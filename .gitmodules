@@ -1,0 +1,6 @@
+[submodule "lcc"]
+	path = lcc
+	url = https://github.com/drh/lcc
+[submodule "tinycc"]
+	path = tinycc
+	url = https://github.com/TinyCC/tinycc

@@ -69,7 +69,7 @@ void vm_init(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info)
     info->p = (int*)codes.buf;
     info->head = (int*)codes.buf;
     
-    map<char*, ZVALUE>* vtable = new  map<char*, ZVALUE>.initialize();
+    info->vtable = new  map<char*, ZVALUE>.initialize();
     
     int get_element_num = 0;
     ZVALUE for_list_value;

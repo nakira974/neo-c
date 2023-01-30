@@ -231,6 +231,8 @@ struct sVMInfo
     
     ZVALUE stack[ZSTACK_MAX];
     int stack_num;
+    
+    map<char*, ZVALUE>* vtable;
 };
 
 void vm_init(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info);
@@ -256,4 +258,8 @@ bool ZVALUE::equals(ZVALUE self, ZVALUE right);
 
 bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 96;
 
+/// 05var.c ///
+sPyType* parse_type(sParserInfo* info);
+sNode* exp_node(sParserInfo* info) version 5;
 
+bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 95;

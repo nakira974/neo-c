@@ -55,10 +55,84 @@ void initialize_modules() version 1
     
     gUndefined.kind = kUndefinedValue;
     gUndefined.objValue = null;
+    
+    gModules = new map<char*, sModule*>();
+    
+    sModule* sys_module = new  sModule("sys");
+    gModules.insert("sys", sys_module);
+    
+    sModule* main_module = new  sModule("__main__");
+    gModules.insert("__main__", main_module);
+    
+    main_module.global_vars.insert("None", gNoneValue);
+    
+    add_class("int", "", "__main__");
+    add_class("float", "", "__main__");
+    sClass* str_class = add_class("str", "", "__main__");
+    add_class("bytes", "", "__main__");
+    add_class("bool", "", "__main__");
+    add_class("NoneType", "", "__main__");
+    add_class("UndefinedType", "", "__main__");
+    sClass* list_class = add_class("list", "", "__main__");
+    add_class("type", "", "__main__");
+    add_class("module", "", "__main__");
+    add_class("exception", "", "__main__");
+}
+
+sModule* sModule*::initialize(sModule* self, char* module_name)
+{
+    self.name = string(module_name);
+    
+    self.funcs = new map<char*, sFunction*>();
+    self.global_vars = new map<char*, ZVALUE>();
+    self.classes = new map<char*, sClass*>();
+    
+    return self;
+}
+
+sClass* sClass*::initialize(sClass* self, char* name, buffer* codes, char* module_name)
+{
+    self.name = string(name);
+    self.module_name = string(module_name);
+    
+    if(codes) {
+        self.codes = clone codes;
+    }
+    else {
+        self.codes = null;
+    }
+    
+    self.class_vars = new map<string, ZVALUE>.initialize();
+    self.funcs = new map<string, sFunction*%>.initialize();
+    
+    return self;
 }
 
 void finalize_modules() version 1
 {
+}
+
+map<char*, sModule*>* gModules;
+
+void add_module(char* module_name)
+{
+    sModule* module = new sModule(module_name);
+    
+    gModules.insert(string(module_name), module);
+}
+
+sClass* add_class(char* class_name, char* class_module_name, char* module_name)
+{
+    sModule* module = gModules.at(module_name, null);
+    
+    if(module) {
+        sClass* klass = new  sClass(class_name, null, class_module_name);
+        module.classes.insert(string(class_name), klass);
+        
+        return klass;
+    }
+    
+    return null;
 }
 
 void vm_init(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info)
@@ -69,7 +143,7 @@ void vm_init(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info)
     info->p = (int*)codes.buf;
     info->head = (int*)codes.buf;
     
-    info->vtable = new  map<char*, ZVALUE>.initialize();
+    info->vtable = new map<char*, ZVALUE>();
     
     int get_element_num = 0;
     ZVALUE for_list_value;
@@ -86,7 +160,7 @@ void vm_init(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info)
                 return false;
             }
             
-            vtable.insert(string(key), item);
+            info->vtable.insert(string(key), item);
         }
     }
 }
@@ -235,8 +309,8 @@ void print_op(int op)
 bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 99
 {
     while((info->p - info->head) < (codes.length() / sizeof(int))) {
-printf("p %d max %d\n", info->p - info->head, codes.length() /sizeof(int));
-print_op(*info->p);
+//print_op(*info->p);
+//printf("start info->p - info->head %d max %d\n", info->p - info->head, codes.length() / sizeof(int));
         switch(*info->p) {
             case OP_POP: {
                 info->p++;
@@ -266,6 +340,8 @@ print_op(*info->p);
                 }
                 break;
         }
+//printf("end info->p - info->head %d max %d\n", info->p - info->head, codes.length() / sizeof(int));
+//printf("end info->stack_num %d\n", info->stack_num);
         
         if(info->stack_num < 0 || info->stack_num >= ZSTACK_MAX) {
             fprintf(stderr, "Inerpreter Bug occurs. invalid stack num %d\n", info->stack_num);

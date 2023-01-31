@@ -166,7 +166,7 @@ struct sClass
     buffer* codes;
     
     map<string, ZVALUE>* class_vars;
-    map<string, sFunction*%>* funcs;
+    map<string, sFunction*>* funcs;
 };
 
 struct sModule
@@ -176,6 +176,9 @@ struct sModule
     map<char*, ZVALUE>* global_vars;
     map<char*, sClass*>* classes;
 };
+
+sModule* sModule*::initialize(sModule* self, char* module_name);
+sClass* sClass*::initialize(sClass* self, char* name, buffer* codes, char* module_name);
 
 struct sObject
 {
@@ -190,8 +193,8 @@ protocol sNode;
 void skip_spaces(sParserInfo* info);
 void skip_spaces_until_eol(sParserInfo* info);
 string parse_word(sParserInfo* info);
-list<sNode*%>*%? parse_block(sParserInfo* info);
-buffer*% compile_nodes(list<sNode*>* nodes, sParserInfo* info);
+list<sNode*>* parse_block(sParserInfo* info);
+buffer* compile_nodes(list<sNode*>* nodes, sParserInfo* info);
 void compile_block(buffer* codes, list<sNode*>* nodes, sParserInfo* info);
 
 bool import_module(char* module_name);
@@ -205,7 +208,7 @@ protocol sNode
 
 /// 01int.c ///
 bool expression(sNode** node, sParserInfo* info) version 1;
-sNode*? exp_node(sParserInfo* info) version 1;
+sNode* exp_node(sParserInfo* info) version 1;
 
 inline bool sNode*::equals(sNode* left, sNode* right)
 {
@@ -217,13 +220,17 @@ void finalize_modules() version 1;
 
 extern ZVALUE gNoneValue;
 extern ZVALUE gUndefined;
+extern map<char*, sModule*>* gModules;
 
+void add_module(char* module_name);
+sClass* add_class(char* class_name, char* class_module_name, char* module_name)
+;
 struct sVMInfo 
 {
     ZVALUE exception;
     ZVALUE return_value;
     
-    char* module_name;
+    string module_name;
     char* class_name;
     
     int* p;
@@ -245,7 +252,7 @@ bool expression(sNode** node, sParserInfo* info) version 2;
 bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 98;
 
 /// 03str.c ///
-sNode*? exp_node(sParserInfo* info) version 3;
+sNode* exp_node(sParserInfo* info) version 3;
 sNode* method_node(sNode* node, sParserInfo* info) version 1;
 
 bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 97;

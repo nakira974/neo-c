@@ -2,8 +2,6 @@
 
 class sLoadVarNode(char* str, sParserInfo* info)
 {
-    sNode* self.left = exp;
-    
     string self.name = string(str);
     bool self.in_global_context = info->in_global_context;
     
@@ -26,6 +24,8 @@ class sLoadVarNode(char* str, sParserInfo* info)
         codes.append_int(self.in_global_context);
         
         info->stack_num++;
+        
+        return true;
     }
 };
 
@@ -39,7 +39,7 @@ class sStoreVarNode(char* str, sNode* right, sParserInfo* info)
     {
         sNode* right = self.right;
         
-        if(!compile(right, codes, info)) {
+        if(!right.compile->(codes, info)) {
             return false;
         }
         
@@ -58,6 +58,8 @@ class sStoreVarNode(char* str, sNode* right, sParserInfo* info)
         codes.alignment();
         
         codes.append_int(self.in_global_context);
+        
+        return true;
     }
 };
 
@@ -163,7 +165,7 @@ sNode* exp_node(sParserInfo* info) version 5
                     return null;
                 }
                 
-                return new sNode(new sStoreVarNode(buf.to_string(), right, info);
+                return new sNode(new sStoreVarNode(buf.to_string(), right, info));
             }
             else if(*info->p == '(') {
                 result = fun_node(buf.to_string(), info)
@@ -219,7 +221,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 95
             info->p += offset;
             
             bool in_global_context = (bool)*info->p;
-            p++;
+            info->p++;
             
             sModule* module = gModules.at(string(var_name2), null);
             
@@ -228,19 +230,19 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 95
             sClass* klass = module2.classes.at(string(var_name2), null);
             
             if(module) {
-                stack[stack_num].kind = kModuleValue;
-                stack[stack_num].value.moduleValue = module;
-                stack_num++;
+                info->stack[info->stack_num].kind = kModuleValue;
+                info->stack[info->stack_num].value.moduleValue = module;
+                info->stack_num++;
             }
             else if(klass) {
-                stack[stack_num].kind = kClassValue;
-                stack[stack_num].value.classValue = klass;
-                stack_num++;
+                info->stack[info->stack_num].kind = kClassValue;
+                info->stack[info->stack_num].value.classValue = klass;
+                info->stack_num++;
             }
             else if(in_global_context) {
-                stack[stack_num] = module2.global_vars.at(string(var_name2), gUndefined);
+                info->stack[info->stack_num] = module2.global_vars.at(string(var_name2), gUndefined);
                 
-                if(stack[stack_num].kind == kUndefinedValue) {
+                if(info->stack[info->stack_num].kind == kUndefinedValue) {
                     info->exception.kind = kExceptionValue;
                     info->exception.value.expValue = kExceptionVarNotFound;
                     return false;
@@ -271,6 +273,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 95
             info->p++;
             
             int offset = *info->p;
+            
             info->p++;
             
             int len = *info->p;
@@ -285,6 +288,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 95
             info->p += offset;
             
             bool in_global_context = (bool)*info->p;
+
             info->p++;
             
             if(in_global_context) {
@@ -305,7 +309,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 95
                             return false;
                         }
                         
-                        ZVALUE right = info->stack[stack_num-1];
+                        ZVALUE right = info->stack[info->stack_num-1];
                         klass.class_vars.insert(string(var_name2), right);
                     }
                     else {

@@ -55,7 +55,7 @@ static bool read_source(char* fname, buffer* source)
     return true;
 }
 
-static list<sNode*%>*% parse(sParserInfo* info, int block_space_num)
+static list<sNode*>* parse(sParserInfo* info, int block_space_num)
 {
     auto nodes = new list<sNode*>();
     
@@ -116,9 +116,9 @@ static list<sNode*%>*% parse(sParserInfo* info, int block_space_num)
     return nodes;
 }
 
-list<sNode*%>*%? parse_block(sParserInfo* info)
+list<sNode*>* parse_block(sParserInfo* info)
 {
-    list<sNode*%>*%? nodes = null;
+    list<sNode*>* nodes = nonullable null;
     
     /// multi line ///
     if(*info->p == '\n') {
@@ -144,7 +144,7 @@ list<sNode*%>*%? parse_block(sParserInfo* info)
             }
         }
         
-        nodes = nullable parse(info, block_space_num);
+        nodes = parse(info, block_space_num);
     }
     /// one line ///
     else {
@@ -153,9 +153,9 @@ list<sNode*%>*%? parse_block(sParserInfo* info)
     return nodes;
 }
 
-buffer*% compile_nodes(list<sNode*>* nodes, sParserInfo* info)
+buffer* compile_nodes(list<sNode*>* nodes, sParserInfo* info)
 {
-    buffer*% codes = new buffer.initialize();
+    buffer* codes = new buffer.initialize();
     
     foreach(it, nodes) {
         it.compile->(codes, info).expect {
@@ -214,7 +214,7 @@ int main(int argc, char** argv)
     else {
         initialize_modules();
         
-        buffer*% source = new buffer.initialize();
+        buffer* source = new buffer.initialize();
         
         read_source(fname, source).expect {
             exit(1);
@@ -244,21 +244,19 @@ int main(int argc, char** argv)
         
         auto nodes = parse(&info, block_space_num:0);
         
-        buffer*% codes = compile_nodes(nodes, &info);
+        buffer* codes = compile_nodes(nodes, &info);
         
         sVMInfo vm_info;
         
         memset(&vm_info, 0, sizeof(sVMInfo));
         
-        vm_info.module_name = borrow string("__main__");
+        vm_info.module_name = string("__main__");
         
         vm_init(codes, null, &vm_info);
         vm(codes, null, &vm_info).expect {
             print_exception(parent->vm_info->exception);
             exit(1);
         }
-        
-        delete vm_info.module_name;
         
         finalize_modules();
     }

@@ -135,8 +135,16 @@ sClass* add_class(char* class_name, char* class_module_name, char* module_name)
     return null;
 }
 
-void vm_init(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info)
+void vm_init(buffer* codes, map<char*, ZVALUE>* params, char* module_name, char* class_name, sVMInfo* info)
 {
+    info->module_name = string(module_name);
+    if(class_name) {
+        info->class_name = string(class_name);
+    }
+    else {
+        info->class_name = null;
+    }
+    
     info->stack_num = 0;
     info->return_value = gNoneValue;
     

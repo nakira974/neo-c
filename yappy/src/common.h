@@ -242,7 +242,7 @@ struct sVMInfo
     map<char*, ZVALUE>* vtable;
 };
 
-void vm_init(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info);
+void vm_init(buffer* codes, map<char*, ZVALUE>* params, char* module_name, char* class_name, sVMInfo* info);
 bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 1;
 bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 99;
 
@@ -270,3 +270,9 @@ sPyType* parse_type(sParserInfo* info);
 sNode* exp_node(sParserInfo* info) version 5;
 
 bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 95;
+
+/// 06fun.c ///
+sNode* def_node(sParserInfo* info) version 6;
+sNode* fun_node(char* fun_name, sParserInfo* info) version 6;
+sNode* class_node(sParserInfo* info) version 6;
+bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 94;

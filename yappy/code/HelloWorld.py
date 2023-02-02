@@ -1,2 +1,5 @@
-a=1
-print(a)
+
+def fun(a):
+    print(a)
+
+fun(123)

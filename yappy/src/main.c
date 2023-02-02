@@ -250,9 +250,7 @@ int main(int argc, char** argv)
         
         memset(&vm_info, 0, sizeof(sVMInfo));
         
-        vm_info.module_name = string("__main__");
-        
-        vm_init(codes, null, &vm_info);
+        vm_init(codes, null, string("__main__"), null, &vm_info);
         vm(codes, null, &vm_info).expect {
             print_exception(parent->vm_info->exception);
             exit(1);

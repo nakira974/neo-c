@@ -1,6 +1,6 @@
 #include "common.h"
 
-static sNode* create_true(sParserInfo* info)
+ode* create_true(sParserInfo* info)
 {
     sNode* result = new  sNode;
     

@@ -48,39 +48,25 @@ class sFunNode(char* fun_name, buffer* codes, vector<char*>* param_names, sParse
         
         return true;
     }
-}
+};
 
-class sClassNode(char* class_name, buffer* codes, sParserInfo* info)
+class sReturnNode(sNode* exp)
 {
-    string self.name = string(class_name);
-    buffer* self.codes = codes;
-    vector<char*>* self.param_names = nonullable null;
+    sNode* self.left = exp;
     
-    bool compile(sClassNode* self, buffer* codes, sParserInfo* info)
+    bool compile(sReturnNode* self, buffer* codes, sParserInfo* info)
     {
-        codes.append_int(OP_CLASS);
+        sNode* exp = self.left;
         
-        char* name = self.name;
+        if(!exp.compile->(codes, info)) {
+            return false;
+        }
         
-        int len = strlen(name);
-        int offset = (len + 3) & ~3;
-        offset /= sizeof(int);
-        
-        codes.append_int(offset);
-        codes.append_int(len);
-        
-        codes.append_str(name);
-        codes.alignment();
-        
-        buffer* codes2 = self.codes;
-        
-        codes.append_int(codes2.len);
-        
-        codes.append(codes2.buf, codes2.len);
+        codes.append_int(OP_RETURN);
         
         return true;
     }
-}
+};
 
 class sFunCallNode(char* fun_name, vector<sNode*>* params, map<char*, sNode*>* named_params, sParserInfo* info)
 {
@@ -296,27 +282,27 @@ sNode* fun_node(char* fun_name, sParserInfo* info) version 6
     return new sNode(new sFunCallNode(fun_name, params, named_params, info));
 }
 
-sNode* class_node(sParserInfo* info) version 6
+sNode* return_node(sParserInfo* info) version 2
 {
-    buffer* buf = new buffer();
-    
-    while(xisalnum(*info->p) || *info->p == '_') {
-        buf.append_char(*info->p);
-        info->p++;
-    }
+    info->p += strlen("return");
     skip_spaces_until_eol(info);
     
-    if(*info->p == ':') {
+    if(*info->p == '(') {
         info->p++;
         skip_spaces_until_eol(info);
     }
     
-    char* class_name = buf.to_string();
+    sNode* node = null;
+    if(!expression(&node, info)) {
+        return null;
+    }
     
-    list<sNode*>* nodes = parse_block(info);
-    buffer* codes = compile_nodes(nodes, info);
+    if(*info->p == ')') {
+        info->p++;
+        skip_spaces_until_eol(info);
+    }
     
-    return new sNode(new sClassNode(class_name, codes, info));
+    return new sNode(new sReturnNode(node));
 }
 
 static sFunction* sFunction*::initialize(sFunction* self, char* name, buffer* codes, vector<string>* param_names)
@@ -333,24 +319,6 @@ static sFunction* sFunction*::initialize(sFunction* self, char* name, buffer* co
     
     return self;
 }
-
-static sClass* sClass*::initialize(sClass* self, char* name, buffer* codes, char* module_name)
-{
-    self.name = string(name);
-    self.module_name = string(module_name);
-    
-    if(codes) {
-        self.codes = clone codes;
-    }
-    else {
-        self.codes = null;
-    }
-    
-    self.class_vars = new map<string, ZVALUE>.initialize();
-    self.funcs = new map<string, sFunction*%>.initialize();
-    
-    return self;
-};
 
 static bool function_call(sFunction* fun, vector<ZVALUE>* param_values, map<char*, ZVALUE>* named_params, sVMInfo* info)
 {
@@ -412,27 +380,9 @@ static bool function_call(sFunction* fun, vector<ZVALUE>* param_values, map<char
         if(!vm(codes, params, &vm_info)) {
             return false;
         }
+        
+        info->return_value = vm_info->return_value;
     }
-    
-    return true;
-}
-
-static bool class_call(sClass* klass, sVMInfo* info)
-{
-    buffer* codes = klass->codes;
-    
-    char* class_name = info->class_name;
-    
-    sVMInfo vm_info;
-    
-    memset(&vm_info, 0, sizeof(sVMInfo));
-    
-    vm_init(codes, null, info->module_name, klass.name, &vm_info);
-    if(!vm(codes, null, &vm_info)) {
-        return false;
-    }
-    
-    info->class_name = class_name;
     
     return true;
 }
@@ -658,51 +608,15 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 94
             }
             }
             break;
-            
-        case OP_CLASS: {
+        
+        case OP_RETURN: 
             info->p++;
             
-            int offset = *info->p;
-            info->p++;
+            ZVALUE return_value = info->stack[info->stack_num-1];
             
-            int len = *info->p;
-            info->p++;
+//            info->stack_num--;
             
-            char* name = (char*)info->p;
-            
-            char name2[len+1];
-            memcpy(name2, name, len);
-            name2[len] = '\0'
-            
-            info->p += offset;
-            
-            int len_codes = *info->p;
-            info->p++;
-            
-            char* codes = (char*)info->p;
-            
-            info->p += len_codes / sizeof(int);
-            
-            buffer* codes2 = new  buffer.initialize();
-            
-            codes2.append(codes, len_codes);
-            
-            sModule* module = gModules.at(info.module_name, null);
-            
-            if(module == null) {
-                info->exception.kind = kExceptionValue;
-                info->exception.value.expValue = kExceptionVarNotFound;
-                return false;
-            }
-            
-            sClass* klass = new  sClass.initialize(string(name2), codes2, module.name);
-            
-            module.classes.insert(string(name2), klass);
-            
-            if(!class_call(klass, info)) {
-                return false;
-            }
-            }
+            info->return_value = return_value;
             break;
             
         default: {

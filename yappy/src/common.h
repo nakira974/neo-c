@@ -259,6 +259,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 97;
 
 /// 04print.c ///
 sNode* exp_node(sParserInfo* info) version 4;
+sNode* return_node(sParserInfo* info) version 1;
 
 unsigned int ZVALUE::get_hash_key(ZVALUE self);
 bool ZVALUE::equals(ZVALUE self, ZVALUE right);
@@ -274,5 +275,11 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 95;
 /// 06fun.c ///
 sNode* def_node(sParserInfo* info) version 6;
 sNode* fun_node(char* fun_name, sParserInfo* info) version 6;
-sNode* class_node(sParserInfo* info) version 6;
+sNode* return_node(sParserInfo* info) version 2;
+
 bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 94;
+
+/// 07module.c ///
+sNode* class_node(sParserInfo* info) version 7;
+
+bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 93;

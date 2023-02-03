@@ -314,24 +314,6 @@ class sExitNode(sNode* exp)
     }
 };
 
-class sReturnNode(sNode* exp)
-{
-    sNode* self.left = exp;
-    
-    bool compile(sStrNode* self, buffer* codes, sParserInfo* info)
-    {
-        sNode* exp = self.left;
-        
-        if(!exp.compile->(codes, info)) {
-            return false;
-        }
-        
-        codes.append_int(OP_RETURN);
-        
-        return true;
-    }
-};
-
 static bool emb_funcmp(char* p, char* word2)
 {
     bool result = strstr(p, word2) == p;
@@ -343,6 +325,11 @@ static bool emb_funcmp(char* p, char* word2)
     }
     
     return false;
+}
+
+sNode* return_node(sParserInfo* info) version 1
+{
+    return nonullable null;
 }
 
 sNode* exp_node(sParserInfo* info) version 4
@@ -477,25 +464,7 @@ sNode* exp_node(sParserInfo* info) version 4
             result = new sNode(new sExitNode(node));
         }
         else if(emb_funcmp(info->p, "return")) {
-            info->p += strlen("return");
-            skip_spaces_until_eol(info);
-            
-            if(*info->p == '(') {
-                info->p++;
-                skip_spaces_until_eol(info);
-            }
-            
-            sNode* node = null;
-            if(!expression(&node, info)) {
-                return null;
-            }
-            
-            if(*info->p == ')') {
-                info->p++;
-                skip_spaces_until_eol(info);
-            }
-            
-            result = new sNode(new sReturnNode(node));
+            result = return_node(info);
         }
     }
     
@@ -826,7 +795,6 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 96
                 return false;
             }
             break;
-            
             
         default: {
             bool result = inherit(codes, params, info);

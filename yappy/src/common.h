@@ -199,6 +199,9 @@ void compile_block(buffer* codes, list<sNode*>* nodes, sParserInfo* info);
 
 bool import_module(char* module_name);
 
+extern char* gDirName;
+bool read_source(char* fname, buffer* source);
+list<sNode*>* parse(sParserInfo* info, int block_space_num);
 
 /// node ///
 protocol sNode
@@ -277,9 +280,14 @@ sNode* def_node(sParserInfo* info) version 6;
 sNode* fun_node(char* fun_name, sParserInfo* info) version 6;
 sNode* return_node(sParserInfo* info) version 2;
 
+bool function_call(sFunction* fun, vector<ZVALUE>* param_values, map<char*, ZVALUE>* named_params, sVMInfo* info);
+
+
 bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 94;
 
 /// 07module.c ///
 sNode* class_node(sParserInfo* info) version 7;
 
 bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 93;
+sNode* method_node(sNode* node, sParserInfo* info) version 7;
+sNode* exp_node(sParserInfo* info) version 7;

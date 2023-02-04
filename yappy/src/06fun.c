@@ -320,7 +320,7 @@ static sFunction* sFunction*::initialize(sFunction* self, char* name, buffer* co
     return self;
 }
 
-static bool function_call(sFunction* fun, vector<ZVALUE>* param_values, map<char*, ZVALUE>* named_params, sVMInfo* info)
+bool function_call(sFunction* fun, vector<ZVALUE>* param_values, map<char*, ZVALUE>* named_params, sVMInfo* info)
 {
     if(fun.native_fun) {
         fNativeFun fun2 = fun.native_fun;

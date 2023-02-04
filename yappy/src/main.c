@@ -32,7 +32,7 @@ string parse_word(sParserInfo* info)
     return result.to_string();
 }
 
-static bool read_source(char* fname, buffer* source)
+bool read_source(char* fname, buffer* source)
 {
     FILE* f = fopen(fname, "r");
     
@@ -55,7 +55,7 @@ static bool read_source(char* fname, buffer* source)
     return true;
 }
 
-static list<sNode*>* parse(sParserInfo* info, int block_space_num)
+list<sNode*>* parse(sParserInfo* info, int block_space_num)
 {
     auto nodes = new list<sNode*>();
     

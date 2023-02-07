@@ -291,3 +291,8 @@ sNode* class_node(sParserInfo* info) version 7;
 bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 93;
 sNode* method_node(sNode* node, sParserInfo* info) version 7;
 sNode* exp_node(sParserInfo* info) version 7;
+
+/// 08if.c ///
+sNode* exp_node(sParserInfo* info) version 8;
+
+bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 92;

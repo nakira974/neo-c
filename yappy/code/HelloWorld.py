@@ -19,3 +19,10 @@ def fun(a):
 b = fun(123)
 
 print(b)
+
+if False:
+    print("IF OK")
+elif True:
+    print("ELIF OK")
+else:
+    print("ELSE OK")

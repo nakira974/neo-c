@@ -296,3 +296,6 @@ sNode* exp_node(sParserInfo* info) version 7;
 sNode* exp_node(sParserInfo* info) version 8;
 
 bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 92;
+
+/// 09comment.c ///
+bool expression(sNode** node, sParserInfo* info) version 99;

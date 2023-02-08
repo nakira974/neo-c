@@ -71,7 +71,9 @@ list<sNode*>* parse(sParserInfo* info, int block_space_num)
             exit(2);
         }
         
-        nodes.push_back(node);
+        if(node != null) {
+            nodes.push_back(node);
+        }
         
         if(*info->p == ';') {
             info->p++;

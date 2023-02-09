@@ -705,7 +705,7 @@ static void print_obj(ZVALUE obj, bool lf)
     }
 }
 
-bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 96
+bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 95
 {
     switch(*info->p) {
         case OP_PRINT:

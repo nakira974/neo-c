@@ -29,3 +29,9 @@ else:
 
 # comment
 
+i = 0
+while i != 3:
+    print("HELLO WHILE")
+    i = i + 1
+
+print("AAA")

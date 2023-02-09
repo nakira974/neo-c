@@ -396,7 +396,7 @@ sObject* sObject*::initialize(sObject* self, sModule* module, sClass* klass)
     return self;
 }
 
-bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 94
+bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 93
 {
     switch(*info->p) {
         case OP_FUN: {

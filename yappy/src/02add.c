@@ -57,7 +57,7 @@ class sSubNode(sNode* left, sNode* right, sParserInfo* info)
     }
 };
 
-static sNode* op_add_node(sParserInfo* info)
+sNode* op_add_node(sParserInfo* info)
 {
     sNode* result = exp_node(info);
     
@@ -102,7 +102,7 @@ bool expression(sNode** node, sParserInfo* info) version 2
     return true;
 }
 
-bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 98
+bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 97
 {
     switch(*info->p) {
         case OP_ADD: {

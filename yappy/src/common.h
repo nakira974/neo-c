@@ -243,22 +243,26 @@ struct sVMInfo
     int stack_num;
     
     map<char*, ZVALUE>* vtable;
+    
+    int get_element_num;
+    ZVALUE for_list_value;
 };
 
 void vm_init(buffer* codes, map<char*, ZVALUE>* params, char* module_name, char* class_name, sVMInfo* info);
 bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 1;
-bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 99;
+bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 98;
 
 /// 02add.c ///
 bool expression(sNode** node, sParserInfo* info) version 2;
+sNode* op_add_node(sParserInfo* info);
 
-bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 98;
+bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 97;
 
 /// 03str.c ///
 sNode* exp_node(sParserInfo* info) version 3;
 sNode* method_node(sNode* node, sParserInfo* info) version 1;
 
-bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 97;
+bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 96;
 
 /// 04print.c ///
 sNode* exp_node(sParserInfo* info) version 4;
@@ -267,13 +271,13 @@ sNode* return_node(sParserInfo* info) version 1;
 unsigned int ZVALUE::get_hash_key(ZVALUE self);
 bool ZVALUE::equals(ZVALUE self, ZVALUE right);
 
-bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 96;
+bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 95;
 
 /// 05var.c ///
 sPyType* parse_type(sParserInfo* info);
 sNode* exp_node(sParserInfo* info) version 5;
 
-bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 95;
+bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 94;
 
 /// 06fun.c ///
 sNode* def_node(sParserInfo* info) version 6;
@@ -283,19 +287,27 @@ sNode* return_node(sParserInfo* info) version 2;
 bool function_call(sFunction* fun, vector<ZVALUE>* param_values, map<char*, ZVALUE>* named_params, sVMInfo* info);
 
 
-bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 94;
+bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 93;
 
 /// 07module.c ///
 sNode* class_node(sParserInfo* info) version 7;
 
-bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 93;
+bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 92;
 sNode* method_node(sNode* node, sParserInfo* info) version 7;
 sNode* exp_node(sParserInfo* info) version 7;
 
 /// 08if.c ///
 sNode* exp_node(sParserInfo* info) version 8;
 
-bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 92;
+bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 91;
 
 /// 09comment.c ///
 bool expression(sNode** node, sParserInfo* info) version 99;
+
+/// 10while.c ///
+sNode* exp_node(sParserInfo* info) version 10;
+bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 90;
+
+/// 11op.c ///
+bool expression(sNode** node, sParserInfo* info) version 11;
+bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 89;

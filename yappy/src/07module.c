@@ -469,7 +469,7 @@ static bool import_module(char* module_name)
     return true;
 }
 
-bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 93
+bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 92
 {
     switch(*info->p) {
         case OP_CLASS: {

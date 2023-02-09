@@ -171,6 +171,8 @@ void vm_init(buffer* codes, map<char*, ZVALUE>* params, char* module_name, char*
             info->vtable.insert(string(key), item);
         }
     }
+    
+    info->get_element_num = 0;
 }
 
 bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 1
@@ -314,7 +316,7 @@ void print_op(int op)
     }
 }
 
-bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 99
+bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 98
 {
     while((info->p - info->head) < (codes.length() / sizeof(int))) {
 //print_op(*info->p);

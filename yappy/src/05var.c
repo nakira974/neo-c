@@ -200,7 +200,7 @@ sNode* exp_node(sParserInfo* info) version 5
     return result;
 }
 
-bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 95
+bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 94
 {
     switch(*info->p) {
         case OP_LOAD: {

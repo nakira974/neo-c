@@ -7,6 +7,14 @@ class sWhileNode(sNode* while_exp, list<sNode*>* while_nodes
     list<sNode*>* self.while_nodes = while_nodes;
     list<sNode*>*? self.else_nodes = else_nodes;
     
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sWhileNode* self)
+    {
+        return self.id;
+    }
+    
+    
     bool compile(sWhileNode* self, buffer* codes, sParserInfo* info)
     {
         sNode* while_exp = self.while_exp;
@@ -19,7 +27,7 @@ class sWhileNode(sNode* while_exp, list<sNode*>* while_nodes
         info->loop_head = head;
         
         vector<int>* breaks_before = info->breaks;
-        info->breaks = new  vector<int>.initialize();
+        info->breaks = new  vector<int>();
         
         if(!while_exp.compile->(codes, info)) {
             return false;
@@ -65,6 +73,13 @@ class sForNode(char* var_name, list<sNode*>* nodes, sNode* list_node
     list<sNode*>* self.for_nodes = nodes;
     sNode* self.list_node = list_node;
     
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sForNode* self)
+    {
+        return self.id;
+    }
+    
     bool compile(sForNode* self, buffer* codes, sParserInfo* info)
     {
         sNode* list_node = self.list_node;
@@ -102,7 +117,7 @@ class sForNode(char* var_name, list<sNode*>* nodes, sNode* list_node
         codes.alignment();
         
         vector<int>* breaks_before = info->breaks;
-        info->breaks = new  vector<int>.initialize();
+        info->breaks = new  vector<int>();
         
         int head2 = codes.length();
         int head_before = info->loop_head;
@@ -134,6 +149,12 @@ class sForNode(char* var_name, list<sNode*>* nodes, sNode* list_node
 
 class sContinueNode(sParserInfo* info)
 {
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sContinueNode* self)
+    {
+        return self.id;
+    }
     bool compile(sContinueNode* self, buffer* codes, sParserInfo* info)
     {
         if(info->loop_head == -1) {
@@ -150,6 +171,13 @@ class sContinueNode(sParserInfo* info)
 
 class sBreakNode(sParserInfo* info)
 {
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sBreakNode* self)
+    {
+        return self.id;
+    }
+    
     bool compile(sBreakNode* self, buffer* codes, sParserInfo* info)
     {
         if(info->breaks == null) {
@@ -232,7 +260,7 @@ sNode* exp_node(sParserInfo* info) version 10
         info->p += strlen("for");
         skip_spaces_until_eol(info);
         
-        buffer* buf = new  buffer.initialize();
+        buffer* buf = new buffer();
         
         if(xisalpha(*info->p)) {
             while(xisalnum(*info->p)) {

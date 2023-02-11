@@ -6,6 +6,13 @@ class sEqualNode(sNode* left, sNode* right, sParserInfo* info)
     sNode* self.left = left;
     sNode* self.right = right;
     
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sEqualNode* self)
+    {
+        return self.id;
+    }
+    
     bool compile(sEqualNode* self, buffer* codes, sParserInfo* info)
     {
         sNode* left = self.left
@@ -33,6 +40,13 @@ class sEqualNotNode(sNode* left, sNode* right, sParserInfo* info)
 {
     sNode* self.left = left;
     sNode* self.right = right;
+    
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sEqualNotNode* self)
+    {
+        return self.id;
+    }
     
     bool compile(sEqualNotNode* self, buffer* codes, sParserInfo* info)
     {
@@ -62,6 +76,13 @@ class sIsNode(sNode* left, sNode* right, sParserInfo* info)
     sNode* self.left = left;
     sNode* self.right = right;
     
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sIsNode* self)
+    {
+        return self.id;
+    }
+    
     bool compile(sIsNode* self, buffer* codes, sParserInfo* info)
     {
         sNode* left = self.left
@@ -89,6 +110,13 @@ class sIsNotNode(sNode* left, sNode* right, sParserInfo* info)
 {
     sNode* self.left = left;
     sNode* self.right = right;
+    
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sIsNotNode* self)
+    {
+        return self.id;
+    }
     
     bool compile(sIsNotNode* self, buffer* codes, sParserInfo* info)
     {
@@ -118,6 +146,13 @@ class sMultNode(sNode* left, sNode* right, sParserInfo* info)
     sNode* self.left = left;
     sNode* self.right = right;
     
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sMultNode* self)
+    {
+        return self.id;
+    }
+    
     bool compile(sMultNode* self, buffer* codes, sParserInfo* info)
     {
         sNode* left = self.left
@@ -145,6 +180,13 @@ class sDivNode(sNode* left, sNode* right, sParserInfo* info)
 {
     sNode* self.left = left;
     sNode* self.right = right;
+    
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sDivNode* self)
+    {
+        return self.id;
+    }
     
     bool compile(sDivNode* self, buffer* codes, sParserInfo* info)
     {
@@ -174,6 +216,13 @@ class sAndAndNode(sNode* left, sNode* right, sParserInfo* info)
     sNode* self.left = left;
     sNode* self.right = right;
     
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sAndAndNode* self)
+    {
+        return self.id;
+    }
+    
     bool compile(sAndAndNode* self, buffer* codes, sParserInfo* info)
     {
         sNode* left = self.left
@@ -201,6 +250,13 @@ class sOrOrNode(sNode* left, sNode* right, sParserInfo* info)
 {
     sNode* self.left = left;
     sNode* self.right = right;
+    
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sOrOrNode* self)
+    {
+        return self.id;
+    }
     
     bool compile(sOrOrNode* self, buffer* codes, sParserInfo* info)
     {

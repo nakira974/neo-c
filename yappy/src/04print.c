@@ -197,6 +197,13 @@ class sPrintNode(sNode* exp)
 {
     sNode* self.left = exp;
     
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sPrintNode* self)
+    {
+        return self.id;
+    }
+    
     bool compile(sPrintNode* self, buffer* codes, sParserInfo* info)
     {
         sNode* exp = self.left;
@@ -214,6 +221,13 @@ class sPrintNode(sNode* exp)
 class sLenNode(sNode* exp)
 {
     sNode* self.left = exp;
+    
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sLenNode* self)
+    {
+        return self.id;
+    }
     
     bool compile(sLenNode* self, buffer* codes, sParserInfo* info)
     {
@@ -237,6 +251,13 @@ class sStrToIntNode(sNode* exp)
 {
     sNode* self.left = exp;
     
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sStrToIntNode* self)
+    {
+        return self.id;
+    }
+    
     bool compile(sStrToIntNode* self, buffer* codes, sParserInfo* info)
     {
         sNode* exp = self.left;
@@ -257,6 +278,13 @@ class sStrToIntNode(sNode* exp)
 class sStrNode(sNode* exp)
 {
     sNode* self.left = exp;
+    
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sStrNode* self)
+    {
+        return self.id;
+    }
     
     bool compile(sStrNode* self, buffer* codes, sParserInfo* info)
     {
@@ -279,6 +307,13 @@ class sTypeNode(sNode* exp)
 {
     sNode* self.left = exp;
     
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sTypeNode* self)
+    {
+        return self.id;
+    }
+    
     bool compile(sStrNode* self, buffer* codes, sParserInfo* info)
     {
         sNode* exp = self.left;
@@ -299,6 +334,13 @@ class sTypeNode(sNode* exp)
 class sExitNode(sNode* exp)
 {
     sNode* self.left = exp;
+    
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sExitNode* self)
+    {
+        return self.id;
+    }
     
     bool compile(sStrNode* self, buffer* codes, sParserInfo* info)
     {
@@ -513,7 +555,7 @@ static char* zvalue_to_str(ZVALUE value)
         case kListValue: {
             list<ZVALUE>* li = value.value.listValue;
             
-            buffer* buf = new  buffer.initialize();
+            buffer* buf = new  buffer();
             
             buf.append_str("[");
             for(int i= 0; i<li.length(); i++) {
@@ -531,7 +573,7 @@ static char* zvalue_to_str(ZVALUE value)
         case kTupleValue: {
             immutable list<ZVALUE>* li = value.value.tupleValue;
             
-            buffer* buf = new  buffer.initialize();
+            buffer* buf = new  buffer();
             
             buf.append_str("(");
             for(int i= 0; i<li.length(); i++) {

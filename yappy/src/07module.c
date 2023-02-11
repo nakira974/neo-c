@@ -6,6 +6,13 @@ class sClassNode(char* class_name, buffer* codes, sParserInfo* info)
     buffer* self.codes = codes;
     vector<char*>* self.param_names = nonullable null;
     
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sClassNode* self)
+    {
+        return self.id;
+    }
+    
     bool compile(sClassNode* self, buffer* codes, sParserInfo* info)
     {
         codes.append_int(OP_CLASS);
@@ -36,6 +43,13 @@ class sImportNode(char* name, sParserInfo* info)
 {
     string self.name = string(name);
     
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sImportNode* self)
+    {
+        return self.id;
+    }
+    
     bool compile(sImportNode* self, buffer* codes, sParserInfo* info)
     {
         char* str = string(self.name);
@@ -63,6 +77,13 @@ class sMethodCallNode(sNode* left, char* fun_name, vector<sNode*>* params, map<c
     vector<sNode*>* self.params = params;
     map<char*, sNode*>* self.named_params = name_params;
     sNode* self.left = left;
+    
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sMethodCallNode* self)
+    {
+        return self.id;
+    }
     
     bool compile(sMethodCallNode* self, buffer* codes, sParserInfo* info)
     {
@@ -137,6 +158,13 @@ class sStoreField(sNode* left, char* field_name, sNode* right, sParserInfo* info
     sNode* self.left = left;
     sNode* self.right = right;
     
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sStoreField* self)
+    {
+        return self.id;
+    }
+    
     bool compile(sStoreField* self, buffer* codes, sParserInfo* info)
     {
         sNode* left = self.left;
@@ -175,6 +203,13 @@ class sLoadFieldNode(sNode* left, char* field_name, sParserInfo* info)
 {
     string self.name = string(field_name);
     sNode* self.left = left;
+    
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sLoadFieldNode* self)
+    {
+        return self.id;
+    }
     
     bool compile(sLoadFieldNode* self, buffer* codes, sParserInfo* info)
     {
@@ -221,7 +256,7 @@ sNode* method_node(sNode* node, sParserInfo* info) version 7
     skip_spaces_until_eol(info);
     
     if(xisalpha(*info->p) || *info->p == '_') {
-        buffer* buf = new  buffer.initialize();
+        buffer* buf = new  buffer();
         
         while(xisalnum(*info->p) || *info->p == '_') {
             buf.append_char(*info->p);
@@ -253,8 +288,8 @@ sNode* method_node(sNode* node, sParserInfo* info) version 7
             info->p++;
             skip_spaces_until_eol(info);
             
-            vector<sNode*>* params = new  vector<sNode*>.initialize();
-            map<char*, sNode*>* named_params = new  map<char*, sNode*>.initialize();
+            vector<sNode*>* params = new  vector<sNode*>();
+            map<char*, sNode*>* named_params = new  map<char*, sNode*>();
             
             bool in_fun_call = info->in_fun_call;
             info->in_fun_call = true;
@@ -271,7 +306,7 @@ sNode* method_node(sNode* node, sParserInfo* info) version 7
                 bool named_param_flag = false;
                 
                 if(xisalpha(*info->p)) {
-                    buffer* buf = new  buffer.initialize();
+                    buffer* buf = new  buffer();
                     
                     while(xisalnum(*info->p)) {
                         buf.append_char(*info->p);
@@ -393,8 +428,8 @@ static sClass* sClass*::initialize(sClass* self, char* name, buffer* codes, char
         self.codes = null;
     }
     
-    self.class_vars = new map<string, ZVALUE>.initialize();
-    self.funcs = new map<string, sFunction*%>.initialize();
+    self.class_vars = new map<string, ZVALUE>();
+    self.funcs = new map<string, sFunction*%>();
     
     return self;
 };
@@ -496,7 +531,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 92
             
             info->p += len_codes / sizeof(int);
             
-            buffer* codes2 = new  buffer.initialize();
+            buffer* codes2 = new  buffer();
             
             codes2.append(codes, len_codes);
             
@@ -508,7 +543,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 92
                 return false;
             }
             
-            sClass* klass = new  sClass.initialize(string(name2), codes2, module.name);
+            sClass* klass = new  sClass(string(name2), codes2, module.name);
             
             module.classes.insert(string(name2), klass);
             

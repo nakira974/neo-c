@@ -35,3 +35,7 @@ while i != 3:
     i = i + 1
 
 print("AAA")
+
+l = [1,2,3]
+
+print(l);

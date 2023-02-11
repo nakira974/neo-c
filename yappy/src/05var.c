@@ -5,6 +5,13 @@ class sLoadVarNode(char* str, sParserInfo* info)
     string self.name = string(str);
     bool self.in_global_context = info->in_global_context;
     
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sLoadVarNode* self)
+    {
+        return self.id;
+    }
+    
     bool compile(sLoadVarNode* self, buffer* codes, sParserInfo* info)
     {
         codes.append_int(OP_LOAD);
@@ -34,6 +41,13 @@ class sStoreVarNode(char* str, sNode* right, sParserInfo* info)
     string self.name = string(str);
     bool self.in_global_context = info->in_global_context;
     sNode* self.right = right;
+    
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sStoreVarNode* self)
+    {
+        return self.id;
+    }
     
     bool compile(sStoreVarNode* self, buffer* codes, sParserInfo* info)
     {
@@ -120,7 +134,7 @@ sPyType* parse_type(sParserInfo* info)
             return null;
         }
         
-        buffer* buf = new  buffer.initialize();
+        buffer* buf = new  buffer();
         while(xisalnum(*info->p) || *info->p == '_') {
             buf.append_char(*info->p);
             info->p++;
@@ -139,7 +153,7 @@ sNode* exp_node(sParserInfo* info) version 5
     
     if(result == null) {
         if(xisalpha(*info->p) || *info->p == '_') {
-            buffer* buf = new  buffer.initialize();
+            buffer* buf = new  buffer();
             
             while(xisalnum(*info->p) || *info->p == '_') {
                 buf.append_char(*info->p);

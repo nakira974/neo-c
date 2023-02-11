@@ -5,6 +5,13 @@ class sStrNode(char* str)
 {
     wchar_t*% self.stringValue = wstring(str);
     
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sStrNode* self)
+    {
+        return self.id;
+    }
+    
     bool compile(sStrNode* self, buffer* codes, sParserInfo* info)
     {
         codes.append_int(OP_STRING_VALUE);
@@ -35,7 +42,7 @@ sNode* exp_node(sParserInfo* info) version 3
         if(*info->p == '"') {
             info->p++;
             
-            buffer* buf = new buffer.initialize();
+            buffer* buf = new buffer();
             
             while(true) {
                 if(*info->p == '\0') {
@@ -74,7 +81,7 @@ sNode* exp_node(sParserInfo* info) version 3
         else if(*info->p == '\'') {
             info->p++;
             
-            buffer* buf = new buffer.initialize();
+            buffer* buf = new buffer();
             
             while(true) {
                 if(*info->p == '\0') {

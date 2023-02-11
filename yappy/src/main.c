@@ -20,7 +20,7 @@ void skip_spaces_until_eol(sParserInfo* info)
 
 string parse_word(sParserInfo* info)
 {
-    auto result = new buffer.initialize();
+    auto result = new buffer();
     
     while((*info->p >= 'a' && *info->p <= 'z')
         || (*info->p >= 'A' && *info->p <= 'Z') || *info->p == '_')
@@ -157,7 +157,7 @@ list<sNode*>* parse_block(sParserInfo* info)
 
 buffer* compile_nodes(list<sNode*>* nodes, sParserInfo* info)
 {
-    buffer* codes = new buffer.initialize();
+    buffer* codes = new buffer();
     
     foreach(it, nodes) {
         it.compile->(codes, info).expect {
@@ -216,7 +216,7 @@ int main(int argc, char** argv)
     else {
         initialize_modules();
         
-        buffer* source = new buffer.initialize();
+        buffer* source = new buffer();
         
         read_source(fname, source).expect {
             exit(1);

@@ -207,11 +207,39 @@ list<sNode*>* parse(sParserInfo* info, int block_space_num);
 protocol sNode
 {
     bool compile(buffer* codes, sParserInfo* info);
+    
+    unsigned int get_hash_key();
 };
 
 /// 01int.c ///
+extern int gNodeID;
+
+unsigned int sNode*::get_hash_key(sNode* self);
+
 bool expression(sNode** node, sParserInfo* info) version 1;
 sNode* exp_node(sParserInfo* info) version 1;
+
+class sIntNode(int value)
+{
+    int self.intValue = value;
+    
+    bool compile(sIntNode* self, buffer* codes, sParserInfo* info)
+    {
+        codes.append_int(OP_INT_VALUE);
+        codes.append_int(self.intValue);
+        
+        info->stack_num++;
+        
+        return true;
+    }
+    
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sIntNode* self)
+    {
+        return self.id;
+    }
+};
 
 inline bool sNode*::equals(sNode* left, sNode* right)
 {
@@ -311,3 +339,9 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 90;
 /// 11op.c ///
 bool expression(sNode** node, sParserInfo* info) version 11;
 bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 89;
+
+/// 12list.c ///
+sNode* exp_node(sParserInfo* info) version 12;
+sNode* index_node(char* var_name, sParserInfo* info) version 12;
+
+bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 88;

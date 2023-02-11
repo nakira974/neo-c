@@ -2,6 +2,13 @@
 
 class sTrueNode(sParserInfo* info)
 {
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sTrueNode* self)
+    {
+        return self.id;
+    }
+    
     bool compile(sFunNode* self, buffer* codes, sParserInfo* info)
     {
         codes.append_int(OP_BOOL_VALUE);
@@ -16,6 +23,13 @@ class sTrueNode(sParserInfo* info)
 
 class sFalseNode(sParserInfo* info)
 {
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sFalseNode* self)
+    {
+        return self.id;
+    }
+    
     bool compile(sFunNode* self, buffer* codes, sParserInfo* info)
     {
         codes.append_int(OP_BOOL_VALUE);
@@ -30,6 +44,13 @@ class sFalseNode(sParserInfo* info)
 
 class sNoneNode(sParserInfo* info)
 {
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sNoneNode* self)
+    {
+        return self.id;
+    }
+    
     bool compile(sFunNode* self, buffer* codes, sParserInfo* info)
     {
         codes.append_int(OP_NONE_VALUE);
@@ -42,6 +63,13 @@ class sNoneNode(sParserInfo* info)
 
 class sIfNode(sNode* if_exp, list<sNode*>* if_nodes, vector<sNode*>* elif_exps, vector<list<sNode*>*>* elif_blocks, list<sNode*>*? else_nodes, sParserInfo* info)
 {
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sIfNode* self)
+    {
+        return self.id;
+    }
+    
     sNode* self.if_exp = if_exp;
     list<sNode*>* self.if_nodes = if_nodes;
     vector<sNode*>* self.elif_exps = elif_exps;
@@ -182,8 +210,8 @@ sNode* exp_node(sParserInfo* info) version 8
         
         list<sNode*>* if_nodes = parse_block(info);
         
-        vector<sNode*>* elif_exps = new  vector<sNode*>.initialize();
-        vector<list<sNode*>*>* elif_blocks = new  vector<list<sNode*>*>.initialize();
+        vector<sNode*>* elif_exps = new  vector<sNode*>();
+        vector<list<sNode*>*>* elif_blocks = new  vector<list<sNode*>*>();
         
         while(word_cmp(info->p, "elif")) {
             info->p += strlen("elif");

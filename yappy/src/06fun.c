@@ -6,6 +6,13 @@ class sFunNode(char* fun_name, buffer* codes, vector<char*>* param_names, sParse
     buffer* self.codes = codes;
     vector<char*>* self.param_names = param_names;
     
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sFunNode* self)
+    {
+        return self.id;
+    }
+    
     bool compile(sFunNode* self, buffer* codes, sParserInfo* info)
     {
         codes.append_int(OP_FUN);
@@ -54,6 +61,13 @@ class sReturnNode(sNode* exp)
 {
     sNode* self.left = exp;
     
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sReturnNode* self)
+    {
+        return self.id;
+    }
+    
     bool compile(sReturnNode* self, buffer* codes, sParserInfo* info)
     {
         sNode* exp = self.left;
@@ -73,6 +87,13 @@ class sFunCallNode(char* fun_name, vector<sNode*>* params, map<char*, sNode*>* n
     string self.name = string(fun_name);
     vector<sNode*>* self.params = params;
     map<char*, sNode*>* self.named_params = named_params;
+    
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sFunCallNode* self)
+    {
+        return self.id;
+    }
     
     bool compile(sFunCallNode* self, buffer* codes, sParserInfo* info) {
         int stack_num = info.stack_num;
@@ -234,7 +255,7 @@ sNode* fun_node(char* fun_name, sParserInfo* info) version 6
         bool named_param_flag = false;
         
         if(xisalpha(*info->p)) {
-            buffer* buf = new  buffer.initialize();
+            buffer* buf = new  buffer();
             
             while(xisalnum(*info->p)) {
                 buf.append_char(*info->p);
@@ -327,7 +348,7 @@ bool function_call(sFunction* fun, vector<ZVALUE>* param_values, map<char*, ZVAL
         
         vector<char*>* param_names = fun->param_names;
         
-        map<char*, ZVALUE>* params = new  map<char*, ZVALUE>.initialize();
+        map<char*, ZVALUE>* params = new  map<char*, ZVALUE>();
         
         int i = 0;
         foreach(it, param_names) {
@@ -354,7 +375,7 @@ bool function_call(sFunction* fun, vector<ZVALUE>* param_values, map<char*, ZVAL
         
         vector<char*>* param_names = fun->param_names;
         
-        map<char*, ZVALUE>* params = new  map<char*, ZVALUE>.initialize();
+        map<char*, ZVALUE>* params = new  map<char*, ZVALUE>();
         
         int i = 0;
         foreach(it, param_names) {
@@ -391,7 +412,7 @@ sObject* sObject*::initialize(sObject* self, sModule* module, sClass* klass)
 {
     self.klass = klass;
     self.module = module;
-    self.fields = new map<char*, ZVALUE>.initialize();
+    self.fields = new map<char*, ZVALUE>();
     
     return self;
 }
@@ -544,7 +565,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 93
                 sFunction* constructor = klass.funcs.at("__init__", null);
                 
                 if(constructor) {
-                    vector<ZVALUE>* param_values = new  vector<ZVALUE>.initialize();
+                    vector<ZVALUE>* param_values = new  vector<ZVALUE>();
                     
                     ZVALUE object_value;
                     object_value.kind = kObjValue;
@@ -576,7 +597,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 93
             }
             /// function call ///
             else {
-                vector<ZVALUE>* param_values = new  vector<ZVALUE>.initialize();
+                vector<ZVALUE>* param_values = new  vector<ZVALUE>();
                 
                 for(int i=0; i<num_params; i++) {
                     ZVALUE value = info->stack[info->stack_num-num_params+i];

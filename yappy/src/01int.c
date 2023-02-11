@@ -1,20 +1,12 @@
 #include "common.h"
 #include <ctype.h>
 
-class sIntNode(int value)
+int gNodeID = 0;
+
+unsigned int sNode*::get_hash_key(sNode* self)
 {
-    int self.intValue = value;
-    
-    bool compile(sIntNode* self, buffer* codes, sParserInfo* info)
-    {
-        codes.append_int(OP_INT_VALUE);
-        codes.append_int(self.intValue);
-        
-        info->stack_num++;
-        
-        return true;
-    }
-};
+    return self.get_hash_key->();
+}
 
 sNode* exp_node(sParserInfo* info) version 1
 {
@@ -102,8 +94,8 @@ sClass* sClass*::initialize(sClass* self, char* name, buffer* codes, char* modul
         self.codes = null;
     }
     
-    self.class_vars = new map<string, ZVALUE>.initialize();
-    self.funcs = new map<string, sFunction*%>.initialize();
+    self.class_vars = new map<string, ZVALUE>();
+    self.funcs = new map<string, sFunction*%>();
     
     return self;
 }

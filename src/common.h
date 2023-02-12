@@ -496,6 +496,7 @@ struct sParserInfoStruct
     BOOL getting_refference;
     
     BOOL parse_catch;
+    BOOL in_parse_function;
 };
 
 typedef struct sParserInfoStruct sParserInfo;

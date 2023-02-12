@@ -752,6 +752,13 @@ BOOL parse_function(unsigned int* node, sNodeType* result_type, char* fun_name, 
     BOOL safe_mode = gNCSafeMode;
     int sline = info->sline;
     char* function_head = info->p;
+    
+    if(info->in_parse_function) {
+        parser_err_msg(info, "Nested function is not allow");
+    }
+    
+    BOOL in_parse_function = info->in_parse_function;
+    info->in_parse_function = TRUE;
 
     /// method generics ///
     info->mNumMethodGenerics = 0;
@@ -940,6 +947,8 @@ BOOL parse_function(unsigned int* node, sNodeType* result_type, char* fun_name, 
 
     info->mNumMethodGenerics = 0;
     gNCSafeMode = safe_mode;
+    
+    info->in_parse_function = in_parse_function;
 
     return TRUE;
 }

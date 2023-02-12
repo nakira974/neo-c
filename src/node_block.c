@@ -281,7 +281,9 @@ BOOL parse_block(sNodeBlock* node_block, BOOL extern_c_lang, BOOL single_express
                     node_block->mTerminated = TRUE;
                     break;
                 }
-                parser_err_msg(info, "require } before the source end");
+                char buf[512];
+                snprintf(buf, 512, "require } before the source end");
+                parser_err_msg(info, buf);
                 return TRUE;
             }
             

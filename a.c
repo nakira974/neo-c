@@ -1,17 +1,19 @@
-#include <neo-c.h>
 
-class sData(int a, int b)
+int xxx()
 {
-    int self.a = a;
-    int self.b = b;
-};
+    if(1) {
+    }
+    else {
+}
+
+int fun()
+{
+    if(1) {
+    }
+}
 
 int main(int argc, char** argv)
 {
-    map<sData*, char*>* m = new map<sData*, char*>();
-    
-    m.insert(new sData(1, 2), "AAA");
-    m.insert(new sData(2, 3), "BBB");
     
     return 0;
 }

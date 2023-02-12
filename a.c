@@ -1,15 +1,17 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <neo-c.h>
 
-int fun()
+class sData(int a, int b)
 {
-    "AAA";
-}
+    int self.a = a;
+    int self.b = b;
+};
 
 int main(int argc, char** argv)
 {
-    printf("%s\n", fun());
+    map<sData*, char*>* m = new map<sData*, char*>();
+    
+    m.insert(new sData(1, 2), "AAA");
+    m.insert(new sData(2, 3), "BBB");
     
     return 0;
 }

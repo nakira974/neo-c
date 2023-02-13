@@ -1,15 +1,19 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+
+int xxx()
+{
+    if(1) {
+    }
+    else {
+}
 
 int fun()
 {
-    "AAA";
+    if(1) {
+    }
 }
 
 int main(int argc, char** argv)
 {
-    printf("%s\n", fun());
     
     return 0;
 }

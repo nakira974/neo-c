@@ -5113,7 +5113,7 @@ BOOL compile_block(sNodeBlock* block, BOOL force_hash_result, sCompileInfo* info
                     
                     if(!is_generics_type(gComeFunctionResultType) && !is_method_generics_type(gComeFunctionResultType) && !(type_identify_with_class_name(gComeFunctionResultType, "void") && gComeFunctionResultType->mPointerNum == 0))
                     {
-                        if(!substitution_posibility(gComeFunctionResultType, info->return_result_type, &llvm_value, info))
+                        if(!(type_identify(gComeFunctionResultType, info->return_result_type) && gComeFunctionResultType->mPointerNum == info->return_result_type->mPointerNum))
                         {
                             compile_err_msg(info, "The different type between left type and right type.");
                             puts("return_type");

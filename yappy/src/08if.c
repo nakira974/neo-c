@@ -1,26 +1,156 @@
 #include "common.h"
 
-static sNode* create_if(sNode* if_exp, list<sNode*>* if_nodes, vector<sNode*>* elif_exps, vector<list<sNode*>*>* elif_blocks, list<sNode*>*? else_nodes, sParserInfo* info)
+class sTrueNode(sParserInfo* info)
 {
-    sNode* result = new  sNode;
+    unsigned int self.id = gNodeID++;
     
-    result.kind = kIf;
-    
-    result.fname = info->fname;
-    result.sline = info->sline;
-    result.value.ifValue.if_exp = if_exp;
-    result.value.ifValue.if_nodes = if_nodes;
-    result.value.ifValue.elif_exps = elif_exps;
-    result.value.ifValue.elif_blocks = elif_blocks;
-    if(result.value.ifValue.else_nodes == null) {
-        result.value.ifValue.else_nodes = null;
-    }
-    else {
-        result.value.ifValue.else_nodes = nonullable else_nodes;
+    unsigned int get_hash_key(sTrueNode* self)
+    {
+        return self.id;
     }
     
-    return result;
-}
+    bool compile(sFunNode* self, buffer* codes, sParserInfo* info)
+    {
+        codes.append_int(OP_BOOL_VALUE);
+        
+        codes.append_int(1);
+        
+        info->stack_num++;
+        
+        return true;
+    }
+};
+
+class sFalseNode(sParserInfo* info)
+{
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sFalseNode* self)
+    {
+        return self.id;
+    }
+    
+    bool compile(sFunNode* self, buffer* codes, sParserInfo* info)
+    {
+        codes.append_int(OP_BOOL_VALUE);
+        
+        codes.append_int(0);
+        
+        info->stack_num++;
+        
+        return true;
+    }
+};
+
+class sNoneNode(sParserInfo* info)
+{
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sNoneNode* self)
+    {
+        return self.id;
+    }
+    
+    bool compile(sFunNode* self, buffer* codes, sParserInfo* info)
+    {
+        codes.append_int(OP_NONE_VALUE);
+        
+        info->stack_num++;
+        
+        return true;
+    }
+};
+
+class sIfNode(sNode* if_exp, list<sNode*>* if_nodes, vector<sNode*>* elif_exps, vector<list<sNode*>*>* elif_blocks, list<sNode*>*? else_nodes, sParserInfo* info)
+{
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sIfNode* self)
+    {
+        return self.id;
+    }
+    
+    sNode* self.if_exp = if_exp;
+    list<sNode*>* self.if_nodes = if_nodes;
+    vector<sNode*>* self.elif_exps = elif_exps;
+    vector<list<sNode*>*>* self.elif_blocks = elif_blocks;
+    list<sNode?>*? self.else_nodes = null;
+    if(else_nodes) {
+        self.else_nodes = else_nodes;
+    }
+    
+    bool compile(sIfNode* self, buffer* codes, sParserInfo* info)
+    {
+        sNode* if_exp = self.if_exp;
+        list<sNode*>* if_nodes = self.if_nodes;
+        vector<sNode*>* elif_exps = self.elif_exps;
+        vector<list<sNode*>*>* elif_blocks = self.elif_blocks;
+        list<sNode*>* else_nodes = self.else_nodes;
+        
+        vector<int>* end_points = new vector<int>();
+        
+        if(!if_exp.compile->(codes, info)) {
+            return false;
+        }
+        
+        codes.append_int(OP_IF);
+        int false_jump_point = codes.len;
+        codes.append_int(0);
+        
+        info->stack_num--;
+        
+        compile_block(codes, if_nodes, info);
+        
+        codes.append_int(OP_GOTO);
+        
+        int end_point = codes.len;
+        end_points.push_back(end_point);
+        codes.append_int(0);
+        
+        int* p = (int*)(codes.buf + false_jump_point);
+        *p = codes.len;
+        
+        for(int i= 0; i<elif_exps.length(); i++) {
+            sNode* elif_exp = elif_exps.item(i, null);
+            list<sNode*>* elif_nodes = elif_blocks.item(i, null);
+            
+            if(!elif_exp.compile->(codes, info)) {
+                return false;
+            }
+            
+            codes.append_int(OP_IF);
+            int false_jump_point = codes.len;
+            codes.append_int(0);
+            
+            info->stack_num--;
+            
+            compile_block(codes, elif_nodes, info);
+            
+            codes.append_int(OP_GOTO);
+            
+            int end_point = codes.len;
+            end_points.push_back(end_point);
+            codes.append_int(0);
+            
+            int* p = (int*)(codes.buf + false_jump_point);
+            *p = codes.len;
+        }
+        
+        if(else_nodes) {
+            compile_block(codes, else_nodes, info);
+        }
+        
+        for(int i=0; i<end_points.length(); i++) {
+            int end_point = end_points.item(i, -1);
+            
+            int* p = (int*)(codes.buf + end_point);
+            
+            *p = codes.length();
+        }
+        
+        return true;
+    }
+};
 
 static bool word_cmp(char* p, char* word2)
 {
@@ -35,11 +165,29 @@ static bool word_cmp(char* p, char* word2)
     return false;
 }
 
-sNode*? exp_node(sParserInfo* info) version 8
+sNode* exp_node(sParserInfo* info) version 8
 {
-    sNode*? result = null;
+    sNode* result = null;
     
-    if(word_cmp(info->p, "if")) {
+    if(word_cmp(info->p, "True")) {
+        info->p += strlen("True");
+        skip_spaces_until_eol(info);
+        
+        result = new sNode(new sTrueNode(info));
+    }
+    else if(word_cmp(info->p, "False")) {
+        info->p += strlen("False");
+        skip_spaces_until_eol(info);
+        
+        result = new sNode(new sFalseNode(info));
+    }
+    else if(word_cmp(info->p, "None")) {
+        info->p += strlen("None");
+        skip_spaces_until_eol(info);
+        
+        result = new sNode(new sNoneNode(info));
+    }
+    else if(word_cmp(info->p, "if")) {
         info->p += strlen("if");
         skip_spaces_until_eol(info);
         
@@ -62,8 +210,8 @@ sNode*? exp_node(sParserInfo* info) version 8
         
         list<sNode*>* if_nodes = parse_block(info);
         
-        vector<sNode*>* elif_exps = new  vector<sNode*>.initialize();
-        vector<list<sNode*>*>* elif_blocks = new  vector<list<sNode*>*>.initialize();
+        vector<sNode*>* elif_exps = new  vector<sNode*>();
+        vector<list<sNode*>*>* elif_blocks = new  vector<list<sNode*>*>();
         
         while(word_cmp(info->p, "elif")) {
             info->p += strlen("elif");
@@ -109,7 +257,7 @@ sNode*? exp_node(sParserInfo* info) version 8
             else_nodes = nullable parse_block(info);
         }
         
-        result = nullable create_if(if_exp, if_nodes, elif_exps, elif_blocks, else_nodes, info);
+        result = new sNode(new sIfNode(if_exp, if_nodes, elif_exps, elif_blocks, else_nodes, info));
     }
     
     if(result == null) {
@@ -119,78 +267,60 @@ sNode*? exp_node(sParserInfo* info) version 8
     return result;
 }
 
-
-bool compile(sNode* node, buffer* codes, sParserInfo* info) version 8
+bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 91
 {
-    inherit(node, codes, info);
-    
-    if(node.kind == kIf) {
-        sNode* if_exp = node.value.ifValue.if_exp;
-        list<sNode*>* if_nodes = node.value.ifValue.if_nodes;
-        vector<sNode*>* elif_exps = node.value.ifValue.elif_exps;
-        vector<list<sNode*>*>* elif_blocks = node.value.ifValue.elif_blocks;
-        list<sNode*>* else_nodes = node.value.ifValue.else_nodes;
-        
-        vector<int>* end_points = new  vector<int>.initialize();
-        
-        if(!compile(if_exp, codes, info)) {
-            return false;
-        }
-        
-        codes.append_int(OP_IF);
-        int false_jump_point = codes.len;
-        codes.append_int(0);
-        
-        info->stack_num--;
-        
-        compile_block(codes, if_nodes, info);
-        
-        codes.append_int(OP_GOTO);
-        
-        int end_point = codes.len;
-        end_points.push_back(end_point);
-        codes.append_int(0);
-        
-        int* p = (int*)(codes.buf + false_jump_point);
-        *p = codes.len;
-        
-        for(int i= 0; i<elif_exps.length(); i++) {
-            sNode* elif_exp = elif_exps.item(i, null);
-            list<sNode*>* elif_nodes = elif_blocks.item(i, null);
+    switch(*info->p) {
+        case OP_BOOL_VALUE: {
+            info->p++;
+            int value = *info->p;
+            info->p++;
             
-            if(!compile(elif_exp, codes, info)) {
-                return false;
+            info->stack[info->stack_num].kind = kBoolValue;
+            info->stack[info->stack_num].value.boolValue = value;
+            info->stack_num++;
             }
+            break;
             
-            codes.append_int(OP_IF);
-            int false_jump_point = codes.len;
-            codes.append_int(0);
+        case OP_NONE_VALUE: {
+            info->p++;
             
+            info->stack[info->stack_num]= gNoneValue;
+            info->stack_num++;
+            }
+            break;
+            
+        case OP_IF: {
+            info->p++;
+            
+            int value = *info->p;
+            info->p++;
+            
+            bool exp = info->stack[info->stack_num-1].value.boolValue;
             info->stack_num--;
             
-            compile_block(codes, elif_nodes, info);
+            if(!exp) {
+                info->p = (int*)((char*)info->head + value);
+            }
+            }
+            break;
             
-            codes.append_int(OP_GOTO);
+        case OP_GOTO: {
+            info->p++;
             
-            int end_point = codes.len;
-            end_points.push_back(end_point);
-            codes.append_int(0);
+            int value = *info->p;
+            info->p++;
             
-            int* p = (int*)(codes.buf + false_jump_point);
-            *p = codes.len;
-        }
-        
-        if(else_nodes) {
-            compile_block(codes, else_nodes, info);
-        }
-        
-        for(int i=0; i<end_points.length(); i++) {
-            int end_point = end_points.item(i, -1);
+            info->p = (int*)((char*)info->head + value);
+            }
+            break;
             
-            int* p = (int*)(codes.buf + end_point);
-            
-            *p = codes.length();
-        }
+        default: {
+            bool result = inherit(codes, params, info);
+            if(!result) {
+                return false;
+            }
+            }
+            break;
     }
     
     return true;

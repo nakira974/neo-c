@@ -496,6 +496,7 @@ struct sParserInfoStruct
     BOOL getting_refference;
     
     BOOL parse_catch;
+    BOOL in_parse_function;
 };
 
 typedef struct sParserInfoStruct sParserInfo;
@@ -692,6 +693,8 @@ struct sCompileInfoStruct
     
     char inline_caller_sname[VAR_NAME_MAX];
     int inline_caller_sline;
+    
+    BOOL creating_generics_function;
 };
 
 typedef struct sCompileInfoStruct sCompileInfo;

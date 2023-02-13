@@ -1376,7 +1376,7 @@ BOOL create_generics_function(LLVMValueRef* llvm_fun, sFunction* fun, char* fun_
 
     char real_fun_name[REAL_FUN_NAME_MAX];
     create_generics_fun_name(real_fun_name, REAL_FUN_NAME_MAX, fun_name,  generics_type, num_method_generics_types, method_generics_types);
-
+    
     *llvm_fun = LLVMGetNamedFunction(gModule, real_fun_name);
 
     if(*llvm_fun == NULL) {
@@ -1503,8 +1503,17 @@ BOOL create_generics_function(LLVMValueRef* llvm_fun, sFunction* fun, char* fun_
         else {
             cinfo.generics_type = NULL;
         }
-        xstrncpy(cinfo.generics_sname, info->sname, PATH_MAX);
-        cinfo.generics_sline = info->sline;
+        cinfo.creating_generics_function = TRUE;
+    
+        if(!info->creating_generics_function)
+        {
+            xstrncpy(cinfo.generics_sname, info->sname, PATH_MAX);
+            cinfo.generics_sline = info->sline;
+        }
+        else {
+            xstrncpy(cinfo.generics_sname, info->generics_sname, PATH_MAX);
+            cinfo.generics_sline = info->generics_sline;
+        }
 
         cinfo.in_generics_function = TRUE;
         

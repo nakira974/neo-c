@@ -5,6 +5,13 @@ class sAddNode(sNode* left, sNode* right, sParserInfo* info)
 {
     sNode* self.left = left;
     sNode* self.right = right;
+    
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sAddNode* self)
+    {
+        return self.id;
+    }
 
     bool compile(sAddNode* self, buffer* codes, sParserInfo* info)
     {
@@ -33,6 +40,13 @@ class sSubNode(sNode* left, sNode* right, sParserInfo* info)
 {
     sNode* self.left = left;
     sNode* self.right = right;
+    
+    unsigned int self.id = gNodeID++;
+    
+    unsigned int get_hash_key(sSubNode* self)
+    {
+        return self.id;
+    }
 
     bool compile(sSubNode* self, buffer* codes, sParserInfo* info)
     {
@@ -57,7 +71,7 @@ class sSubNode(sNode* left, sNode* right, sParserInfo* info)
     }
 };
 
-static sNode* op_add_node(sParserInfo* info)
+sNode* op_add_node(sParserInfo* info)
 {
     sNode* result = exp_node(info);
     
@@ -102,7 +116,7 @@ bool expression(sNode** node, sParserInfo* info) version 2
     return true;
 }
 
-bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 98
+bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 97
 {
     switch(*info->p) {
         case OP_ADD: {
@@ -127,7 +141,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 98
                     break;
                     
                 case kStringValue: {
-                    buffer* buf = new  buffer.initialize();
+                    buffer* buf = new  buffer();
                     
                     buf.append_str(lvalue.value.stringValue.to_string());
                     buf.append_str(rvalue.value.stringValue.to_string());
@@ -139,7 +153,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 98
                     break;
                     
                 case kListValue: {
-                    list<ZVALUE>* list_object = new  list<ZVALUE>.initialize();
+                    list<ZVALUE>* list_object = new  list<ZVALUE>();
                     
                     list<ZVALUE>* li = lvalue.value.listValue;
                     list<ZVALUE>* li2 = rvalue.value.listValue;
@@ -158,7 +172,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 98
                     break;
                     
                 case kTupleValue: {
-                    list<ZVALUE>* list_object = new  list<ZVALUE>.initialize();
+                    list<ZVALUE>* list_object = new  list<ZVALUE>();
                     
                     immutable list<ZVALUE>* li = lvalue.value.tupleValue;
                     immutable list<ZVALUE>* li2 = rvalue.value.tupleValue;

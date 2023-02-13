@@ -40,7 +40,7 @@ void initialize_modules() version 2
 {
     inherit();
     
-    gPyTypes = new  map<char*, sPyType*>.initialize();
+    gPyTypes = new  map<char*, sPyType*>();
     
     add_type("int", null);
     add_type("float", null);

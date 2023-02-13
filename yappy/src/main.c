@@ -20,7 +20,7 @@ void skip_spaces_until_eol(sParserInfo* info)
 
 string parse_word(sParserInfo* info)
 {
-    auto result = new buffer.initialize();
+    auto result = new buffer();
     
     while((*info->p >= 'a' && *info->p <= 'z')
         || (*info->p >= 'A' && *info->p <= 'Z') || *info->p == '_')
@@ -32,7 +32,7 @@ string parse_word(sParserInfo* info)
     return result.to_string();
 }
 
-static bool read_source(char* fname, buffer* source)
+bool read_source(char* fname, buffer* source)
 {
     FILE* f = fopen(fname, "r");
     
@@ -55,7 +55,7 @@ static bool read_source(char* fname, buffer* source)
     return true;
 }
 
-static list<sNode*%>*% parse(sParserInfo* info, int block_space_num)
+list<sNode*>* parse(sParserInfo* info, int block_space_num)
 {
     auto nodes = new list<sNode*>();
     
@@ -71,7 +71,9 @@ static list<sNode*%>*% parse(sParserInfo* info, int block_space_num)
             exit(2);
         }
         
-        nodes.push_back(node);
+        if(node != null) {
+            nodes.push_back(node);
+        }
         
         if(*info->p == ';') {
             info->p++;
@@ -116,9 +118,9 @@ static list<sNode*%>*% parse(sParserInfo* info, int block_space_num)
     return nodes;
 }
 
-list<sNode*%>*%? parse_block(sParserInfo* info)
+list<sNode*>* parse_block(sParserInfo* info)
 {
-    list<sNode*%>*%? nodes = null;
+    list<sNode*>* nodes = nonullable null;
     
     /// multi line ///
     if(*info->p == '\n') {
@@ -144,7 +146,7 @@ list<sNode*%>*%? parse_block(sParserInfo* info)
             }
         }
         
-        nodes = nullable parse(info, block_space_num);
+        nodes = parse(info, block_space_num);
     }
     /// one line ///
     else {
@@ -153,9 +155,9 @@ list<sNode*%>*%? parse_block(sParserInfo* info)
     return nodes;
 }
 
-buffer*% compile_nodes(list<sNode*>* nodes, sParserInfo* info)
+buffer* compile_nodes(list<sNode*>* nodes, sParserInfo* info)
 {
-    buffer*% codes = new buffer.initialize();
+    buffer* codes = new buffer();
     
     foreach(it, nodes) {
         it.compile->(codes, info).expect {
@@ -214,7 +216,7 @@ int main(int argc, char** argv)
     else {
         initialize_modules();
         
-        buffer*% source = new buffer.initialize();
+        buffer* source = new buffer();
         
         read_source(fname, source).expect {
             exit(1);
@@ -244,21 +246,17 @@ int main(int argc, char** argv)
         
         auto nodes = parse(&info, block_space_num:0);
         
-        buffer*% codes = compile_nodes(nodes, &info);
+        buffer* codes = compile_nodes(nodes, &info);
         
         sVMInfo vm_info;
         
         memset(&vm_info, 0, sizeof(sVMInfo));
         
-        vm_info.module_name = borrow string("__main__");
-        
-        vm_init(codes, null, &vm_info);
+        vm_init(codes, null, string("__main__"), null, &vm_info);
         vm(codes, null, &vm_info).expect {
             print_exception(parent->vm_info->exception);
             exit(1);
         }
-        
-        delete vm_info.module_name;
         
         finalize_modules();
     }

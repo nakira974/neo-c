@@ -29,10 +29,12 @@ bool expression(sNode** node, sParserInfo* info) version 99
     comment(info);
     
     if(*info->p == '\0') {
-        *node = 0;
+        *node = null;
         return true;
     }
     else {
         return inherit(node, info);
     }
+    
+    return true;
 }

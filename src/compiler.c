@@ -450,6 +450,75 @@ BOOL compile_source(char* fname, char** source, BOOL optimize, sVarTable* module
         }
     }
     
+    /// detected unclosed block ///
+    sParserInfo info2;
+    memset(&info2, 0, sizeof(sParserInfo));
+    
+    info2.p = *source;
+    xstrncpy(info2.sname, fname, PATH_MAX);
+    info2.sline = 1;
+    
+    int top_of_block[128];
+    memset(top_of_block, 0, sizeof(int)*128);
+    
+    int block_count = 0;
+    while(*info2.p) {
+        if(*info2.p == '\'') {
+            info2.p++;
+            if(*info2.p == '\\') {
+                info2.p+=3;
+            }
+            else {
+                info2.p+=2;
+            }
+        }
+        else if(*info2.p == '"') {
+            info2.p++;
+            while(TRUE) {
+                if(*info2.p == '\\') {
+                    info2.p+=2;
+                }
+                else if(*info2.p == '"') {
+                    info2.p++;
+                    break;
+                }
+                else {
+                    info2.p++;
+                }
+            }
+        }
+        else if(*info2.p == '#') {
+            if(!parse_sharp(&info2)) {
+                return FALSE;
+            }
+        }
+        else if(*info2.p == '{') {
+            info2.p++;
+            top_of_block[block_count] = info2.sline;
+            
+            block_count++;
+            
+            if(block_count > 128) {
+                fprintf(stderr, "overflow block count\n");
+                exit(2);
+            }
+        }
+        else if(*info2.p == '}') {
+            info2.p++;
+            block_count--;
+        }
+        else if(*info2.p == '\n') {
+            info2.p++;
+            info2.sline++;
+        }
+        else {
+            info2.p++;
+        }
+    }
+            
+    if(block_count > 0) {
+        fprintf(stderr, "%s:%d: to match this {\n", info2.sname, top_of_block[block_count-1]);
+    }
 
     if(info.err_num > 0 || cinfo.err_num > 0) {
         if(!gNCType && !gNCHeader) {

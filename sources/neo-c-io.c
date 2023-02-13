@@ -51,10 +51,7 @@ bool wchar_t*::equals(wchar_t* left, wchar_t* right)
     return wcscmp(left, right) == 0;
 }
 
-unsigned int regex_struct*::get_hash_key(regex_struct* self)
-{
-    return self.str.get_hash_key();
-}
+
 
 int int::compare(int left, int right) 
 {
@@ -425,3 +422,56 @@ wstring wstring::operator_add(wchar_t* left, wchar_t* right)
     
     return result;
 }
+
+list<string>*% FILE::readlines(FILE* f)
+{
+list<string>*% result = new list<string>.initialize();
+
+while(1) {
+char buf[BUFSIZ];
+
+if(fgets(buf, BUFSIZ, f) == NULL) {
+break;
+}
+
+result.push_back(string(buf));
+}
+
+return result;
+}
+
+
+
+FILE* FILE::fprintf(FILE* f, const char* msg, ...)
+{
+    char msg2[1024];
+
+    va_list args;
+    va_start(args, msg);
+    vsnprintf(msg2, 1024, msg, args);
+    va_end(args);
+
+    (void)fprintf(f, "%s", msg2);
+
+    return f;
+}
+
+FILE* FILE*::fprintf(FILE* f, const char* msg, ...)
+{
+char msg2[1024];
+
+va_list args;
+va_start(args, msg);
+vsnprintf(msg2, 1024, msg, args);
+va_end(args);
+
+(void)fprintf(f, "%s", msg2);
+
+return f;
+}
+
+void FILE::fclose(FILE* f)
+{
+    fclose(f);
+}
+

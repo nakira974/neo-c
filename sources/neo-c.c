@@ -793,3 +793,5 @@ void check_null_pointer(int sline, char* sname)
     fprintf(stderr, "%s %d: derefference for null pointer. abort\n", sname, sline);
     exit(2);
 }
+
+

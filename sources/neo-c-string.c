@@ -577,3 +577,54 @@ void bool::expect(bool self, void* parent, void (*block_)(void* parent))
         block_(parent);
     }
 }
+
+string FILE::read(FILE* f)
+{
+    buffer*% buf = new buffer.initialize();
+
+    while(1) {
+        char buf2[BUFSIZ];
+
+        int size = fread(buf2, 1, BUFSIZ, f);
+        buf.append(buf2, size);
+
+        if(size < BUFSIZ) {
+            break;
+        }
+    }
+
+    return buf.to_string();
+}
+
+char* char*::puts(char* self)
+{
+    (void)puts(self);
+
+    return self;
+}
+
+char* char*::print(char* self)
+{
+    printf("%s", self);
+
+    return self;
+}
+
+string char*::strip(char* self)
+{
+    string result = string(self);
+
+    int len = strlen(self);
+
+    if(self[len-1] == '\n') {
+        result[len-1] = '\0';
+    }
+    else if(self[len-1] == '\r') {
+        result[len-1] = '\0';
+    }
+    else if(len > 2 && self[len-2] == '\r' && self[len-1] == '\n') {
+        result[len-2] = '\0';
+    }
+
+    return result;
+}

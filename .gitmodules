@@ -4,3 +4,9 @@
 [submodule "tinycc"]
 	path = tinycc
 	url = https://github.com/TinyCC/tinycc
+[submodule "external/GC"]
+	path = external/GC
+	url = https://github.com/GJDuck/GC
+[submodule "external/microsoft-llvm"]
+	path = external/microsoft-llvm
+	url = https://github.com/microsoft/llvm

@@ -230,7 +230,7 @@ clean:
 
 
 distclean: clean
-	rm -fR  config.h Makefile autom4te.cache 
+	rm -fR  config.h Makefile autom4te.cache
 
 #########################################
 # test
@@ -285,7 +285,7 @@ tcc-test:
 	PWD=`pwd` ./neo-c -gc -g code/tcctest.c
 	./code/tcctest
 
-debug-test: 
+debug-test:
 	@echo "Compile to test code..."
 	PWD=`pwd` ./neo-c -no-gc -clang -g code/HelloWorld.c
 	./code/HelloWorld
@@ -366,7 +366,7 @@ gc-test:
 	PWD=`pwd` ./neo-c -gc code/HelloWorld19.c
 
 
-gc-debug-test: 
+gc-debug-test:
 	@echo "Compile to test code..."
 	PWD=`pwd` ./neo-c -gc -clang -g code/HelloWorld.c
 	./code/HelloWorld

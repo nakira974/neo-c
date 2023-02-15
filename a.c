@@ -2,8 +2,8 @@
 
 int main(int argc, char** argv)
 {
-    int a;
-    int b[10];
+    short a;
+    short b[10];
     
     a = b;
     

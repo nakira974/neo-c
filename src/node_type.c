@@ -1424,7 +1424,10 @@ BOOL type_equalability(sNodeType* left_type, sNodeType* right_type)
 
 BOOL is_left_type_bigger_size(sNodeType* left_type, sNodeType* right_type)
 {
-    if(left_type->mPointerNum > 0 || right_type->mPointerNum > 0) {
+    if(left_type->mPointerNum > 0 && right_type->mArrayDimentionNum > 0) {
+        return TRUE;
+    }
+    else if(left_type->mPointerNum > 0 || right_type->mPointerNum > 0) {
         return FALSE;
     }
     else if(left_type->mArrayDimentionNum > 0 || right_type->mArrayDimentionNum > 0) {

@@ -2,12 +2,14 @@
 
 int main(int argc, char** argv)
 {
-    short a;
-    short b[10];
+    unsigned char a = 0xFF;
     
-    a = b;
-    
-    printf("%p %p\n", a, b);
+    if(a < 0xFFF) {
+        puts("AAA");
+    }
+    else {
+        puts("BBB");
+    }
     
     return 0;
 }

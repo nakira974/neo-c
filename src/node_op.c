@@ -1154,13 +1154,20 @@ BOOL compile_equals(unsigned int node, sCompileInfo* info)
         left_type = node_type;
     }
 
-//    if(auto_cast_posibility(left_type, right_type, TRUE)) {
+    if(!is_left_type_bigger_size(left_type, right_type)) {
+        if(!cast_right_type_to_left_type(right_type, &left_type, &lvalue, info))
+        {
+            compile_err_msg(info, "Cast failed");
+            return TRUE;
+        }
+    }
+    else {
         if(!cast_right_type_to_left_type(left_type, &right_type, &rvalue, info))
         {
             compile_err_msg(info, "Cast failed");
             return TRUE;
         }
-//    }
+    }
 
     LVALUE llvm_value;
     if((type_identify_with_class_name(left_type, "long_double") || type_identify_with_class_name(left_type, "double") || type_identify_with_class_name(left_type, "float")) && left_type->mPointerNum == 0) 
@@ -1344,13 +1351,20 @@ BOOL compile_not_equals(unsigned int node, sCompileInfo* info)
         left_type = node_type;
     }
 
-//    if(auto_cast_posibility(left_type, right_type, TRUE)) {
+    if(!is_left_type_bigger_size(left_type, right_type)) {
+        if(!cast_right_type_to_left_type(right_type, &left_type, &lvalue, info))
+        {
+            compile_err_msg(info, "Cast failed");
+            return TRUE;
+        }
+    }
+    else {
         if(!cast_right_type_to_left_type(left_type, &right_type, &rvalue, info))
         {
             compile_err_msg(info, "Cast failed");
             return TRUE;
         }
-//    }
+    }
 
     LVALUE llvm_value;
     if((type_identify_with_class_name(left_type, "long_double") || type_identify_with_class_name(left_type, "double") || type_identify_with_class_name(left_type, "float")) && left_type->mPointerNum == 0) 
@@ -1546,13 +1560,20 @@ BOOL compile_gteq(unsigned int node, sCompileInfo* info)
             left_type = node_type;
         }
     
-//        if(auto_cast_posibility(left_type, right_type, TRUE)) {
+        if(is_left_type_bigger_size(left_type, right_type)) {
             if(!cast_right_type_to_left_type(left_type, &right_type, &rvalue, info))
             {
                 compile_err_msg(info, "Cast failed");
                 return TRUE;
             }
-//        }
+        }
+        else {
+            if(!cast_right_type_to_left_type(right_type, &left_type, &lvalue, info))
+            {
+                compile_err_msg(info, "Cast failed");
+                return TRUE;
+            }
+        }
     
         LVALUE llvm_value;
         if((type_identify_with_class_name(left_type, "long_double") || type_identify_with_class_name(left_type, "double") || type_identify_with_class_name(left_type, "float")) && left_type->mPointerNum == 0) 
@@ -1651,13 +1672,20 @@ BOOL compile_leeq(unsigned int node, sCompileInfo* info)
             left_type = node_type;
         }
     
-//        if(auto_cast_posibility(left_type, right_type, TRUE)) {
+        if(is_left_type_bigger_size(left_type, right_type)) {
             if(!cast_right_type_to_left_type(left_type, &right_type, &rvalue, info))
             {
                 compile_err_msg(info, "Cast failed");
                 return TRUE;
             }
-//        }
+        }
+        else {
+            if(!cast_right_type_to_left_type(right_type, &left_type, &lvalue, info))
+            {
+                compile_err_msg(info, "Cast failed");
+                return TRUE;
+            }
+        }
     
         LVALUE llvm_value;
         if((type_identify_with_class_name(left_type, "long_double") || type_identify_with_class_name(left_type, "double") || type_identify_with_class_name(left_type, "float")) && left_type->mPointerNum == 0) 
@@ -1756,13 +1784,20 @@ BOOL compile_gt(unsigned int node, sCompileInfo* info)
             left_type = node_type;
         }
     
-//        if(auto_cast_posibility(left_type, right_type, TRUE)) {
+        if(is_left_type_bigger_size(left_type, right_type)) {
             if(!cast_right_type_to_left_type(left_type, &right_type, &rvalue, info))
             {
                 compile_err_msg(info, "Cast failed");
                 return TRUE;
             }
-//        }
+        }
+        else {
+            if(!cast_right_type_to_left_type(right_type, &left_type, &lvalue, info))
+            {
+                compile_err_msg(info, "Cast failed");
+                return TRUE;
+            }
+        }
 
         LVALUE llvm_value;
         if((type_identify_with_class_name(left_type, "long_double") || type_identify_with_class_name(left_type, "double") || type_identify_with_class_name(left_type, "float")) && left_type->mPointerNum == 0) 
@@ -1861,13 +1896,20 @@ BOOL compile_le(unsigned int node, sCompileInfo* info)
             left_type = node_type;
         }
     
-//        if(auto_cast_posibility(left_type, right_type, TRUE)) {
+        if(is_left_type_bigger_size(left_type, right_type)) {
             if(!cast_right_type_to_left_type(left_type, &right_type, &rvalue, info))
             {
                 compile_err_msg(info, "Cast failed");
                 return TRUE;
             }
-//        }
+        }
+        else {
+            if(!cast_right_type_to_left_type(right_type, &left_type, &lvalue, info))
+            {
+                compile_err_msg(info, "Cast failed");
+                return TRUE;
+            }
+        }
     
         LVALUE llvm_value;
         if((type_identify_with_class_name(left_type, "long_double") || type_identify_with_class_name(left_type, "double") || type_identify_with_class_name(left_type, "float")) && left_type->mPointerNum == 0) 

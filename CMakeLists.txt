@@ -30,11 +30,12 @@ include_directories(${CMAKE_SOURCE_DIR}/external/GC)
 
 #PLATFORM SPECIFIC BUILD
 if(WIN32)
-    find_library(MS-LLVM LLVM PATHS external/microsoft-llvm NAMES microsoft-llvm ms-llvm c-llvm MS-LLVM)
+    find_library(MS-LLVM LLVM PATHS ${CMAKE_SOURCE_DIR}/external/microsoft-llvm NAMES microsoft-llvm ms-llvm c-llvm MS-LLVM)
     message(STATUS "WIN32 DISTRIBUTION FOUND")
     if(${ms-llvm})
         message(FATAL_ERROR "COULD NOT FIND MS-LLVM")
     else()
+        include_directories(${CMAKE_SOURCE_DIR}/external/microsoft-llvm/include)
         message(STATUS "MS-LLVM HAS BEEN FOUND")
     endif()
 endif()

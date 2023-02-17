@@ -27,7 +27,7 @@
 
 #include <sys/errno.h>
 
-#include <ncurses.h>
+#include <curses.h>
 
 #undef bool
 #undef true

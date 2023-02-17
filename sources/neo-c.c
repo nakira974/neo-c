@@ -1,4 +1,5 @@
 #include "neo-c.h"
+#include "compiler/xfunc.h"
 
 static int XXX = 0;
 

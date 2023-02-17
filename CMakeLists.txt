@@ -44,6 +44,7 @@ else()
 endif()
 
 
+#COMMON PROJECT'S FILES
 file(GLOB_RECURSE HEADERS
         ${CMAKE_SOURCE_DIR}/headers/*.h
         ${CMAKE_SOURCE_DIR}/headers/*.hpp
@@ -78,10 +79,23 @@ if(WIN32)
         include_directories(${CMAKE_SOURCE_DIR}/external/microsoft-llvm/include)
         message(STATUS "MS-LLVM HAS BEEN FOUND")
     endif()
+    #WINDOWS PROJECT'S FILES
+    file(GLOB_RECURSE NCURSES_SOURCES
+            ${CMAKE_SOURCE_DIR}/external/ncurses/source/*.d
+            ${CMAKE_SOURCE_DIR}/external/ncurses/C/*.h
+            )
+    include_directories(${CMAKE_SOURCE_DIR}/external/ncurses/C/)
 endif()
 
-add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${GC_SOURCES})
 
 if(WIN32)
-target_link_libraries(${PROJECT_NAME} PRIVATE ms-llvm)
+    add_executable(${PROJECT_NAME}
+            ${SOURCES}
+            ${HEADERS}
+            ${GC_SOURCES}
+            ${NCURSES_SOURCES}
+            )
+    target_link_libraries(${PROJECT_NAME} PRIVATE ms-llvm)
+else()
+    add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${GC_SOURCES})
 endif()

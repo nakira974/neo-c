@@ -27,4 +27,12 @@ file(GLOB_RECURSE GC_SOURCES
 include_directories(${CMAKE_SOURCE_DIR}/headers)
 include_directories(${CMAKE_SOURCE_DIR}/external/GC)
 
+find_library(MS-LLVM LLVM PATHS external/microsoft-llvm NAMES microsoft-llvm ms-llvm c-llvm MS-LLVM)
+if(${ms-llvm})
+    message(FATAL_ERROR "COULD NOT FIND MS-LLVM")
+else()
+    message(STATUS "MS-LLVM HAS BEEN FOUND")
+endif()
+
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${GC_SOURCES})
+target_link_libraries(${PROJECT_NAME} ms-llvm)

@@ -37,6 +37,10 @@ if(WIN32)
     else()
         message(STATUS "MS-LLVM HAS BEEN FOUND")
     endif()
-    add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${GC_SOURCES})
-    target_link_libraries(${PROJECT_NAME} PRIVATE ms-llvm)
+endif()
+
+add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${GC_SOURCES})
+
+if(WIN32)
+target_link_libraries(${PROJECT_NAME} PRIVATE ms-llvm)
 endif()

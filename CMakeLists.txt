@@ -28,11 +28,14 @@ include_directories(${CMAKE_SOURCE_DIR}/headers)
 include_directories(${CMAKE_SOURCE_DIR}/external/GC)
 
 find_library(MS-LLVM LLVM PATHS external/microsoft-llvm NAMES microsoft-llvm ms-llvm c-llvm MS-LLVM)
+
+if(WIN32)
+    message(STATUS "WIN32 DISTRIBUTION FOUND")
 if(${ms-llvm})
     message(FATAL_ERROR "COULD NOT FIND MS-LLVM")
 else()
     message(STATUS "MS-LLVM HAS BEEN FOUND")
 endif()
-
+endif()
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${GC_SOURCES})
-target_link_libraries(${PROJECT_NAME} ms-llvm)
+target_link_libraries(${PROJECT_NAME} PRIVATE ms-llvm)

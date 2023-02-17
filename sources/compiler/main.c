@@ -256,6 +256,7 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
             snprintf(cmd, 1024, "%s -o %s %s -lgc -lpcre -lpthread -fPIC -L/opt/homebrew/lib -I/opt/homebrew/include -L/usr/local/lib/libgc/lib -fPIC -L/opt/homebrew/opt/libgc/lib -L/opt/homebrew/opt/pcre/lib ", GCC, exec_fname, clang_optiones);
         }
         else {
+            //TODO: Pour adapter le compiler sous Windows-NT :
             snprintf(cmd, 1024, "%s -o %s %s -lgc -lpcre -lpthread -fPIC -L/opt/homebrew/lib -I/opt/homebrew/include -L/usr/local/opt/libgc/lib -fPIC -L/opt/homebrew/opt/boehmgc/lib ", GCC, exec_fname, clang_optiones);
         }
         

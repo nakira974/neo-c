@@ -1,8 +1,48 @@
 set(PROJECT_NAME neo-c)
-set(CMAKE_C_STANDARD 17)
+
 cmake_minimum_required(VERSION 3.23)
 
 project(${PROJECT_NAME})
+set(CMAKE_C_STANDARD 17)
+set(MSVC "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.33.31629\\bin\\HostX64\\x64\\cl.exe")
+add_compile_options(-Wall)
+
+if(WIN32)
+    set(CMAKE_C_COMPILER GCC)
+    set(CMAKE_CXX_COMPILER G++)
+    message("-- WINDOWS CMAKE BUILD HAS BEGUN")
+else()
+    message("-- ANDROID_LINUX CMAKE BUILD HAS BEGUN")
+    #SETTING ENV VARIABLES
+    set(ENV{ANDROID_NDK_HOME} /home/maxime/Android/default/android-ndk-r23c/)
+    set(ENV{ANDROID_SDK_VERSION} 30)
+    set(ENV{ANDROID_ABI} x86_64)
+    set(ENV{ANDROID_PLATFORM} android-23)
+    set(CMAKE_SYSTEM_NAME  Android)
+    set(CMAKE_CXX_COMPILER
+            /home/maxime/Android/default/android-ndk-r23c/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android$ENV{ANDROID_SDK_VERSION}-clang++)
+    set(CMAKE_C_COMPILER
+            /home/maxime/Android/default/android-ndk-r23c/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android$ENV{ANDROID_SDK_VERSION}-clang)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall")
+
+    #NDK TOOLCHAIN
+    set(CMAKE_SYSTEM_VERSION $ENV{ANDROID_SDK_VERSION})
+    set(CMAKE_ANDROID_ARCH_ABI $ENV{ANDROID_ABI})
+    set(CMAKE_ANDROID_NDK $ENV{ANDROID_NDK_HOME})
+    set(CMAKE_ANDROID_NDK_VERSION  $ENV{ANDROID_PLATFORM})
+    set(CMAKE_ANDROID_STL_TYPE gnustl_static)
+    set(ANDROID_TOOLCHAIN clang)
+    set(CMAKE_TOOLCHAIN_FILE $ENV{ANDROID_NDK_HOME}/build/cmake/android.toolchain.cmake)
+
+    #JAVA TOOLCHAIN
+    set(JAVA_AWT_LIBRARY "$ENV{JAVA_HOME}/lib/libjawt.so")
+    set(JAVA_JVM_LIBRARY "$ENV{JAVA_HOME}/lib/server/libjvm.so")
+
+    set(JAVA_INCLUDE_PATH "$ENV{JAVA_HOME}/include")
+    set(JAVA_INCLUDE_PATH2 "$ENV{JAVA_HOME}/include/linux")
+    set(JAVA_AWT_INCLUDE_PATH "$ENV{JAVA_HOME}/include")
+endif()
+
 
 file(GLOB_RECURSE HEADERS
         ${CMAKE_SOURCE_DIR}/headers/*.h

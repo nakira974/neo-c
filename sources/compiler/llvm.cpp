@@ -1,5 +1,5 @@
 extern "C" {
-#include "../../headers/compiler/common.h"
+#include "compiler/common.h"
 }
 
 #include "llvm/IR/Verifier.h"

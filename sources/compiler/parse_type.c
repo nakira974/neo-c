@@ -1,4 +1,4 @@
-#include "../../headers/compiler/common.h"
+#include "compiler/common.h"
 #include <ctype.h>
 
 BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_name, BOOL definition_typedef, BOOL definition_struct, BOOL* function_pointer_result_function, BOOL definition_function_pointer_result_function, BOOL tuple_type_name, BOOL parse_parametor_type_name, BOOL in_new, BOOL parse_interface)

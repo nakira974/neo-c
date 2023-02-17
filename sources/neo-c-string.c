@@ -1,4 +1,4 @@
-#include "../headers/neo-c.h"
+#include "neo-c.h"
 
 /// string ///
 int char*::index(char* str, char* search_str, int default_value)

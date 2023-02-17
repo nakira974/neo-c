@@ -1,4 +1,4 @@
-#include "../../headers/compiler/common.h"
+#include "compiler/common.h"
 
 extern int parse_cmp(char* p, char* str);
 

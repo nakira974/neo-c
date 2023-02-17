@@ -1,4 +1,4 @@
-#include "../../headers/compiler/common.h"
+#include "compiler/common.h"
 #include <ctype.h>
 
 BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserInfo* info)

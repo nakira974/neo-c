@@ -1,5 +1,5 @@
-#include "../../headers/compiler/buffer.h"
-#include "../../headers/compiler/xfunc.h"
+#include "compiler/buffer.h"
+#include "compiler/xfunc.h"
 #include <wchar.h>
 #include <string.h>
 #include <ctype.h>

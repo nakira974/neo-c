@@ -1,4 +1,4 @@
-#include "../../headers/compiler/common.h"
+#include "compiler/common.h"
 
 BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_method_generics_types, sNodeType** method_generics_types, LLVMValueRef* llvm_params, sCompileInfo* info)
 {

@@ -1,4 +1,4 @@
-#include "../../headers/compiler/common.h"
+#include "compiler/common.h"
 #include <ctype.h>
 
 static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment, int num_bufs, char** bufs, sParserInfo* info)

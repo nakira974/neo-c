@@ -1,4 +1,4 @@
-#include "../../headers/compiler/common.h"
+#include "compiler/common.h"
 
 static sNodeType** gNodeTypes = NULL;
 static int gUsedPageNodeTypes = 0;

@@ -1,4 +1,4 @@
-#include "../../headers/compiler/common.h"
+#include "compiler/common.h"
 
 unsigned int get_hash_key(char* name, unsigned int max)
 {

@@ -1,4 +1,4 @@
-#include "../../headers/compiler/common.h"
+#include "compiler/common.h"
 
 
 BOOL call_operator_function(char* fun_base_name, sNodeType* left_type, int num_params, LVALUE* params, BOOL* found, BOOL move_, sVar* var_, sCompileInfo* info)

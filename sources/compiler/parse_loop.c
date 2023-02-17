@@ -1,4 +1,4 @@
-#include "../../headers/compiler/common.h"
+#include "compiler/common.h"
 #include <ctype.h>
 
 BOOL parse_if(unsigned int* node, sParserInfo* info)

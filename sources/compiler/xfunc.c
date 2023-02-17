@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <stddef.h>
 #include <ctype.h>
-#include "../../headers/compiler/xfunc.h"
+#include "compiler/xfunc.h"
 
 BOOL xisdigit(char c) 
 {

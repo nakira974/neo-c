@@ -225,14 +225,14 @@ BOOL compile_come_function_call(unsigned int node, sCompileInfo* info)
     unsigned int pthread_create_fun_params[PARAMS_MAX];
     
     pthread_create_fun_params[0] = sNodeTree_create_load_variable(thread_var_name, info->pinfo);
-    pthread_create_fun_params[0] = sNodeTree_create_reffernce(pthread_create_fun_params[0], info->pinfo);
+    pthread_create_fun_params[0] = sNodeTree_create_refference(pthread_create_fun_params[0], info->pinfo);
     
     pthread_create_fun_params[1] = sNodeTree_create_null(info->pinfo);
     
     pthread_create_fun_params[2] = sNodeTree_create_load_function(thread_fun_name, info->pinfo, info->pinfo->sline);
     
     pthread_create_fun_params[3] = sNodeTree_create_load_variable(thread_arg_var_name, info->pinfo);
-    pthread_create_fun_params[3] = sNodeTree_create_reffernce(pthread_create_fun_params[3], info->pinfo);
+    pthread_create_fun_params[3] = sNodeTree_create_refference(pthread_create_fun_params[3], info->pinfo);
     
     BOOL method2 = FALSE;
     BOOL inherit2 = FALSE;

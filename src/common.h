@@ -1016,6 +1016,7 @@ struct sNodeTreeStruct
         
         struct {
             BOOL mMove;
+            BOOL mSafeMode;
         } sOp;
         struct {
             int mNumElements;
@@ -1287,8 +1288,8 @@ unsigned int sNodeTree_create_caller_sline(sParserInfo* info);
 
 unsigned int sNodeTree_create_load_channel_element(unsigned int array, unsigned int num_chanel, sParserInfo* info);
 unsigned int sNodeTree_create_stack_object(sNodeType* node_type, unsigned int object_num, char* sname, int sline, sParserInfo* info);
-unsigned int sNodeTree_create_dereffernce(unsigned int left_node, BOOL parent, sNodeType* cast_pointer_type, sParserInfo* info);
-unsigned int sNodeTree_create_reffernce(unsigned int left_node, sParserInfo* info);
+unsigned int sNodeTree_create_derefference(unsigned int left_node, BOOL parent, sNodeType* cast_pointer_type, sParserInfo* info);
+unsigned int sNodeTree_create_refference(unsigned int left_node, sParserInfo* info);
 unsigned int sNodeTree_create_clone(unsigned int left, BOOL gc, sParserInfo* info);
 unsigned int sNodeTree_create_is_gc_heap(unsigned int left, sParserInfo* info);
 unsigned int sNodeTree_create_load_array_element(unsigned int array, unsigned int index_node[], int num_dimetion, sParserInfo* info);
@@ -1362,7 +1363,7 @@ BOOL compile_stack_object(unsigned int node, sCompileInfo* info);
 BOOL compile_store_field(unsigned int node, sCompileInfo* info);
 BOOL compile_load_field(unsigned int node, sCompileInfo* info);
 BOOL compile_derefference(unsigned int node, sCompileInfo* info);
-BOOL compile_reffernce(unsigned int node, sCompileInfo* info);
+BOOL compile_refference(unsigned int node, sCompileInfo* info);
 BOOL compile_clone(unsigned int node, sCompileInfo* info);
 BOOL compile_is_gc_heap(unsigned int node, sCompileInfo* info);
 BOOL compile_load_element(unsigned int node, sCompileInfo* info);

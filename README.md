@@ -6,7 +6,7 @@ Modern C compiler. It has a collection and string library using Boehm GC or Reff
 モダンなCコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 1.1.0
+version 1.1.1
 
 ``` C
 #include <neo-c.h>
@@ -2229,9 +2229,14 @@ using safe;
 
 void fun(char* p)
 {
+    printf("%c\n", *p);   // compile error
+    
+    p++;                  // compile error
+    p--;                  // compile error
+    
     using unsafe;
     
-    printf("%c\n", *p);
+    printf("%c\n", *p);   // no compile error
 }
 ```
 
@@ -2256,6 +2261,18 @@ printf("%d %d\n", i, a[i]);
     return 0;
 }
 ```
+
+# derefference
+
+```C
+int main()
+{
+    char* p = "ABC";
+    
+    printf("%c\n", p->);
+    
+    return 0;
+}
 
 # as
 

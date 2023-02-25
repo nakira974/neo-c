@@ -1,15 +1,21 @@
 #include <stdio.h>
+#include <stdlib.h>
+
+using safe;
+
+struct sData {
+    int a;
+    long b;
+    int c;
+    char d;
+};
 
 int main(int argc, char** argv)
 {
-    unsigned char a = 0xFF;
+    struct sData a;
+    struct sData* b = &a;
     
-    if(a < 0xFFF) {
-        puts("AAA");
-    }
-    else {
-        puts("BBB");
-    }
+    b++;
     
     return 0;
 }

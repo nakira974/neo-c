@@ -486,6 +486,9 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
     
             *node = sNodeTree_create_cast(node_type, *node, info);
         }
+        else if(gNCCome && *info->p == '-' && *(info->p+1) == '>') {
+            *node = sNodeTree_create_derefference(*node, TRUE, NULL, info);
+        }
         /// access element ///
         else if(*info->p == '[') {
             int num_dimention = 0;

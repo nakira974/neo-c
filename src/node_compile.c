@@ -366,14 +366,14 @@ BOOL compile(unsigned int node, sCompileInfo* info)
             break;
 
         case kNodeTypeRefference:
-            if(!compile_reffernce(node, info))
+            if(!compile_refference(node, info))
             {
                 return FALSE;
             }
             break;
             
         case kNodeTypeRefferenceLoadField:
-            if(!compile_reffernce_load_field(node, info))
+            if(!compile_refference_load_field(node, info))
             {
                 return FALSE;
             }

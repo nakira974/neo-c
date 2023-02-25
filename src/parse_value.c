@@ -2449,7 +2449,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                     nodes[num_nodes++] = *node;
                     
                     unsigned int right_node = sNodeTree_create_load_variable(name2, info);
-                    right_node = sNodeTree_create_reffernce(right_node, info);
+                    right_node = sNodeTree_create_refference(right_node, info);
                     
                     BOOL alloc = TRUE;
                     BOOL global = TRUE;
@@ -3280,7 +3280,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                     nodes[num_nodes++] = *node;
                     
                     unsigned int right_node = sNodeTree_create_load_variable(name2, info);
-                    right_node = sNodeTree_create_reffernce(right_node, info);
+                    right_node = sNodeTree_create_refference(right_node, info);
                     
                     BOOL alloc = TRUE;
                     BOOL global = TRUE;

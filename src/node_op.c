@@ -327,6 +327,7 @@ unsigned int sNodeTree_create_add(unsigned int left, unsigned int right, unsigne
     gNodes[node].mLine = info->sline;
     
     gNodes[node].uValue.sOp.mMove = move_;
+    gNodes[node].uValue.sOp.mSafeMode = gNCSafeMode;
 
     gNodes[node].mLeft = left;
     gNodes[node].mRight = right;
@@ -338,6 +339,7 @@ unsigned int sNodeTree_create_add(unsigned int left, unsigned int right, unsigne
 BOOL compile_add(unsigned int node, sCompileInfo* info)
 {
     BOOL move_ = gNodes[node].uValue.sOp.mMove;
+    BOOL safe_mode = gNodes[node].uValue.sOp.mSafeMode;
     
     int left_node = gNodes[node].mLeft;
     if(!compile(left_node, info)) {
@@ -407,6 +409,10 @@ BOOL compile_add(unsigned int node, sCompileInfo* info)
         
         if(left_type->mPointerNum > 0 && is_number_type(right_type))
         {
+            if(safe_mode) {
+                compile_err_msg(info, "This is safe mode. can't not be derefference");
+                return TRUE;
+            }
             LLVMTypeRef long_type = create_llvm_type_with_class_name("long");
     
             LLVMValueRef left_value = LLVMBuildCast(gBuilder, LLVMPtrToInt, lvalue.value, long_type, "ptrToIntC");
@@ -568,6 +574,7 @@ unsigned int sNodeTree_create_sub(unsigned int left, unsigned int right, unsigne
     gNodes[node].mLine = info->sline;
     
     gNodes[node].uValue.sOp.mMove = move_;
+    gNodes[node].uValue.sOp.mSafeMode = gNCSafeMode;
 
     gNodes[node].mLeft = left;
     gNodes[node].mRight = right;
@@ -579,6 +586,7 @@ unsigned int sNodeTree_create_sub(unsigned int left, unsigned int right, unsigne
 BOOL compile_sub(unsigned int node, sCompileInfo* info)
 {
     BOOL move_ = gNodes[node].uValue.sOp.mMove;
+    BOOL safe_mode = gNodes[node].uValue.sOp.mSafeMode;
     
     int left_node = gNodes[node].mLeft;
     if(!compile(left_node, info)) {
@@ -646,6 +654,10 @@ BOOL compile_sub(unsigned int node, sCompileInfo* info)
             }
         }
         if(left_type->mPointerNum > 0 && right_type->mPointerNum > 0) {
+            if(safe_mode) {
+                compile_err_msg(info, "This is safe mode. can't not be derefference");
+                return TRUE;
+            }
             LLVMTypeRef long_type = create_llvm_type_with_class_name("long");
     
             LLVMValueRef left_value;
@@ -2671,7 +2683,9 @@ unsigned int sNodeTree_create_plus_plus(unsigned int left_node, sParserInfo* inf
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
-
+    
+    gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
+    
     gNodes[node].mLeft = left_node;
     gNodes[node].mRight = 0;
     gNodes[node].mMiddle = 0;
@@ -2682,7 +2696,9 @@ unsigned int sNodeTree_create_plus_plus(unsigned int left_node, sParserInfo* inf
 BOOL compile_plus_plus(unsigned int node, sCompileInfo* info)
 {
     unsigned int left_node = gNodes[node].mLeft;
-
+    
+    BOOL safe_mode = gNodes[node].uValue.sStoreValueToAddress.mSafeMode;
+    
     BOOL derefference = gNodes[left_node].mNodeType == kNodeTypeDerefference;
 
     if(!compile(left_node, info)) {
@@ -2714,6 +2730,10 @@ BOOL compile_plus_plus(unsigned int node, sCompileInfo* info)
     dec_stack_ptr(1, info);
 
     if(left_type->mPointerNum > 0) {
+        if(safe_mode) {
+            compile_err_msg(info, "This is safe mode. can't not be derefference");
+            return TRUE;
+        }
         left_type->mPointerNum--;
 
         if(derefference && left_type->mPointerNum == 0) {
@@ -2834,6 +2854,8 @@ unsigned int sNodeTree_create_minus_minus(unsigned int left_node, sParserInfo* i
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
+    
+    gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
 
     gNodes[node].mLeft = left_node;
     gNodes[node].mRight = 0;
@@ -2851,6 +2873,8 @@ BOOL compile_minus_minus(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
+    
+    BOOL safe_mode = gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
     
     if(!check_nullable_type(NULL, info->type, info)) {
         return TRUE;
@@ -2879,6 +2903,10 @@ BOOL compile_minus_minus(unsigned int node, sCompileInfo* info)
     sNodeType* result_type = clone_node_type(left_type);
 
     if(left_type->mPointerNum > 0) {
+        if(safe_mode) {
+            compile_err_msg(info, "This is safe mode. can't not be derefference");
+            return TRUE;
+        }
         left_type->mPointerNum--;
 
         if(derefference && left_type->mPointerNum == 0) {
@@ -3002,6 +3030,8 @@ unsigned int sNodeTree_create_equal_plus(unsigned int left_node, unsigned int ri
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
+    
+    gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
 
     gNodes[node].mLeft = left_node;
     gNodes[node].mRight = right_node;
@@ -3013,6 +3043,8 @@ unsigned int sNodeTree_create_equal_plus(unsigned int left_node, unsigned int ri
 BOOL compile_equal_plus(unsigned int node, sCompileInfo* info)
 {
     unsigned int left_node = gNodes[node].mLeft;
+    
+    BOOL safe_mode = gNodes[node].uValue.sStoreValueToAddress.mSafeMode;
 
     BOOL derefference = gNodes[left_node].mNodeType == kNodeTypeDerefference;
 
@@ -3047,6 +3079,10 @@ BOOL compile_equal_plus(unsigned int node, sCompileInfo* info)
     sNodeType* result_type = clone_node_type(right_type);
 
     if(left_type->mPointerNum > 0) {
+        if(safe_mode) {
+            compile_err_msg(info, "This is safe mode. can't not be derefference");
+            return TRUE;
+        }
         left_type->mPointerNum--;
 
         if(derefference && left_type->mPointerNum == 0) {
@@ -3145,6 +3181,8 @@ unsigned int sNodeTree_create_equal_minus(unsigned int left_node, unsigned int r
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
+    
+    gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
 
     gNodes[node].mLeft = left_node;
     gNodes[node].mRight = right_node;
@@ -3157,6 +3195,7 @@ BOOL compile_equal_minus(unsigned int node, sCompileInfo* info)
 {
     unsigned int left_node = gNodes[node].mLeft;
     BOOL derefference = gNodes[left_node].mNodeType == kNodeTypeDerefference;
+    BOOL safe_mode = gNodes[node].uValue.sStoreValueToAddress.mSafeMode;
 
     if(!compile(left_node, info)) {
         return FALSE;
@@ -3187,6 +3226,10 @@ BOOL compile_equal_minus(unsigned int node, sCompileInfo* info)
     dec_stack_ptr(1, info);
 
     if(left_type->mPointerNum > 0) {
+        if(safe_mode) {
+            compile_err_msg(info, "This is safe mode. can't not be derefference");
+            return TRUE;
+        }
         left_type->mPointerNum--;
 
         if(derefference && left_type->mPointerNum == 0) {
@@ -3284,6 +3327,8 @@ unsigned int sNodeTree_create_equal_mult(unsigned int left_node, unsigned int ri
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
+    
+    gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
 
     gNodes[node].mLeft = left_node;
     gNodes[node].mRight = right_node;
@@ -3295,6 +3340,8 @@ unsigned int sNodeTree_create_equal_mult(unsigned int left_node, unsigned int ri
 BOOL compile_equal_mult(unsigned int node, sCompileInfo* info)
 {
     unsigned int left_node = gNodes[node].mLeft;
+    
+    BOOL safe_mode = gNodes[node].uValue.sStoreValueToAddress.mSafeMode;
 
     if(!compile(left_node, info)) {
         return FALSE;
@@ -3325,6 +3372,10 @@ BOOL compile_equal_mult(unsigned int node, sCompileInfo* info)
     dec_stack_ptr(1, info);
 
     if(left_type->mPointerNum > 0) {
+        if(safe_mode) {
+            compile_err_msg(info, "This is safe mode. can't not be derefference");
+            return TRUE;
+        }
         left_type->mPointerNum--;
 
         if(auto_cast_posibility(left_type, right_type, TRUE)) {
@@ -3385,6 +3436,8 @@ unsigned int sNodeTree_create_equal_div(unsigned int left_node, unsigned int rig
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
+    
+    gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
 
     gNodes[node].mLeft = left_node;
     gNodes[node].mRight = right_node;
@@ -3396,6 +3449,8 @@ unsigned int sNodeTree_create_equal_div(unsigned int left_node, unsigned int rig
 BOOL compile_equal_div(unsigned int node, sCompileInfo* info)
 {
     unsigned int left_node = gNodes[node].mLeft;
+    
+    BOOL safe_mode = gNodes[node].uValue.sStoreValueToAddress.mSafeMode;
 
     if(!compile(left_node, info)) {
         return FALSE;
@@ -3426,6 +3481,10 @@ BOOL compile_equal_div(unsigned int node, sCompileInfo* info)
     dec_stack_ptr(1, info);
 
     if(left_type->mPointerNum > 0) {
+        if(safe_mode) {
+            compile_err_msg(info, "This is safe mode. can't not be derefference");
+            return TRUE;
+        }
         left_type->mPointerNum--;
 
         if(auto_cast_posibility(left_type, right_type, TRUE)) {
@@ -3499,6 +3558,8 @@ unsigned int sNodeTree_create_equal_mod(unsigned int left_node, unsigned int rig
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
+    
+    gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
 
     gNodes[node].mLeft = left_node;
     gNodes[node].mRight = right_node;
@@ -3510,6 +3571,8 @@ unsigned int sNodeTree_create_equal_mod(unsigned int left_node, unsigned int rig
 BOOL compile_equal_mod(unsigned int node, sCompileInfo* info)
 {
     unsigned int left_node = gNodes[node].mLeft;
+    
+    BOOL safe_mode = gNodes[node].uValue.sStoreValueToAddress.mSafeMode;
 
     if(!compile(left_node, info)) {
         return FALSE;
@@ -3540,6 +3603,10 @@ BOOL compile_equal_mod(unsigned int node, sCompileInfo* info)
     dec_stack_ptr(1, info);
 
     if(left_type->mPointerNum > 0) {
+        if(safe_mode) {
+            compile_err_msg(info, "This is safe mode. can't not be derefference");
+            return TRUE;
+        }
         left_type->mPointerNum--;
 
         if(auto_cast_posibility(left_type, right_type, TRUE)) {
@@ -3631,6 +3698,8 @@ unsigned int sNodeTree_create_equal_lshift(unsigned int left_node, unsigned int 
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
+    
+    gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
 
     gNodes[node].mLeft = left_node;
     gNodes[node].mRight = right_node;
@@ -3642,6 +3711,8 @@ unsigned int sNodeTree_create_equal_lshift(unsigned int left_node, unsigned int 
 BOOL compile_equal_lshift(unsigned int node, sCompileInfo* info)
 {
     unsigned int left_node = gNodes[node].mLeft;
+    
+    BOOL safe_mode = gNodes[node].uValue.sStoreValueToAddress.mSafeMode;
 
     if(!compile(left_node, info)) {
         return FALSE;
@@ -3672,6 +3743,10 @@ BOOL compile_equal_lshift(unsigned int node, sCompileInfo* info)
     dec_stack_ptr(1, info);
 
     if(left_type->mPointerNum > 0) {
+        if(safe_mode) {
+            compile_err_msg(info, "This is safe mode. can't not be derefference");
+            return TRUE;
+        }
         left_type->mPointerNum--;
 
         if(auto_cast_posibility(left_type, right_type, TRUE)) {
@@ -3730,6 +3805,8 @@ unsigned int sNodeTree_create_equal_rshift(unsigned int left_node, unsigned int 
     unsigned int node = alloc_node();
 
     gNodes[node].mNodeType = kNodeTypeEqualRShift;
+    
+    gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
@@ -3744,6 +3821,8 @@ unsigned int sNodeTree_create_equal_rshift(unsigned int left_node, unsigned int 
 BOOL compile_equal_rshift(unsigned int node, sCompileInfo* info)
 {
     unsigned int left_node = gNodes[node].mLeft;
+    
+    BOOL safe_mode = gNodes[node].uValue.sStoreValueToAddress.mSafeMode;
 
     if(!compile(left_node, info)) {
         return FALSE;
@@ -3774,6 +3853,10 @@ BOOL compile_equal_rshift(unsigned int node, sCompileInfo* info)
     dec_stack_ptr(1, info);
 
     if(left_type->mPointerNum > 0) {
+        if(safe_mode) {
+            compile_err_msg(info, "This is safe mode. can't not be derefference");
+            return TRUE;
+        }
         left_type->mPointerNum--;
 
         if(auto_cast_posibility(left_type, right_type, TRUE)) {
@@ -3833,6 +3916,8 @@ unsigned int sNodeTree_create_equal_and(unsigned int left_node, unsigned int rig
     unsigned int node = alloc_node();
 
     gNodes[node].mNodeType = kNodeTypeEqualAnd;
+    
+    gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
@@ -3847,6 +3932,8 @@ unsigned int sNodeTree_create_equal_and(unsigned int left_node, unsigned int rig
 BOOL compile_equal_and(unsigned int node, sCompileInfo* info)
 {
     unsigned int left_node = gNodes[node].mLeft;
+    
+    BOOL safe_mode = gNodes[node].uValue.sStoreValueToAddress.mSafeMode;
 
     if(!compile(left_node, info)) {
         return FALSE;
@@ -3877,6 +3964,10 @@ BOOL compile_equal_and(unsigned int node, sCompileInfo* info)
     dec_stack_ptr(1, info);
 
     if(left_type->mPointerNum > 0) {
+        if(safe_mode) {
+            compile_err_msg(info, "This is safe mode. can't not be derefference");
+            return TRUE;
+        }
         left_type->mPointerNum--;
 
         if(auto_cast_posibility(left_type, right_type, TRUE)) {
@@ -3935,6 +4026,8 @@ unsigned int sNodeTree_create_equal_xor(unsigned int left_node, unsigned int rig
     unsigned int node = alloc_node();
 
     gNodes[node].mNodeType = kNodeTypeEqualXor;
+    
+    gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
@@ -3949,6 +4042,8 @@ unsigned int sNodeTree_create_equal_xor(unsigned int left_node, unsigned int rig
 BOOL compile_equal_xor(unsigned int node, sCompileInfo* info)
 {
     unsigned int left_node = gNodes[node].mLeft;
+    
+    BOOL safe_mode = gNodes[node].uValue.sStoreValueToAddress.mSafeMode;
 
     if(!compile(left_node, info)) {
         return FALSE;
@@ -3975,6 +4070,10 @@ BOOL compile_equal_xor(unsigned int node, sCompileInfo* info)
     dec_stack_ptr(1, info);
 
     if(left_type->mPointerNum > 0) {
+        if(safe_mode) {
+            compile_err_msg(info, "This is safe mode. can't not be derefference");
+            return TRUE;
+        }
         left_type->mPointerNum--;
 
         if(auto_cast_posibility(right_type, left_type, TRUE)) {
@@ -4036,6 +4135,8 @@ unsigned int sNodeTree_create_equal_or(unsigned int left_node, unsigned int righ
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
+    
+    gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
 
     gNodes[node].mLeft = left_node;
     gNodes[node].mRight = right_node;
@@ -4047,6 +4148,8 @@ unsigned int sNodeTree_create_equal_or(unsigned int left_node, unsigned int righ
 BOOL compile_equal_or(unsigned int node, sCompileInfo* info)
 {
     unsigned int left_node = gNodes[node].mLeft;
+    
+    BOOL safe_mode = gNodes[node].uValue.sStoreValueToAddress.mSafeMode;
 
     if(!compile(left_node, info)) {
         return FALSE;
@@ -4077,6 +4180,10 @@ BOOL compile_equal_or(unsigned int node, sCompileInfo* info)
     dec_stack_ptr(1, info);
 
     if(left_type->mPointerNum > 0) {
+        if(safe_mode) {
+            compile_err_msg(info, "This is safe mode. can't not be derefference");
+            return TRUE;
+        }
         left_type->mPointerNum--;
 
         if(auto_cast_posibility(left_type, right_type, TRUE)) {

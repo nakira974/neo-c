@@ -1360,7 +1360,7 @@ BOOL compile_is_gc_heap(unsigned int node, sCompileInfo* info)
     return TRUE;
 }
 
-unsigned int sNodeTree_create_reffernce(unsigned int left_node, sParserInfo* info)
+unsigned int sNodeTree_create_refference(unsigned int left_node, sParserInfo* info)
 {
     unsigned int node = alloc_node();
 
@@ -1376,7 +1376,7 @@ unsigned int sNodeTree_create_reffernce(unsigned int left_node, sParserInfo* inf
     return node;
 }
 
-BOOL compile_reffernce(unsigned int node, sCompileInfo* info)
+BOOL compile_refference(unsigned int node, sCompileInfo* info)
 {
     unsigned int left_node = gNodes[node].mLeft;
     
@@ -1426,7 +1426,7 @@ BOOL compile_reffernce(unsigned int node, sCompileInfo* info)
     return TRUE;
 }
 
-unsigned int sNodeTree_create_reffernce_load_field(unsigned int left_node, sParserInfo* info)
+unsigned int sNodeTree_create_refference_load_field(unsigned int left_node, sParserInfo* info)
 {
     unsigned int node = alloc_node();
 
@@ -1442,7 +1442,7 @@ unsigned int sNodeTree_create_reffernce_load_field(unsigned int left_node, sPars
     return node;
 }
 
-BOOL compile_reffernce_load_field(unsigned int node, sCompileInfo* info)
+BOOL compile_refference_load_field(unsigned int node, sCompileInfo* info)
 {
     unsigned int left_node = gNodes[node].mLeft;
     
@@ -1739,7 +1739,7 @@ BOOL compile_reffernce_load_field(unsigned int node, sCompileInfo* info)
     return TRUE;
 }
 
-unsigned int sNodeTree_create_dereffernce(unsigned int left_node, BOOL parent, sNodeType* cast_pointer_type, sParserInfo* info)
+unsigned int sNodeTree_create_derefference(unsigned int left_node, BOOL parent, sNodeType* cast_pointer_type, sParserInfo* info)
 {
     unsigned int node = alloc_node();
 
@@ -2992,7 +2992,7 @@ BOOL compile_load_function(unsigned int node, sCompileInfo* info)
     sFunction* fun = get_function_from_table(fun_name);
 
     if(fun == NULL) {
-        compile_err_msg(info, "undeclared function %s\n", fun_name);
+        compile_err_msg(info, "unexpected word %s\n", fun_name);
         return FALSE;
     }
     
@@ -6875,7 +6875,7 @@ BOOL compile_write_channel(unsigned int node, sCompileInfo* info)
     params[0] = sNodeTree_create_load_variable(buffer_var_name, info->pinfo);
 
     params[1] = sNodeTree_create_load_variable(right_var_name, info->pinfo);
-    params[1] = sNodeTree_create_reffernce(params[1], info->pinfo);
+    params[1] = sNodeTree_create_refference(params[1], info->pinfo);
 
     sNodeType* right_var_type2 = create_node_type_with_class_name("char*");
 

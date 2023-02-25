@@ -2243,6 +2243,8 @@ void fun(char* p)
 # fn
 
 ``` C
+#include <neo-c.h>
+
 fn fun(a:int, b:int*) -> int
 {
     return a + b[0];
@@ -2265,6 +2267,8 @@ printf("%d %d\n", i, a[i]);
 # post derefference
 
 ```C
+#include <neo-c.h>
+
 int main()
 {
     char* p = "ABC";
@@ -2277,6 +2281,8 @@ int main()
 # as
 
 ``` C
+#include <neo-c.h>
+
 int main()
 {
     var a = 123;

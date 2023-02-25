@@ -2262,14 +2262,14 @@ printf("%d %d\n", i, a[i]);
 }
 ```
 
-# derefference
+# post derefference
 
 ```C
 int main()
 {
     char* p = "ABC";
     
-    printf("%c\n", p->);
+    printf("%c\n", p>>>); // put A
     
     return 0;
 }
@@ -2282,7 +2282,7 @@ int main()
     var a = 123;
     void* b = &a;
     
-    printf("%d\n", *(b as int*));
+    printf("%d\n", b as int*>>>); // put 123
     
     return 0;
 }

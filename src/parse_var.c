@@ -9,8 +9,14 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
 
     while(*info->p) {
         char c = *(info->p+1);
+        if(gNCCome && *info->p == '>' && *(info->p+1) == '>' && *(info->p+2) == '>') 
+        {
+            info->p+=3;
+            skip_spaces_and_lf(info);
+            *node = sNodeTree_create_derefference(*node, TRUE, NULL, info);
+        }
         /// call method or access field ///
-        if(((*info->p == '.' && *(info->p+1) != '.')|| (*info->p == '-' && *(info->p+1) == '>')) && !info->no_method_call)
+        else if(((*info->p == '.' && *(info->p+1) != '.')|| (*info->p == '-' && *(info->p+1) == '>')) && !info->no_method_call)
         {
             if(!parse_sharp(info)) {
                 return FALSE;
@@ -205,7 +211,7 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
                             nodes[1] = sNodeTree_create_sub(field_node, right_node, 1, FALSE, info);
                             *node = sNodeTree_create_nodes(nodes, num_nodes, TRUE, info);
                         }
-                        else if(*info->p == '-' && *(info->p+1) == '-')
+                        else if(*info->p == '-' && *(info->p+1) == '-' && *(info->p+2) != '>')
                         {
                             info->p+=2;
                             skip_spaces_and_lf(info);
@@ -486,9 +492,6 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
     
             *node = sNodeTree_create_cast(node_type, *node, info);
         }
-        else if(gNCCome && *info->p == '-' && *(info->p+1) == '>') {
-            *node = sNodeTree_create_derefference(*node, TRUE, NULL, info);
-        }
         /// access element ///
         else if(*info->p == '[') {
             int num_dimention = 0;
@@ -584,7 +587,7 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
 
             *node = sNodeTree_create_plus_plus(*node, info);
         }
-        else if(gMultDivPlusPlusEnableNode[gNodes[*node].mNodeType] && *info->p == '-' && *(info->p+1) == '-')
+        else if(gMultDivPlusPlusEnableNode[gNodes[*node].mNodeType] && *info->p == '-' && *(info->p+1) == '-' && *(info->p+2) != '>')
         {
             info->p+=2;
             skip_spaces_and_lf(info);

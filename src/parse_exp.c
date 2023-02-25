@@ -892,7 +892,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
     
             *node = sNodeTree_create_store_value_to_address(*node, node2, FALSE, cast_pointer_type, FALSE, info);
         }
-        else if(*info->p == '-' && *(info->p+1) == '-')
+        else if(*info->p == '-' && *(info->p+1) == '-' && *(info->p+2) != '>')
         {
             info->p+=2;
             skip_spaces_and_lf(info);

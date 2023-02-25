@@ -204,7 +204,7 @@ BOOL expression_shift(unsigned int* node, sParserInfo* info)
 
             *node = sNodeTree_create_left_shift(*node, right, 0, info);
         }
-        else if(*info->p == '>' && *(info->p+1) == '>' && *(info->p+2) != '=') {
+        else if(*info->p == '>' && *(info->p+1) == '>' && *(info->p+2) != '=' && *(info->p+2) != '>') {
             info->p+=2;
             skip_spaces_and_lf(info);
             

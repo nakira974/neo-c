@@ -1,21 +1,11 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-using safe;
-
-struct sData {
-    int a;
-    long b;
-    int c;
-    char d;
-};
+#include <neo-c.h>
 
 int main(int argc, char** argv)
 {
-    struct sData a;
-    struct sData* b = &a;
+    var a = 123;
+    void* b = &a;
     
-    b++;
+    printf("%d\n", b as int*>>>);
     
     return 0;
 }

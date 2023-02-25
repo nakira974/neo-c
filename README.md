@@ -2233,6 +2233,12 @@ void fun(char* p)
     p++;                  // compile error
     p--;                  // compile error
     
+    var p2 = "ABC".to_buffer().to_pointer();
+    
+    p2++;                 // no compile error
+    
+    printf("%c\n", *p2);  // no compile error
+    
     using unsafe;
     
     printf("%c\n", *p);   // no compile error

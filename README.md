@@ -6,7 +6,7 @@ Modern C compiler. It has a collection and string library using Boehm GC or Reff
 モダンなCコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 1.1.1
+version 1.1.2
 
 ``` C
 #include <neo-c.h>
@@ -170,9 +170,8 @@ int main()
     var z = [new sData(1,2), new sData(3,4)];
     
     //printf("%d\n", *z[5]!.a);  // exception. printout source code file name and source code line number
-    var buf = "ABC".to_buffer();
     
-    var p = buf.to_pointer();
+    var p = "ABC".to_buffer().to_pointer();
     
     p++;
     p++;

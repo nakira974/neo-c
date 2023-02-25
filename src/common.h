@@ -1232,7 +1232,7 @@ unsigned int sNodeTree_create_store_value_to_derefference(unsigned int address_n
 
 BOOL compile_va_arg(unsigned int node, sCompileInfo* info);
 BOOL compile_store_derefference(unsigned int node, sCompileInfo* info);
-BOOL compile_reffernce_load_field(unsigned int node, sCompileInfo* info);
+BOOL compile_refference_load_field(unsigned int node, sCompileInfo* info);
 BOOL compile_store_field_of_protocol(unsigned int node, sCompileInfo* info);
 BOOL compile_guard_expression(unsigned int node, sCompileInfo* info);
 BOOL compile_equal_or(unsigned int node, sCompileInfo* info);

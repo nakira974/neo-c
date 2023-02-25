@@ -216,7 +216,7 @@ a.c,b.c,c.c
 
 3. It has Generics, Method Generics, inline function, debug info (-g option), and lambda.
 
-4. It has a mixin-layers system. You can implement your application in layers. Each layer is complete and useful for debugging and porting. A vi clone called vin is implemented as an editor implemented in mixin-layers. Please refer to it because it is in a directory called vin. Also I'm creating a text processing interpreter(zed), 1000 lines shell(shsh) and 1000 lines filer(mf).
+4. It has a mixin-layers system. You can implement your application in layers. Each layer is complete and useful for debugging and porting. A vi clone called vin is implemented as an editor implemented in mixin-layers. Please refer to it because it is in a directory called vin. Also I'm creating a text processing interpreter(zed), 1000 lines shell(shsh), 1000 lines filer(mf) and constructing python3 clone(yappy).
 
 5. Protocol(Interface)
 
@@ -246,7 +246,7 @@ a.c,b.c,c.c
 
 3. ジェネリクス、メソッドジェネリクス、インライン関数、デバッグ情報、ラムダをサポートします。
 
-4. mixin-layersシステムを備えます。アプリケーションをレイヤーを重ねるように実装できます。各レイヤーは完結しており、デバッグや移植作業でも有効です。mixin-layersで実装されたエディッタとしてvinというviクローンを実装しています。vinというディレクトリの中に入っているので参考にしてください。またテキスト処理系をzedというディレクトリに作っています。shshという1000行シェルもあります。
+4. mixin-layersシステムを備えます。アプリケーションをレイヤーを重ねるように実装できます。各レイヤーは完結しており、デバッグや移植作業でも有効です。mixin-layersで実装されたエディッタとしてvinというviクローンを実装しています。vinというディレクトリの中に入っているので参考にしてください。またテキスト処理系をzedというディレクトリに作っています。shshという1000行シェルもあります。mfという1000ファイルマネージャー。yappyという作りかけのPython3クローンもあります。
 
 5. プロトコル（インターフェース）
 

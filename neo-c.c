@@ -1,7 +1,5 @@
 #include "neo-c.h"
 
-static int XXX = 0;
-
 struct sGCInfo
 {
     void* mem;
@@ -29,7 +27,7 @@ static long get_key(char* mem)
     return (long)mem;
 }
 
-void* igc_calloc(long count, size_t size)
+void* igc_calloc(size_t count, size_t size)
 {
     gNumGCTable++;
 
@@ -149,7 +147,6 @@ void igc_decrement_ref_count(void* mem)
             break;
         }
         else {
-XXX++;
             it++;
             
             if(it == gGCTable + gSizeGCTable) {
@@ -197,10 +194,6 @@ void call_finalizer(void* fun, void* mem)
             }
             else if(it == gGCTable + key) {
                 break;
-/*
-                fprintf(stderr, "memory not found in decremeting refference count\n");
-                exit(1);
-*/
             }
         }
     }
@@ -732,32 +725,6 @@ bool bool::equals(bool left, bool right)
     return left == right;
 }
 
-/*
-char string::operator_load_element(char* str, int n) 
-{
-    string str2 = str.substring(n, n);
-    
-    if(strlen(str2) > 0) {
-        return str2.substring(n, n)[0];
-    }
-    else {
-        return '\0';
-    }
-}
-
-
-char char*::operator_load_element(char* str, int n) 
-{
-    string str2 = str.substring(n, n);
-    
-    if(strlen(str2) > 0) {
-        return str2.substring(n, n)[0];
-    }
-    else {
-        return '\0';
-    }
-}
-*/
 
 string string::lower_case(char* str)
 {

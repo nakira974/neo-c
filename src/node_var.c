@@ -381,7 +381,11 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
 
             LVALUE llvm_value = *get_value_from_stack(-1);
 
+#ifdef __32BIT_CPU__
+            sNodeType* left_type = create_node_type_with_class_name("int");
+#else
             sNodeType* left_type = create_node_type_with_class_name("long");
+#endif
 
             if(!cast_right_type_to_left_type(left_type, &llvm_value.type, &llvm_value, info))
             {
@@ -5555,10 +5559,11 @@ BOOL compile_object(unsigned int node, sCompileInfo* info)
     if(left_node == 0) {
 #ifdef __32BIT_CPU__
         LLVMTypeRef llvm_type = create_llvm_type_with_class_name("int");
+        object_num = LLVMConstInt(llvm_type, 1, FALSE);
 #else
         LLVMTypeRef llvm_type = create_llvm_type_with_class_name("long");
-#endif
         object_num = LLVMConstInt(llvm_type, 1, FALSE);
+#endif
     }
     else {
         if(!compile(left_node, info)) {
@@ -5753,7 +5758,7 @@ BOOL compile_object(unsigned int node, sCompileInfo* info)
         //char* fun_name = "calloc";
         //char* fun_name = "nccalloc";
         char* fun_name = "igc_calloc";
-
+        
         llvm_params[0] = object_num;
 
         LLVMTypeRef llvm_type = create_llvm_type_from_node_type(node_type2);
@@ -5761,7 +5766,11 @@ BOOL compile_object(unsigned int node, sCompileInfo* info)
         int alignment = 0;
         uint64_t alloc_size = get_size_from_node_type(node_type2, &alignment);
 
+#ifdef __32BIT_CPU__
+        LLVMTypeRef long_type = create_llvm_type_with_class_name("int");
+#else
         LLVMTypeRef long_type = create_llvm_type_with_class_name("long");
+#endif
         llvm_params[1] = LLVMConstInt(long_type, alloc_size, FALSE);
         
         LLVMTypeRef int_type = create_llvm_type_with_class_name("int");
@@ -8792,7 +8801,7 @@ BOOL compile_va_arg(unsigned int node, sCompileInfo* info)
     LLVMTypeRef llvm_type = create_llvm_type_with_class_name("char**");
     
     LLVMValueRef ap2 = LLVMBuildCast(gBuilder, LLVMBitCast, ap_value.value, llvm_type, "cast");
-    LLVMValueRef ap3 = LLVMBuildLoad2(gBuilder, create_llvm_type_with_class_name("char*"), ap_type, ap2, "loadOOO");
+    LLVMValueRef ap3 = LLVMBuildLoad2(gBuilder, create_llvm_type_with_class_name("char*"), ap2, "loadOOO");
     
     LLVMValueRef indices[2];
 
@@ -8800,13 +8809,16 @@ BOOL compile_va_arg(unsigned int node, sCompileInfo* info)
 
     indices[0] = LLVMConstInt(llvm_type2, 4, FALSE);
     
-    LLVMValueRef ap4 = LLVMBuildGEP2(gBuilder, create_llvm_type_with_class_name("char*"), ap3, indices, 1, "gepAI");
+    LLVMValueRef ap4 = LLVMBuildGEP2(gBuilder, create_llvm_type_with_class_name("char"), ap3, indices, 1, "gepAI");
     
     LLVMBuildStore(gBuilder, ap4, ap2);
     LLVMTypeRef llvm_type3 = create_llvm_type_from_node_type(node_type3);
     LLVMValueRef ap5 = LLVMBuildCast(gBuilder, LLVMBitCast, ap3, llvm_type3, "cast");
     
-    LLVMValueRef ap6 = LLVMBuildLoad2(gBuilder, create_llvm_type_from_node_type("char*"), apx_type, ap5, "loadUV");
+    sNodeType* node_type4 = clone_node_type(node_type3);
+    node_type4->mPointerNum--;
+    LLVMTypeRef llvm_type4 = create_llvm_type_from_node_type(node_type4);
+    LLVMValueRef ap6 = LLVMBuildLoad2(gBuilder, llvm_type4, ap5, "loadUV");
     
     node_type3->mPointerNum--;
     

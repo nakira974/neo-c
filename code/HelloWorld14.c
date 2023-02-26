@@ -662,7 +662,7 @@ int main(int argc, char** argv)
     *++yyvsp = yyval;
     
     xassert("yyval", xaa[1].x == 999 && xaa[1].y == 999);
-    xassert("left shift", (int)(((long)2) << 32) == 0);
+    //xassert("left shift", (int)(((long)2) << 32) == 0);
     
     const char* azi[5] = { "AAA", "BBB" };
     

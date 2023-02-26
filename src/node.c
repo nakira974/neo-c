@@ -1578,10 +1578,6 @@ void init_nodes(char* sname)
     sCLClass* va_list_struct = alloc_struct("__builtin_va_list", FALSE, FALSE, NULL, FALSE);
     sNodeType* node_type3 = create_node_type_with_class_pointer(va_list_struct);
 
-    class_name = "va_list";
-    va_list_struct = alloc_struct("va_list", FALSE, FALSE, NULL, FALSE);
-    node_type3 = create_node_type_with_class_pointer(va_list_struct);
-    
     add_typedef("va_list", node_type3, FALSE);
 #elif __AARCH64_CPU__
     LLVMTypeRef field_types[STRUCT_FIELD_MAX];
@@ -1946,11 +1942,21 @@ void init_nodes(char* sname)
         char* block_text = NULL;
         BOOL var_arg = FALSE;
 
+#ifdef __32BIT_CPU__
+        xstrncpy(param_names[0], "count", VAR_NAME_MAX);
+        param_types[0] = create_node_type_with_class_name("int");
+#else
         xstrncpy(param_names[0], "count", VAR_NAME_MAX);
         param_types[0] = create_node_type_with_class_name("long");
+#endif
 
+#ifdef __32BIT_CPU__
+        xstrncpy(param_names[1], "size", VAR_NAME_MAX);
+        param_types[1] = create_node_type_with_class_name("int");
+#else
         xstrncpy(param_names[1], "size", VAR_NAME_MAX);
         param_types[1] = create_node_type_with_class_name("long");
+#endif
         
         sNodeType* result_type = create_node_type_with_class_name("void*");
 
@@ -4612,7 +4618,11 @@ uint64_t get_size_from_node_type(sNodeType* node_type, int* alignment)
     LLVMTypeRef llvm_type = create_llvm_type_from_node_type(node_type);
     
     if(node_type->mPointerNum > 0) {
+#ifdef __32BIT_CPU__
+        result = 4;
+#else
         result = 8;
+#endif
 
         int i;
         for(i=0; i<node_type->mArrayDimentionNum; i++) {
@@ -4823,6 +4833,7 @@ int get_llvm_alignment_from_node_type(sNodeType* node_type)
     return result;
 }
 
+/*
 #ifdef __32BIT_CPU__
 BOOL create_llvm_union_type(char* union_name, sNodeType* node_type, sNodeType* generics_type, BOOL undefined_body, sCompileInfo* info)
 {
@@ -4935,6 +4946,7 @@ BOOL create_llvm_union_type(char* union_name, sNodeType* node_type, sNodeType* g
     return TRUE;
 }
 #else
+*/
 BOOL create_llvm_union_type(char* union_name, sNodeType* node_type, sNodeType* generics_type, BOOL undefined_body, sCompileInfo* info)
 {
     sCLClass* klass = node_type->mClass;
@@ -5015,7 +5027,7 @@ BOOL create_llvm_union_type(char* union_name, sNodeType* node_type, sNodeType* g
 
     return TRUE;
 }
-#endif
+//#endif
 
 
 void compile_err_msg(sCompileInfo* info, const char* msg, ...)

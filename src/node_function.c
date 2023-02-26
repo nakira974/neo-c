@@ -178,7 +178,7 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
                 return FALSE;
             }
             if(!type_equalability(fun->mResultType, result_type)) {
-                compile_err_msg(info, "Different extern function and definition of the function %s", fun_name);
+                compile_err_msg(info, "Different extern function and definition of the function result type %s", fun_name);
                 show_node_type_one_line(fun->mResultType);
                 show_node_type_one_line(result_type);
                 return FALSE;
@@ -190,7 +190,7 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
                     
                     if(!type_equalability(old_fun_param_type, new_fun_param_type))
                     {
-                        compile_err_msg(info, "Different extern function and definition of the function %s", fun_name);
+                        compile_err_msg(info, "Different extern function and definition of the function %s num params #%d", fun_name, i);
                         show_node_type_one_line(old_fun_param_type);
                         show_node_type_one_line(new_fun_param_type);
                         return FALSE;

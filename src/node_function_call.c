@@ -971,9 +971,9 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
 
                 LLVMTypeRef llvm_type2 = create_llvm_type_from_node_type(node_type);
 
-                llvm_type2 = LLVMPointerType(llvm_type2, 0);
+                LLVMTypeRef llvm_type3 = LLVMPointerType(llvm_type2, 0);
 
-                llvm_params[i] = LLVMBuildCast(gBuilder, LLVMBitCast, llvm_params[i], llvm_type2, "icastXXX");
+                llvm_params[i] = LLVMBuildCast(gBuilder, LLVMBitCast, llvm_params[i], llvm_type3, "icastXXX");
                 llvm_params[i] = LLVMBuildLoad2(gBuilder, llvm_type2, llvm_params[i], "va_list");
             }
         }

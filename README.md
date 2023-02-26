@@ -6,7 +6,7 @@ Modern C compiler. It has a collection and string library using Boehm GC or Reff
 モダンなCコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 1.1.2
+version 1.1.3
 
 ``` C
 #include <neo-c.h>
@@ -274,7 +274,7 @@ a.c,b.c,c.c
 
 Required libraries are clang, g++, gcc, llvm-dev, pcre-dev, gc-dev, readline-dev, ncurses-dev, make, autoconf, valgrind, gdb, lldb, musl-dev(alpine linux)
 
-For Linux, WSL, MacOS(Darwin), userland(android)
+For Linux, WSL, MacOS(Darwin), userland(android), raspiberry pi
 
 Fast Build. No self host
 

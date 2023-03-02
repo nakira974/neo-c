@@ -3512,10 +3512,6 @@ LLVMTypeRef create_llvm_type_from_node_type(sNodeType* node_type)
     else if(node_type->mSizeNum > 0) {
         result_type = LLVMIntTypeInContext(gContext, node_type->mSizeNum);
     }
-    else if(node_type->mChannel) {
-        result_type = LLVMInt32TypeInContext(gContext);
-        result_type = LLVMArrayType(result_type, 2);
-    }
     else if(type_identify_with_class_name(node_type, "int")) {
         result_type = LLVMInt32TypeInContext(gContext);
     }
@@ -3696,20 +3692,6 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
 
         *right_type = clone_node_type(left_type);
     }
-    else if((type_identify_with_class_name(left_type, "int") || left_type->mSizeNum == 32) && type_identify_with_class_name(*right_type, "int") && left_type->mNoArrayPointerNum && (*right_type)->mChannel)
-    {
-        if(rvalue && rvalue->value) {
-            if(rvalue) {
-                LLVMTypeRef llvm_type = create_llvm_type_with_class_name("int*");
-                LLVMValueRef llvm_value2 = LLVMBuildCast(gBuilder, LLVMBitCast, rvalue->address, llvm_type, "castXXXY");
-                rvalue->value = llvm_value2;
-
-                *right_type = create_node_type_with_class_name("int");
-                (*right_type)->mPointerNum++;
-                rvalue->type = clone_node_type(*right_type);
-            }
-        }
-    }
 #ifdef __DARWIN__
     else if(!left_type->mHeap && type_identify_with_class_name(left_type, "void") && left_type->mPointerNum >= 1 && (*right_type)->mPointerNum > 0) {
         LLVMTypeRef llvm_type = create_llvm_type_from_node_type(left_type);
@@ -3867,17 +3849,6 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
             }
             rvalue->type = clone_node_type(left_type);
 #endif
-        }
-
-        *right_type = clone_node_type(left_type);
-    }
-    else if((left_type->mPointerNum-1 == (*right_type)->mPointerNum) && (*right_type)->mChannel) 
-    {
-        if(rvalue && rvalue->value) {
-            LLVMTypeRef llvm_type = create_llvm_type_from_node_type(left_type);
-
-            rvalue->value = LLVMBuildCast(gBuilder, LLVMBitCast, rvalue->address, llvm_type, "autocast");
-            rvalue->type = clone_node_type(left_type);
         }
 
         *right_type = clone_node_type(left_type);

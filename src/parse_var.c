@@ -555,31 +555,6 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
                 *node = sNodeTree_create_unwrap(*node, info);
             }
         }
-        /// access channel ///
-        else if(*info->p == '@') {
-            info->p++;
-            skip_spaces_and_lf(info);
-
-            int num;
-            if(*info->p == '0') {
-                info->p++;
-                skip_spaces_and_lf(info);
-
-                num = 0;
-            }
-            else if(*info->p == '1') {
-                info->p++;
-                skip_spaces_and_lf(info);
-
-                num = 1;
-            }
-            else {
-                parser_err_msg(info, "invalid channel element");
-                return FALSE;
-            }
-
-            *node = sNodeTree_create_load_channel_element(*node, num, info);
-        }
         else if(gMultDivPlusPlusEnableNode[gNodes[*node].mNodeType] && *info->p == '+' && *(info->p+1) == '+')
         {
             info->p+=2;

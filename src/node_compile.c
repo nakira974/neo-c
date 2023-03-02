@@ -219,18 +219,6 @@ BOOL compile(unsigned int node, sCompileInfo* info)
             }
             break;
 
-        case kNodeTypeComeFunctionCall:
-            if(!compile_come_function_call(node, info)) {
-                return FALSE;
-            }
-            break;
-
-        case kNodeTypeJoin:
-            if(!compile_join(node, info)) {
-                return FALSE;
-            }
-            break;
-
         case kNodeTypeLoadVariable:
             if(!compile_load_variable(node, info)) {
                 return FALSE;
@@ -435,24 +423,6 @@ BOOL compile(unsigned int node, sCompileInfo* info)
 
         case kNodeTypeCast:
             if(!compile_cast(node, info)) {
-                return FALSE;
-            }
-            break;
-
-        case kNodeTypeLoadChannelElement:
-            if(!compile_load_channel_element(node, info)) {
-                return FALSE;
-            }
-            break;
-
-        case kNodeTypeReadChannel:
-            if(!compile_read_channel(node, info)) {
-                return FALSE;
-            }
-            break;
-
-        case kNodeTypeWriteChannel:
-            if(!compile_write_channel(node, info)) {
                 return FALSE;
             }
             break;

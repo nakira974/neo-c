@@ -1,5 +1,7 @@
 #include "common.h"
 
+sNodeType* gComeFunctionResultType;
+
 unsigned int sNodeTree_create_function(char* fun_name, char* asm_fname, sParserParam* params, int num_params, sNodeType* result_type, MANAGED struct sNodeBlockStruct* node_block, BOOL lambda_, sVarTable* block_var_table, char* struct_name, BOOL operator_fun, BOOL constructor_fun, BOOL simple_lambda_param, sParserInfo* info, BOOL generics_function, BOOL var_arg, int version, BOOL finalize, int generics_fun_num, char* simple_fun_name, int sline, BOOL immutable_)
 {
     unsigned int node = alloc_node();
@@ -113,9 +115,6 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
 {
     LLVMValueRef inline_result_variable = info->inline_result_variable;
     LLVMBasicBlockRef current_block_before = info->current_block; //LLVMGetLastBasicBlock(gFunction);
-
-    int thread_num = gThreadNum;
-    gThreadNum = 0;
 
     /// get result type ///
     sNodeType* result_type = clone_node_type(gNodes[node].uValue.sFunction.mResultType);
@@ -616,8 +615,6 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
     if(lambda_) {
         llvm_change_block(current_block, info);
     }
-
-    gThreadNum = thread_num;
     
     sNodeType* return_result_type2 = clone_node_type(info->return_result_type);
 

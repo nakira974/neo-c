@@ -66,64 +66,6 @@ BOOL parse_param(sParserParam* param, sParserInfo* info)
     return TRUE;
 }
 
-BOOL parse_come_param(sParserParam* param, sParserInfo* info)
-{
-    char asm_fname[VAR_NAME_MAX];
-    asm_fname[0] = '\0';
-    BOOL flag_asm_fun_name = FALSE;
-    
-    if(*info->p == '_' && (*(info->p+1) == ' ' || *(info->p+1) == '\t' || *(info->p+1) == '\n')) {
-        info->p++;
-        skip_spaces_and_lf(info);
-        
-        param->mLabel = TRUE;
-    }
-
-    if(param->mName[0] == '\0') {
-        if(!parse_variable_name(param->mName, VAR_NAME_MAX, info, param->mType, FALSE, TRUE))
-        {
-            return FALSE;
-        }
-    }
-    
-    if(*info->p == ':') {
-        info->p++;
-        skip_spaces_and_lf(info);
-    }
-    
-    if(!parse_type(&param->mType, info, NULL, FALSE, FALSE, NULL, FALSE, FALSE, TRUE, FALSE, FALSE)) {
-        return FALSE;
-    }
-    
-    if(*info->p == '=') {
-        info->p++;
-        skip_spaces_and_lf(info);
-        
-        if(!parse_sharp(info)) {
-            return FALSE;
-        }
-        
-        char* p = info->p;
-        
-        unsigned int node = 0;
-        if(!expression(&node, FALSE, info)) {
-            return FALSE;
-        }
-        
-        char* p2 = info->p;
-        
-        if(p2 - p >= METHOD_DEFAULT_PARAM_MAX) {
-            fprintf(stderr, "overflow default parametor value\n");
-            exit(2);
-        }
-        
-        memcpy(param->mDefaultValue, p, p2 - p);
-        param->mDefaultValue[p2-p] = '\0';
-    }
-
-    return TRUE;
-}
-
 BOOL get_block_text(char* fun_name, sBuf* buf, sParserInfo* info, BOOL append_head_currly_brace)
 {
     if(append_head_currly_brace) {
@@ -309,6 +251,64 @@ BOOL parse_params(sParserParam* params, int* num_params, sParserInfo* info, int 
             }
             info->p++;
         }
+    }
+
+    return TRUE;
+}
+
+BOOL parse_come_param(sParserParam* param, sParserInfo* info)
+{
+    char asm_fname[VAR_NAME_MAX];
+    asm_fname[0] = '\0';
+    BOOL flag_asm_fun_name = FALSE;
+    
+    if(*info->p == '_' && (*(info->p+1) == ' ' || *(info->p+1) == '\t' || *(info->p+1) == '\n')) {
+        info->p++;
+        skip_spaces_and_lf(info);
+        
+        param->mLabel = TRUE;
+    }
+
+    if(param->mName[0] == '\0') {
+        if(!parse_variable_name(param->mName, VAR_NAME_MAX, info, param->mType, FALSE, TRUE))
+        {
+            return FALSE;
+        }
+    }
+    
+    if(*info->p == ':') {
+        info->p++;
+        skip_spaces_and_lf(info);
+    }
+    
+    if(!parse_type(&param->mType, info, NULL, FALSE, FALSE, NULL, FALSE, FALSE, TRUE, FALSE, FALSE)) {
+        return FALSE;
+    }
+    
+    if(*info->p == '=') {
+        info->p++;
+        skip_spaces_and_lf(info);
+        
+        if(!parse_sharp(info)) {
+            return FALSE;
+        }
+        
+        char* p = info->p;
+        
+        unsigned int node = 0;
+        if(!expression(&node, FALSE, info)) {
+            return FALSE;
+        }
+        
+        char* p2 = info->p;
+        
+        if(p2 - p >= METHOD_DEFAULT_PARAM_MAX) {
+            fprintf(stderr, "overflow default parametor value\n");
+            exit(2);
+        }
+        
+        memcpy(param->mDefaultValue, p, p2 - p);
+        param->mDefaultValue[p2-p] = '\0';
     }
 
     return TRUE;
@@ -1451,50 +1451,6 @@ BOOL parse_inherit(unsigned int* node, sParserInfo* info)
     return TRUE;
 }
 
-BOOL parse_come(unsigned int* node, sParserInfo* info)
-{
-    char buf[VAR_NAME_MAX+1];
-    if(!parse_word(buf, VAR_NAME_MAX, info, TRUE, FALSE))
-    {
-        return FALSE;
-    }
-
-    if(strcmp(buf, "join") == 0) {
-        *node = sNodeTree_create_join(info);
-    }
-    else if(strcmp(buf, "select") == 0) {
-        if(!parse_select(node, info)) {
-            return FALSE;
-        }
-    }
-    else if(strcmp(buf, "pselect") == 0) {
-        if(!parse_pselect(node, info)) {
-            return FALSE;
-        }
-    }
-    else {
-        char* fun_name = buf;
-
-        unsigned int params[PARAMS_MAX];
-        int num_params = 0;
-
-        if(!parse_funcation_call_params(&num_params, params, info)) 
-        {
-            return FALSE;
-        }
-
-        *node = sNodeTree_create_come_function_call(fun_name, params, num_params, info);
-        
-        if(*info->p == '!' && *(info->p+1) != '=') {
-            info->p++;
-            skip_spaces_and_lf(info);
-            
-            *node = sNodeTree_create_unwrap(*node, info);
-        }
-    }
-    
-    return TRUE;
-}
 
 BOOL parse_macro(unsigned int* node, sParserInfo* info)
 {

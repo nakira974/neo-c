@@ -510,7 +510,6 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                     long_long = TRUE;
                 }
 
-                channel = (*result_type)->mChannel;
                 nullable_ = (*result_type)->mNullable;
                 no_heap = (*result_type)->mNoHeap;
                 refference = (*result_type)->mRefference;
@@ -1400,7 +1399,6 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
     (*result_type)->mPointerNum = pointer_num;
     
     
-    (*result_type)->mChannel = channel;
     (*result_type)->mNullable = nullable_;
     (*result_type)->mNoHeap = no_heap;
     (*result_type)->mRefference = refference;

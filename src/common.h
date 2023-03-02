@@ -207,7 +207,6 @@ struct sNodeTypeStruct {
     BOOL mStatic;
     BOOL mUniq;
     int mSizeNum;
-    BOOL mChannel;
     BOOL mImmutable;
 
     struct sNodeTypeStruct* mParamTypes[PARAMS_MAX];

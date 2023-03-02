@@ -83,7 +83,6 @@ sNodeType* clone_node_type(sNodeType* node_type)
     node_type2->mNullable = node_type->mNullable;
     node_type2->mGuarded = node_type->mGuarded;
     node_type2->mImmutable = node_type->mImmutable;
-    node_type2->mChannel = node_type->mChannel;
     node_type2->mPointerNum = node_type->mPointerNum;
     node_type2->mHeap = node_type->mHeap;
     node_type2->mAllocaValue = node_type->mAllocaValue;
@@ -205,9 +204,6 @@ void show_type_core(sNodeType* type, int* num_classes, char** classes, BOOL no_o
     }
     if(type->mImmutable) {
         printf(" immutable ");
-    }
-    if(type->mChannel) {
-        printf("@");
     }
     if(type->mNumParams > 0) printf("(");
 /*
@@ -351,7 +347,6 @@ static sNodeType* parse_class_name(char** p, char** p2, char* buf)
     node_type->mArrayDimentionNum = 0;
     node_type->mNullable = FALSE;
     node_type->mImmutable = FALSE;
-    node_type->mChannel = FALSE;
 
     *p2 = buf;
 
@@ -419,12 +414,6 @@ static sNodeType* parse_class_name(char** p, char** p2, char* buf)
             skip_spaces_for_parse_class_name(p);
 
             node_type->mNullable = TRUE;
-        }
-        else if(**p == '~') {
-            (*p)++;
-            skip_spaces_for_parse_class_name(p);
-
-            node_type->mChannel = TRUE;
         }
         else if(**p == '*') {
             (*p)++;
@@ -586,9 +575,6 @@ BOOL auto_cast_posibility(sNodeType* left_type, sNodeType* right_type, BOOL op)
     else if(type_identify(left_type, right_type) && (left_class->mFlags & CLASS_FLAGS_UNION) && (right_class->mFlags & CLASS_FLAGS_UNION)) {
         return TRUE;
     }
-    else if(type_identify(left_type, right_type) && right_type->mChannel) {
-        return TRUE;
-    }
     else if(is_number_type(left_type) && is_number_type(right_type)) {
         return TRUE;
     }
@@ -690,10 +676,6 @@ BOOL auto_cast_posibility(sNodeType* left_type, sNodeType* right_type, BOOL op)
         return TRUE;
     }
     else if(left_type->mPointerNum == 1 && left_type->mArrayDimentionNum == 1 && right_type->mArrayDimentionNum == 2 && right_type->mPointerNum == 0) {
-        return TRUE;
-    }
-    else if((left_type->mPointerNum-1 == right_type->mPointerNum) && right_type->mChannel == 1)
-    {
         return TRUE;
     }
 
@@ -912,7 +894,6 @@ BOOL solve_generics(sNodeType** node_type, sNodeType* generics_type)
             }
             BOOL nullable_ = (*node_type)->mNullable;
             BOOL immutable_ = (*node_type)->mImmutable;
-            BOOL channel = (*node_type)->mChannel;
             int pointer_num = (*node_type)->mPointerNum;
             BOOL heap = (*node_type)->mHeap;
 
@@ -935,9 +916,6 @@ BOOL solve_generics(sNodeType** node_type, sNodeType* generics_type)
             }
             if(immutable_) {
                 (*node_type)->mImmutable = immutable_;
-            }
-            if(channel) {
-                (*node_type)->mChannel = channel;
             }
             if(array_dimetion_num > 0) {
                 (*node_type)->mArrayDimentionNum = array_dimetion_num;
@@ -1024,7 +1002,6 @@ BOOL solve_method_generics(sNodeType** node_type, int num_method_generics_types,
             BOOL immutable_ = (*node_type)->mImmutable;
             int pointer_num = (*node_type)->mPointerNum;
             BOOL heap = (*node_type)->mHeap;
-            BOOL channel = (*node_type)->mChannel;
 
             BOOL no_heap = (*node_type)->mNoHeap;
             BOOL refference = (*node_type)->mRefference;
@@ -1042,9 +1019,6 @@ BOOL solve_method_generics(sNodeType** node_type, int num_method_generics_types,
             }
             if(nullable_) {
                 (*node_type)->mNullable = nullable_;
-            }
-            if(channel) {
-                (*node_type)->mChannel = channel;
             }
             if(immutable_) {
                 (*node_type)->mImmutable = immutable_;
@@ -1365,9 +1339,6 @@ void create_type_name_from_node_type(char* type_name, int type_name_max, sNodeTy
     }
     if(node_type->mHeap) {
         xstrncat(type_name, "%", type_name_max);
-    }
-    if(node_type->mChannel) {
-        xstrncat(type_name, "~", type_name_max);
     }
     if(node_type->mNumGenericsTypes > 0) {
         xstrncat(type_name, "<", type_name_max);

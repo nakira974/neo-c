@@ -374,6 +374,44 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
 
         *node = sNodeTree_create_sub(left_node2, right_node2, 0, FALSE, info);
     }
+    else if(*info->p == '@') {
+        info->p++;
+        skip_spaces_and_lf(info);
+        
+        BOOL in_derefference = info->in_derefference;
+        info->in_derefference = TRUE;
+        
+        if(!expression_node(node, FALSE, info)) 
+        {
+            return FALSE;
+        }
+        
+        info->in_derefference = in_derefference;
+
+        if(*node == 0) {
+            parser_err_msg(info, "require value for @");
+        }
+
+        if(*info->p == '=' && *(info->p+1) != '=') {
+            info->p++;
+            skip_spaces_and_lf(info);
+
+            unsigned int node2 = 0;
+            if(!expression(&node2, FALSE, info)) 
+            {
+                return FALSE;
+            }
+
+            if(node2 == 0) {
+                parser_err_msg(info, "require right value for =");
+            };
+
+            *node = sNodeTree_create_write_channel(*node, node2, info);
+        }
+        else {
+            *node = sNodeTree_create_read_channel(*node, info);
+        }
+    }
     else if(*info->p == '-' && *(info->p+1) == '-')
     {
         info->p+=2;

@@ -1,14 +1,14 @@
 #include <neo-c.h>
 #include "common.h"
 
-private struct sWhileNode
+ struct sWhileNode
 {
     int id;
     sNode*% while_exp;
     sNodeBlock while_block;
 };
 
-private sWhileNode*% sWhileNode*::initialize(sWhileNode*% self, sNode*% while_exp, sNodeBlock while_block)
+ sWhileNode*% sWhileNode*::initialize(sWhileNode*% self, sNode*% while_exp, sNodeBlock while_block)
 {
     self.id = gNodeID++;
     self.while_exp = while_exp;
@@ -17,12 +17,12 @@ private sWhileNode*% sWhileNode*::initialize(sWhileNode*% self, sNode*% while_ex
     return self;
 }
 
-private unsigned int sWhileNode*::id(sWhileNode* self)
+ unsigned int sWhileNode*::id(sWhileNode* self)
 {
     return self.id;
 }
 
-private bool sWhileNode*::compile(sWhileNode* self, sInfo* info)
+ bool sWhileNode*::compile(sWhileNode* self, sInfo* info)
 {
     sNode* while_exp = self.while_exp;
     sNodeBlock& while_block = self.while_block;
@@ -69,24 +69,24 @@ private bool sWhileNode*::compile(sWhileNode* self, sInfo* info)
     return true;
 }
 
-private struct sBreakNode
+ struct sBreakNode
 {
     int id;
     bool dummy;
 };
 
-private sBreakNode*% sBreakNode*::initialize(sBreakNode*% self)
+ sBreakNode*% sBreakNode*::initialize(sBreakNode*% self)
 {
     self.id = gNodeID++;
     return self;
 }
 
-private unsigned int sBreakNode*::id(sBreakNode* self)
+ unsigned int sBreakNode*::id(sBreakNode* self)
 {
     return self.id;
 }
 
-private bool sBreakNode*::compile(sBreakNode* self, sInfo* info)
+ bool sBreakNode*::compile(sBreakNode* self, sInfo* info)
 {
     if(info->breaks == null) {
         fprintf(stderr, "not in aloop for break\n");

@@ -25,13 +25,13 @@ wstring get_str_from_codes(sInfo* info)
     return str2;
 }
 
-private struct sStrNode
+ struct sStrNode
 {
     int id;
     wstring value;
 };
 
-private sStrNode*% sStrNode*::initialize(sStrNode*% self, wstring value)
+ sStrNode*% sStrNode*::initialize(sStrNode*% self, wstring value)
 {
     self.value = value;
     self.id = gNodeID++;
@@ -39,12 +39,12 @@ private sStrNode*% sStrNode*::initialize(sStrNode*% self, wstring value)
     return self;
 }
 
-private unsigned int sStrNode*::id(sStrNode* self)
+ unsigned int sStrNode*::id(sStrNode* self)
 {
     return self.id;
 }
 
-private bool sStrNode*::compile(sStrNode* self, sInfo* info)
+ bool sStrNode*::compile(sStrNode* self, sInfo* info)
 {
     info.codes.append_int(OP_STR_VALUE);
     

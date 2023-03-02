@@ -1,11 +1,7 @@
 #include <neo-c.h>
 #include "common.h"
 
-public {
-typedef vector<sNode*%>*% sNodeBlock;
-}
-
-private struct sIfNode
+ struct sIfNode
 {
     int id;
     sNode*% if_exp;
@@ -15,7 +11,7 @@ private struct sIfNode
     sNodeBlock? else_block;
 };
 
-private sIfNode*% sIfNode*::initialize(sIfNode*% self, sNode*% if_exp, sNodeBlock if_block, vector<sNode*%>*% elif_exps
+ sIfNode*% sIfNode*::initialize(sIfNode*% self, sNode*% if_exp, sNodeBlock if_block, vector<sNode*%>*% elif_exps
                                 , vector<sNodeBlock>*% elif_blocks, sNodeBlock? else_block)
 {
     self.id = gNodeID++;
@@ -28,29 +24,29 @@ private sIfNode*% sIfNode*::initialize(sIfNode*% self, sNode*% if_exp, sNodeBloc
     return self;
 }
 
-private unsigned int sIfNode*::id(sIfNode* self)
+ unsigned int sIfNode*::id(sIfNode* self)
 {
     return self.id;
 }
 
-private struct sTrueNode
+ struct sTrueNode
 {
     int id;
     bool dummy;
 };
 
-private sTrueNode*% sTrueNode*::initialize(sTrueNode*% self)
+ sTrueNode*% sTrueNode*::initialize(sTrueNode*% self)
 {
     self.id = gNodeID++;
     return self;
 }
 
-private unsigned int sTrueNode*::id(sTrueNode* self)
+ unsigned int sTrueNode*::id(sTrueNode* self)
 {
     return self.id;
 }
 
-private bool sTrueNode*::compile(sTrueNode* self, sInfo* info)
+ bool sTrueNode*::compile(sTrueNode* self, sInfo* info)
 {
     info.codes.append_int(OP_TRUE_VALUE);
     
@@ -59,24 +55,24 @@ private bool sTrueNode*::compile(sTrueNode* self, sInfo* info)
     return true;
 }
 
-private struct sFalseNode
+ struct sFalseNode
 {
     int id;
     bool dummy;
 };
 
-private sFalseNode*% sFalseNode*::initialize(sFalseNode*% self)
+ sFalseNode*% sFalseNode*::initialize(sFalseNode*% self)
 {
     self.id = gNodeID++;
     return self;
 }
 
-private unsigned int sFalseNode*::id(sTrueNode* self)
+ unsigned int sFalseNode*::id(sTrueNode* self)
 {
     return self.id;
 }
 
-private bool sFalseNode*::compile(sFalseNode* self, sInfo* info)
+ bool sFalseNode*::compile(sFalseNode* self, sInfo* info)
 {
     info.codes.append_int(OP_FALSE_VALUE);
     
@@ -99,7 +95,7 @@ bool compile_block(sNodeBlock& block, sInfo* info)
     return true;
 }
 
-private bool sIfNode*::compile(sIfNode* self, sInfo* info)
+ bool sIfNode*::compile(sIfNode* self, sInfo* info)
 {
     sNode* if_exp = self.if_exp;
     sNodeBlock& if_block = self.if_block;

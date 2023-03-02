@@ -4,7 +4,6 @@
 ////////////////////////////
 #include <neo-c.h>
 
-
 struct sInfo;
 
 extern int gNodeID;

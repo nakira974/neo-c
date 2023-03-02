@@ -1,7 +1,7 @@
 #include <neo-c.h>
 #include "common.h"
 
-private struct sFunNode
+ struct sFunNode
 {
     int id;
     sNode*% obj;
@@ -10,7 +10,7 @@ private struct sFunNode
     sNodeBlock? block;
 };
 
-private sFunNode*% sFunNode*::initialize(sFunNode*% self, string name, sNode*% obj, vector<sNode*%>*% params, sNodeBlock? block)
+ sFunNode*% sFunNode*::initialize(sFunNode*% self, string name, sNode*% obj, vector<sNode*%>*% params, sNodeBlock? block)
 {
     self.id = gNodeID++;
     self.name = name;
@@ -21,12 +21,12 @@ private sFunNode*% sFunNode*::initialize(sFunNode*% self, string name, sNode*% o
     return self;
 }
 
-private unsigned int sFunNode*::id(sFunNode* self)
+ unsigned int sFunNode*::id(sFunNode* self)
 {
     return self.id;
 }
 
-private bool sFunNode*::compile(sFunNode* self, sInfo* info)
+ bool sFunNode*::compile(sFunNode* self, sInfo* info)
 {
     char* name = self.name;
     vector<sNode*%>* params = self.params;

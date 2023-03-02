@@ -1,14 +1,14 @@
 #include <neo-c.h>
 #include "common.h"
 
-private struct sStoreNode
+ struct sStoreNode
 {
     int id;
     wstring var_name;
     sNode*% right;
 };
 
-private sStoreNode*% sStoreNode*::initialize(sStoreNode*% self, wstring var_name, sNode*% right)
+ sStoreNode*% sStoreNode*::initialize(sStoreNode*% self, wstring var_name, sNode*% right)
 {
     self.id = gNodeID++;
     self.var_name = var_name;
@@ -17,7 +17,7 @@ private sStoreNode*% sStoreNode*::initialize(sStoreNode*% self, wstring var_name
     return self;
 }
 
-private bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
+ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
 {
     if(!self.right.compile->(info)) {
         return false;
@@ -31,18 +31,18 @@ private bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
     return true;
 }
 
-private unsigned int sStoreNode*::id(sStoreNode* self)
+ unsigned int sStoreNode*::id(sStoreNode* self)
 {
     return self.id;
 }
 
-private struct sLoadNode
+ struct sLoadNode
 {
     int id;
     wstring var_name;
 };
 
-private sLoadNode*% sLoadNode*::initialize(sLoadNode*% self, wstring var_name)
+ sLoadNode*% sLoadNode*::initialize(sLoadNode*% self, wstring var_name)
 {
     self.id = gNodeID++;
     self.var_name = var_name;
@@ -50,7 +50,7 @@ private sLoadNode*% sLoadNode*::initialize(sLoadNode*% self, wstring var_name)
     return self;
 }
 
-private bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
+ bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
 {
     info.codes.append_int(OP_LOAD);
     
@@ -61,19 +61,19 @@ private bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
     return true;
 }
 
-private unsigned int sLoadNode*::id(sLoadNode* self)
+ unsigned int sLoadNode*::id(sLoadNode* self)
 {
     return self.id;
 }
 
-private struct sLoadElementNode
+ struct sLoadElementNode
 {
     int id;
     string var_name;
     sNode*% index;
 };
 
-private sLoadElementNode*% sLoadElementNode*::initialize(sLoadElementNode*% self, string var_name, sNode*% index)
+ sLoadElementNode*% sLoadElementNode*::initialize(sLoadElementNode*% self, string var_name, sNode*% index)
 {
     self.id = gNodeID++;
     
@@ -83,12 +83,12 @@ private sLoadElementNode*% sLoadElementNode*::initialize(sLoadElementNode*% self
     return self;
 }
 
-private unsigned int sLoadElementNode*::id(sLoadElementNode* self)
+ unsigned int sLoadElementNode*::id(sLoadElementNode* self)
 {
     return self.id;
 }
 
-private bool sLoadElementNode*::compile(sLoadElementNode* self, sInfo* info)
+ bool sLoadElementNode*::compile(sLoadElementNode* self, sInfo* info)
 {
     sNode* index = self.index;
     
@@ -106,7 +106,7 @@ private bool sLoadElementNode*::compile(sLoadElementNode* self, sInfo* info)
     return true;
 }
 
-private struct sStoreElementNode
+ struct sStoreElementNode
 {
     int id;
     string var_name;
@@ -114,7 +114,7 @@ private struct sStoreElementNode
     sNode*% right;
 };
 
-private sStoreElementNode*% sStoreElementNode*::initialize(sStoreElementNode*% self, string var_name, sNode*% index, sNode*% right)
+ sStoreElementNode*% sStoreElementNode*::initialize(sStoreElementNode*% self, string var_name, sNode*% index, sNode*% right)
 {
     self.id = gNodeID++;
     
@@ -125,12 +125,12 @@ private sStoreElementNode*% sStoreElementNode*::initialize(sStoreElementNode*% s
     return self;
 }
 
-private unsigned int sStoreElementNode*::id(sStoreElementNode* self)
+ unsigned int sStoreElementNode*::id(sStoreElementNode* self)
 {
     return self.id;
 }
 
-private bool sStoreElementNode*::compile(sStoreElementNode* self, sInfo* info)
+ bool sStoreElementNode*::compile(sStoreElementNode* self, sInfo* info)
 {
     sNode* index = self.index;
     
@@ -153,7 +153,7 @@ private bool sStoreElementNode*::compile(sStoreElementNode* self, sInfo* info)
     return true;
 }
 
-private map<wstring, ZVALUE*%>* gVars;
+ map<wstring, ZVALUE*%>* gVars;
 
 ZVALUE gNullValue;
 

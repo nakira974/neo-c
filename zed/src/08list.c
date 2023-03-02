@@ -1,13 +1,13 @@
 #include <neo-c.h>
 #include "common.h"
 
-private struct sListNode
+ struct sListNode
 {
     int id;
     list<sNode*%>*% value;
 };
 
-private sListNode*% sListNode*::initialize(sListNode*% self, list<sNode*%>*% value)
+ sListNode*% sListNode*::initialize(sListNode*% self, list<sNode*%>*% value)
 {
     self.id = gNodeID++;
     self.value = value;
@@ -15,12 +15,12 @@ private sListNode*% sListNode*::initialize(sListNode*% self, list<sNode*%>*% val
     return self;
 }
 
-private unsigned int sListNode*::id(sListNode* self)
+ unsigned int sListNode*::id(sListNode* self)
 {
     return self.id;
 }
 
-private bool sListNode*::compile(sListNode* self, sInfo* info)
+ bool sListNode*::compile(sListNode* self, sInfo* info)
 {
     list<sNode*%>* list = self.value;
     
@@ -41,13 +41,13 @@ private bool sListNode*::compile(sListNode* self, sInfo* info)
     return true;
 }
 
-private struct sMapNode
+ struct sMapNode
 {
     int id;
     map<sNode*%, sNode*%>*% value;
 };
 
-private sMapNode*% sMapNode*::initialize(sMapNode*% self, map<sNode*%, sNode*%>*% value)
+ sMapNode*% sMapNode*::initialize(sMapNode*% self, map<sNode*%, sNode*%>*% value)
 {
     self.id = gNodeID++;
     self.value = value;
@@ -55,12 +55,12 @@ private sMapNode*% sMapNode*::initialize(sMapNode*% self, map<sNode*%, sNode*%>*
     return self;
 }
 
-private unsigned int sMapNode*::id(sMapNode* self)
+ unsigned int sMapNode*::id(sMapNode* self)
 {
     return self.id;
 }
 
-private bool sMapNode*::compile(sMapNode* self, sInfo* info)
+ bool sMapNode*::compile(sMapNode* self, sInfo* info)
 {
     map<sNode*%, sNode*%>* map = self.value;
     

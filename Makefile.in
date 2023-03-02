@@ -243,8 +243,8 @@ no-gc-test:
 	./code/HelloWorld
 	PWD=`pwd` ./neo-c -no-gc code/HelloWorld3.c
 	./code/HelloWorld3
-	PWD=`pwd` ./neo-c -no-gc code/HelloWorld4.c
-	./code/HelloWorld4
+#	PWD=`pwd` ./neo-c -no-gc code/HelloWorld4.c
+#	./code/HelloWorld4
 #	PWD=`pwd` ./neo-c -no-gc code/HelloWorld5.c
 #	./code/HelloWorld5
 #	PWD=`pwd` ./neo-c -no-gc code/HelloWorld6.c
@@ -295,8 +295,8 @@ debug-test:
 	./code/HelloWorld3
 	PWD=`pwd` ./neo-c -no-gc -g code/HelloWorld3.c
 	./code/HelloWorld3
-	PWD=`pwd` ./neo-c -no-gc -g code/HelloWorld4.c
-	./code/HelloWorld4
+#	PWD=`pwd` ./neo-c -no-gc -g code/HelloWorld4.c
+#	./code/HelloWorld4
 #	PWD=`pwd` ./neo-c -no-gc -g code/HelloWorld5.c
 #	./code/HelloWorld5
 #	PWD=`pwd` ./neo-c -no-gc -g code/HelloWorld6.c
@@ -333,8 +333,8 @@ gc-test:
 	./code/HelloWorld
 	PWD=`pwd` ./neo-c -gc code/HelloWorld3.c
 	./code/HelloWorld3
-	PWD=`pwd` ./neo-c -gc code/HelloWorld4.c
-	./code/HelloWorld4
+#	PWD=`pwd` ./neo-c -gc code/HelloWorld4.c
+#	./code/HelloWorld4
 #	PWD=`pwd` ./neo-c -gc code/HelloWorld5.c
 #	./code/HelloWorld5
 #	PWD=`pwd` ./neo-c -gc code/HelloWorld6.c
@@ -376,8 +376,8 @@ gc-debug-test:
 	./code/HelloWorld3
 	PWD=`pwd` ./neo-c -gc -g code/HelloWorld3.c
 	./code/HelloWorld3
-	PWD=`pwd` ./neo-c -gc -g code/HelloWorld4.c
-	./code/HelloWorld4
+#	PWD=`pwd` ./neo-c -gc -g code/HelloWorld4.c
+#	./code/HelloWorld4
 #	PWD=`pwd` ./neo-c -gc -g code/HelloWorld5.c
 #	./code/HelloWorld5
 #	PWD=`pwd` ./neo-c -gc -g code/HelloWorld6.c

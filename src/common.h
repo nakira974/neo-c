@@ -1318,7 +1318,7 @@ unsigned int sNodeTree_create_load_field(char* name, unsigned int left_node, sPa
 unsigned int sNodeTree_create_cast(sNodeType* left_type, unsigned int left_node, sParserInfo* info);
 unsigned int sNodeTree_create_typedef(char* name, sNodeType* node_type, sParserInfo* info);
 unsigned int sNodeTree_create_write_channel(unsigned int address_node, unsigned int right_node, sParserInfo* info);
-unsigned int sNodeTree_create_read_channel(unsigned int left_node, sParserInfo* info);
+unsigned int sNodeTree_create_read_channel(unsigned int left_node, char* var_name, sParserInfo* info);
 unsigned int sNodeTree_create_borrow(unsigned int object_node, sParserInfo* info);
 unsigned int sNodeTree_create_nomove(unsigned int object_node, sParserInfo* info);
 unsigned int sNodeTree_create_dummy_heap(unsigned int object_node, sParserInfo* info);

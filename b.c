@@ -1,15 +1,11 @@
-#include <neo-c.h>
-
-struct sData 
-{
-    int a;
-    string b;
-};
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 int main()
 {
-    sData*% data = new sData;
-    data.b = string("AAA");
+    int a[2];
+    pipe(a);
     
     return 0;
 }

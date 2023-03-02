@@ -1,918 +1,178 @@
-==4217== Memcheck, a memory error detector
-==4217== Copyright (C) 2002-2011, and GNU GPL'd, by Julian Seward et al.
-==4217== Using Valgrind-3.7.0 and LibVEX; rerun with -h for copyright info
-==4217== Command: zed "AAA".sub_block(/A/g)\ {\ it.lower_case()\ }
-==4217== 
---4217-- WARNING: Serious error when reading debug info
---4217-- When reading debug info from /usr/lib/arm-linux-gnueabihf/ld-2.31.so:
---4217-- Ignoring non-Dwarf2/3/4 block in .debug_info
---4217-- WARNING: Serious error when reading debug info
---4217-- When reading debug info from /usr/lib/arm-linux-gnueabihf/ld-2.31.so:
---4217-- Last block truncated in .debug_info; ignoring
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401BFA0: index (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401BFA4: index (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x400876C: _dl_dst_count (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x40089B8: expand_dynamic_string_token (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401C460: strlen (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401C464: strlen (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x4019814: malloc (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x4019820: malloc (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CF18: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CF38: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CF48: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CF64: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CF8C: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x401CF8C: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x401CFB4: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CFC8: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CFCC: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CFD8: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401994C: calloc (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x4019858: malloc (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401BB30: mmap (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Syscall param mmap2(start) contains uninitialised byte(s)
-==4217==    at 0x401BB44: mmap (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Syscall param mmap2(length) contains uninitialised byte(s)
-==4217==    at 0x401BB44: mmap (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Syscall param mmap2(offset) contains uninitialised byte(s)
-==4217==    at 0x401BB44: mmap (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x40197F0: malloc (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x400C638: _dl_new_object (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x401CF60: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400C5C8: _dl_new_object (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400C5E0: _dl_new_object (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401C3EC: strdup (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CF88: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x401CF88: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x401CFB0: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x40094D0: _dl_map_object (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Syscall param openat(filename) contains uninitialised byte(s)
-==4217==    at 0x401B8C0: __open64_nocancel (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401998C: free (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x400C3C4: _dl_new_object (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400C3D8: _dl_new_object (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400C3F0: _dl_new_object (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400C410: _dl_new_object (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400C438: _dl_new_object (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400C4C8: _dl_new_object (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400C4DC: _dl_new_object (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400C4FC: _dl_new_object (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400C518: _dl_new_object (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x401C410: strlen (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x401C428: strlen (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x401CF58: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400C5E4: _dl_new_object (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x4007460: _dl_map_object_from_fd (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4007480: _dl_map_object_from_fd (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4007494: _dl_map_object_from_fd (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x40074B4: _dl_map_object_from_fd (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x40077DC: _dl_map_object_from_fd (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x40077F0: _dl_map_object_from_fd (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4007584: _dl_map_object_from_fd (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4007600: _dl_map_object_from_fd (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4007618: _dl_map_object_from_fd (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4007628: _dl_map_object_from_fd (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4007F28: _dl_map_object_from_fd (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4007704: _dl_map_object_from_fd (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x4012004: _dl_name_match_p (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4012018: _dl_name_match_p (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x401BFF0: strcmp (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x401200C: _dl_name_match_p (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x40146F0: _dl_get_origin (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x401CFB8: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x401CFBC: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x401CFD8: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x401CFDC: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4014704: _dl_get_origin (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x4008A60: expand_dynamic_string_token (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x4008A18: expand_dynamic_string_token (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4008848: _dl_dst_substitute (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x401C04C: strcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x40088C8: _dl_dst_substitute (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CF94: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x401CF94: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x40099FC: _dl_map_object (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x401D210: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x401CFD4: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
---4217-- WARNING: Serious error when reading debug info
---4217-- When reading debug info from /usr/lib/arm-linux-gnueabihf/libutil-2.31.so:
---4217-- Ignoring non-Dwarf2/3/4 block in .debug_info
---4217-- WARNING: Serious error when reading debug info
---4217-- When reading debug info from /usr/lib/arm-linux-gnueabihf/libutil-2.31.so:
---4217-- Last block truncated in .debug_info; ignoring
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CF70: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
---4217-- WARNING: Serious error when reading debug info
---4217-- When reading debug info from /usr/lib/arm-linux-gnueabihf/libm-2.31.so:
---4217-- Ignoring non-Dwarf2/3/4 block in .debug_info
---4217-- WARNING: Serious error when reading debug info
---4217-- When reading debug info from /usr/lib/arm-linux-gnueabihf/libm-2.31.so:
---4217-- Last block truncated in .debug_info; ignoring
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x401D168: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CF90: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x401CF90: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CFD0: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CFD4: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CFDC: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x40078CC: _dl_map_object_from_fd (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4007748: _dl_map_object_from_fd (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
---4217-- WARNING: Serious error when reading debug info
---4217-- When reading debug info from /usr/lib/arm-linux-gnueabihf/libc-2.31.so:
---4217-- Ignoring non-Dwarf2/3/4 block in .debug_info
---4217-- WARNING: Serious error when reading debug info
---4217-- When reading debug info from /usr/lib/arm-linux-gnueabihf/libc-2.31.so:
---4217-- Last block truncated in .debug_info; ignoring
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x400F2E0: _dl_map_object_deps (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400F2F4: _dl_map_object_deps (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x4019898: malloc (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CF24: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
---4217-- WARNING: Serious error when reading debug info
---4217-- When reading debug info from /usr/lib/arm-linux-gnueabihf/libdl-2.31.so:
---4217-- Ignoring non-Dwarf2/3/4 block in .debug_info
---4217-- WARNING: Serious error when reading debug info
---4217-- When reading debug info from /usr/lib/arm-linux-gnueabihf/libdl-2.31.so:
---4217-- Last block truncated in .debug_info; ignoring
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x401CFA8: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x401CFAC: memcpy (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x400F6C0: _dl_map_object_deps (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400F6F4: _dl_map_object_deps (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400F728: _dl_map_object_deps (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x40176D8: _dl_sort_maps (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== 
-==4217== More than 100 errors detected.  Subsequent errors
-==4217== will still be recorded, but in less detail than before.
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x40176F8: _dl_sort_maps (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CB78: memmove (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4017790: _dl_sort_maps (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400FAC8: _dl_map_object_deps (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4003B60: dl_main (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x4003B74: dl_main (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4003BD0: dl_main (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4003BE8: dl_main (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4003C14: dl_main (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4012394: _dl_check_map_versions (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x40123B0: _dl_check_map_versions (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x40123C8: _dl_check_map_versions (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x40127FC: _dl_check_map_versions (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4012870: _dl_check_map_versions (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x40128EC: _dl_check_map_versions (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400114C: init_tls (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4001178: init_tls (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x4013B64: _dl_determine_tlsoffset (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4013B68: _dl_determine_tlsoffset (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4013B74: _dl_determine_tlsoffset (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4013B88: _dl_determine_tlsoffset (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4013C6C: _dl_determine_tlsoffset (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x4013D94: _dl_allocate_tls_storage (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401D3D4: __udivsi3 (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CEA0: memset (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CEA8: memset (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CEC0: memset (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x401CEC0: memset (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CEC8: memset (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CED0: memset (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CED8: memset (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CEDC: memset (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CEE8: memset (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CEF0: memset (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CEF8: memset (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CF00: memset (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401CF04: memset (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4013DCC: _dl_allocate_tls_storage (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x4013DE0: _dl_allocate_tls_storage (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4013DE0: _dl_allocate_tls_storage (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4013DE4: _dl_allocate_tls_storage (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x4013DE8: _dl_allocate_tls_storage (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x40011A8: init_tls (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x40011B0: init_tls (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Syscall param set_tls(addr) contains uninitialised byte(s)
-==4217==    at 0x40011C4: init_tls (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x40048F4: dl_main (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x40048FC: dl_main (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400D564: _dl_relocate_object (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x400B048: _dl_lookup_symbol_x (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400B060: _dl_lookup_symbol_x (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400A4C4: do_lookup_x (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x400A4D0: do_lookup_x (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400A4EC: do_lookup_x (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400A448: do_lookup_x (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400A454: do_lookup_x (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400A488: do_lookup_x (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400A680: do_lookup_x (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400A690: do_lookup_x (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400A6F0: do_lookup_x (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400A2A4: check_match (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x400A2A8: check_match (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400A2BC: check_match (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400A2C4: check_match (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400A2D4: check_match (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400A378: check_match (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400A37C: check_match (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400B12C: _dl_lookup_symbol_x (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400B13C: _dl_lookup_symbol_x (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400D734: _dl_relocate_object (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400D8C0: _dl_relocate_object (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400B09C: _dl_lookup_symbol_x (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x40144B4: _dl_add_to_slotinfo (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x40144D8: _dl_add_to_slotinfo (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400A2E0: check_match (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x400E688: _dl_relocate_object (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x4013E2C: _dl_allocate_tls_init (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4013E34: _dl_allocate_tls_init (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4013E3C: _dl_allocate_tls_init (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4013E78: _dl_allocate_tls_init (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4013E94: _dl_allocate_tls_init (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4013EA0: _dl_allocate_tls_init (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4013EC4: _dl_allocate_tls_init (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4013F30: _dl_allocate_tls_init (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4013F50: _dl_allocate_tls_init (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4010910: _dl_fixup (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x401099C: _dl_fixup (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x401099C: _dl_fixup (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x40170A8: _dl_runtime_resolve (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x485DAA0: ??? (in /usr/lib/arm-linux-gnueabihf/libarmmem-v6l.so)
-==4217==    by 0x49E1553: __libc_sigaction (sigaction.c:51)
-==4217==    by 0x49D1A73: __pthread_initialize_minimal (nptl-init.c:295)
-==4217==    by 0x49D116F: ??? (in /usr/lib/arm-linux-gnueabihf/libpthread-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4011414: _dl_init (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4A563F4: getenv (in /usr/lib/arm-linux-gnueabihf/libc-2.31.so)
-==4217== 
---4217-- WARNING: unhandled syscall: 403
---4217-- You may be able to write your own handler.
---4217-- Read the file README_MISSING_SYSCALL_OR_IOCTL.
---4217-- Nevertheless we consider this a bug.  Please report
---4217-- it at http://valgrind.org/support/bug_reports.html.
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x49829F8: GC_exclude_static_roots_inner (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4A9BDC4: malloc (in /usr/lib/arm-linux-gnueabihf/libc-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4A853B4: getdelim (in /usr/lib/arm-linux-gnueabihf/libc-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4A6CEE8: __isoc99_sscanf (in /usr/lib/arm-linux-gnueabihf/libc-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4A9C498: free (in /usr/lib/arm-linux-gnueabihf/libc-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x485E8D4: ??? (in /usr/lib/arm-linux-gnueabihf/libarmmem-v6l.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x497D56C: GC_scratch_alloc (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4986FDC: GC_unix_get_mem (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4986E90: GC_unix_mmap_get_mem (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4AFE728: mmap (in /usr/lib/arm-linux-gnueabihf/libc-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x49776F0: GC_clear_bl (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4A96A1C: pthread_self (in /usr/lib/arm-linux-gnueabihf/libc-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4982930: GC_approx_sp (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4A55040: sigdelset (in /usr/lib/arm-linux-gnueabihf/libc-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x49E1668: sigaction (sigaction.c:24)
-==4217==    by 0x498DA5F: GC_stop_init (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4A54F74: sigfillset (in /usr/lib/arm-linux-gnueabihf/libc-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x498CDE8: GC_remove_allowed_signals (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4A54FC8: sigaddset (in /usr/lib/arm-linux-gnueabihf/libc-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x49E07B8: open (open.c:33)
-==4217==    by 0x498AA7B: GC_get_nprocs (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x49DFF1C: read (read.c:25)
-==4217==    by 0x498AA9B: GC_get_nprocs (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x49DFFC8: close (close.c:27)
-==4217==    by 0x498AAA7: GC_get_nprocs (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4979930: GC_register_main_static_data (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x498296C: GC_next_exclusion (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x485E198: ??? (in /usr/lib/arm-linux-gnueabihf/libarmmem-v6l.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4B3DA70: dl_iterate_phdr (in /usr/lib/arm-linux-gnueabihf/libc-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x40143E8: _dl_tls_get_addr_soft (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4014408: _dl_tls_get_addr_soft (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4014418: _dl_tls_get_addr_soft (in /usr/lib/arm-linux-gnueabihf/ld-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4982260: GC_add_roots_inner (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4982208: GC_roots_present (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4981CC8: GC_mark_some (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4982BA0: GC_push_conditional_with_exclusions (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x49812B0: GC_push_conditional (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x49810E8: GC_push_all (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x498319C: GC_base (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x49816FC: GC_push_all_eager (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x498030C: GC_mark_from (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x49802DC: GC_mark_from (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x497FF04: GC_mark_from (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x497D438: GC_header_cache_miss (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4977990: GC_add_to_black_list_stack (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x497DAB0: GC_apply_to_all_blocks (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x49DD75C: pthread_setcancelstate (pthread_setcancelstate.c:26)
-==4217==    by 0x4984D73: GC_init (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x49868AC: GC_setpagesize (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4AFAB44: getpagesize (in /usr/lib/arm-linux-gnueabihf/libc-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x49DD75C: pthread_setcancelstate (pthread_setcancelstate.c:26)
-==4217==    by 0x4985287: GC_enable_incremental (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x49DD75C: pthread_setcancelstate (pthread_setcancelstate.c:26)
-==4217==    by 0x49852AF: GC_enable_incremental (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x49DD75C: pthread_setcancelstate (pthread_setcancelstate.c:26)
-==4217==    by 0x4976757: GC_collect_a_little_inner (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x49DD75C: pthread_setcancelstate (pthread_setcancelstate.c:26)
-==4217==    by 0x4976867: GC_collect_a_little_inner (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4973DA4: GC_hblk_fl_from_blocks (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4974930: GC_allochblk_nth (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x497D880: GC_install_header (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x49743EC: GC_add_to_fl (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x497E784: GC_malloc (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x498DE94: GC_malloc_kind (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x49DD214: pthread_getspecific (pthread_getspecific.c:30)
-==4217==    by 0x498DED7: GC_malloc_kind (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x497E618: GC_malloc_kind_global (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x497E3E4: GC_generic_malloc (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x497C8D0: GC_notify_or_invoke_finalizers (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x497C650: GC_should_invoke_finalizers (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x497E158: GC_generic_malloc_inner (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x49774A8: GC_allocobj (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x49766DC: GC_collect_a_little_inner (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x497FA9C: GC_collection_in_progress (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x49764CC: GC_maybe_gc (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x49755EC: GC_should_collect (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x497556C: GC_adj_bytes_allocd (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x49889AC: GC_continue_reclaim (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4986060: GC_new_hblk (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4974E58: GC_allochblk (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4977A2C: GC_is_black_listed (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4974794: GC_get_first_part (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4974234: GC_remove_from_fl_at (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x497D920: GC_install_counts (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4986208: GC_add_map_entry (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x497FAC4: GC_clear_hdr_marks (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x49874C8: GC_remove_protection (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4985FA0: GC_build_fl (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4983140: GC_clear_stack (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4AA0960: strlen (in /usr/lib/arm-linux-gnueabihf/libc-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x485D4CC: ??? (in /usr/lib/arm-linux-gnueabihf/libarmmem-v6l.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4AA0C4C: strncpy (in /usr/lib/arm-linux-gnueabihf/libc-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4A57A10: mbstowcs (in /usr/lib/arm-linux-gnueabihf/libc-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x49832B4: GC_is_heap_ptr (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x49832FC: GC_size (in /usr/lib/arm-linux-gnueabihf/libgc.so.1.4.3)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x485DAA0: ??? (in /usr/lib/arm-linux-gnueabihf/libarmmem-v6l.so)
-==4217==    by 0x49FEB: bufferp_append (in /usr/local/bin/zed)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4AA8E90: wcslen (in /usr/lib/arm-linux-gnueabihf/libc-2.31.so)
-==4217== 
-==4217== Jump to the invalid address stated on the next line
-==4217==    at 0x0: ???
-==4217==  Address 0x0 is not stack'd, malloc'd or (recently) free'd
-==4217== 
-==4217== 
-==4217== Process terminating with default action of signal 11 (SIGSEGV)
-==4217==  Bad permissions for mapped region at address 0x0
-==4217==    at 0x0: ???
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4B44188: free_mem (in /usr/lib/arm-linux-gnueabihf/libc-2.31.so)
-==4217== 
-==4217== Conditional jump or move depends on uninitialised value(s)
-==4217==    at 0x4B44200: free_mem (in /usr/lib/arm-linux-gnueabihf/libc-2.31.so)
-==4217== 
-==4217== Use of uninitialised value of size 4
-==4217==    at 0x4B440AC: free_slotinfo (in /usr/lib/arm-linux-gnueabihf/libc-2.31.so)
-==4217== 
-==4217== 
-==4217== HEAP SUMMARY:
-==4217==     in use at exit: 0 bytes in 0 blocks
-==4217==   total heap usage: 4 allocs, 4 frees, 1,488 bytes allocated
-==4217== 
-==4217== All heap blocks were freed -- no leaks are possible
-==4217== 
-==4217== For counts of detected and suppressed errors, rerun with: -v
-==4217== Use --track-origins=yes to see where uninitialised values come from
-==4217== ERROR SUMMARY: 32081 errors from 282 contexts (suppressed: 387 from 1)
+==171953== Memcheck, a memory error detector
+==171953== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==171953== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==171953== Command: zed "AAA".sub_block(/A/g)\ {\ it.lower_case()\ }
+==171953== 
+==171953== Conditional jump or move depends on uninitialised value(s)
+==171953==    at 0x49E7E56: GC_push_all_eager (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49D5F08: GC_with_callee_saves_pushed (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49ED49D: GC_push_roots (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DB968: GC_mark_some (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DBC2C: GC_stopped_mark (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DD121: GC_try_to_collect_inner (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49EA12B: GC_init (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x1436E8: come_boehm_gc_init (in /usr/local/bin/zed)
+==171953==    by 0x10B3EB: main (in /usr/local/bin/zed)
+==171953== 
+==171953== Conditional jump or move depends on uninitialised value(s)
+==171953==    at 0x49E7E5B: GC_push_all_eager (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49D5F08: GC_with_callee_saves_pushed (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49ED49D: GC_push_roots (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DB968: GC_mark_some (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DBC2C: GC_stopped_mark (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DD121: GC_try_to_collect_inner (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49EA12B: GC_init (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x1436E8: come_boehm_gc_init (in /usr/local/bin/zed)
+==171953==    by 0x10B3EB: main (in /usr/local/bin/zed)
+==171953== 
+==171953== Use of uninitialised value of size 8
+==171953==    at 0x49E7C4A: GC_mark_and_push_stack (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49E7E61: GC_push_all_eager (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49D5F08: GC_with_callee_saves_pushed (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49ED49D: GC_push_roots (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DB968: GC_mark_some (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DBC2C: GC_stopped_mark (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DD121: GC_try_to_collect_inner (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49EA12B: GC_init (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x1436E8: come_boehm_gc_init (in /usr/local/bin/zed)
+==171953==    by 0x10B3EB: main (in /usr/local/bin/zed)
+==171953== 
+==171953== Conditional jump or move depends on uninitialised value(s)
+==171953==    at 0x49E7C59: GC_mark_and_push_stack (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49E7E61: GC_push_all_eager (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49D5F08: GC_with_callee_saves_pushed (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49ED49D: GC_push_roots (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DB968: GC_mark_some (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DBC2C: GC_stopped_mark (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DD121: GC_try_to_collect_inner (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49EA12B: GC_init (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x1436E8: come_boehm_gc_init (in /usr/local/bin/zed)
+==171953==    by 0x10B3EB: main (in /usr/local/bin/zed)
+==171953== 
+==171953== Use of uninitialised value of size 8
+==171953==    at 0x49E7C8D: GC_mark_and_push_stack (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49E7E61: GC_push_all_eager (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49D5F08: GC_with_callee_saves_pushed (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49ED49D: GC_push_roots (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DB968: GC_mark_some (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DBC2C: GC_stopped_mark (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DD121: GC_try_to_collect_inner (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49EA12B: GC_init (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x1436E8: come_boehm_gc_init (in /usr/local/bin/zed)
+==171953==    by 0x10B3EB: main (in /usr/local/bin/zed)
+==171953== 
+==171953== Use of uninitialised value of size 8
+==171953==    at 0x49D513A: GC_find_header (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49D54C6: GC_add_to_black_list_stack (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49E7E61: GC_push_all_eager (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49D5F08: GC_with_callee_saves_pushed (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49ED49D: GC_push_roots (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DB968: GC_mark_some (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DBC2C: GC_stopped_mark (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DD121: GC_try_to_collect_inner (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49EA12B: GC_init (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x1436E8: come_boehm_gc_init (in /usr/local/bin/zed)
+==171953==    by 0x10B3EB: main (in /usr/local/bin/zed)
+==171953== 
+==171953== Conditional jump or move depends on uninitialised value(s)
+==171953==    at 0x49D5149: GC_find_header (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49D54C6: GC_add_to_black_list_stack (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49E7E61: GC_push_all_eager (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49D5F08: GC_with_callee_saves_pushed (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49ED49D: GC_push_roots (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DB968: GC_mark_some (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DBC2C: GC_stopped_mark (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DD121: GC_try_to_collect_inner (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49EA12B: GC_init (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x1436E8: come_boehm_gc_init (in /usr/local/bin/zed)
+==171953==    by 0x10B3EB: main (in /usr/local/bin/zed)
+==171953== 
+==171953== Use of uninitialised value of size 8
+==171953==    at 0x49D5177: GC_find_header (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49D54C6: GC_add_to_black_list_stack (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49E7E61: GC_push_all_eager (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49D5F08: GC_with_callee_saves_pushed (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49ED49D: GC_push_roots (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DB968: GC_mark_some (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DBC2C: GC_stopped_mark (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DD121: GC_try_to_collect_inner (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49EA12B: GC_init (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x1436E8: come_boehm_gc_init (in /usr/local/bin/zed)
+==171953==    by 0x10B3EB: main (in /usr/local/bin/zed)
+==171953== 
+==171953== Use of uninitialised value of size 8
+==171953==    at 0x49D5509: GC_add_to_black_list_stack (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49E7E61: GC_push_all_eager (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49D5F08: GC_with_callee_saves_pushed (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49ED49D: GC_push_roots (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DB968: GC_mark_some (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DBC2C: GC_stopped_mark (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DD121: GC_try_to_collect_inner (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49EA12B: GC_init (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x1436E8: come_boehm_gc_init (in /usr/local/bin/zed)
+==171953==    by 0x10B3EB: main (in /usr/local/bin/zed)
+==171953== 
+==171953== Conditional jump or move depends on uninitialised value(s)
+==171953==    at 0x49D754E: GC_mark_from (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49E6BC0: GC_do_local_mark (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49E6DEF: GC_mark_local (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49E6F64: GC_do_parallel_mark (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DBA5C: GC_mark_some (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DBC2C: GC_stopped_mark (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DD121: GC_try_to_collect_inner (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49EA12B: GC_init (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x1436E8: come_boehm_gc_init (in /usr/local/bin/zed)
+==171953==    by 0x10B3EB: main (in /usr/local/bin/zed)
+==171953== 
+==171953== Conditional jump or move depends on uninitialised value(s)
+==171953==    at 0x49D7526: GC_mark_from (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49E6BC0: GC_do_local_mark (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49E6DEF: GC_mark_local (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49E6F64: GC_do_parallel_mark (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DBA5C: GC_mark_some (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DBC2C: GC_stopped_mark (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DD121: GC_try_to_collect_inner (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49EA12B: GC_init (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x1436E8: come_boehm_gc_init (in /usr/local/bin/zed)
+==171953==    by 0x10B3EB: main (in /usr/local/bin/zed)
+==171953== 
+==171953== Conditional jump or move depends on uninitialised value(s)
+==171953==    at 0x49D7553: GC_mark_from (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49E6BC0: GC_do_local_mark (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49E6DEF: GC_mark_local (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49E6F64: GC_do_parallel_mark (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DBA5C: GC_mark_some (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DBC2C: GC_stopped_mark (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DD121: GC_try_to_collect_inner (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49EA12B: GC_init (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x1436E8: come_boehm_gc_init (in /usr/local/bin/zed)
+==171953==    by 0x10B3EB: main (in /usr/local/bin/zed)
+==171953== 
+==171953== Conditional jump or move depends on uninitialised value(s)
+==171953==    at 0x49D752B: GC_mark_from (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49E6BC0: GC_do_local_mark (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49E6DEF: GC_mark_local (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49E6F64: GC_do_parallel_mark (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DBA5C: GC_mark_some (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DBC2C: GC_stopped_mark (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49DD121: GC_try_to_collect_inner (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x49EA12B: GC_init (in /usr/lib/x86_64-linux-gnu/libgc.so.1.4.4)
+==171953==    by 0x1436E8: come_boehm_gc_init (in /usr/local/bin/zed)
+==171953==    by 0x10B3EB: main (in /usr/local/bin/zed)
+==171953== 
+==171953== 
+==171953== HEAP SUMMARY:
+==171953==     in use at exit: 937 bytes in 4 blocks
+==171953==   total heap usage: 14 allocs, 10 frees, 4,137 bytes allocated
+==171953== 
+==171953== LEAK SUMMARY:
+==171953==    definitely lost: 0 bytes in 0 blocks
+==171953==    indirectly lost: 0 bytes in 0 blocks
+==171953==      possibly lost: 864 bytes in 3 blocks
+==171953==    still reachable: 73 bytes in 1 blocks
+==171953==         suppressed: 0 bytes in 0 blocks
+==171953== Rerun with --leak-check=full to see details of leaked memory
+==171953== 
+==171953== Use --track-origins=yes to see where uninitialised values come from
+==171953== For lists of detected and suppressed errors, rerun with: -s
+==171953== ERROR SUMMARY: 143 errors from 13 contexts (suppressed: 0 from 0)

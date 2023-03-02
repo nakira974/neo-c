@@ -43,6 +43,7 @@ unsigned int sNodeTree_create_come_function_call(char* fun_name, unsigned int* p
 
 BOOL compile_come_function_call(unsigned int node, sCompileInfo* info)
 {
+    
     /// rename variables ///
     char fun_name[VAR_NAME_MAX];
     xstrncpy(fun_name, gNodes[node].uValue.sFunctionCall.mName, VAR_NAME_MAX);
@@ -88,7 +89,7 @@ BOOL compile_come_function_call(unsigned int node, sCompileInfo* info)
     char* field_names[STRUCT_FIELD_MAX];
     sNodeType* fields[STRUCT_FIELD_MAX];
     LLVMValueRef llvm_params[STRUCT_FIELD_MAX];
-
+    
     int i;
     for(i=0; i<num_params; i++) {
         field_names[i] = calloc(1, sizeof(char)*VAR_NAME_MAX);
@@ -102,7 +103,7 @@ BOOL compile_come_function_call(unsigned int node, sCompileInfo* info)
 
         fields[i] = info->type;
     }
-
+    
     add_fields_to_struct(thread_arg_struct_class, num_fields, field_names, fields);
 
     sNodeType* thread_arg_struct_type = create_node_type_with_class_pointer(thread_arg_struct_class);
@@ -245,6 +246,7 @@ BOOL compile_come_function_call(unsigned int node, sCompileInfo* info)
     }
 
     gThreadNum++;
+    
 
     return TRUE;
 }

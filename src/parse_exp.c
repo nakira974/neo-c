@@ -409,7 +409,15 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
             *node = sNodeTree_create_write_channel(*node, node2, info);
         }
         else {
-            *node = sNodeTree_create_read_channel(*node, info);
+            char var_name[VAR_NAME_MAX];
+            if(gNodes[*node].mNodeType == kNodeTypeLoadVariable) {
+                xstrncpy(var_name, gNodes[*node].uValue.sLoadVariable.mVarName, VAR_NAME_MAX);
+            }
+            else {
+                parser_err_msg(info, "require variable name for @");
+            }
+            
+            *node = sNodeTree_create_read_channel(*node, var_name, info);
         }
     }
     else if(*info->p == '-' && *(info->p+1) == '-')
@@ -1107,7 +1115,6 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
             *node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, info);
         }
     }
-/*
     else if(*info->p == '@') {
         info->p++;
         skip_spaces_and_lf(info);
@@ -1143,10 +1150,16 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
             *node = sNodeTree_create_write_channel(*node, node2, info);
         }
         else {
-            *node = sNodeTree_create_read_channel(*node, info);
+            char var_name[VAR_NAME_MAX];
+            if(gNodes[*node].mNodeType == kNodeTypeLoadVariable) {
+                xstrncpy(var_name, gNodes[*node].uValue.sLoadVariable.mVarName, VAR_NAME_MAX);
+            }
+            else {
+                parser_err_msg(info, "require variable name for @");
+            }
+            *node = sNodeTree_create_read_channel(*node, var_name, info);
         }
     }
-*/
     else if(*info->p == '&') {
         info->p++;
         skip_spaces_and_lf(info);

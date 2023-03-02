@@ -255,7 +255,6 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
         return TRUE;
     }
 
-
     LLVMTypeRef llvm_type = create_llvm_type_from_node_type(var_type);
 
 #if defined(__X86_64_CPU__ ) || defined(__DARWIN__)
@@ -263,7 +262,6 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
         llvm_type = LLVMArrayType(llvm_type, 1);
     }
 #endif
-
 
     if(extern_) {
         LLVMValueRef global = LLVMGetNamedGlobal(gModule, var_name);
@@ -368,6 +366,41 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
 
         var_->mLLVMValue.value = alloca_value;
         var_->mLLVMValue.address = alloca_value;
+    }
+    else if(var_type->mChannel) {
+        LLVMBasicBlockRef this_block = LLVMGetInsertBlock(gBuilder);
+        LLVMBasicBlockRef entry_block = LLVMGetEntryBasicBlock(gFunction);
+        LLVMValueRef inst = LLVMGetFirstInstruction(entry_block);
+        if(inst != NULL) {
+            LLVMPositionBuilderBefore(gBuilder, inst);
+        }
+
+        LLVMValueRef alloca_value = LLVMBuildAlloca(gBuilder, llvm_type, var_name);
+
+        llvm_change_block(this_block, info);
+
+        var_->mLLVMValue.value = alloca_value;
+        var_->mLLVMValue.constant = FALSE;
+
+        /// call pipe ///
+        char fun_name[VAR_NAME_MAX];
+        
+        xstrncpy(fun_name, "pipe", VAR_NAME_MAX);
+        
+        int num_params = 1;
+        unsigned int params[PARAMS_MAX];
+        
+        params[0] = sNodeTree_create_load_variable(var_name, info->pinfo);
+        
+        BOOL method2 = FALSE;
+        BOOL inherit2 = FALSE;
+        int version2 = 0;
+        
+        unsigned int node = sNodeTree_create_function_call(fun_name, params, num_params, method2, inherit2, version2, info->pinfo);
+        
+        if(!compile(node, info)) {
+            return FALSE;
+        }
     }
     else {
         if(var_type->mDynamicArrayNum != 0) {

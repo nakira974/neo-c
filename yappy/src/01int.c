@@ -3,6 +3,38 @@
 
 int gNodeID = 0;
 
+map<char*, sModule*>* gModules;
+
+struct sIntNode
+{
+    int intValue;
+    unsigned int id;
+};
+
+sIntNode* sIntNode*::initialize(sIntNode* self, int value)
+{
+    self.intValue = value;
+    
+    self.id = gNodeID++;
+    
+    return self;
+};
+
+bool sIntNode*::compile(sIntNode* self, buffer* codes, sParserInfo* info)
+{
+    codes.append_int(OP_INT_VALUE);
+    codes.append_int(self.intValue);
+    
+    info->stack_num++;
+    
+    return true;
+}
+
+unsigned int sIntNode*::get_hash_key(sIntNode* self)
+{
+    return self.id;
+}
+
 unsigned int sNode*::get_hash_key(sNode* self)
 {
     return self.get_hash_key->();
@@ -38,6 +70,36 @@ bool expression(sNode** node, sParserInfo* info) version 1
 ZVALUE gNoneValue;
 ZVALUE gUndefined;
 
+sModule* sModule*::initialize(sModule* self, char* module_name)
+{
+    self.name = string(module_name);
+    
+    self.funcs = new map<char*, sFunction*>();
+    self.global_vars = new map<char*, ZVALUE>();
+    self.classes = new map<char*, sClass*>();
+    
+    return self;
+}
+
+
+sClass* sClass*::initialize(sClass* self, char* name, buffer* codes, char* module_name)
+{
+    self.name = string(name);
+    self.module_name = string(module_name);
+    
+    if(codes) {
+        self.codes = clone codes;
+    }
+    else {
+        self.codes = null;
+    }
+    
+    self.class_vars = new map<string, ZVALUE>();
+    self.funcs = new map<string, sFunction*%>();
+    
+    return self;
+}
+
 void initialize_modules() version 1
 {
     setlocale(LC_ALL, "");
@@ -71,40 +133,9 @@ void initialize_modules() version 1
     add_class("exception", "", "__main__");
 }
 
-sModule* sModule*::initialize(sModule* self, char* module_name)
-{
-    self.name = string(module_name);
-    
-    self.funcs = new map<char*, sFunction*>();
-    self.global_vars = new map<char*, ZVALUE>();
-    self.classes = new map<char*, sClass*>();
-    
-    return self;
-}
-
-sClass* sClass*::initialize(sClass* self, char* name, buffer* codes, char* module_name)
-{
-    self.name = string(name);
-    self.module_name = string(module_name);
-    
-    if(codes) {
-        self.codes = clone codes;
-    }
-    else {
-        self.codes = null;
-    }
-    
-    self.class_vars = new map<string, ZVALUE>();
-    self.funcs = new map<string, sFunction*%>();
-    
-    return self;
-}
-
 void finalize_modules() version 1
 {
 }
-
-map<char*, sModule*>* gModules;
 
 void add_module(char* module_name)
 {

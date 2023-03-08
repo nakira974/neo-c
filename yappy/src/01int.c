@@ -3,8 +3,6 @@
 
 int gNodeID = 0;
 
-map<char*, sModule*>* gModules;
-
 struct sIntNode
 {
     int intValue;
@@ -136,6 +134,8 @@ void initialize_modules() version 1
 void finalize_modules() version 1
 {
 }
+
+map<char*, sModule*>* gModules;
 
 void add_module(char* module_name)
 {

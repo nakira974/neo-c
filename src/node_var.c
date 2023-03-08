@@ -281,11 +281,15 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
     else if(global) {
         LLVMValueRef global2 = LLVMGetNamedGlobal(gModule, var_name);
 
+        LLVMValueRef alloca_value;
         if(global2) {
-            LLVMDeleteGlobal(global2);
+            alloca_value = global2;
+            //LLVMDeleteGlobal(global2);
+        }
+        else {
+            alloca_value = LLVMAddGlobal(gModule, llvm_type, var_name);
         }
 
-        LLVMValueRef alloca_value = LLVMAddGlobal(gModule, llvm_type, var_name);
         if(var_type->mPointerNum > 0) {
             LLVMSetAlignment(alloca_value, 4);
         }
@@ -632,7 +636,9 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
             LLVMValueRef global_var = LLVMGetNamedGlobal(gModule, var_name);
 
             if(global_var) {
+/*
                 LLVMDeleteGlobal(global_var);
+*/
             }
 
             LLVMTypeRef llvm_type = create_llvm_type_from_node_type(left_type);
@@ -649,7 +655,13 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
                 llvm_type = create_llvm_type_from_node_type(var_type2);
             }
 
-            LLVMValueRef alloca_value = LLVMAddGlobal(gModule, llvm_type, var_name);
+            LLVMValueRef alloca_value;
+            if(global_var) {
+                alloca_value = global_var;
+            }
+            else {
+                alloca_value = LLVMAddGlobal(gModule, llvm_type, var_name);
+            }
             
             if(var_->mType->mStatic) {
                 LLVMSetLinkage(alloca_value, LLVMInternalLinkage);

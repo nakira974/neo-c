@@ -6,7 +6,7 @@ Modern C compiler. It has a collection and string library using Boehm GC or Reff
 モダンなCコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 1.1.6
+version 1.1.7
 
 ``` C
 #include <neo-c.h>
@@ -1970,97 +1970,6 @@ int main()
 
     return 0;
 }
-```
-
-# automatically output to common header
-
-neo-c header common.h a.c b.c, ...
-
-とするとcommon.hにa.c b.c, ...の宣言が出力されます。
-
-public { #include <neo-c.h> }
-
-とするとcommon.hに#include <neo-c.h>が追加されます。
-
-ファイル内だけの宣言はprivate int A;などとします。static int A;でも同じです。関数、union, struct, typedefも同様です。
-
-``` C
-> vim a.c
-#include "common.h"
-
-public {#include <neo-c.h>}
-
-private int gA;
-public {int gB;}
-
-open_struct sA
-{
-    int a;
-    int b;
-};
-
-int main(int argc, char** argv)
-{
-    sA a;
-    a.a = 111;
-    a.b = 222;
-    a.c = 333;
-    a.d = 444;
-    
-    printf("%d %d %d %d\n", a.a, a.b, a.c, a.d);
-    
-    gA = 222;
-    gB = 333;
-    gC = 444;
-    
-    printf("%d %d %d\n", gA, gB, gC);
-    
-    printf("%d\n", fun());
-    
-    return 0;
-}
-
-> vim b.c
-#include "common.h"
-
-public {int gC};
-
-open_struct sA
-{
-    int c;
-    int d;
-};
-
-int fun() { return 123 }
-
-> neo-c header common.h a.c b.c
-> cat common.h
-struct sA
-{
-    /// a.c ///
-    int a;
-    int b;
-
-    /// b.c ///
-    int c;
-    int d;
-};
-////////////////////////////
-// a.c
-////////////////////////////
-#include <neo-c.h>
-
-int gB;
-
-int main(int argc, char** argv);
-
-////////////////////////////
-// b.c
-////////////////////////////
-int gC
-
-int fun();
-
 ```
 
 # multiple assign

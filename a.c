@@ -1,25 +1,19 @@
 #include <neo-c.h>
 
-class sA(int a)
+class sParam(string name, sType* type)
 {
-    int self.a = a;
+    string self.mName = string(name);
 };
 
-void fun(int b)
+class sFunction(string name, sType* result_type, list<sParam*>* params, LLVMValueRef llvm_fun)
 {
-    sA* a = new sA(b);
-}
-
-class sA(int a)
-{
-    int self.a = a;
+    string self.mName = string(name);
+    list<sParam*>* self.params = params;
+    bool self.mVarArgs = false;
 };
 
 int main(int argc, char** argv)
 {
-    var a = new sA(123);
-    
-    printf("%d\n", a.a);
     return 0;
 }
 

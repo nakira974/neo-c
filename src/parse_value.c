@@ -816,12 +816,14 @@ BOOL parse_struct(unsigned int* node, char* struct_name, int size_struct_name, B
         struct_class = alloc_struct(struct_name, anonymous, TRUE, parent_class, protocol_);
     }
     
+/*
     if(gNCHeader) {
         if(!skip_block(info)) {
             return FALSE;
         }
     }
     else {
+*/
         expect_next_character_with_one_forward("{", info);
         
         if(protocol_)  {
@@ -1028,7 +1030,7 @@ BOOL parse_struct(unsigned int* node, char* struct_name, int size_struct_name, B
                 }
             }
         }
-    }
+//    }
 
     char asm_fname[VAR_NAME_MAX];
     BOOL flag_asm_fun_name = FALSE;

@@ -1,41 +1,24 @@
 #include <neo-c.h>
 #include "common.h"
 
-struct sParam
+class sParam(string name, sType* type)
 {
-    string mName;
-    sType* mType;
+    string self.mName = string(name);
+    sType* self.mType = type;
 };
 
-struct sFunction {
-    string mName;
-    sType* result_type;
-    list<sParam*>* params;
-    LLVMValueRef llvm_fun;
-    bool mVarArgs;
-};
-
-sParam* sParam*::initialize(sParam* self, string name, sType* type)
+class sFunction(string name, sType* result_type, list<sParam*>* params, LLVMValueRef llvm_fun)
 {
-    self.mName = string(name);
-    self.mType = type;
+    string self.mName = string(name);
+    sType* self.result_type = result_type;
+    list<sParam*>* self.params = params;
+    LLVMValueRef self.llvm_fun = llvm_fun;
+    bool self.mVarArgs = false;
     
-    return self;
+    gFuncs.insert(name, self);
 };
 
 map<string,sFunction*>* gFuncs;
-
-sFunction* sFunction*::initialize(sFunction* self, string name, sType* result_type, list<sParam*>* params, LLVMValueRef llvm_fun)
-{
-    self.mName = string(name);
-    self.result_type = result_type;
-    self.params = params;
-    self.llvm_fun = llvm_fun;
-    
-    gFuncs.insert(name, self);
-    
-    return self;
-}
 
 void func_init()
 {

@@ -3478,6 +3478,7 @@ LLVMTypeRef create_llvm_type_from_node_type(sNodeType* node_type)
         if(llvm_type == NULL) {
             create_generics_struct_type(CLASS_NAME(klass), node_type);
             llvm_type = LLVMGetTypeByName(gModule, class_name);
+            
         }
         
         if(llvm_type) {
@@ -4545,6 +4546,7 @@ BOOL create_llvm_struct_type(char* struct_name, sNodeType* node_type, sNodeType*
                     fprintf(stderr, "can't solve generics types(1)");
                     return FALSE;
                 }
+                
     
                 field_types[i] = create_llvm_type_from_node_type(field);
             }
@@ -5213,6 +5215,7 @@ BOOL compile_conditional_expression(unsigned int node, sCompileInfo* info)
 BOOL create_generics_struct_type(char* class_name, sNodeType* node_type)
 {
     sGenericsStructType* generics_struct_type = get_generics_struct_from_table(class_name);
+    
 
     if(generics_struct_type) {
         sNodeType* generics_type = clone_node_type(node_type);

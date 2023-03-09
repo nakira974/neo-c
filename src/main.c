@@ -341,7 +341,7 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
 
 int main(int argc, char** argv)
 {
-    gVersion = "1.1.6";
+    gVersion = "1.1.7";
     
     setlocale(LC_ALL, "");
     
@@ -424,6 +424,7 @@ int main(int argc, char** argv)
             xstrncat(optiones, "-c ", 1024);
             xstrncat(clang_optiones, "-c ", 1024);
         }
+/*
         else if(strcmp(argv[i], "header") == 0)
         {
             if(i + 1 < argc) {
@@ -439,6 +440,7 @@ int main(int argc, char** argv)
             gNCHeader = TRUE;
             header = TRUE;
         }
+*/
         else if(strcmp(argv[i], "libs") == 0)
         {
             printf("-lgc -lpcre -lpthread %slib/libneo-c.a -L/usr/local/lib/libgc/lib \n", PREFIX);

@@ -241,6 +241,7 @@ struct sNodeTypeStruct {
     
     BOOL mArrayPointer;
     BOOL mOmitArrayNum;
+    BOOL mOriginalOmitArrayNum;
     int mNoArrayPointerNum;
     BOOL mException;
     

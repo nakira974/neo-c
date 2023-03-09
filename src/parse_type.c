@@ -943,6 +943,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                             //node_type->mArrayDimentionNum = 1;
                             //node_type->mArrayNum[0] = 0;
                             (*result_type)->mOmitArrayNum = TRUE;
+                            (*result_type)->mOriginalOmitArrayNum = TRUE;
                             if(type_identify_with_class_name(*result_type, "lambda")) {
                                 pointer_num++;
                             }

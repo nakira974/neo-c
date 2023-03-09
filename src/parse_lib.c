@@ -595,6 +595,7 @@ BOOL parse_variable_name(char* buf, int buf_size, sParserInfo* info, sNodeType* 
                 node_type->mPointerNum++;
                 node_type->mArrayDimentionNum = 0;
                 node_type->mOmitArrayNum = TRUE;
+                node_type->mOriginalOmitArrayNum = TRUE;
             }
             else {
                 while(*info->p == '[') {

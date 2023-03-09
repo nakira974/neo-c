@@ -125,6 +125,7 @@ sNodeType* clone_node_type(sNodeType* node_type)
     
     node_type2->mArrayPointer = node_type->mArrayPointer;
     node_type2->mOmitArrayNum = node_type->mOmitArrayNum;
+    node_type2->mOriginalOmitArrayNum = node_type->mOriginalOmitArrayNum;
     node_type2->mNoArrayPointerNum = node_type->mNoArrayPointerNum;
     node_type2->mFunctionParam = node_type->mFunctionParam;
     node_type2->mArrayParam = node_type->mArrayParam;

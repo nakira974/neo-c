@@ -283,8 +283,13 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
 
         LLVMValueRef alloca_value;
         if(global2) {
-            alloca_value = global2;
-            //LLVMDeleteGlobal(global2);
+            if(var_type->mOriginalOmitArrayNum) {
+                LLVMDeleteGlobal(global2);
+                alloca_value = LLVMAddGlobal(gModule, llvm_type, var_name);
+            }
+            else {
+                alloca_value = global2;
+            }
         }
         else {
             alloca_value = LLVMAddGlobal(gModule, llvm_type, var_name);
@@ -635,12 +640,6 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
         else if(global) {
             LLVMValueRef global_var = LLVMGetNamedGlobal(gModule, var_name);
 
-            if(global_var) {
-/*
-                LLVMDeleteGlobal(global_var);
-*/
-            }
-
             LLVMTypeRef llvm_type = create_llvm_type_from_node_type(left_type);
 
 #if defined(__X86_64_CPU__ ) || defined(__DARWIN__)
@@ -657,7 +656,13 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
 
             LLVMValueRef alloca_value;
             if(global_var) {
-                alloca_value = global_var;
+                if(var_type->mOriginalOmitArrayNum) {
+                    LLVMDeleteGlobal(global_var);
+                    alloca_value = LLVMAddGlobal(gModule, llvm_type, var_name);
+                }
+                else {
+                    alloca_value = global_var;
+                }
             }
             else {
                 alloca_value = LLVMAddGlobal(gModule, llvm_type, var_name);

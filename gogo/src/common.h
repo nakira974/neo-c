@@ -138,11 +138,12 @@ bool cast_right_type_to_left_type(sType* left_type, sType** right_type, LVALUE* 
 ////////////////////////////
 // src/01fun.c
 ////////////////////////////
-class sParam(sParam* self, string name, sType* type)
+struct sParam
 {
-    string self.mName = string(name);
-    sType* self.mType = type;
+    string mName;
+    sType* mType;
 };
+
 struct sFunction {
     string name;
     sType* result_type;
@@ -150,6 +151,7 @@ struct sFunction {
     LLVMValueRef llvm_fun;
 };
 
+sParam* sParam*::initialize(sParam* self, string name, sType* type);
 extern map<string,sFunction*>* gFuncs;
 sFunction* sFunction*::initialize(sFunction* self, string name, sType* result_type, list<sParam*>* params, LLVMValueRef llvm_fun);
 void func_init();

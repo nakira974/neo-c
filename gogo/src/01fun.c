@@ -1,24 +1,33 @@
 #include <neo-c.h>
 #include "common.h"
 
-class sParam(sParam* self, string name, sType* type)
+struct sParam
 {
-    string self.mName = string(name);
-    sType* self.mType = type;
+    string mName;
+    sType* mType;
 };
 
 struct sFunction {
-    string name;
+    string mName;
     sType* result_type;
     list<sParam*>* params;
     LLVMValueRef llvm_fun;
+    bool mVarArgs;
+};
+
+sParam* sParam*::initialize(sParam* self, string name, sType* type)
+{
+    self.mName = string(name);
+    self.mType = type;
+    
+    return self;
 };
 
 map<string,sFunction*>* gFuncs;
 
 sFunction* sFunction*::initialize(sFunction* self, string name, sType* result_type, list<sParam*>* params, LLVMValueRef llvm_fun)
 {
-    self.name = string(name);
+    self.mName = string(name);
     self.result_type = result_type;
     self.params = params;
     self.llvm_fun = llvm_fun;
@@ -398,7 +407,23 @@ private bool sFunCall*::compile(sFunCall* self, sInfo* info)
     
     if(type_identify_with_class_name(result_type, "void") && result_type->pointer_num == 0)
     {
-        LLVMBuildCall(gBuilder, llvm_fun, llvm_params, num_params, "");
+        sType* result_type = fun->result_type;
+        
+        LLVMTypeRef llvm_param_types[PARAMS_MAX];
+        
+        for(i=0; i<num_params; i++) {
+            sType* fun_param_type = fun->params[i].mType;
+            
+            llvm_param_types[i] = create_llvm_type_from_node_type(fun_param_type);
+        }
+
+        LLVMTypeRef llvm_result_type = create_llvm_type_from_node_type(result_type);
+    
+        bool var_arg = fun->mVarArgs;
+        
+        LLVMTypeRef function_type = LLVMFunctionType(llvm_result_type, llvm_param_types, fun->mNumParams, var_arg);
+        
+        LLVMBuildCall2(gBuilder, function_type, llvm_fun, llvm_params, num_params, "");
 
         info->type = clone result_type;
     }

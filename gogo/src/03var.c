@@ -334,7 +334,9 @@ private bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
         info->type = clone var_type;
     }
     else {
-        llvm_value.value = LLVMBuildLoad(gBuilder, var_address, var_name);
+        LLVMTypeRef llvm_type = create_llvm_type_from_node_type(var_type);
+        
+        llvm_value.value = LLVMBuildLoad2(gBuilder, var_type, var_address, var_name);
         llvm_value.type = var_type;
         llvm_value.address = var_address;
         llvm_value.var = var2;

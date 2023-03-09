@@ -1,26 +1,11 @@
-struct sA
-{
-    /// a.c ///
-    int a;
-    int b;
-    /// b.c ///
-    int c;
-    int d;
 
-};
 ////////////////////////////
 // a.c
 ////////////////////////////
-#include <neo-c.h>
-
-int gB;
+class sParam(sParam* self, int a)
+{
+    int self.a = a;
+};
 
 int main(int argc, char** argv);
-
-////////////////////////////
-// b.c
-////////////////////////////
-int gC
-
-int fun();
 

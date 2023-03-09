@@ -958,6 +958,8 @@ BOOL parse_class(unsigned int* node, sParserInfo* info)
     BOOL safe_mode = gNCSafeMode;
     int sline = info->sline;
     
+    char* head = info->p;
+    
     char struct_name[VAR_NAME_MAX+1];
     if(!parse_word(struct_name, VAR_NAME_MAX, info, TRUE, FALSE))
     {
@@ -1114,6 +1116,16 @@ BOOL parse_class(unsigned int* node, sParserInfo* info)
     
     info->mInClass = in_class;
     gNCSafeMode = safe_mode;
+        
+    char* tail = info->p;
+
+    if(strcmp(info->sname, gFName) == 0) {
+        sBuf_append_str(&gHeader, "class ");
+        
+        sBuf_append(&gHeader, head, tail -head);
+        
+        sBuf_append(&gHeader, ";\n\n", 3);
+    }
     
     return TRUE;
 }

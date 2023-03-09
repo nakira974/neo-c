@@ -138,13 +138,11 @@ bool cast_right_type_to_left_type(sType* left_type, sType** right_type, LVALUE* 
 ////////////////////////////
 // src/01fun.c
 ////////////////////////////
-struct sParam
+class sParam(sParam* self, string name, sType* type)
 {
-    string mName;
-    sType* mType;
+    string self.mName = string(name);
+    sType* self.mType = type;
 };
-
-sParam* sParam*::initialize(sParam* self, string name, sType* type);
 struct sFunction {
     string name;
     sType* result_type;

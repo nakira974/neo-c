@@ -1,3 +1,8 @@
 #include <neo-c.h>
+#include "common.h"
 
-map<string, int>* gID;
+void fun()
+{
+    var a = new sA(123);
+}
+

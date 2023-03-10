@@ -1,9 +1,5 @@
 #include "common.h"
 
-public {
-enum { kYankKindLine, kYankKindNoLine };
-}
-
 bool ViWin*::saveYankToFile(ViWin* self, Vi* nvi)
 {
     char* home = getenv("HOME");

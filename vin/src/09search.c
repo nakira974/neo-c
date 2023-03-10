@@ -2,12 +2,6 @@
 #include <sys/stat.h>
 #include "common.h"
 
-public {
-enum eRepeatForwardNextCharacter {
-    kRFNCNone, kRFNC1, kRFNC2
-};
-}
-
 void ViWin*::searchModeView(ViWin* self, Vi* nvi)
 {
     werase(self.win);

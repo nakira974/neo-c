@@ -96,7 +96,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
         else if(strcmp(type_name, "immutable") == 0) {
             immutable_ = TRUE;
         }
-        else if(strcmp(type_name, "static") == 0 || strcmp(type_name, "private") == 0) {
+        else if(strcmp(type_name, "static") == 0) {
             static_ = TRUE;
         }
         else if(strcmp(type_name, "exception") == 0) {

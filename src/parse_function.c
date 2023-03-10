@@ -655,14 +655,6 @@ BOOL parse_come_function(unsigned int* node, char* struct_name, sParserInfo* inf
         *node = sNodeTree_create_external_function(fun_name, asm_fname, params, num_params, var_arg, result_type, struct_name, operator_fun, version, immutable_, flag_asm_fun_name, info);
     }
     else {
-        if(strcmp(info->sname, gFName) == 0) {
-            if(!result_type->mStatic) {
-                sBuf_append_str(&gHeader, "fn ");
-                sBuf_append(&gHeader, definition_top, info->p - definition_top-1);
-                sBuf_append_str(&gHeader, ";\n");
-            }
-        }
-        
         int i;
         for(i=0; i<num_params; i++) {
             char* name = params[i].mName;
@@ -862,13 +854,6 @@ BOOL parse_function(unsigned int* node, sNodeType* result_type, char* fun_name, 
         *node = sNodeTree_create_external_function(fun_name, asm_fname, params, num_params, var_arg, result_type, struct_name, operator_fun, version, immutable_, flag_asm_fun_name, info);
     }
     else {
-        if(strcmp(info->sname, gFName) == 0) {
-            if(!result_type->mStatic) {
-                sBuf_append(&gHeader, definition_top, info->p - definition_top-1);
-                sBuf_append_str(&gHeader, ";\n");
-            }
-        }
-        
         int i;
         for(i=0; i<num_params; i++) {
             char* name = params[i].mName;
@@ -1139,14 +1124,6 @@ BOOL parse_class(unsigned int* node, sParserInfo* info)
         gNCSafeMode = safe_mode;
             
         char* tail = info->p;
-    
-        if(strcmp(info->sname, gFName) == 0) {
-            sBuf_append_str(&gHeader, "class ");
-            
-            sBuf_append(&gHeader, head, tail -head);
-            
-            sBuf_append(&gHeader, ";\n\n", 3);
-        }
     }
     
     return TRUE;

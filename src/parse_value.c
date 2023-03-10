@@ -713,17 +713,6 @@ BOOL parse_struct(unsigned int* node, char* struct_name, int size_struct_name, B
         
         char* tail = info->p;
         
-        if(strcmp(info->sname, gFName) == 0 && !info->static_) {
-            if(protocol_) {
-                sBuf_append_str(&gHeader, "protocol ");
-            }
-            else {
-                sBuf_append_str(&gHeader, "struct ");
-            }
-            
-            sBuf_append(&gHeader, head, tail -head);
-        }
-        
         if(terminated) {
             *terminated = TRUE;
         }
@@ -1054,17 +1043,6 @@ BOOL parse_struct(unsigned int* node, char* struct_name, int size_struct_name, B
     
     char* tail = info->p;
     
-    if(strcmp(info->sname, gFName) == 0 && !info->static_) {
-        if(protocol_) {
-            sBuf_append_str(&gHeader, "protocol ");
-        }
-        else {
-            sBuf_append_str(&gHeader, "struct ");
-        }
-    
-        sBuf_append(&gHeader, head, tail -head);
-    }
-    
     if(!gNCHeader) {
         if(terminated == NULL) {
 /*
@@ -1341,13 +1319,6 @@ BOOL parse_union(unsigned int* node, char* union_name, int size_union_name, BOOL
             return TRUE;
         }
     }
-    
-    if(strcmp(info->sname, gFName) == 0 && !info->static_) {
-        char* tail = info->p;
-        
-        sBuf_append_str(&gHeader, "union ");
-        sBuf_append(&gHeader, head, tail -head);
-    }
 
     if(terminated == NULL) {
         add_fields_to_union(union_class, num_fields, field_names, fields);
@@ -1567,13 +1538,6 @@ BOOL parse_enum(unsigned int* node, char* name, int name_size, BOOL* terminated,
             return TRUE;
         }
     }
-    
-    if(strcmp(info->sname, gFName) == 0 && !info->static_) {
-        char* tail = info->p;
-        
-        sBuf_append_str(&gHeader, "enum ");
-        sBuf_append(&gHeader, head, tail -head);
-    }
 
     *node = sNodeTree_create_null(info);
 
@@ -1676,15 +1640,6 @@ BOOL parse_typedef(unsigned int* node, BOOL static_, sParserInfo* info)
         skip_spaces_and_lf(info);
     }
 */
-    
-    if(strcmp(info->sname, gFName) == 0 && !info->static_) {
-        char* tail = info->p;
-        
-        sBuf_append_str(&gHeader, "typedef ");
-        sBuf_append(&gHeader, head, tail -head);
-        sBuf_append_char(&gHeader, ';');
-        sBuf_append_char(&gHeader, '\n');
-    }
     
     info->static_ = static_before;
 
@@ -1815,7 +1770,7 @@ BOOL is_type_name(char* buf, sParserInfo* info)
         }
     }
 
-    return klass || node_type || generics_type_name || method_type_name || strcmp(buf, "const") == 0 || strcmp(buf, "immutable") == 0 || strcmp(buf, "static") == 0 || strcmp(buf, "private") == 0 || (strcmp(buf, "struct") == 0 && *info->p == '{') || (strcmp(buf, "protocol") == 0 && *info->p == '{') || strcmp(buf, "protocol") == 0 || (strcmp(buf, "struct") == 0) || (strcmp(buf, "union") == 0) || (strcmp(buf, "union") == 0 && *info->p == '{') || (strcmp(buf, "unsigned") == 0) || (strcmp(buf, "signed") == 0) || (strcmp(buf, "__signed") == 0) ||(strcmp(buf, "short") == 0) || (strcmp(buf, "long") == 0) || (strcmp(buf, "signed") == 0) || (strcmp(buf, "register") == 0) || (strcmp(buf, "volatile") == 0) || strcmp(buf, "enum") == 0 || strcmp(buf, "__signed__") == 0 || (strcmp(buf, "__extension__") == 0 && *info->p != '(') || (strcmp(buf, "__uniq__") == 0)|| strcmp(buf, "typeof") == 0|| strcmp(buf, "_Noreturn") == 0 || strcmp(buf, "_Alignas") == 0 || strcmp(buf, "_Nullable") == 0 || strcmp(buf, "exception") == 0;
+    return klass || node_type || generics_type_name || method_type_name || strcmp(buf, "const") == 0 || strcmp(buf, "immutable") == 0 || strcmp(buf, "static") == 0 || (strcmp(buf, "struct") == 0 && *info->p == '{') || (strcmp(buf, "protocol") == 0 && *info->p == '{') || strcmp(buf, "protocol") == 0 || (strcmp(buf, "struct") == 0) || (strcmp(buf, "union") == 0) || (strcmp(buf, "union") == 0 && *info->p == '{') || (strcmp(buf, "unsigned") == 0) || (strcmp(buf, "signed") == 0) || (strcmp(buf, "__signed") == 0) ||(strcmp(buf, "short") == 0) || (strcmp(buf, "long") == 0) || (strcmp(buf, "signed") == 0) || (strcmp(buf, "register") == 0) || (strcmp(buf, "volatile") == 0) || strcmp(buf, "enum") == 0 || strcmp(buf, "__signed__") == 0 || (strcmp(buf, "__extension__") == 0 && *info->p != '(') || (strcmp(buf, "__uniq__") == 0)|| strcmp(buf, "typeof") == 0|| strcmp(buf, "_Noreturn") == 0 || strcmp(buf, "_Alignas") == 0 || strcmp(buf, "_Nullable") == 0 || strcmp(buf, "exception") == 0;
 }
 
 BOOL is_premitive_type(char* buf, sParserInfo* info)
@@ -2067,15 +2022,6 @@ BOOL parse_struct_initializer(int* num_elements, struct sStructInitializer* elem
 
 BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL extern_, sParserInfo* info, char* definition_top, BOOL readonly)
 {
-    if(strcmp(info->sname, gFName) == 0 && !result_type->mStatic && info->mBlockLevel == 0) {
-        char* tail = info->p;
-        
-        sBuf_append_str(&gHeader, "extern ");
-        sBuf_append(&gHeader, definition_top, tail - definition_top);
-        sBuf_append_char(&gHeader, ';');
-        sBuf_append_char(&gHeader, '\n');
-    }
-    
     if(strcmp(name, "self") == 0 && info->mInClass && *info->p == '.') {
         info->p++;
         skip_spaces_and_lf(info);

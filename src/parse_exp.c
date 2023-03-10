@@ -2151,14 +2151,6 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
         
         BOOL static_ = FALSE;
         
-        if(strcmp(buf, "private") == 0) {
-            static_ = TRUE;
-            
-            if(!parse_word(buf, VAR_NAME_MAX, info, TRUE, FALSE))
-            {
-                return FALSE;
-            }
-        }
         
         /// forwarding parse until terminated union, struct and enum
 //        if(strcmp(buf, "struct") == 0) {
@@ -2278,7 +2270,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
             info->p = p_before2;
             info->sline = sline_before2;
         }
-        else if(strcmp(buf, "static") == 0 || strcmp(buf, "private") == 0) {
+        else if(strcmp(buf, "static") == 0) {
             char* p_before2 = info->p;
             int sline_before2 = info->sline;
 
@@ -2301,80 +2293,6 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
             if(!expression(node, FALSE, info)) {
                 return FALSE;
             }
-        }
-        else if(strcmp(buf, "public") == 0) {
-            if(*info->p == '{') {
-                char* head = info->p+1;
-                
-                if(!skip_block(info)) {
-                    return FALSE;
-                }
-                
-                char* tail = info->p;
-                
-                while(TRUE) {
-                    if(*tail == '}') {
-                        break;
-                    }
-                    else {
-                        tail--;
-                    }
-                }
-                
-                sBuf_append(&gHeader, head, tail -head);
-                sBuf_append(&gHeader, "\n\n", 2);
-            }
-            else {
-                char* head = info->p;
-                
-                while(*info->p && *info->p != '\n') {
-                    info->p++;
-                }
-                
-                char* tail = info->p;
-                
-                sBuf_append(&gHeader, head, tail -head);
-                sBuf_append(&gHeader, "\n\n", 2);
-                
-                skip_spaces_and_lf(info);
-            }
-            
-            *node = sNodeTree_create_null(info);
-        }
-        else if(strcmp(buf, "open_struct") == 0) {
-            char struct_name[VAR_NAME_MAX];
-            if(!parse_word(struct_name, VAR_NAME_MAX, info, TRUE, FALSE))
-            {
-                return FALSE;
-            }
-            
-            if(*info->p == '{') {
-                char* head = info->p+1;
-                
-                if(!skip_block(info)) {
-                    return FALSE;
-                }
-                
-                char* tail = info->p;
-                
-                while(TRUE) {
-                    if(*tail == '}') {
-                        break;
-                    }
-                    else {
-                        tail--;
-                    }
-                }
-                
-                char source[BUFSIZ];
-                
-                memcpy(source, head, tail - head);
-                source[tail-head] = '\0';
-                
-                append_open_struct(struct_name, source, info->sname);
-            }
-            
-            *node = sNodeTree_create_null(info);
         }
         else if(strcmp(buf, "__PRETTY_FUNCTION__") == 0) {
             *node = sNodeTree_create_c_string_value(MANAGED xstrdup(info->fun_name), strlen(info->fun_name), info->sline, info);

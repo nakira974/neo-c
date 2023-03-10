@@ -422,10 +422,6 @@ extern char gMainModulePath[PATH_MAX];
 //////////////////////////////
 /// parser.c
 //////////////////////////////
-extern sBuf gHeader;
-void append_open_struct(char* name, char* source, char* sname);
-void write_open_struct_to_header(sBuf* header);
-
 struct sParserInfoStruct
 {
     sBuf mConst;

@@ -18,8 +18,6 @@ BOOL gNCNoMacro = FALSE;
 BOOL gNCSafeMode = FALSE;
 BOOL gNCCome = FALSE;
 
-sBuf gHeader;
-
 static void compiler_init(char* sname)
 {
     node_var_init();
@@ -693,18 +691,9 @@ int main(int argc, char** argv)
         return rc;
     }
     else {
-        sBuf_init(&gHeader);
-        
         int n;
         for(n=0; n<num_snames; n++) {
             char buf[128];
-            
-            snprintf(buf, 128, "\n////////////////////////////\n");
-            sBuf_append_str(&gHeader, buf);
-            snprintf(buf, 128, "// %s\n", sname[n]);
-            sBuf_append_str(&gHeader, buf);
-            snprintf(buf, 128, "////////////////////////////\n");
-            sBuf_append_str(&gHeader, buf);
             
             xstrncpy(gFName, sname[n], PATH_MAX);
             
@@ -750,72 +739,6 @@ int main(int argc, char** argv)
                 }
             }
         }
-        
-        if(header) {
-            if(header_name[0] == '\0') {
-                xstrncpy(header_name, "common.h", PATH_MAX);
-            }
-            
-            sBuf header;
-            sBuf_init(&header);
-            
-            char* p = gHeader.mBuf;
-            
-            int new_line = TRUE;
-            write_open_struct_to_header(&header);
-            
-            while(*p) {
-                if(new_line && *p == '#') {
-                    char* p2 = p;
-                    
-                    p++;
-                    while(*p == ' ' || *p == '\t') {
-                        p++;
-                    }
-                    
-                    if(xisdigit(*p)) {
-                        while(*p != '\n' && *p != '\0') {
-                            p++;
-                        }
-                        
-                        if(*p != '\0') {
-                            p++;
-                        }
-                    }
-                    else {
-                        while(*p != '\n' && *p != '\0') {
-                            p++;
-                        }
-                        
-                        if(*p != '\0') {
-                            p++;
-                        }
-                        sBuf_append(&header, p2, p-p2);
-                    }
-                }
-                else if(*p == '\n') {
-                    new_line = TRUE;
-                    sBuf_append_char(&header, *p);
-                    p++;
-                }
-                else {
-                    new_line = FALSE;
-                    sBuf_append_char(&header, *p);
-                    p++;
-                }
-            }
-            
-            FILE* f = fopen(header_name, "w");
-            
-            if(f) {
-                fprintf(f, "%s\n", header.mBuf);
-                fclose(f);
-            }
-            
-            free(header.mBuf);
-        }
-        
-        free(gHeader.mBuf);
     }
     
     char* obj_files2[128];

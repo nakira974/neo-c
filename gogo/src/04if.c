@@ -1,11 +1,7 @@
 #include <neo-c.h>
 #include "common.h"
 
-public {
-    #define ELIF_NUM_MAX 64
-}
-
-private struct sIfNode
+struct sIfNode
 {
     int id;
     
@@ -21,7 +17,7 @@ private struct sIfNode
     char* sname;
 };
 
-private sIfNode* sIfNode*::initialize(sIfNode* self, sNode* if_exp, sNodeBlock* if_block, list<sNode*>* elif_exps, list<sNodeBlock*>* elif_blocks, sNodeBlock*? else_block, sInfo* info)
+sIfNode* sIfNode*::initialize(sIfNode* self, sNode* if_exp, sNodeBlock* if_block, list<sNode*>* elif_exps, list<sNodeBlock*>* elif_blocks, sNodeBlock*? else_block, sInfo* info)
 {
     self.id = gNodeID++;
     
@@ -39,12 +35,12 @@ private sIfNode* sIfNode*::initialize(sIfNode* self, sNode* if_exp, sNodeBlock* 
     return self;
 }
 
-private unsigned int sIfNode*::id(sIfNode* self)
+unsigned int sIfNode*::id(sIfNode* self)
 {
     return self.id;
 }
 
-private bool sIfNode*::compile(sIfNode* self, sInfo* info)
+bool sIfNode*::compile(sIfNode* self, sInfo* info)
 {
     int sline = self.sline;
     char* sname = self.sname; 

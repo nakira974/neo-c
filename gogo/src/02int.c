@@ -1,7 +1,7 @@
 #include <neo-c.h>
 #include "common.h"
 
-private struct sIntNode
+struct sIntNode
 {
     int id;
     char* sname;
@@ -9,7 +9,7 @@ private struct sIntNode
     int value;
 };
 
-private sIntNode* sIntNode*::initialize(sIntNode* self, int value, sInfo* info)
+sIntNode* sIntNode*::initialize(sIntNode* self, int value, sInfo* info)
 {
     self.id = gNodeID++;
     self.value = value;
@@ -20,12 +20,12 @@ private sIntNode* sIntNode*::initialize(sIntNode* self, int value, sInfo* info)
     return self;
 }
 
-private unsigned int sIntNode*::id(sIntNode* self)
+unsigned int sIntNode*::id(sIntNode* self)
 {
     return self.id;
 }
 
-private bool sIntNode*::compile(sIntNode* self, sInfo* info)
+bool sIntNode*::compile(sIntNode* self, sInfo* info)
 {
     int sline = self.sline;
     char* sname = self.sname;
@@ -49,7 +49,7 @@ private bool sIntNode*::compile(sIntNode* self, sInfo* info)
     return true;
 }
 
-private struct sBoolNode
+struct sBoolNode
 {
     int id;
     bool value;
@@ -58,7 +58,7 @@ private struct sBoolNode
     char* sname;
 };
 
-private sBoolNode* sBoolNode*::initialize(sBoolNode* self, bool value, sInfo* info)
+sBoolNode* sBoolNode*::initialize(sBoolNode* self, bool value, sInfo* info)
 {
     self.id = gNodeID++;
     self.value = value;
@@ -69,12 +69,12 @@ private sBoolNode* sBoolNode*::initialize(sBoolNode* self, bool value, sInfo* in
     return self;
 }
 
-private unsigned int sBoolNode*::id(sBoolNode* self)
+unsigned int sBoolNode*::id(sBoolNode* self)
 {
     return self.id;
 }
 
-private bool sBoolNode*::compile(sBoolNode* self, sInfo* info)
+bool sBoolNode*::compile(sBoolNode* self, sInfo* info)
 {
     char* sname = self.sname;
     int sline = self.sline;

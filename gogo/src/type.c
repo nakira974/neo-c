@@ -1,9 +1,6 @@
 #include <neo-c.h>
 #include "common.h"
 
-public {#define PARAMS_MAX 32}
-public {#define VAR_NAME_MAX 128}
-
 struct sClass 
 {
     string name;
@@ -11,7 +8,7 @@ struct sClass
     bool unsigned_;
 };
 
-private map<string, sClass*>* gClasses;
+map<string, sClass*>* gClasses;
 
 void class_init()
 {
@@ -164,7 +161,7 @@ bool type_identify(sType* left, sType* right)
     return left->klass->name === right->klass->name;
 }
 
-private sType* parse_class_name(char** p, char** p2, char* buf)
+sType* parse_class_name(char** p, char** p2, char* buf)
 {
     sType* node_type = new sType();
 

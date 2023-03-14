@@ -99,7 +99,7 @@ sVarTable* init_block_vtable(sVarTable*? lv_table)
     return new_table;
 }
 
-private struct sStoreNode
+struct sStoreNode
 {
     int id;
     string name;
@@ -111,7 +111,7 @@ private struct sStoreNode
     char* sname;
 };
 
-private sStoreNode* sStoreNode*::initialize(sStoreNode* self, string name, sType*? type, sNode*? right_node, bool alloc, sInfo* info)
+sStoreNode* sStoreNode*::initialize(sStoreNode* self, string name, sType*? type, sNode*? right_node, bool alloc, sInfo* info)
 {
     self.id = gNodeID++;
     self.name = name;
@@ -129,12 +129,12 @@ private sStoreNode* sStoreNode*::initialize(sStoreNode* self, string name, sType
     return self;
 }
 
-private unsigned int sStoreNode*::id(sStoreNode* self)
+unsigned int sStoreNode*::id(sStoreNode* self)
 {
     return self.id;
 }
 
-private bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
+bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
 {
     int sline = self.sline;
     char* sname = self.sname; 
@@ -265,7 +265,7 @@ private bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
     return true;
 }
 
-private struct sLoadNode
+struct sLoadNode
 {
     int id;
     string name;
@@ -274,7 +274,7 @@ private struct sLoadNode
     char* sname;
 };
 
-private sLoadNode* sLoadNode*::initialize(sLoadNode* self, string name, sInfo* info)
+sLoadNode* sLoadNode*::initialize(sLoadNode* self, string name, sInfo* info)
 {
     self.id = gNodeID++;
     self.name = name;
@@ -285,12 +285,12 @@ private sLoadNode* sLoadNode*::initialize(sLoadNode* self, string name, sInfo* i
     return self;
 }
 
-private unsigned int sLoadNode*::id(sLoadNode* self)
+unsigned int sLoadNode*::id(sLoadNode* self)
 {
     return self.id;
 }
 
-private bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
+bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
 {
     char* sname = self.sname;
     int sline = self.sline;
@@ -336,7 +336,7 @@ private bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
     else {
         LLVMTypeRef llvm_type = create_llvm_type_from_node_type(var_type);
         
-        llvm_value.value = LLVMBuildLoad2(gBuilder, var_type, var_address, var_name);
+        llvm_value.value = LLVMBuildLoad2(gBuilder, llvm_type, var_address, var_name);
         llvm_value.type = var_type;
         llvm_value.address = var_address;
         llvm_value.var = var2;

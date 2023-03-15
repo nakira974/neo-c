@@ -1,210 +1,93 @@
 #include "neo-c.h"
 
-struct sGCInfo
-{
-    void* mem;
-    int count;
-};
-
-long gSizeGCTable;
-long gNumGCTable;
-struct sGCInfo* gGCTable;
-
 void come_gc_init()
 {
-    gSizeGCTable = 4096;
-    gNumGCTable = 0;
-    gGCTable = calloc(1, sizeof(struct sGCInfo)*gSizeGCTable);
 }
 
 void come_gc_final()
 {
-    free(gGCTable);
-}
-
-static long get_key(char* mem)
-{
-    return (long)mem;
 }
 
 void* igc_calloc(size_t count, size_t size)
 {
-    gNumGCTable++;
-
-    if(gNumGCTable >= gSizeGCTable/5) {
-        long new_gc_table_size = gSizeGCTable * 2;
-        struct sGCInfo* new_gc_table = calloc(1, sizeof(struct sGCInfo)*new_gc_table_size);
-        struct sGCInfo* it = gGCTable;
-        while(TRUE) {
-            if(it->mem) {
-                unsigned long key = get_key(it->mem) % new_gc_table_size;
-        
-                struct sGCInfo* it2 = new_gc_table + key;
+    char* mem = calloc(1, sizeof(int)+count*size);
     
-                for(;;) {
-                    if(it2->mem == NULL) {
-                        it2->count = it->count;
-                        it2->mem = it->mem;
-                        break;
-                    }
-                    else {
-                        it2++;
-                        
-                        if(it2 == new_gc_table + new_gc_table_size) {
-                            it2 = new_gc_table;
-                        }
-                        else if(it2 == new_gc_table + key) {
-                            fprintf(stderr, "overflow gc size\n");
-                            exit(1);
-                        }
-                    }
-                }
-            }
-
-            it++;
+    int* ref_count = (int*)mem;
     
-            if(it == gGCTable + gSizeGCTable) {
-                break;
-            }
-        }
-
-        free(gGCTable);
-        gGCTable = new_gc_table;
-        gSizeGCTable = new_gc_table_size;
-    }
+    (*ref_count)++;
     
-    void* result = calloc(count, size);
-    
-    unsigned long key = get_key(result) % gSizeGCTable;
-    
-    struct sGCInfo* it = gGCTable + key;
-    
-    for(;;) {
-        if(it->mem == NULL) {
-            it->count = 1;
-            it->mem = result;
-            break;
-        }
-        else {
-            it++;
-            
-            if(it == gGCTable + gSizeGCTable) {
-                it = gGCTable;
-            }
-            else if(it == gGCTable + key) {
-                fprintf(stderr, "overflow gc size\n");
-                exit(1);
-            }
-        }
-    }
-    
-    return result;
+//printf("igc_calloc %p\n", mem + sizeof(int));
+    return mem + sizeof(int);
 }
 
 void igc_increment_ref_count(void* mem)
 {
-    unsigned long key = get_key(mem) % gSizeGCTable;
+//printf("igc_increment_ref_count %p\n", mem);
+    int* ref_count = (char*)mem - sizeof(int);
     
-    struct sGCInfo* it = gGCTable + key;
+    (*ref_count)++;
     
-    for(;;) {
-        if(it->mem == mem) {
-            it->count++;
-            break;
-        }
-        else {
-            it++;
-            
-            if(it == gGCTable + gSizeGCTable) {
-                it = gGCTable;
-            }
-            else if(it == gGCTable + key) {
-                fprintf(stderr, "memory not found in incremeting refference count\n");
-                exit(1);
-            }
-        }
-    }
+//printf("ref_count %d\n", *ref_count);
 }
 
 
 void igc_decrement_ref_count(void* mem)
 {
+//printf("igc_decrement_ref_count %p\n", mem);
     if(mem == NULL) {
         return;
     }
     
-    unsigned long key = get_key(mem) % gSizeGCTable;
+    int* ref_count = (char*)mem - sizeof(int);
     
-    struct sGCInfo* it = gGCTable + key;
+    (*ref_count)--;
+//printf("ref_count %d\n", *ref_count);
     
-    for(;;) {
-        if(it->mem == mem) {
-            it->count--;
-            if(it->count == 0) {
-                ncfree(it->mem);
-                it->mem = NULL;
-            }
-            break;
-        }
-        else {
-            it++;
-            
-            if(it == gGCTable + gSizeGCTable) {
-                it = gGCTable;
-            }
-            else if(it == gGCTable + key) {
-                break;
-            }
-        }
+    int count = *ref_count;
+    if(count == 0) {
+        ncfree(ref_count);
     }
+}
+
+void free_object(void* mem)
+{
+//printf("free_object %p\n", mem);
+    if(mem == NULL) {
+        return;
+    }
+    
+    int* ref_count = (char*)mem - sizeof(int);
+    
+    ncfree(ref_count);
 }
 
 void call_finalizer(void* fun, void* mem)
 {
 //printf("call_finalizer %p\n", mem);
-    long key = (long)mem % gSizeGCTable;
-    
-    struct sGCInfo* it = gGCTable + key;
-    
     if(mem == NULL) {
         return;
     }
     
-    for(;;) {
-        if(it->mem == mem) {
-            it->count--;
-            if(it->count == 0) {
-                if(mem) {
-                    if(fun) {
-                        void (*finalizer)(void*) = fun;
-                        finalizer(mem);
-                    }
-                    ncfree(mem);
-                }
-                it->mem = NULL;
-                it->count = 0;
+    int* ref_count = (char*)mem - sizeof(int);
+//printf("ref_count %d\n", *ref_count);
+    
+    (*ref_count)--;
+    
+    int count = *ref_count;
+    if(count == 0) {
+        if(mem) {
+            if(fun) {
+                void (*finalizer)(void*) = fun;
+                finalizer(mem);
             }
-            break;
-        }
-        else {
-            it++;
-            
-            if(it == gGCTable + gSizeGCTable) {
-                it = gGCTable;
-            }
-            else if(it == gGCTable + key) {
-                break;
-            }
+            free_object(mem);
         }
     }
 }
 
-
-
-
-
 void ncfree(void* mem)
 {
+//printf("ncfree %p\n", mem);
     if(mem) {
         free(mem);
     }
@@ -226,35 +109,47 @@ void* gc_nccalloc(size_t nmemb, size_t size)
 
 void*%? ncmemdup(void*% block)
 {
+//puts("ncmemdup1");
     managed block;
 
     if(!block) {
         return dummy_heap null;
     }
+//puts("ncmemdup2");
+    char* mem = (char*)block - sizeof(int);
 
+//puts("ncmemdup3");
+//printf("malloc size mem %p\n", mem);
 #ifdef __DARWIN__
-    size_t size = malloc_size(block);
+    size_t size = malloc_size(mem);
 #else
-    size_t size = malloc_usable_size(block);
+    size_t size = malloc_usable_size(mem);
 #endif
 
-    void*% ret = dummy_heap igc_calloc(1, size);
+//puts("ncmemdup4");
+    void* ret = calloc(1, size);
+
+//printf("memdup mem %p calloc %p\n", mem, ret);
+
+    int* ref_count = ret;
     
     using unsafe;
 
     if (ret) {
         char* p = ret;
-        char* p2 = block;
+        char* p2 = mem;
         while(p - ret < size) {
             *p = *p2;
             p++;
             p2++;
         }
     }
-    
-//printf("clone %p\n", ret);
 
-    return nullable ret;
+    (*ref_count) = 1;
+    
+//printf("ncmemdup ret %p\n", (char*)ret + sizeof(int));
+
+    return nullable (char*)ret + sizeof(int);
 }
 
 void* call_cloner(void* fun, void* mem)

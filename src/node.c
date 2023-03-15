@@ -425,7 +425,7 @@ sFunction* create_finalizer_automatically(sNodeType* node_type, char* fun_name, 
             char* name = "_protocol_obj";
             char source2[1024];
             snprintf(source2, 1024, "if(self != null && self.%s != null && self.finalize) { void (*finalizer)(void*) = self.finalize; finalizer(self._protocol_obj); igc_decrement_ref_count(self.%s); }\n", name, name);
-            //snprintf(source2, 1024, "if(self != null && self.%s != null && self.finalize) { void (*finalizer)(void*) = self.finalize; finalizer(self._protocol_obj); ncfree(self.%s); }\n", name, name);
+            //snprintf(source2, 1024, "if(self != null && self.%s != null && self.finalize) { void (*finalizer)(void*) = self.finalize; finalizer(self._protocol_obj); free_object(self.%s); }\n", name, name);
             
             sBuf_append_str(&source, source2);
         }
@@ -906,7 +906,8 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCom
                     LLVMValueRef llvm_params3[PARAMS_MAX];
                     memset(llvm_params3, 0, sizeof(LLVMValueRef)*PARAMS_MAX);
             
-                    char* fun_name3 = "igc_decrement_ref_count";
+                    //char* fun_name3 = "igc_decrement_ref_count";
+                    char* fun_name3 = "free_object";
                     //char* fun_name3 = "ncfree";
             
                     LLVMTypeRef llvm_type2 = create_llvm_type_with_class_name("char*");
@@ -958,9 +959,10 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCom
                 LLVMValueRef llvm_params[PARAMS_MAX];
                 memset(llvm_params, 0, sizeof(LLVMValueRef)*PARAMS_MAX);
         
-                char* fun_name2 = "ncfree";
+                //char* fun_name2 = "ncfree";
                 //char* fun_name2 = "igc_decrement_ref_count";
                 //char* fun_name2 = "free";
+                char* fun_name2 = "free_object";
         
                 LLVMTypeRef llvm_type = create_llvm_type_with_class_name("char*");
         

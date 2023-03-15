@@ -66,6 +66,7 @@ void* call_cloner(void* fun, void* mem);
 
 string string(char* str);
 void ncfree(void* mem);
+void free_object(void* mem);
 void* nccalloc(size_t nmemb, size_t size);
 void*%? ncmemdup(void*% block);
 void* gc_ncmemdup(void* block);
@@ -269,7 +270,7 @@ impl vector<T>
                 delete self.items[i];
             }
         }
-        ncfree((char*)self.items);  // don't call finalizer function
+        free_object((char*)self.items);  // don't call finalizer function
     }
     
     immutable vector<T>* to_immutable(vector<T>* self) {
@@ -349,7 +350,7 @@ impl vector<T>
             auto new_size = self.size * 2;
             auto items = self.items;
 
-            self.items = nccalloc(1, sizeof(T)*new_size);
+            self.items = igc_calloc(1, sizeof(T)*new_size);
 
             int i;
             for(i=0; i<self.size; i++) {

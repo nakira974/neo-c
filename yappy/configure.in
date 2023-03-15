@@ -82,7 +82,7 @@ fi
 ##############################################################
 AC_MSG_CHECKING(Operating System)
 
-CFLAGS='-DPREFIX="\"${DESTDIR}/\""'
+CFLAGS='-DPREFIX="\"${DESTDIR}/\"" -gc'
 CFLAGS="-fPIC -rdynamic $CFLAGS"
 
 AR_LIB=
@@ -188,9 +188,6 @@ export CFLAGS
 CC=clang
 
 INSTALL="$(which install) -c"
-
-AC_CHECK_HEADER(readline/readline.h, [AC_DEFINE(HAVE_READLINE_H, 1)], [exit])
-AC_HAVE_LIBRARY(readline, [ LIBS="$LIBS -lreadline"; ], [exit])
 
 AC_CHECK_HEADER(bsd/stdlib.h, [AC_DEFINE(HAVE_BSD_H, 1)], [])
 

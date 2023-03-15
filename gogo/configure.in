@@ -84,7 +84,7 @@ fi
 ##############################################################
 AC_MSG_CHECKING(Operating System)
 
-CFLAGS='-DPREFIX="\"${DESTDIR}/\""'
+CFLAGS='-DPREFIX="\"${DESTDIR}/\"" -gc'
 CFLAGS="-fPIC $CFLAGS"
 
 AR_LIB=

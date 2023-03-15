@@ -2,7 +2,7 @@
 #include <libgen.h>
 
 char* gVersion;
-BOOL gNCGC = TRUE;
+BOOL gNCGC = FALSE;
 BOOL gNCDebug = FALSE;
 BOOL gExternC = TRUE;
 BOOL gNCClang = TRUE;

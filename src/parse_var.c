@@ -56,6 +56,7 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
                         *node = 0;
                     }
                     else {
+                        *node = sNodeTree_create_unwrap(*node, info);
                         *node = sNodeTree_create_store_field(var_name, *node, right_node, TRUE, info);
                     }
                 }
@@ -66,6 +67,7 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
                     unsigned int params[PARAMS_MAX];
                     int num_params = 0;
     
+                    *node = sNodeTree_create_unwrap(*node, info);
                     params[0] = *node;
                     num_params++;
     
@@ -114,6 +116,7 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
                 /// call methods ///
                 if(*info->p == '(' || *info->p == '{' || type_name_after_word) {
                     if(gExternC) {
+                        *node = sNodeTree_create_unwrap(*node, info);
                         unsigned int obj_node = *node;
                         
                         unsigned int params[PARAMS_MAX];
@@ -140,6 +143,7 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
                             unsigned int params[PARAMS_MAX];
                             int num_params = 0;
         
+                            *node = sNodeTree_create_unwrap(*node, info);
                             params[0] = *node;
                             num_params++;
         
@@ -183,11 +187,13 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
                                 *node = sNodeTree_create_store_field_of_protocol(*node, right_node, info);
                             }
                             else {
+                                *node = sNodeTree_create_unwrap(*node, info);
                                 *node = sNodeTree_create_store_field(var_name, *node, right_node, TRUE, info);
                             }
                         }
                     }
                     else {
+                        *node = sNodeTree_create_unwrap(*node, info);
                         unsigned int obj_node = *node;
                         
                         if(*info->p == '+' && *(info->p+1) == '+')
@@ -560,6 +566,7 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
             info->p+=2;
             skip_spaces_and_lf(info);
 
+            *node = sNodeTree_create_unwrap(*node, info);
             *node = sNodeTree_create_plus_plus(*node, info);
         }
         else if(gMultDivPlusPlusEnableNode[gNodes[*node].mNodeType] && *info->p == '-' && *(info->p+1) == '-' && *(info->p+2) != '>')
@@ -567,6 +574,7 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
             info->p+=2;
             skip_spaces_and_lf(info);
 
+            *node = sNodeTree_create_unwrap(*node, info);
             *node = sNodeTree_create_minus_minus(*node, info);
         }
         else if(enable_assginment && *info->p == '+' && *(info->p+1) == '=')
@@ -579,6 +587,7 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
                 return FALSE;
             };
 
+            *node = sNodeTree_create_unwrap(*node, info);
             *node  = sNodeTree_create_equal_plus(*node, right_node, info);
         }
         else if(enable_assginment && *info->p == '-' && *(info->p+1) == '=')
@@ -591,6 +600,7 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
                 return FALSE;
             };
 
+            *node = sNodeTree_create_unwrap(*node, info);
             *node = sNodeTree_create_equal_minus(*node, right_node, info);
         }
         else if(enable_assginment && *info->p == '*' && *(info->p+1) == '=')
@@ -603,6 +613,7 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
                 return FALSE;
             };
 
+            *node = sNodeTree_create_unwrap(*node, info);
             *node  = sNodeTree_create_equal_mult(*node, right_node, info);
         }
         else if(enable_assginment && *info->p == '/' && *(info->p+1) == '=')
@@ -615,6 +626,7 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
                 return FALSE;
             };
 
+            *node = sNodeTree_create_unwrap(*node, info);
             *node  = sNodeTree_create_equal_div(*node, right_node, info);
         }
         else if(enable_assginment && *info->p == '%' && *(info->p+1) == '=')
@@ -627,6 +639,7 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
                 return FALSE;
             };
 
+            *node = sNodeTree_create_unwrap(*node, info);
             *node  = sNodeTree_create_equal_mod(*node, right_node, info);
         }
         else if(enable_assginment && *info->p == '<' && *(info->p+1) == '<' && *(info->p+2) == '=')
@@ -639,6 +652,7 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
                 return FALSE;
             };
 
+            *node = sNodeTree_create_unwrap(*node, info);
             *node  = sNodeTree_create_equal_lshift(*node, right_node, info);
         }
         else if(enable_assginment && *info->p == '>' && *(info->p+1) == '>' && *(info->p+2) == '=')
@@ -651,6 +665,7 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
                 return FALSE;
             };
 
+            *node = sNodeTree_create_unwrap(*node, info);
             *node = sNodeTree_create_equal_rshift(*node, right_node, info);
         }
         else if(enable_assginment && *info->p == '&' && *(info->p+1) == '=')
@@ -663,6 +678,7 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
                 return FALSE;
             };
 
+            *node = sNodeTree_create_unwrap(*node, info);
             *node = sNodeTree_create_equal_and(*node, right_node, info);
         }
         else if(enable_assginment && *info->p == '^' && *(info->p+1) == '=')
@@ -675,6 +691,7 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
                 return FALSE;
             };
 
+            *node = sNodeTree_create_unwrap(*node, info);
             *node = sNodeTree_create_equal_xor(*node, right_node, info);
         }
         else if(enable_assginment && *info->p == '|' && *(info->p+1) == '=')
@@ -687,6 +704,7 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
                 return FALSE;
             };
 
+            *node = sNodeTree_create_unwrap(*node, info);
             *node = sNodeTree_create_equal_or(*node, right_node, info);
         }
         else {

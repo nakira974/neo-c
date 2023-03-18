@@ -1455,7 +1455,7 @@ BOOL parse_inherit(unsigned int* node, sParserInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
             
-            *node = sNodeTree_create_unwrap(*node, info);
+            *node = sNodeTree_create_unwrap(*node, FALSE, info);
         }
     }
 

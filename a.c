@@ -1,16 +1,11 @@
-#include <neo-c.h>
-
-struct sParserInfo
-{
-    char* p;
-};
+using neo-c;
 
 int main()
 {
-    struct sParserInfo info;
-    
-    
-    printf("%c\n", *info.p);
+    int array[128];
+    int* ppp = array;
+
+    ppp++;
     
     return 0;
 }

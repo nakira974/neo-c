@@ -8139,7 +8139,7 @@ BOOL compile_nonullable(unsigned int node, sCompileInfo* info)
     return TRUE;
 }
 
-unsigned int sNodeTree_create_unwrap(unsigned int left, sParserInfo* info)
+unsigned int sNodeTree_create_unwrap(unsigned int left, BOOL load_, sParserInfo* info)
 {
     unsigned node = alloc_node();
 
@@ -8147,6 +8147,8 @@ unsigned int sNodeTree_create_unwrap(unsigned int left, sParserInfo* info)
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
+    
+    gNodes[node].uValue.sUnwrap.mLoad = load_;
 
     gNodes[node].mLeft = left;
     gNodes[node].mRight = 0;
@@ -8158,6 +8160,8 @@ unsigned int sNodeTree_create_unwrap(unsigned int left, sParserInfo* info)
 BOOL compile_unwrap(unsigned int node, sCompileInfo* info)
 {
     unsigned int left_node = gNodes[node].mLeft;
+    
+    BOOL load_ = gNodes[node].uValue.sUnwrap.mLoad;
 
     if(left_node == 0) {
         compile_err_msg(info, "require unwrap target object");
@@ -8178,6 +8182,12 @@ BOOL compile_unwrap(unsigned int node, sCompileInfo* info)
         LLVMBasicBlockRef cond_else_block = LLVMAppendBasicBlockInContext(gContext, gFunction, "unwrap_else");
         
         LLVMValueRef value = llvm_value.value;
+        if(load_) {
+            sNodeType* left_type2 = clone_node_type(left_type);
+            left_type2->mPointerNum--;
+            LLVMTypeRef llvm_type = create_llvm_type_from_node_type(left_type2);
+            value = LLVMBuildLoad2(gBuilder, llvm_type, value, "valueXYZunwrap");
+        }
         
         LLVMTypeRef llvm_type = create_llvm_type_with_class_name("char*");
         LLVMTypeRef long_llvm_type = create_llvm_type_with_class_name("long");
@@ -8194,10 +8204,12 @@ BOOL compile_unwrap(unsigned int node, sCompileInfo* info)
         char buf[PATH_MAX];
         
         snprintf(buf, PATH_MAX, "%s", info->sname);
-    
+        
         LLVMTypeRef llvm_type2 = create_llvm_type_with_class_name("char*");
+        
+        LLVMValueRef sname_value = LLVMBuildGlobalString(gBuilder, buf, buf);
     
-        LLVMValueRef param0 = LLVMBuildPointerCast(gBuilder, LLVMBuildGlobalString(gBuilder, buf, buf), llvm_type2, "str");
+        LLVMValueRef param0 = LLVMBuildPointerCast(gBuilder, sname_value, llvm_type2, "str");
         
         LLVMTypeRef llvm_type3 = create_llvm_type_with_class_name("int");
         LLVMValueRef param1 = LLVMConstInt(llvm_type3, info->sline, FALSE);

@@ -1024,6 +1024,9 @@ struct sNodeTreeStruct
         struct {
             sNodeType* mNodeType;
         } sNullValue;
+        struct {
+            BOOL mLoad;
+        } sUnwrap;
     } uValue;
 };
 
@@ -1186,7 +1189,7 @@ unsigned int sNodeTree_create_va_arg(unsigned int ap, sNodeType* node_type, sPar
 unsigned int sNodeTree_guard_expression(char* var_name, MANAGED struct sNodeBlockStruct* if_node_block, sParserInfo* info, char* sname, int sline);
 unsigned int sNodeTree_create_store_field_of_protocol(unsigned int left_node, unsigned int right_node, sParserInfo* info);
 unsigned int sNodeTree_create_dupe_function(char* old_fun_name, char* new_fun_name, sParserInfo* info);
-unsigned int sNodeTree_create_unwrap(unsigned int left, sParserInfo* info);
+unsigned int sNodeTree_create_unwrap(unsigned int left, BOOL load_, sParserInfo* info);
 unsigned int sNodeTree_create_nullable(unsigned int object_node, sParserInfo* info);
 unsigned int sNodeTree_create_nonullable(unsigned int object_node, sParserInfo* info);
 unsigned int sNodeTree_create_nonullable(unsigned int object_node, sParserInfo* info);

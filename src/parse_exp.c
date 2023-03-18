@@ -41,7 +41,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
         xstrncpy(var_name, bufs[0], VAR_NAME_MAX);
 
         unsigned int left_node = sNodeTree_create_load_variable(var_name, info);
-        left_node = sNodeTree_create_unwrap(left_node, info);
+        left_node = sNodeTree_create_unwrap(left_node, FALSE, info);
 
         unsigned int right_node = sNodeTree_create_int_value(1, info);
 
@@ -74,7 +74,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
         xstrncpy(var_name, bufs[0], VAR_NAME_MAX);
 
         unsigned int left_node = sNodeTree_create_load_variable(var_name, info);
-        left_node = sNodeTree_create_unwrap(left_node, info);
+        left_node = sNodeTree_create_unwrap(left_node, FALSE, info);
         sVar* var_ = get_variable_from_table(info->lv_table, var_name);
 
         if(var_ && var_->mReadOnly) {
@@ -109,7 +109,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
         xstrncpy(var_name, bufs[0], VAR_NAME_MAX);
 
         unsigned int left_node = sNodeTree_create_load_variable(var_name, info);
-        left_node = sNodeTree_create_unwrap(left_node, info);
+        left_node = sNodeTree_create_unwrap(left_node, FALSE, info);
 
         *node = sNodeTree_create_add(left_node, right_node, 0, TRUE, info);
 
@@ -133,7 +133,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
         xstrncpy(var_name, bufs[0], VAR_NAME_MAX);
 
         unsigned int left_node = sNodeTree_create_load_variable(var_name, info);
-        left_node = sNodeTree_create_unwrap(left_node, info);
+        left_node = sNodeTree_create_unwrap(left_node, FALSE, info);
 
         *node = sNodeTree_create_sub(left_node, right_node, 0, TRUE, info);
 
@@ -157,7 +157,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
         xstrncpy(var_name, bufs[0], VAR_NAME_MAX);
 
         unsigned int left_node = sNodeTree_create_load_variable(var_name, info);
-        left_node = sNodeTree_create_unwrap(left_node, info);
+        left_node = sNodeTree_create_unwrap(left_node, FALSE, info);
 
         *node = sNodeTree_create_mult(left_node, right_node, 0, info);
 
@@ -179,7 +179,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
         xstrncpy(var_name, bufs[0],  VAR_NAME_MAX);
 
         unsigned int left_node = sNodeTree_create_load_variable(var_name, info);
-        left_node = sNodeTree_create_unwrap(left_node, info);
+        left_node = sNodeTree_create_unwrap(left_node, FALSE, info);
 
         *node = sNodeTree_create_div(left_node, right_node, 0, info);
 
@@ -201,7 +201,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
         xstrncpy(var_name, bufs[0], VAR_NAME_MAX);
 
         unsigned int left_node = sNodeTree_create_load_variable(var_name, info);
-        left_node = sNodeTree_create_unwrap(left_node, info);
+        left_node = sNodeTree_create_unwrap(left_node, FALSE, info);
 
         *node = sNodeTree_create_mod(left_node, right_node, 0, info);
 
@@ -223,7 +223,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
         xstrncpy(var_name, bufs[0], VAR_NAME_MAX);
 
         unsigned int left_node = sNodeTree_create_load_variable(var_name, info);
-        left_node = sNodeTree_create_unwrap(left_node, info);
+        left_node = sNodeTree_create_unwrap(left_node, FALSE, info);
 
         *node = sNodeTree_create_left_shift(left_node, right_node, 0, info);
 
@@ -245,7 +245,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
         xstrncpy(var_name, bufs[0], VAR_NAME_MAX);
 
         unsigned int left_node = sNodeTree_create_load_variable(var_name, info);
-        left_node = sNodeTree_create_unwrap(left_node, info);
+        left_node = sNodeTree_create_unwrap(left_node, FALSE, info);
 
         *node = sNodeTree_create_right_shift(left_node, right_node, 0, info);
 
@@ -267,7 +267,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
         xstrncpy(var_name, bufs[0], VAR_NAME_MAX);
 
         unsigned int left_node = sNodeTree_create_load_variable(var_name, info);
-        left_node = sNodeTree_create_unwrap(left_node, info);
+        left_node = sNodeTree_create_unwrap(left_node, FALSE, info);
 
         *node = sNodeTree_create_and(left_node, right_node, 0, info);
 
@@ -289,7 +289,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
         xstrncpy(var_name, bufs[0], VAR_NAME_MAX);
 
         unsigned int left_node = sNodeTree_create_load_variable(var_name, info);
-        left_node = sNodeTree_create_unwrap(left_node, info);
+        left_node = sNodeTree_create_unwrap(left_node, FALSE, info);
 
         *node = sNodeTree_create_xor(left_node, right_node, 0, info);
 
@@ -311,7 +311,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
         xstrncpy(var_name, bufs[0], VAR_NAME_MAX);
 
         unsigned int left_node = sNodeTree_create_load_variable(var_name, info);
-        left_node = sNodeTree_create_unwrap(left_node, info);
+        left_node = sNodeTree_create_unwrap(left_node, FALSE, info);
 
         *node = sNodeTree_create_or(left_node, right_node, 0, info);
 
@@ -329,7 +329,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
         };
 
         *node = sNodeTree_create_load_variable(bufs[0], info);
-        *node = sNodeTree_create_unwrap(*node, info);
+        *node = sNodeTree_create_unwrap(*node, FALSE, info);
 
         *node = sNodeTree_create_lambda_call(*node, params, num_params, info);
     }
@@ -2781,7 +2781,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
 
             *node = sNodeTree_create_load_variable(var_name, info);
             
-            *node = sNodeTree_create_unwrap(*node, info);
+            *node = sNodeTree_create_unwrap(*node, FALSE, info);
         }
 /*
         else if(*info->p == '@' && (*(info->p+1) == '(' || *(info->p+1) == '{' || *(info->p+1) == '[' || *(info->p+1) == '<'))
@@ -2966,7 +2966,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                     info->p++;
                     skip_spaces_and_lf(info);
                     
-                    *node = sNodeTree_create_unwrap(*node, info);
+                    *node = sNodeTree_create_unwrap(*node, FALSE, info);
                 }
             }
             else {
@@ -3075,7 +3075,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 info->p++;
                 skip_spaces_and_lf(info);
                 
-                *node = sNodeTree_create_unwrap(*node, info);
+                *node = sNodeTree_create_unwrap(*node, FALSE, info);
             }
         }
 */
@@ -3110,7 +3110,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 info->p++;
                 skip_spaces_and_lf(info);
                 
-                *node = sNodeTree_create_unwrap(*node, info);
+                *node = sNodeTree_create_unwrap(*node, FALSE, info);
             }
         }
         else {

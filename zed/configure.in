@@ -22,7 +22,7 @@ ENABLE_NO_GC=0
 
 AC_ARG_WITH(debug,              [  --with-debug              include debug info ], [ DEBUGGING=1; ], [])
 AC_ARG_WITH(optimize,           [  --with-optimize           with optimize(-O in CFLAGS) ], [ ENABLE_OPTIMIZE=1 ], [ ENABLE_OPTIMIZE=0 ])
-AC_ARG_WITH(-gc,                [  --with-gc                 enable Boehm GC ], [ ENABLE_GC=1 ], [])
+AC_ARG_WITH(gc,                 [  --with-gc                 enable Boehm GC ], [ ENABLE_GC=1 ], [])
 
 ##############################################################
 # check cpu type

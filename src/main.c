@@ -5,7 +5,6 @@ char* gVersion;
 BOOL gNCGC = FALSE;
 BOOL gNCDebug = FALSE;
 BOOL gExternC = TRUE;
-BOOL gNCClang = TRUE;
 char gFName[PATH_MAX];
 sVarTable* gModuleVarTable;
 BOOL gNCType = FALSE;
@@ -411,11 +410,6 @@ int main(int argc, char** argv)
         {
             gNCGC = FALSE;
             xstrncat(optiones, "-no-gc ", 1024);
-        }
-        else if(strcmp(argv[i], "-clang") == 0)
-        {
-            gNCClang = TRUE;
-            xstrncat(optiones, "-clang ", 1024);
         }
         else if(strcmp(argv[i], "-c") == 0) {
             no_linker = TRUE;

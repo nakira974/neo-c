@@ -239,7 +239,7 @@ test: gc-test gc-debug-test no-gc-test debug-test
 
 no-gc-test:
 	@echo "Compile to gc test code..."
-	PWD=`pwd` ./neo-c -no-gc -clang code/HelloWorld.c
+	PWD=`pwd` ./neo-c -no-gc code/HelloWorld.c
 	./code/HelloWorld
 	PWD=`pwd` ./neo-c -no-gc code/HelloWorld3.c
 	./code/HelloWorld3
@@ -285,9 +285,9 @@ tcc-test:
 
 debug-test: 
 	@echo "Compile to test code..."
-	PWD=`pwd` ./neo-c -no-gc -clang -g code/HelloWorld.c
+	PWD=`pwd` ./neo-c -no-gc -g code/HelloWorld.c
 	./code/HelloWorld
-	PWD=`pwd` ./neo-c -no-gc -clang -g code/HelloWorld2.c
+	PWD=`pwd` ./neo-c -no-gc -g code/HelloWorld2.c
 	./code/HelloWorld2
 	PWD=`pwd` ./neo-c -no-gc -g code/HelloWorld3.c
 	./code/HelloWorld3
@@ -325,7 +325,7 @@ debug-test:
 
 gc-test:
 	@echo "Compile to gc test code..."
-	PWD=`pwd` ./neo-c -gc -clang code/HelloWorld.c
+	PWD=`pwd` ./neo-c -gc code/HelloWorld.c
 	./code/HelloWorld
 	PWD=`pwd` ./neo-c -gc code/HelloWorld3.c
 	./code/HelloWorld3
@@ -364,9 +364,9 @@ gc-test:
 
 gc-debug-test: 
 	@echo "Compile to test code..."
-	PWD=`pwd` ./neo-c -gc -clang -g code/HelloWorld.c
+	PWD=`pwd` ./neo-c -gc -g code/HelloWorld.c
 	./code/HelloWorld
-	PWD=`pwd` ./neo-c -gc -clang -g code/HelloWorld2.c
+	PWD=`pwd` ./neo-c -gc -g code/HelloWorld2.c
 	./code/HelloWorld2
 	PWD=`pwd` ./neo-c -gc -g code/HelloWorld3.c
 	./code/HelloWorld3

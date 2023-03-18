@@ -213,7 +213,7 @@ void free_protocol_object(sNodeType* protocol_type, LLVMValueRef protocol_value,
                 LLVMBuildCall2(gBuilder, function_type, llvm_fun3, llvm_params2, num_params2, "");
             }
             else {
-                int num_params = 2;
+                int num_params = 3;
             
                 LLVMValueRef llvm_params[PARAMS_MAX];
                 memset(llvm_params, 0, sizeof(LLVMValueRef)*PARAMS_MAX);
@@ -225,6 +225,7 @@ void free_protocol_object(sNodeType* protocol_type, LLVMValueRef protocol_value,
                 
                 llvm_params[0] = fun;
                 llvm_params[1] = mem;
+                llvm_params[2] = LLVMConstInt(LLVMInt32Type(), FALSE, FALSE);
                 
                 sNodeType* result_type = create_node_type_with_class_name("void");
         
@@ -797,7 +798,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCom
                     return;
                 }
                 
-                int num_params = 2;
+                int num_params = 3;
         
                 LLVMValueRef llvm_params[PARAMS_MAX];
                 memset(llvm_params, 0, sizeof(LLVMValueRef)*PARAMS_MAX);
@@ -811,6 +812,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCom
         
                 llvm_params[0] = fun;
                 llvm_params[1] = mem;
+                llvm_params[2] = LLVMConstInt(LLVMInt32Type(), node_type->mAllocaValue, FALSE);
         
                 LLVMValueRef llvm_fun2 = LLVMGetNamedFunction(gModule, fun_name2);
                 
@@ -857,7 +859,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCom
         
                     llvm_param_types[0] = create_llvm_type_with_class_name("char*");
                     llvm_param_types[1] = create_llvm_type_with_class_name("char*");
-                    llvm_param_types[1] = create_llvm_type_with_class_name("int");
+                    llvm_param_types[2] = create_llvm_type_with_class_name("int");
         
                     LLVMTypeRef llvm_result_type = create_llvm_type_from_node_type(result_type);
                 
@@ -883,7 +885,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCom
                     exit(2);
                 }
                 
-                int num_params2 = 2;
+                int num_params2 = 3;
         
                 LLVMValueRef llvm_params2[PARAMS_MAX];
                 memset(llvm_params2, 0, sizeof(LLVMValueRef)*PARAMS_MAX);
@@ -897,6 +899,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCom
         
                 llvm_params2[0] = fun;
                 llvm_params2[1] = mem;
+                llvm_params2[2] = LLVMConstInt(LLVMInt32Type(), node_type->mAllocaValue, FALSE);
         
                 LLVMValueRef llvm_fun2 = LLVMGetNamedFunction(gModule, fun_name2);
                 

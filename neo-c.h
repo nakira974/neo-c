@@ -61,7 +61,7 @@ inline void xassert(const char* msg, bool exp)
     }
 }
 
-void call_finalizer(void* fun, void* mem);
+void call_finalizer(void* fun, void* mem, int call_finalizer_only);
 void* call_cloner(void* fun, void* mem);
 
 string string(char* str);

@@ -61,26 +61,33 @@ void free_object(void* mem)
     ncfree(ref_count);
 }
 
-void call_finalizer(void* fun, void* mem)
+void call_finalizer(void* fun, void* mem, int call_finalizer_only)
 {
-//printf("call_finalizer %p\n", mem);
     if(mem == NULL) {
         return;
     }
     
-    int* ref_count = (char*)mem - sizeof(int);
+    if(call_finalizer_only) {
+        if(fun) {
+            void (*finalizer)(void*) = fun;
+            finalizer(mem);
+        }
+    }
+    else {
+        int* ref_count = (char*)mem - sizeof(int);
 //printf("ref_count %d\n", *ref_count);
-    
-    (*ref_count)--;
-    
-    int count = *ref_count;
-    if(count == 0) {
-        if(mem) {
-            if(fun) {
-                void (*finalizer)(void*) = fun;
-                finalizer(mem);
+        
+        (*ref_count)--;
+        
+        int count = *ref_count;
+        if(count == 0) {
+            if(mem) {
+                if(fun) {
+                    void (*finalizer)(void*) = fun;
+                    finalizer(mem);
+                }
+                free_object(mem);
             }
-            free_object(mem);
         }
     }
 }

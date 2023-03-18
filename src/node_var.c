@@ -8177,7 +8177,7 @@ BOOL compile_unwrap(unsigned int node, sCompileInfo* info)
     LVALUE llvm_value = *get_value_from_stack(-1);
     dec_stack_ptr(1, info);
     
-    if(left_type->mPointerNum > 0) {
+    if(left_type->mPointerNum > 0 && gNCCome) {
         LLVMBasicBlockRef cond_then_block = LLVMAppendBasicBlockInContext(gContext, gFunction, "unwrap_then");
         LLVMBasicBlockRef cond_else_block = LLVMAppendBasicBlockInContext(gContext, gFunction, "unwrap_else");
         

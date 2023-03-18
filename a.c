@@ -1,11 +1,18 @@
-using neo-c;
+#include <neo-c.h>
+
+struct sInfo {
+    vector<string>*% strs;
+    string str2;
+};
 
 int main()
 {
-    int array[128];
-    int* ppp = array;
-
-    ppp++;
+    sInfo info;
+    
+    info.strs = new vector<string>();
+    
+    info.strs.push_back(string("AAA"));
+    info.str2 = string("ABC");
     
     return 0;
 }

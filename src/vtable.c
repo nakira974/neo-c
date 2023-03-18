@@ -417,14 +417,26 @@ void free_objects(sVarTable* table, sCompileInfo* info)
                         p->mLLVMValue.value = NULL;
                     }
                 }
-                else if(p->mAllocaValue && (klass->mFlags & CLASS_FLAGS_STRUCT) && !gNCClang) {
+                else if(p->mAllocaValue && (klass->mFlags & CLASS_FLAGS_STRUCT) && gNCCome) {
                     LLVMValueRef obj = p->mLLVMValue.value;
                     
                     sNodeType* node_type = clone_node_type(p->mType);
                     node_type->mPointerNum++;
                     node_type->mAllocaValue = TRUE;
                     
-                    free_object(node_type, obj, FALSE, info);
+                    BOOL exist_heap_fields = FALSE;
+                    sCLClass* klass = node_type->mClass;
+                    int i;
+                    for(i=0; i<klass->mNumFields; i++) {
+                        sNodeType* field_type = klass->mFields[i];
+                        if(field_type->mHeap) {
+                            exist_heap_fields = TRUE;
+                        }
+                    }
+                    
+                    if(exist_heap_fields) {
+                        free_object(node_type, obj, FALSE, info);
+                    }
                 }
             }
 
@@ -469,14 +481,26 @@ static void free_block_variables(sVarTable* table, LLVMValueRef ret_value, sComp
                         //p->mLLVMValue = NULL;
                     }
                 }
-                else if(p->mAllocaValue && (klass->mFlags & CLASS_FLAGS_STRUCT) && !gNCClang) {
+                else if(p->mAllocaValue && (klass->mFlags & CLASS_FLAGS_STRUCT) && gNCCome) {
                     LLVMValueRef obj = p->mLLVMValue.value;
                     
                     sNodeType* node_type = clone_node_type(p->mType);
                     node_type->mPointerNum++;
                     node_type->mAllocaValue = TRUE;
                     
-                    free_object(node_type, obj, FALSE, info);
+                    BOOL exist_heap_fields = FALSE;
+                    sCLClass* klass = node_type->mClass;
+                    int i;
+                    for(i=0; i<klass->mNumFields; i++) {
+                        sNodeType* field_type = klass->mFields[i];
+                        if(field_type->mHeap) {
+                            exist_heap_fields = TRUE;
+                        }
+                    }
+                    
+                    if(exist_heap_fields) {
+                        free_object(node_type, obj, FALSE, info);
+                    }
                 }
             }
         }

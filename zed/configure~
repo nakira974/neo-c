@@ -4175,8 +4175,7 @@ fi
 
 export CFLAGS
 
-OBJS="src/main.o src/01int.o"
-#OBJS="src/main.o src/01int.o src/02str.o src/03var.o src/04if.o src/05loop.o src/06print.o src/07regex.o src/08list.o src/09fun.o src/10fun.o src/11str_fun.o"
+OBJS="src/main.o src/01int.o src/02str.o src/03var.o src/04if.o src/05loop.o src/06print.o src/07regex.o src/08list.o src/09fun.o src/10fun.o src/11str_fun.o"
 
 ac_fn_c_check_func "$LINENO" "execvpe" "ac_cv_func_execvpe"
 if test "x$ac_cv_func_execvpe" = xyes

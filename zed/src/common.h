@@ -125,6 +125,7 @@ bool parse(sInfo* info) version 1;
 void arrange_stack(sInfo* info);
 bool vm(sInfo* info) version 1;
 
+/*
 ////////////////////////////
 // src/02str.c
 ////////////////////////////
@@ -198,3 +199,4 @@ string ZVALUE*::to_string(ZVALUE* self);
 int main(int argc, char** argv);
 
 bool str_method(char* fun_name, list<ZVALUE*%>* params, ZVALUE* obj, ZVALUE** result, buffer* codes, sInfo* info);
+*/

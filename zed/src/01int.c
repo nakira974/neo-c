@@ -68,7 +68,7 @@ bool sAddNode*::compile(sAddNode* self, sInfo* info)
     return true;
 }
 
- struct sSubNode
+struct sSubNode
 {
     int id;
     sNode*% left;
@@ -84,12 +84,12 @@ bool sAddNode*::compile(sAddNode* self, sInfo* info)
     return self;
 }
 
- unsigned int sSubNode*::id(sSubNode*% self)
+unsigned int sSubNode*::id(sSubNode*% self)
 {
     return self.id;
 }
 
- bool sSubNode*::compile(sSubNode* self, sInfo* info)
+bool sSubNode*::compile(sSubNode* self, sInfo* info)
 {
     if(!self.left.compile->(info)) {
         return false;
@@ -106,14 +106,14 @@ bool sAddNode*::compile(sAddNode* self, sInfo* info)
     return true;
 }
 
- struct sMultNode
+struct sMultNode
 {
     int id;
     sNode*% left;
     sNode*% right;
 };
 
- sMultNode*% sMultNode*::initialize(sMultNode*% self, sNode*% left, sNode*% right)
+sMultNode*% sMultNode*::initialize(sMultNode*% self, sNode*% left, sNode*% right)
 {
     self.id = gNodeID++;
     self.left = left;
@@ -122,12 +122,12 @@ bool sAddNode*::compile(sAddNode* self, sInfo* info)
     return self;
 }
 
- unsigned int sMultNode*::id(sMultNode*% self)
+unsigned int sMultNode*::id(sMultNode*% self)
 {
     return self.id;
 }
 
- bool sMultNode*::compile(sMultNode* self, sInfo* info)
+bool sMultNode*::compile(sMultNode* self, sInfo* info)
 {
     if(!self.left.compile->(info)) {
         return false;
@@ -144,14 +144,14 @@ bool sAddNode*::compile(sAddNode* self, sInfo* info)
     return true;
 }
 
- struct sDivNode
+struct sDivNode
 {
     int id;
     sNode*% left;
     sNode*% right;
 };
 
- sDivNode*% sDivNode*::initialize(sDivNode*% self, sNode*% left, sNode*% right)
+sDivNode*% sDivNode*::initialize(sDivNode*% self, sNode*% left, sNode*% right)
 {
     self.id = gNodeID++;
     self.left = left;
@@ -160,12 +160,12 @@ bool sAddNode*::compile(sAddNode* self, sInfo* info)
     return self;
 }
 
- unsigned int sDivNode*::id(sDivNode*% self)
+unsigned int sDivNode*::id(sDivNode*% self)
 {
     return self.id;
 }
 
- bool sDivNode*::compile(sDivNode* self, sInfo* info)
+bool sDivNode*::compile(sDivNode* self, sInfo* info)
 {
     if(!self.left.compile->(info)) {
         return false;
@@ -182,14 +182,14 @@ bool sAddNode*::compile(sAddNode* self, sInfo* info)
     return true;
 }
 
- struct sModNode
+struct sModNode
 {
     int id;
     sNode*% left;
     sNode*% right;
 };
 
- sModNode*% sModNode*::initialize(sModNode*% self, sNode*% left, sNode*% right)
+sModNode*% sModNode*::initialize(sModNode*% self, sNode*% left, sNode*% right)
 {
     self.id = gNodeID++;
     self.left = left;
@@ -198,12 +198,12 @@ bool sAddNode*::compile(sAddNode* self, sInfo* info)
     return self;
 }
 
- unsigned int sModNode*::id(sModNode*% self)
+unsigned int sModNode*::id(sModNode*% self)
 {
     return self.id;
 }
 
- bool sModNode*::compile(sModNode* self, sInfo* info)
+bool sModNode*::compile(sModNode* self, sInfo* info)
 {
     if(!self.left.compile->(info)) {
         return false;
@@ -220,14 +220,14 @@ bool sAddNode*::compile(sAddNode* self, sInfo* info)
     return true;
 }
 
- struct sEqNode
+struct sEqNode
 {
     int id;
     sNode*% left;
     sNode*% right;
 };
 
- sEqNode*% sEqNode*::initialize(sEqNode*% self, sNode*% left, sNode*% right)
+sEqNode*% sEqNode*::initialize(sEqNode*% self, sNode*% left, sNode*% right)
 {
     self.id = gNodeID++;
     self.left = left;
@@ -236,12 +236,12 @@ bool sAddNode*::compile(sAddNode* self, sInfo* info)
     return self;
 }
 
- unsigned int sEqNode*::id(sEqNode*% self)
+unsigned int sEqNode*::id(sEqNode*% self)
 {
     return self.id;
 }
 
- bool sEqNode*::compile(sEqNode* self, sInfo* info)
+bool sEqNode*::compile(sEqNode* self, sInfo* info)
 {
     if(!self.left.compile->(info)) {
         return false;
@@ -258,14 +258,14 @@ bool sAddNode*::compile(sAddNode* self, sInfo* info)
     return true;
 }
 
- struct sNotEqNode
+struct sNotEqNode
 {
     int id;
     sNode*% left;
     sNode*% right;
 };
 
- sNotEqNode*% sNotEqNode*::initialize(sNotEqNode*% self, sNode*% left, sNode*% right)
+sNotEqNode*% sNotEqNode*::initialize(sNotEqNode*% self, sNode*% left, sNode*% right)
 {
     self.id = gNodeID++;
     self.left = left;
@@ -274,12 +274,12 @@ bool sAddNode*::compile(sAddNode* self, sInfo* info)
     return self;
 }
 
- unsigned int sNotEqNode*::id(sNotEqNode*% self)
+unsigned int sNotEqNode*::id(sNotEqNode*% self)
 {
     return self.id;
 }
 
- bool sNotEqNode*::compile(sNotEqNode* self, sInfo* info)
+bool sNotEqNode*::compile(sNotEqNode* self, sInfo* info)
 {
     if(!self.left.compile->(info)) {
         return false;
@@ -296,14 +296,14 @@ bool sAddNode*::compile(sAddNode* self, sInfo* info)
     return true;
 }
 
- struct sGTEqNode
+struct sGTEqNode
 {
     int id;
     sNode*% left;
     sNode*% right;
 };
 
- sGTEqNode*% sGTEqNode*::initialize(sGTEqNode*% self, sNode*% left, sNode*% right)
+sGTEqNode*% sGTEqNode*::initialize(sGTEqNode*% self, sNode*% left, sNode*% right)
 {
     self.id = gNodeID++;
     self.left = left;
@@ -312,12 +312,12 @@ bool sAddNode*::compile(sAddNode* self, sInfo* info)
     return self;
 }
 
- unsigned int sGTEqNode*::id(sGTEqNode*% self)
+unsigned int sGTEqNode*::id(sGTEqNode*% self)
 {
     return self.id;
 }
 
- bool sGTEqNode*::compile(sGTEqNode* self, sInfo* info)
+bool sGTEqNode*::compile(sGTEqNode* self, sInfo* info)
 {
     if(!self.left.compile->(info)) {
         return false;
@@ -334,14 +334,14 @@ bool sAddNode*::compile(sAddNode* self, sInfo* info)
     return true;
 }
 
- struct sLTEqNode
+struct sLTEqNode
 {
     int id;
     sNode*% left;
     sNode*% right;
 };
 
- sLTEqNode*% sLTEqNode*::initialize(sLTEqNode*% self, sNode*% left, sNode*% right)
+sLTEqNode*% sLTEqNode*::initialize(sLTEqNode*% self, sNode*% left, sNode*% right)
 {
     self.id = gNodeID++;
     self.left = left;
@@ -350,12 +350,12 @@ bool sAddNode*::compile(sAddNode* self, sInfo* info)
     return self;
 }
 
- unsigned int sLTEqNode*::id(sLTEqNode*% self)
+unsigned int sLTEqNode*::id(sLTEqNode*% self)
 {
     return self.id;
 }
 
- bool sLTEqNode*::compile(sLTEqNode* self, sInfo* info)
+bool sLTEqNode*::compile(sLTEqNode* self, sInfo* info)
 {
     if(!self.left.compile->(info)) {
         return false;
@@ -372,14 +372,14 @@ bool sAddNode*::compile(sAddNode* self, sInfo* info)
     return true;
 }
 
- struct sGTNode
+struct sGTNode
 {
     int id;
     sNode*% left;
     sNode*% right;
 };
 
- sGTNode*% sGTNode*::initialize(sGTNode*% self, sNode*% left, sNode*% right)
+sGTNode*% sGTNode*::initialize(sGTNode*% self, sNode*% left, sNode*% right)
 {
     self.id = gNodeID++;
     self.left = left;
@@ -388,12 +388,12 @@ bool sAddNode*::compile(sAddNode* self, sInfo* info)
     return self;
 }
 
- unsigned int sGTNode*::id(sGTNode*% self)
+unsigned int sGTNode*::id(sGTNode*% self)
 {
     return self.id;
 }
 
- bool sGTNode*::compile(sGTNode* self, sInfo* info)
+bool sGTNode*::compile(sGTNode* self, sInfo* info)
 {
     if(!self.left.compile->(info)) {
         return false;
@@ -410,14 +410,14 @@ bool sAddNode*::compile(sAddNode* self, sInfo* info)
     return true;
 }
 
- struct sLTNode
+struct sLTNode
 {
     int id;
     sNode*% left;
     sNode*% right;
 };
 
- sLTNode*% sLTNode*::initialize(sLTNode*% self, sNode*% left, sNode*% right)
+sLTNode*% sLTNode*::initialize(sLTNode*% self, sNode*% left, sNode*% right)
 {
     self.id = gNodeID++;
     self.left = left;
@@ -426,12 +426,12 @@ bool sAddNode*::compile(sAddNode* self, sInfo* info)
     return self;
 }
 
- unsigned int sLTNode*::id(sLTNode*% self)
+unsigned int sLTNode*::id(sLTNode*% self)
 {
     return self.id;
 }
 
- bool sLTNode*::compile(sLTNode* self, sInfo* info)
+bool sLTNode*::compile(sLTNode* self, sInfo* info)
 {
     if(!self.left.compile->(info)) {
         return false;
@@ -448,7 +448,7 @@ bool sAddNode*::compile(sAddNode* self, sInfo* info)
     return true;
 }
 
-sNode*? exp_node(sInfo* info) version 1
+sNode* exp_node(sInfo* info) version 1
 {
     if(*info->p == '-' && xisdigit(*(info->p+1))) {
         info->p++;
@@ -482,31 +482,29 @@ sNode*? exp_node(sInfo* info) version 1
         info->p++;
         skip_spaces(info);
         
-        sNode*? exp = expression(info);
+        sNode* exp = expression(info);
         
         if(*info->p == ')') {
             info->p++;
             skip_spaces(info);
         }
         
-        sNode* result = exp!;
-        
-        return result;
+        return exp;
     }
     
     return null;
 }
 
- sNode*? op_mult_node(sInfo* info)
+sNode* op_mult_node(sInfo* info)
 {
-    sNode*? result = exp_node(info);
+    sNode* result = exp_node(info);
     
     while(*info->p == '/' || *info->p == '*' || *info->p == '%') {
         if(*info->p == '*') {
             info->p++;
             skip_spaces(info);
             
-            sNode*? right = op_mult_node(info);
+            sNode* right = op_mult_node(info);
             
             if(result == null) {
                 return null;
@@ -516,18 +514,13 @@ sNode*? exp_node(sInfo* info) version 1
                 return null;
             }
             
-            sNode*? result_before = result;
-            
-            result = borrow new sNode(new sMultNode(clone result!, clone right!));
-            
-            delete result_before!;
-            delete right!;
+            result = borrow new sNode(new sMultNode(dummy_heap result, dummy_heap right));
         }
         else if(*info->p == '/') {
             info->p++;
             skip_spaces(info);
             
-            sNode*? right = op_mult_node(info);
+            sNode* right = op_mult_node(info);
             
             if(result == null) {
                 return null;
@@ -537,18 +530,13 @@ sNode*? exp_node(sInfo* info) version 1
                 return null;
             }
             
-            sNode*? result_before = result;
-            
-            result = borrow new sNode(new sDivNode(clone result!, clone right!));
-            
-            delete result_before!;
-            delete right!;
+            result = borrow new sNode(new sDivNode(dummy_heap result, dummy_heap right));
         }
         else if(*info->p == '%') {
             info->p++;
             skip_spaces(info);
             
-            sNode*? right = op_mult_node(info);
+            sNode* right = op_mult_node(info);
             
             if(result == null) {
                 return null;
@@ -558,19 +546,14 @@ sNode*? exp_node(sInfo* info) version 1
                 return null;
             }
             
-            sNode*? result_before = result;
-            
-            result = borrow new sNode(new sModNode(clone result!, clone right!));
-            
-            delete result_before!;
-            delete right!;
+            result = borrow new sNode(new sModNode(dummy_heap result, dummy_heap right));
         }
     }
     
     return result;
 }
 
- struct sAndAndNode
+struct sAndAndNode
 {
     int id;
     sNode*% left;
@@ -586,12 +569,12 @@ sNode*? exp_node(sInfo* info) version 1
     return self;
 }
 
- unsigned int sAndAndNode*::id(sAndAndNode* self)
+unsigned int sAndAndNode*::id(sAndAndNode* self)
 {
     return self.id;
 }
 
- bool sAndAndNode*::compile(sAndAndNode* self, sInfo* info)
+bool sAndAndNode*::compile(sAndAndNode* self, sInfo* info)
 {
     if(!self.left.compile->(info)) {
         return false;
@@ -605,14 +588,14 @@ sNode*? exp_node(sInfo* info) version 1
     return true;
 }
 
- struct sOrOrNode
+struct sOrOrNode
 {
     int id;
     sNode*% left;
     sNode*% right;
 };
 
- sOrOrNode*% sOrOrNode*::initialize(sOrOrNode*% self, sNode*% left, sNode*% right)
+sOrOrNode*% sOrOrNode*::initialize(sOrOrNode*% self, sNode*% left, sNode*% right)
 {
     self.id = gNodeID++;
     self.left = left;
@@ -621,12 +604,12 @@ sNode*? exp_node(sInfo* info) version 1
     return self;
 }
 
- unsigned int sOrOrNode*::id(sOrOrNode* self)
+unsigned int sOrOrNode*::id(sOrOrNode* self)
 {
     return self.id;
 }
 
- bool sOrOrNode*::compile(sOrOrNode* self, sInfo* info)
+bool sOrOrNode*::compile(sOrOrNode* self, sInfo* info)
 {
     if(!self.left.compile->(info)) {
         return false;
@@ -640,16 +623,16 @@ sNode*? exp_node(sInfo* info) version 1
     return true;
 }
 
- sNode*? op_add_node(sInfo* info)
+sNode* op_add_node(sInfo* info)
 {
-    sNode*? result = op_mult_node(info);
+    sNode* result = op_mult_node(info);
     
     while(*info->p == '+' || *info->p == '-') {
         if(*info->p == '+') {
             info->p++;
             skip_spaces(info);
             
-            sNode*? right = op_add_node(info);
+            sNode* right = op_add_node(info);
             
             if(result == null) {
                 return null;
@@ -659,18 +642,13 @@ sNode*? exp_node(sInfo* info) version 1
                 return null;
             }
             
-            sNode*? result_before = result;
-            
-            result = borrow new sNode(new sAddNode(clone result!, clone right!));
-            
-            delete result_before!;
-            delete right!;
+            result = borrow new sNode(new sAddNode(dummy_heap result, dummy_heap right));
         }
         else if(*info->p == '-') {
             info->p++;
             skip_spaces(info);
             
-            sNode*? right = op_add_node(info);
+            sNode* right = op_add_node(info);
             
             if(result == null) {
                 return null;
@@ -680,28 +658,23 @@ sNode*? exp_node(sInfo* info) version 1
                 return null;
             }
             
-            sNode*? result_before = result;
-            
-            result = borrow new sNode(new sSubNode(clone result!, clone right!));
-            
-            delete result_before!;
-            delete right!;
+            result = borrow new sNode(new sSubNode(dummy_heap result, dummy_heap right));
         }
     }
     
     return result;
 }
 
- sNode*? op_eq_node(sInfo* info)
+sNode* op_eq_node(sInfo* info)
 {
-    sNode*? result = op_add_node(info);
+    sNode* result = op_add_node(info);
     
     while((*info->p == '=' && *(info->p+1) == '=') || (*info->p == '!' && *(info->p+1) == '=') || *info->p == '>' || *info->p == '<' || (*info->p == '>' && *(info->p + 1) == '=') || (*info->p == '<' && *(info->p + 1) == '=')) {
         if(*info->p == '=' && *(info->p+1) == '=') {
             info->p+=2;
             skip_spaces(info);
             
-            sNode*? right = op_eq_node(info);
+            sNode* right = op_eq_node(info);
             
             if(result == null) {
                 return null;
@@ -711,18 +684,13 @@ sNode*? exp_node(sInfo* info) version 1
                 return null;
             }
             
-            sNode*? result_before = result;
-            
-            result = borrow new sNode(new sEqNode(clone result!, clone right!));
-            
-            delete result_before!;
-            delete right!;
+            result = borrow new sNode(new sEqNode(dummy_heap result, dummy_heap right));
         }
         else if(*info->p == '!' && *(info->p+1) == '=') {
             info->p+=2;
             skip_spaces(info);
             
-            sNode*? right = op_eq_node(info);
+            sNode* right = op_eq_node(info);
             
             if(result == null) {
                 return null;
@@ -732,18 +700,13 @@ sNode*? exp_node(sInfo* info) version 1
                 return null;
             }
             
-            sNode*? result_before = result;
-            
-            result = borrow new sNode(new sNotEqNode(clone result!, clone right!));
-            
-            delete result_before!;
-            delete right!;
+            result = borrow new sNode(new sNotEqNode(dummy_heap result, dummy_heap right));
         }
         else if(*info->p == '>' && *(info->p +1 ) == '=') {
             info->p+=2;
             skip_spaces(info);
             
-            sNode*? right = op_eq_node(info);
+            sNode* right = op_eq_node(info);
             
             if(result == null) {
                 return null;
@@ -753,18 +716,13 @@ sNode*? exp_node(sInfo* info) version 1
                 return null;
             }
             
-            sNode*? result_before = result;
-            
-            result = borrow new sNode(new sGTEqNode(clone result!, clone right!));
-            
-            delete result_before!;
-            delete right!;
+            result = borrow new sNode(new sGTEqNode(dummy_heap result, dummy_heap right));
         }
         else if(*info->p == '<' && *(info->p +1 ) == '=') {
             info->p+=2;
             skip_spaces(info);
             
-            sNode*? right = op_eq_node(info);
+            sNode* right = op_eq_node(info);
             
             if(result == null) {
                 return null;
@@ -774,18 +732,13 @@ sNode*? exp_node(sInfo* info) version 1
                 return null;
             }
             
-            sNode*? result_before = result;
-            
-            result = borrow new sNode(new sLTEqNode(clone result!, clone right!));
-            
-            delete result_before!;
-            delete right!;
+            result = borrow new sNode(new sLTEqNode(dummy_heap result, dummy_heap right));
         }
         else if(*info->p == '>') {
             info->p+=2;
             skip_spaces(info);
             
-            sNode*? right = op_eq_node(info);
+            sNode* right = op_eq_node(info);
             
             if(result == null) {
                 return null;
@@ -795,18 +748,13 @@ sNode*? exp_node(sInfo* info) version 1
                 return null;
             }
             
-            sNode*? result_before = result;
-            
-            result = borrow new sNode(new sGTNode(clone result!, clone right!));
-            
-            delete result_before!;
-            delete right!;
+            result = borrow new sNode(new sGTNode(dummy_heap result, dummy_heap right));
         }
         else if(*info->p == '<') {
             info->p+=2;
             skip_spaces(info);
             
-            sNode*? right = op_eq_node(info);
+            sNode* right = op_eq_node(info);
             
             if(result == null) {
                 return null;
@@ -816,28 +764,23 @@ sNode*? exp_node(sInfo* info) version 1
                 return null;
             }
             
-            sNode*? result_before = result;
-            
-            result = borrow new sNode(new sLTNode(clone result!, clone right!));
-            
-            delete result_before!;
-            delete right!;
+            result = borrow new sNode(new sLTNode(dummy_heap result, dummy_heap right));
         }
     }
     
     return result;
 }
 
- sNode*? op_andand_node(sInfo* info)
+sNode* op_andand_node(sInfo* info)
 {
-    sNode*? result = op_eq_node(info);
+    sNode* result = op_eq_node(info);
     
     while((*info->p == '&' && *(info->p+1) == '&') || (*info->p == '|' && *(info->p+1) == '|')) {
         if(*info->p == '&' && *(info->p+1) == '&') {
             info->p+=2;
             skip_spaces(info);
             
-            sNode*? right = op_andand_node(info);
+            sNode* right = op_andand_node(info);
             
             if(result == null) {
                 return null;
@@ -847,18 +790,13 @@ sNode*? exp_node(sInfo* info) version 1
                 return null;
             }
             
-            sNode*? result_before = result;
-            
-            result = borrow new sNode(new sAndAndNode(clone result!, clone right!));
-            
-            delete result_before!;
-            delete right!;
+            result = borrow new sNode(new sAndAndNode(dummy_heap result, dummy_heap right));
         }
         else if(*info->p == '|' && *(info->p+1) == '|') {
             info->p+=2;
             skip_spaces(info);
             
-            sNode*? right = op_andand_node(info);
+            sNode* right = op_andand_node(info);
             
             if(result == null) {
                 return null;
@@ -868,28 +806,23 @@ sNode*? exp_node(sInfo* info) version 1
                 return null;
             }
             
-            sNode*? result_before = result;
-            
-            result = borrow new sNode(new sOrOrNode(clone result!, clone right!));
-            
-            delete result_before!;
-            delete right!;
+            result = borrow new sNode(new sOrOrNode(dummy_heap result, dummy_heap right!));
         }
     }
     
     return result;
 }
 
-sNode*? expression(sInfo* info) version 1
+sNode* expression(sInfo* info) version 1
 {
     return op_andand_node(info);
 }
 
 bool parse(sInfo* info) version 1
 {
-    sNode*? node = expression(info);
+    sNode* node = expression(info);
     
-    info->nodes.push_back(dummy_heap node!);
+    info->nodes.push_back(dummy_heap node);
     
     return true;
 }
@@ -933,12 +866,12 @@ bool vm(sInfo* info) version 1
         case OP_IADD: {
             info->op++;
             
-            ZVALUE*? left_value = nullable info.stack[-2];
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE* left_value = info.stack[-2];
+            ZVALUE* right_value = info.stack[-1];
             
-            if(left_value!.kind == kIntValue && right_value!.kind == kIntValue) {
-                int lvalue = left_value!.intValue;
-                int rvalue = right_value!.intValue;
+            if(left_value.kind == kIntValue && right_value.kind == kIntValue) {
+                int lvalue = left_value.intValue;
+                int rvalue = right_value.intValue;
                 
                 info.stack.delete_back();
                 info.stack.delete_back();
@@ -947,9 +880,9 @@ bool vm(sInfo* info) version 1
                 
                 info->stack.push_back(new ZVALUE(kind: kIntValue, int_value:value));
             }
-            else if(left_value!.kind == kStrValue && right_value!.kind == kStrValue) {
-                wchar_t* lvalue = borrow left_value!.strValue;
-                wchar_t* rvalue = borrow right_value!.strValue;
+            else if(left_value.kind == kStrValue && right_value.kind == kStrValue) {
+                wchar_t* lvalue = borrow left_value.strValue;
+                wchar_t* rvalue = borrow right_value.strValue;
                 
                 wstring value = lvalue + rvalue;
                 
@@ -958,9 +891,9 @@ bool vm(sInfo* info) version 1
                 
                 info->stack.push_back(new ZVALUE(kind: kStrValue, str_value:value));
             }
-            else if(left_value!.kind == kMapValue && right_value!.kind == kMapValue) {
-                map<ZVALUE*%, ZVALUE*%>* lvalue = borrow left_value!.mapValue;
-                map<ZVALUE*%, ZVALUE*%>* rvalue = borrow right_value!.mapValue;
+            else if(left_value.kind == kMapValue && right_value.kind == kMapValue) {
+                map<ZVALUE*%, ZVALUE*%>* lvalue = borrow left_value.mapValue;
+                map<ZVALUE*%, ZVALUE*%>* rvalue = borrow right_value.mapValue;
                 
                 map<ZVALUE*%, ZVALUE*%>*% value = lvalue + rvalue;
                 
@@ -969,9 +902,9 @@ bool vm(sInfo* info) version 1
                 
                 info->stack.push_back(new ZVALUE(kind: kMapValue, map_value:value));
             }
-            else if(left_value!.kind == kListValue && right_value!.kind == kListValue) {
-                list<ZVALUE*%>* lvalue = borrow left_value!.listValue;
-                list<ZVALUE*%>* rvalue = borrow right_value!.listValue;
+            else if(left_value.kind == kListValue && right_value.kind == kListValue) {
+                list<ZVALUE*%>* lvalue = borrow left_value.listValue;
+                list<ZVALUE*%>* rvalue = borrow right_value.listValue;
                 
                 list<ZVALUE*%>*% value = lvalue + rvalue;
                 
@@ -990,11 +923,11 @@ bool vm(sInfo* info) version 1
         case OP_ISUB: {
             info->op++;
             
-            ZVALUE*? left_value = nullable info.stack[-2];
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE* left_value = info.stack[-2];
+            ZVALUE* right_value = info.stack[-1];
             
-            int lvalue = left_value!.intValue;
-            int rvalue = right_value!.intValue;
+            int lvalue = left_value.intValue;
+            int rvalue = right_value.intValue;
             
             info.stack.delete_back();
             info.stack.delete_back();
@@ -1008,12 +941,12 @@ bool vm(sInfo* info) version 1
         case OP_IMUL: {
             info->op++;
             
-            ZVALUE*? left_value = nullable info.stack[-2];
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE* left_value = info.stack[-2];
+            ZVALUE* right_value = info.stack[-1];
             
-            if(left_value!.kind == kIntValue && right_value!.kind == kIntValue) {
-                int lvalue = left_value!.intValue;
-                int rvalue = right_value!.intValue;
+            if(left_value.kind == kIntValue && right_value.kind == kIntValue) {
+                int lvalue = left_value.intValue;
+                int rvalue = right_value.intValue;
                 
                 info.stack.delete_back();
                 info.stack.delete_back();
@@ -1022,9 +955,9 @@ bool vm(sInfo* info) version 1
                 
                 info->stack.push_back(new ZVALUE(kind: kIntValue, int_value:value));
             }
-            else if(left_value!.kind == kStrValue && right_value!.kind == kIntValue) {
-                wchar_t* lvalue = borrow left_value!.strValue;
-                int rvalue = right_value!.intValue;
+            else if(left_value.kind == kStrValue && right_value.kind == kIntValue) {
+                wchar_t* lvalue = borrow left_value.strValue;
+                int rvalue = right_value.intValue;
                 
                 wstring value = lvalue * rvalue;
                 
@@ -1033,9 +966,9 @@ bool vm(sInfo* info) version 1
                 
                 info->stack.push_back(new ZVALUE(kind: kStrValue, str_value:value));
             }
-            else if(left_value!.kind == kMapValue && right_value!.kind == kIntValue) {
-                map<ZVALUE*%, ZVALUE*%>* lvalue = borrow left_value!.mapValue;
-                int rvalue = right_value!.intValue;
+            else if(left_value.kind == kMapValue && right_value.kind == kIntValue) {
+                map<ZVALUE*%, ZVALUE*%>* lvalue = borrow left_value.mapValue;
+                int rvalue = right_value.intValue;
                 
                 map<ZVALUE*%, ZVALUE*%>*% value = lvalue * rvalue;
                 
@@ -1044,9 +977,9 @@ bool vm(sInfo* info) version 1
                 
                 info->stack.push_back(new ZVALUE(kind: kMapValue, map_value:value));
             }
-            else if(left_value!.kind == kListValue && right_value!.kind == kIntValue) {
-                list<ZVALUE*%>* lvalue = borrow left_value!.listValue;
-                int rvalue = right_value!.intValue;
+            else if(left_value.kind == kListValue && right_value.kind == kIntValue) {
+                list<ZVALUE*%>* lvalue = borrow left_value.listValue;
+                int rvalue = right_value.intValue;
                 
                 list<ZVALUE*%>*% value = lvalue * rvalue;
                 
@@ -1065,11 +998,11 @@ bool vm(sInfo* info) version 1
         case OP_IDIV: {
             info->op++;
             
-            ZVALUE*? left_value = nullable info.stack[-2];
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE* left_value = info.stack[-2];
+            ZVALUE* right_value = info.stack[-1];
             
-            int lvalue = left_value!.intValue;
-            int rvalue = right_value!.intValue;
+            int lvalue = left_value.intValue;
+            int rvalue = right_value.intValue;
             
             info.stack.delete_back();
             info.stack.delete_back();
@@ -1083,11 +1016,11 @@ bool vm(sInfo* info) version 1
         case OP_IMOD: {
             info->op++;
             
-            ZVALUE*? left_value = nullable info.stack[-2];
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE* left_value = info.stack[-2];
+            ZVALUE* right_value = info.stack[-1];
             
-            int lvalue = left_value!.intValue;
-            int rvalue = right_value!.intValue;
+            int lvalue = left_value.intValue;
+            int rvalue = right_value.intValue;
             
             info.stack.delete_back();
             info.stack.delete_back();
@@ -1101,10 +1034,10 @@ bool vm(sInfo* info) version 1
         case OP_IEQ: {
             info->op++;
             
-            ZVALUE*? left_value = nullable info.stack[-2];
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE* left_value = info.stack[-2];
+            ZVALUE* right_value = info.stack[-1];
             
-            bool value = left_value! === right_value!;
+            bool value = left_value === right_value;
             
             info.stack.delete_back();
             info.stack.delete_back();
@@ -1116,10 +1049,10 @@ bool vm(sInfo* info) version 1
         case OP_INOTEQ: {
             info->op++;
             
-            ZVALUE*? left_value = nullable info.stack[-2];
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE* left_value = info.stack[-2];
+            ZVALUE* right_value = info.stack[-1];
             
-            bool value = left_value! !== right_value!;
+            bool value = left_value !== right_value;
             
             info.stack.delete_back();
             info.stack.delete_back();
@@ -1131,11 +1064,11 @@ bool vm(sInfo* info) version 1
         case OP_IGT: {
             info->op++;
             
-            ZVALUE*? left_value = nullable info.stack[-2];
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE* left_value = info.stack[-2];
+            ZVALUE* right_value = info.stack[-1];
             
-            int lvalue = left_value!.intValue;
-            int rvalue = right_value!.intValue;
+            int lvalue = left_value.intValue;
+            int rvalue = right_value.intValue;
             
             info.stack.delete_back();
             info.stack.delete_back();
@@ -1149,11 +1082,11 @@ bool vm(sInfo* info) version 1
         case OP_ILT: {
             info->op++;
             
-            ZVALUE*? left_value = nullable info.stack[-2];
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE* left_value = info.stack[-2];
+            ZVALUE* right_value = info.stack[-1];
             
-            int lvalue = left_value!.intValue;
-            int rvalue = right_value!.intValue;
+            int lvalue = left_value.intValue;
+            int rvalue = right_value.intValue;
             
             info.stack.delete_back();
             info.stack.delete_back();
@@ -1167,11 +1100,11 @@ bool vm(sInfo* info) version 1
         case OP_IGTEQ: {
             info->op++;
             
-            ZVALUE*? left_value = nullable info.stack[-2];
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE* left_value = info.stack[-2];
+            ZVALUE* right_value = info.stack[-1];
             
-            int lvalue = left_value!.intValue;
-            int rvalue = right_value!.intValue;
+            int lvalue = left_value.intValue;
+            int rvalue = right_value.intValue;
             
             info.stack.delete_back();
             info.stack.delete_back();
@@ -1185,11 +1118,11 @@ bool vm(sInfo* info) version 1
         case OP_ILTEQ: {
             info->op++;
             
-            ZVALUE*? left_value = nullable info.stack[-2];
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE* left_value = info.stack[-2];
+            ZVALUE* right_value = info.stack[-1];
             
-            int lvalue = left_value!.intValue;
-            int rvalue = right_value!.intValue;
+            int lvalue = left_value.intValue;
+            int rvalue = right_value.intValue;
             
             info.stack.delete_back();
             info.stack.delete_back();
@@ -1203,11 +1136,11 @@ bool vm(sInfo* info) version 1
         case OP_IANDAND: {
             info->op++;
             
-            ZVALUE*? left_value = nullable info.stack[-2];
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE* left_value = info.stack[-2];
+            ZVALUE* right_value = info.stack[-1];
             
-            bool lvalue = left_value!.boolValue;
-            bool rvalue = right_value!.boolValue;
+            bool lvalue = left_value.boolValue;
+            bool rvalue = right_value.boolValue;
             
             info.stack.delete_back();
             info.stack.delete_back();
@@ -1221,11 +1154,11 @@ bool vm(sInfo* info) version 1
         case OP_IOROR: {
             info->op++;
             
-            ZVALUE*? left_value = nullable info.stack[-2];
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE* left_value = info.stack[-2];
+            ZVALUE* right_value = info.stack[-1];
             
-            bool lvalue = left_value!.boolValue;
-            bool rvalue = right_value!.boolValue;
+            bool lvalue = left_value.boolValue;
+            bool rvalue = right_value.boolValue;
             
             info.stack.delete_back();
             info.stack.delete_back();

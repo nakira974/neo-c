@@ -153,7 +153,7 @@
     return true;
 }
 
- map<wstring, ZVALUE*%>* gVars;
+map<wstring, ZVALUE*%>* gVars;
 
 ZVALUE gNullValue;
 

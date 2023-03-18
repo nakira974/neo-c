@@ -240,13 +240,13 @@ string ZVALUE*::to_string(ZVALUE* self)
 
 int main(int argc, char** argv)
 {
-    string? command = null;
+    string command = null;
     for(int i=1; i<argc; i++) {
         if(argv[i][0] == '-') {
         }
         else {
             if(command == null) {
-                command = nullable string(argv[i]);
+                command = string(argv[i]);
             }
         }
     }
@@ -258,14 +258,14 @@ int main(int argc, char** argv)
         return 1;
     }
     
-    info.command = command!;
+    info.command = command;
     
-    info.nodes = new vector<sNode*%>.initialize();
-    info.codes = new buffer.initialize();
+    info.nodes = new vector<sNode*%>();
+    info.codes = new buffer();
     
     info.stack = new vector<ZVALUE*%>.initialize();
     
-    initialize_modules();
+//    initialize_modules();
     
     /// parse ///
     info.p = info.command;
@@ -312,7 +312,7 @@ int main(int argc, char** argv)
         puts(info->result_value.to_string());
     }
     
-    finalize_modules();
+//    finalize_modules();
     
     return 0;
 }

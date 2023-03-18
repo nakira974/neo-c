@@ -641,11 +641,11 @@ int main(int argc, char** argv)
     unsigned char* p;
     int x;
     
+/*
     Section* section = NULL;
     
     get32(p + 2) + x + section->data; // - p;
 
-/*
     if(rt_bound_error_msg && *rt_bound_error_msg) {
         puts("AAA");
     }

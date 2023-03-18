@@ -2167,7 +2167,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
         
         /// forwarding parse until terminated union, struct and enum
 //        if(strcmp(buf, "struct") == 0) {
-        if(strcmp(buf, "struct") == 0 || (gNCCome && ((strcmp(buf, "protocol") == 0 || strcmp(buf, "interface") == 0)))) {
+        if(strcmp(buf, "struct") == 0 || (gNCCome && (gNCGC && (strcmp(buf, "protocol") == 0 || strcmp(buf, "interface") == 0)))) {
             BOOL protocol_ = strcmp(buf, "protocol") == 0 || strcmp(buf, "interface") == 0;
             
             char* p_before2 = info->p;

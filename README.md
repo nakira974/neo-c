@@ -366,9 +366,9 @@ If you want to object file only, use -c option.
 
 # Boehm GC libraries
 
-With -no-gc option for neo-c, disable boehm GC and enable original refference count GC heap system. The default heap system is boehm GC.
+With -gc option for Boehm GC, disable original refference count GC heap system and enable boehm GC. The default heap system is original refference count GC heap system.
 
-boehmGCはデフォルトです。オリジナルのヒープシステムを使うには-no-gcをオプションに加えてください。
+オリジナルのヒープシステムはデフォルトです。boehmGCを使うには-gcをオプションに加えてください。
 
 neo-c uses boethm gc with reffrence count, so no stop the world in your application.
 
@@ -2297,3 +2297,5 @@ int main(int argc, char** argv)
 }
 
 ```
+
+for using this, required with -gc option

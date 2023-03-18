@@ -247,7 +247,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                 short_ = TRUE;
             }
         }
-        else if(strcmp(type_name, "struct") == 0 || strcmp(type_name, "protocol") == 0)
+        else if(strcmp(type_name, "struct") == 0 || (gNCGC && strcmp(type_name, "protocol") == 0))
         {
             BOOL protocol_ = strcmp(type_name, "protocol") == 0;
             

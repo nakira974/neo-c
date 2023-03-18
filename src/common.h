@@ -1376,6 +1376,7 @@ BOOL compile_sline(unsigned int node, sCompileInfo* info);
 //////////////////////////////
 /// node_value.c ///
 //////////////////////////////
+LLVMValueRef defineStringLiteral(LLVMValueRef* str, const char *sourceString, size_t size ) ;
 unsigned int sNodeTree_create_c_string_value(MANAGED char* value, int len, int sline, sParserInfo* info);
 unsigned int sNodeTree_create_regex_value(MANAGED char* value, BOOL global, BOOL ignore_case, int sline, sParserInfo* info);
 unsigned int sNodeTree_create_int_value(int value, sParserInfo* info);

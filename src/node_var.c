@@ -8207,7 +8207,8 @@ BOOL compile_unwrap(unsigned int node, sCompileInfo* info)
         
         LLVMTypeRef llvm_type2 = create_llvm_type_with_class_name("char*");
         
-        LLVMValueRef sname_value = LLVMBuildGlobalString(gBuilder, buf, buf);
+        LLVMValueRef address = NULL;
+        LLVMValueRef sname_value = defineStringLiteral(&address, buf, strlen(buf));
     
         LLVMValueRef param0 = LLVMBuildPointerCast(gBuilder, sname_value, llvm_type2, "str");
         

@@ -22,7 +22,7 @@ ENABLE_NO_GC=0
 
 AC_ARG_WITH(debug,              [  --with-debug              include debug info ], [ DEBUGGING=1; ], [])
 AC_ARG_WITH(optimize,           [  --with-optimize           with optimize(-O in CFLAGS) ], [ ENABLE_OPTIMIZE=1 ], [ ENABLE_OPTIMIZE=0 ])
-AC_ARG_WITH(gc,                 [  --with-gc                 enable Boehm GC ], [ ENABLE_GC=1 ], [])
+AC_ARG_WITH(no-gc,              [  --with-no-gc              disable gc ], [ ENABLE_NO_GC=1 ], [])
 
 ##############################################################
 # check cpu type
@@ -208,17 +208,16 @@ then
     CFLAGS="$CFLAGS -g"
 fi
 
-if test $ENABLE_GC = 1
+if test $ENABLE_NO_GC = 1
 then
-    CFLAGS="$CFLAGS -gc"
-else
     CFLAGS="$CFLAGS -no-gc"
+else
+    CFLAGS="$CFLAGS -gc"
 fi
 
 export CFLAGS
 
-OBJS="src/main.o src/01int.o"
-#OBJS="src/main.o src/01int.o src/02str.o src/03var.o src/04if.o src/05loop.o src/06print.o src/07regex.o src/08list.o src/09fun.o src/10fun.o src/11str_fun.o"
+OBJS="src/main.o src/01int.o src/02str.o src/03var.o src/04if.o src/05loop.o src/06print.o src/07regex.o src/08list.o src/09fun.o src/10fun.o src/11str_fun.o"
 
 AC_CHECK_FUNCS(execvpe)
 

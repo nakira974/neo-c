@@ -681,7 +681,7 @@ ac_user_opts='
 enable_option_checking
 with_debug
 with_optimize
-with_gc
+with_no_gc
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1311,7 +1311,7 @@ Optional Packages:
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-debug              include debug info
   --with-optimize           with optimize(-O in CFLAGS)
-  --with-gc                 enable Boehm GC
+  --with-no-gc              disable gc
 
 Some influential environment variables:
   CC          C compiler command
@@ -3669,9 +3669,9 @@ else
 fi
 
 
-# Check whether --with-gc was given.
-if test "${with_gc+set}" = set; then :
-  withval=$with_gc;  ENABLE_GC=1
+# Check whether --with-no-gc was given.
+if test "${with_no_gc+set}" = set; then :
+  withval=$with_no_gc;  ENABLE_NO_GC=1
 fi
 
 
@@ -4006,17 +4006,16 @@ then
     CFLAGS="$CFLAGS -g"
 fi
 
-if test $ENABLE_GC = 1
+if test $ENABLE_NO_GC = 1
 then
-    CFLAGS="$CFLAGS -gc"
-else
     CFLAGS="$CFLAGS -no-gc"
+else
+    CFLAGS="$CFLAGS -gc"
 fi
 
 export CFLAGS
 
-OBJS="src/main.o src/01int.o"
-#OBJS="src/main.o src/01int.o src/02str.o src/03var.o src/04if.o src/05loop.o src/06print.o src/07regex.o src/08list.o src/09fun.o src/10fun.o src/11str_fun.o"
+OBJS="src/main.o src/01int.o src/02str.o src/03var.o src/04if.o src/05loop.o src/06print.o src/07regex.o src/08list.o src/09fun.o src/10fun.o src/11str_fun.o"
 
 for ac_func in execvpe
 do :

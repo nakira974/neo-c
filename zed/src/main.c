@@ -9,20 +9,6 @@ void skip_spaces(sInfo* info)
     }
 }
 
-ZVALUE*% ZVALUE*::initialize(ZVALUE*% self, int kind, int int_value=0, wchar_t* str_value=null, bool bool_value=false, FILE* file_value=null, regex_struct* regex_value=null, list<ZVALUE*%>* list_value=null, map<ZVALUE*%, ZVALUE*%>* map_value=null)
-{
-    self.kind = kind;
-    self.intValue = int_value;
-    self.strValue = str_value;
-    self.boolValue = bool_value;
-    self.fileValue = file_value;
-    self.regexValue = regex_value;
-    self.listValue = list_value;
-    self.mapValue = map_value;
-    
-    return self;
-}
-
 unsigned int ZVALUE*::get_hash_key(ZVALUE* self)
 {
     switch(self.kind) {
@@ -254,13 +240,13 @@ string ZVALUE*::to_string(ZVALUE* self)
 
 int main(int argc, char** argv)
 {
-    string command = null;
+    string? command = null;
     for(int i=1; i<argc; i++) {
         if(argv[i][0] == '-') {
         }
         else {
             if(command == null) {
-                command = string(argv[i]);
+                command = nullable string(argv[i]);
             }
         }
     }
@@ -272,14 +258,14 @@ int main(int argc, char** argv)
         return 1;
     }
     
-    info.command = clone command;
+    info.command = command!;
     
-    info.nodes = new vector<sNode*%>();
-    info.codes = new buffer();
+    info.nodes = new vector<sNode*%>.initialize();
+    info.codes = new buffer.initialize();
     
-    info.stack = new vector<ZVALUE*%>();
+    info.stack = new vector<ZVALUE*%>.initialize();
     
-//    initialize_modules();
+    initialize_modules();
     
     /// parse ///
     info.p = info.command;
@@ -298,7 +284,7 @@ int main(int argc, char** argv)
     
     /// compile ///
     foreach(it, info.nodes) {
-        if(!compile_node(it, &info)) {
+        if(!it.compile->(&info)) {
             fprintf(stderr, "compile error\n");
             return 1;
         }
@@ -306,8 +292,6 @@ int main(int argc, char** argv)
         if(info.stack_num > 0) {
             arrange_stack(&info);
         }
-        
-        free_node(it);
     }
     
     info.codes.append_int(0);  /// terminator
@@ -328,7 +312,7 @@ int main(int argc, char** argv)
         puts(info->result_value.to_string());
     }
     
-//    finalize_modules();
+    finalize_modules();
     
     return 0;
 }

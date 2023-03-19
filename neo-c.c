@@ -51,7 +51,6 @@ void igc_decrement_ref_count(void* mem)
 
 void free_object(void* mem)
 {
-//printf("free_object %p\n", mem);
     if(mem == NULL) {
         return;
     }
@@ -63,6 +62,7 @@ void free_object(void* mem)
 
 void call_finalizer(void* fun, void* mem, int call_finalizer_only)
 {
+//printf("mem %p\n", mem);
     if(mem == NULL) {
         return;
     }
@@ -94,7 +94,6 @@ void call_finalizer(void* fun, void* mem, int call_finalizer_only)
 
 void ncfree(void* mem)
 {
-//printf("ncfree %p\n", mem);
     if(mem) {
         free(mem);
     }

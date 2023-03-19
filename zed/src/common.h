@@ -1,28 +1,6 @@
-
-////////////////////////////
-// src/01int.c
-////////////////////////////
 #include <neo-c.h>
 
-struct sInfo;
-
-extern int gNodeID;
-
-protocol sNode
-{
-    unsigned int id();
-    bool compile(sInfo* info);
-};
-
-inline unsigned int sNode*::get_hash_key(sNode* self)
-{
-    return self.id->();
-}
-
-inline bool sNode*::equals(sNode* self, sNode* right)
-{
-    return (self.compile == right.compile);
-}
+struct sNode;
 
 struct ZVALUE 
 {
@@ -37,20 +15,7 @@ struct ZVALUE
     map<ZVALUE*%, ZVALUE*%>*% mapValue;
 };
 
-inline ZVALUE*% ZVALUE*::initialize(ZVALUE*% self, int kind, int int_value=0, wstring str_value=wstring(""), bool bool_value=false, FILE* file_value=null, nregex regex_value=null, list<ZVALUE*%>*% list_value=null, map<ZVALUE*%, ZVALUE*%>*% map_value=null)
-{
-    self.kind = kind;
-    self.intValue = int_value;
-    self.strValue = str_value;
-    self.boolValue = bool_value;
-    self.fileValue = file_value;
-    self.regexValue = regex_value;
-    self.listValue = list_value;
-    self.mapValue = map_value;
-    
-    return self;
-}
-
+ZVALUE*% ZVALUE*::initialize(ZVALUE*% self, int kind, int int_value=0, wchar_t* str_value=null, bool bool_value=false, FILE* file_value=null, regex_struct* regex_value=null, list<ZVALUE*%>* list_value=null, map<ZVALUE*%, ZVALUE*%>* map_value=null);
 string ZVALUE*::to_string(ZVALUE* self);
 unsigned int ZVALUE*::get_hash_key(ZVALUE* self);
 bool ZVALUE*::equals(ZVALUE* self, ZVALUE* right);
@@ -59,21 +24,22 @@ int ZVALUE*::compare(ZVALUE* self, ZVALUE* right);
 
 struct sInfo
 {
+    int stack_num;
     char* p;
     string command;
-    buffer*% codes;
+
     vector<sNode*%>*% nodes;
+    buffer*% codes;
     int* head;
     int* op;
     vector<ZVALUE*%>*% stack;
     
+    ZVALUE*% result_value;
+    
+    
     int loop_head;
     
     vector<int>*%? breaks;
-    
-    ZVALUE*% result_value;
-    
-    int stack_num;
 };
 
 #define OP_INT_VALUE 1
@@ -116,14 +82,34 @@ struct sInfo
 #define OP_LOAD_ELEMENT 64
 #define OP_STORE_ELEMENT 65
 
+extern int gNodeID;
+
+
+////////////////////////////
+// src/01int.c
+////////////////////////////
+struct sNode
+{
+    int mID;
+    
+    enum { kIntNode } mKind;
+    
+    void* body;
+};
+
+
 void skip_spaces(sInfo* info);
 
 
-sNode*? exp_node(sInfo* info) version 1;
-sNode*? expression(sInfo* info) version 1;
-bool parse(sInfo* info) version 1;
+sNode* exp_node(sInfo* info) version 99;
+bool vm(sInfo* info) version 99;
+bool compile_node(sNode* self, sInfo* info) version 99;
+void free_node(sNode* self) version 99;
+
+sNode* expression(sInfo* info) version 1;
+
 void arrange_stack(sInfo* info);
-bool vm(sInfo* info) version 1;
+bool parse(sInfo* info);
 
 /*
 ////////////////////////////

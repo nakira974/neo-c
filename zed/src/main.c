@@ -9,6 +9,20 @@ void skip_spaces(sInfo* info)
     }
 }
 
+ZVALUE*% ZVALUE*::initialize(ZVALUE*% self, int kind, int int_value=0, wchar_t* str_value=null, bool bool_value=false, FILE* file_value=null, regex_struct* regex_value=null, list<ZVALUE*%>* list_value=null, map<ZVALUE*%, ZVALUE*%>* map_value=null)
+{
+    self.kind = kind;
+    self.intValue = int_value;
+    self.strValue = str_value;
+    self.boolValue = bool_value;
+    self.fileValue = file_value;
+    self.regexValue = regex_value;
+    self.listValue = list_value;
+    self.mapValue = map_value;
+    
+    return self;
+}
+
 unsigned int ZVALUE*::get_hash_key(ZVALUE* self)
 {
     switch(self.kind) {
@@ -258,12 +272,12 @@ int main(int argc, char** argv)
         return 1;
     }
     
-    info.command = command;
+    info.command = clone command;
     
     info.nodes = new vector<sNode*%>();
     info.codes = new buffer();
     
-    info.stack = new vector<ZVALUE*%>.initialize();
+    info.stack = new vector<ZVALUE*%>();
     
 //    initialize_modules();
     
@@ -284,7 +298,7 @@ int main(int argc, char** argv)
     
     /// compile ///
     foreach(it, info.nodes) {
-        if(!it.compile->(&info)) {
+        if(!compile_node(it, &info)) {
             fprintf(stderr, "compile error\n");
             return 1;
         }
@@ -292,6 +306,8 @@ int main(int argc, char** argv)
         if(info.stack_num > 0) {
             arrange_stack(&info);
         }
+        
+        free_node(it);
     }
     
     info.codes.append_int(0);  /// terminator

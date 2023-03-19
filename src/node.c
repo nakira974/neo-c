@@ -390,6 +390,49 @@ void clone_protocol_object(sNodeType* protocol_type, LLVMValueRef protocol_value
     }
 }
 
+static void create_generics_name(char* real_name, int size_real_name, sNodeType* generics_type)
+{
+    xstrncpy(real_name, "", size_real_name);
+    
+    sCLClass* klass = generics_type->mClass;
+    
+    if(klass) {
+        char* class_name = CLASS_NAME(klass);
+    
+        xstrncat(real_name, class_name, size_real_name);
+
+        int j;
+        for(j=0; j<generics_type->mPointerNum; j++) 
+        {
+            xstrncat(real_name, "p", size_real_name);
+        }
+
+        if(generics_type->mHeap) {
+            xstrncat(real_name, "h", size_real_name);
+        }
+    }
+    
+    if(generics_type->mNumGenericsTypes > 0) {
+        xstrncat(real_name, "_", size_real_name);
+        
+        int i;
+        for(i=0; i<generics_type->mNumGenericsTypes; i++)
+        {
+            sNodeType* node_type = generics_type->mGenericsTypes[i];
+    
+            int size_real_name2 = 1024;
+            char real_name2[size_real_name2];
+            
+            create_generics_name(real_name2, size_real_name2, node_type);
+            xstrncat(real_name, real_name2, size_real_name);
+    
+            if(i != generics_type->mNumGenericsTypes-1) {
+                xstrncat(real_name, "_", size_real_name);
+            }
+        }
+    }
+}
+
 sFunction* create_finalizer_automatically(sNodeType* node_type, char* fun_name, sCompileInfo* info)
 {
     sNodeType* come_function_result_type = gComeFunctionResultType;
@@ -442,18 +485,10 @@ sFunction* create_finalizer_automatically(sNodeType* node_type, char* fun_name, 
                 }
                 
                 if(field_type->mHeap) {
-                    if(field_type->mNullable) {
-                        char source2[1024];
-                        snprintf(source2, 1024, "if(self != null && self.%s != null) { delete self.%s!; }\n", name, name);
-                        
-                        sBuf_append_str(&source, source2);
-                    }
-                    else {
-                        char source2[1024];
-                        snprintf(source2, 1024, "if(self != null && self.%s != null) { delete self.%s; }\n", name, name);
-                        
-                        sBuf_append_str(&source, source2);
-                    }
+                    char source2[1024];
+                    snprintf(source2, 1024, "if(self != null && self.%s != null) { delete self.%s!; }\n", name, name);
+                    
+                    sBuf_append_str(&source, source2);
                 }
             }
         }
@@ -729,7 +764,7 @@ void check_null_value_for_pointer(LLVMValueRef value, sCompileInfo* info)
 
 void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCompileInfo* info)
 {
-    if(!gNCGC && node_type->mPointerNum > 0) {
+    if(!gNCGC && (node_type->mAllocaValue || node_type->mPointerNum > 0)) {
         LLVMTypeRef llvm_type = create_llvm_type_with_class_name("char*");
 
         LLVMValueRef mem = LLVMBuildCast(gBuilder, LLVMBitCast, obj, llvm_type, "castAK2");
@@ -780,6 +815,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCom
         if(finalizer == NULL) {
             finalizer = get_function_from_table(fun_name);
         }
+        
         
         if(finalizer == NULL && !is_number_class(node_type) && !gExternC && !node_type->mClass->mProtocol)
         //if(finalizer == NULL && !node_type->mClass->mProtocol && !is_number_class(node_type) && node_type->mNumGenericsTypes == 0 && !gExternC)
@@ -3410,48 +3446,6 @@ LVALUE* get_value_from_stack(int offset)
     return gLLVMStack + offset;
 }
 
-static void create_generics_name(char* real_name, int size_real_name, sNodeType* generics_type)
-{
-    xstrncpy(real_name, "", size_real_name);
-    
-    sCLClass* klass = generics_type->mClass;
-    
-    if(klass) {
-        char* class_name = CLASS_NAME(klass);
-    
-        xstrncat(real_name, class_name, size_real_name);
-
-        int j;
-        for(j=0; j<generics_type->mPointerNum; j++) 
-        {
-            xstrncat(real_name, "p", size_real_name);
-        }
-
-        if(generics_type->mHeap) {
-            xstrncat(real_name, "h", size_real_name);
-        }
-    }
-    
-    if(generics_type->mNumGenericsTypes > 0) {
-        xstrncat(real_name, "_", size_real_name);
-        
-        int i;
-        for(i=0; i<generics_type->mNumGenericsTypes; i++)
-        {
-            sNodeType* node_type = generics_type->mGenericsTypes[i];
-    
-            int size_real_name2 = 1024;
-            char real_name2[size_real_name2];
-            
-            create_generics_name(real_name2, size_real_name2, node_type);
-            xstrncat(real_name, real_name2, size_real_name);
-    
-            if(i != generics_type->mNumGenericsTypes-1) {
-                xstrncat(real_name, "_", size_real_name);
-            }
-        }
-    }
-}
 
 void create_generics_struct_name(char* struct_name, size_t size, sNodeType* struct_type)
 {

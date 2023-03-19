@@ -11,6 +11,12 @@ int main()
     
     info.strs = new vector<string>();
     
+    int a = 1;
+    
+    if(a != 1) {
+        return 0;
+    }
+    
     info.strs.push_back(string("AAA"));
     info.str2 = string("ABC");
     

@@ -6,7 +6,7 @@ Modern C compiler. It has a collection and string library using Boehm GC or Reff
 モダンなCコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 1.9.9b
+version 1.9.9c
 
 ``` C
 #include <neo-c.h>
@@ -366,9 +366,9 @@ If you want to object file only, use -c option.
 
 # Boehm GC libraries
 
-With -gc option for Boehm GC, disable original refference count GC heap system and enable boehm GC. The default heap system is original refference count GC heap system.
+With -no-gc option for original refference count GC heap system, enable original refference count GC heap system and disable boehm GC. The default heap system is Boehm GC.
 
-オリジナルのヒープシステムはデフォルトです。boehmGCを使うには-gcをオプションに加えてください。
+BoehmGCはデフォルトです。オリジナルのヒープシステムを使うには-no-gcをオプションに加えてください。
 
 neo-c uses boethm gc with reffrence count, so no stop the world in your application.
 
@@ -2298,4 +2298,4 @@ int main(int argc, char** argv)
 
 ```
 
-for using this, required with -gc option
+With -no-gc option, it can't be used.

@@ -576,6 +576,14 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
         var_->mRefferenceVar = refference_var;
     }
     
+    /// std::move ///
+    if(left_type->mHeap && right_type->mHeap && !no_stdmove) {
+        if(gNodes[right_node].mNodeType == kNodeTypeLoadVariable || gNodes[right_node].mNodeType == kNodeTypeNormalBlock)
+        {
+            increment_ref_count(rvalue.value, right_type, info);
+        }
+    }
+    
     if(auto_cast_posibility(left_type, right_type, FALSE)) {
         if(!cast_right_type_to_left_type(left_type, &right_type, &rvalue, info))
         {
@@ -599,14 +607,6 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
             LLVMDumpValue(rvalue.value);
             puts("");
             return TRUE;
-        }
-    }
-    
-    /// std::move ///
-    if(left_type->mHeap && right_type->mHeap && !no_stdmove) {
-        if(gNodes[right_node].mNodeType == kNodeTypeLoadVariable || gNodes[right_node].mNodeType == kNodeTypeNormalBlock)
-        {
-	    increment_ref_count(rvalue.value, right_type, info);
         }
     }
     
@@ -1012,7 +1012,7 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
         if(left_type->mHeap && right_type2->mHeap) {
             if(gNodes[right_node].mNodeType == kNodeTypeLoadVariable || gNodes[right_node].mNodeType == kNodeTypeNormalBlock)
             {
-	        increment_ref_count(rvalue.value, right_type2, info);
+                increment_ref_count(rvalue.value, right_type2, info);
             }
         }
         
@@ -2340,7 +2340,7 @@ BOOL compile_store_element(unsigned int node, sCompileInfo* info)
         if(var_type->mHeap && right_type->mHeap) {
             if(gNodes[rnode].mNodeType == kNodeTypeLoadVariable || gNodes[rnode].mNodeType == kNodeTypeNormalBlock) 
             {
-	    	increment_ref_count(rvalue.value, right_type, info);
+                increment_ref_count(rvalue.value, right_type, info);
             }
         }
         
@@ -5938,7 +5938,7 @@ BOOL compile_store_field(unsigned int node, sCompileInfo* info)
     char var_name[VAR_NAME_MAX];
     xstrncpy(var_name, gNodes[node].uValue.sStoreField.mVarName, VAR_NAME_MAX);
     BOOL std_move = gNodes[node].uValue.sStoreField.mStdMove;
-
+    
     /// compile left node ///
     unsigned int lnode = gNodes[node].mLeft;
 
@@ -6045,6 +6045,16 @@ BOOL compile_store_field(unsigned int node, sCompileInfo* info)
         return TRUE;
     }
 
+    /// std::move ///
+    if(std_move && field_type->mHeap && right_type->mHeap) {
+        if(gNodes[rnode].mNodeType == kNodeTypeLoadVariable || gNodes[rnode].mNodeType == kNodeTypeNormalBlock) 
+        {
+            increment_ref_count(rvalue.value, right_type, info);
+        }
+        
+        remove_object_from_right_values(rvalue.value, info);
+    }
+
     if(auto_cast_posibility(field_type, right_type, FALSE)) {
         if(!cast_right_type_to_left_type(field_type, &right_type, &rvalue, info))
         {
@@ -6062,15 +6072,6 @@ BOOL compile_store_field(unsigned int node, sCompileInfo* info)
             show_node_type_one_line(right_type);
             return TRUE;
         }
-    }
-
-    /// std::move ///
-    if(std_move && field_type->mHeap && right_type->mHeap) {
-        if(gNodes[rnode].mNodeType == kNodeTypeLoadVariable || gNodes[rnode].mNodeType == kNodeTypeNormalBlock) 
-        {
-            increment_ref_count(rvalue.value, right_type, info);
-        }
-        remove_object_from_right_values(rvalue.value, info);
     }
     
     LLVMValueRef field_address;

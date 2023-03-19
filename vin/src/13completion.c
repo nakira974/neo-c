@@ -145,7 +145,9 @@ void ViWin*::completion(ViWin* self, Vi* nvi) version 13
     auto candidates2 = candidates.sort_with_lambda(int lambda(wchar_t* left, wchar_t* right) { return wcscmp(left, right); }).uniq();
 
     auto candidate = nonullable self.selector2(candidates2);
-
-    auto append = candidate.substring(len, -1);
-    self.insertText(append);
+    
+    if(candidate) {
+        auto append = candidate.substring(len, -1);
+        self.insertText(append);
+    }
 }

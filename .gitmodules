@@ -7,3 +7,6 @@
 [submodule "external/ncurses"]
 	path = external/ncurses
 	url = https://github.com/D-Programming-Deimos/ncurses.git
+[submodule "external/pcre2"]
+	path = external/pcre2
+	url = https://github.com/PCRE2Project/pcre2.git

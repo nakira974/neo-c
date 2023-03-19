@@ -20,7 +20,7 @@
 #include <assert.h>
 
 #include <limits.h>
-#include <pcre.h>
+#include <pcrt32.h>
 #include <sys/ioctl.h>
 #include <locale.h>
 #include <wctype.h>

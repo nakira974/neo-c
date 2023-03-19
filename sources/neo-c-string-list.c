@@ -1,4 +1,4 @@
-#include "neo-c.h"
+#include "neo-c.inl"
 
 list<string>*% string::scan_block(char* self, regex_struct* reg, void* parent, string (*block)(void* parent, char* match_string, list<string>* group_strings))
 {

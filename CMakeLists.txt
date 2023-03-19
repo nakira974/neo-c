@@ -4,6 +4,8 @@ cmake_minimum_required(VERSION 3.23)
 
 project(${PROJECT_NAME})
 set(CMAKE_C_STANDARD 17)
+set(CMAKE_Cxx_STANDARD 20)
+
 set(MSVC "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.33.31629\\bin\\HostX64\\x64\\cl.exe")
 add_compile_options(-Wall)
 
@@ -71,13 +73,21 @@ include_directories(${CMAKE_SOURCE_DIR}/external/GC)
 
 #PLATFORM SPECIFIC BUILD
 if(WIN32)
-    find_library(MS-LLVM LLVM PATHS ${CMAKE_SOURCE_DIR}/external/microsoft-llvm NAMES microsoft-llvm ms-llvm c-llvm MS-LLVM)
     message(STATUS "WIN32 DISTRIBUTION FOUND")
+    find_library(MS-LLVM LLVM PATHS ${CMAKE_SOURCE_DIR}/external/microsoft-llvm NAMES microsoft-llvm ms-llvm c-llvm MS-LLVM)
     if(${ms-llvm})
-        message(FATAL_ERROR "COULD NOT FIND MS-LLVM")
+        message(FATAL_ERROR "COULD NOT FIND MS-LLVM 'microsoft-llvm'")
     else()
         include_directories(${CMAKE_SOURCE_DIR}/external/microsoft-llvm/include)
         message(STATUS "MS-LLVM HAS BEEN FOUND")
+    endif()
+
+    find_library(pcre2 pcre2 PATHS ${CMAKE_SOURCE_DIR}/external/pcre2 NAMES pcre pcre2)
+    if(${pcre})
+        message(FATAL_ERROR "COULD NOT FIND PERL REGULAR EXPRESSIONS V2 'pcre2'")
+    else()
+        include_directories(${CMAKE_SOURCE_DIR}/external/pcre2/src)
+        message(STATUS "PERL REGULAR EXPRESSION V2 HAS BEEN FOUND")
     endif()
     #WINDOWS PROJECT'S FILES
     file(GLOB_RECURSE NCURSES_SOURCES
@@ -95,7 +105,7 @@ if(WIN32)
             ${GC_SOURCES}
             ${NCURSES_SOURCES}
             )
-    target_link_libraries(${PROJECT_NAME} PRIVATE ms-llvm)
+    target_link_libraries(${PROJECT_NAME} PRIVATE ms-llvm pcre)
 else()
     add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${GC_SOURCES})
 endif()

@@ -1,4 +1,4 @@
-#include <neo-c.h>
+#include <neo-c.inl>
 
 tuple2<int, char*>*% fun(int n, char* m) 
 {

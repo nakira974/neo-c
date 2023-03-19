@@ -1,4 +1,4 @@
-#include "neo-c.h"
+#include "neo-c.inl"
 
 char* char*::printf(char* self, const char* msg)
 {

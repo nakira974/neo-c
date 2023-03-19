@@ -1,4 +1,4 @@
-#include <neo-c.h>
+#include <neo-c.inl>
 #include <stdio.h>
 
 int fun(int x = 123, int y = 345, int z = 456) 

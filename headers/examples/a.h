@@ -11,7 +11,7 @@ struct sA
 ////////////////////////////
 // a.c
 ////////////////////////////
-#include "neo-c.h"
+#include "neo-c.inl"
 
 int gB;
 

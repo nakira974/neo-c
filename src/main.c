@@ -338,7 +338,7 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
 
 int main(int argc, char** argv)
 {
-    gVersion = "1.9.9c";
+    gVersion = "2.0.0";
     
     setlocale(LC_ALL, "");
     

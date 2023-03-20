@@ -1,24 +1,12 @@
 #include <neo-c.h>
 
-struct sInfo {
-    vector<string>*% strs;
-    string str2;
-};
-
 int main()
 {
-    sInfo info;
+    var p = "ABCDEFGHIJKLMN".to_buffer().to_pointer();
     
-    info.strs = new vector<string>();
+    p += strlen("ABC");
     
-    int a = 1;
-    
-    if(a != 1) {
-        return 0;
-    }
-    
-    info.strs.push_back(string("AAA"));
-    info.str2 = string("ABC");
+    printf("%c\n", *p);
     
     return 0;
 }

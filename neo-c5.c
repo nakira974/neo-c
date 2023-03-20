@@ -380,12 +380,6 @@ bool wstring::operator_equals(wchar_t* left, wchar_t* right)
     return wcscmp(left, right) == 0;
 }
 
-void unwrap_exception(char* sname, int sline)
-{
-    fprintf(stderr, "%s %d: unwrap exception. The value is null\n", sname, sline);
-    exit(2);
-}
-
 string char*::operator_add(char* left, char* right)
 {
     buffer*% buf = new buffer.initialize();

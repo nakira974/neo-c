@@ -1,6 +1,5 @@
 #include <neo-c.h>
 
-
 long fun()
 {
     return (long)1;

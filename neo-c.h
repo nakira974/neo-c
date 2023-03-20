@@ -3398,7 +3398,7 @@ inline string bool::to_string(bool self)
     }
 }
 
-void unwrap_exception(char* sname, int sline);
+void unwrap_exception(char* sname, int sline, char* mem);
 
 string char*::operator_mult(char* str, int n);
 string string::operator_mult(char* str, int n);

@@ -661,3 +661,11 @@ void check_null_pointer(int sline, char* sname)
     fprintf(stderr, "%s %d: derefference for null pointer. abort\n", sname, sline);
     exit(2);
 }
+
+void unwrap_exception(char* sname, int sline, char* mem)
+{
+    if(mem == null) {
+        fprintf(stderr, "%s %d: unwrap exception. The value is null\n", sname, sline);
+        exit(2);
+    }
+}

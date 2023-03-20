@@ -2108,7 +2108,7 @@ void init_nodes(char* sname)
     /// unwrap_exception ///
     {
         char* name = "unwrap_exception";
-        int num_params = 2;
+        int num_params = 3;
         char param_names[PARAMS_MAX][VAR_NAME_MAX];
         sNodeType* param_types[PARAMS_MAX];
         char* block_text = NULL;
@@ -2119,6 +2119,9 @@ void init_nodes(char* sname)
 
         xstrncpy(param_names[1], "sline", VAR_NAME_MAX);
         param_types[1] = create_node_type_with_class_name("int");
+
+        xstrncpy(param_names[2], "mem", VAR_NAME_MAX);
+        param_types[2] = create_node_type_with_class_name("char*");
         
         sNodeType* result_type = create_node_type_with_class_name("void");
 

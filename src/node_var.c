@@ -8179,29 +8179,11 @@ BOOL compile_unwrap(unsigned int node, sCompileInfo* info)
     dec_stack_ptr(1, info);
     
     if(left_type->mPointerNum > 0 && gNCCome) {
-        LLVMBasicBlockRef cond_then_block = LLVMAppendBasicBlockInContext(gContext, gFunction, "unwrap_then");
-        LLVMBasicBlockRef cond_else_block = LLVMAppendBasicBlockInContext(gContext, gFunction, "unwrap_else");
-        
         LLVMValueRef value = llvm_value.value;
-        if(load_) {
-            sNodeType* left_type2 = clone_node_type(left_type);
-            left_type2->mPointerNum--;
-            LLVMTypeRef llvm_type = create_llvm_type_from_node_type(left_type2);
-            value = LLVMBuildLoad2(gBuilder, llvm_type, value, "valueXYZunwrap");
-        }
         
         LLVMTypeRef llvm_type = create_llvm_type_with_class_name("char*");
-        LLVMTypeRef long_llvm_type = create_llvm_type_with_class_name("long");
-        LLVMValueRef long_null_value = LLVMConstInt(long_llvm_type, 0, FALSE);
-        LLVMValueRef null_value = LLVMBuildCast(gBuilder, LLVMBitCast, long_null_value, llvm_type, "unwrap_cast");
         LLVMValueRef value2 = LLVMBuildCast(gBuilder, LLVMBitCast, value, llvm_type, "unwrap_cast2");
     
-        LLVMValueRef conditional_value = LLVMBuildICmp(gBuilder, LLVMIntEQ, value2, null_value, "unwrap_cmp");
-        
-        LLVMBuildCondBr(gBuilder, conditional_value, cond_then_block, cond_else_block);
-        
-        llvm_change_block(cond_then_block, info);
-        
         char buf[PATH_MAX];
         
         snprintf(buf, PATH_MAX, "%s", info->sname);
@@ -8216,13 +8198,14 @@ BOOL compile_unwrap(unsigned int node, sCompileInfo* info)
         LLVMTypeRef llvm_type3 = create_llvm_type_with_class_name("int");
         LLVMValueRef param1 = LLVMConstInt(llvm_type3, info->sline, FALSE);
         
-        int num_params = 2;
+        int num_params = 3;
         
         LLVMValueRef llvm_params[PARAMS_MAX];
         memset(llvm_params, 0, sizeof(LLVMValueRef)*PARAMS_MAX);
         
         llvm_params[0] = param0;
         llvm_params[1] = param1;
+        llvm_params[2] = value2;
     
         char* fun_name = "unwrap_exception";
         LLVMValueRef llvm_fun = LLVMGetNamedFunction(gModule, fun_name);
@@ -8238,6 +8221,7 @@ BOOL compile_unwrap(unsigned int node, sCompileInfo* info)
     
         llvm_param_types[0] = create_llvm_type_with_class_name("char*");
         llvm_param_types[1] = create_llvm_type_with_class_name("int");
+        llvm_param_types[2] = create_llvm_type_with_class_name("char*");
     
         LLVMTypeRef llvm_result_type = create_llvm_type_from_node_type(result_type);
         
@@ -8246,9 +8230,6 @@ BOOL compile_unwrap(unsigned int node, sCompileInfo* info)
         LLVMTypeRef function_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
     
         (void)LLVMBuildCall2(gBuilder, function_type, llvm_fun, llvm_params, num_params, "");
-    
-        LLVMBuildBr(gBuilder, cond_else_block);
-        llvm_change_block(cond_else_block, info);
     
         sNodeType* node_type = clone_node_type(left_type);
         node_type->mNullable = FALSE;

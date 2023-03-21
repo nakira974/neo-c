@@ -107,6 +107,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
         char var_name[VAR_NAME_MAX];
 
         xstrncpy(var_name, bufs[0], VAR_NAME_MAX);
+        
 
         unsigned int left_node = sNodeTree_create_load_variable(var_name, info);
         left_node = sNodeTree_create_unwrap(left_node, FALSE, info);

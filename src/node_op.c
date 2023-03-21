@@ -111,11 +111,6 @@ BOOL call_operator_function(char* fun_base_name, sNodeType* left_type, int num_p
                 if(!solve_type(&fun_param_type, generics_type, 0, NULL, info)) {
                     return FALSE;
                 }
-
-                if(!substitution_posibility(fun_param_type, param_type, NULL, info)) {
-                    *found = FALSE;
-                    return TRUE;
-                }
                 
                 if(auto_cast_posibility(fun_param_type, param_type, TRUE)) 
                 {
@@ -124,6 +119,15 @@ BOOL call_operator_function(char* fun_base_name, sNodeType* left_type, int num_p
                         compile_err_msg(info, "Cast failed");
                         return TRUE;
                     }
+                }
+
+                if(!substitution_posibility(fun_param_type, param_type, NULL, info)) {
+                    compile_err_msg(info, "%s param error %d", fun_name, i);
+                    show_node_type(fun_param_type);
+                    show_node_type(param_type);
+                    
+                    *found = FALSE;
+                    return TRUE;
                 }
                 
                 llvm_params[i] = param.value;

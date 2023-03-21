@@ -2757,6 +2757,7 @@ impl smart_pointer<T>
     smart_pointer<T>* operator_add(smart_pointer<T>* self, int value)
     {
         using unsafe;
+        
         self.p+=value;
         
         if(self.p > self.memory.buf + self.memory.len) {

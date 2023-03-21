@@ -51,5 +51,11 @@ int main(int argc, char** argv)
     
     delete gID;
     
+    var xxxxxxxxxx = "ABCFGDEFFEFE".to_buffer().to_pointer();
+    
+    xxxxxxxxxx += strlen("ABC");
+    
+    xassert("smart pointer test", *xxxxxxxxxx == 'F');
+    
     return 0;
 }

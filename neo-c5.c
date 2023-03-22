@@ -122,6 +122,8 @@ int wchar_t*::length(wchar_t* str)
 
 wchar_t* wchar_t*::delete(wchar_t* str, int head, int tail) 
 {
+    using unsafe;
+    
     int len = wcslen(str);
 
     if(len == 0) {
@@ -157,6 +159,8 @@ wchar_t* wchar_t*::delete(wchar_t* str, int head, int tail)
 
 int wchar_t*::index(wchar_t* str, wchar_t* search_str, int default_value)
 {
+    using unsafe;
+    
     wchar_t* head = wcsstr(str, search_str);
 
     if(head == null) {
@@ -168,6 +172,8 @@ int wchar_t*::index(wchar_t* str, wchar_t* search_str, int default_value)
 
 int wchar_t*::rindex(wchar_t* str, wchar_t* search_str, int default_value)
 {
+    using unsafe;
+    
     int len = wcslen(search_str);
 
     wchar_t* p = str + wcslen(str) - len;

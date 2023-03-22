@@ -10,6 +10,8 @@ void come_gc_final()
 
 void* igc_calloc(size_t count, size_t size)
 {
+    using unsafe;
+    
     char* mem = calloc(1, sizeof(int)+count*size);
     
     int* ref_count = (int*)mem;
@@ -23,6 +25,8 @@ void* igc_calloc(size_t count, size_t size)
 void igc_increment_ref_count(void* mem)
 {
 //printf("igc_increment_ref_count %p\n", mem);
+    using unsafe;
+    
     int* ref_count = (char*)mem - sizeof(int);
     
     (*ref_count)++;
@@ -34,6 +38,8 @@ void igc_increment_ref_count(void* mem)
 void igc_decrement_ref_count(void* mem)
 {
 //printf("igc_decrement_ref_count %p\n", mem);
+    using unsafe;
+    
     if(mem == NULL) {
         return;
     }
@@ -74,6 +80,8 @@ void call_finalizer(void* fun, void* mem, int call_finalizer_only)
         }
     }
     else {
+        using unsafe;
+        
         int* ref_count = (char*)mem - sizeof(int);
 //printf("ref_count %d\n", *ref_count);
         
@@ -255,6 +263,8 @@ string string::chomp(char* str)
 
 string string::substring(char* str, int head, int tail)
 {
+    using unsafe;
+    
     if(str == null) {
         return string("");
     }
@@ -415,6 +425,8 @@ void buffer*::reset(buffer* self)
 
 buffer* buffer*::append(buffer* self, char* mem, size_t size)
 {
+    using unsafe;
+    
     if(self.len + size + 1 + 1 >= self.size) {
         char* old_buf = self.buf;
         int old_len = self.len;

@@ -3,6 +3,8 @@
 
 char* char*::delete(char* str, int head, int tail) 
 {
+    using unsafe;
+    
     int len = strlen(str);
 
     if(strcmp(str, "") == 0) {
@@ -38,6 +40,8 @@ char* char*::delete(char* str, int head, int tail)
 
 wstring wchar_t*::substring(wchar_t* str, int head, int tail)
 {
+    using unsafe;
+    
     if(str == null) {
         return wstring("");
     }
@@ -180,6 +184,8 @@ int char*::index_regex_count(char* self, regex_struct* reg, int count, int defau
 
 int char*::rindex(char* str, char* search_str, int default_value)
 {
+    using unsafe;
+    
     int len = strlen(search_str);
     char* p = str + strlen(str) - len;
 
@@ -244,6 +250,8 @@ int char*::rindex_regex(char* self, regex_struct* reg, int default_value)
 
 int char*::rindex_count(char* str, char* search_str, int count, int default_value)
 {
+    using unsafe;
+    
     int len = strlen(search_str);
     char* p = str + strlen(str) - len;
     

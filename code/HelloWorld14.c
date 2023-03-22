@@ -489,6 +489,8 @@ struct sDataGG {
 
 int main(int argc, char** argv)
 {
+    using unsafe;
+    
     xassert("global array initializer test", dyyy[0] == 1 && dyyy[1] == 2 && dyyy[2] == 3);
     
     xassert("global struct initializer test", ayyy.a == 111 && ayyy.b == 0);

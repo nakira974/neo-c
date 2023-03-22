@@ -2,6 +2,8 @@
 
 int main()
 {
+    using unsafe;
+    
     xassert("xaasert test", true);
 
     auto a = xsprintf("AAA");

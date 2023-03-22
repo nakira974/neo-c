@@ -3,6 +3,8 @@
 /// string ///
 int char*::index(char* str, char* search_str, int default_value)
 {
+    using unsafe;
+    
     char* head = strstr(str, search_str);
 
     if(head == null) {
@@ -237,6 +239,8 @@ string char*::sub_count(char* self, regex_struct* reg, char* replace, int count)
 
 list<string>*% char*::split_str(char* self, char* str) 
 {
+    using unsafe;
+    
     auto result = new list<string>.initialize();
 
     auto buf = new buffer.initialize();

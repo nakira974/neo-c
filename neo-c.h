@@ -2742,6 +2742,36 @@ inline smart_pointer<char>*% buffer*::to_pointer(buffer* self)
     return result;
 }
 
+inline smart_pointer<int>*% buffer*::to_int_pointer(buffer* self)
+{
+    auto result = new smart_pointer<int>;
+    
+    result.memory = clone self;
+    result.p = result.memory.buf;
+    
+    return result;
+}
+
+inline smart_pointer<short>*% buffer*::to_short_pointer(buffer* self)
+{
+    auto result = new smart_pointer<short>;
+    
+    result.memory = clone self;
+    result.p = result.memory.buf;
+    
+    return result;
+}
+
+inline smart_pointer<long>*% buffer*::to_long_pointer(buffer* self)
+{
+    auto result = new smart_pointer<long>;
+    
+    result.memory = clone self;
+    result.p = result.memory.buf;
+    
+    return result;
+}
+
 impl smart_pointer<T>
 {
     smart_pointer<T>*% initialize(smart_pointer<T>*% self, void* memory, int size)

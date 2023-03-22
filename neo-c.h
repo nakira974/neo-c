@@ -2792,42 +2792,42 @@ impl smart_pointer<T>
     {
         using unsafe;
         int p = *(int*)self.p;
-        return *p;
+        return p;
     }
     
     short as_short(smart_pointer<T>* self)
     {
         using unsafe;
         short p = *(short*)self.p;
-        return *p;
+        return p;
     }
     
     long as_long(smart_pointer<T>* self)
     {
         using unsafe;
         long p = *(long*)self.p;
-        return *p;
+        return p;
     }
     
     float as_float(smart_pointer<T>* self)
     {
         using unsafe;
         float p = *(float*)self.p;
-        return *p;
+        return p;
     }
     
     double as_double(smart_pointer<T>* self)
     {
         using unsafe;
         double p = *(double*)self.p;
-        return *p;
+        return p;
     }
     
     bool as_bool(smart_pointer<T>* self)
     {
         using unsafe;
         bool p = *(bool*)self.p;
-        return *p;
+        return p;
     }
     
     string to_string(smart_pointer<T>* self)

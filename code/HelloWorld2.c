@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#ifdef __DARWIN__
+#ifdef __DARWIN_ARM__
 #include <malloc/malloc.h>
 #else
 #include <malloc.h>

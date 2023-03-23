@@ -134,7 +134,7 @@ void*%? ncmemdup(void*% block)
 
 //puts("ncmemdup3");
 //printf("malloc size mem %p\n", mem);
-#ifdef __DARWIN__
+#ifdef __DARWIN_ARM__
     size_t size = malloc_size(mem);
 #else
     size_t size = malloc_usable_size(mem);

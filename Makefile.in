@@ -101,7 +101,7 @@ neo-c8-gc.o:
 	./neo-c -o neo-c8-gc.o -gc -c neo-c8.c -fPIC
 
 
-self-host: neo-c config.h $(SELF_HOST_OBJS) lib src/llvm.o
+self-host: neo-c config.h $(SELF_HOST_OBJS) lib lib-gc src/llvm.o
 	$(CXX) -o neo-c $(SELF_HOST_OBJS) src/llvm.o $(CXXFLAGS) -fPIC $(LIBS) -L/usr/local/lib -L/opt/homebrew/lib
 
 src/parse_value.c.o: src/parse_value.c

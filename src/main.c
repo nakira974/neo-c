@@ -91,7 +91,7 @@ static BOOL compiler(char* fname, BOOL optimize, sVarTable* module_var_table, BO
     
         char cmd[1024];
 #ifdef __DARWIN_ARM__
-        snprintf(cmd, 1024, "/opt/homebrew/opt/llvm/bin/clang-cpp %s -I. -I/usr/local/include -I%s/include %s -I/opt/homebrew/opt/llvm@15/include -I/opt/homebrew/opt/libgc/include -I/opt/homebrew/opt/pcre/include -D__DARWIN__ -U__GNUC__ %s %s > %s", include_path, PREFIX, cflags, fname, macro_definition, cpp_fname);
+        snprintf(cmd, 1024, "/opt/homebrew/opt/llvm/bin/clang-cpp %s -I. -I/usr/local/include -I%s/include %s -I/opt/homebrew/opt/llvm@15/include -I/opt/homebrew/opt/libgc/include -I/opt/homebrew/opt/pcre/include -D__DARWIN_ARM__ -U__GNUC__ %s %s > %s", include_path, PREFIX, cflags, fname, macro_definition, cpp_fname);
 #else
         snprintf(cmd, 1024, "cpp %s -I. -I%s/include %s -U__GNUC__ %s %s > %s", include_path, PREFIX,cflags, fname, macro_definition, cpp_fname);
 #endif

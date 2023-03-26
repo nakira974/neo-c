@@ -649,11 +649,11 @@ ac_subst_vars='LTLIBOBJS
 LIBOBJS
 SELF_HOST_OBJS
 OBJS
-CLANG
 CXXFLAGS2
 CXXFLAGS
 CXX
 DESTDIR
+CLANG
 OS
 INSTALL_DATA
 INSTALL_SCRIPT
@@ -4395,11 +4395,11 @@ fi
 ac_cv_lib_rt=ac_cv_lib_rt_main
 
 
-if which /opt/homebrew/Cellar/llvm/15.*/bin/clang-15
+if which /opt/homebrew/Cellar/llvm/16.*/bin/clang-16
 then
     echo Darwin-clang
-    CC=$(ls /opt/homebrew/Cellar/llvm/15.*/bin/clang-15)
-    CLANG=$(ls /opt/homebrew/Cellar/llvm/15.*/bin/clang-15)
+    CC=$(ls /opt/homebrew/Cellar/llvm/16.*/bin/clang-16)
+    CLANG=$(ls /opt/homebrew/Cellar/llvm/16.*/bin/clang-16)
 elif test `uname -s` = "Darwin"; then
     CC=clang
 elif which clang-11 2> /dev/null
@@ -4411,6 +4411,7 @@ then
 fi
 
 echo $CC
+
 
 
 
@@ -4444,7 +4445,7 @@ LIBS="$LIBS"
 
 
 OBJS="src/parse_value.o src/parse_lib.o src/parse_type.o src/parse_function.o src/parse_loop.o src/parse_var.o src/parse_exp.o src/parse_op.o src/alignment.o src/buffer.o src/xfunc.o src/node.o src/node_function_call.o src/node_function_lib.o src/node_function.o src/node_compile.o src/node_loop.o src/node_op.o src/node_value.o src/node_var.o src/vtable.o src/node_type.o src/klass.o src/node_block.o src/typedef.o src/compiler.o src/macro.o"
-SELF_HOST_OBJS="src/parse_value.c.o src/parse_lib.c.o src/parse_type.c.o src/parse_function.c.o src/parse_loop.c.o src/parse_var.c.o src/parse_exp.c.o src/parse_op.c.o src/alignment.c.o src/buffer.c.o src/xfunc.c.o src/node.c.o src/vtable.c.o src/node_type.c.o src/klass.c.o src/node_block.c.o src/typedef.c.o src/compiler.c.o src/node_function_call.c.o src/node_function_lib.c.o src/node_function.c.o src/node_function_come.c.o src/node_loop.c.o src/node_op.c.o src/node_value.c.o src/node_var.c.o src/macro.c.o src/node_compile.c.o src/main.c.o"
+SELF_HOST_OBJS="src/parse_value.c.o src/parse_lib.c.o src/parse_type.c.o src/parse_function.c.o src/parse_loop.c.o src/parse_var.c.o src/parse_exp.c.o src/parse_op.c.o src/alignment.c.o src/buffer.c.o src/xfunc.c.o src/node.c.o src/vtable.c.o src/node_type.c.o src/klass.c.o src/node_block.c.o src/typedef.c.o src/compiler.c.o src/node_function_call.c.o src/node_function_lib.c.o src/node_function.c.o src/node_loop.c.o src/node_op.c.o src/node_value.c.o src/node_var.c.o src/macro.c.o src/node_compile.c.o src/main.c.o"
 
 ac_fn_c_check_func "$LINENO" "lchmod" "ac_cv_func_lchmod"
 if test "x$ac_cv_func_lchmod" = xyes

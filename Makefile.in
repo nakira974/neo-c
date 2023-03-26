@@ -27,6 +27,7 @@ LIBS=@LIBS@
 OS=@OS@
 DESTDIR=@DESTDIR@
 OBJS=@OBJS@
+CLANG=@CLANG@
 SELF_HOST_OBJS=@SELF_HOST_OBJS@
 
 #########################################

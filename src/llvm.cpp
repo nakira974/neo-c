@@ -45,8 +45,10 @@ LLVMValueRef call_va_arg_inst(LLVMBasicBlockRef block, LLVMValueRef value, LLVMT
     BasicBlock* cpp_block = (BasicBlock*)block;
     
     Instruction* inst = new VAArgInst(cpp_value, cpp_type);
-
-    cpp_block->getInstList().push_back(inst);
+    
+    LLVMValueRef inst2 = (LLVMValueRef)inst;
+    
+    LLVMInsertIntoBuilder(gBuilder, inst2);
 
     return (LLVMValueRef)inst;
 }

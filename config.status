@@ -603,15 +603,15 @@ S["SELF_HOST_OBJS"]="src/parse_value.c.o src/parse_lib.c.o src/parse_type.c.o sr
 S["OBJS"]="src/parse_value.o src/parse_lib.o src/parse_type.o src/parse_function.o src/parse_loop.o src/parse_var.o src/parse_exp.o src/parse_op.o src/alignmen"\
 "t.o src/buffer.o src/xfunc.o src/node.o src/node_function_call.o src/node_function_lib.o src/node_function.o src/node_compile.o src/node_loop.o src/"\
 "node_op.o src/node_value.o src/node_var.o src/vtable.o src/node_type.o src/klass.o src/node_block.o src/typedef.o src/compiler.o src/macro.o"
-S["CLANG"]="/opt/homebrew/Cellar/llvm/15.0.7_1/bin/clang-15"
-S["CXXFLAGS2"]="-I/opt/homebrew/Cellar/llvm/15.0.7_1/include -std=c++14 -stdlib=libc++   -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -L/op"\
-"t/homebrew/Cellar/llvm/15.0.7_1/lib -Wl,-search_paths_first -Wl,-headerpad_max_install_names -lLLVM-15   -O2 -I . -I src -DPREFIX=\"\\\"${DESTDIR}/\\\" -"\
-"L/usr/local/lib\""
-S["CXXFLAGS"]="-I/opt/homebrew/Cellar/llvm/15.0.7_1/include -std=c++14 -stdlib=libc++   -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -L/op"\
-"t/homebrew/Cellar/llvm/15.0.7_1/lib -Wl,-search_paths_first -Wl,-headerpad_max_install_names -lLLVM-15   -O2 -I . -I src -DPREFIX=\"\\\"${DESTDIR}/\\\" -"\
-"L/usr/local/lib\""
+S["CXXFLAGS2"]="-I/opt/homebrew/Cellar/llvm/16.0.0/include -std=c++17 -stdlib=libc++   -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -L/opt/"\
+"homebrew/Cellar/llvm/16.0.0/lib -Wl,-search_paths_first -Wl,-headerpad_max_install_names -lLLVM-16   -O2 -I . -I src -DPREFIX=\"\\\"${DESTDIR}/\\\" -L/us"\
+"r/local/lib\""
+S["CXXFLAGS"]="-I/opt/homebrew/Cellar/llvm/16.0.0/include -std=c++17 -stdlib=libc++   -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -L/opt/"\
+"homebrew/Cellar/llvm/16.0.0/lib -Wl,-search_paths_first -Wl,-headerpad_max_install_names -lLLVM-16   -O2 -I . -I src -DPREFIX=\"\\\"${DESTDIR}/\\\" -L/us"\
+"r/local/lib\""
 S["CXX"]="clang++"
 S["DESTDIR"]="/usr/local"
+S["CLANG"]="/opt/homebrew/Cellar/llvm/16.0.0/bin/clang-16"
 S["OS"]="DARWIN_ARM"
 S["INSTALL_DATA"]="${INSTALL} -m 644"
 S["INSTALL_SCRIPT"]="${INSTALL}"
@@ -621,10 +621,10 @@ S["EXEEXT"]=""
 S["ac_ct_CC"]="gcc"
 S["CPPFLAGS"]=""
 S["LDFLAGS"]=""
-S["CFLAGS"]="-I/opt/homebrew/Cellar/llvm/15.0.7_1/include  -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -Isrc/ -I.  -DPREFIX=\"\\\"${DESTD"\
-"IR}/\\\"\" -fPIC -L/usr/local/lib -DCONFIG_H -I/usr/local/opt/llvm/include -L/opt/homebrew/lib -I/opt/homebrew/include -I/usr/local/include -DLLVM_VERS"\
-"ION=15 -DCLANG=\"\\\"/opt/homebrew/Cellar/llvm/15.0.7_1/bin/clang-15\\\"\" -DGCC=\"\\\"clang\\\"\""
-S["CC"]="/opt/homebrew/Cellar/llvm/15.0.7_1/bin/clang-15"
+S["CFLAGS"]="-I/opt/homebrew/Cellar/llvm/16.0.0/include  -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -Isrc/ -I.  -DPREFIX=\"\\\"${DESTDIR"\
+"}/\\\"\" -fPIC -L/usr/local/lib -DCONFIG_H -I/usr/local/opt/llvm/include -L/opt/homebrew/lib -I/opt/homebrew/include -I/usr/local/include -DLLVM_VERSIO"\
+"N=16 -DCLANG=\"\\\"/opt/homebrew/Cellar/llvm/16.0.0/bin/clang-16\\\"\" -DGCC=\"\\\"clang\\\"\""
+S["CC"]="/opt/homebrew/Cellar/llvm/16.0.0/bin/clang-16"
 S["target_alias"]=""
 S["host_alias"]=""
 S["build_alias"]=""

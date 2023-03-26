@@ -91,18 +91,18 @@ static BOOL compiler(char* fname, BOOL optimize, sVarTable* module_var_table, BO
     
         char cmd[1024];
 #ifdef __DARWIN_ARM__
-        snprintf(cmd, 1024, "/opt/homebrew/opt/llvm/bin/clang-cpp %s -I. -I/usr/local/include -I%s/include %s -I/opt/homebrew/opt/llvm@15/include -I/opt/homebrew/opt/libgc/include -I/opt/homebrew/opt/pcre/include -D__DARWIN_ARM__ -U__GNUC__ %s %s > %s", include_path, PREFIX, cflags, fname, macro_definition, cpp_fname);
+        snprintf(cmd, 1024, "/opt/homebrew/opt/llvm/bin/clang-cpp %s -I. -I/usr/local/include -I%s/include %s -I/opt/homebrew/opt/llvm@16/include -I/opt/homebrew/opt/libgc/include -I/opt/homebrew/opt/pcre/include -D__DARWIN_ARM__ -U__GNUC__ %s %s > %s", include_path, PREFIX, cflags, fname, macro_definition, cpp_fname);
 #else
         snprintf(cmd, 1024, "cpp %s -I. -I%s/include %s -U__GNUC__ %s %s > %s", include_path, PREFIX,cflags, fname, macro_definition, cpp_fname);
 #endif
-        //puts(cmd);
+        puts(cmd);
     
         int rc = system(cmd);
         if(rc != 0) {
             char cmd[1024];
             snprintf(cmd, 1024, "cpp -I. -I%s/include %s -C %s %s > %s", PREFIX, cflags, fname, macro_definition, cpp_fname);
     
-            //puts(cmd);
+            puts(cmd);
             rc = system(cmd);
     
             if(rc != 0) {
@@ -129,7 +129,7 @@ static BOOL compiler(char* fname, BOOL optimize, sVarTable* module_var_table, BO
         snprintf(cmd, 1024, "rm -f %s", cpp_fname);
 
         (void)system(cmd);
-        //puts(cmd);
+        puts(cmd);
     }
     
     free(source.mBuf);
@@ -176,13 +176,13 @@ static BOOL compile_ll_file(char* fname, char* bname, char* clang_optiones, BOOL
     char cmd[1024];
     
 #ifdef __DARWIN_ARM__
-    snprintf(cmd, 1024, "%s -o %s -c %s.ll %s -fPIC -I/opt/homebrew/opt/llvm@15/include -L/opt/homebrew/opt/llvm@15/lib -L/opt/homebrew/lib -I/opt/homebrew/include -L/usr/local/opt/libgc/lib -L/opt/homebrew/opt/boehmgc/lib -I/opt/homebrew/opt/pcre/include -fPIC -L/opt/homebrew/opt/boehmgc/lib ", CLANG, bname2, fname, clang_optiones);
+    snprintf(cmd, 1024, "%s -o %s -c %s.ll %s -fPIC -I/opt/homebrew/opt/llvm@16/include -L/opt/homebrew/opt/llvm@16/lib -L/opt/homebrew/lib -I/opt/homebrew/include -L/usr/local/opt/libgc/lib -L/opt/homebrew/opt/boehmgc/lib -I/opt/homebrew/opt/pcre/include -fPIC -L/opt/homebrew/opt/boehmgc/lib ", CLANG, bname2, fname, clang_optiones);
 #else
     snprintf(cmd, 1024, "%s -o %s -c %s.ll %s -fPIC -L/opt/homebrew/lib -I/opt/homebrew/include -L/usr/local/opt/libgc/lib -L/opt/homebrew/opt/boehmgc/lib -fPIC -L/opt/homebrew/opt/boehmgc/lib ", CLANG, bname2, fname, clang_optiones);
 #endif
     
     int rc = system(cmd);
-    //puts(cmd);
+    puts(cmd);
     if(rc != 0) {
         fprintf(stderr, "return code is error on clang\n");
         exit(2);
@@ -192,7 +192,7 @@ static BOOL compile_ll_file(char* fname, char* bname, char* clang_optiones, BOOL
         char cmd[1024];
         snprintf(cmd, 1024, "rm -f %s.ll", fname);
         
-        //puts(cmd);
+        puts(cmd);
         (void)system(cmd);
     }
     
@@ -230,11 +230,11 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
     if(strcmp(fname, "") != 0) {
         char cmd[1024];
 #ifdef __DARWIN_ARM__
-        snprintf(cmd, 1024, "%s -c -o %s.o %s.ll -fPIC -I/opt/homebrew/opt/llvm@15/include -L/opt/homebrew/opt/llvm@15/lib -I/opt/homebrew/opt/pcre/include ", CLANG, fname, fname);
+        snprintf(cmd, 1024, "%s -c -o %s.o %s.ll -fPIC -I/opt/homebrew/opt/llvm@16/include -L/opt/homebrew/opt/llvm@16/lib -I/opt/homebrew/opt/pcre/include ", CLANG, fname, fname);
 #else
         snprintf(cmd, 1024, "%s -c -o %s.o %s.ll -fPIC ", CLANG, fname, fname);
 #endif
-        //puts(cmd);
+        puts(cmd);
     
         int rc = system(cmd);
         if(rc != 0) {
@@ -338,7 +338,7 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
 
 int main(int argc, char** argv)
 {
-    gVersion = "2.0.2";
+    gVersion = "2.0.3";
     
     setlocale(LC_ALL, "");
     

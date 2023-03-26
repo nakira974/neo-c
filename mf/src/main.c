@@ -4,6 +4,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
+#include <readline/readline.h>
+#include <readline/history.h>
 
 #define COLS 3
 
@@ -74,6 +76,44 @@ void read_dir(sInfo* info)
     info.files = info.files.sort_with_lambda(int lambda(char* left, char* right) { return strcmp(left, right); });
 }
 
+void vd(sInfo* info)
+{
+    char* line = readline(getenv("PWD") + " > ");
+    
+    if(line == null) {
+        return;
+    }
+
+    string cmdline = string(line);
+    
+    free(line);
+    
+    char buf[BUFSIZ];
+    
+    FILE* f = popen(cmdline, "r");
+    if(f == NULL) {
+        return;
+    }
+    info.files.push_back(string("."));
+    info.files.push_back(string(".."));
+
+    while(1) {
+        char file[PATH_MAX];
+        char* result = fgets(file, PATH_MAX, f);
+        
+        if(result == null) {
+            break;
+        }
+        
+        info.files.push_back(string(result).chomp());
+    }
+    if(pclose(f) < 0) {
+        return;
+    }
+
+    info.files = info.files.sort_with_lambda(int lambda(char* left, char* right) { return strcmp(left, right); });
+}
+
 void fix_cursor(sInfo* info);
 
 bool change_directory(sInfo* info, char* path, char* cursor_file)
@@ -109,6 +149,7 @@ bool change_directory(sInfo* info, char* path, char* cursor_file)
     
     return true;
 }
+
 
 void fix_cursor(sInfo* info)
 {
@@ -170,7 +211,7 @@ void view(sInfo* info)
     }
 
     attron(A_REVERSE);
-    mvprintw(maxy, 0, "page %d files %d head %d tail %d", info.page, info.files.length(), head, tail);
+    mvprintw(maxy, 0, "%s page %d files %d head %d tail %d", info.path, info.page, info.files.length(), head, tail);
     attroff(A_REVERSE);
 
     refresh();
@@ -198,6 +239,16 @@ void input(sInfo* info)
     switch(key) {
         case 'q':
             info.app_end = true;
+            break;
+            
+        case '*':
+            endwin();
+            info.files.reset();
+            vd(info);
+            initscr();
+            keypad(stdscr, true);
+            raw();
+            noecho();
             break;
 
         case KEY_ENTER:
@@ -342,6 +393,7 @@ void input(sInfo* info)
 
         case 'L'-'A'+1:
             clear();
+            read_dir(info);
             view(info);
             refresh();
             break;

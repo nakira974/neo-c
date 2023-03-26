@@ -1,5 +1,5 @@
-shsh
+mf
 
-shell script 
+1000 lines console filer by neo-c
 
-1000 lines shell implemented by neo-c
+

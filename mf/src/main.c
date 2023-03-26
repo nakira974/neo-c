@@ -211,7 +211,7 @@ void view(sInfo* info)
     }
 
     attron(A_REVERSE);
-    mvprintw(maxy, 0, "%s page %d files %d head %d tail %d", info.path, info.page, info.files.length(), head, tail);
+    mvprintw(maxy, 0, "%s page %d files %d head %d tail %d press ? for manual", info.path, info.page, info.files.length(), head, tail);
     attroff(A_REVERSE);
 
     refresh();
@@ -250,6 +250,33 @@ void search_file(sInfo* info)
             break;
         }
     }
+}
+
+void manual(sInfo* info)
+{
+    clear();
+    mvprintw(0,0, "q --> quit");
+    mvprintw(1,0, "* --> virtual directory(type shell command, and the result of the command is file list");
+    mvprintw(2,0, "ENTER --> run command(type shell command) or insert directory");
+    mvprintw(3,0, "~ --> move to home directory");
+    mvprintw(4,0, "BACK SPACE ^H --> move to the parent directory");
+    mvprintw(5,0, "d --> delete file");
+    mvprintw(6,0, "c --> copy file");
+    mvprintw(7,0, "m --> move file");
+    mvprintw(8,0, "n --> new file");
+    mvprintw(9,0, "x --> excute file");
+    mvprintw(10,0, "e --> edit file");
+    mvprintw(11,0, "LEFT h --> move cursor left");
+    mvprintw(12,0, "RIGHT l --> move cursor right");
+    mvprintw(13,0, "DOWN j --> move cursor down");
+    mvprintw(14,0, "UP k --> move cursor up");
+    mvprintw(15,0, "CTRL-L --> reread directory and refresh the window");
+    mvprintw(16,0, "/ --> move cursor with searching file");
+    mvprintw(17,0, "? --> this manual");
+    mvprintw(18,0, ": --> run shell");
+    
+    refresh();
+    getch();
 }
 
 void input(sInfo* info)
@@ -426,6 +453,10 @@ void input(sInfo* info)
             view(info);
             refresh();
             break;
+            
+        case '?':
+            manual(info);
+            break;
 
         case ':': {
             endwin();
@@ -447,6 +478,8 @@ void input(sInfo* info)
 
 int main(int argc, char** argv)
 {
+    setlocale(LC_ALL, "");
+    
     sInfo info;
     
     memset(&info, 0, sizeof(sInfo));

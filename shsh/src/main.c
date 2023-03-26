@@ -864,6 +864,8 @@ int readline_init_text()
 
 int main(int argc, char** argv)
 {
+    setlocale(LC_ALL, "");
+    
     bool command = false;
     string? file_name = null;
     bool run_once = false;

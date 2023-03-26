@@ -39,4 +39,9 @@ USAGE
     RR
     LL
     DD
+    
+    > zed '[1,4,3,10].sort()'
+    [1,3,4,10]
+    > zed 'sum=0; [1,4,3,10].each { sum = sum + it }; sum'
+    18
 ```

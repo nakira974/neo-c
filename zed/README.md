@@ -1,4 +1,4 @@
-Zed interpreter written by neo-c
+Zed interpreter written by comelang
 
 In my hobby
 

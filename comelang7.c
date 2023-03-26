@@ -1,4 +1,4 @@
-#include <neo-c.h>
+#include "comelang.h"
 
 /// string ///
 int char*::index(char* str, char* search_str, int default_value)

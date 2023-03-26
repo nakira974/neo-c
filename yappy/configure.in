@@ -200,7 +200,7 @@ AC_HAVE_LIBRARY(pcre, [ LIBS="$LIBS -lpcre"; ], [ eixt ])
 
 AC_SUBST(LIBS)
 
-CC=neo-c
+CC=comelang
 
 AC_SUBST(CC)
 

@@ -1,4 +1,4 @@
 mf
 
-1000 lines console filer by neo-c
+1000 lines console filer by comelang
 

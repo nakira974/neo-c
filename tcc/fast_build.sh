@@ -1,1 +1,1 @@
-make clean && make CC=neo-c && make CC=neo-c test
+make clean && make CC=comelang && make CC=comelang test

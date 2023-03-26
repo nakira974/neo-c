@@ -2,7 +2,7 @@
 ////////////////////////////
 // src/main.c
 ////////////////////////////
-#include <neo-c.h>
+#include <comelang.h>
 
 #include <llvm-c/Core.h>
 

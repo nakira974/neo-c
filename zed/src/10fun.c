@@ -1,4 +1,4 @@
-#include <neo-c.h>
+#include <comelang.h>
 #include "common.h"
 
 bool vm(sInfo* info) version 8

@@ -98,7 +98,7 @@ void ViWin*::completion_neo_c2(ViWin* self, Vi* nvi) version 20
         fclose(f);
 
         char cmdline[128];
-        snprintf(cmdline, 128, "neo-c2 -I. type neo_c2_completion2.tmp");
+        snprintf(cmdline, 128, "comelang2 -I. type neo_c2_completion2.tmp");
         
         auto command_result = new buffer.initialize();
         
@@ -118,7 +118,7 @@ void ViWin*::completion_neo_c2(ViWin* self, Vi* nvi) version 20
 
                 char* dname2 = dirname(dname);
 
-                snprintf(cmdline, 128, "neo-c2 -I. -I%s function neo_c2_completion.tmp | egrep '^[a-zA-Z0-9_]+'", dname2);
+                snprintf(cmdline, 128, "comelang2 -I. -I%s function neo_c2_completion.tmp | egrep '^[a-zA-Z0-9_]+'", dname2);
                 
                 auto candidates = new list<wstring>.initialize();
                 
@@ -218,7 +218,7 @@ void ViWin*::completion_neo_c2(ViWin* self, Vi* nvi) version 20
         char* dname2 = dirname(dname);
 
         char cmdline[128];
-        snprintf(cmdline, 128, "neo-c2 -I. -I%s function neo_c2_completion.tmp | egrep '^[a-zA-Z0-9_]+'", dname2);
+        snprintf(cmdline, 128, "comelang2 -I. -I%s function neo_c2_completion.tmp | egrep '^[a-zA-Z0-9_]+'", dname2);
         
         auto candidates = new list<wstring>.initialize();
         

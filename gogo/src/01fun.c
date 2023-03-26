@@ -1,4 +1,4 @@
-#include <neo-c.h>
+#include <comelang.h>
 #include "common.h"
 
 sParam* sParam*::initialize(sParam* self, string name, sType* type)

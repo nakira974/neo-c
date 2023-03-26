@@ -1,4 +1,4 @@
-#include <neo-c.h>
+#include <comelang.h>
 #include <ncurses.h>
 #include <dirent.h>
 #include <sys/stat.h>

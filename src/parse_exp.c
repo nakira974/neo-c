@@ -2344,8 +2344,8 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
             }
         }
         else if(strcmp(buf, "using") == 0) {
-            if(memcmp(info->p, "neo-c", strlen("neo-c")) == 0) {
-                info->p += strlen("neo-c");
+            if(memcmp(info->p, "comelang", strlen("comelang")) == 0) {
+                info->p += strlen("comelang");
                 skip_spaces_and_lf(info);
                 
                 gExternC = FALSE;

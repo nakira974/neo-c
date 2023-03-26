@@ -1364,7 +1364,7 @@ BOOL parse_funcation_call_params(int* num_params, unsigned int* params, sParserI
                 }
                 else {
                     char msg[1024];
-                    snprintf(msg, 1024, "neo-c requires , or ) for method call. it is %c", *info->p);
+                    snprintf(msg, 1024, "comelang requires , or ) for method call. it is %c", *info->p);
                     parser_err_msg(info, msg);
                     break;
                 }

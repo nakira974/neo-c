@@ -1,4 +1,4 @@
-#include <neo-c.h>
+#include <comelang.h>
 #include <signal.h>
 #include <readline/readline.h>
 #include <readline/history.h>
@@ -575,7 +575,7 @@ void sigchld_block(int block)
     }
 }
 
-using neo-c;
+using comelang;
 
 void sig_int_optc(int signum)
 {

@@ -1,15 +1,17 @@
 
-# neo-c
+# comelang
 
-Modern C compiler. It has a collection and string library using Boehm GC or Refference count GC heap system. 
+come together!
 
-モダンなCコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
+It has a collection and string library using Boehm GC or Refference count GC heap system. 
+
+boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 2.0.3
+version 0.9.9
 
 ``` C
-#include <neo-c.h>
+#include <comelang.h>
 
 int fun(int x=123, int y = 234, int z = 345) 
 {
@@ -196,17 +198,17 @@ int main()
 In pipes filter or command lines.
 
 ```
-> neo-c -e 'puts("HELLO WORLD");'
+> comelang -e 'puts("HELLO WORLD");'
 HELLO WORLD
-> neo-c -e 'puts("HO! * 3);'
+> comelang -e 'puts("HO! * 3);'
 HO!HO!HO!
 > ls
 a.c
 b.c
 c.c
-> ls | neo-c -e 'stdin.read().split(/\n/).join(",").puts();'
+> ls | comelang -e 'stdin.read().split(/\n/).join(",").puts();'
 a.c,b.c,c.c
-> echo "aaa bbb" | neo-c 'stdin.read().chomp().spit(/ /).to_string().puts()'
+> echo "aaa bbb" | comelang 'stdin.read().chomp().spit(/ /).to_string().puts()'
 [aaa,bbb]
 ```
 
@@ -224,7 +226,7 @@ a.c,b.c,c.c
 
 7. It has using regex library(pcre) string libraries.
 
-8. For command line pipes, neo-c can run C code with -e command option.
+8. For command line pipes, comelang can run C code with -e command option.
 
 10. defer
 
@@ -254,7 +256,7 @@ a.c,b.c,c.c
 
 7. 正規表現を使った文字列ライブラリがあります。
 
-8. コマンドラインのパイプのためにneo-cは-eコマンドオプションによってCコードを実行できます。
+8. コマンドラインのパイプのためにcomelangは-eコマンドオプションによってCコードを実行できます。
 
 10. 遅延評価(defer)があります。
 
@@ -281,8 +283,8 @@ Fast Build. No self host
 速いビルドです。
 
 ```
-git clone https://github.com/ab25cq/neo-c
-cd neo-c
+git clone https://github.com/ab25cq/comelang
+cd comelang
 bash fast_build.sh
 ```
 
@@ -291,9 +293,9 @@ With debug info.
 デバッグ情報を入れたビルドは以下です。
 
 ```
-git clone https://github.com/ab25cq/neo-c
+git clone https://github.com/ab25cq/comelang
 
-cd neo-c
+cd comelang
 bash debug_build.sh
 ```
 
@@ -302,18 +304,18 @@ with self hosting.
 セルフホストするビルドは以下です。
 
 ```
-git clone https://github.com/ab25cq/neo-c
+git clone https://github.com/ab25cq/comelang
 
-cd neo-c
+cd comelang
 bash self_host.sh
 ```
 
 For termux.
 
 ```
-git clone https://github.com/ab25cq/neo-c
+git clone https://github.com/ab25cq/comelang
 
-cd neo-c
+cd comelang
 bash home_build.sh
 ```
 
@@ -334,10 +336,10 @@ bash xhome_build.sh
 
 # Language specifications
 
-It is almost the same as C language. Since it is not POSIX compliant, it is not compatible with C language in every detail, but I think that anyone who can use C language can use it immediately. If you don't use the heap system and do #include <neo-c.h>, you can just use it as a C compiler. 
+It is almost the same as C language. Since it is not POSIX compliant, it is not compatible with C language in every detail, but I think that anyone who can use C language can use it immediately. If you don't use the heap system and do #include <comelang.h>, you can just use it as a C compiler. 
 
 C言語とほぼ一緒です。POSIX準拠じゃないため、あまり細部までC言語とは互換性がありませんが、C言語を使える人ならすぐ使えると思います。
-ヒープシステムを使わずに#include <neo-c.h>をしなければ、単なるCコンパイラとして使えます。
+ヒープシステムを使わずに#include <comelang.h>をしなければ、単なるCコンパイラとして使えます。
 
 # HELLO WORLD
 
@@ -350,7 +352,7 @@ int main()
     puts("HELLO WORLD");
     return 0;
 }
-> neo-c a.c
+> comelang a.c
 > ./a
 HELLO WORLD
 ```
@@ -370,7 +372,7 @@ With -no-gc option for original refference count GC heap system, enable original
 
 BoehmGCはデフォルトです。オリジナルのヒープシステムを使うには-no-gcをオプションに加えてください。
 
-neo-c uses boethm gc with reffrence count, so no stop the world in your application.
+comelang uses boethm gc with reffrence count, so no stop the world in your application.
 
 
 boehmGCはリファレンスカウントをデフォルトにしているため、画面が固まることもないとおもいます。
@@ -716,7 +718,7 @@ bufferもあります。
 sample
 
 ``` C
-#include <neo-c.h>
+#include <comelang.h>
 
 int main()
 {
@@ -925,11 +927,11 @@ fun finish
 a.c
 b.c
 c.c
-> ls | neo-c -e 'stdin.readlines().map { it.strip(); }.join(",").printf("[%s]\n")'
+> ls | comelang -e 'stdin.readlines().map { it.strip(); }.join(",").printf("[%s]\n")'
 [a.c,b.c,c.c]
-> ls | neo-c -e 'stdin.readlines().map { it.strip(); }.join(",").puts()'
+> ls | comelang -e 'stdin.readlines().map { it.strip(); }.join(",").puts()'
 a.c,b.c,c.c
-> ls | neo-c -e 'stdin.readlines().map { it.strip(); }.join(",").print()'
+> ls | comelang -e 'stdin.readlines().map { it.strip(); }.join(",").print()'
 a.c,b.c,c.c
 ```
 
@@ -1085,7 +1087,7 @@ bool string::operator_equals(char* left, char* right);
 ```
 
 ``` C
-#include <neo-c.h>
+#include <comelang.h>
 
 int main(int argc, char** argv)
 {
@@ -1177,22 +1179,22 @@ struct sB {
 int main() {
     sB b;
     b;
-> neo-c type a.c
+> comelang type a.c
 struct sB
 #0 int a
 #1 char* b
 #2 struct sB*
 ```
 
-neo-c type file name outputs the type of last expression and the type inner contents. It's useful for reflection. You will make a program output a program with any script languaged or neo-c its self.
+comelang type file name outputs the type of last expression and the type inner contents. It's useful for reflection. You will make a program output a program with any script languaged or comelang its self.
 
-neo-c type ファイル名で最後の式の型とその内容を出力することができます。これはリフレクションで便利です。プログラムを生成するプログラムを任意のスクリプト言語やneo-c自身で作ることができるでしょう。
+comelang type ファイル名で最後の式の型とその内容を出力することができます。これはリフレクションで便利です。プログラムを生成するプログラムを任意のスクリプト言語やcomelang自身で作ることができるでしょう。
 
 ``` C
 > vim a.c
 int gGlobal1;
 int gGlobal2;
-> neo-c global a.c
+> comelang global a.c
 gGlobal1 int
 gGlobal2 int
 ```
@@ -1208,7 +1210,7 @@ int fun2()
 {
     return 123;
 }
-> neo-c function a.c
+> comelang function a.c
 fun extern 0 var args 0 gnerics function 0 num params 2
 a int
 b int
@@ -1226,7 +1228,7 @@ struct sA
 };
 
 enum eEnumA { kA, kB };
-> neo-c class a.c
+> comelang class a.c
 struct sA
 #0 int a
 #1 int b
@@ -1239,7 +1241,7 @@ kB 1
 > vim a.c
 typedef int tType;
 typedef int tType2;
-> neo-c typedef a.c
+> comelang typedef a.c
 tType int
 tType2 int
 ```
@@ -1273,12 +1275,12 @@ int gGlobal;
 
 
 ruby <<EOS
-    type = "`neo-c -n global $SOURCE_NAME | grep gGlobal`".split()[1];
+    type = "`comelang -n global $SOURCE_NAME | grep gGlobal`".split()[1];
     puts(type + " gGlobal2;");
 EOS
 ```
 ~~~ shell
-> neo-c global g.c
+> comelang global g.c
 gGlobal int
 gGlobal2 int
 ~~~
@@ -1475,7 +1477,7 @@ aのリファレンスカウントは２なので、aがfreeされるのはブ�
 finalizeとcloneメソッドとequalsメソッドは自動的に定義されます。
 
 ``` C
-#include <neo-c.h>
+#include <comelang.h>
 
 struct sInfo
 {
@@ -1501,7 +1503,7 @@ int main()
 
 # Generics(Original Heap version)
 
-Generics is a code generation method. I have implemented it, but basically I am making it for the collection library of the basic library. We do not recommend using Generics for your own application code. This is because the code be neo-c complicated. If you want to make your own library, you can use it. The vector is defined as follows.
+Generics is a code generation method. I have implemented it, but basically I am making it for the collection library of the basic library. We do not recommend using Generics for your own application code. This is because the code be comelang complicated. If you want to make your own library, you can use it. The vector is defined as follows.
 
 Genericsはコード生成方式です。実装してますが、基本的に基本ライブラリのコレクションライブラリ用に作っています。
 自作のアプリケーションコードにGenericsを使うことはお勧めしません。コードが複雑になるためです。
@@ -1988,7 +1990,7 @@ int main()
 # multiple assign
 
 ``` C
-#include <neo-c.h>
+#include <comelang.h>
 
 int, string fun(int n, string m) 
 {
@@ -2064,7 +2066,7 @@ int main()
 # smart pointer
 
 ``` C
-#include <neo-c.h>
+#include <comelang.h>
 
 int main(int argc, char** argv)
 {
@@ -2083,13 +2085,13 @@ int main(int argc, char** argv)
 ```
 
 ``` shell
-> neo-c a.c
+> comelang a.c
 > ./a
 a.c 12: out of range of smart pointer
 ```
 
 ``` C
-#include <neo-c.h>
+#include <comelang.h>
 
 int main(int argc, char** argv)
 {
@@ -2111,7 +2113,7 @@ int main(int argc, char** argv)
 # exception
 
 ``` C
-#include <neo-c.h>
+#include <comelang.h>
 
 exception int div_op(int left, int right)
 {
@@ -2144,7 +2146,7 @@ int main()
 # unsafe, safe
 
 ``` C
-#include <neo-c.h>
+#include <comelang.h>
 
 using safe;
 
@@ -2170,7 +2172,7 @@ void fun(char* p)
 # fn
 
 ``` C
-#include <neo-c.h>
+#include <comelang.h>
 
 fn fun(a:int, b:int*) -> int
 {
@@ -2193,7 +2195,7 @@ int main()
 # post derefference
 
 ```C
-#include <neo-c.h>
+#include <comelang.h>
 
 int main()
 {
@@ -2207,7 +2209,7 @@ int main()
 # as
 
 ``` C
-#include <neo-c.h>
+#include <comelang.h>
 
 int main()
 {
@@ -2262,7 +2264,7 @@ int main()
 # Protocol, interface
 
 ``` C
-#include <neo-c.h>
+#include <comelang.h>
 
 interface sBase
 {

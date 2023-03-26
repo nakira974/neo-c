@@ -2,7 +2,7 @@
 ////////////////////////////
 // src/01int.c
 ////////////////////////////
-#include <neo-c.h>
+#include <comelang.h>
 
 struct sInfo;
 

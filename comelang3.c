@@ -1,4 +1,4 @@
-#include "neo-c.h"
+#include "comelang.h"
 
 
 char* char*::delete(char* str, int head, int tail) 

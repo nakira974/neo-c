@@ -1,1 +1,1 @@
-make CC=neo-c BUILDDIR=. all
+make CC=comelang BUILDDIR=. all

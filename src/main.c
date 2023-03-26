@@ -264,13 +264,13 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
         
         if(gNCGC) {
             char buf[128];
-            snprintf(buf, 128, "%slib/libneo-c-gc.a", PREFIX);
+            snprintf(buf, 128, "%slib/libcomelang-gc.a", PREFIX);
             xstrncat(cmd, buf, 1024);
             xstrncat(cmd, " ", 1024);
         }
         else {
             char buf[128];
-            snprintf(buf, 128, "%slib/libneo-c.a", PREFIX);
+            snprintf(buf, 128, "%slib/libcomelang.a", PREFIX);
             xstrncat(cmd, buf, 1024);
             xstrncat(cmd, " ", 1024);
         }
@@ -308,13 +308,13 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
         
         if(gNCGC) {
             char buf[128];
-            snprintf(buf, 128, "%slib/libneo-c-gc.a", PREFIX);
+            snprintf(buf, 128, "%slib/libcomelang-gc.a", PREFIX);
             xstrncat(cmd, buf, 1024);
             xstrncat(cmd, " ", 1024);
         }
         else {
             char buf[128];
-            snprintf(buf, 128, "%slib/libneo-c.a", PREFIX);
+            snprintf(buf, 128, "%slib/libcomelang.a", PREFIX);
             xstrncat(cmd, buf, 1024);
             xstrncat(cmd, " ", 1024);
         }
@@ -338,7 +338,7 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
 
 int main(int argc, char** argv)
 {
-    gVersion = "2.0.3";
+    gVersion = "0.9.9";
     
     setlocale(LC_ALL, "");
     
@@ -384,7 +384,7 @@ int main(int argc, char** argv)
     for(i=1; i<argc; i++) {
         if(strcmp(argv[i], "--version") == 0 || strcmp(argv[i], "-version") == 0 || strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "-V") == 0)
         {
-            printf("neo-c version %s\n", gVersion);
+            printf("comelang version %s\n", gVersion);
             exit(0);
         }
         else if(strcmp(argv[i], "-g") == 0)
@@ -435,12 +435,12 @@ int main(int argc, char** argv)
 */
         else if(strcmp(argv[i], "libs") == 0)
         {
-            printf("-lgc -lpcre -lpthread %slib/libneo-c.a -L/usr/local/lib/libgc/lib \n", PREFIX);
+            printf("-lgc -lpcre -lpthread %slib/libcomelang.a -L/usr/local/lib/libgc/lib \n", PREFIX);
             return 0;
         }
         else if(strcmp(argv[i], "libs-gc") == 0)
         {
-            printf("-lgc -lpcre -lpthread %s/lib/libneo-c-gc.a -L/usr/local/opt/libgc/lib \n", PREFIX);
+            printf("-lgc -lpcre -lpthread %s/lib/libcomelang-gc.a -L/usr/local/opt/libgc/lib \n", PREFIX);
             return 0;
         }
         else if(strcmp(argv[i], "type") == 0)
@@ -663,11 +663,11 @@ int main(int argc, char** argv)
         
         char* sname2 = "_eval.c";
         FILE* f = fopen(sname2, "w");
-        fprintf(f, "#include <neo-c.h>\n int main(int argc, char** argv) { %s; return 0; }\n", cmdline);
+        fprintf(f, "#include <comelang.h>\n int main(int argc, char** argv) { %s; return 0; }\n", cmdline);
         fclose(f);
         
         char run_cmdline[BUFSIZ];
-        snprintf(run_cmdline, BUFSIZ, "neo-c _eval.c 2>/dev/null");
+        snprintf(run_cmdline, BUFSIZ, "comelang _eval.c 2>/dev/null");
         
         sBuf command_result;
         sBuf_init(&command_result);
@@ -743,7 +743,7 @@ int main(int argc, char** argv)
     
     if(!gNCType && !gNCGlobal && !gNCFunction && !gNCClass && !gNCTypedef && !gNCNoMacro && !no_linker && !header) {
         if(!linker(sname[0], num_obj_files, obj_files2, clang_optiones, exec_fname, output_assembler_source)) {
-            fprintf(stderr, "neo-c can't compile(2)\n");
+            fprintf(stderr, "comelang can't compile(2)\n");
             return 1;
         }
     }

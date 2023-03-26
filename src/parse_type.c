@@ -1785,7 +1785,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
         sNodeType* generics_type = create_node_type_with_class_name(class_name);
         
         if(generics_type == NULL || generics_type->mClass == NULL) {
-            fprintf(stderr, "%s %d: tuple not found. require include <neo-c.h>\n", info->sname, info->sline);
+            fprintf(stderr, "%s %d: tuple not found. require include <comelang.h>\n", info->sname, info->sline);
             exit(1);
         }
         

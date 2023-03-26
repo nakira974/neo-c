@@ -1,4 +1,4 @@
-#include "neo-c.h"
+#include "comelang.h"
 
 char* char*::printf(char* self, const char* msg)
 {

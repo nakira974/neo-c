@@ -1,4 +1,4 @@
-#include <neo-c.h>
+#include "comelang.h"
 
 int char*::rindex_regex_count(char* self, regex_struct* reg, int count, int default_value)
 {

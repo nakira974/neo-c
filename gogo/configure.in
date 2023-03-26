@@ -238,7 +238,7 @@ OBJS="src/main.o src/type.o src/01fun.o src/02int.o src/03var.o src/04if.o"
 
 AC_SUBST(OBJS)
 
-COMELIB=`neo-c libs-gc`
+COMELIB=`comelang libs-gc`
 
 AC_SUBST(COMELIB)
 

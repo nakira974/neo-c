@@ -4,7 +4,7 @@
 ////////////////////////////
 #include "config.h" 
 
-#include <neo-c.h> 
+#include <comelang.h> 
 
 using unsafe;
 

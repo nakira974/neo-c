@@ -1,4 +1,4 @@
-#include "neo-c.h"
+#include "comelang.h"
 
 regex_struct*% regex(char* str, bool ignore_case, bool multiline, bool global, bool extended, bool dotall, bool anchored, bool dollar_endonly, bool ungreedy)
 {

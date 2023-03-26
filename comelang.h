@@ -41,7 +41,7 @@
 //#define _XOPEN_SOURCE
 #include <wchar.h>
 
-using neo-c;
+using comelang;
 
 #define foreach(o1, o2) for(auto _obj = nomove (o2), auto o1 = _obj.begin(); !_obj.end(); o1 = _obj.next())
 
@@ -3526,6 +3526,6 @@ void check_null_pointer(int sline, char* sname);
 
 void bool::expect(bool self, void* parent, void (*block_)(void* parent));
 
-using neo-c;
+using comelang;
 
 #endif

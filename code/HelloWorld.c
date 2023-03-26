@@ -1,4 +1,4 @@
-using neo-c;
+using comelang;
 
 int puts(const char* msg);
 int printf(const char *format, ...);

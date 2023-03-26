@@ -1,4 +1,4 @@
-#include "neo-c.h"
+#include "comelang.h"
 
 void come_gc_init()
 {

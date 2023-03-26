@@ -323,7 +323,7 @@ BOOL get_list(unsigned int* node, sParserInfo* info)
     sNodeType* node_type = create_node_type_with_class_name("list");
     
     if(node_type == NULL || node_type->mClass == NULL) {
-        parser_err_msg(info, "require incldue neo-c.h");
+        parser_err_msg(info, "require incldue comelang.h");
         return FALSE;
     }
     
@@ -453,7 +453,7 @@ BOOL get_map(unsigned int* node, sParserInfo* info)
     sNodeType* node_type = create_node_type_with_class_pointer(map_klass);
     
     if(node_type == NULL || node_type->mClass == NULL) {
-        parser_err_msg(info, "require incldue neo-c.h");
+        parser_err_msg(info, "require incldue comelang.h");
         return FALSE;
     }
     
@@ -2148,11 +2148,11 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
         
         if(info->mBlockLevel > 0 && (struct_initializer || struct_initializer2)) {
             if(result_type->mArrayDimentionNum > 1) {
-                parser_err_msg(info, "neo-c don't support this format");
+                parser_err_msg(info, "comelang don't support this format");
                 return FALSE;
             }
             else if(struct_initializer && result_type->mArrayDimentionNum > 0) {
-                parser_err_msg(info, "neo-c don't support this format");
+                parser_err_msg(info, "comelang don't support this format");
                 return FALSE;
             }
             else if(struct_initializer2 && (result_type->mArrayDimentionNum == 1 || result_type->mOmitArrayNum)) {
@@ -2921,7 +2921,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                     *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
                 }
                 else if(result_type->mArrayDimentionNum > 0) {
-                    parser_err_msg(info, "neo-c don't support this format");
+                    parser_err_msg(info, "comelang don't support this format");
                     return FALSE;
                 }
                 else {
@@ -3556,7 +3556,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                     *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
                 }
                 else if(result_type->mArrayDimentionNum > 0) {
-                    parser_err_msg(info, "neo-c don't support this format");
+                    parser_err_msg(info, "comelang don't support this format");
                     return FALSE;
                 }
                 else {

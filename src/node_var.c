@@ -1328,7 +1328,7 @@ BOOL compile_is_gc_heap(unsigned int node, sCompileInfo* info)
             LLVMValueRef llvm_fun = LLVMGetNamedFunction(gModule, "GC_is_heap_ptr");
             
             if(llvm_fun == NULL) {
-                fprintf(stderr, "reuire GC_is_heap_ptr function. incldue <neo-c.h>\n");
+                fprintf(stderr, "reuire GC_is_heap_ptr function. incldue <comelang.h>\n");
                 exit(2);
             }
             
@@ -1987,7 +1987,7 @@ BOOL compile_store_element(unsigned int node, sCompileInfo* info)
     
     if(left_type->mArrayDimentionNum == 0 && left_type->mPointerNum == 0 && left_type->mDynamicArrayNum == 0)
     {
-        compile_err_msg(info, "neo-c can't get an element from this type.(2)");
+        compile_err_msg(info, "comelang can't get an element from this type.(2)");
         return TRUE;
     }
 
@@ -3234,7 +3234,7 @@ BOOL compile_array_initializer(unsigned int node, sCompileInfo* info)
             LLVMSetInitializer(alloca_value, value);
         }
         else if(var_type->mArrayDimentionNum > 0) {
-            compile_err_msg(info, "neo-c don't support this format");
+            compile_err_msg(info, "comelang don't support this format");
             return FALSE;
         }
     }
@@ -3449,7 +3449,7 @@ BOOL compile_array_initializer(unsigned int node, sCompileInfo* info)
             LLVMSetInitializer(alloca_value, value);
         }
         else if(var_type->mArrayDimentionNum > 0) {
-            compile_err_msg(info, "neo-c don't support this format");
+            compile_err_msg(info, "comelang don't support this format");
             return FALSE;
         }
         else {
@@ -4033,7 +4033,7 @@ BOOL compile_union_initializer_core(int num_elements, struct sStructInitializer*
     }
     
     if(type_identify_with_class_name(left_type, "float") || type_identify_with_class_name(left_type, "double")) {
-        compile_err_msg(info, "neo-c does'nt support this type format");
+        compile_err_msg(info, "comelang does'nt support this type format");
         return FALSE;
     }
 
@@ -4387,7 +4387,7 @@ BOOL compile_struct_initializer(unsigned int node, sCompileInfo* info)
             call_zero_clearer(alloca_value, var_type, info);
         }
         if(var_type->mArrayDimentionNum > 0) {
-            compile_err_msg(info, "neo-c don't support this format");
+            compile_err_msg(info, "comelang don't support this format");
             return FALSE;
         }
         else {
@@ -4407,7 +4407,7 @@ BOOL compile_struct_initializer(unsigned int node, sCompileInfo* info)
     }
     else if((var_type->mClass->mFlags & CLASS_FLAGS_UNION) && var_type->mPointerNum == 0) {
         if(var_type->mArrayDimentionNum > 0) {
-            compile_err_msg(info, "neo-c don't support this format");
+            compile_err_msg(info, "comelang don't support this format");
             return FALSE;
         }
         else {
@@ -6733,7 +6733,7 @@ BOOL compile_load_element(unsigned int node, sCompileInfo* info)
 
     if(left_type->mArrayDimentionNum == 0 && left_type->mPointerNum == 0 && left_type->mNoArrayPointerNum == 0 && left_type->mDynamicArrayNum == 0)
     {
-        compile_err_msg(info, "neo-c can't get an element from this type.(1)");
+        compile_err_msg(info, "comelang can't get an element from this type.(1)");
         return FALSE;
     }
     

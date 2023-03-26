@@ -133,7 +133,7 @@ string parse_word(sInfo* info)
         result.append_str(getenv("HOME"));
     }
     
-    while(!(!dquort && !squort && *info->p == ' ') && *info->p != '\t' && *info->p != '\n' && *info->p != '\0' && *info->p != ';' && *info->p != '&' && *info->p != '|') {
+    while(true) {
         if(!squort && *info->p == '"') {
             info->p++;
             dquort = !dquort;
@@ -167,6 +167,12 @@ string parse_word(sInfo* info)
                 result.append_char(*info->p);
                 info->p++;
             }
+        }
+        else if(*info->p == ' ' ||  *info->p == '\t' || *info->p == '\n' 
+                || *info->p == '\0' || *info->p == ';' || *info->p == '&' 
+                || *info->p == '|') 
+        {
+            break;
         }
         else {
             result.append_char(*info->p);

@@ -229,6 +229,29 @@ string cursor_file(sInfo* info)
     return string(info.files.item(info.cursor, null));
 }
 
+void search_file(sInfo* info)
+{
+    string str = string("");
+    while(true) {
+        int key = getch();
+        
+        if(key >= ' ' && key <= '~') {
+            str = xsprintf("%s%c", str, key);
+            int n = 0;
+            foreach(it, info.files) {
+                if(strcasestr(it, str)) {
+                    info.cursor = n;
+                    break;
+                }
+                n++;
+            }
+        }
+        else {
+            break;
+        }
+    }
+}
+
 void input(sInfo* info)
 {
     int maxx = xgetmaxx();
@@ -394,6 +417,12 @@ void input(sInfo* info)
         case 'L'-'A'+1:
             clear();
             read_dir(info);
+            view(info);
+            refresh();
+            break;
+
+        case '/':
+            search_file(info);
             view(info);
             refresh();
             break;

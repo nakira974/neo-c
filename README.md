@@ -513,6 +513,19 @@ eachは全ての要素にイテレータでアクセスします。
 ```
 
 ```
+    int sum = 0;
+    foreach(it, [1,2,3,4,5,6]) {
+        if(it > 3) {
+            break;
+        }
+        sum += it;
+    }
+    sum.to_string().puts();
+```
+
+foreach can be breaking the loop
+
+```
     [1,2,3,4,5].to_string().puts();
 ```
 

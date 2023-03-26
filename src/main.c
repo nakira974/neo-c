@@ -95,14 +95,14 @@ static BOOL compiler(char* fname, BOOL optimize, sVarTable* module_var_table, BO
 #else
         snprintf(cmd, 1024, "cpp %s -I. -I%s/include %s -U__GNUC__ %s %s > %s", include_path, PREFIX,cflags, fname, macro_definition, cpp_fname);
 #endif
-        puts(cmd);
+        //puts(cmd);
     
         int rc = system(cmd);
         if(rc != 0) {
             char cmd[1024];
             snprintf(cmd, 1024, "cpp -I. -I%s/include %s -C %s %s > %s", PREFIX, cflags, fname, macro_definition, cpp_fname);
     
-            puts(cmd);
+            //puts(cmd);
             rc = system(cmd);
     
             if(rc != 0) {
@@ -129,7 +129,7 @@ static BOOL compiler(char* fname, BOOL optimize, sVarTable* module_var_table, BO
         snprintf(cmd, 1024, "rm -f %s", cpp_fname);
 
         (void)system(cmd);
-        puts(cmd);
+        //puts(cmd);
     }
     
     free(source.mBuf);
@@ -182,7 +182,7 @@ static BOOL compile_ll_file(char* fname, char* bname, char* clang_optiones, BOOL
 #endif
     
     int rc = system(cmd);
-    puts(cmd);
+    //puts(cmd);
     if(rc != 0) {
         fprintf(stderr, "return code is error on clang\n");
         exit(2);
@@ -192,7 +192,7 @@ static BOOL compile_ll_file(char* fname, char* bname, char* clang_optiones, BOOL
         char cmd[1024];
         snprintf(cmd, 1024, "rm -f %s.ll", fname);
         
-        puts(cmd);
+        //puts(cmd);
         (void)system(cmd);
     }
     
@@ -234,7 +234,7 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
 #else
         snprintf(cmd, 1024, "%s -c -o %s.o %s.ll -fPIC ", CLANG, fname, fname);
 #endif
-        puts(cmd);
+        //puts(cmd);
     
         int rc = system(cmd);
         if(rc != 0) {

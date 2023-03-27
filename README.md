@@ -3,9 +3,9 @@
 
 come together!
 
-It has a collection and string library using Boehm GC or Refference count GC heap system. 
+Yet another modern compiler. It has a collection and string library using Boehm GC or Refference count GC heap system. 
 
-boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
+もう一つのモダンコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
 version 0.9.9

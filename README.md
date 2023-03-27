@@ -212,7 +212,7 @@ a.c,b.c,c.c
 [aaa,bbb]
 ```
 
-1. It is compatible with C language. The C preprocessor also works.
+1. It is compatible with C language in some content. The C preprocessor also works.
 
 2. The default heap system is using Boehm GC with reffrece count.
 
@@ -242,7 +242,7 @@ a.c,b.c,c.c
 
 16. Detect dangling pointer
 
-1. C言語と互換性があります。Cプリプロセッサーも動きます。
+1. C言語とある程度の互換性があります。Cプリプロセッサーも動きます。
 
 2. boehmGCを使ったヒープ管理をします。
 

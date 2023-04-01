@@ -889,7 +889,9 @@ bool parse(sInfo* info) version 1
 {
     sNode*? node = expression(info);
     
-    info->nodes.push_back(dummy_heap node!);
+    if(node != null) {
+        info->nodes.push_back(dummy_heap node!);
+    }
     
     return true;
 }

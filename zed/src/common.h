@@ -4,6 +4,8 @@
 ////////////////////////////
 #include <comelang.h>
 
+using safe;
+
 struct sInfo;
 
 extern int gNodeID;
@@ -59,12 +61,12 @@ int ZVALUE*::compare(ZVALUE* self, ZVALUE* right);
 
 struct sInfo
 {
-    char* p;
+    smart_pointer<char>* p;
     string command;
     buffer*% codes;
     vector<sNode*%>*% nodes;
-    int* head;
-    int* op;
+    smart_pointer<int>* head;
+    smart_pointer<int>* op;
     vector<ZVALUE*%>*% stack;
     
     int loop_head;

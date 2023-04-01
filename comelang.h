@@ -2788,27 +2788,34 @@ impl smart_pointer<T>
     {
         using unsafe;
         
-        self.p+=value;
+        var result = new smart_pointer<T>;
         
-        if(self.p > self.memory.buf + self.memory.len) {
+        result.memory = self.memory;
+        result.p = self.p + value;
+        
+        if(result.p > result.memory.buf + result.memory.len) {
             fprintf(stderr, "%s %d: out of range of smart pointer\n", __caller_sname__, __caller_sline__);
             exit(1);
         }
         
-        return self;
+        return result;
     }
     
     smart_pointer<T>* operator_sub(smart_pointer<T>* self, int value)
     {
         using unsafe;
-        self.p-=value;
         
-        if(self.p < self.memory.buf) {
+        var result = new smart_pointer<T>;
+        
+        result.memory = self.memory;
+        result.p = self.p - value;
+        
+        if(result.p > result.memory.buf + result.memory.len) {
             fprintf(stderr, "%s %d: out of range of smart pointer\n", __caller_sname__, __caller_sline__);
             exit(1);
         }
         
-        return self;
+        return result;
     }
     
     T operator_derefference(smart_pointer<T>* self)

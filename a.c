@@ -2,17 +2,26 @@
 
 int main()
 {
-    buffer* buf = new buffer();
+    var p = "&& false".to_buffer().to_pointer();
     
-    buf.append_int(123);
-    buf.append_int(234);
-    buf.append_int(567);
+printf("%p\n", p.p);
     
-    smart_pointer<int>* p = buf.to_pointer();
+    while((*p == '&' && *(p+1) == '&') || (*p == '|' && *(p+1) == '|')) {
+printf("%p\n", p.p);
+        if(*p == '&' && *(p+1) == '&') {
+            puts("AAA");
+            break;
+        }
+        else {
+            break;
+        }
+    }
     
-    p.p = (int*)(buf.buf + 4);
+    printf("%p\n", p.p);
+    printf("%p\n", (p+3).p);
     
-    printf("%d\n", p->as_int());
+    p += 3;
+printf("%c\n", *p);
     
     return 0;
 }

@@ -2024,8 +2024,9 @@ BOOL compile_store_element(unsigned int node, sCompileInfo* info)
 
         mvalue[i] = *get_value_from_stack(-1);
         
+/*
         int array_num = 0;
-        if(gNCCome && LLVMIsConstant(mvalue[i].value) != 0) {
+        if(LLVMIsConstant(mvalue[i].value) != 0) {
             int array_num = LLVMConstIntGetZExtValue(mvalue[i].value);
             if(i < left_type->mArrayDimentionNum && array_num >= left_type->mArrayNum[i]) 
             {
@@ -2033,6 +2034,7 @@ BOOL compile_store_element(unsigned int node, sCompileInfo* info)
                 return TRUE;
             }
         }
+*/
     }
 
     /// compile right node ///
@@ -6767,8 +6769,9 @@ BOOL compile_load_element(unsigned int node, sCompileInfo* info)
 
         rvalue[i] = *get_value_from_stack(-1);
         
+/*
         int array_num = 0;
-        if(gNCCome && LLVMIsConstant(rvalue[i].value) != 0) {
+        if(LLVMIsConstant(rvalue[i].value) != 0) {
             int array_num = LLVMConstIntGetZExtValue(rvalue[i].value);
             if(i < left_type->mArrayDimentionNum && array_num >= left_type->mArrayNum[i]) 
             {
@@ -6776,6 +6779,7 @@ BOOL compile_load_element(unsigned int node, sCompileInfo* info)
                 return TRUE;
             }
         }
+*/
     }
     
     char class_name[VAR_NAME_MAX];

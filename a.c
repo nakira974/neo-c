@@ -2,26 +2,11 @@
 
 int main()
 {
-    var p = "&& false".to_buffer().to_pointer();
+    int a[1];
     
-printf("%p\n", p.p);
+    a[6] = 123;
     
-    while((*p == '&' && *(p+1) == '&') || (*p == '|' && *(p+1) == '|')) {
-printf("%p\n", p.p);
-        if(*p == '&' && *(p+1) == '&') {
-            puts("AAA");
-            break;
-        }
-        else {
-            break;
-        }
-    }
-    
-    printf("%p\n", p.p);
-    printf("%p\n", (p+3).p);
-    
-    p += 3;
-printf("%c\n", *p);
+    printf("%d\n", a[6]);
     
     return 0;
 }

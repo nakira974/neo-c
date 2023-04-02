@@ -4,6 +4,8 @@
 ////////////////////////////
 #include "config.h" 
 
+using unsafe;
+
 #include <comelang.h> 
 
 using unsafe;

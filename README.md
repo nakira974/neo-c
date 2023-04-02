@@ -8,7 +8,7 @@ Yet another modern compiler. It has a collection and string library using Boehm 
 もう一つのモダンコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 0.9.9a
+version 0.9.9b
 
 ``` C
 #include <comelang.h>
@@ -2148,8 +2148,6 @@ int main()
 ``` C
 #include <comelang.h>
 
-using safe;
-
 void fun(char* p)
 {
     printf("%c\n", *p);   // compile error
@@ -2168,6 +2166,15 @@ void fun(char* p)
     printf("%c\n", *p);   // no compile error
 }
 ```
+
+ポインタのデリファレンスとインクリメント、デクリメントは、safeモードでは許されていません。safeモードはデフォルトです。ポインタのデリファレンスとインクリメント、デクリメントをしたい場合はusing unsafeとしてください。関数の外で宣言するとそれ以降全てのソースでunsafeとなります。関数内で宣言すると、その関数の中でunsafeとなります。ポインタの操作はsafeモードでは原則禁止です。スマートポインタを使ってください。スマートポインタでは範囲チェックを行います。セグメンテーションフォルトが起こりません。
+
+Pointer dereference and increment/decrement are allowed in safe mode~
+Is not ... safe mode is the default. Dereferencing and incrementing pointers~
+If you want to decrement, use using unsafe. When declared outside a function ~
+After that, all sources will be unsafe. Declaring it inside a function makes it unsafe inside that function. Pointer manipulation is prohibited in principle in safe mode. smart pointer ~
+please use it. Smart pointers do bounds checking. Segmentation~
+no faults.
 
 # fn
 

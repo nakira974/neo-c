@@ -3535,4 +3535,6 @@ void bool::expect(bool self, void* parent, void (*block_)(void* parent));
 
 using comelang;
 
+using safe;
+
 #endif

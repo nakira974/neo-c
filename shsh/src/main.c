@@ -1,4 +1,7 @@
 #include <comelang.h>
+
+using unsafe;
+
 #include <signal.h>
 #include <readline/readline.h>
 #include <readline/history.h>

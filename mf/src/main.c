@@ -1,4 +1,7 @@
 #include <comelang.h>
+
+using unsafe;
+
 #include <ncurses.h>
 #include <dirent.h>
 #include <sys/stat.h>

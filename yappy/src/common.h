@@ -1,5 +1,7 @@
 #include <comelang.h>
 
+using unsafe;
+
 /// type.c ///
 struct sPyClass {
     char* mName;

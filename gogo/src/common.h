@@ -4,6 +4,8 @@
 ////////////////////////////
 #include <comelang.h>
 
+using unsafe;
+
 #include <llvm-c/Core.h>
 
 #include <llvm-c/DebugInfo.h>

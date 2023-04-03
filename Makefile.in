@@ -262,6 +262,8 @@ no-gc-test:
 	./code/HelloWorld11
 	PWD=`pwd` ./comelang -no-gc code/HelloWorld12.c
 	./code/HelloWorld12
+	PWD=`pwd` ./comelang -no-gc code/HelloWorld13.c
+	./code/HelloWorld13
 	PWD=`pwd` ./comelang -no-gc code/HelloWorld14.c
 	./code/HelloWorld14
 	PWD=`pwd` ./comelang -no-gc code/HelloWorld15.c
@@ -312,6 +314,8 @@ debug-test:
 	./code/HelloWorld11
 	PWD=`pwd` ./comelang -no-gc -g code/HelloWorld12.c
 	./code/HelloWorld12
+	PWD=`pwd` ./comelang -no-gc -g code/HelloWorld13.c
+	./code/HelloWorld13
 	PWD=`pwd` ./comelang -no-gc -g code/HelloWorld14.c
 	./code/HelloWorld14
 	PWD=`pwd` ./comelang -no-gc -g code/HelloWorld15.c

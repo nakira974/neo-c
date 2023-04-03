@@ -442,7 +442,7 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
     return TRUE;
 }
 
-unsigned int sNodeTree_create_store_variable(char* var_name, int right, BOOL alloc, BOOL global, BOOL no_stdmove, sParserInfo* info)
+unsigned int sNodeTree_create_store_variable(char* var_name, int right, BOOL alloc, BOOL global, sParserInfo* info)
 {
     unsigned node = alloc_node();
 
@@ -455,7 +455,6 @@ unsigned int sNodeTree_create_store_variable(char* var_name, int right, BOOL all
     gNodes[node].uValue.sStoreVariable.mAlloc = alloc;
     gNodes[node].uValue.sStoreVariable.mGlobal = global;
     gNodes[node].uValue.sStoreVariable.mStoreAddress = info->store_address;
-    gNodes[node].uValue.sStoreVariable.mNoStdMove = no_stdmove;
 
     gNodes[node].mLeft = 0;
     gNodes[node].mRight = right;
@@ -475,7 +474,6 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
     BOOL alloc = gNodes[node].uValue.sStoreVariable.mAlloc;
     BOOL global = gNodes[node].uValue.sStoreVariable.mGlobal;
     int sline = gNodes[node].mLine;
-    BOOL no_stdmove = gNodes[node].uValue.sStoreVariable.mNoStdMove;
     
     unsigned int right_node = gNodes[node].mRight;
     
@@ -577,7 +575,7 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
     }
     
     /// std::move ///
-    if(left_type->mHeap && right_type->mHeap && !no_stdmove) {
+    if(left_type->mHeap && right_type->mHeap) {
         if(gNodes[right_node].mNodeType == kNodeTypeLoadVariable || gNodes[right_node].mNodeType == kNodeTypeNormalBlock)
         {
             increment_ref_count(rvalue.value, right_type, info);
@@ -592,7 +590,7 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
         }
     }
     
-    if(!(info->mBlockLevel == 0 && left_type->mClass->mFlags & CLASS_FLAGS_UNION) && !no_stdmove)
+    if(!(info->mBlockLevel == 0 && left_type->mClass->mFlags & CLASS_FLAGS_UNION))
     {
         if(!substitution_posibility(left_type, right_type, rvalue.value, info)) {
             compile_err_msg(info, "Type error(1)");
@@ -612,7 +610,7 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
     
     LLVMValueRef obj_before = var_->mLLVMValue.value;
     
-    if(obj_before && left_type->mHeap && !no_stdmove) {
+    if(obj_before && left_type->mHeap) {
         LLVMTypeRef llvm_type = create_llvm_type_from_node_type(left_type);
         LLVMValueRef obj2 = LLVMBuildLoad2(gBuilder, llvm_type, obj_before, "obj");
         free_object(left_type, obj2, FALSE, info);
@@ -798,7 +796,7 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
     
     push_value_to_stack_ptr(&rvalue, info);
 
-    if(left_type->mHeap && !no_stdmove) {
+    if(left_type->mHeap) {
         remove_object_from_right_values(rvalue.value, info);
     }
 
@@ -2026,7 +2024,8 @@ BOOL compile_store_element(unsigned int node, sCompileInfo* info)
         
 /*
         int array_num = 0;
-        if(LLVMIsConstant(mvalue[i].value) != 0) {
+        if(LLVMIsConstant(mvalue[i].value) != 0) 
+        {
             int array_num = LLVMConstIntGetZExtValue(mvalue[i].value);
             if(i < left_type->mArrayDimentionNum && array_num >= left_type->mArrayNum[i]) 
             {
@@ -5619,71 +5618,12 @@ BOOL compile_object(unsigned int node, sCompileInfo* info)
         BOOL gc = gNCGC;
         unsigned int obj_node = sNodeTree_create_object(node_type, 0, 0, NULL, 0, 0, 0, NULL, 0, sname, sline, gc, info->pinfo);
         
-        char buf[VAR_NAME_MAX];
-        static int n = 0;
-        snprintf(buf, VAR_NAME_MAX, "__obj%d", n++);
-        
-        check_already_added_variable(lv_table, buf, info->pinfo);
-        BOOL readonly = FALSE;
-        sNodeType* node_type2 = clone_node_type(node_type);
-        if(!gNCGC) {
-            node_type2->mHeap = TRUE;
-        }
-        node_type2->mPointerNum++;
-        
-        if(!add_variable_to_table(lv_table, buf, node_type2, readonly, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
-        {
-            fprintf(stderr, "overflow variable table\n");
-            exit(2);
-        }
-        
-        unsigned int var_node = sNodeTree_create_store_variable(buf, obj_node, TRUE, FALSE, FALSE, info->pinfo);
-        
-        if(!compile(var_node, info)) {
-            return FALSE;
-        }
-        
-        dec_stack_ptr(-1, info);
-        
-        unsigned int var_node2 = sNodeTree_create_load_variable(buf, info->pinfo);
         unsigned int right_node = params[0];
-        unsigned int store_protocol = sNodeTree_create_store_field_of_protocol(var_node2, right_node, info->pinfo);
+        unsigned int store_protocol = sNodeTree_create_store_field_of_protocol(obj_node, right_node, info->pinfo);
         
         if(!compile(store_protocol, info)) {
             return FALSE;
         }
-        
-        dec_stack_ptr(-1, info);
-        
-        unsigned int var_node3 = sNodeTree_create_load_variable(buf, info->pinfo);
-        
-        if(!compile(var_node3, info)) {
-            return FALSE;
-        }
-        
-/*
-        unsigned int var_node4 = sNodeTree_create_delete(var_node3, info->pinfo);
-        
-        if(!compile(var_node4, info)) {
-            return FALSE;
-        }
-*/
-        
-/*
-        unsigned int cloned_ = sNodeTree_create_clone(var_node3, gNCGC, info->pinfo);
-        
-        if(!compile(cloned_, info)) {
-            return FALSE;
-        }
-        
-        unsigned int managed_ = sNodeTree_create_managed(buf, info->pinfo);
-        
-        if(!compile(managed_, info)) {
-            return FALSE;
-        }
-*/
-
-        info->type = clone_node_type(node_type2);
         
         return TRUE;
     }
@@ -5926,7 +5866,7 @@ BOOL compile_stack_object(unsigned int node, sCompileInfo* info)
     return TRUE;
 }
 
-unsigned int sNodeTree_create_store_field(char* var_name, unsigned int left_node, unsigned int right_node, BOOL std_move, sParserInfo* info)
+unsigned int sNodeTree_create_store_field(char* var_name, unsigned int left_node, unsigned int right_node, sParserInfo* info)
 {
     unsigned int node = alloc_node();
 
@@ -5936,7 +5876,6 @@ unsigned int sNodeTree_create_store_field(char* var_name, unsigned int left_node
     gNodes[node].mLine = info->sline;
 
     xstrncpy(gNodes[node].uValue.sStoreField.mVarName, var_name, VAR_NAME_MAX);
-    gNodes[node].uValue.sStoreField.mStdMove = std_move;
 
     gNodes[node].mLeft = left_node;
     gNodes[node].mRight = right_node;
@@ -5949,7 +5888,6 @@ BOOL compile_store_field(unsigned int node, sCompileInfo* info)
 {
     char var_name[VAR_NAME_MAX];
     xstrncpy(var_name, gNodes[node].uValue.sStoreField.mVarName, VAR_NAME_MAX);
-    BOOL std_move = gNodes[node].uValue.sStoreField.mStdMove;
     
     /// compile left node ///
     unsigned int lnode = gNodes[node].mLeft;
@@ -6058,7 +5996,7 @@ BOOL compile_store_field(unsigned int node, sCompileInfo* info)
     }
 
     /// std::move ///
-    if(std_move && field_type->mHeap && right_type->mHeap) {
+    if(field_type->mHeap && right_type->mHeap) {
         if(gNodes[rnode].mNodeType == kNodeTypeLoadVariable || gNodes[rnode].mNodeType == kNodeTypeNormalBlock) 
         {
             increment_ref_count(rvalue.value, right_type, info);
@@ -6076,14 +6014,12 @@ BOOL compile_store_field(unsigned int node, sCompileInfo* info)
     }
     
     if(!substitution_posibility(field_type, right_type, rvalue.value, info)) {
-        if(std_move) {
-            compile_err_msg(info, "The different type between left type and right type. store field(2)");
-            puts("field_type");
-            show_node_type_one_line(field_type);
-            puts("right_type");
-            show_node_type_one_line(right_type);
-            return TRUE;
-        }
+        compile_err_msg(info, "The different type between left type and right type. store field(2)");
+        puts("field_type");
+        show_node_type_one_line(field_type);
+        puts("right_type");
+        show_node_type_one_line(right_type);
+        return TRUE;
     }
     
     LLVMValueRef field_address;
@@ -6117,7 +6053,7 @@ BOOL compile_store_field(unsigned int node, sCompileInfo* info)
         }
     }
     
-    if(std_move && field_address && field_type->mHeap) {
+    if(field_address && field_type->mHeap) {
         LLVMTypeRef llvm_type = create_llvm_type_from_node_type(field_type);
         LLVMValueRef obj2 = LLVMBuildLoad2(gBuilder, llvm_type, field_address, "obj");
         free_object(field_type, obj2, FALSE, info);
@@ -6172,6 +6108,12 @@ BOOL compile_store_field_of_protocol(unsigned int node, sCompileInfo* info)
     }
 
     LVALUE lvalue = *get_value_from_stack(-1);
+    
+/*
+    if(!gNCGC) {
+        remove_object_from_right_values(lvalue.value, info);
+    }
+*/
 
     /// compile right node ///
     unsigned int rnode = gNodes[node].mRight;
@@ -6183,6 +6125,10 @@ BOOL compile_store_field_of_protocol(unsigned int node, sCompileInfo* info)
     sNodeType* right_type = clone_node_type(info->type);
 
     LVALUE rvalue = *get_value_from_stack(-1);
+    
+    if(!gNCGC) {
+        remove_object_from_right_values(rvalue.value, info);
+    }
     
     if(!protocol_type->mClass->mProtocol) {
         compile_err_msg(info, "This is not protocol type");
@@ -6212,10 +6158,16 @@ BOOL compile_store_field_of_protocol(unsigned int node, sCompileInfo* info)
     LLVMValueRef rvalue2 = LLVMBuildCast(gBuilder, LLVMBitCast, rvalue.value, llvm_type, "fun_cast");
     
     if(field_address && protocol_type->mHeap) {
-        free_protocol_object(protocol_type, protocol_value, info);
+//        free_protocol_object(protocol_type, protocol_value, info);
     }
     
     LLVMBuildStore(gBuilder, rvalue2, field_address);
+    
+/*
+    if(protocol_type->mHeap) {
+        remove_object_from_right_values(rvalue.value, info);
+    }
+*/
     
     int i;
     for(i=1; i<protocol_class->mNumFields; i++) {
@@ -6440,7 +6392,7 @@ BOOL compile_store_field_of_protocol(unsigned int node, sCompileInfo* info)
     }
 
     dec_stack_ptr(2, info);
-    push_value_to_stack_ptr(&rvalue, info);
+    push_value_to_stack_ptr(&lvalue, info);
 
     info->type = clone_node_type(right_type);
     
@@ -8005,6 +7957,41 @@ BOOL compile_is_heap(unsigned int node, sCompileInfo* info)
     }
 
     BOOL value = node_type2->mHeap && node_type2->mPointerNum > 0;
+
+    LLVMTypeRef llvm_type = create_llvm_type_with_class_name("bool");
+
+    LVALUE llvm_value;
+    llvm_value.value = LLVMConstInt(llvm_type, value, FALSE);
+    llvm_value.type = create_node_type_with_class_name("bool");
+    llvm_value.address = NULL;
+    llvm_value.var = NULL;
+
+    push_value_to_stack_ptr(&llvm_value, info);
+
+    info->type = create_node_type_with_class_name("bool");
+
+    return TRUE;
+}
+
+unsigned int sNodeTree_create_is_gc(sParserInfo* info)
+{
+    unsigned int node = alloc_node();
+
+    gNodes[node].mNodeType = kNodeTypeIsGC;
+
+    xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
+    gNodes[node].mLine = info->sline;
+
+    gNodes[node].mLeft = 0;
+    gNodes[node].mRight = 0;
+    gNodes[node].mMiddle = 0;
+
+    return node;
+}
+
+BOOL compile_is_gc(unsigned int node, sCompileInfo* info)
+{
+    BOOL value = gNCGC;
 
     LLVMTypeRef llvm_type = create_llvm_type_with_class_name("bool");
 

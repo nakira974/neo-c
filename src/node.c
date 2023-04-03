@@ -269,6 +269,8 @@ void free_protocol_object(sNodeType* protocol_type, LLVMValueRef protocol_value,
         memset(llvm_params, 0, sizeof(LLVMValueRef)*PARAMS_MAX);
     
         //char* fun_name2 = "ncfree";
+/*
+show_node_type(protocol_type);
         char* fun_name2 = "igc_decrement_ref_count";
         //char* fun_name2 = "free";
     
@@ -298,6 +300,7 @@ void free_protocol_object(sNodeType* protocol_type, LLVMValueRef protocol_value,
         LLVMTypeRef function_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
         
         LLVMBuildCall2(gBuilder, function_type, llvm_fun, llvm_params, num_params, "");
+*/
     }
 }
 
@@ -990,6 +993,10 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCom
             }
         }
         else {
+            if(node_type->mClass->mProtocol && node_type->mPointerNum == 1) {
+                free_protocol_object(node_type, obj, info);
+            }
+            
             /// free memmory ///
             if(force_delete) {
                 /// free ///
@@ -1074,10 +1081,6 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCom
                 /// remove right value objects from list
                 //remove_object_from_right_values(obj, info);
             }
-        }
-        
-        if(node_type->mClass->mProtocol && node_type->mPointerNum == 1) {
-            //free_protocol_object(obj, info);
         }
 
         LLVMBuildBr(gBuilder, cond_end_block);

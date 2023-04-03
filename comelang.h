@@ -2777,6 +2777,7 @@ impl smart_pointer<T>
     smart_pointer<T>*% initialize(smart_pointer<T>*% self, void* memory, int size)
     {
         self.memory = new buffer.initialize();
+        
         self.memory.append(memory, sizeof(T)*size);
         
         self.p = (T*)self.memory.buf;
@@ -2784,33 +2785,63 @@ impl smart_pointer<T>
         return self;
     }
     
-    smart_pointer<T>* operator_add(smart_pointer<T>* self, int value)
+    smart_pointer<T>*% operator_add(smart_pointer<T>* self, int value)
     {
         using unsafe;
         
+        if(is_gc()) {
+            smart_pointer<T>* result_gc = borrow new smart_pinter<T>;
+            
+            result_gc.memory = self.memory;
+            result_gc.p = self.p + value;
+            
+            if(result_gc.p > result_gc.memory.buf + result_gc.memory.len) {
+                fprintf(stderr, "%s %d: out of range of smart pointer(1)\n", __caller_sname__, __caller_sline__);
+                exit(1);
+            }
+            
+            return result_gc;
+        }
+        
         var result = new smart_pointer<T>;
         
-        result.memory = self.memory;
-        result.p = self.p + value;
+        result.memory = clone self.memory;
+        int n = self.p - self.memory.buf;
+        result.p = ((T*)result.memory.buf) + n + value;
         
         if(result.p > result.memory.buf + result.memory.len) {
-            fprintf(stderr, "%s %d: out of range of smart pointer\n", __caller_sname__, __caller_sline__);
+            fprintf(stderr, "%s %d: out of range of smart pointer(2)\n", __caller_sname__, __caller_sline__);
             exit(1);
         }
         
         return result;
     }
     
-    smart_pointer<T>* operator_sub(smart_pointer<T>* self, int value)
+    smart_pointer<T>*% operator_sub(smart_pointer<T>* self, int value)
     {
         using unsafe;
         
-        var result = new smart_pointer<T>;
+        if(is_gc()) {
+            smart_pointer<T>* result_gc = borrow new smart_pinter<T>;
+            
+            result_gc.memory = self.memory;
+            result_gc.p = self.p - value;
+            
+            if(result_gc.p < result_gc.memory.buf) {
+                fprintf(stderr, "%s %d: out of range of smart pointer(1)\n", __caller_sname__, __caller_sline__);
+                exit(1);
+            }
+            
+            return result_gc;
+        }
         
-        result.memory = self.memory;
-        result.p = self.p - value;
+        smart_pointer<T>*% result = new smart_pointer<T>;
         
-        if(result.p > result.memory.buf + result.memory.len) {
+        result.memory = clone self.memory;
+        int n = self.p - self.memory.buf;
+        result.p = ((T*)result.memory.buf) + n - value;
+        
+        if(result.p < result.memory.buf) {
             fprintf(stderr, "%s %d: out of range of smart pointer\n", __caller_sname__, __caller_sline__);
             exit(1);
         }

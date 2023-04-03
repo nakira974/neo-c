@@ -8,7 +8,7 @@ Yet another modern compiler. It has a collection and string library using Boehm 
 もう一つのモダンコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 0.9.9c
+version 0.9.9f
 
 ``` C
 #include <comelang.h>
@@ -87,7 +87,7 @@ int main()
         printf("%d\n", it);       // 2\n3\n
     }
     
-    list<char*>* li2 = ["1", "2", "3", "4", "5"]
+    var li2 = ["1", "2", "3", "4", "5"]
 
     li2.map { atoi(it); }.filter { it > 3; }.each { printf("%d\n", it); }  // 4\n5\n
     
@@ -125,7 +125,7 @@ int main()
     xassert("operator overload test2", [1,2] + [3] === [1,2,3]);
     xassert("operator overload test3", [1,2] * 2 === [1,2,1,2]);
     
-    list<int>* z = [1,2,3];
+    var z = [1,2,3];
     
     xassert("operator overload test", z[0] == 1 && z[1] == 2 && z[2] == 3);
     
@@ -133,7 +133,7 @@ int main()
     
     xassert("operator overload test", z[0] == 1 && z[1] == 22 && z[2] == 3);
     
-    map<char*, int>* zz = ["AAA":1, "BBB":2, "CCC":3];
+    var zz = ["AAA":1, "BBB":2, "CCC":3];
     
     xassert("operator overload test", zz["AAA"] == 1 && z["BBB"] == 22 && z["CCC"] == 3);
     
@@ -368,9 +368,9 @@ If you want to object file only, use -c option.
 
 # Boehm GC libraries
 
-With -no-gc option for original refference count GC heap system, enable original refference count GC heap system and disable boehm GC. The default heap system is Boehm GC.
+With -gc option for boehm GC, enable boehmGC and disable original heap system. The default heap system is original heap system.
 
-BoehmGCはデフォルトです。オリジナルのヒープシステムを使うには-no-gcをオプションに加えてください。
+オリジナルヒープシステムはデフォルトです。boehmGCを使うには-gcをオプションに加えてください。
 
 comelang uses boethm gc with reffrence count, so no stop the world in your application.
 

@@ -2,7 +2,7 @@
 #include <libgen.h>
 
 char* gVersion;
-BOOL gNCGC = TRUE;
+BOOL gNCGC = FALSE;
 BOOL gNCDebug = FALSE;
 BOOL gExternC = TRUE;
 char gFName[PATH_MAX];
@@ -338,7 +338,7 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
 
 int main(int argc, char** argv)
 {
-    gVersion = "0.9.9c";
+    gVersion = "0.9.9f";
     
     setlocale(LC_ALL, "");
     

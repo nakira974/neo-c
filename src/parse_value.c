@@ -363,7 +363,7 @@ BOOL get_list(unsigned int* node, sParserInfo* info)
     BOOL alloc = TRUE;
     BOOL global = FALSE;
     
-    unsigned int var_ = sNodeTree_create_store_variable(var_name, func, alloc, global, FALSE, info);
+    unsigned int var_ = sNodeTree_create_store_variable(var_name, func, alloc, global, info);
 
     check_already_added_variable(info->lv_table, var_name, info);
     if(!add_variable_to_table(info->lv_table, var_name, NULL, FALSE, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
@@ -497,7 +497,7 @@ BOOL get_map(unsigned int* node, sParserInfo* info)
     BOOL alloc = TRUE;
     BOOL global = FALSE;
     
-    unsigned int var_ = sNodeTree_create_store_variable(var_name, func, alloc, global, FALSE, info);
+    unsigned int var_ = sNodeTree_create_store_variable(var_name, func, alloc, global, info);
 
     check_already_added_variable(info->lv_table, var_name, info);
     if(!add_variable_to_table(info->lv_table, var_name, NULL, FALSE, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
@@ -818,6 +818,9 @@ BOOL parse_struct(unsigned int* node, char* struct_name, int size_struct_name, B
         if(protocol_)  {
             sNodeType* node_type = create_node_type_with_class_name("protocol_obj_t");
     
+            if(!gNCGC) {
+                node_type->mHeap = TRUE;
+            }
             fields[num_fields] = node_type;
             field_names[num_fields] = strdup("_protocol_obj");
     
@@ -1458,7 +1461,7 @@ BOOL parse_enum(unsigned int* node, char* name, int name_size, BOOL* terminated,
     
                     BOOL alloc_ = TRUE;
                     BOOL global = info->mBlockLevel == 0;
-                    unsigned int node = sNodeTree_create_store_variable(var_name, right_node, alloc_, global, FALSE, info);
+                    unsigned int node = sNodeTree_create_store_variable(var_name, right_node, alloc_, global, info);
     
                     sNodeType* result_type = create_node_type_with_class_name("int");
                     result_type->mConstant = TRUE;
@@ -1770,7 +1773,7 @@ BOOL is_type_name(char* buf, sParserInfo* info)
         }
     }
 
-    return klass || node_type || generics_type_name || method_type_name || strcmp(buf, "const") == 0 || strcmp(buf, "immutable") == 0 || strcmp(buf, "static") == 0 || (strcmp(buf, "struct") == 0 && *info->p == '{') || (gNCGC && strcmp(buf, "protocol") == 0 && *info->p == '{') || (gNCGC && strcmp(buf, "protocol") == 0) || (strcmp(buf, "struct") == 0) || (strcmp(buf, "union") == 0) || (strcmp(buf, "union") == 0 && *info->p == '{') || (strcmp(buf, "unsigned") == 0) || (strcmp(buf, "signed") == 0) || (strcmp(buf, "__signed") == 0) ||(strcmp(buf, "short") == 0) || (strcmp(buf, "long") == 0) || (strcmp(buf, "signed") == 0) || (strcmp(buf, "register") == 0) || (strcmp(buf, "volatile") == 0) || strcmp(buf, "enum") == 0 || strcmp(buf, "__signed__") == 0 || (strcmp(buf, "__extension__") == 0 && *info->p != '(') || (strcmp(buf, "__uniq__") == 0)|| strcmp(buf, "typeof") == 0|| strcmp(buf, "_Noreturn") == 0 || strcmp(buf, "_Alignas") == 0 || strcmp(buf, "_Nullable") == 0 || strcmp(buf, "exception") == 0;
+    return klass || node_type || generics_type_name || method_type_name || strcmp(buf, "const") == 0 || strcmp(buf, "immutable") == 0 || strcmp(buf, "static") == 0 || (strcmp(buf, "struct") == 0 && *info->p == '{') || (strcmp(buf, "protocol") == 0 && *info->p == '{') || (strcmp(buf, "protocol") == 0) || (strcmp(buf, "struct") == 0) || (strcmp(buf, "union") == 0) || (strcmp(buf, "union") == 0 && *info->p == '{') || (strcmp(buf, "unsigned") == 0) || (strcmp(buf, "signed") == 0) || (strcmp(buf, "__signed") == 0) ||(strcmp(buf, "short") == 0) || (strcmp(buf, "long") == 0) || (strcmp(buf, "signed") == 0) || (strcmp(buf, "register") == 0) || (strcmp(buf, "volatile") == 0) || strcmp(buf, "enum") == 0 || strcmp(buf, "__signed__") == 0 || (strcmp(buf, "__extension__") == 0 && *info->p != '(') || (strcmp(buf, "__uniq__") == 0)|| strcmp(buf, "typeof") == 0|| strcmp(buf, "_Noreturn") == 0 || strcmp(buf, "_Alignas") == 0 || strcmp(buf, "_Nullable") == 0 || strcmp(buf, "exception") == 0 || (strcmp(buf, "interface") == 0);
 }
 
 BOOL is_premitive_type(char* buf, sParserInfo* info)
@@ -2048,7 +2051,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
             }
             else {
                 *node = sNodeTree_create_load_variable("self", info);
-                *node = sNodeTree_create_store_field(var_name, *node, right_node, TRUE, info);
+                *node = sNodeTree_create_store_field(var_name, *node, right_node, info);
             }
         }
         else {
@@ -2234,7 +2237,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                             if(strcmp(struct_initializer->mName, var_name) == 0) {
                                 unsigned int right_node = struct_initializer->mNode;
                             
-                                nodes[num_nodes++] = sNodeTree_create_store_field(var_name, element_node, right_node, TRUE, info);
+                                nodes[num_nodes++] = sNodeTree_create_store_field(var_name, element_node, right_node, info);
             
                                 if(num_nodes >= INIT_ARRAY_MAX+128) {
                                     fprintf(stderr, "overflow array initializer number\n");
@@ -2322,7 +2325,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                         if(strcmp(struct_initializer->mName, var_name) == 0) {
                             unsigned int right_node = struct_initializer->mNode;
                         
-                            nodes[num_nodes++] = sNodeTree_create_store_field(var_name, array_node, right_node, TRUE, info);
+                            nodes[num_nodes++] = sNodeTree_create_store_field(var_name, array_node, right_node, info);
         
                             if(num_nodes >= INIT_ARRAY_MAX+128) {
                                 fprintf(stderr, "overflow array initializer number\n");
@@ -2401,7 +2404,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                     
                     BOOL alloc = TRUE;
                     BOOL global = TRUE;
-                    unsigned int node3 = sNodeTree_create_store_variable(name, right_node, alloc, global, FALSE, info);
+                    unsigned int node3 = sNodeTree_create_store_variable(name, right_node, alloc, global, info);
     
                     nodes[num_nodes++] = node3;
     
@@ -2908,7 +2911,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                             char* var_name = klass->mFieldName[j];
                             unsigned int right_node = initialize_array_values[n++];
         
-                            nodes[num_nodes++] = sNodeTree_create_store_field(var_name, struct_node, right_node, TRUE, info);
+                            nodes[num_nodes++] = sNodeTree_create_store_field(var_name, struct_node, right_node, info);
         
                             if(num_nodes >= INIT_ARRAY_MAX+128) {
                                 fprintf(stderr, "overflow array initializer number\n");
@@ -2944,7 +2947,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                         char* var_name = klass->mFieldName[i];
                         unsigned int right_node = initialize_array_values[i];
     
-                        nodes[num_nodes++] = sNodeTree_create_store_field(var_name, array_node, right_node, TRUE, info);
+                        nodes[num_nodes++] = sNodeTree_create_store_field(var_name, array_node, right_node, info);
     
                         if(num_nodes >= INIT_ARRAY_MAX+128) {
                             fprintf(stderr, "overflow array initializer number\n");
@@ -3160,7 +3163,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                     if(strcmp(struct_initializer->mName, var_name) == 0) {
                         unsigned int right_node = struct_initializer->mNode;
                     
-                        nodes[num_nodes++] = sNodeTree_create_store_field(var_name, array_node, right_node, TRUE, info);
+                        nodes[num_nodes++] = sNodeTree_create_store_field(var_name, array_node, right_node, info);
     
                         if(num_nodes >= INIT_ARRAY_MAX+128) {
                             fprintf(stderr, "overflow array initializer number\n");
@@ -3232,7 +3235,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                     
                     BOOL alloc = TRUE;
                     BOOL global = TRUE;
-                    unsigned int node3 = sNodeTree_create_store_variable(name, right_node, alloc, global, FALSE, info);
+                    unsigned int node3 = sNodeTree_create_store_variable(name, right_node, alloc, global, info);
     
                     nodes[num_nodes++] = node3;
     
@@ -3543,7 +3546,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                             char* var_name = klass->mFieldName[j];
                             unsigned int right_node = initialize_array_values[n++];
         
-                            nodes[num_nodes++] = sNodeTree_create_store_field(var_name, struct_node, right_node, TRUE, info);
+                            nodes[num_nodes++] = sNodeTree_create_store_field(var_name, struct_node, right_node, info);
         
                             if(num_nodes >= INIT_ARRAY_MAX+128) {
                                 fprintf(stderr, "overflow array initializer number\n");
@@ -3579,7 +3582,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                         char* var_name = klass->mFieldName[i];
                         unsigned int right_node = initialize_array_values[i];
     
-                        nodes[num_nodes++] = sNodeTree_create_store_field(var_name, array_node, right_node, TRUE, info);
+                        nodes[num_nodes++] = sNodeTree_create_store_field(var_name, array_node, right_node, info);
     
                         if(num_nodes >= INIT_ARRAY_MAX+128) {
                             fprintf(stderr, "overflow array initializer number\n");
@@ -3739,7 +3742,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
             }
             else {
                 BOOL global = info->mBlockLevel == 0;
-                *node = sNodeTree_create_store_variable(name, right_node, TRUE, global, FALSE, info);
+                *node = sNodeTree_create_store_variable(name, right_node, TRUE, global, info);
             }
         }
     }

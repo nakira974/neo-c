@@ -388,6 +388,13 @@ BOOL compile(unsigned int node, sCompileInfo* info)
             }
             break;
             
+        case kNodeTypeIsGC:
+            if(!compile_is_gc(node, info))
+            { 
+                return FALSE;
+            }
+            break;
+            
         case kNodeTypeIsGCHeap:
             if(!compile_is_gc_heap(node, info))
             { 

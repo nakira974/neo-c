@@ -2369,6 +2369,18 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 
                 gNCSafeMode = FALSE;
             }
+            else if(memcmp(info->p, "gc", strlen("gc")) == 0) {
+                info->p += strlen("gc");
+                skip_spaces_and_lf(info);
+                
+                gNCGC = TRUE;
+            }
+            else if(memcmp(info->p, "no-gc", strlen("no-gc")) == 0) {
+                info->p += strlen("no-gc");
+                skip_spaces_and_lf(info);
+                
+                gNCGC = FALSE;
+            }
             else {
                 parser_err_msg(info, "invalid using language");
                 return FALSE;

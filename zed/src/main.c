@@ -240,13 +240,13 @@ string ZVALUE*::to_string(ZVALUE* self)
 
 int main(int argc, char** argv)
 {
-    string command = null;
+    string? command = null;
     for(int i=1; i<argc; i++) {
         if(argv[i][0] == '-') {
         }
         else {
             if(command == null) {
-                command = string(argv[i]);
+                command = nullable string(argv[i]);
             }
         }
     }
@@ -268,7 +268,7 @@ int main(int argc, char** argv)
     initialize_modules();
     
     /// parse ///
-    info.p = info.command.to_buffer().to_pointer();
+    info.p = info.command;
     
     while(*info.p) {
         if(!parse(&info)) {
@@ -297,8 +297,8 @@ int main(int argc, char** argv)
     info.codes.append_int(0);  /// terminator
     
     /// vm ///
-    info.op = info.codes.to_pointer();
-    info.head = info.codes.to_pointer();
+    info.op = (int*)info.codes.buf;
+    info.head = (int*)info.codes.buf;
     
     while(*info.op) {
         if(!vm(&info)) {

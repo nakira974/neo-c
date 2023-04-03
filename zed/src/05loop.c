@@ -52,8 +52,6 @@
     info.codes.append_int(OP_GOTO);
     info.codes.append_int(head);
     
-    using unsafe;
-    
     int* p = (int*)(info.codes.buf + end_point);
     *p = info.codes.len;
     
@@ -88,7 +86,7 @@
     return self.id;
 }
 
-bool sBreakNode*::compile(sBreakNode* self, sInfo* info)
+ bool sBreakNode*::compile(sBreakNode* self, sInfo* info)
 {
     if(info->breaks == null) {
         fprintf(stderr, "not in aloop for break\n");
@@ -130,9 +128,7 @@ sNode*? exp_node(sInfo* info) version 5
         return borrow new sNode(new sBreakNode());
     }
     else {
-        sNode* result = inherit(info);
-        
-        return result;
+        return inherit(info);
     }
     
     return null;

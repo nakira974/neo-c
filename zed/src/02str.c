@@ -14,7 +14,7 @@ wstring get_str_from_codes(sInfo* info)
     int len = *info->op;
     info->op++;
     
-    wchar_t* str = (wchar_t*)info->op.p;
+    wchar_t* str = (wchar_t*)info->op;
     
     wchar_t*% str2 = new wchar_t[len+1];
     memcpy(str2, str, sizeof(wchar_t)*len);

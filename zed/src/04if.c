@@ -125,8 +125,6 @@ bool compile_block(sNodeBlock& block, sInfo* info)
     end_points.push_back(end_point);
     info.codes.append_int(0);
     
-    using unsafe;
-    
     int* p = (int*)(info.codes.buf + false_jump_point);
     *p = info.codes.len;
     
@@ -181,14 +179,12 @@ bool vm(sInfo* info) version 4
     
     switch(*info->op) {
         case OP_GOTO: {
-            using unsafe;
-            
             info->op++;
             
             int value = *info->op;
             info->op++;
             
-            info->op.p = (int*)((char*)info->head.p + value);
+            info->op = (int*)((char*)info->head + value);
             }
             break;
             
@@ -204,7 +200,7 @@ bool vm(sInfo* info) version 4
                 bool exp = conditional!.boolValue;
                 
                 if(!exp) {
-                    info.op.p = (int*)((char*)info->head.p + value);
+                    info.op = (int*)((char*)info->head + value);
                 }
                 
                 info.stack.delete_back();
@@ -275,7 +271,7 @@ sNodeBlock? parse_block(sInfo* info)
 
 bool is_word(char* str, sInfo* info)
 {
-    return strlen(info->p.p) >= strlen(str) && memcmp(info->p.p, str, strlen(str)) == 0 && (strlen(info->p.p) == strlen(str) || !xisalnum(*(info->p.p + strlen(str))));
+    return strlen(info->p) >= strlen(str) && memcmp(info->p, str, strlen(str)) == 0 && (strlen(info->p) == strlen(str) || !xisalnum(*(info->p + strlen(str))));
 }
 
 sNode*? exp_node(sInfo* info) version 4
@@ -310,7 +306,7 @@ sNode*? exp_node(sInfo* info) version 4
         vector<sNode*%>*% elif_exps = new vector<sNode*%>();
         vector<sNodeBlock>*% elif_blocks = new vector<sNodeBlock>();
         
-        if(memcmp(info->p.p, "elif", 4) == 0 && !xisalnum(*(info->p+4))) {
+        if(memcmp(info->p, "elif", 4) == 0 && !xisalnum(*(info->p+4))) {
             info->p += strlen("elif");
             skip_spaces(info);
             
@@ -330,7 +326,7 @@ sNode*? exp_node(sInfo* info) version 4
         
         sNodeBlock? else_block = null;
         
-        if(memcmp(info->p.p, "else", 4) == 0 && !xisalnum(*(info->p.p+4))) {
+        if(memcmp(info->p, "else", 4) == 0 && !xisalnum(*(info->p+4))) {
             info->p += strlen("else");
             skip_spaces(info);
             

@@ -318,8 +318,6 @@ bool str_method(char* fun_name, list<ZVALUE*%>* params, ZVALUE* obj, ZVALUE** re
                 ZVALUE*% value2 = new ZVALUE(kind:kListValue, list_value:clone list2);
                 append_var(name:"it2".to_wstring(), value: value2);
                 
-                using unsafe;
-                
                 sInfo info2;
                 
                 info2.p = null;

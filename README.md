@@ -214,7 +214,7 @@ a.c,b.c,c.c
 
 1. It is compatible with C language in some content. The C preprocessor also works.
 
-2. The default heap system is using Boehm GC with reffrece count.
+2. The default heap system is original refference count heap system. With -gc option enable Boehm GC with reffrece count.
 
 3. It has Generics, Method Generics, inline function, debug info (-g option), and lambda.
 
@@ -244,7 +244,7 @@ a.c,b.c,c.c
 
 1. C言語とある程度の互換性があります。Cプリプロセッサーも動きます。
 
-2. boehmGCを使ったヒープ管理をします。
+2. オリジナルのリファレンスカウントを使ったヒープ管理をします。-gcオプションでboehmGCを使ったヒープ管理をします。
 
 3. ジェネリクス、メソッドジェネリクス、インライン関数、デバッグ情報、ラムダをサポートします。
 

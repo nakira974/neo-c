@@ -1,47 +1,102 @@
 #include <comelang.h>
 
-interface IA
+using unsafe;
+
+struct sInfo;
+
+extern int gNodeID;
+
+protocol sNode
 {
-    void show();
+    unsigned int id();
+    bool compile(sInfo* info);
 };
 
-struct sA
+inline unsigned int sNode*::get_hash_key(sNode* self)
 {
-    int a;
-    int b;
+    return self.id->();
+}
+
+inline bool sNode*::equals(sNode* self, sNode* right)
+{
+    return (self.compile == right.compile);
+}
+
+struct ZVALUE 
+{
+    enum { kIntValue, kStrValue, kBoolValue, kNullValue, kFileValue, kRegexValue, kListValue, kMapValue } kind;
+    
+    int intValue;
+    wstring strValue;
+    bool boolValue;
+    FILE* fileValue;
+    nregex regexValue;
+    list<ZVALUE*%>*% listValue;
+    map<ZVALUE*%, ZVALUE*%>*% mapValue;
 };
 
-sA*% sA*::initialize(sA*% self)
+inline ZVALUE*% ZVALUE*::initialize(ZVALUE*% self, int kind, int int_value=0, wstring str_value=wstring(""), bool bool_value=false, FILE* file_value=null, nregex regex_value=null, list<ZVALUE*%>*% list_value=null, map<ZVALUE*%, ZVALUE*%>*% map_value=null)
 {
-    self.a = 111;
-    self.b = 222;
+    self.kind = kind;
+    self.intValue = int_value;
+    self.strValue = str_value;
+    self.boolValue = bool_value;
+    self.fileValue = file_value;
+    self.regexValue = regex_value;
+    self.listValue = list_value;
+    self.mapValue = map_value;
     
     return self;
 }
 
-void sA*::show(sA* self) {
-    printf("%d %d\n", self.a, self.b);
-}
+string ZVALUE*::to_string(ZVALUE* self);
+unsigned int ZVALUE*::get_hash_key(ZVALUE* self);
+bool ZVALUE*::equals(ZVALUE* self, ZVALUE* right);
+bool ZVALUE*::operator_equals(ZVALUE* self, ZVALUE* right);
+int ZVALUE*::compare(ZVALUE* self, ZVALUE* right);
 
 struct sInfo
 {
-    IA*% ia;
+    char* p;
+    string command;
+    string command2;
+    buffer*% codes;
+    vector<sNode*%>*% nodes;
+    int* head;
+    int* op;
+    vector<ZVALUE*%>*% stack;
+    
+    int loop_head;
+    
+    vector<int>*%? breaks;
+    
+    ZVALUE*% result_value;
+    
+    int stack_num;
 };
 
-int main()
+int main(int argc, char** argv)
 {
-    vector<IA*%>*% v = new vector<IA*%>();
+    string command = null;
+    for(int i=1; i<argc; i++) {
+        command = string(argv[i]);
+    }
     
-    v.push_back(new IA(new sA));
+/*
+    if(command == null) {
+        fprintf(stderr, "require command\n");
+        return 1;
+    }
+*/
     
-    list<IA*%>*% l = new list<IA*%>();
+    sInfo info;
     
-    l.push_back(new IA(new sA));
+    info.command = command;
     
-    puts("in main");
+    info.command2 = command;
     
-//    ia.show->();
-    
+    return 0;
+
     return 0;
 }
 

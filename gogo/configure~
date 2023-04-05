@@ -4125,7 +4125,7 @@ fi
 
 export CFLAGS
 
-OBJS="src/main.o src/type.o src/01fun.o src/02int.o src/03var.o src/04if.o src/vtable.o"
+OBJS="src/main.o src/type.o src/01fun.o"
 
 
 
@@ -5451,6 +5451,5 @@ if test -n "$ac_unrecognized_opts" && test "$enable_option_checking" != no; then
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: unrecognized options: $ac_unrecognized_opts" >&5
 printf "%s\n" "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
 fi
-
 
 

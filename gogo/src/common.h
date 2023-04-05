@@ -7,7 +7,6 @@
 using unsafe;
 
 #include <llvm-c/Core.h>
-
 #include <llvm-c/DebugInfo.h>
 
 #define STACK_NUM 512

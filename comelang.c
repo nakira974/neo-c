@@ -27,6 +27,10 @@ void igc_increment_ref_count(void* mem)
 //printf("igc_increment_ref_count %p\n", mem);
     using unsafe;
     
+    if(mem == NULL) {
+        return;
+    }
+    
     int* ref_count = (char*)mem - sizeof(int);
     
     (*ref_count)++;

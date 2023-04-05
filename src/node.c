@@ -948,8 +948,8 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCom
                     LLVMValueRef llvm_params3[PARAMS_MAX];
                     memset(llvm_params3, 0, sizeof(LLVMValueRef)*PARAMS_MAX);
             
-                    //char* fun_name3 = "igc_decrement_ref_count";
-                    char* fun_name3 = "free_object";
+                    char* fun_name3 = "igc_decrement_ref_count";
+                    //char* fun_name3 = "free_object";
                     //char* fun_name3 = "ncfree";
             
                     LLVMTypeRef llvm_type2 = create_llvm_type_with_class_name("char*");
@@ -1006,9 +1006,9 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCom
                 memset(llvm_params, 0, sizeof(LLVMValueRef)*PARAMS_MAX);
         
                 //char* fun_name2 = "ncfree";
-                //char* fun_name2 = "igc_decrement_ref_count";
+                char* fun_name2 = "igc_decrement_ref_count";
                 //char* fun_name2 = "free";
-                char* fun_name2 = "free_object";
+                //char* fun_name2 = "free_object";
         
                 LLVMTypeRef llvm_type = create_llvm_type_with_class_name("char*");
         

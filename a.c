@@ -77,26 +77,28 @@ struct sInfo
 
 int main(int argc, char** argv)
 {
+    char* a = borrow string("AAAA");
+    delete a;
     string command = null;
     for(int i=1; i<argc; i++) {
         command = string(argv[i]);
     }
     
-/*
+    string command2 = clone command;
+    
     if(command == null) {
         fprintf(stderr, "require command\n");
         return 1;
     }
-*/
     
     sInfo info;
     
     info.command = command;
+    info.command = clone command;
     
     info.command2 = command;
+    info.command2 = clone command;
     
-    return 0;
-
     return 0;
 }
 

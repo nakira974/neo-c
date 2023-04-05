@@ -1,8 +1,9 @@
-#include <comelang.h>
-#include "common.h"
+using comelang;
 
-void fun()
+int main()
 {
-    var a = new sA(123);
+    char*% a = null;
+    
+    return 0;
 }
 

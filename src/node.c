@@ -3739,7 +3739,9 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
             rvalue->type = clone_node_type(left_type);
         }
 
+        BOOL heap = (*right_type)->mHeap;
         *right_type = clone_node_type(left_type);
+        (*right_type)->mHeap = heap;
     }
 #ifdef __DARWIN__
     else if(!left_type->mHeap && type_identify_with_class_name(left_type, "void") && left_type->mPointerNum >= 1 && (*right_type)->mPointerNum > 0) {
@@ -3747,7 +3749,9 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
 
         rvalue->value = LLVMBuildCast(gBuilder, LLVMBitCast, rvalue->value, llvm_type, "icatXXXXXX");
         rvalue->type = clone_node_type(left_type);
+        BOOL heap = (*right_type)->mHeap;
         *right_type = clone_node_type(left_type);
+        (*right_type)->mHeap = heap;
         
         return TRUE;
     }
@@ -3756,7 +3760,10 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
 
         rvalue->value = LLVMBuildCast(gBuilder, LLVMBitCast, rvalue->address, llvm_type, "icatXXXXXX");
         rvalue->type = clone_node_type(left_type);
+        
+        BOOL heap = (*right_type)->mHeap;
         *right_type = clone_node_type(left_type);
+        (*right_type)->mHeap = heap;
         
         return TRUE;
     }
@@ -3806,7 +3813,9 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
 #endif
         }
 
+        BOOL heap = (*right_type)->mHeap;
         *right_type = clone_node_type(left_type);
+        (*right_type)->mHeap = heap;
     }
     else if(type_identify_with_class_name(left_type, "lambda") && is_number_class(*right_type))
     {
@@ -3816,7 +3825,9 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
             rvalue->type = create_node_type_with_class_name("char*");
         }
 
+        BOOL heap = (*right_type)->mHeap;
         *right_type = clone_node_type(left_type);
+        (*right_type)->mHeap = heap;
     }
     else if(left_type->mSizeNum > 0 && (*right_type)->mSizeNum > 0) {
         if(rvalue && rvalue->value) {
@@ -3834,7 +3845,9 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
             rvalue->type = clone_node_type(left_type);
         }
 
+        BOOL heap = (*right_type)->mHeap;
         *right_type = clone_node_type(left_type);
+        (*right_type)->mHeap = heap;
     }
     else if(left_type->mSizeNum > 0 && (*right_type)->mSizeNum == 0) {
         int size = 0;
@@ -3866,7 +3879,9 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
             rvalue->type = clone_node_type(left_type);
         }
 
+        BOOL heap = (*right_type)->mHeap;
         *right_type = clone_node_type(left_type);
+        (*right_type)->mHeap = heap;
     }
     else if(left_type->mPointerNum == 1 && left_type->mArrayDimentionNum == 1 && (*right_type)->mArrayDimentionNum == 2 && (*right_type)->mPointerNum == 0)
     {
@@ -3900,7 +3915,9 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
 #endif
         }
 
+        BOOL heap = (*right_type)->mHeap;
         *right_type = clone_node_type(left_type);
+        (*right_type)->mHeap = heap;
     }
 
     else if(type_identify_with_class_name(left_type, "protocol_obj_t") && right_class->mProtocol) {
@@ -3912,7 +3929,9 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
             rvalue->value = LLVMBuildCast(gBuilder, LLVMBitCast, rvalue->value, create_llvm_type_from_node_type(left_type), "autocast");
         }
 
+        BOOL heap = (*right_type)->mHeap;
         *right_type = clone_node_type(left_type);
+        (*right_type)->mHeap = heap;
     }
     else if(left_type->mPointerNum > 0 && (*right_type)->mPointerNum == 0) {
         if(rvalue && rvalue->value) {
@@ -3921,13 +3940,18 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
             if((*right_type)->mArrayDimentionNum > 0) {
                 rvalue->value = LLVMBuildCast(gBuilder, LLVMBitCast, rvalue->address, llvm_type, "castBA");
                 rvalue->type = clone_node_type(left_type);
+                BOOL heap = (*right_type)->mHeap;
                 *right_type = clone_node_type(left_type);
+                (*right_type)->mHeap = heap;
                 (*right_type)->mCastedPointerToPointer = TRUE;
             }
             else if(type_identify_with_class_name(*right_type, "lambda")) {
                 rvalue->value = LLVMBuildCast(gBuilder, LLVMBitCast, rvalue->value, llvm_type, "castBA");
                 rvalue->type = clone_node_type(left_type);
+                BOOL heap = (*right_type)->mHeap;
                 *right_type = clone_node_type(left_type);
+                (*right_type)->mHeap = heap;
+                (*right_type)->mCastedPointerToPointer = TRUE;
             }
             else {
                 if(type_identify_with_class_name((*right_type), "void") && (*right_type)->mPointerNum == 0) {
@@ -3936,12 +3960,18 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
                     rvalue->value = LLVMBuildCast(gBuilder, LLVMIntToPtr, rvalue->value, llvm_type, "castBA");
         
                     rvalue->type = clone_node_type(left_type);
+                    BOOL heap = (*right_type)->mHeap;
                     *right_type = clone_node_type(left_type);
+                    (*right_type)->mHeap = heap;
+                    (*right_type)->mCastedPointerToPointer = TRUE;
                 }
             }
         }
         else {
+            BOOL heap = (*right_type)->mHeap;
             *right_type = clone_node_type(left_type);
+            (*right_type)->mHeap = heap;
+            (*right_type)->mCastedPointerToPointer = TRUE;
         }
     }
     else if(left_type->mPointerNum > 0 && (*right_type)->mPointerNum > 0 && !left_type->mArrayPointer && !(*right_type)->mArrayPointer) 
@@ -3953,7 +3983,9 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
             rvalue->type = clone_node_type(left_type);
         }
 
+        BOOL heap = (*right_type)->mHeap;
         *right_type = clone_node_type(left_type);
+        (*right_type)->mHeap = heap;
     }
     else if(type_identify(left_type, *right_type) && left_type->mNoArrayPointerNum == 1 && left_type->mArrayDimentionNum == 0 && (*right_type)->mArrayDimentionNum == 1 && (*right_type)->mPointerNum == 0 && (*right_type)->mNoArrayPointerNum == 0) 
     {
@@ -3971,7 +4003,10 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
             rvalue->type = clone_node_type(left_type);
         }
 
+        BOOL heap = (*right_type)->mHeap;
         *right_type = clone_node_type(left_type);
+        (*right_type)->mHeap = heap;
+        (*right_type)->mCastedPointerToPointer = TRUE;
     }
     else if(type_identify_with_class_name(*right_type, "void") && (*right_type)->mPointerNum == 0) {
         return FALSE;
@@ -3986,7 +4021,10 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
                     rvalue->type = clone_node_type(left_type);
                 }
 
+                BOOL heap = (*right_type)->mHeap;
                 *right_type = clone_node_type(left_type);
+                (*right_type)->mHeap = heap;
+                (*right_type)->mCastedPointerToPointer = TRUE;
             }
             else if((*right_type)->mPointerNum == 0 && (type_identify_with_class_name(*right_type, "int") || type_identify_with_class_name(*right_type, "char") || type_identify_with_class_name(*right_type, "short") || type_identify_with_class_name(*right_type, "long") || (*right_type)->mSizeNum > 0)) 
             {
@@ -4054,7 +4092,10 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
                     rvalue->type = clone_node_type(left_type);
                 }
 
+                BOOL heap = (*right_type)->mHeap;
                 *right_type = clone_node_type(left_type);
+                (*right_type)->mHeap = heap;
+                (*right_type)->mCastedPointerToPointer = TRUE;
             }
             else if((*right_type)->mPointerNum == 0 && (type_identify_with_class_name(*right_type, "int") || type_identify_with_class_name(*right_type, "char") || type_identify_with_class_name(*right_type, "short") || type_identify_with_class_name(*right_type, "bool") || (*right_type)->mSizeNum > 0)) 
             {
@@ -4116,7 +4157,10 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
                     rvalue->type = clone_node_type(left_type);
                 }
 
+                BOOL heap = (*right_type)->mHeap;
                 *right_type = clone_node_type(left_type);
+                (*right_type)->mHeap = heap;
+                (*right_type)->mCastedPointerToPointer = TRUE;
             }
             else if((type_identify_with_class_name(*right_type, "char") || type_identify_with_class_name(*right_type, "bool") || (*right_type)->mSizeNum == 8) && (*right_type)->mPointerNum == 0)
             {
@@ -4142,7 +4186,10 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
                     rvalue->type = clone_node_type(left_type);
                 }
 
+                BOOL heap = (*right_type)->mHeap;
                 *right_type = clone_node_type(left_type);
+                (*right_type)->mHeap = heap;
+                (*right_type)->mCastedPointerToPointer = TRUE;
             }
             else if(is_float_type(*right_type)) {
                 if(left_type->mUnsigned) {
@@ -4172,7 +4219,10 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
                     rvalue->type = clone_node_type(left_type);
                 }
 
+                BOOL heap = (*right_type)->mHeap;
                 *right_type = clone_node_type(left_type);
+                (*right_type)->mHeap = heap;
+                (*right_type)->mCastedPointerToPointer = TRUE;
             }
             else if((((*right_type)->mSizeNum > 0 && (*right_type)->mSizeNum < 8) || type_identify_with_class_name(*right_type, "bool")) && (*right_type)->mPointerNum == 0) {
                 LLVMTypeRef llvm_type = create_llvm_type_with_class_name("char");
@@ -4196,7 +4246,10 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
                     rvalue->type = clone_node_type(left_type);
                 }
 
+                BOOL heap = (*right_type)->mHeap;
                 *right_type = clone_node_type(left_type);
+                (*right_type)->mHeap = heap;
+                (*right_type)->mCastedPointerToPointer = TRUE;
             }
             else if(is_float_type(*right_type)) {
                 if(left_type->mUnsigned) {
@@ -4234,7 +4287,10 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
                     rvalue->type = clone_node_type(left_type);
                 }
 
+                BOOL heap = (*right_type)->mHeap;
                 *right_type = clone_node_type(left_type);
+                (*right_type)->mHeap = heap;
+                (*right_type)->mCastedPointerToPointer = TRUE;
             }
 /*
             else if((*right_type)->mPointerNum == 0 && (type_identify_with_class_name(*right_type, "bool") || ((*right_type)->mSizeNum > 0 && (*right_type)->mSizeNum < 8)))
@@ -4243,7 +4299,10 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
 
                 rvalue->value = LLVMBuildCast(gBuilder, LLVMZExt, rvalue->value, llvm_type, "icastKX");
 
+                BOOL heap = (*right_type)->mHeap;
                 *right_type = clone_node_type(left_type);
+                (*right_type)->mHeap = heap;
+                (*right_type)->mCastedPointerToPointer = TRUE;
             }
             else if((*right_type)->mPointerNum == 0 && (type_identify_with_class_name(*right_type, "char") || type_identify_with_class_name(*right_type, "short") || ((*right_type)->mSizeNum >=8 && (*right_type)->mSizeNum <= 16)))
             {
@@ -4256,14 +4315,20 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
                     rvalue->value = LLVMBuildCast(gBuilder, LLVMSExt, rvalue->value, llvm_type, "icastL");
                 }
 
+                BOOL heap = (*right_type)->mHeap;
                 *right_type = clone_node_type(left_type);
+                (*right_type)->mHeap = heap;
+                (*right_type)->mCastedPointerToPointer = TRUE;
             }
             else if((*right_type)->mPointerNum == 0 && (type_identify_with_class_name(*right_type, "long") || (*right_type)->mSizeNum > 32)) {
                 LLVMTypeRef llvm_type = create_llvm_type_with_class_name("int");
 
                 rvalue->value = LLVMBuildTrunc(gBuilder, rvalue->value, llvm_type, "icastM");
 
+                BOOL heap = (*right_type)->mHeap;
                 *right_type = clone_node_type(left_type);
+                (*right_type)->mHeap = heap;
+                (*right_type)->mCastedPointerToPointer = TRUE;
             }
             else if((*right_type)->mPointerNum > 0 || type_identify_with_class_name(*right_type, "protocol_obj_t")) {
                 if(rvalue) {
@@ -4273,7 +4338,10 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
                     rvalue->type = clone_node_type(left_type);
                 }
 
+                BOOL heap = (*right_type)->mHeap;
                 *right_type = clone_node_type(left_type);
+                (*right_type)->mHeap = heap;
+                (*right_type)->mCastedPointerToPointer = TRUE;
             }
             else if(is_float_type(*right_type)) {
                 if(left_type->mUnsigned) {
@@ -4287,7 +4355,10 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
                     rvalue->value = LLVMBuildCast(gBuilder, LLVMFPToSI, rvalue->value, llvm_type, "icastKO");
                 }
 
+                BOOL heap = (*right_type)->mHeap;
                 *right_type = clone_node_type(left_type);
+                (*right_type)->mHeap = heap;
+                (*right_type)->mCastedPointerToPointer = TRUE;
             }
 
             rvalue->type = create_node_type_with_class_name("int");
@@ -4306,7 +4377,10 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
                     rvalue->type = clone_node_type(left_type);
                 }
 
+                BOOL heap = (*right_type)->mHeap;
                 *right_type = clone_node_type(left_type);
+                (*right_type)->mHeap = heap;
+                (*right_type)->mCastedPointerToPointer = TRUE;
             }
             else if((*right_type)->mPointerNum == 0 && (type_identify_with_class_name(*right_type, "bool") || ((*right_type)->mSizeNum > 0 && (*right_type)->mSizeNum < 8)))
             {
@@ -4314,7 +4388,10 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
 
                 rvalue->value = LLVMBuildCast(gBuilder, LLVMZExt, rvalue->value, llvm_type, "icastKX");
 
+                BOOL heap = (*right_type)->mHeap;
                 *right_type = clone_node_type(left_type);
+                (*right_type)->mHeap = heap;
+                (*right_type)->mCastedPointerToPointer = TRUE;
             }
             else if((*right_type)->mPointerNum == 0 && (type_identify_with_class_name(*right_type, "char") || type_identify_with_class_name(*right_type, "short") || ((*right_type)->mSizeNum >=8 && (*right_type)->mSizeNum <= 16)))
             {
@@ -4327,14 +4404,20 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
                     rvalue->value = LLVMBuildCast(gBuilder, LLVMSExt, rvalue->value, llvm_type, "icastL");
                 }
 
+                BOOL heap = (*right_type)->mHeap;
                 *right_type = clone_node_type(left_type);
+                (*right_type)->mHeap = heap;
+                (*right_type)->mCastedPointerToPointer = TRUE;
             }
             else if((*right_type)->mPointerNum == 0 && (type_identify_with_class_name(*right_type, "long") || (*right_type)->mSizeNum > 32)) {
                 LLVMTypeRef llvm_type = create_llvm_type_with_class_name("int");
 
                 rvalue->value = LLVMBuildTrunc(gBuilder, rvalue->value, llvm_type, "icastM");
 
+                BOOL heap = (*right_type)->mHeap;
                 *right_type = clone_node_type(left_type);
+                (*right_type)->mHeap = heap;
+                (*right_type)->mCastedPointerToPointer = TRUE;
             }
             else if((*right_type)->mPointerNum > 0 || type_identify_with_class_name(*right_type, "protocol_obj_t")) {
                 if(rvalue) {
@@ -4344,7 +4427,10 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
                     rvalue->type = clone_node_type(left_type);
                 }
 
+                BOOL heap = (*right_type)->mHeap;
                 *right_type = clone_node_type(left_type);
+                (*right_type)->mHeap = heap;
+                (*right_type)->mCastedPointerToPointer = TRUE;
             }
             else if(is_float_type(*right_type)) {
                 if(left_type->mUnsigned) {
@@ -4358,7 +4444,10 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
                     rvalue->value = LLVMBuildCast(gBuilder, LLVMFPToSI, rvalue->value, llvm_type, "icastKO");
                 }
 
+                BOOL heap = (*right_type)->mHeap;
                 *right_type = clone_node_type(left_type);
+                (*right_type)->mHeap = heap;
+                (*right_type)->mCastedPointerToPointer = TRUE;
             }
 
             rvalue->type = create_node_type_with_class_name("int");
@@ -4507,7 +4596,10 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
             rvalue->type = clone_node_type(left_type);
         }
 
+        BOOL heap = (*right_type)->mHeap;
         *right_type = clone_node_type(left_type);
+        (*right_type)->mHeap = heap;
+        (*right_type)->mCastedPointerToPointer = TRUE;
     }
     
     if(left_type->mUnsigned && !(*right_type)->mUnsigned) {

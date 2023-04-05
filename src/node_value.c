@@ -388,14 +388,12 @@ BOOL compile_null(unsigned int node, sCompileInfo* info)
     LLVMTypeRef llvm_type2 = create_llvm_type_with_class_name("void*");
     llvm_value.value = LLVMBuildCast(gBuilder, LLVMBitCast, llvm_value.value, llvm_type2, "castAH");
     llvm_value.type = create_node_type_with_class_name("void*");
-    llvm_value.type->mNullable = TRUE;
     llvm_value.address = NULL;
     llvm_value.var = NULL;
 
     push_value_to_stack_ptr(&llvm_value, info);
 
     info->type = create_node_type_with_class_name("void*");
-    info->type->mNullable = TRUE;
 
     return TRUE;
 }

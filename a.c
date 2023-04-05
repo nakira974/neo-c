@@ -77,7 +77,7 @@ struct sInfo
 
 int main(int argc, char** argv)
 {
-    char* a = borrow string("AAAA");
+    string a = string("AAAA");
     delete a;
     string command = null;
     for(int i=1; i<argc; i++) {

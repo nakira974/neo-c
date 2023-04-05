@@ -25,7 +25,7 @@ regex_struct*% regex(char* str, bool ignore_case, bool multiline, bool global, b
 
     if(result.re == NULL) {
 fprintf(stderr, "regex error (%s)\n", str);
-        return NULL;
+        return dummy_heap NULL;
     }
 
     return result;
@@ -64,7 +64,7 @@ regex_struct*% regex_struct*::clone(regex_struct* reg)
     result.re = pcre_compile(result.str, result.options, &err, &erro_ofs, NULL);
 
     if(result.re == NULL) {
-        return NULL;
+        return dummy_heap NULL;
     }
 
     return result;

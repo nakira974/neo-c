@@ -2800,7 +2800,7 @@ impl smart_pointer<T>
                 exit(1);
             }
             
-            return result_gc;
+            return dummy_heap result_gc;
         }
         
         var result = new smart_pointer<T>;
@@ -2832,7 +2832,7 @@ impl smart_pointer<T>
                 exit(1);
             }
             
-            return result_gc;
+            return dummy_heap result_gc;
         }
         
         smart_pointer<T>*% result = new smart_pointer<T>;

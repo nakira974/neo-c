@@ -2121,7 +2121,7 @@ BOOL compile_store_element(unsigned int node, sCompileInfo* info)
                 if(!solve_type(&fun_param_type, generics_type, 0, NULL, info)) {
                     return FALSE;
                 }
-
+                
                 if(!substitution_posibility(fun_param_type, param_type, NULL, info)) {
                     compile_err_msg(info, "invalid parametor");
                     show_node_type(fun_param_type);
@@ -2366,8 +2366,12 @@ BOOL compile_store_element(unsigned int node, sCompileInfo* info)
                 return TRUE;
             }
         }
+        
+        sNodeType* var_type2 = clone_node_type(var_type);
+        
+        var_type2->mHeap = FALSE;
     
-        if(!substitution_posibility(var_type, right_type, rvalue.value, info)) 
+        if(!substitution_posibility(var_type2, right_type, rvalue.value, info)) 
         {
             compile_err_msg(info, "The different type between left type and right type, store element(1)");
             show_node_type_one_line(var_type);
@@ -7764,7 +7768,7 @@ BOOL compile_borrow(unsigned int node, sCompileInfo* info)
     push_value_to_stack_ptr(&llvm_value, info);
 
     info->type = node_type;
-
+    
     return TRUE;
 }
 

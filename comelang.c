@@ -168,7 +168,7 @@ void*%? ncmemdup(void*% block)
     
 //printf("ncmemdup ret %p\n", (char*)ret + sizeof(int));
 
-    return nullable (char*)ret + sizeof(int);
+    return dummy_heap nullable (char*)ret + sizeof(int);
 }
 
 void* call_cloner(void* fun, void* mem)

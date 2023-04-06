@@ -13,10 +13,10 @@ void ViWin*::finalize(ViWin* self) version 16
 {
     inherit(self);
 
-    delete self.mark;
+    delete borrow self.mark;
 
     if(self.returnPoint) {
-        delete self.returnPoint;
+        delete borrow self.returnPoint;
     }
 }
 

@@ -72,7 +72,7 @@ void free_object(void* mem)
 
 void call_finalizer(void* fun, void* mem, int call_finalizer_only)
 {
-//printf("call_finalizer mem %p\n", mem);
+//printf("call_finalizer mem %p %d\n", mem, call_finalizer_only);
     if(mem == NULL) {
         return;
     }
@@ -400,7 +400,7 @@ buffer*% buffer*::initialize(buffer*% self)
 
 void buffer*::finalize(buffer* self)
 {
-    if(self && self.buf) delete self.buf;
+    if(self && self.buf) delete borrow self.buf;
 }
 
 buffer*% buffer*::clone(buffer* self)

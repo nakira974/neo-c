@@ -78,6 +78,30 @@ struct sInfo
 
 int main(int argc, char** argv)
 {
+    string a = string("AAAA");
+    string command = null;
+    for(int i=1; i<argc; i++) {
+        command = string(argv[i]);
+    }
+    
+    string command2 = clone command;
+    
+    if(command == null) {
+        fprintf(stderr, "require command\n");
+        return 1;
+    }
+    
+    sInfo info;
+    
+    info.command = command;
+    info.command = clone command;
+    
+    info.command2 = command;
+    info.command2 = clone command;
+    
+    info.nodes = new vector<sNode*%>();
+    
+    info.nodes2 = info.nodes;
     
     return 0;
 }

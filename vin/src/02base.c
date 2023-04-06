@@ -12,7 +12,7 @@ ViWin*% ViWin*::initialize(ViWin*% self, int y, int x, int width, int height, Vi
 void ViWin*::finalize(ViWin* self) version 2
 {
     inherit(self);
-    delete self.returnPointStack;
+    delete borrow self.returnPointStack;
 }
 
 void ViWin*::textsView(ViWin* self, Vi* nvi)
@@ -668,7 +668,7 @@ void Vi*::finalize(Vi* self) version 2
 {
     inherit(self);
     
-    delete self.events;
+    delete borrow self.events;
 }
 
 void Vi*::exitFromApp(Vi* self) version 2

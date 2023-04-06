@@ -34,7 +34,7 @@ fprintf(stderr, "regex error (%s)\n", str);
 void regex_struct*::finalize(regex_struct* reg)
 {
     if(reg && reg.str) {
-        delete reg.str;
+        delete borrow reg.str;
     }
     if(reg && reg.re) {
         free(reg.re);

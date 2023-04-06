@@ -353,6 +353,6 @@ void Vi*::finalize(Vi* self) version 7
 {
     inherit(self);
 
-    delete self.yank;
-    delete self.fileYank;
+    delete borrow self.yank;
+    delete borrow self.fileYank;
 }

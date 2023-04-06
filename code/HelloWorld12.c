@@ -40,7 +40,7 @@ struct sData2
 
 void sData2::finalize(sData2* self)
 {
-    delete self.m1;
+    delete borrow self.m1;
 }
 
 struct sInfo

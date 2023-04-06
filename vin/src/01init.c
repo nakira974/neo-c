@@ -30,7 +30,7 @@ ViWin*% ViWin*::initialize(ViWin*% self, int y, int x, int width, int height, Vi
 
 void ViWin*::finalize(ViWin* self) version 1
 {
-    delete self.texts;
+    delete borrow self.texts;
     delwin(self.win);
 }
 
@@ -81,7 +81,7 @@ bool ViWin*::equals(ViWin* left, ViWin* right)
 
 void Vi*::finalize(Vi* self) version 1
 {
-    delete self.wins;
+    delete borrow self.wins;
 
 //    endwin();
 }

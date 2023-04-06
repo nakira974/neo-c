@@ -472,7 +472,6 @@ sFunction* create_finalizer_automatically(sNodeType* node_type, char* fun_name, 
             char* name = "_protocol_obj";
             char source2[1024];
             snprintf(source2, 1024, "if(self != null && self.%s != null && self.finalize) { void (*finalizer)(void*) = self.finalize; finalizer(self._protocol_obj); igc_decrement_ref_count(self.%s); }\n", name, name);
-            //snprintf(source2, 1024, "if(self != null && self.%s != null && self.finalize) { void (*finalizer)(void*) = self.finalize; finalizer(self._protocol_obj); free_object(self.%s); }\n", name, name);
             
             sBuf_append_str(&source, source2);
         }
@@ -489,7 +488,7 @@ sFunction* create_finalizer_automatically(sNodeType* node_type, char* fun_name, 
                 
                 if(field_type->mHeap) {
                     char source2[1024];
-                    snprintf(source2, 1024, "if(self != null && self.%s != null) { delete self.%s!; }\n", name, name);
+                    snprintf(source2, 1024, "if(self != null && self.%s != null) { delete (self.%s!); }\n", name, name);
                     
                     sBuf_append_str(&source, source2);
                 }
@@ -827,7 +826,8 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCom
         }
 
         /// call finalizer ///
-        if((node_type->mHeap || node_type->mAllocaValue || force_delete) && finalizer != NULL) {
+        if(finalizer != NULL) {
+        //if((node_type->mHeap || node_type->mAllocaValue || force_delete) && finalizer != NULL) {
             if(finalizer->mGenericsFunction) {
                 LLVMValueRef llvm_fun = NULL;
                 

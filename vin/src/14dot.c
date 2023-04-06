@@ -72,11 +72,11 @@ void ViWin*::finalize(ViWin* self) version 14
 {
     inherit(self);
 
-    delete self.inputedKeys;
+    delete borrow self.inputedKeys;
     if(self.savedInputedKeys) {
-        delete self.savedInputedKeys;
+        delete borrow self.savedInputedKeys;
     }
-    delete self.macro;
+    delete borrow self.macro;
 }
 
 bool ViWin*::saveDotToFile(ViWin* self, Vi* nvi) version 14

@@ -576,7 +576,7 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
     
     /// std::move ///
     if(left_type->mHeap && right_type->mHeap) {
-        if(gNodes[right_node].mNodeType == kNodeTypeLoadVariable || gNodes[right_node].mNodeType == kNodeTypeNormalBlock)
+        if(gNodes[right_node].mNodeType == kNodeTypeLoadField || gNodes[right_node].mNodeType == kNodeTypeLoadVariable || gNodes[right_node].mNodeType == kNodeTypeNormalBlock) 
         {
             increment_ref_count(rvalue.value, right_type, info);
         }
@@ -1008,7 +1008,7 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
         
         /// std::move ///
         if(left_type->mHeap && right_type2->mHeap) {
-            if(gNodes[right_node].mNodeType == kNodeTypeLoadVariable || gNodes[right_node].mNodeType == kNodeTypeNormalBlock)
+            if(gNodes[right_node].mNodeType == kNodeTypeLoadField || gNodes[right_node].mNodeType == kNodeTypeLoadVariable || gNodes[right_node].mNodeType == kNodeTypeNormalBlock) 
             {
                 increment_ref_count(rvalue.value, right_type2, info);
             }
@@ -2349,7 +2349,7 @@ BOOL compile_store_element(unsigned int node, sCompileInfo* info)
     
         /// std::move ///
         if(var_type->mHeap && right_type->mHeap) {
-            if(gNodes[rnode].mNodeType == kNodeTypeLoadVariable || gNodes[rnode].mNodeType == kNodeTypeNormalBlock) 
+            if(gNodes[rnode].mNodeType == kNodeTypeLoadField || gNodes[rnode].mNodeType == kNodeTypeLoadVariable || gNodes[rnode].mNodeType == kNodeTypeNormalBlock) 
             {
                 increment_ref_count(rvalue.value, right_type, info);
             }
@@ -6001,7 +6001,7 @@ BOOL compile_store_field(unsigned int node, sCompileInfo* info)
 
     /// std::move ///
     if(field_type->mHeap && right_type->mHeap) {
-        if(gNodes[rnode].mNodeType == kNodeTypeLoadVariable || gNodes[rnode].mNodeType == kNodeTypeNormalBlock) 
+        if(gNodes[rnode].mNodeType == kNodeTypeLoadField || gNodes[rnode].mNodeType == kNodeTypeLoadVariable || gNodes[rnode].mNodeType == kNodeTypeNormalBlock) 
         {
             increment_ref_count(rvalue.value, right_type, info);
         }
@@ -7890,6 +7890,8 @@ BOOL compile_delete(unsigned int node, sCompileInfo* info)
         compile_err_msg(info, "require delete target object");
         return TRUE;
     }
+    
+    
 
     if(!compile(left_node, info)) {
         return FALSE;
@@ -7903,6 +7905,11 @@ BOOL compile_delete(unsigned int node, sCompileInfo* info)
     dec_stack_ptr(1, info);
 
     sNodeType* node_type = clone_node_type(info->type);
+    
+    if(node_type->mHeap && (gNodes[left_node].mNodeType == kNodeTypeLoadVariable || gNodes[left_node].mNodeType == kNodeTypeLoadField)) {
+        compile_err_msg(info, "can't delete %% variables or %% fields");
+        return TRUE;
+    }
 
     //node_type->mHeap = TRUE;
     

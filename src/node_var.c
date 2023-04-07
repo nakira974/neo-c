@@ -592,7 +592,22 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
     
     if(!(info->mBlockLevel == 0 && left_type->mClass->mFlags & CLASS_FLAGS_UNION))
     {
-        if(!substitution_posibility(left_type, right_type, rvalue.value, info)) {
+        if(left_type->mHeap && !right_type->mHeap && rvalue.value && LLVMIsNull(rvalue.value) == 0)
+        {
+            compile_err_msg(info, "Type error(1)");
+            
+            puts(var_name);
+            
+            puts("left type");
+            show_node_type_one_line(left_type);
+            
+            puts("right type");
+            show_node_type_one_line(right_type);
+            LLVMDumpValue(rvalue.value);
+            puts("");
+            return TRUE;
+        }
+        else if(!substitution_posibility(left_type, right_type, rvalue.value, info)) {
             compile_err_msg(info, "Type error(1)");
             
             puts(var_name);
@@ -5372,7 +5387,7 @@ BOOL compile_union(unsigned int node, sCompileInfo* info)
     return TRUE;
 }
 
-unsigned int sNodeTree_create_object(sNodeType* node_type, unsigned int object_num, int num_params, unsigned int* params, unsigned int list_first_value, unsigned int map_first_key, unsigned int map_first_value, unsigned int* tuple_nodes, int num_tuples, char* sname, int sline, BOOL gc, sParserInfo* info)
+unsigned int sNodeTree_create_object(sNodeType* node_type, unsigned int object_num, int num_params, unsigned int* params, char* sname, int sline, BOOL gc, sParserInfo* info)
 {
     unsigned node = alloc_node();
 
@@ -5384,21 +5399,11 @@ unsigned int sNodeTree_create_object(sNodeType* node_type, unsigned int object_n
     gNodes[node].uValue.sObject.mType = clone_node_type(node_type);
     gNodes[node].uValue.sObject.mNumParams = num_params;
     gNodes[node].uValue.sObject.mGC = gc;
-    gNodes[node].uValue.sObject.mListFirstValue = list_first_value;
-    gNodes[node].uValue.sObject.mMapFirstKey = map_first_key;
-    gNodes[node].uValue.sObject.mMapFirstValue = map_first_value;
-    gNodes[node].uValue.sObject.mNumTuples = num_tuples;
-    gNodes[node].uValue.sObject.mVarTable = info->lv_table;
 
     int i;
     if(num_params > 0) {
         for(i=0; i<num_params; i++) {
             gNodes[node].uValue.sObject.mParams[i] = params[i];
-        }
-    }
-    if(num_tuples > 0) {
-        for(i=0; i<num_tuples; i++) {
-            gNodes[node].uValue.sObject.mTupleNodes[i] = tuple_nodes[i];
         }
     }
 
@@ -5415,91 +5420,6 @@ BOOL compile_object(unsigned int node, sCompileInfo* info)
     int num_params = gNodes[node].uValue.sObject.mNumParams;
     unsigned int params[PARAMS_MAX];
     BOOL gc = gNodes[node].uValue.sObject.mGC;
-    unsigned int list_first_value = gNodes[node].uValue.sObject.mListFirstValue;
-    unsigned int map_first_key = gNodes[node].uValue.sObject.mMapFirstKey;
-    unsigned int map_first_value = gNodes[node].uValue.sObject.mMapFirstValue;
-    unsigned int num_tuples = gNodes[node].uValue.sObject.mNumTuples;
-    sVarTable* lv_table = gNodes[node].uValue.sObject.mVarTable;
-    
-    if(list_first_value) {
-        sNodeType* list_first_type = NULL;
-
-        if(!compile(list_first_value, info)) {
-            return FALSE;
-        }
-        
-        dec_stack_ptr(1, info);
-        
-        list_first_type = clone_node_type(info->type);
-        
-        node_type->mGenericsTypes[0] = list_first_type;
-        node_type->mNumGenericsTypes = 1;
-        
-/*
-        if(info->type->mClass->mProtocol) {
-            compile_err_msg(info, "can't get protocol as list element");
-            return TRUE;
-        }
-*/
-    }
-    if(map_first_key && map_first_value) {
-        if(!compile(map_first_key, info)) {
-            return FALSE;
-        }
-        
-        dec_stack_ptr(1, info);
-        
-/*
-        if(info->type->mClass->mProtocol) {
-            compile_err_msg(info, "can't get protocol as map element");
-            return TRUE;
-        }
-*/
-        
-        sNodeType* map_key_type = clone_node_type(info->type);
-        
-        if(!compile(map_first_value, info)) {
-            return FALSE;
-        }
-        
-        dec_stack_ptr(1, info);
-        
-/*
-        if(info->type->mClass->mProtocol) {
-            compile_err_msg(info, "can't get protocol as map element");
-            return TRUE;
-        }
-*/
-        
-        sNodeType* map_value_type = clone_node_type(info->type);
-        
-        node_type->mGenericsTypes[0] = map_key_type;
-        node_type->mGenericsTypes[1] = map_value_type;
-        node_type->mNumGenericsTypes = 2;
-    }
-    
-    sNodeType* tuple_types[TUPLE_ELEMENT_MAX];
-    if(num_tuples) {
-        char class_name[VAR_NAME_MAX];
-        snprintf(class_name, VAR_NAME_MAX, "tuple%d", num_tuples);
-        
-        node_type = create_node_type_with_class_name(class_name);
-        
-        int i;
-        for(i=0; i<num_tuples; i++) {
-            unsigned int tuple_node = gNodes[node].uValue.sObject.mTupleNodes[i];
-            
-            if(!compile(tuple_node, info)) {
-                return FALSE;
-            }
-            
-            dec_stack_ptr(1, info);
-            
-            node_type->mGenericsTypes[i] = clone_node_type(info->type);
-        }
-        
-        node_type->mNumGenericsTypes = num_tuples;
-    }
 
     int i;
     if(num_params > 0) {
@@ -5551,7 +5471,6 @@ BOOL compile_object(unsigned int node, sCompileInfo* info)
 
         return FALSE;
     }
-    
     
     if(!create_generics_struct_type(CLASS_NAME(node_type2->mClass), node_type2)) {
         compile_err_msg(info, "invalid type %s(6)", CLASS_NAME(node_type2->mClass));
@@ -5620,7 +5539,7 @@ BOOL compile_object(unsigned int node, sCompileInfo* info)
         
         int sline = gNodes[node].mLine;
         BOOL gc = gNCGC;
-        unsigned int obj_node = sNodeTree_create_object(node_type, 0, 0, NULL, 0, 0, 0, NULL, 0, sname, sline, gc, info->pinfo);
+        unsigned int obj_node = sNodeTree_create_object(node_type, 0, 0, NULL, sname, sline, gc, info->pinfo);
         
         unsigned int right_node = params[0];
         unsigned int store_protocol = sNodeTree_create_store_field_of_protocol(obj_node, right_node, info->pinfo);
@@ -5763,7 +5682,7 @@ BOOL compile_object(unsigned int node, sCompileInfo* info)
         push_value_to_stack_ptr(&llvm_value, info);
         
         append_object_to_right_values(address, node_type2, info);
-
+        
         info->type = clone_node_type(node_type2);
     }
 
@@ -6017,7 +5936,7 @@ BOOL compile_store_field(unsigned int node, sCompileInfo* info)
         }
     }
     
-    if(!substitution_posibility(field_type, right_type, rvalue.value, info)) {
+    else if(!substitution_posibility(field_type, right_type, rvalue.value, info)) {
         compile_err_msg(info, "The different type between left type and right type. store field(2)");
         puts("field_type");
         show_node_type_one_line(field_type);

@@ -315,94 +315,20 @@ BOOL get_regex(unsigned int* node, sParserInfo* info)
     return TRUE;
 }
 
-BOOL get_list(unsigned int* node, sParserInfo* info)
+BOOL parse_list(unsigned int* node, sParserInfo* info)
 {
-    unsigned int nodes[LIST_ELEMENT_MAX];
-    int num_nodes = 0;
-    
-    sNodeType* node_type = create_node_type_with_class_name("list");
-    
-    if(node_type == NULL || node_type->mClass == NULL) {
-        parser_err_msg(info, "require incldue comelang.h");
-        return FALSE;
-    }
-    
-    node_type->mNumGenericsTypes = 1;
-    node_type->mGenericsTypes[0] = create_node_type_with_class_name("any");
-    if(!gNCGC) {
-        node_type->mHeap = TRUE;
-    }
-    
-    int object_num = sNodeTree_create_int_value(1, info);
-    int num_params = 0;
-    unsigned int params[PARAMS_MAX];
-    BOOL gc = gNCGC;
-    
-    unsigned int list_first_value = 0;
-    if(!expression(&list_first_value, FALSE, info)) {
-        return FALSE;
-    }
-    
-    unsigned int list_object = sNodeTree_create_object(node_type, object_num, num_params, params, list_first_value, 0, 0, NULL, 0, info->sname, info->sline, gc, info);
-        
-    char* fun_name = "initialize";
-    unsigned int params2[PARAMS_MAX];
-    int num_params2 = 1;
-    BOOL method = TRUE;
-    BOOL inherit = FALSE;
-    int version = 0;
-    
-    params2[0] = list_object;
-    
-    unsigned int func = sNodeTree_create_function_call(fun_name, params2, num_params2, method, inherit, version, info);
-    
-    char var_name[VAR_NAME_MAX];
-    static int list_num = 0;
-    snprintf(var_name, VAR_NAME_MAX, "_li%d", list_num++);
-    
-    BOOL alloc = TRUE;
-    BOOL global = FALSE;
-    
-    unsigned int var_ = sNodeTree_create_store_variable(var_name, func, alloc, global, info);
-
-    check_already_added_variable(info->lv_table, var_name, info);
-    if(!add_variable_to_table(info->lv_table, var_name, NULL, FALSE, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
-    {
-        fprintf(stderr, "overflow variable table\n");
-        exit(2);
-    }
-
-    nodes[num_nodes++] = var_;
-    
-    sNodeType* element_type = NULL;
+    unsigned int elements[LIST_ELEMENT_MAX];
+    int num_elements = 0;
     
     while(TRUE) {
         unsigned int value = 0;
-        if(list_first_value) {
-            value = list_first_value;
-            list_first_value = 0;
-        }
-        else {
-            if(!expression(&value, FALSE, info)) {
-                return FALSE;
-            }
+        if(!expression(&value, FALSE, info)) {
+            return FALSE;
         }
         
-        char* fun_name = "push_back";
-        unsigned int params[PARAMS_MAX];
-        int num_params = 2;
-        BOOL method = TRUE;
-        BOOL inherit = FALSE;
-        int version = 0;
+        elements[num_elements++] = value;
         
-        params[0] = sNodeTree_create_load_variable(var_name, info);
-        params[1] = value;
-        
-        unsigned int func = sNodeTree_create_function_call(fun_name, params, num_params, method, inherit, version, info);
-        
-        nodes[num_nodes++] = func;
-        
-        if(num_nodes >= LIST_ELEMENT_MAX) {
+        if(num_elements >= LIST_ELEMENT_MAX) {
             fprintf(stderr, "list element overflow\n");
             exit(1);
         }
@@ -422,106 +348,21 @@ BOOL get_list(unsigned int* node, sParserInfo* info)
         }
     }
     
-    nodes[num_nodes++] = sNodeTree_create_managed(var_name, info);
-    
-    if(num_nodes >= LIST_ELEMENT_MAX) {
-        fprintf(stderr, "list element overflow\n");
-        exit(1);
-    }
-    
-    unsigned int node2 = sNodeTree_create_load_variable(var_name, info);
-    node2 = sNodeTree_create_dummy_heap(node2, info);
-    
-    nodes[num_nodes++] = node2;
-    
-    if(num_nodes >= LIST_ELEMENT_MAX) {
-        fprintf(stderr, "list element overflow\n");
-        exit(1);
-    }
-    
-    *node = sNodeTree_create_list(num_nodes, nodes, info);
+    *node = sNodeTree_create_list(num_elements, elements, info);
     
     return TRUE;
 }
 
-BOOL get_map(unsigned int* node, sParserInfo* info)
+BOOL parse_map(unsigned int* node, sParserInfo* info)
 {
-    unsigned int nodes[LIST_ELEMENT_MAX];
-    int num_nodes = 0;
-    
-    sCLClass* map_klass = get_class("map");
-    sNodeType* node_type = create_node_type_with_class_pointer(map_klass);
-    
-    if(node_type == NULL || node_type->mClass == NULL) {
-        parser_err_msg(info, "require incldue comelang.h");
-        return FALSE;
-    }
-    
-    int object_num = sNodeTree_create_int_value(1, info);
-    int num_params = 0;
-    unsigned int params[PARAMS_MAX];
-    BOOL gc = gNCGC;
-    
-    unsigned int map_first_key = 0;
-    if(!expression(&map_first_key, FALSE, info)) {
-        return FALSE;
-    }
-    
-    if(*info->p == ':') {
-        info->p++;
-        skip_spaces_and_lf(info);
-    }
-    
-    unsigned int map_first_value = 0;
-    if(!expression(&map_first_value, FALSE, info)) {
-        return FALSE;
-    }
-    
-    unsigned int map_object = sNodeTree_create_object(node_type, object_num, num_params, params, 0, map_first_key, map_first_value, NULL, 0, info->sname, info->sline, gc, info);
-    
-    char* fun_name = "initialize";
-    unsigned int params2[PARAMS_MAX];
-    int num_params2 = 1;
-    BOOL method = TRUE;
-    BOOL inherit = FALSE;
-    int version = 0;
-    
-    params2[0] = map_object;
-    
-    unsigned int func = sNodeTree_create_function_call(fun_name, params2, num_params2, method, inherit, version, info);
-    
-    char var_name[VAR_NAME_MAX];
-    static int list_num = 0;
-    snprintf(var_name, VAR_NAME_MAX, "_ma%d", list_num++);
-    
-    BOOL alloc = TRUE;
-    BOOL global = FALSE;
-    
-    unsigned int var_ = sNodeTree_create_store_variable(var_name, func, alloc, global, info);
-
-    check_already_added_variable(info->lv_table, var_name, info);
-    if(!add_variable_to_table(info->lv_table, var_name, NULL, FALSE, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
-    {
-        fprintf(stderr, "overflow variable table\n");
-        exit(2);
-    }
-
-    nodes[num_nodes++] = var_;
-    
-    sNodeType* element_type = NULL;
-    
-    int n = 0;
+    unsigned int keys[LIST_ELEMENT_MAX];
+    unsigned int values[LIST_ELEMENT_MAX];
+    int num_keys = 0;
     
     while(TRUE) {
         unsigned int key = 0;
-        if(map_first_key) {
-            key = map_first_key;
-            map_first_key = 0;
-        }
-        else {
-            if(!expression(&key, FALSE, info)) {
-                return FALSE;
-            }
+        if(!expression(&key, FALSE, info)) {
+            return FALSE;
         }
         
         if(*info->p == ':') {
@@ -530,34 +371,17 @@ BOOL get_map(unsigned int* node, sParserInfo* info)
         }
         
         unsigned int value = 0;
-        if(map_first_value) {
-            value = map_first_value;
-            map_first_value = 0;
-        }
-        else {
-            if(!expression(&value, FALSE, info)) {
-                return FALSE;
-            }
+        if(!expression(&value, FALSE, info)) {
+            return FALSE;
         }
         
-        char* fun_name = "insert";
-        unsigned int params[PARAMS_MAX];
-        int num_params = 3;
-        BOOL method = TRUE;
-        BOOL inherit = FALSE;
-        int version = 0;
+        keys[num_keys] = key;
+        values[num_keys] = value;
+        num_keys++;
         
-        params[0] = sNodeTree_create_load_variable(var_name, info);
-        params[1] = key;
-        params[2] = value;
-        
-        unsigned int func = sNodeTree_create_function_call(fun_name, params, num_params, method, inherit, version, info);
-        
-        nodes[num_nodes++] = func;
-        
-        if(num_nodes >= LIST_ELEMENT_MAX) {
-            fprintf(stderr, "map element overflow\n");
-            exit(1);
+        if(num_keys >= LIST_ELEMENT_MAX) {
+            fprintf(stderr, "overflow key max\n");
+            exit(2);
         }
         
         if(*info->p == ',') {
@@ -573,33 +397,14 @@ BOOL get_map(unsigned int* node, sParserInfo* info)
             parser_err_msg(info, "require , or } for map value");
             return FALSE;
         }
-        
-        n++;
     }
     
-    nodes[num_nodes++] = sNodeTree_create_managed(var_name, info);
-    
-    if(num_nodes >= LIST_ELEMENT_MAX) {
-        fprintf(stderr, "list element overflow\n");
-        exit(1);
-    }
-    
-    unsigned int node2 = sNodeTree_create_load_variable(var_name, info);
-    node2 = sNodeTree_create_dummy_heap(node2, info);
-    
-    nodes[num_nodes++] = node2;
-    
-    if(num_nodes >= LIST_ELEMENT_MAX) {
-        fprintf(stderr, "list element overflow\n");
-        exit(1);
-    }
-    
-    *node = sNodeTree_create_map(num_nodes, nodes, info);
+    *node = sNodeTree_create_map(num_keys, keys, values, info);
     
     return TRUE;
 }
 
-BOOL get_tuple(unsigned int* node, sParserInfo* info)
+BOOL parse_tuple(unsigned int* node, sParserInfo* info)
 {
     unsigned int nodes[TUPLE_ELEMENT_MAX];
     int num_nodes = 0;
@@ -629,32 +434,7 @@ BOOL get_tuple(unsigned int* node, sParserInfo* info)
         }
     }
     
-    int object_num = sNodeTree_create_int_value(1, info);
-    int num_params = 0;
-    unsigned int params[PARAMS_MAX];
-    BOOL gc = gNCGC;
-    
-    int num_tuples = num_nodes;
-    
-    sNodeType* node_type = create_node_type_with_class_name("any");
-    
-    unsigned int tuple_object = sNodeTree_create_object(node_type, object_num, num_params, params, 0, 0, 0, nodes, num_tuples, info->sname, info->sline, gc, info);
-    
-    char* fun_name = "initialize";
-    unsigned int params2[PARAMS_MAX];
-    int num_params2 = num_tuples+1;
-    BOOL method = TRUE;
-    BOOL inherit = FALSE;
-    int version = 0;
-    
-    params2[0] = tuple_object;
-    
-    int i;
-    for(i=0; i<num_tuples; i++) {
-        params2[i+1] = nodes[i];
-    }
-    
-    *node = sNodeTree_create_function_call(fun_name, params2, num_params2, method, inherit, version, info);
+    *node = sNodeTree_create_tuple(num_nodes, nodes, info);
     
     return TRUE;
 }
@@ -1468,7 +1248,7 @@ BOOL parse_enum(unsigned int* node, char* name, int name_size, BOOL* terminated,
     
                     check_already_added_variable(info->lv_table, var_name, info);
                     BOOL readonly = TRUE;
-                    if(!add_variable_to_table(info->lv_table, var_name, result_type, readonly, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
+                    if(!add_variable_to_table(info->lv_table, var_name, result_type, readonly, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE, FALSE))
                     {
                         fprintf(stderr, "overflow variable table\n");
                         exit(2);
@@ -1689,7 +1469,7 @@ BOOL parse_lambda(unsigned int* node, sNodeType* result_type, sParserInfo* info)
         sParserParam* param = params + i;
 
         BOOL readonly = TRUE;
-        if(!add_variable_to_table(info->lv_table, param->mName, param->mType, readonly, gNullLVALUE, -1, FALSE, FALSE, FALSE))
+        if(!add_variable_to_table(info->lv_table, param->mName, param->mType, readonly, gNullLVALUE, -1, FALSE, FALSE, FALSE, FALSE))
         {
             return FALSE;
         }
@@ -1804,33 +1584,7 @@ void create_exception_result_value(unsigned int* node, BOOL throw_, sParserInfo*
         num_nodes++;
     }
     
-    int object_num = sNodeTree_create_int_value(1, info);
-    int num_params = 0;
-    unsigned int params[PARAMS_MAX];
-    BOOL gc = gNCGC;
-    
-    int num_tuples = num_nodes;
-    
-    sNodeType* node_type = clone_node_type(info->function_result_type);
-    node_type->mPointerNum--;
-    
-    unsigned int tuple_object = sNodeTree_create_object(node_type, object_num, num_params, params, 0, 0, 0, nodes, num_tuples, info->sname, info->sline, gc, info);
-    
-    char* fun_name = "initialize";
-    unsigned int params2[PARAMS_MAX];
-    int num_params2 = num_tuples+1;
-    BOOL method = TRUE;
-    BOOL inherit = FALSE;
-    int version = 0;
-    
-    params2[0] = tuple_object;
-    
-    int i;
-    for(i=0; i<num_tuples; i++) {
-        params2[i+1] = nodes[i];
-    }
-    
-    *node = sNodeTree_create_function_call(fun_name, params2, num_params2, method, inherit, version, info);
+    *node = sNodeTree_create_tuple(num_nodes, nodes, info);
 }
 
 BOOL parse_return(unsigned int* node, sParserInfo* info)
@@ -2381,7 +2135,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                     check_already_added_variable(info->lv_table, name2, info);
                     sNodeType* node_type2 = clone_node_type(node_type);
                     node_type2->mConstant = TRUE;
-                    if(!add_variable_to_table(info->lv_table, name2, node_type2, FALSE, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
+                    if(!add_variable_to_table(info->lv_table, name2, node_type2, FALSE, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE, FALSE))
                     {
                         fprintf(stderr, "overflow variable table\n");
                         exit(2);
@@ -2469,7 +2223,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
             
             if(result_type->mOmitArrayNum == FALSE) {
                 result_type->mConstant = TRUE;
-                if(!add_variable_to_table(info->lv_table, name, result_type, FALSE, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
+                if(!add_variable_to_table(info->lv_table, name, result_type, FALSE, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE, FALSE))
                 {
                     fprintf(stderr, "overflow variable table\n");
                     exit(2);
@@ -2868,7 +2622,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                 
                 result_type->mConstant = TRUE;
                 
-                if(!add_variable_to_table(info->lv_table, name, result_type, FALSE, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
+                if(!add_variable_to_table(info->lv_table, name, result_type, FALSE, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE, FALSE))
                 {
                     fprintf(stderr, "overflow variable table\n");
                     exit(2);
@@ -3212,7 +2966,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                     check_already_added_variable(info->lv_table, name2, info);
                     sNodeType* node_type2 = clone_node_type(node_type);
                     node_type2->mConstant = TRUE;
-                    if(!add_variable_to_table(info->lv_table, name2, node_type2, FALSE, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
+                    if(!add_variable_to_table(info->lv_table, name2, node_type2, FALSE, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE, FALSE))
                     {
                         fprintf(stderr, "overflow variable table\n");
                         exit(2);
@@ -3508,7 +3262,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
 
             if(info->mBlockLevel == 0) {
                 result_type->mConstant = TRUE;
-                if(!add_variable_to_table(info->lv_table, name, result_type, FALSE, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
+                if(!add_variable_to_table(info->lv_table, name, result_type, FALSE, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE, FALSE))
                 {
                     fprintf(stderr, "overflow variable table\n");
                     exit(2);
@@ -3724,7 +3478,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
         }
         else {
             check_already_added_variable(info->lv_table, name, info);
-            if(!add_variable_to_table(info->lv_table, name, result_type, readonly, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
+            if(!add_variable_to_table(info->lv_table, name, result_type, readonly, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE, FALSE))
             {
                 fprintf(stderr, "overflow variable table\n");
                 exit(2);
@@ -3752,7 +3506,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
     
     if(get_variable_from_this_table_only(info->lv_table, name) == NULL) {
         check_already_added_variable(info->lv_table, name, info);
-        if(!add_variable_to_table(info->lv_table, name, result_type, readonly, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
+        if(!add_variable_to_table(info->lv_table, name, result_type, readonly, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE, FALSE))
         {
             fprintf(stderr, "overflow variable table\n");
             exit(2);

@@ -319,6 +319,8 @@ struct sVarStruct {
     
     BOOL mReturnValue;
     BOOL mCalledMutable;
+    
+    BOOL mNoFree;
 };
 
 typedef struct sVarStruct sVar;
@@ -351,7 +353,7 @@ void create_current_stack_frame_struct(char* type_name, sVarTable* lv_table);
 void check_already_added_variable(sVarTable* table, char* name, struct sParserInfoStruct* info);
 
 // result: (true) success (false) overflow the table or a variable which has the same name exists
-BOOL add_variable_to_table(sVarTable* table, char* name, sNodeType* type_, BOOL readonly, LVALUE llvm_value, int index, BOOL global, BOOL alloca_value, BOOL param);
+BOOL add_variable_to_table(sVarTable* table, char* name, sNodeType* type_, BOOL readonly, LVALUE llvm_value, int index, BOOL global, BOOL alloca_value, BOOL param, BOOL no_free);
 
 // result: (null) not found (sVar*) found
 sVar* get_variable_from_table(sVarTable* table, char* name);
@@ -597,9 +599,9 @@ BOOL parse_defer(unsigned int* node, sParserInfo* info);
 BOOL parse_call_macro(unsigned int* node, char* name, sParserInfo* info);
 BOOL parse_function_pointer_result_function(unsigned int* node, BOOL* array_pointer_result_function_type, sParserInfo* info);
 BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* info);
-BOOL get_map(unsigned int* node, sParserInfo* info);
-BOOL get_list(unsigned int* node, sParserInfo* info);
-BOOL get_tuple(unsigned int* node, sParserInfo* info);
+BOOL parse_map(unsigned int* node, sParserInfo* info);
+BOOL parse_list(unsigned int* node, sParserInfo* info);
+BOOL parse_tuple(unsigned int* node, sParserInfo* info);
 
 //////////////////////////////
 /// node.c
@@ -699,7 +701,7 @@ extern LLVMBuilderRef gBuilder;
 
 enum eNodeType { kNodeTypeIntValue, kNodeTypeList, kNodeTypeMap, kNodeTypeFloatValue, kNodeTypeDoubleValue, kNodeTypeUIntValue, kNodeTypeLongValue, kNodeTypeULongValue, kNodeTypeAdd, kNodeTypeSub, kNodeTypeStoreVariable, kNodeTypeStoreVariableMultiple, kNodeTypeLoadVariable, kNodeTypeLoadChannelElement, kNodeTypeDefineVariable, kNodeTypeIsHeap, kNodeTypeCString, kNodeTypeRegex, kNodeTypeFunction, kNodeTypeExternalFunction, kNodeTypeFunctionCall, kNodeTypeComeFunctionCall, kNodeTypeIf, kNodeTypeGuard, kNodeTypeEquals, kNodeTypeNotEquals, kNodeTypeEquals2, kNodeTypeNotEquals2, kNodeTypeStruct, kNodeTypeObject, kNodeTypeStackObject, kNodeTypeStoreField, kNodeTypeStoreFieldOfProtocol, kNodeTypeLoadField, kNodeTypeWhile, kNodeTypeDoWhile, kNodeTypeGteq, kNodeTypeLeeq, kNodeTypeGt, kNodeTypeLe, kNodeTypeLogicalDenial, kNodeTypeTrue, kNodeTypeFalse, kNodeTypeAndAnd, kNodeTypeOrOr, kNodeTypeFor, kNodeTypeLambdaCall, kNodeTypeDerefference, kNodeTypeRefference, kNodeTypeRefferenceLoadField, kNodeTypeNull, kNodeTypeClone, kNodeTypeLoadElement, kNodeTypeStoreElement, kNodeTypeChar, kNodeTypeMult, kNodeTypeDiv, kNodeTypeMod, kNodeTypeCast, kNodeTypeGenericsFunction, kNodeTypeInlineFunction, kNodeTypeTypeDef, kNodeTypeUnion, kNodeTypeLeftShift, kNodeTypeRightShift, kNodeTypeAnd, kNodeTypeXor, kNodeTypeOr, kNodeTypeReturn, kNodeTypeSizeOf, kNodeTypeSizeOfExpression, kNodeTypeNodes, kNodeTypeLoadFunction, kNodeTypeArrayWithInitialization, kNodeTypeStructInitializer, kNodeTypeNormalBlock, kNodeTypeSelect, kNodeTypePSelect, kNodeTypeSwitch, kNodeTypeBreak, kNodeTypeContinue, kNodeTypeCase, kNodeTypeLabel, kNodeTypeGoto, kNodeTypeConditional, kNodeTypeAlignOf, kNodeTypeAlignOfExpression, kNodeTypeComplement, kNodeTypeStoreAddress, kNodeTypeLoadAddressValue, kNodeTypePlusPlus, kNodeTypeMinusMinus, kNodeTypeEqualPlus, kNodeTypeEqualMinus, kNodeTypeEqualMult, kNodeTypeEqualDiv, kNodeTypeEqualMod, kNodeTypeEqualLShift, kNodeTypeEqualRShift, kNodeTypeEqualAnd, kNodeTypeEqualXor, kNodeTypeEqualOr, kNodeTypeComma, kNodeTypeFunName, kNodeTypeJoin, kNodeTypeWriteChannel, kNodeTypeReadChannel, kNodeTypeStack, kNodeTypeMethodBlock, kNodeTypeDefer, kNodeTypeManaged, kNodeTypeDelete, kNodeTypeDummyHeap, kNodeTypeBorrow, kNodeTypeNoMove, kNodeTypeNullable, kNodeTypeNoNullable, kNodeTypeIsGCHeap, kNodeTypeUnwrap, kNodeTypeDupeFunction, kNodeTypeSName, kNodeTypeSLine, kNodeTypeCallerSName, kNodeTypeCallerSLine, kNodeTypeStoreDerefference, kNodeTypeVaArg };
 
-enum { kNodeTypeLChar = kNodeTypeVaArg + 1, kNodeTypeWCString, kNodeTypeCreateLabel, kNodeTypeNullValue, kNodeTypeMacro, kNodeTypeIsGC };
+enum { kNodeTypeLChar = kNodeTypeVaArg + 1, kNodeTypeWCString, kNodeTypeCreateLabel, kNodeTypeNullValue, kNodeTypeMacro, kNodeTypeIsGC, kNodeTypeTuple };
 
 static const BOOL gMultDivPlusPlusEnableNode[] = {
     1, 1, 1, 1, 1, 1, 1,     1, 1, 1, 0, 0, 1,     1, 0, 0, 1, 1, 0, 0,     1, 1, 0, 0, 1, 1, 1,     1, 0, 0, 0, 1, 1,     1, 0, 0, 1, 1, 1, 1, 1,     1, 1, 1, 1, 0, 1, 1, 1,     1, 1, 1, 1, 1, 1, 1, 1, 1,     1, 0, 0, 0, 1, 1, 1,     1, 1, 0, 1, 1, 0, 0,     0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0, 1, 1,     1, 0, 0, 1, 1, 0,     0, 0, 0, 0, 0, 0, 0,     0, 0, 1, 0, 0, 1, 1, 0,     0, 0, 0, 0, 0, 0, 0, 1,     1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0 
@@ -776,6 +778,12 @@ struct sNodeTreeStruct
             int mNumNodes;
             BOOL mInMacro;
         } sNodes;
+        
+        struct {
+            unsigned int mKeys[LIST_ELEMENT_MAX];
+            unsigned int mValues[LIST_ELEMENT_MAX];
+            int mNumKeys;
+        } sMap;
 
         struct {
             char mVarName[VAR_NAME_MAX];
@@ -890,12 +898,6 @@ struct sNodeTreeStruct
             unsigned int mParams[PARAMS_MAX];
             int mNumParams;
             BOOL mGC;
-            unsigned int mListFirstValue;
-            unsigned int mMapFirstKey;
-            unsigned int mMapFirstValue;
-            unsigned int mTupleNodes[TUPLE_ELEMENT_MAX];
-            int mNumTuples;
-            struct sVarTableStruct* mVarTable;
         } sObject;
 
         struct {
@@ -1312,7 +1314,7 @@ unsigned int sNodeTree_create_store_variable(char* var_name, int right, BOOL all
 unsigned int sNodeTree_create_store_variable_multiple(int num_vars, char** var_names, int right, BOOL alloc, sParserInfo* info);
 unsigned int sNodeTree_struct(sNodeType* struct_type, sParserInfo* info, char* sname, int sline, BOOL undefined_body);
 unsigned int sNodeTree_union(sNodeType* struct_type, sParserInfo* info, char* sname, int sline, BOOL undefined_body);
-unsigned int sNodeTree_create_object(sNodeType* node_type, unsigned int object_num, int num_params, unsigned int* params, unsigned int list_first_value, unsigned int map_first_key, unsigned int map_first_value, unsigned int* tuple_nodes, int num_tuples, char* sname, int sline, BOOL gc, sParserInfo* info);
+unsigned int sNodeTree_create_object(sNodeType* node_type, unsigned int object_num, int num_params, unsigned int* params, char* sname, int sline, BOOL gc, sParserInfo* info);
 unsigned int sNodeTree_create_store_field(char* var_name, unsigned int left_node, unsigned int right_node, sParserInfo* info);
 unsigned int sNodeTree_create_load_field(char* name, unsigned int left_node, sParserInfo* info);
 unsigned int sNodeTree_create_cast(sNodeType* left_type, unsigned int left_node, sParserInfo* info);
@@ -1392,8 +1394,9 @@ unsigned int sNodeTree_create_character_value(unsigned char c, sParserInfo* info
 unsigned int sNodeTree_create_true(sParserInfo* info);
 unsigned int sNodeTree_create_false(sParserInfo* info);
 unsigned int sNodeTree_create_null(sParserInfo* info);
-unsigned int sNodeTree_create_map(int num_nodes, unsigned int* nodes, sParserInfo* info);
-unsigned int sNodeTree_create_list(int num_nodes, unsigned int* nodes, sParserInfo* info);
+unsigned int sNodeTree_create_map(int num_keys, unsigned int* keys, unsigned int* values, sParserInfo* info);
+unsigned int sNodeTree_create_tuple(int num_nodes, unsigned int* nodes, sParserInfo* info);
+unsigned int sNodeTree_create_list(int num_elements, unsigned int* elements, sParserInfo* info);
 
 BOOL compile_c_string_value(unsigned int node, sCompileInfo* info);
 BOOL compile_regex_value(unsigned int node, sCompileInfo* info);
@@ -1408,6 +1411,7 @@ BOOL compile_null(unsigned int node, sCompileInfo* info);
 BOOL compile_float_value(unsigned int node, sCompileInfo* info);
 BOOL compile_double_value(unsigned int node, sCompileInfo* info);
 BOOL compile_list_value(unsigned int node, sCompileInfo* info);
+BOOL compile_tuple_value(unsigned int node, sCompileInfo* info);
 BOOL compile_map_value(unsigned int node, sCompileInfo* info);
 
 //////////////////////////////

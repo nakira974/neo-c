@@ -53,7 +53,7 @@ BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_meth
 
     for(i=0; i<num_params; i++) {
         BOOL readonly = FALSE;
-        if(!add_variable_to_table(info2.lv_table, param_names[i], fun->mParamTypes[i], readonly, gNullLVALUE, -1, FALSE, FALSE, FALSE))
+        if(!add_variable_to_table(info2.lv_table, param_names[i], fun->mParamTypes[i], readonly, gNullLVALUE, -1, FALSE, FALSE, FALSE, FALSE))
         {
             compile_err_msg(info, "overflow variable table");
             return FALSE;
@@ -985,7 +985,6 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
     /// call generics function ///
     sNodeType* result_type = NULL;
     if(fun->mGenericsFunction) {
-            
         LLVMTypeRef llvm_param_types[PARAMS_MAX];
         
         for(i=0; i<num_params; i++) {
@@ -1095,7 +1094,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
 
         for(i=0; i<num_params; i++) {
             BOOL readonly = FALSE;
-            if(!add_variable_to_table(info2.lv_table, param_names[i], fun->mParamTypes[i], readonly, gNullLVALUE, -1, FALSE, FALSE, FALSE))
+            if(!add_variable_to_table(info2.lv_table, param_names[i], fun->mParamTypes[i], readonly, gNullLVALUE, -1, FALSE, FALSE, FALSE, FALSE))
             {
                 compile_err_msg(info, "overflow variable table");
                 return FALSE;

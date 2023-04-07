@@ -18,7 +18,7 @@ void* igc_calloc(size_t count, size_t size)
     
     (*ref_count)++;
     
-//printf("igc_calloc %p size %ld\n", mem + sizeof(int),size);
+//printf("igc_calloc %p size %ld count %ld\n", mem + sizeof(int),size, count);
     return mem + sizeof(int);
 }
 

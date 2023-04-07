@@ -56,7 +56,7 @@ sVarTable* clone_var_table(sVarTable* lv_table)
 
     while(1) {
         if(p->mName[0] != 0) {
-            if(!add_variable_to_table(result, p->mName, p->mType, p->mReadOnly, p->mLLVMValue, p->mIndex, p->mGlobal, p->mAllocaValue, p->mParamVar))
+            if(!add_variable_to_table(result, p->mName, p->mType, p->mReadOnly, p->mLLVMValue, p->mIndex, p->mGlobal, p->mAllocaValue, p->mParamVar, p->mNoFree))
             {
                 fprintf(stderr, "overflow variable table\n");
                 exit(2);
@@ -84,7 +84,7 @@ sVarTable* clone_var_table(sVarTable* lv_table)
 // local variable table
 //////////////////////////////////////////////////
 // result: (true) success (false) overflow the table or a variable which has the same name exists
-BOOL add_variable_to_table(sVarTable* table, char* name, sNodeType* type_, BOOL readonly, LVALUE llvm_value, int index, BOOL global, BOOL alloca_value, BOOL param)
+BOOL add_variable_to_table(sVarTable* table, char* name, sNodeType* type_, BOOL readonly, LVALUE llvm_value, int index, BOOL global, BOOL alloca_value, BOOL param, BOOL no_free)
 {
     int hash_value;
     sVar* p;
@@ -115,6 +115,7 @@ BOOL add_variable_to_table(sVarTable* table, char* name, sNodeType* type_, BOOL 
             p->mGlobal = global;
             p->mAllocaValue = alloca_value;
             p->mParamVar = param;
+            p->mNoFree = no_free;
 
             if(table->mVarNum >= LOCAL_VARIABLE_MAX) {
                 return FALSE;
@@ -145,6 +146,7 @@ BOOL add_variable_to_table(sVarTable* table, char* name, sNodeType* type_, BOOL 
                 p->mGlobal = global;
                 p->mAllocaValue = alloca_value;
                 p->mParamVar = param;
+                p->mNoFree = no_free;
 
                 return TRUE;
             }
@@ -398,7 +400,7 @@ void free_objects(sVarTable* table, sCompileInfo* info)
                 sNodeType* node_type = p->mType;
                 sCLClass* klass = node_type->mClass;
 
-                if(node_type->mHeap)
+                if(node_type->mHeap && !p->mNoFree)
                 {
                     if(p->mLLVMValue.value)
                     {
@@ -460,7 +462,7 @@ static void free_block_variables(sVarTable* table, LLVMValueRef ret_value, sComp
             if(node_type) {
                 sCLClass* klass = node_type->mClass;
                 
-                if(node_type->mHeap)
+                if(node_type->mHeap && !p->mNoFree)
                 {
                     if(p->mLLVMValue.value)
                     {

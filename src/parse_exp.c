@@ -711,7 +711,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
             return FALSE;
         }
 
-        if(is_type_name(buf, info) && !get_variable_from_table(info->lv_table, buf) || (*info->p == '(' && *(info->p+1) == '*') && *info->p != '(') {
+        if(is_type_name(buf, info) && *info->p != '(' && !get_variable_from_table(info->lv_table, buf) || (*info->p == '(' && *(info->p+1) == '*') && *info->p != '(') {
             info->p = p;
             info->sline = sline;
 
@@ -762,7 +762,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 info->p = p2;
                 info->sline = sline2;
                 
-                if(!get_tuple(node, info)) {
+                if(!parse_tuple(node, info)) {
                     return FALSE;
                 }
             }
@@ -1495,7 +1495,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
             info->p = p;
             info->sline = sline;
             
-            if(!get_map(node, info)) {
+            if(!parse_map(node, info)) {
                 return FALSE;
             }
         }
@@ -1503,7 +1503,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
             info->p = p;
             info->sline = sline;
             
-            if(!get_list(node, info)) {
+            if(!parse_list(node, info)) {
                 return FALSE;
             }
         }
@@ -2947,7 +2947,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                         BOOL global = info->mBlockLevel == 0;
                         BOOL alloc = TRUE;
                         check_already_added_variable(info->lv_table, name, info);
-                        if(!add_variable_to_table(info->lv_table, name, result_type, FALSE, gNullLVALUE, -1, global, FALSE, FALSE))
+                        if(!add_variable_to_table(info->lv_table, name, result_type, FALSE, gNullLVALUE, -1, global, FALSE, FALSE, FALSE))
                         {
                             fprintf(stderr, "overflow variable table\n");
                             exit(2);

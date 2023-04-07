@@ -193,7 +193,13 @@ BOOL compile(unsigned int node, sCompileInfo* info)
                 return FALSE;
             }
             break;
-
+            
+        case kNodeTypeTuple:
+            if(!compile_tuple_value(node, info)) 
+            {
+                return FALSE;
+            }
+            break;
 
         case kNodeTypeStoreVariable:
             if(!compile_store_variable(node, info)) {

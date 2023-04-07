@@ -909,7 +909,7 @@ BOOL parse_new(unsigned int* node, sParserInfo* info)
                 return FALSE;
             }
     
-            *node = sNodeTree_create_object(node_type, 0, num_params, params, 0, 0, 0, NULL, 0, info->sname, info->sline, gc, info);
+            *node = sNodeTree_create_object(node_type, 0, num_params, params, info->sname, info->sline, gc, info);
         }
         else {
             unsigned int object_num = 0;
@@ -928,7 +928,7 @@ BOOL parse_new(unsigned int* node, sParserInfo* info)
                 unsigned int params[PARAMS_MAX];
                 int num_params = 1;
                 
-                params[0] = sNodeTree_create_object(node_type, object_num, 0, NULL, 0, 0, 0, NULL, 0, info->sname, info->sline, gc, info);
+                params[0] = sNodeTree_create_object(node_type, object_num, 0, NULL, info->sname, info->sline, gc, info);
     
                 if(!parse_funcation_call_params(&num_params, params, info)) 
                 {
@@ -947,7 +947,7 @@ BOOL parse_new(unsigned int* node, sParserInfo* info)
                 }
             }
             else {
-                *node = sNodeTree_create_object(node_type, object_num, 0, NULL, 0, 0, 0, NULL, 0, info->sname, info->sline, gc, info);
+                *node = sNodeTree_create_object(node_type, object_num, 0, NULL, info->sname, info->sline, gc, info);
             }
             
         }
@@ -991,7 +991,7 @@ BOOL parse_var(unsigned int* node, sParserInfo* info, BOOL readonly)
     for(i=0; i<num_vars; i++) {
         sNodeType* node_type = NULL;
         check_already_added_variable(info->lv_table, buf[i], info);
-        if(!add_variable_to_table(info->lv_table, buf[i], node_type, readonly, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
+        if(!add_variable_to_table(info->lv_table, buf[i], node_type, readonly, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE, FALSE))
         {
             fprintf(stderr, "overflow variable table\n");
             exit(2);

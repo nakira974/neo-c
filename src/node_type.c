@@ -714,10 +714,6 @@ BOOL substitution_posibility(sNodeType* left_type, sNodeType* right_type, LLVMVa
         return FALSE;
     }
 */
-    if(left_type->mHeap && !right_type->mHeap && right_obj && LLVMIsNull(right_obj) == 0)
-    {
-        return FALSE;
-    }
     
 /*
     if(left_type->mNullable != right_type->mNullable) {
@@ -730,6 +726,10 @@ BOOL substitution_posibility(sNodeType* left_type, sNodeType* right_type, LLVMVa
         }
     }
 */
+    if(left_type->mHeap && !right_type->mHeap && right_obj && LLVMIsNull(right_obj) == 0)
+    {
+        return FALSE;
+    }
     
     if(type_identify_with_class_name(left_type, "lambda") && type_identify_with_class_name(right_type, "lambda")) {
         return lambda_posibility(left_type, right_type);

@@ -267,7 +267,7 @@ impl vector<T>
         if(isheap(T)) {
             for(int i=0; i<self.len; i++) 
             {
-                delete self.items[i];
+                delete borrow self.items[i];
             }
         }
         free_object((char*)self.items);  // don't call finalizer function
@@ -410,7 +410,7 @@ impl vector<T>
         if(index >= 0 && index < self.len)
         {
             if(isheap(T)) {
-                delete self.items[index];
+                delete borrow self.items[index];
             }
 
             self.items[index] = value;
@@ -440,7 +440,7 @@ impl vector<T>
         if(isheap(T)) {
             for(int i=0; i<self.len; i++) 
             {
-                delete self.items[i];
+                delete borrow self.items[i];
 
             }
         }
@@ -476,7 +476,7 @@ impl vector<T>
     vector<T>* delete_back(vector<T>* self) {
         if(self.len > 0) {
             if(isheap(T)) {
-                delete self.items[self.len-1];
+                delete borrow self.items[self.len-1];
                 self.items[self.len-1] = null;
             }
             
@@ -512,6 +512,20 @@ impl list <T>
         self.head = null;
         self.tail = null;
         self.len = 0;
+
+        return self;
+    }
+    list<T>*% initialize_with_values(list<T>*% self, int num_value, T`* values) 
+    {
+        managed values;
+        
+        self.head = null;
+        self.tail = null;
+        self.len = 0;
+        
+        for(int i=0; i<num_value; i++) {
+            self.push_back(values[i]);
+        }
 
         return self;
     }
@@ -1517,6 +1531,32 @@ impl map <T, T2>
 
         return self;
     }
+    
+    map<T,T2>*% initialize_with_values(map<T,T2>*% self, int num_keys, T`* keys, T2`* values) 
+    {
+        managed keys;
+        managed values;
+        
+        self.keys = borrow new T[MAP_TABLE_DEFAULT_SIZE];
+        self.items = borrow new T2[MAP_TABLE_DEFAULT_SIZE];
+        self.item_existance = borrow new bool[MAP_TABLE_DEFAULT_SIZE];
+
+        for(int i=0; i<MAP_TABLE_DEFAULT_SIZE; i++)
+        {
+            self.item_existance[i] = false;
+        }
+
+        self.size = MAP_TABLE_DEFAULT_SIZE;
+        self.len = 0;
+
+        self.it = 0;
+        
+        for(int i=0; i<num_keys; i++) {
+            self.insert(keys[i], values[i]);
+        }
+
+        return self;
+    }
 
     void finalize(map<T,T2>* self) {
         for(int i=0; i<self.size; i++) {
@@ -2061,7 +2101,7 @@ impl tuple1 <T>
     void finalize(tuple1<T>* self)
     {
         if(isheap(T)) {
-            delete self.v1;
+            delete borrow self.v1;
         }
     }
     
@@ -2110,10 +2150,10 @@ impl tuple2 <T, T2>
     void finalize(tuple2<T, T2>* self)
     {
         if(isheap(T)) {
-            delete self.v1;
+            delete borrow self.v1;
         }
         if(isheap(T2)) {
-            delete self.v2;
+            delete borrow self.v2;
         }
     }
     
@@ -2237,13 +2277,13 @@ impl tuple3 <T, T2, T3>
     void finalize(tuple3<T, T2, T3>* self)
     {
         if(isheap(T)) {
-            delete self.v1;
+            delete borrow self.v1;
         }
         if(isheap(T2)) {
-            delete self.v2;
+            delete borrow self.v2;
         }
         if(isheap(T3)) {
-            delete self.v3;
+            delete borrow self.v3;
         }
     }
 
@@ -2357,16 +2397,16 @@ impl tuple4 <T, T2, T3, T4>
     void finalize(tuple4<T, T2, T3, T4>* self)
     {
         if(isheap(T)) {
-            delete self.v1;
+            delete borrow self.v1;
         }
         if(isheap(T2)) {
-            delete self.v2;
+            delete borrow self.v2;
         }
         if(isheap(T3)) {
-            delete self.v3;
+            delete borrow self.v3;
         }
         if(isheap(T4)) {
-            delete self.v4;
+            delete borrow self.v4;
         }
     }
 

@@ -1,18 +1,17 @@
 #include <comelang.h>
 
+struct sInfo
+{
+    int a[3][3];
+};
+
 int main()
 {
-    var a = [[string("A"), string("B")], [string("C")]];
+    sInfo info;
     
-    var b = [string("AAA"):[string("CCC"):1], string("BBB"):[string("DDD"):2]];
+    info.a[1][1] = 1;
     
-    printf("b %d\n", b.at(string("AAA"),null).at(string("CCC"), -9));
-    
-    var c = (string("CCC"), (string("BBB"), 1), "AAA");
-    
-    printf("c.0 %s\n", c.1.0);
-    
-//    printf("%d\n", [[string("111"), string("222"), string("333")], [string("444"), string("555"), string("666")]] === [[string("111"), string("222"), string("333")], [string("444"), string("555"), string("666")]])
+    printf("%d\n", info.a[1][1]);
     
     return 0;
 }

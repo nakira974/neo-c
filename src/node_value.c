@@ -994,8 +994,6 @@ BOOL compile_map_value(unsigned int node, sCompileInfo* info)
     info->type = clone_node_type(map_type);
     
     return TRUE;
-
-    return TRUE;
 }
 
 unsigned int sNodeTree_create_tuple(int num_elements, unsigned int* elements, sParserInfo* info)

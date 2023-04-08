@@ -6563,11 +6563,6 @@ BOOL compile_load_field(unsigned int node, sCompileInfo* info)
     return TRUE;
 }
 
-
-
-
-
-
 unsigned int sNodeTree_create_load_array_element(unsigned int array, unsigned int index_node[], int num_dimention, sParserInfo* info)
 {
     unsigned int node = alloc_node();
@@ -6591,74 +6586,11 @@ unsigned int sNodeTree_create_load_array_element(unsigned int array, unsigned in
     return node;
 }
 
-BOOL compile_load_element(unsigned int node, sCompileInfo* info)
+BOOL load_element_core(BOOL getting_refference, int num_dimention, sNodeType* left_type, BOOL global, LVALUE lvalue, LVALUE* rvalue, dec_stack_value, sCompileInfo* info)
 {
-    BOOL getting_refference = gNodes[node].uValue.sLoadElement.mGettingRefference;
-    int num_dimention = gNodes[node].uValue.sLoadElement.mArrayDimentionNum;
-    int i;
-    unsigned int index_node[ARRAY_DIMENTION_MAX];
-    for(i=0; i<num_dimention; i++) {
-        index_node[i] = gNodes[node].uValue.sLoadElement.mIndex[i];
-    }
-    
-    /// compile left node ///
-    unsigned int lnode = gNodes[node].mLeft;
-
-    if(!compile(lnode, info)) {
-        return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
-
-    sNodeType* left_type = info->type;
-    
-    int left_type_array_dimention_num = left_type->mArrayDimentionNum;
-
-    LVALUE lvalue = *get_value_from_stack(-1);
-
-    if(left_type->mArrayDimentionNum == 0 && left_type->mPointerNum == 0 && left_type->mNoArrayPointerNum == 0 && left_type->mDynamicArrayNum == 0)
-    {
-        compile_err_msg(info, "comelang can't get an element from this type.(1)");
-        return FALSE;
-    }
-    
-    BOOL global = FALSE;
-    if(lvalue.var) {
-        global = lvalue.var->mGlobal;
-    }
-
-    /// compile middle node ///
-    LVALUE rvalue[ARRAY_DIMENTION_MAX];
-    for(i=0; i<num_dimention; i++) {
-        unsigned int mnode = index_node[i];
-
-        if(!compile(mnode, info)) {
-            return FALSE;
-        }
-        
-        if(!check_nullable_type(NULL, info->type, info)) {
-            return TRUE;
-        }
-
-        rvalue[i] = *get_value_from_stack(-1);
-        
-/*
-        int array_num = 0;
-        if(LLVMIsConstant(rvalue[i].value) != 0) {
-            int array_num = LLVMConstIntGetZExtValue(rvalue[i].value);
-            if(i < left_type->mArrayDimentionNum && array_num >= left_type->mArrayNum[i]) 
-            {
-                compile_err_msg(info, "invalid array index");
-                return TRUE;
-            }
-        }
-*/
-    }
-    
     char class_name[VAR_NAME_MAX];
     xstrncpy(class_name, CLASS_NAME(left_type->mClass), VAR_NAME_MAX);
+    int i;
     if(left_type->mNumGenericsTypes == 0) {
         for(i=0; i<left_type->mPointerNum; i++) {
             xstrncat(class_name, "p", VAR_NAME_MAX);
@@ -6892,8 +6824,8 @@ BOOL compile_load_element(unsigned int node, sCompileInfo* info)
         llvm_value.type = result_type;
         llvm_value.address = NULL;
         llvm_value.var = lvalue.var;
-
-        dec_stack_ptr(1+num_dimention, info);
+        
+        dec_stack_ptr(dec_stack_value, info);
         push_value_to_stack_ptr(&llvm_value, info);
         
         if(result_type->mHeap) {
@@ -6901,6 +6833,20 @@ BOOL compile_load_element(unsigned int node, sCompileInfo* info)
         }
         
         info->type = result_type;
+        
+        if(num_dimention-1 > 0) {
+            int num_dimention2 = num_dimention-1;
+            sNodeType* left_type = info->type;
+            LVALUE rvalue2[ARRAY_DIMENTION_MAX];
+            LVALUE lvalue2 = *get_value_from_stack(-1);
+            
+            int j;
+            for(j=0; j<num_dimention2; j++) {
+                rvalue2[j] = rvalue[j+1];
+            }
+            
+            return load_element_core(getting_refference, num_dimention2, left_type, global, lvalue2, rvalue2, 1, info);
+        }
     }
     else {
         /// compile middle node ///
@@ -7544,8 +7490,77 @@ BOOL compile_load_element(unsigned int node, sCompileInfo* info)
     
         info->type->mHeap = FALSE;
     }
-
+    
     return TRUE;
+}
+
+BOOL compile_load_element(unsigned int node, sCompileInfo* info)
+{
+    BOOL getting_refference = gNodes[node].uValue.sLoadElement.mGettingRefference;
+    int num_dimention = gNodes[node].uValue.sLoadElement.mArrayDimentionNum;
+    int i;
+    unsigned int index_node[ARRAY_DIMENTION_MAX];
+    for(i=0; i<num_dimention; i++) {
+        index_node[i] = gNodes[node].uValue.sLoadElement.mIndex[i];
+    }
+    
+    /// compile left node ///
+    unsigned int lnode = gNodes[node].mLeft;
+
+    if(!compile(lnode, info)) {
+        return FALSE;
+    }
+    
+    if(!check_nullable_type(NULL, info->type, info)) {
+        return TRUE;
+    }
+    
+    sNodeType* left_type = info->type;
+    
+    int left_type_array_dimention_num = left_type->mArrayDimentionNum;
+
+    LVALUE lvalue = *get_value_from_stack(-1);
+
+    if(left_type->mArrayDimentionNum == 0 && left_type->mPointerNum == 0 && left_type->mNoArrayPointerNum == 0 && left_type->mDynamicArrayNum == 0)
+    {
+        compile_err_msg(info, "comelang can't get an element from this type.(1)");
+        return FALSE;
+    }
+    
+    BOOL global = FALSE;
+    if(lvalue.var) {
+        global = lvalue.var->mGlobal;
+    }
+
+    /// compile middle node ///
+    LVALUE rvalue[ARRAY_DIMENTION_MAX];
+    for(i=0; i<num_dimention; i++) {
+        unsigned int mnode = index_node[i];
+
+        if(!compile(mnode, info)) {
+            return FALSE;
+        }
+        
+        if(!check_nullable_type(NULL, info->type, info)) {
+            return TRUE;
+        }
+
+        rvalue[i] = *get_value_from_stack(-1);
+        
+/*
+        int array_num = 0;
+        if(LLVMIsConstant(rvalue[i].value) != 0) {
+            int array_num = LLVMConstIntGetZExtValue(rvalue[i].value);
+            if(i < left_type->mArrayDimentionNum && array_num >= left_type->mArrayNum[i]) 
+            {
+                compile_err_msg(info, "invalid array index");
+                return TRUE;
+            }
+        }
+*/
+    }
+    
+    return load_element_core(getting_refference, num_dimention, left_type, global, lvalue, rvalue, 1+num_dimention, info);
 }
 
 unsigned int sNodeTree_create_stack(char* current_stack_frame_type_name, sParserInfo* info)

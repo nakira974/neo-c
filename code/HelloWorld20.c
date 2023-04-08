@@ -86,10 +86,12 @@ int main(int argc, char** argv)
     
     string command2 = clone command;
     
+/*
     if(command == null) {
         fprintf(stderr, "require command\n");
         return 1;
     }
+*/
     
     sInfo info;
     
@@ -102,6 +104,20 @@ int main(int argc, char** argv)
     info.nodes = new vector<sNode*%>();
     
     info.nodes2 = info.nodes;
+    
+    var aa = [[string("A"), string("B")], [string("C")]];
+    
+    xassert("element overload test", aa[0][1] === "B");
+    
+    var bb = [string("AAA"):[1,2,3], string("BBB"):[3,5,7]];
+    
+    xassert("element overload test", bb[string("BBB")][0] == 3);
+    
+    var c = (string("CCC"), (string("BBB"), 1), "AAA");
+    
+    xassert("tuple test", c.1.0 === string("BBB"));
+    
+    xassert("list test", [[string("111"), string("222"), string("333")], [string("444"), string("555"), string("666")]] === [[string("111"), string("222"), string("333")], [string("444"), string("555"), string("666")]]);
     
     return 0;
 }

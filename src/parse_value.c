@@ -1900,6 +1900,12 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
             struct_initializer_pointer = FALSE;
         }
         
+        BOOL array_initializer_before = info->array_initializer2;
+        if(struct_initializer || struct_initializer2 || struct_initializer_pointer)
+        {
+            info->array_initializer2 = TRUE;
+        }
+        
         info->p = p;
         info->sline = sline;
         
@@ -3499,6 +3505,8 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                 *node = sNodeTree_create_store_variable(name, right_node, TRUE, global, info);
             }
         }
+        
+        info->array_initializer2 = array_initializer_before;
     }
     else {
         *node = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);

@@ -484,6 +484,7 @@ struct sParserInfoStruct
     unsigned int mClassFieldsRightValue[CLASS_FIELD_MAX];
     
     BOOL array_initializer;
+    BOOL array_initializer2;
     BOOL exception_result_type_function;
     sNodeType* function_result_type;
     
@@ -1294,7 +1295,7 @@ unsigned int sNodeTree_create_derefference(unsigned int left_node, BOOL parent, 
 unsigned int sNodeTree_create_refference(unsigned int left_node, sParserInfo* info);
 unsigned int sNodeTree_create_clone(unsigned int left, BOOL gc, sParserInfo* info);
 unsigned int sNodeTree_create_is_gc_heap(unsigned int left, sParserInfo* info);
-unsigned int sNodeTree_create_load_array_element(unsigned int array, unsigned int index_node[], int num_dimetion, sParserInfo* info);
+unsigned int sNodeTree_create_load_array_element(unsigned int array, unsigned int index_node[], int num_dimention, sParserInfo* info);
 unsigned int sNodeTree_create_store_element(unsigned int array, unsigned int index_node[], int num_dimetion, unsigned int right_node, sParserInfo* info);
 unsigned int sNodeTree_create_func_name(sParserInfo* info);
 unsigned int sNodeTree_create_load_adress_value(unsigned int address_node, sParserInfo* info);

@@ -502,7 +502,7 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
         else if(*info->p == '[') {
             int num_dimention = 0;
             unsigned int index_node[ARRAY_DIMENTION_MAX];
-
+            
             while(*info->p == '[') {
                 info->p++;
                 skip_spaces_and_lf(info);

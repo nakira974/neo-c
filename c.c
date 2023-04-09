@@ -1,17 +1,10 @@
 #include <comelang.h>
 
-struct sInfo
-{
-    int c[2][2];
-};
-
 int main(int argc, char** argv)
 {
-    sInfo info;
-    info.c[0][0] = 123;
-    info.c[0][1] = 234;
+    var c = ("AAA", "BBB", "CCC", ["AAA":1]);
     
-    printf("%d\n", info.c[0][1]);
+    printf("%c\n", c.0[0]);
     
     return 0;
 }

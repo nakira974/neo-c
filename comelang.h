@@ -530,14 +530,14 @@ impl list <T>
         return self;
     }
     void finalize(list<T>* self) {
-        list_item<T>*? it = self->head;
+        list_item<T>* it = self->head;
         while(it != null) {
             if(isheap(T)) {
-                delete it!.item;
+                delete it.item;
             }
             auto prev_it = it;
-            it = it!.next;
-            delete prev_it!;
+            it = it.next;
+            delete prev_it;
         }
     }
 

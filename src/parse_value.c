@@ -317,6 +317,13 @@ BOOL get_regex(unsigned int* node, sParserInfo* info)
 
 BOOL parse_list(unsigned int* node, sParserInfo* info)
 {
+    info->container_nest++;
+    
+    if(info->container_nest > 2) {
+        parser_err_msg(info, "container list max is 2");
+        return FALSE;
+    }
+    
     unsigned int elements[LIST_ELEMENT_MAX];
     int num_elements = 0;
     
@@ -350,11 +357,20 @@ BOOL parse_list(unsigned int* node, sParserInfo* info)
     
     *node = sNodeTree_create_list(num_elements, elements, info);
     
+    info->container_nest--;
+    
     return TRUE;
 }
 
 BOOL parse_map(unsigned int* node, sParserInfo* info)
 {
+    info->container_nest++;
+    
+    if(info->container_nest > 2) {
+        parser_err_msg(info, "container list max is 2");
+        return FALSE;
+    }
+    
     unsigned int keys[LIST_ELEMENT_MAX];
     unsigned int values[LIST_ELEMENT_MAX];
     int num_keys = 0;
@@ -401,11 +417,26 @@ BOOL parse_map(unsigned int* node, sParserInfo* info)
     
     *node = sNodeTree_create_map(num_keys, keys, values, info);
     
+    info->container_nest--;
+    
     return TRUE;
 }
 
 BOOL parse_tuple(unsigned int* node, sParserInfo* info)
 {
+    info->container_nest++;
+    info->tuple_nest++;
+    
+    if(info->tuple_nest > 2) {
+        parser_err_msg(info, "can't make tuple nested");
+        return FALSE;
+    }
+    
+    if(info->container_nest > 2) {
+        parser_err_msg(info, "container list max is 2");
+        return FALSE;
+    }
+    
     unsigned int nodes[TUPLE_ELEMENT_MAX];
     int num_nodes = 0;
     
@@ -435,6 +466,9 @@ BOOL parse_tuple(unsigned int* node, sParserInfo* info)
     }
     
     *node = sNodeTree_create_tuple(num_nodes, nodes, info);
+    
+    info->container_nest--;
+    info->tuple_nest--;
     
     return TRUE;
 }

@@ -496,6 +496,9 @@ struct sParserInfoStruct
     
     BOOL parse_catch;
     BOOL in_parse_function;
+    
+    int container_nest;
+    int tuple_nest;
 };
 
 typedef struct sParserInfoStruct sParserInfo;

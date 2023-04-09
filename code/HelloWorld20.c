@@ -76,6 +76,11 @@ struct sInfo
     int stack_num;
 };
 
+struct sInfo2
+{
+    int c[2][2];
+};
+
 int main(int argc, char** argv)
 {
     string a = string("AAAA");
@@ -118,6 +123,28 @@ int main(int argc, char** argv)
     xassert("tuple test", c.1.0 === string("BBB"));
     
     xassert("list test", [[string("111"), string("222"), string("333")], [string("444"), string("555"), string("666")]] === [[string("111"), string("222"), string("333")], [string("444"), string("555"), string("666")]]);
+    
+    sInfo2 infoXXX;
+    infoXXX.c[0][0] = 123;
+    infoXXX.c[0][1] = 234;
+    
+    xassert("array test", infoXXX.c[0][0] == 123 && infoXXX.c[0][1] == 234);
+    
+    var aXYZ = ("AAA", 1);
+    
+    xassert("tuple test", aXYZ.0[0] == 'A');
+    
+    var aXYZ2 = [["AAA", "BBB"], ["BBB", "CCC"]];
+    
+    xassert("list of list test", aXYZ2[0][1] === "BBB");
+    
+    var cXYZ = ["AAA", "BBB"];
+    
+    xassert("list", cXYZ[0][1] == 'A');
+    
+    var cZZZ = [["BBB":1], ["AAA":2]];
+    
+    xassert("list", cZZZ[0]["BBB"] == 1);
     
     return 0;
 }

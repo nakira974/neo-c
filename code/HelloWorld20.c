@@ -81,7 +81,7 @@ struct sInfo2
     int c[2][2];
 };
 
-int c(char*% a)
+int cZYZZZZZZZZZZZZZZZZZZZZZZZZZZZ(char*% a)
 {
     a = string("AAA");
     
@@ -157,7 +157,7 @@ int main(int argc, char** argv)
     
     char*% cZYZ = null;
     
-    c(string("AAA"));
+    cZYZZZZZZZZZZZZZZZZZZZZZZZZZZZ(string("AAA"));
     
     return 0;
 }

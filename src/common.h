@@ -1033,6 +1033,7 @@ struct sNodeTreeStruct
         } sNullValue;
         struct {
             BOOL mLoad;
+            BOOL mInhibitUnwrap;
         } sUnwrap;
     } uValue;
 };

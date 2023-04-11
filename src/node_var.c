@@ -8182,6 +8182,7 @@ unsigned int sNodeTree_create_unwrap(unsigned int left, BOOL load_, sParserInfo*
     gNodes[node].mLine = info->sline;
     
     gNodes[node].uValue.sUnwrap.mLoad = load_;
+    gNodes[node].uValue.sUnwrap.mInhibitUnwrap = FALSE;
 
     gNodes[node].mLeft = left;
     gNodes[node].mRight = 0;
@@ -8195,6 +8196,7 @@ BOOL compile_unwrap(unsigned int node, sCompileInfo* info)
     unsigned int left_node = gNodes[node].mLeft;
     
     BOOL load_ = gNodes[node].uValue.sUnwrap.mLoad;
+    BOOL inhibit_unwrap = gNodes[node].uValue.sUnwrap.mInhibitUnwrap;
 
     if(left_node == 0) {
         compile_err_msg(info, "require unwrap target object");
@@ -8210,7 +8212,7 @@ BOOL compile_unwrap(unsigned int node, sCompileInfo* info)
     LVALUE llvm_value = *get_value_from_stack(-1);
     dec_stack_ptr(1, info);
     
-    if(left_type->mPointerNum > 0 && gNCCome) {
+    if(left_type->mPointerNum > 0 && gNCCome && !inhibit_unwrap) {
         LLVMValueRef value = llvm_value.value;
         
         LLVMTypeRef llvm_type = create_llvm_type_with_class_name("char*");

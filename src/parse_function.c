@@ -1326,7 +1326,7 @@ BOOL parse_funcation_call_params(int* num_params, unsigned int* params, sParserI
                 
                 //gNodes[node].mLabel = GC_strdup(label);
                 xstrncpy(gNodes[node].mLabel, label, VAR_NAME_MAX);
-
+                
                 params[*num_params] = node;
                 (*num_params)++;
 

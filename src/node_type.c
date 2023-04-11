@@ -553,6 +553,8 @@ BOOL lambda_posibility(sNodeType* left_type, sNodeType* right_type)
 
 BOOL auto_cast_posibility(sNodeType* left_type, sNodeType* right_type, BOOL op)
 {
+//show_node_type(left_type);
+//show_node_type(right_type);
     sCLClass* left_class = left_type->mClass;
     sCLClass* right_class = right_type->mClass; 
     
@@ -675,8 +677,16 @@ BOOL auto_cast_posibility(sNodeType* left_type, sNodeType* right_type, BOOL op)
     {
         return TRUE;
     }
-    else if(type_identify(left_type, right_type) && left_type->mPointerNum+left_type->mNoArrayPointerNum == right_type->mPointerNum+right_type->mArrayDimentionNum) 
+    else if(type_identify(left_type, right_type) && left_type->mPointerNum+left_type->mNoArrayPointerNum == right_type->mPointerNum+right_type->mArrayDimentionNum && left_type->mNumGenericsTypes == right_type->mNumGenericsTypes) 
     {
+        int i;
+        for(i=0; i<left_type->mNumGenericsTypes; i++) {
+            sNodeType* left_type2 = left_type->mGenericsTypes[i];
+            sNodeType* right_type2 = right_type->mGenericsTypes[i];
+            if(!type_identify(left_type2, right_type2)) {
+                return FALSE;
+            }
+        }
         return TRUE;
     }
     else if(type_identify(left_type, right_type) && left_type->mPointerNum == 1 && left_type->mArrayDimentionNum == 1 && right_type->mArrayDimentionNum == 2 && right_type->mPointerNum == 0) {
@@ -746,8 +756,20 @@ BOOL substitution_posibility(sNodeType* left_type, sNodeType* right_type, LLVMVa
     else if(left_type->mPointerNum == 1 && right_type->mDynamicArrayNum > 0) {
         return TRUE;
     }
-    else if(type_identify(left_type, right_type) && left_type->mPointerNum+left_type->mNoArrayPointerNum == right_type->mPointerNum+right_type->mNoArrayPointerNum) 
+    else if(type_identify(left_type, right_type) && left_type->mPointerNum+left_type->mNoArrayPointerNum == right_type->mPointerNum+right_type->mNoArrayPointerNum && left_type->mNumGenericsTypes == right_type->mNumGenericsTypes) 
     {
+        if(left_type->mNumGenericsTypes > 0) {
+            int i;
+            for(i=0; i<left_type->mNumGenericsTypes; i++) {
+                sNodeType* left_type2 = left_type->mGenericsTypes[i];
+                sNodeType* right_type2 = right_type->mGenericsTypes[i];
+                
+                if(!substitution_posibility(left_type2, right_type2, NULL, info))
+                {
+                    return FALSE;
+                }
+            }
+        }
         return TRUE;
     }
     else if(type_identify_with_class_name(left_type, "bool")) {

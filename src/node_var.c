@@ -492,6 +492,7 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
         return FALSE;
     }
     
+    
     LLVMValueRef obj = NULL;
 
     sNodeType* right_type = clone_node_type(info->type);

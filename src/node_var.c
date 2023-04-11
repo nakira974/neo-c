@@ -5548,6 +5548,9 @@ BOOL compile_object(unsigned int node, sCompileInfo* info)
             return FALSE;
         }
         
+        info->type = clone_node_type(node_type);
+        info->type->mPointerNum++;
+        
         return TRUE;
     }
     else if(gc) {
@@ -5927,7 +5930,7 @@ BOOL compile_store_field(unsigned int node, sCompileInfo* info)
         
         remove_object_from_right_values(rvalue.value, info);
     }
-
+    
     if(auto_cast_posibility(field_type, right_type, FALSE)) {
         if(!cast_right_type_to_left_type(field_type, &right_type, &rvalue, info))
         {

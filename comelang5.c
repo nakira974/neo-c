@@ -197,7 +197,7 @@ int wchar_t*::rindex(wchar_t* str, wchar_t* search_str, int default_value)
     return default_value;
 }
 
-wstring wchar_t*::reverse(whar_t* str) 
+wstring wchar_t*::reverse(wchar_t* str) 
 {
     int len = wcslen(str);
     wstring result = new wchar_t[len + 1];

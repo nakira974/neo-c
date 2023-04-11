@@ -562,6 +562,9 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
     }
 
     if(*result_type == NULL || (*result_type)->mClass == NULL) {
+        char buf[128];
+        snprintf(buf, 128, "type not found %s\n", type_name);
+        parser_err_msg(info, buf);
         *result_type = create_node_type_with_class_name("int");
     }
 

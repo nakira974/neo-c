@@ -2830,7 +2830,7 @@ impl smart_pointer<T>
         using unsafe;
         
         if(is_gc()) {
-            smart_pointer<T>* result_gc = borrow new smart_pinter<T>;
+            smart_pointer<T>* result_gc = borrow new smart_pointer<T>;
             
             result_gc.memory = self.memory;
             result_gc.p = self.p + value;
@@ -2863,7 +2863,7 @@ impl smart_pointer<T>
         using unsafe;
         
         if(is_gc()) {
-            smart_pointer<T>* result_gc = borrow new smart_pinter<T>;
+            smart_pointer<T>* result_gc = borrow new smart_pointer<T>;
             
             result_gc.memory = self.memory;
             result_gc.p = self.p - value;
@@ -3196,8 +3196,8 @@ inline int wstring::rindex(wchar_t* str, wchar_t* search_str, int default_value)
     return wchar_tp_rindex(str, search_str, default_value);
 }
 
-wstring wchar_t*::reverse(whar_t* str) ;
-inline wstring wtring::reverse(whar_t* str) 
+wstring wchar_t*::reverse(wchar_t* str) ;
+inline wstring wtring::reverse(wchar_t* str) 
 {
     return wchar_tp_reverse(str);
 }

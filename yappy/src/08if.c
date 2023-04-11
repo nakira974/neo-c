@@ -1,5 +1,7 @@
 #include "common.h"
 
+struct sFunNode;
+
 class sTrueNode(sParserInfo* info)
 {
     unsigned int self.id = gNodeID++;

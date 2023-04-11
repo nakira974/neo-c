@@ -151,6 +151,8 @@ struct sVar
 #define OP_IS 38
 #define OP_IS_NOT 39
 
+struct sVMInfo;
+
 typedef bool (*fNativeFun)(map<string, ZVALUE>* params, sVMInfo* info);
 
 struct sFunction

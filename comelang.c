@@ -31,7 +31,7 @@ void igc_increment_ref_count(void* mem)
         return;
     }
     
-    int* ref_count = (char*)mem - sizeof(int);
+    int* ref_count = (int*)((char*)mem - sizeof(int));
     
     (*ref_count)++;
     
@@ -48,7 +48,7 @@ void igc_decrement_ref_count(void* mem)
         return;
     }
     
-    int* ref_count = (char*)mem - sizeof(int);
+    int* ref_count = (int*)((char*)mem - sizeof(int));
     
     (*ref_count)--;
 //printf("ref_count %d\n", *ref_count);
@@ -65,7 +65,7 @@ void free_object(void* mem)
         return;
     }
     
-    int* ref_count = (char*)mem - sizeof(int);
+    int* ref_count = (int*)((char*)mem - sizeof(int));
     
     ncfree(ref_count);
 }
@@ -86,7 +86,7 @@ void call_finalizer(void* fun, void* mem, int call_finalizer_only)
     else {
         using unsafe;
         
-        int* ref_count = (char*)mem - sizeof(int);
+        int* ref_count = (int*)((char*)mem - sizeof(int));
 //printf("ref_count %d\n", *ref_count);
         
         (*ref_count)--;

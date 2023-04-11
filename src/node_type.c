@@ -646,6 +646,9 @@ BOOL auto_cast_posibility(sNodeType* left_type, sNodeType* right_type, BOOL op)
     else if(type_identify_with_class_name(left_type, "void") && left_type->mPointerNum == 1 && right_type->mPointerNum > 0) {
         return TRUE;
     }
+    else if(type_identify_with_class_name(left_type, "void") && left_type->mPointerNum == 1 && right_type->mArrayDimentionNum == 1) {
+        return TRUE;
+    }
     else if(type_identify_with_class_name(left_type, "protocol_obj_t")) {
         return TRUE;
     }
@@ -668,15 +671,15 @@ BOOL auto_cast_posibility(sNodeType* left_type, sNodeType* right_type, BOOL op)
     {
         return TRUE;
     }
-    else if((left_type->mPointerNum-1 == right_type->mPointerNum) && right_type->mArrayDimentionNum == 1)
+    else if(type_identify(left_type, right_type) && (left_type->mPointerNum-1 == right_type->mPointerNum) && right_type->mArrayDimentionNum == 1)
     {
         return TRUE;
     }
-    else if(left_type->mPointerNum+left_type->mNoArrayPointerNum == right_type->mPointerNum+right_type->mArrayDimentionNum) 
+    else if(type_identify(left_type, right_type) && left_type->mPointerNum+left_type->mNoArrayPointerNum == right_type->mPointerNum+right_type->mArrayDimentionNum) 
     {
         return TRUE;
     }
-    else if(left_type->mPointerNum == 1 && left_type->mArrayDimentionNum == 1 && right_type->mArrayDimentionNum == 2 && right_type->mPointerNum == 0) {
+    else if(type_identify(left_type, right_type) && left_type->mPointerNum == 1 && left_type->mArrayDimentionNum == 1 && right_type->mArrayDimentionNum == 2 && right_type->mPointerNum == 0) {
         return TRUE;
     }
 

@@ -1,17 +1,20 @@
 #include <comelang.h>
 
-int c(char*% a)
+int fun(sInfo* a)
 {
-    a = string("AAA");
-    
-    delete borrow a;
-    
-    return 0;
+    return 1;
+}
+
+struct sInfo
+{
+    int a;
+    int b;
 }
 
 int main(int argc, char** argv)
 {
-    c(string("AAA"));
+    sInfo info;
+    fun(&info);
     
     return 0;
 }

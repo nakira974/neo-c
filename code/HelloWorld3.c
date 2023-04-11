@@ -108,7 +108,7 @@ int main()
         printf("%d\n", it);
     }
 
-    vector<int*>*% v3 = new vector<init*>.initialize();
+    vector<int*>*% v3 = new vector<int*>.initialize();
 
     int x = 0;
 

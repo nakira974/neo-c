@@ -7916,6 +7916,14 @@ BOOL compile_delete(unsigned int node, sCompileInfo* info)
         free_object(node_type, llvm_value.value, TRUE, info);
     }
     remove_object_from_right_values(llvm_value.value, info);
+    
+    if(llvm_value.address) {
+        LLVMValueRef obj = llvm_value.address;
+        
+        LLVMValueRef null_value = create_null_value(node_type);
+    
+        LLVMBuildStore(gBuilder, null_value, obj);
+    }
 
     info->type = create_node_type_with_class_name("void");
 

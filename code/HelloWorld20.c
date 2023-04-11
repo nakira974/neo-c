@@ -81,6 +81,15 @@ struct sInfo2
     int c[2][2];
 };
 
+int c(char*% a)
+{
+    a = string("AAA");
+    
+    delete borrow a;
+    
+    return 0;
+}
+
 int main(int argc, char** argv)
 {
     string a = string("AAAA");
@@ -145,6 +154,10 @@ int main(int argc, char** argv)
     var cZZZ = [["BBB":1], ["AAA":2]];
     
     xassert("list", cZZZ[0]["BBB"] == 1);
+    
+    char*% cZYZ = null;
+    
+    c(string("AAA"));
     
     return 0;
 }

@@ -234,6 +234,8 @@ a.c,b.c,c.c
 
 16. Detect dangling pointer
 
+17 In safe mode, runtime is memory safe. no segmention fault
+
 1. C言語とある程度の互換性があります。Cプリプロセッサーも動きます。
 
 2. オリジナルのリファレンスカウントを使ったヒープ管理をします。-gcオプションでboehmGCを使ったヒープ管理をします。
@@ -263,6 +265,8 @@ a.c,b.c,c.c
 15. 簡易な例外処理があります。
 
 16. できる限りダンジリングポインタを検出する機能があります。
+
+17. セーフモードではできるかぎりメモリセーフです。
 
 # INSTALL
 
@@ -1146,131 +1150,10 @@ int main()
 
 `[a-zA-Z][a-zA-Z_0-9]* is a comment of expression.
 
-# Reflection
-
-``` C
-> vim a.c
-struct sB {
-    int a;
-    char* b;
-    struct sB* c;
-};
-
-int main() {
-    sB b;
-    b;
-> comelang type a.c
-struct sB
-#0 int a
-#1 char* b
-#2 struct sB*
-```
-
-comelang type file name outputs the type of last expression and the type inner contents. It's useful for reflection. You will make a program output a program with any script languaged or comelang its self.
-
-comelang type ファイル名で最後の式の型とその内容を出力することができます。これはリフレクションで便利です。プログラムを生成するプログラムを任意のスクリプト言語やcomelang自身で作ることができるでしょう。
-
-``` C
-> vim a.c
-int gGlobal1;
-int gGlobal2;
-> comelang global a.c
-gGlobal1 int
-gGlobal2 int
-```
-
-``` C
-> vim a.c
-int fun(int a, int b)
-{
-    return a + b;
-}
-
-int fun2()
-{
-    return 123;
-}
-> comelang function a.c
-fun extern 0 var args 0 gnerics function 0 num params 2
-a int
-b int
-result type int
-fun2 extern 0 var args 0 gnerics function 0 num params 0
-result type int
-```
-
-``` C
-> vim a.c
-struct sA 
-{
-    int a;
-    int b;
-};
-
-enum eEnumA { kA, kB };
-> comelang class a.c
-struct sA
-#0 int a
-#1 int b
-enum eEnumA
-kA 0
-kB 1
-```
-
-``` C
-> vim a.c
-typedef int tType;
-typedef int tType2;
-> comelang typedef a.c
-tType int
-tType2 int
-```
-
-9. MACRO
-
-~~~ C
-```
-ruby <<EOS
-    puts("int gGlobal2;");
-EOS
-```
-~~~
-
-The output of the enclosed code is pasted into the source code. With this and reflection, you'll be able to generate code with reflection at compile time.
-
-囲まれたコードの出力がソースコードに貼り付けます。これとリフレクションを使えばコンパイルタイムにリフレクションでコードを生成できるでしょう。
-
-Do not expand macros with the -n option.
-
--nオプションを使うとマクロを展開しません。
-
-Compile Time Reflection and code generation is below:
-
-~~~ shell
-> vim g.c
-~~~
-
-``` C
-int gGlobal;
-
-
-ruby <<EOS
-    type = "`comelang -n global $SOURCE_NAME | grep gGlobal`".split()[1];
-    puts(type + " gGlobal2;");
-EOS
-```
-~~~ shell
-> comelang global g.c
-gGlobal int
-gGlobal2 int
-~~~
-
-SOURCE_NAMEという環境変数にコンパイル中のソースファイル名が入ってます。
-
 # BoehmGC
 
-The default heap system is boehmGC. And incremental GC is enabled.
- It's faster then my original heap system. If you write char*% as type name, ignored % and it's char*.
+comelang with -gc enable boehmGC. And incremental GC is enabled.
+If you write char*% as type name, ignored % and it's char*.
  
 
 # Original Heap System(Incremental GC)
@@ -1441,6 +1324,8 @@ struct sA {
 
 int main()
 {
+    using unsafe;
+    
     int*% a = new int;
     *a = 5;
 
@@ -2075,6 +1960,8 @@ a.c 12: out of range of smart pointer
 
 int main(int argc, char** argv)
 {
+    using unsafe;
+    
     int a[10];
     for(int i=0; i<10; i++) {
         a[i] = i;
@@ -2156,6 +2043,11 @@ After that, all sources will be unsafe. Declaring it inside a function makes it 
 please use it. Smart pointers do bounds checking. Segmentation~
 no faults.
 
+配列もセーフモードでは宣言禁止です。配列を使う場合はusing unsafeしてください。
+
+Arrays are also not allowed to be declared in safe mode. Use unsafe when using arrays.
+
+
 # fn
 
 ``` C
@@ -2186,6 +2078,8 @@ int main()
 
 int main()
 {
+    using unsafe;
+    
     char* p = "ABC";
     
     printf("%c\n", p>>>); // put A
@@ -2200,6 +2094,8 @@ int main()
 
 int main()
 {
+    using unsafe;
+    
     var a = 123;
     void* b = &a;
     
@@ -2299,4 +2195,123 @@ int main(int argc, char** argv)
 
 ```
 
-With -no-gc option, it can't be used.
+# Reflection
+
+``` C
+> vim a.c
+struct sB {
+    int a;
+    char* b;
+    struct sB* c;
+};
+
+int main() {
+    sB b;
+    b;
+> comelang type a.c
+struct sB
+#0 int a
+#1 char* b
+#2 struct sB*
+```
+
+comelang type file name outputs the type of last expression and the type inner contents. It's useful for reflection. You will make a program output a program with any script languaged or comelang its self.
+
+comelang type ファイル名で最後の式の型とその内容を出力することができます。これはリフレクションで便利です。プログラムを生成するプログラムを任意のスクリプト言語やcomelang自身で作ることができるでしょう。
+
+``` C
+> vim a.c
+int gGlobal1;
+int gGlobal2;
+> comelang global a.c
+gGlobal1 int
+gGlobal2 int
+```
+
+``` C
+> vim a.c
+int fun(int a, int b)
+{
+    return a + b;
+}
+
+int fun2()
+{
+    return 123;
+}
+> comelang function a.c
+fun extern 0 var args 0 gnerics function 0 num params 2
+a int
+b int
+result type int
+fun2 extern 0 var args 0 gnerics function 0 num params 0
+result type int
+```
+
+``` C
+> vim a.c
+struct sA 
+{
+    int a;
+    int b;
+};
+
+enum eEnumA { kA, kB };
+> comelang class a.c
+struct sA
+#0 int a
+#1 int b
+enum eEnumA
+kA 0
+kB 1
+```
+
+``` C
+> vim a.c
+typedef int tType;
+typedef int tType2;
+> comelang typedef a.c
+tType int
+tType2 int
+```
+
+9. MACRO
+
+~~~ C
+```
+ruby <<EOS
+    puts("int gGlobal2;");
+EOS
+```
+~~~
+
+The output of the enclosed code is pasted into the source code. With this and reflection, you'll be able to generate code with reflection at compile time.
+
+囲まれたコードの出力がソースコードに貼り付けます。これとリフレクションを使えばコンパイルタイムにリフレクションでコードを生成できるでしょう。
+
+Do not expand macros with the -n option.
+
+-nオプションを使うとマクロを展開しません。
+
+Compile Time Reflection and code generation is below:
+
+~~~ shell
+> vim g.c
+~~~
+
+``` C
+int gGlobal;
+
+
+ruby <<EOS
+    type = "`comelang -n global $SOURCE_NAME | grep gGlobal`".split()[1];
+    puts(type + " gGlobal2;");
+EOS
+```
+~~~ shell
+> comelang global g.c
+gGlobal int
+gGlobal2 int
+~~~
+
+SOURCE_NAMEという環境変数にコンパイル中のソースファイル名が入ってます。

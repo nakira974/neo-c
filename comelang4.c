@@ -459,6 +459,7 @@ list<string>*% FILE::readlines(FILE* f)
     list<string>*% result = new list<string>.initialize();
     
     while(1) {
+        using unsafe;
         char buf[BUFSIZ];
         
         if(fgets(buf, BUFSIZ, f) == NULL) {
@@ -476,6 +477,7 @@ string FILE::read(FILE* f)
     buffer*% buf = new buffer.initialize();
     
     while(1) {
+        using unsafe;
         char buf2[BUFSIZ];
         
         int size = fread(buf2, 1, BUFSIZ, f);
@@ -491,6 +493,7 @@ string FILE::read(FILE* f)
 
 FILE* FILE::fprintf(FILE* f, const char* msg, ...)
 {
+    using unsafe;
     char msg2[1024];
 
     va_list args;
@@ -505,6 +508,7 @@ FILE* FILE::fprintf(FILE* f, const char* msg, ...)
 
 FILE* FILE*::fprintf(FILE* f, const char* msg, ...)
 {
+    using unsafe;
     char msg2[1024];
 
     va_list args;

@@ -5,6 +5,8 @@ long fun()
     return (long)1;
 }
 
+using unsafe;
+
 int gArray[10];
 
 int (*ArrayPointerRresultFun(int c, int d))[10]

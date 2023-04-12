@@ -770,6 +770,7 @@ struct sNodeTreeStruct
             char mVarName[VAR_NAME_MAX];
             BOOL mGlobal;
             BOOL mExtern;
+            BOOL mSafeMode;
         } sDefineVariable;
 
         struct {

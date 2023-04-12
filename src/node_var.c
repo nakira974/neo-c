@@ -151,6 +151,7 @@ unsigned int sNodeTree_create_define_variable(char* var_name, BOOL extern_, BOOL
     xstrncpy(gNodes[node].uValue.sDefineVariable.mVarName, var_name, VAR_NAME_MAX);
     gNodes[node].uValue.sDefineVariable.mGlobal = global;
     gNodes[node].uValue.sDefineVariable.mExtern = extern_;
+    gNodes[node].uValue.sDefineVariable.mSafeMode = gNCSafeMode;
     
     gNodes[node].mLeft = 0;
     gNodes[node].mRight = 0;
@@ -217,6 +218,7 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
     xstrncpy(var_name, gNodes[node].uValue.sStoreVariable.mVarName, VAR_NAME_MAX);
     BOOL global = gNodes[node].uValue.sDefineVariable.mGlobal;
     BOOL extern_ = gNodes[node].uValue.sDefineVariable.mExtern;
+    BOOL safe_mode = gNodes[node].uValue.sDefineVariable.mSafeMode;
     int sline = gNodes[node].mLine;
     
     sVar* var_ = get_variable_from_table(info->pinfo->lv_table, var_name);
@@ -227,6 +229,13 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
     }
     
     sNodeType* var_type = var_->mType;
+    
+    if(safe_mode) {
+        if(var_type->mArrayDimentionNum > 0) {
+            compile_err_msg(info, "array can't be used in safe mode");
+            return TRUE;
+        }
+    }
     
     if(is_typeof_type(var_type))
     {

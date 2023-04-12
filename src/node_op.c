@@ -349,10 +349,6 @@ BOOL compile_add(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = clone_node_type(info->type);
 
@@ -363,10 +359,6 @@ BOOL compile_add(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = clone_node_type(info->type);
@@ -596,10 +588,6 @@ BOOL compile_sub(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = clone_node_type(info->type);
     
@@ -610,10 +598,6 @@ BOOL compile_sub(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = clone_node_type(info->type);
@@ -834,10 +818,6 @@ BOOL compile_mult(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = clone_node_type(info->type);
 
@@ -848,10 +828,6 @@ BOOL compile_mult(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = clone_node_type(info->type);
@@ -936,10 +912,6 @@ BOOL compile_div(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = clone_node_type(info->type);
 
@@ -950,10 +922,6 @@ BOOL compile_div(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = clone_node_type(info->type);
@@ -1040,10 +1008,6 @@ BOOL compile_mod(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = clone_node_type(info->type);
 
@@ -1054,10 +1018,6 @@ BOOL compile_mod(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = clone_node_type(info->type);
@@ -1133,12 +1093,6 @@ BOOL compile_equals(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-/*
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
-*/
 
     sNodeType* left_type = clone_node_type(info->type);
 
@@ -1148,12 +1102,6 @@ BOOL compile_equals(unsigned int node, sCompileInfo* info)
     if(!compile(right_node, info)) {
         return FALSE;
     }
-    
-/*
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
-*/
 
     sNodeType* right_type = clone_node_type(info->type);
 
@@ -1227,10 +1175,6 @@ BOOL compile_equals2(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = clone_node_type(info->type);
 
@@ -1241,10 +1185,6 @@ BOOL compile_equals2(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = clone_node_type(info->type);
@@ -1330,12 +1270,6 @@ BOOL compile_not_equals(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-/*
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
-*/
 
     sNodeType* left_type = clone_node_type(info->type);
 
@@ -1345,12 +1279,6 @@ BOOL compile_not_equals(unsigned int node, sCompileInfo* info)
     if(!compile(right_node, info)) {
         return FALSE;
     }
-    
-/*
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
-*/
 
     sNodeType* right_type = clone_node_type(info->type);
 
@@ -1424,10 +1352,6 @@ BOOL compile_not_equals2(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = clone_node_type(info->type);
 
@@ -1438,10 +1362,6 @@ BOOL compile_not_equals2(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = clone_node_type(info->type);
@@ -1526,10 +1446,6 @@ BOOL compile_gteq(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = clone_node_type(info->type);
 
@@ -1540,10 +1456,6 @@ BOOL compile_gteq(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = clone_node_type(info->type);
@@ -1638,10 +1550,6 @@ BOOL compile_leeq(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = clone_node_type(info->type);
 
@@ -1652,10 +1560,6 @@ BOOL compile_leeq(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = clone_node_type(info->type);
@@ -1750,10 +1654,6 @@ BOOL compile_gt(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = clone_node_type(info->type);
 
@@ -1764,10 +1664,6 @@ BOOL compile_gt(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = clone_node_type(info->type);
@@ -1862,10 +1758,6 @@ BOOL compile_le(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = clone_node_type(info->type);
 
@@ -1876,10 +1768,6 @@ BOOL compile_le(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = clone_node_type(info->type);
@@ -1974,10 +1862,6 @@ BOOL compile_logical_denial(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = clone_node_type(info->type);
 
@@ -2068,9 +1952,6 @@ BOOL compile_left_shift(unsigned int node, sCompileInfo* info)
         return FALSE;
     }
     
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
     sNodeType* left_type = info->type;
 
     LVALUE lvalue = *get_value_from_stack(-1);
@@ -2080,10 +1961,6 @@ BOOL compile_left_shift(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = info->type;
@@ -2162,9 +2039,6 @@ BOOL compile_right_shift(unsigned int node, sCompileInfo* info)
         return FALSE;
     }
     
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
     sNodeType* left_type = info->type;
 
     LVALUE lvalue = *get_value_from_stack(-1);
@@ -2174,10 +2048,6 @@ BOOL compile_right_shift(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = info->type;
@@ -2256,9 +2126,6 @@ BOOL compile_and(unsigned int node, sCompileInfo* info)
         return FALSE;
     }
     
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
     sNodeType* left_type = info->type;
 
     LVALUE lvalue = *get_value_from_stack(-1);
@@ -2268,10 +2135,6 @@ BOOL compile_and(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = info->type;
@@ -2350,9 +2213,6 @@ BOOL compile_xor(unsigned int node, sCompileInfo* info)
         return FALSE;
     }
     
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
     sNodeType* left_type = info->type;
 
     LVALUE lvalue = *get_value_from_stack(-1);
@@ -2362,10 +2222,6 @@ BOOL compile_xor(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = info->type;
@@ -2444,9 +2300,6 @@ BOOL compile_or(unsigned int node, sCompileInfo* info)
         return FALSE;
     }
     
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
     sNodeType* left_type = info->type;
 
     LVALUE lvalue = *get_value_from_stack(-1);
@@ -2456,10 +2309,6 @@ BOOL compile_or(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = info->type;
@@ -2538,10 +2387,6 @@ BOOL compile_complement(unsigned int node, sCompileInfo* info)
     if(!compile(expression_node, info))
     {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* left_node_type = clone_node_type(info->type);
@@ -2708,10 +2553,6 @@ BOOL compile_plus_plus(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = info->type;
 
@@ -2722,10 +2563,6 @@ BOOL compile_plus_plus(unsigned int node, sCompileInfo* info)
 
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = info->type;
@@ -2879,10 +2716,6 @@ BOOL compile_minus_minus(unsigned int node, sCompileInfo* info)
     }
     
     BOOL safe_mode = gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = info->type;
 
@@ -2893,10 +2726,6 @@ BOOL compile_minus_minus(unsigned int node, sCompileInfo* info)
 
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = info->type;
@@ -3055,10 +2884,6 @@ BOOL compile_equal_plus(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = info->type;
 
@@ -3069,10 +2894,6 @@ BOOL compile_equal_plus(unsigned int node, sCompileInfo* info)
 
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = info->type;
@@ -3204,10 +3025,6 @@ BOOL compile_equal_minus(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = info->type;
 
@@ -3218,10 +3035,6 @@ BOOL compile_equal_minus(unsigned int node, sCompileInfo* info)
 
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = info->type;
@@ -3350,10 +3163,6 @@ BOOL compile_equal_mult(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = info->type;
 
@@ -3364,10 +3173,6 @@ BOOL compile_equal_mult(unsigned int node, sCompileInfo* info)
 
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = info->type;
@@ -3459,10 +3264,6 @@ BOOL compile_equal_div(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = info->type;
 
@@ -3473,10 +3274,6 @@ BOOL compile_equal_div(unsigned int node, sCompileInfo* info)
 
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = info->type;
@@ -3581,10 +3378,6 @@ BOOL compile_equal_mod(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = info->type;
 
@@ -3595,10 +3388,6 @@ BOOL compile_equal_mod(unsigned int node, sCompileInfo* info)
 
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = info->type;
@@ -3721,10 +3510,6 @@ BOOL compile_equal_lshift(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = info->type;
 
@@ -3735,10 +3520,6 @@ BOOL compile_equal_lshift(unsigned int node, sCompileInfo* info)
 
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = info->type;
@@ -3831,10 +3612,6 @@ BOOL compile_equal_rshift(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = info->type;
 
@@ -3845,10 +3622,6 @@ BOOL compile_equal_rshift(unsigned int node, sCompileInfo* info)
 
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = info->type;
@@ -3942,10 +3715,6 @@ BOOL compile_equal_and(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = info->type;
 
@@ -3956,10 +3725,6 @@ BOOL compile_equal_and(unsigned int node, sCompileInfo* info)
 
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = info->type;
@@ -4063,10 +3828,6 @@ BOOL compile_equal_xor(unsigned int node, sCompileInfo* info)
     if(!compile(right_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* right_type = info->type;
 
@@ -4158,10 +3919,6 @@ BOOL compile_equal_or(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = info->type;
 
@@ -4172,10 +3929,6 @@ BOOL compile_equal_or(unsigned int node, sCompileInfo* info)
 
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = info->type;

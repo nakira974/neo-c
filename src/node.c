@@ -4628,12 +4628,6 @@ BOOL get_const_value_from_node(int* array_size, unsigned int array_size_node, sP
     info->no_output_err_msg = FALSE;
     
     delete_last_instrunction(prev_block, &cinfo);
-    
-/*
-    if(!check_nullable_type(NULL, cinfo.type, &cinfo)) {
-        return TRUE;
-    }
-*/
 
     if(gNCHeader) {
         return TRUE;
@@ -5333,12 +5327,6 @@ BOOL compile_conditional_expression(unsigned int node, sCompileInfo* info)
         }
         return FALSE;
     }
-    
-/*
-    if(!check_nullable_type(info->type, info)) {
-        return TRUE;
-    }
-*/
     
     if(gNodes[node].mTerminated) {
         if(gNCType && !gNCGlobal && !gNCFunction && !gNCClass && !gNCTypedef) {

@@ -55,7 +55,7 @@ void ViWin*::inputRewritetMode(ViWin* self, Vi* nvi)
         self.backSpace();
     }
     else if(key == 9) {
-        auto str = self.texts.item(self.scroll+self.cursorY, null).substring(0, self.cursorX);
+        auto str = self.texts.item(self.scroll+self.cursorY, null!).substring(0, self.cursorX);
 
         bool ignore_case = false;
         bool multiline = false;

@@ -1388,19 +1388,6 @@ void create_type_name_from_node_type(char* type_name, int type_name_max, sNodeTy
     }
 }
 
-BOOL check_nullable_type(char* var_name, sNodeType* node_type, sCompileInfo* info)
-{
-    if(node_type->mNullable && !info->in_generics_function) {
-        if(var_name) {
-            compile_err_msg(info, "Require unwrap to use this variable(%s)", var_name);
-        }
-        else {
-            compile_err_msg(info, "Require unwrap to use this variable");
-        }
-    }
-    return TRUE;
-}
-
 BOOL type_equalability(sNodeType* left_type, sNodeType* right_type)
 {
     if(strcmp(CLASS_NAME(left_type->mClass), CLASS_NAME(right_type->mClass)) != 0) {

@@ -1380,10 +1380,6 @@ BOOL compile_lambda_call(unsigned int node, sCompileInfo* info)
     if(!compile(lambda_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* lambda_type = info->type;
     

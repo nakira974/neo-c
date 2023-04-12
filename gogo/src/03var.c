@@ -71,13 +71,13 @@ sVar*? get_variable_from_table(sVarTable* table, char* name)
     sVarTable*? it = table;
 
     while(it) {
-        sVar*? var_ = it!.get_variable_from_this_table_only(name);
+        sVar*? var_ = it.get_variable_from_this_table_only(name);
 
         if(var_) {
             return var_;
         }
 
-        it = it!->parent;
+        it = it->parent;
     }
 
     return null;
@@ -88,8 +88,8 @@ sVarTable* init_block_vtable(sVarTable*? lv_table)
     sVarTable* new_table = new sVarTable(lv_table);
 
     if(lv_table) {
-        new_table->block_level = lv_table!->block_level + 1;
-        new_table->parent = lv_table!;
+        new_table->block_level = lv_table->block_level + 1;
+        new_table->parent = lv_table;
     }
     else {
         new_table->block_level = 0;
@@ -157,7 +157,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
     LVALUE rvalue;
     
     if(self.right_node) {
-        if(!self.right_node!.compile->(info)) {
+        if(!self.right_node.compile->(info)) {
             return false;
         }
     
@@ -169,7 +169,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
             left_type = clone right_type;
         }
         else {
-            left_type = var2->type!;
+            left_type = var2->type;
         }
         
         rvalue = *get_value_from_stack(info, -1);
@@ -195,10 +195,10 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
             return true;
         }
         
-        left_type = var2->type!;
+        left_type = var2->type;
     }
 
-    bool constant = var2->type!->constant_;
+    bool constant = var2->type->constant_;
     
     if(alloc) {
         if(right_type == null) {
@@ -301,17 +301,17 @@ bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
 
     sVar*? var_ = get_variable_from_table(info->lv_table, var_name);
     
-    if(var_ == null || var_!->type! == null) {
+    if(var_ == null || var_->type == null) {
         fprintf(stderr, "%s %d: var(%s) not found\n", var_name);
         return true;
     }
     
     sVar* var2 = nonullable var_;
 
-    bool global = var2->type!->global_;
-    bool constant = var2->type!->constant_;
+    bool global = var2->type->global_;
+    bool constant = var2->type->constant_;
 
-    sType* var_type = clone var2->type!;
+    sType* var_type = clone var2->type;
 
     LLVMValueRef var_address = var2->llvm_value;
 

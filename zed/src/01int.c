@@ -489,7 +489,7 @@ sNode*? exp_node(sInfo* info) version 1
             skip_spaces(info);
         }
         
-        sNode* result = exp!;
+        sNode* result = exp;
         
         return result;
     }
@@ -518,10 +518,10 @@ sNode*? exp_node(sInfo* info) version 1
             
             sNode*? result_before = result;
             
-            result = borrow new sNode(new sMultNode(clone result!, clone right!));
+            result = borrow new sNode(new sMultNode(clone result, clone right));
             
-            delete result_before!;
-            delete right!;
+            delete result_before;
+            delete right;
         }
         else if(*info->p == '/') {
             info->p++;
@@ -539,10 +539,10 @@ sNode*? exp_node(sInfo* info) version 1
             
             sNode*? result_before = result;
             
-            result = borrow new sNode(new sDivNode(clone result!, clone right!));
+            result = borrow new sNode(new sDivNode(clone result, clone right));
             
-            delete result_before!;
-            delete right!;
+            delete result_before;
+            delete right;
         }
         else if(*info->p == '%') {
             info->p++;
@@ -560,10 +560,10 @@ sNode*? exp_node(sInfo* info) version 1
             
             sNode*? result_before = result;
             
-            result = borrow new sNode(new sModNode(clone result!, clone right!));
+            result = borrow new sNode(new sModNode(clone result, clone right));
             
-            delete result_before!;
-            delete right!;
+            delete result_before;
+            delete right;
         }
     }
     
@@ -661,10 +661,10 @@ sNode*? exp_node(sInfo* info) version 1
             
             sNode*? result_before = result;
             
-            result = borrow new sNode(new sAddNode(clone result!, clone right!));
+            result = borrow new sNode(new sAddNode(clone result, clone right));
             
-            delete result_before!;
-            delete right!;
+            delete result_before;
+            delete right;
         }
         else if(*info->p == '-') {
             info->p++;
@@ -682,10 +682,10 @@ sNode*? exp_node(sInfo* info) version 1
             
             sNode*? result_before = result;
             
-            result = borrow new sNode(new sSubNode(clone result!, clone right!));
+            result = borrow new sNode(new sSubNode(clone result, clone right));
             
-            delete result_before!;
-            delete right!;
+            delete result_before;
+            delete right;
         }
     }
     
@@ -713,10 +713,10 @@ sNode*? exp_node(sInfo* info) version 1
             
             sNode*? result_before = result;
             
-            result = borrow new sNode(new sEqNode(clone result!, clone right!));
+            result = borrow new sNode(new sEqNode(clone result, clone right));
             
-            delete result_before!;
-            delete right!;
+            delete result_before;
+            delete right;
         }
         else if(*info->p == '!' && *(info->p+1) == '=') {
             info->p+=2;
@@ -734,10 +734,10 @@ sNode*? exp_node(sInfo* info) version 1
             
             sNode*? result_before = result;
             
-            result = borrow new sNode(new sNotEqNode(clone result!, clone right!));
+            result = borrow new sNode(new sNotEqNode(clone result, clone right));
             
-            delete result_before!;
-            delete right!;
+            delete result_before;
+            delete right;
         }
         else if(*info->p == '>' && *(info->p +1 ) == '=') {
             info->p+=2;
@@ -755,10 +755,10 @@ sNode*? exp_node(sInfo* info) version 1
             
             sNode*? result_before = result;
             
-            result = borrow new sNode(new sGTEqNode(clone result!, clone right!));
+            result = borrow new sNode(new sGTEqNode(clone result, clone right));
             
-            delete result_before!;
-            delete right!;
+            delete result_before;
+            delete right;
         }
         else if(*info->p == '<' && *(info->p +1 ) == '=') {
             info->p+=2;
@@ -776,10 +776,10 @@ sNode*? exp_node(sInfo* info) version 1
             
             sNode*? result_before = result;
             
-            result = borrow new sNode(new sLTEqNode(clone result!, clone right!));
+            result = borrow new sNode(new sLTEqNode(clone result, clone right));
             
-            delete result_before!;
-            delete right!;
+            delete result_before;
+            delete right;
         }
         else if(*info->p == '>') {
             info->p+=2;
@@ -797,10 +797,10 @@ sNode*? exp_node(sInfo* info) version 1
             
             sNode*? result_before = result;
             
-            result = borrow new sNode(new sGTNode(clone result!, clone right!));
+            result = borrow new sNode(new sGTNode(clone result, clone right));
             
-            delete result_before!;
-            delete right!;
+            delete result_before;
+            delete right;
         }
         else if(*info->p == '<') {
             info->p+=2;
@@ -818,10 +818,10 @@ sNode*? exp_node(sInfo* info) version 1
             
             sNode*? result_before = result;
             
-            result = borrow new sNode(new sLTNode(clone result!, clone right!));
+            result = borrow new sNode(new sLTNode(clone result, clone right));
             
-            delete result_before!;
-            delete right!;
+            delete result_before;
+            delete right;
         }
     }
     
@@ -849,10 +849,10 @@ sNode*? exp_node(sInfo* info) version 1
             
             sNode*? result_before = result;
             
-            result = borrow new sNode(new sAndAndNode(clone result!, clone right!));
+            result = borrow new sNode(new sAndAndNode(clone result, clone right));
             
-            delete result_before!;
-            delete right!;
+            delete result_before;
+            delete right;
         }
         else if(*info->p == '|' && *(info->p+1) == '|') {
             info->p+=2;
@@ -870,10 +870,10 @@ sNode*? exp_node(sInfo* info) version 1
             
             sNode*? result_before = result;
             
-            result = borrow new sNode(new sOrOrNode(clone result!, clone right!));
+            result = borrow new sNode(new sOrOrNode(clone result, clone right));
             
-            delete result_before!;
-            delete right!;
+            delete result_before;
+            delete right;
         }
     }
     
@@ -889,7 +889,7 @@ bool parse(sInfo* info) version 1
 {
     sNode*? node = expression(info);
     
-    info->nodes.push_back(dummy_heap node!);
+    info->nodes.push_back(dummy_heap node);
     
     return true;
 }
@@ -936,9 +936,9 @@ bool vm(sInfo* info) version 1
             ZVALUE*? left_value = nullable info.stack[-2];
             ZVALUE*? right_value = nullable info.stack[-1];
             
-            if(left_value!.kind == kIntValue && right_value!.kind == kIntValue) {
-                int lvalue = left_value!.intValue;
-                int rvalue = right_value!.intValue;
+            if(left_value.kind == kIntValue && right_value.kind == kIntValue) {
+                int lvalue = left_value.intValue;
+                int rvalue = right_value.intValue;
                 
                 info.stack.delete_back();
                 info.stack.delete_back();
@@ -947,9 +947,9 @@ bool vm(sInfo* info) version 1
                 
                 info->stack.push_back(new ZVALUE(kind: kIntValue, int_value:value));
             }
-            else if(left_value!.kind == kStrValue && right_value!.kind == kStrValue) {
-                wchar_t* lvalue = borrow left_value!.strValue;
-                wchar_t* rvalue = borrow right_value!.strValue;
+            else if(left_value.kind == kStrValue && right_value.kind == kStrValue) {
+                wchar_t* lvalue = borrow left_value.strValue;
+                wchar_t* rvalue = borrow right_value.strValue;
                 
                 wstring value = lvalue + rvalue;
                 
@@ -958,9 +958,9 @@ bool vm(sInfo* info) version 1
                 
                 info->stack.push_back(new ZVALUE(kind: kStrValue, str_value:value));
             }
-            else if(left_value!.kind == kMapValue && right_value!.kind == kMapValue) {
-                map<ZVALUE*%, ZVALUE*%>* lvalue = borrow left_value!.mapValue;
-                map<ZVALUE*%, ZVALUE*%>* rvalue = borrow right_value!.mapValue;
+            else if(left_value.kind == kMapValue && right_value.kind == kMapValue) {
+                map<ZVALUE*%, ZVALUE*%>* lvalue = borrow left_value.mapValue;
+                map<ZVALUE*%, ZVALUE*%>* rvalue = borrow right_value.mapValue;
                 
                 map<ZVALUE*%, ZVALUE*%>*% value = lvalue + rvalue;
                 
@@ -969,9 +969,9 @@ bool vm(sInfo* info) version 1
                 
                 info->stack.push_back(new ZVALUE(kind: kMapValue, map_value:value));
             }
-            else if(left_value!.kind == kListValue && right_value!.kind == kListValue) {
-                list<ZVALUE*%>* lvalue = borrow left_value!.listValue;
-                list<ZVALUE*%>* rvalue = borrow right_value!.listValue;
+            else if(left_value.kind == kListValue && right_value.kind == kListValue) {
+                list<ZVALUE*%>* lvalue = borrow left_value.listValue;
+                list<ZVALUE*%>* rvalue = borrow right_value.listValue;
                 
                 list<ZVALUE*%>*% value = lvalue + rvalue;
                 
@@ -993,8 +993,8 @@ bool vm(sInfo* info) version 1
             ZVALUE*? left_value = nullable info.stack[-2];
             ZVALUE*? right_value = nullable info.stack[-1];
             
-            int lvalue = left_value!.intValue;
-            int rvalue = right_value!.intValue;
+            int lvalue = left_value.intValue;
+            int rvalue = right_value.intValue;
             
             info.stack.delete_back();
             info.stack.delete_back();
@@ -1011,9 +1011,9 @@ bool vm(sInfo* info) version 1
             ZVALUE*? left_value = nullable info.stack[-2];
             ZVALUE*? right_value = nullable info.stack[-1];
             
-            if(left_value!.kind == kIntValue && right_value!.kind == kIntValue) {
-                int lvalue = left_value!.intValue;
-                int rvalue = right_value!.intValue;
+            if(left_value.kind == kIntValue && right_value.kind == kIntValue) {
+                int lvalue = left_value.intValue;
+                int rvalue = right_value.intValue;
                 
                 info.stack.delete_back();
                 info.stack.delete_back();
@@ -1022,9 +1022,9 @@ bool vm(sInfo* info) version 1
                 
                 info->stack.push_back(new ZVALUE(kind: kIntValue, int_value:value));
             }
-            else if(left_value!.kind == kStrValue && right_value!.kind == kIntValue) {
-                wchar_t* lvalue = borrow left_value!.strValue;
-                int rvalue = right_value!.intValue;
+            else if(left_value.kind == kStrValue && right_value.kind == kIntValue) {
+                wchar_t* lvalue = borrow left_value.strValue;
+                int rvalue = right_value.intValue;
                 
                 wstring value = lvalue * rvalue;
                 
@@ -1033,9 +1033,9 @@ bool vm(sInfo* info) version 1
                 
                 info->stack.push_back(new ZVALUE(kind: kStrValue, str_value:value));
             }
-            else if(left_value!.kind == kMapValue && right_value!.kind == kIntValue) {
-                map<ZVALUE*%, ZVALUE*%>* lvalue = borrow left_value!.mapValue;
-                int rvalue = right_value!.intValue;
+            else if(left_value.kind == kMapValue && right_value.kind == kIntValue) {
+                map<ZVALUE*%, ZVALUE*%>* lvalue = borrow left_value.mapValue;
+                int rvalue = right_value.intValue;
                 
                 map<ZVALUE*%, ZVALUE*%>*% value = lvalue * rvalue;
                 
@@ -1044,9 +1044,9 @@ bool vm(sInfo* info) version 1
                 
                 info->stack.push_back(new ZVALUE(kind: kMapValue, map_value:value));
             }
-            else if(left_value!.kind == kListValue && right_value!.kind == kIntValue) {
-                list<ZVALUE*%>* lvalue = borrow left_value!.listValue;
-                int rvalue = right_value!.intValue;
+            else if(left_value.kind == kListValue && right_value.kind == kIntValue) {
+                list<ZVALUE*%>* lvalue = borrow left_value.listValue;
+                int rvalue = right_value.intValue;
                 
                 list<ZVALUE*%>*% value = lvalue * rvalue;
                 
@@ -1068,8 +1068,8 @@ bool vm(sInfo* info) version 1
             ZVALUE*? left_value = nullable info.stack[-2];
             ZVALUE*? right_value = nullable info.stack[-1];
             
-            int lvalue = left_value!.intValue;
-            int rvalue = right_value!.intValue;
+            int lvalue = left_value.intValue;
+            int rvalue = right_value.intValue;
             
             info.stack.delete_back();
             info.stack.delete_back();
@@ -1086,8 +1086,8 @@ bool vm(sInfo* info) version 1
             ZVALUE*? left_value = nullable info.stack[-2];
             ZVALUE*? right_value = nullable info.stack[-1];
             
-            int lvalue = left_value!.intValue;
-            int rvalue = right_value!.intValue;
+            int lvalue = left_value.intValue;
+            int rvalue = right_value.intValue;
             
             info.stack.delete_back();
             info.stack.delete_back();
@@ -1104,7 +1104,7 @@ bool vm(sInfo* info) version 1
             ZVALUE*? left_value = nullable info.stack[-2];
             ZVALUE*? right_value = nullable info.stack[-1];
             
-            bool value = left_value! === right_value!;
+            bool value = left_value === right_value;
             
             info.stack.delete_back();
             info.stack.delete_back();
@@ -1119,7 +1119,7 @@ bool vm(sInfo* info) version 1
             ZVALUE*? left_value = nullable info.stack[-2];
             ZVALUE*? right_value = nullable info.stack[-1];
             
-            bool value = left_value! !== right_value!;
+            bool value = left_value !== right_value;
             
             info.stack.delete_back();
             info.stack.delete_back();
@@ -1134,8 +1134,8 @@ bool vm(sInfo* info) version 1
             ZVALUE*? left_value = nullable info.stack[-2];
             ZVALUE*? right_value = nullable info.stack[-1];
             
-            int lvalue = left_value!.intValue;
-            int rvalue = right_value!.intValue;
+            int lvalue = left_value.intValue;
+            int rvalue = right_value.intValue;
             
             info.stack.delete_back();
             info.stack.delete_back();
@@ -1152,8 +1152,8 @@ bool vm(sInfo* info) version 1
             ZVALUE*? left_value = nullable info.stack[-2];
             ZVALUE*? right_value = nullable info.stack[-1];
             
-            int lvalue = left_value!.intValue;
-            int rvalue = right_value!.intValue;
+            int lvalue = left_value.intValue;
+            int rvalue = right_value.intValue;
             
             info.stack.delete_back();
             info.stack.delete_back();
@@ -1170,8 +1170,8 @@ bool vm(sInfo* info) version 1
             ZVALUE*? left_value = nullable info.stack[-2];
             ZVALUE*? right_value = nullable info.stack[-1];
             
-            int lvalue = left_value!.intValue;
-            int rvalue = right_value!.intValue;
+            int lvalue = left_value.intValue;
+            int rvalue = right_value.intValue;
             
             info.stack.delete_back();
             info.stack.delete_back();
@@ -1188,8 +1188,8 @@ bool vm(sInfo* info) version 1
             ZVALUE*? left_value = nullable info.stack[-2];
             ZVALUE*? right_value = nullable info.stack[-1];
             
-            int lvalue = left_value!.intValue;
-            int rvalue = right_value!.intValue;
+            int lvalue = left_value.intValue;
+            int rvalue = right_value.intValue;
             
             info.stack.delete_back();
             info.stack.delete_back();
@@ -1206,8 +1206,8 @@ bool vm(sInfo* info) version 1
             ZVALUE*? left_value = nullable info.stack[-2];
             ZVALUE*? right_value = nullable info.stack[-1];
             
-            bool lvalue = left_value!.boolValue;
-            bool rvalue = right_value!.boolValue;
+            bool lvalue = left_value.boolValue;
+            bool rvalue = right_value.boolValue;
             
             info.stack.delete_back();
             info.stack.delete_back();
@@ -1224,8 +1224,8 @@ bool vm(sInfo* info) version 1
             ZVALUE*? left_value = nullable info.stack[-2];
             ZVALUE*? right_value = nullable info.stack[-1];
             
-            bool lvalue = left_value!.boolValue;
-            bool rvalue = right_value!.boolValue;
+            bool lvalue = left_value.boolValue;
+            bool rvalue = right_value.boolValue;
             
             info.stack.delete_back();
             info.stack.delete_back();

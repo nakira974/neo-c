@@ -90,7 +90,7 @@ void ViWin*::deleteOnVerticalVisualMode(ViWin* self, Vi* nvi)
     }
     
     for(int i=head; i<=tail; i++) {
-        auto it = self.texts.item(i, null);
+        auto it = self.texts.item(i, null!);
         
         it.delete(self.visualModeVerticalHeadX
             , self.visualModeVerticalHeadX 
@@ -117,7 +117,7 @@ void ViWin*::deleteLinesOnVerticalVisualMode(ViWin* self, Vi* nvi)
     }
     
     for(int i=head; i<=tail; i++) {
-        auto it = self.texts.item(i, null);
+        auto it = self.texts.item(i, null!);
         
         it.delete(0, -1);
     }
@@ -142,7 +142,7 @@ void ViWin*::changeCaseVerticalVisualMode(ViWin* self, Vi* nvi)
     }
     
     for(int i=head; i<=tail; i++) {
-        auto line = self.texts.item(i, null);
+        auto line = self.texts.item(i, null!);
         
         
         wstring head_line = line.substring(0, self.visualModeVerticalHeadX);
@@ -191,7 +191,7 @@ void ViWin*::rewriteOnVerticalVisualMode(ViWin* self, Vi* nvi)
     wchar_t key = self.getKey(false);
     
     for(int i=head; i<=tail; i++) {
-        auto it = self.texts.item(i, null);
+        auto it = self.texts.item(i, null!);
         
         auto head_new_line = it.substring(0, self.visualModeVerticalHeadX);
         auto middle_new_line = xsprintf("%lc", key).multiply(self.visualModeVerticalLen).to_wstring();
@@ -234,7 +234,7 @@ void ViWin*::insertOnVerticalVisualMode(ViWin* self, Vi* nvi)
         
         if(self.visualModeVerticalHeadX > 0) {
             for(int i=head; i<=tail; i++) {
-                auto it = self.texts.item(i, null);
+                auto it = self.texts.item(i, null!);
                 
                 auto new_line = xsprintf("%ls%ls"
                         , it.substring(0, self.visualModeVerticalHeadX-1)
@@ -261,7 +261,7 @@ void ViWin*::insertOnVerticalVisualMode(ViWin* self, Vi* nvi)
         }
         
         for(int i=head; i<=tail; i++) {
-            auto it = self.texts.item(i, null);
+            auto it = self.texts.item(i, null!);
             
             auto new_line = xsprintf("%ls%lc%ls"
                     ,it.substring(0, self.visualModeVerticalHeadX)

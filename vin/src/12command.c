@@ -37,7 +37,7 @@ string ViWin*::selector(ViWin* self, list<string>* lines)
 
         /// view ///
         for(int y=0; y<maxy && y < maxy2; y++) {
-            auto it = lines.item(scrolltop+y, null);
+            auto it = lines.item(scrolltop+y, null!);
 
             auto line = it.substring(0, maxx-1);
 
@@ -361,8 +361,8 @@ void ViWin*::subAllTextsFromCommandMode(ViWin* self, Vi* nvi)
 
     auto command = string(nvi.commandString).scan(reg);
 
-    auto str = command.item(1, null);
-    auto replace = command.item(2, null);
+    auto str = command.item(1, null!);
+    auto replace = command.item(2, null!);
     
     if(str != null && replace != null) {
         self.pushUndo();
@@ -408,7 +408,7 @@ void Vi*::exitFromComandMode(Vi* self)
 
         regex_struct*% reg = regex("sp \(.+\)", ignore_case, multiline, global, extended, dotall, anchored, dollar_endonly, ungreedy);
 
-        auto file_name = clone string(self.commandString).scan(reg).item(1, null);
+        auto file_name = clone string(self.commandString).scan(reg).item(1, null!);
 
         if(file_name != null) {
             self.openNewFile(file_name);

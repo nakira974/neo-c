@@ -72,13 +72,6 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
                     num_params++;
     
                     *node = sNodeTree_create_function_call(fun_name, params, num_params, TRUE, FALSE, info->mFunVersion, info);
-                    
-                    if(*info->p == '!' && *(info->p+1) != '=') {
-                        info->p++;
-                        skip_spaces_and_lf(info);
-                        
-                        *node = sNodeTree_create_unwrap(*node, FALSE, info);
-                    }
                 }
             }
             else if(xisalpha(*info->p) || *info->p == '_') 

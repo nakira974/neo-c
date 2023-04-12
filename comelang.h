@@ -270,7 +270,9 @@ impl vector<T>
                 delete borrow self.items[i];
             }
         }
-        free_object((char*)self.items);  // don't call finalizer function
+	if(self && self.items) {
+            free_object((char*)self.items);
+	}
     }
     
     immutable vector<T>* to_immutable(vector<T>* self) {
@@ -338,9 +340,9 @@ impl vector<T>
     
     T& operator_load_element(vector<T>* self, int index) {
         T& default_value;
-        memset(&default_value, 0, sizeof(T));
+        memset(&default_value!, 0, sizeof(T));
         
-        return self.item(index, default_value);
+        return self.item(index, default_value!);
     }
     
     vector<T>* push_back(vector<T>* self, T` item) mutable {
@@ -459,14 +461,14 @@ impl vector<T>
         self.it = 0;
 
         T& default_value;
-        return self.item(0, default_value);
+        return self.item(0, default_value!);
     }
 
     T& next(vector<T>* self) {
         self.it++;
 
         T& default_value
-        return self.item(self.it, default_value);
+        return self.item(self.it, default_value!);
     }
 
     bool end(vector<T>* self) {
@@ -547,16 +549,16 @@ impl list <T>
         list_item<T>*? it = self.head;
         while(it != null) {
             if(isheap(T)) {
-                result.push_back(clone it!.item);
+                result.push_back(clone it.item);
             }
-            else if(is_gc_heap(it!.item)) {
-                result.push_back(clone it!.item);
+            else if(is_gc_heap(it.item)) {
+                result.push_back(clone it.item);
             }
             else {
-                result.push_back(dummy_heap it!.item);
+                result.push_back(dummy_heap it.item);
             }
 
-            it = it!.next;
+            it = it.next;
         }
 
         return result;
@@ -653,9 +655,9 @@ impl list <T>
     
     T& operator_load_element(list<T>* self, int index) {
         T& default_value;
-        memset(&default_value, 0, sizeof(T));
+        memset(&default_value!, 0, sizeof(T));
         
-        return self.item(index, default_value);
+        return self.item(index, default_value!);
     }
 
     int length(list<T>* self)
@@ -670,9 +672,9 @@ impl list <T>
         if(self.len == 0) {
             list_item<T>*? litem = nullable borrow new list_item<T>;
             
-            litem!.prev = null;
-            litem!.next = null;
-            litem!.item = item;
+            litem.prev = null;
+            litem.next = null;
+            litem.item = item;
             
             self.tail = litem;
             self.head = litem;
@@ -680,21 +682,21 @@ impl list <T>
         else if(self.len == 1) {
             list_item<T>*? litem = nullable borrow new list_item<T>;
 
-            litem!.prev = self.head;
-            litem!.next = null;
-            litem!.item = item;
+            litem.prev = self.head;
+            litem.next = null;
+            litem.item = item;
             
             self.tail = litem;
-            self.head!.next = litem;
+            self.head.next = litem;
         }
         else {
             list_item<T>*? litem = nullable borrow new list_item<T>;
 
-            litem!.prev = self.tail;
-            litem!.next = null;
-            litem!.item = item;
+            litem.prev = self.tail;
+            litem.next = null;
+            litem.item = item;
             
-            self.tail!.next = litem;
+            self.tail.next = litem;
             self.tail = litem;
         }
 
@@ -713,9 +715,9 @@ impl list <T>
         auto i = 0;
         while(it != null) {
             if(position == i) {
-                return it!.item;
+                return it.item;
             }
-            it = it!.next;
+            it = it.next;
             i++;
         };
 
@@ -749,11 +751,11 @@ impl list <T>
         if(position == 0) {
             list_item<T>*? litem = nullable borrow new list_item<T>;
 
-            litem!.prev = null;
-            litem!.next = self.head;
-            litem!.item = item;
+            litem.prev = null;
+            litem.next = self.head;
+            litem.item = item;
             
-            self.head!.prev = litem;
+            self.head.prev = litem;
             self.head = litem;
 
             self.len++;
@@ -761,12 +763,12 @@ impl list <T>
         else if(self.len == 1) {
             auto litem = nullable borrow new list_item<T>;
 
-            litem!.prev = self.head;
-            litem!.next = self.tail;
-            litem!.item = item;
+            litem.prev = self.head;
+            litem.next = self.tail;
+            litem.item = item;
             
-            self.tail!.prev = litem;
-            self.head!.next = litem;
+            self.tail.prev = litem;
+            self.head.next = litem;
 
             self.len++;
         }
@@ -777,17 +779,17 @@ impl list <T>
                 if(position == i) {
                     list_item<T>*? litem = nullable borrow new list_item<T>;
 
-                    litem!.prev = it!.prev;
-                    litem!.next = it;
-                    litem!.item = item;
+                    litem.prev = it.prev;
+                    litem.next = it;
+                    litem.item = item;
 
-                    it!.prev!.next = litem;
-                    it!.prev = litem;
+                    it.prev.next = litem;
+                    it.prev = litem;
 
                     self.len++;
                 }
 
-                it = it!.next;
+                it = it.next;
                 i++;
             }
         }
@@ -799,11 +801,11 @@ impl list <T>
         list_item<T>*? it = self.head;
         while(it != null) {
             if(isheap(T)) {
-                delete it!.item;
+                delete it.item;
             }
             auto prev_it = it;
-            it = it!.next;
-            delete prev_it!;
+            it = it.next;
+            delete prev_it;
         }
 
         self.head = null;
@@ -851,24 +853,24 @@ impl list <T>
             while(it != null) {
                 if(i < tail) {
                     if(isheap(T)) {
-                        delete it!.item;
+                        delete it.item;
                     }
                     list_item<T>*? prev_it = it;
 
-                    it = it!.next;
+                    it = it.next;
                     i++;
 
-                    delete prev_it!;
+                    delete prev_it;
 
                     self.len--;
                 }
                 else if(i == tail) {
                     self.head = it;
-                    self.head!.prev = null;
+                    self.head.prev = null;
                     break;
                 }
                 else {
-                    it = it!.next;
+                    it = it.next;
                     i++;
                 }
             }
@@ -878,25 +880,25 @@ impl list <T>
             auto i = 0;
             while(it != null) {
                 if(i == head) {
-                    self.tail = it!.prev;
-                    self.tail!.next = null;
+                    self.tail = it.prev;
+                    self.tail.next = null;
                 }
 
                 if(i >= head) {
                     if(isheap(T)) {
-                        delete it!.item;
+                        delete it.item;
                     }
                     list_item<T>*? prev_it = it;
 
-                    it = it!.next;
+                    it = it.next;
                     i++;
 
-                    delete prev_it!;
+                    delete prev_it;
 
                     self.len--;
                 }
                 else {
-                    it = it!.next;
+                    it = it.next;
                     i++;
                 }
             }
@@ -911,7 +913,7 @@ impl list <T>
             auto i = 0;
             while(it != null) {
                 if(i == head) {
-                    head_prev_it = it!.prev;
+                    head_prev_it = it.prev;
                 }
                 if(i == tail) {
                     tail_it = it;
@@ -920,28 +922,28 @@ impl list <T>
                 if(i >= head && i < tail) 
                 {
                     if(isheap(T)) {
-                        delete it!.item;
+                        delete it.item;
                     }
                     list_item<T>*? prev_it = it;
 
-                    it = it!.next;
+                    it = it.next;
                     i++;
 
-                    delete prev_it!;
+                    delete prev_it;
 
                     self.len--;
                 }
                 else {
-                    it = it!.next;
+                    it = it.next;
                     i++;
                 }
             }
 
             if(head_prev_it != null) {
-                head_prev_it!.next = tail_it;
+                head_prev_it.next = tail_it;
             }
             if(tail_it != null) {
-                tail_it!.prev = head_prev_it;
+                tail_it.prev = head_prev_it;
             }
         }
         
@@ -961,13 +963,13 @@ impl list <T>
         while(it != null) {
             if(position == i) {
                 if(isheap(T)) {
-                    delete it!.item;
+                    delete it.item;
                 }
 
-                it!.item = item;
+                it.item = item;
                 break;
             }
-            it = it!.next;
+            it = it.next;
             i++;
         }
         
@@ -1009,22 +1011,22 @@ impl list <T>
         auto i = 0;
         while(it != null) {
             if(i >= begin && i < tail) {
-                if(is_gc_heap(it!.item)) {
-                    result.push_back(clone it!.item);
+                if(is_gc_heap(it.item)) {
+                    result.push_back(clone it.item);
                 }
                 else {
                     if(isheap(T)) {
-                        result.push_back(clone it!.item);
+                        result.push_back(clone it.item);
                     }
-                    else if(is_gc_heap(it!.item)) {
-                        result.push_back(clone it!.item);
+                    else if(is_gc_heap(it.item)) {
+                        result.push_back(clone it.item);
                     }
                     else {
-                        result.push_back(dummy_heap it!.item);
+                        result.push_back(dummy_heap it.item);
                     }
                 }
             }
-            it = it!.next;
+            it = it.next;
             i++;
         };
 
@@ -1036,18 +1038,18 @@ impl list <T>
 
         list_item<T>*? it = self.tail;
         while(it != null) {
-            if(is_gc_heap(it!.item)) {
-                result.push_back(clone it!.item);
+            if(is_gc_heap(it.item)) {
+                result.push_back(clone it.item);
             }
             else {
                 if(isheap(T)) {
-                    result.push_back(clone it!.item);
+                    result.push_back(clone it.item);
                 }
                 else {
-                    result.push_back(dummy_heap it!.item);
+                    result.push_back(dummy_heap it.item);
                 }
             }
-            it = it!.prev;
+            it = it.prev;
         };
 
         return result;
@@ -1061,62 +1063,62 @@ impl list <T>
 
         while(true) {
             if(it && it2) {
-                if(it!.item == null) {
-                    it = it!.next;
+                if(it.item == null) {
+                    it = it.next;
                 }
-                else if(it2!.item == null) {
-                    it2 = it2!.next;
+                else if(it2.item == null) {
+                    it2 = it2.next;
                 }
-                else if(compare(it!.item, it2!.item) <= 0) 
+                else if(compare(it.item, it2.item) <= 0) 
                 {
-                    if(is_gc_heap(it!.item)) {
-                        result.push_back(clone it!.item);
+                    if(is_gc_heap(it.item)) {
+                        result.push_back(clone it.item);
                     }
                     else {
                         if(isheap(T)) {
-                            result.push_back(clone it!.item);
+                            result.push_back(clone it.item);
                         }
                         else {
-                            result.push_back(dummy_heap it!.item);
+                            result.push_back(dummy_heap it.item);
                         }
                     }
 
-                    it = it!.next;
+                    it = it.next;
                 }
                 else {
-                    if(is_gc_heap(it2!.item)) {
-                        result.push_back(clone it2!.item);
+                    if(is_gc_heap(it2.item)) {
+                        result.push_back(clone it2.item);
                     }
                     else {
                         if(isheap(T)) {
-                            result.push_back(clone it2!.item);
+                            result.push_back(clone it2.item);
                         }
                         else {
-                            result.push_back(dummy_heap it2!.item);
+                            result.push_back(dummy_heap it2.item);
                         }
                     }
 
 
-                    it2 = it2!.next;
+                    it2 = it2.next;
                 }
             }
 
             if(it == null) {
                 if(it2 != null) {
                     while(it2 != null) {
-                        if(is_gc_heap(it2!.item)) {
-                            result.push_back(clone it2!.item);
+                        if(is_gc_heap(it2.item)) {
+                            result.push_back(clone it2.item);
                         }
                         else {
                             if(isheap(T)) {
-                                result.push_back(clone it2!.item);
+                                result.push_back(clone it2.item);
                             }
                             else {
-                                result.push_back(dummy_heap it2!.item);
+                                result.push_back(dummy_heap it2.item);
                             }
                         }
 
-                        it2 = it2!.next;
+                        it2 = it2.next;
                     }
                 }
                 break;
@@ -1124,19 +1126,19 @@ impl list <T>
             else if(it2 == null) {
                 if(it != null) {
                     while(it != null) {
-                        if(is_gc_heap(it!.item)) {
-                            result.push_back(clone it!.item);
+                        if(is_gc_heap(it.item)) {
+                            result.push_back(clone it.item);
                         }
                         else {
                             if(isheap(T)) {
-                                result.push_back(clone it!.item);
+                                result.push_back(clone it.item);
                             }
                             else {
-                                result.push_back(dummy_heap it!.item);
+                                result.push_back(dummy_heap it.item);
                             }
                         }
 
-                        it = it!.next;
+                        it = it.next;
                     }
                 }
                 break;
@@ -1149,7 +1151,7 @@ impl list <T>
         if(self.head == null) {
             return clone self;
         }
-        if(self.head!.next == null) {
+        if(self.head.next == null) {
             return clone self;
         }
 
@@ -1159,46 +1161,46 @@ impl list <T>
         list_item<T>*? it = self.head;
 
         while(true) {
-            if(is_gc_heap(it!.item)) {
-                list1.push_back(clone it!.item);
+            if(is_gc_heap(it.item)) {
+                list1.push_back(clone it.item);
             }
             else {
                 if(isheap(T)) {
-                    list1.push_back(clone it!.item);
+                    list1.push_back(clone it.item);
                 }
                 else {
-                    list1.push_back(dummy_heap it!.item);
+                    list1.push_back(dummy_heap it.item);
                 }
             }
 
-            if(is_gc_heap(it!.next!.item)) {
-                list2.push_back(clone it!.next!.item);
+            if(is_gc_heap(it.next.item)) {
+                list2.push_back(clone it.next.item);
             }
             else {
                 if(isheap(T)) {
-                    list2.push_back(clone it!.next!.item);
+                    list2.push_back(clone it.next.item);
                 }
                 else {
-                    list2.push_back(dummy_heap it!.next!.item);
+                    list2.push_back(dummy_heap it.next.item);
                 }
             }
 
-            if(it!.next!.next == null) {
+            if(it.next.next == null) {
                 break;
             }
 
-            it = it!.next!.next;
+            it = it.next.next;
 
-            if(it!.next == null) {
-                if(is_gc_heap(it!.item)) {
-                    list1.push_back(clone it!.item);
+            if(it.next == null) {
+                if(is_gc_heap(it.item)) {
+                    list1.push_back(clone it.item);
                 }
                 else {
                     if(isheap(T)) {
-                        list1.push_back(clone it!.item);
+                        list1.push_back(clone it.item);
                     }
                     else {
-                        list1.push_back(dummy_heap it!.item);
+                        list1.push_back(dummy_heap it.item);
                     }
                 }
                 break;
@@ -1218,62 +1220,62 @@ impl list <T>
 
         while(true) {
             if(it && it2) {
-                if(it!.item == null) {
-                    it = it!.next;
+                if(it.item == null) {
+                    it = it.next;
                 }
-                else if(it2!.item == null) {
-                    it2 = it2!.next;
+                else if(it2.item == null) {
+                    it2 = it2.next;
                 }
-                else if(it!.item.compare(it2!.item) <= 0) 
+                else if(it.item.compare(it2.item) <= 0) 
                 {
-                    if(is_gc_heap(it!.item)) {
-                        result.push_back(clone it!.item);
+                    if(is_gc_heap(it.item)) {
+                        result.push_back(clone it.item);
                     }
                     else {
                         if(isheap(T)) {
-                            result.push_back(clone it!.item);
+                            result.push_back(clone it.item);
                         }
                         else {
-                            result.push_back(dummy_heap it!.item);
+                            result.push_back(dummy_heap it.item);
                         }
                     }
 
-                    it = it!.next;
+                    it = it.next;
                 }
                 else {
-                    if(is_gc_heap(it2!.item)) {
-                        result.push_back(clone it2!.item);
+                    if(is_gc_heap(it2.item)) {
+                        result.push_back(clone it2.item);
                     }
                     else {
                         if(isheap(T)) {
-                            result.push_back(clone it2!.item);
+                            result.push_back(clone it2.item);
                         }
                         else {
-                            result.push_back(dummy_heap it2!.item);
+                            result.push_back(dummy_heap it2.item);
                         }
                     }
 
 
-                    it2 = it2!.next;
+                    it2 = it2.next;
                 }
             }
 
             if(it == null) {
                 if(it2 != null) {
                     while(it2 != null) {
-                        if(is_gc_heap(it2!.item)) {
-                            result.push_back(clone it2!.item);
+                        if(is_gc_heap(it2.item)) {
+                            result.push_back(clone it2.item);
                         }
                         else {
                             if(isheap(T)) {
-                                result.push_back(clone it2!.item);
+                                result.push_back(clone it2.item);
                             }
                             else {
-                                result.push_back(dummy_heap it2!.item);
+                                result.push_back(dummy_heap it2.item);
                             }
                         }
 
-                        it2 = it2!.next;
+                        it2 = it2.next;
                     }
                 }
                 break;
@@ -1281,19 +1283,19 @@ impl list <T>
             else if(it2 == null) {
                 if(it != null) {
                     while(it != null) {
-                        if(is_gc_heap(it!.item)) {
-                            result.push_back(clone it!.item);
+                        if(is_gc_heap(it.item)) {
+                            result.push_back(clone it.item);
                         }
                         else {
                             if(isheap(T)) {
-                                result.push_back(clone it!.item);
+                                result.push_back(clone it.item);
                             }
                             else {
-                                result.push_back(dummy_heap it!.item);
+                                result.push_back(dummy_heap it.item);
                             }
                         }
 
-                        it = it!.next;
+                        it = it.next;
                     }
                 }
                 break;
@@ -1306,7 +1308,7 @@ impl list <T>
         if(self.head == null) {
             return clone self;
         }
-        if(self.head!.next == null) {
+        if(self.head.next == null) {
             return clone self;
         }
 
@@ -1316,46 +1318,46 @@ impl list <T>
         list_item<T>*? it = self.head;
 
         while(true) {
-            if(is_gc_heap(it!.item)) {
-                list1.push_back(clone it!.item);
+            if(is_gc_heap(it.item)) {
+                list1.push_back(clone it.item);
             }
             else {
                 if(isheap(T)) {
-                    list1.push_back(clone it!.item);
+                    list1.push_back(clone it.item);
                 }
                 else {
-                    list1.push_back(dummy_heap it!.item);
+                    list1.push_back(dummy_heap it.item);
                 }
             }
 
-            if(is_gc_heap(it!.next!.item)) {
-                list2.push_back(clone it!.next!.item);
+            if(is_gc_heap(it.next.item)) {
+                list2.push_back(clone it.next.item);
             }
             else {
                 if(isheap(T)) {
-                    list2.push_back(clone it!.next!.item);
+                    list2.push_back(clone it.next.item);
                 }
                 else {
-                    list2.push_back(dummy_heap it!.next!.item);
+                    list2.push_back(dummy_heap it.next.item);
                 }
             }
 
-            if(it!.next!.next == null) {
+            if(it.next.next == null) {
                 break;
             }
 
-            it = it!.next!.next;
+            it = it.next.next;
 
-            if(it!.next == null) {
-                if(is_gc_heap(it!.item)) {
-                    list1.push_back(clone it!.item);
+            if(it.next == null) {
+                if(is_gc_heap(it.item)) {
+                    list1.push_back(clone it.item);
                 }
                 else {
                     if(isheap(T)) {
-                        list1.push_back(clone it!.item);
+                        list1.push_back(clone it.item);
                     }
                     else {
-                        list1.push_back(dummy_heap it!.item);
+                        list1.push_back(dummy_heap it.item);
                     }
                 }
                 break;
@@ -1372,7 +1374,7 @@ impl list <T>
 
         if(self.length() > 0) {
             T& default_value;
-            T& item_before = self.item(0, default_value);
+            T& item_before = self.item(0, default_value!);
 
             if(is_gc_heap(item_before)) {
                 result.push_back(clone item_before);
@@ -1419,12 +1421,12 @@ impl list <T>
         list_item<T>*? it2 = right.head;
 
         while(it != null) {
-            if(!it!.item.equals(it2!.item)) {
+            if(!it.item.equals(it2.item)) {
                 return false;
             }
 
-            it = it!.next;
-            it2 = it2!.next;
+            it = it.next;
+            it2 = it2.next;
         }
 
         return true;
@@ -1434,7 +1436,7 @@ impl list <T>
         self.it = self.head;
 
         if(self.it) {
-            return self.it!.item;
+            return self.it.item;
         }
         
         T& result;
@@ -1443,10 +1445,10 @@ impl list <T>
     }
 
     T& next(list<T>* self) {
-        self.it = self.it!.next;
+        self.it = self.it.next;
 
         if(self.it) {
-            return self.it!.item;
+            return self.it.item;
         }
         
         T& result;
@@ -1600,7 +1602,7 @@ impl map <T, T2>
         
         foreach(it, left) {
             T2& default_value;
-            T2& it2 = left.at(it, default_value);
+            T2& it2 = left.at(it, default_value!);
             
             if(is_gc_heap(it) && is_gc_heap(it2)) {
                 result.insert(clone it, clone it2);
@@ -1632,7 +1634,7 @@ impl map <T, T2>
         }
         foreach(it, right) {
             T2& default_value;
-            T2& it2 = right.at(it, default_value);
+            T2& it2 = right.at(it, default_value!);
             
             if(is_gc_heap(it) && is_gc_heap(it2)) {
                 result.insert(clone it, clone it2);
@@ -1671,7 +1673,7 @@ impl map <T, T2>
         for(int i=0; i<n; i++) {
             foreach(it, self) {
                 T2& default_value;
-                T2& it2 = self.at(it, default_value);
+                T2& it2 = self.at(it, default_value!);
                 
                 if(is_gc_heap(it) && is_gc_heap(it2)) {
                     result.insert(clone it, clone it2);
@@ -1739,9 +1741,9 @@ impl map <T, T2>
     
     T2& operator_load_element(map<T, T2>* self, T& key) {
         T2& default_value;
-        memset(&default_value, 0, sizeof(T2));
+        memset(&default_value!, 0, sizeof(T2));
         
-        return self.at(key, default_value);
+        return self.at(key, default_value!);
     }
     
     void operator_store_element(map<T, T2>* self, T key, T2 item) mutable {
@@ -1788,7 +1790,7 @@ impl map <T, T2>
 
         for(auto it = self.begin(); !self.end(); it = self.next()) {
             T2& default_value;
-            T2& it2 = self.at(it, default_value);
+            T2& it2 = self.at(it, default_value!);
             int hash = it.get_hash_key() % size;
             int n = hash;
 
@@ -1809,7 +1811,7 @@ impl map <T, T2>
                     item_existance[n] = true;
                     keys[n] = it;
                     T2& default_value;
-                    items[n] = self.at(it, default_value);
+                    items[n] = self.at(it, default_value!);
 
                     len++;
                     break;
@@ -1888,7 +1890,7 @@ impl map <T, T2>
 
         for(auto it = self.begin(); !self.end(); it = self.next()) {
             T2& default_value;
-            auto it2 = self.at(it, default_value);
+            auto it2 = self.at(it, default_value!);
 
             if(is_gc_heap(it) && is_gc_heap(it2)) {
                 result.insert(clone it, clone it2);
@@ -1972,9 +1974,9 @@ impl map <T, T2>
         
         foreach(it, self) {
             T2& default_value;
-            memset(&default_value, 0, sizeof(T2));
+            memset(&default_value!, 0, sizeof(T2));
         
-            auto it2 = self.at(it, default_value);
+            auto it2 = self.at(it, default_value!);
             
             if(is_gc_heap(it2)) {
                 result.push_back(clone it2);
@@ -1999,11 +2001,11 @@ impl map <T, T2>
         bool result = true;
         foreach(it, left) {
             T2& default_value;
-            T2& it2 = left.at(it, default_value);
+            T2& it2 = left.at(it, default_value!);
 
             if(right.find(it)) {
                 T2& default_value;
-                T2& item = right.at(it, default_value);
+                T2& item = right.at(it, default_value!);
                 if(!it2.equals(item)) {
                     result = false;
                 }
@@ -2980,19 +2982,19 @@ impl list<T>
 
         list_item<T>?* it = self.head;
         while(it != null) {
-            if(block(parent, it!.item)) {
-                if(is_gc_heap(it!.item)) {
-                    result.push_back(clone it!.item);
+            if(block(parent, it.item)) {
+                if(is_gc_heap(it.item)) {
+                    result.push_back(clone it.item);
                 }
                 else if(isheap(T)) {
-                    result.push_back(clone it!.item);
+                    result.push_back(clone it.item);
                 }
                 else {
-                    result.push_back(dummy_heap it!.item);
+                    result.push_back(dummy_heap it.item);
                 }
             }
 
-            it = it!.next;
+            it = it.next;
         }
 
         return result;
@@ -3002,12 +3004,12 @@ impl list<T>
         int i = 0;
         while(it != null) {
             bool end_flag = false;
-            block_(parent, it!.item, i, &end_flag);
+            block_(parent, it.item, i, &end_flag);
 
             if(end_flag == true) {
                 break;
             }
-            it = it!.next;
+            it = it.next;
             i++;
         }
 
@@ -3019,9 +3021,9 @@ impl list<T>
 
         list_item<T>?* it = self.head;
         while(it != null) {
-            result.push_back(block(parent, it!.item));
+            result.push_back(block(parent, it.item));
 
-            it = it!.next;
+            it = it.next;
         }
 
         return result;

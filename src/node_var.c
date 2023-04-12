@@ -381,10 +381,6 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
             if(!compile(var_type->mDynamicArrayNum, info)) {
                 return FALSE;
             }
-            
-            if(!check_nullable_type(var_name, info->type, info)) {
-                return TRUE;
-            }
 
             LVALUE llvm_value = *get_value_from_stack(-1);
 
@@ -1238,10 +1234,6 @@ BOOL compile_clone(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     LVALUE lvalue = *get_value_from_stack(-1);
 
@@ -1415,10 +1407,6 @@ BOOL compile_refference(unsigned int node, sCompileInfo* info)
     
     if(!compile(left_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     LVALUE lvalue = *get_value_from_stack(-1);
@@ -1809,12 +1797,6 @@ BOOL compile_derefference(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!parent) {
-        if(!check_nullable_type(NULL, info->type, info)) {
-            return TRUE;
-        }
-    }
 
     sNodeType* left_type = info->type;
 
@@ -1915,8 +1897,6 @@ BOOL compile_derefference(unsigned int node, sCompileInfo* info)
                 
                 LVALUE llvm_value;
                 
-                check_null_value_for_pointer(value, info);
-                
                 LLVMTypeRef llvm_type2 = create_llvm_type_from_node_type(node_type);
                 
                 llvm_value.value = LLVMBuildLoad2(gBuilder, llvm_type2, value, "derefference_valueA");
@@ -1938,8 +1918,6 @@ BOOL compile_derefference(unsigned int node, sCompileInfo* info)
                 derefference_type->mPointerNum--;
                 
                 LLVMTypeRef llvm_type = create_llvm_type_from_node_type(derefference_type);
-                
-                check_null_value_for_pointer(lvalue.value, info);
                 
                 LVALUE llvm_value;
                 llvm_value.value = LLVMBuildLoad2(gBuilder, llvm_type, lvalue.value, "derefference_valueB");
@@ -2013,10 +1991,6 @@ BOOL compile_store_element(unsigned int node, sCompileInfo* info)
 
         if(!compile(mnode, info)) {
             return FALSE;
-        }
-        
-        if(!check_nullable_type(NULL, info->type, info)) {
-            return TRUE;
         }
 
         sNodeType* middle_type = info->type;
@@ -3184,10 +3158,6 @@ BOOL compile_array_initializer(unsigned int node, sCompileInfo* info)
 
     if(!compile(lnode, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sVar* var_ = get_variable_from_table(info->pinfo->lv_table, var_name);
@@ -4510,12 +4480,6 @@ BOOL compile_store_address(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!parent) {
-        if(!check_nullable_type(NULL, info->type, info)) {
-            return TRUE;
-        }
-    }
 
     sNodeType* left_type = clone_node_type(info->type);
 
@@ -4526,12 +4490,6 @@ BOOL compile_store_address(unsigned int node, sCompileInfo* info)
     
         if(!compile(left_node, info)) {
             return FALSE;
-        }
-        
-        if(!parent) {
-            if(!check_nullable_type(NULL, info->type, info)) {
-                return TRUE;
-            }
         }
     
         left_type = clone_node_type(info->type);
@@ -4660,10 +4618,6 @@ BOOL compile_store_derefference(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = clone_node_type(info->type);
 
@@ -4674,10 +4628,6 @@ BOOL compile_store_derefference(unsigned int node, sCompileInfo* info)
     
         if(!compile(left_node, info)) {
             return FALSE;
-        }
-        
-        if(!check_nullable_type(NULL, info->type, info)) {
-            return TRUE;
         }
     
         left_type = clone_node_type(info->type);
@@ -4777,10 +4727,6 @@ BOOL compile_load_address_value(unsigned int node, sCompileInfo* info)
 
     if(!compile(left_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* left_type = clone_node_type(info->type);
@@ -5761,10 +5707,6 @@ BOOL compile_stack_object(unsigned int node, sCompileInfo* info)
         if(!compile(left_node, info)) {
             return FALSE;
         }
-        
-        if(!check_nullable_type(NULL, info->type, info)) {
-            return TRUE;
-        }
 
         if(!type_identify_with_class_name(info->type, "int")) {
             compile_err_msg(info, "Require number value for []");
@@ -5821,10 +5763,6 @@ BOOL compile_store_field(unsigned int node, sCompileInfo* info)
 
     if(!compile(lnode, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(var_name, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* left_type = clone_node_type(info->type);
@@ -6021,10 +5959,6 @@ BOOL compile_store_field_of_protocol(unsigned int node, sCompileInfo* info)
 
     if(!compile(lnode, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* protocol_type = clone_node_type(info->type);
@@ -6354,10 +6288,6 @@ BOOL compile_load_field(unsigned int node, sCompileInfo* info)
 
     if(!compile(lnode, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(var_name, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* left_type = clone_node_type(info->type);
@@ -7580,10 +7510,6 @@ BOOL compile_load_element(unsigned int node, sCompileInfo* info)
         return FALSE;
     }
     
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
-    
     sNodeType* left_type = info->type;
     
     int left_type_array_dimention_num = left_type->mArrayDimentionNum;
@@ -7608,10 +7534,6 @@ BOOL compile_load_element(unsigned int node, sCompileInfo* info)
 
         if(!compile(mnode, info)) {
             return FALSE;
-        }
-        
-        if(!check_nullable_type(NULL, info->type, info)) {
-            return TRUE;
         }
 
         rvalue[i] = *get_value_from_stack(-1);
@@ -7899,10 +7821,6 @@ BOOL compile_delete(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     LVALUE llvm_value = *get_value_from_stack(-1);
     dec_stack_ptr(1, info);
@@ -8184,6 +8102,7 @@ unsigned int sNodeTree_create_unwrap(unsigned int left, BOOL load_, sParserInfo*
     
     gNodes[node].uValue.sUnwrap.mLoad = load_;
     gNodes[node].uValue.sUnwrap.mInhibitUnwrap = FALSE;
+    gNodes[node].uValue.sUnwrap.mSafeMode = gNCSafeMode;
 
     gNodes[node].mLeft = left;
     gNodes[node].mRight = 0;
@@ -8198,6 +8117,7 @@ BOOL compile_unwrap(unsigned int node, sCompileInfo* info)
     
     BOOL load_ = gNodes[node].uValue.sUnwrap.mLoad;
     BOOL inhibit_unwrap = gNodes[node].uValue.sUnwrap.mInhibitUnwrap;
+    BOOL safe_mode = gNodes[node].uValue.sUnwrap.mSafeMode;
 
     if(left_node == 0) {
         compile_err_msg(info, "require unwrap target object");
@@ -8213,7 +8133,7 @@ BOOL compile_unwrap(unsigned int node, sCompileInfo* info)
     LVALUE llvm_value = *get_value_from_stack(-1);
     dec_stack_ptr(1, info);
     
-    if(left_type->mPointerNum > 0 && gNCCome && !inhibit_unwrap) {
+    if(left_type->mPointerNum > 0 && gNCCome && !inhibit_unwrap && safe_mode) {
         LLVMValueRef value = llvm_value.value;
         
         LLVMTypeRef llvm_type = create_llvm_type_with_class_name("char*");

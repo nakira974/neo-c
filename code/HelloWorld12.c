@@ -60,6 +60,7 @@ void funX2(sInfo* info)
 
 int main(int argc, char** argv) 
 {
+    using unsafe; 
     fun();
     fun(y:2);
     
@@ -116,13 +117,13 @@ int main(int argc, char** argv)
     
     putc('X', stdout);
     
-    int*? a = null;
+    int* a = null;
     
     int b = 123;
     
     a = nullable &b;
     
-    printf("%d\n", *a!);
+    printf("%d\n", *a);
     
     sData2*% c = new sData2;
     

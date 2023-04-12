@@ -180,7 +180,7 @@ bool vm(sInfo* info) version 3
             
             ZVALUE*? right_value = nullable info.stack[-1];
             
-            gVars.insert(var_name, clone right_value!);
+            gVars.insert(var_name, clone right_value);
             
             info.stack.delete_back();
             }
@@ -325,7 +325,7 @@ sNode*? exp_node(sInfo* info) version 3
         var_name = nullable new buffer();
         
         while(xisalnum(*info->p) || *info->p == '_') {
-            var_name!.append_char(*info->p);
+            var_name.append_char(*info->p);
             info->p++;
         }
         
@@ -342,14 +342,14 @@ sNode*? exp_node(sInfo* info) version 3
                 exit(2);
             }
             
-            sNode*? result = borrow new sNode(new sStoreNode(var_name!.to_string().to_wstring(), clone node!));
+            sNode*? result = borrow new sNode(new sStoreNode(var_name.to_string().to_wstring(), clone node));
             
-            delete node!;
+            delete node;
             
             return result;
         }
         else {
-           result = borrow new sNode(new sLoadNode(var_name!.to_string().to_wstring()));
+           result = borrow new sNode(new sLoadNode(var_name.to_string().to_wstring()));
         }
     }
     else {
@@ -383,19 +383,19 @@ sNode*? exp_node(sInfo* info) version 3
                 exit(2);
             }
             
-            sNode*? result2 = borrow new sNode(new sStoreElementNode(var_name!.to_string(), clone node!, clone node2!));
+            sNode*? result2 = borrow new sNode(new sStoreElementNode(var_name.to_string(), clone node, clone node2));
             
-            delete result!;
-            delete node!;
-            delete node2!;
+            delete result;
+            delete node;
+            delete node2;
             
             result = result2;
         }
         else {
-            sNode*? result2 = borrow new sNode(new sLoadElementNode(var_name!.to_string(), clone node!))
+            sNode*? result2 = borrow new sNode(new sLoadElementNode(var_name.to_string(), clone node))
             
-            delete result!;
-            delete node!;
+            delete result;
+            delete node;
             
             result = result2;
         }

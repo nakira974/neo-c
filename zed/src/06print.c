@@ -124,7 +124,7 @@ bool vm(sInfo* info) version 5
             
             ZVALUE*? value = nullable info.stack[-1];
             
-            puts(value!.to_string());
+            puts(value.to_string());
             
             info.stack.delete_back();
             }
@@ -172,7 +172,7 @@ sNode*? exp_node(sInfo* info) version 6
             exit(2);
         }
         
-        sNode*% print_exp = dummy_heap node!;
+        sNode*% print_exp = dummy_heap node;
         
         return borrow new sNode(new sPrintNode(print_exp));
     }

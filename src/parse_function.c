@@ -1324,11 +1324,30 @@ BOOL parse_funcation_call_params(int* num_params, unsigned int* params, sParserI
                     break;
                 }
                 
-                //gNodes[node].mLabel = GC_strdup(label);
+                BOOL null_value = FALSE;
+                
+                if(!gNCCome || label[0] != 0) {
+                    null_value = TRUE;
+                }
+                else {
+                    if(*info->p == '!') {
+                        info->p++;
+                        skip_spaces_and_lf(info);
+                        null_value = TRUE;
+                    }
+                }
+                
                 xstrncpy(gNodes[node].mLabel, label, VAR_NAME_MAX);
                 
-                params[*num_params] = node;
-                (*num_params)++;
+                if(null_value) {
+                    params[*num_params] = node;
+                    (*num_params)++;
+                }
+                else {
+                    unsigned int node2 = sNodeTree_create_unwrap(node, FALSE, info);
+                    params[*num_params] = node2;
+                    (*num_params)++;
+                }
 
                 if(*num_params >= PARAMS_MAX) {
                     parser_err_msg(info, "overflow parametor number for method call");
@@ -1450,13 +1469,6 @@ BOOL parse_inherit(unsigned int* node, sParserInfo* info)
         char* fun_name = "inherit";
 
         *node = sNodeTree_create_function_call(fun_name, params, num_params, FALSE, TRUE, 0, info);
-        
-        if(*info->p == '!' && *(info->p+1) != '=') {
-            info->p++;
-            skip_spaces_and_lf(info);
-            
-            *node = sNodeTree_create_unwrap(*node, FALSE, info);
-        }
     }
 
     return TRUE;

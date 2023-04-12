@@ -153,7 +153,7 @@ sNode*? exp_node(sInfo* info) version 8
             return null;
         }
         
-        delete node!;
+        delete node;
         
         if(*info->p == ':') {
             info->p = p;
@@ -178,10 +178,10 @@ sNode*? exp_node(sInfo* info) version 8
                     return null;
                 }
                 
-                map.insert(clone node!, clone node2!);
+                map.insert(clone node, clone node2);
                 
-                delete node!;
-                delete node2!;
+                delete node;
+                delete node2;
                 
                 if(*info->p == ',') {
                     info->p++;
@@ -209,9 +209,9 @@ sNode*? exp_node(sInfo* info) version 8
                     return null;
                 }
                 
-                list.push_back(clone node!);
+                list.push_back(clone node);
                 
-                delete node!;
+                delete node;
                 
                 if(*info->p == ',') {
                     info->p++;

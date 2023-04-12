@@ -157,7 +157,7 @@ bool compile_block(sNodeBlock& block, sInfo* info)
     }
     
     if(else_block) {
-        if(!compile_block(else_block!, info)) {
+        if(!compile_block(else_block, info)) {
             return false;
         }
     }
@@ -196,8 +196,8 @@ bool vm(sInfo* info) version 4
             
             ZVALUE*? conditional = nullable info.stack[-1];
             
-            if(conditional!.kind == kBoolValue) {
-                bool exp = conditional!.boolValue;
+            if(conditional.kind == kBoolValue) {
+                bool exp = conditional.boolValue;
                 
                 if(!exp) {
                     info.op = (int*)((char*)info->head + value);
@@ -250,9 +250,9 @@ sNodeBlock? parse_block(sInfo* info)
             exit(1);
         }
         
-        result.push_back(clone node!);
+        result.push_back(clone node);
         
-        delete node!;
+        delete node;
         
         if(*info->p == ';') {
             info->p++;
@@ -299,7 +299,7 @@ sNode*? exp_node(sInfo* info) version 4
             exit(2);
         }
         
-        sNode*% if_exp = dummy_heap node!;
+        sNode*% if_exp = dummy_heap node;
         
         sNodeBlock? if_block = parse_block(info);
         
@@ -317,11 +317,11 @@ sNode*? exp_node(sInfo* info) version 4
                 exit(2);
             }
             
-            elif_exps.push_back(dummy_heap node!);
+            elif_exps.push_back(dummy_heap node);
             
             sNodeBlock? elif_block = parse_block(info);
             
-            elif_blocks.push_back(elif_block!);
+            elif_blocks.push_back(elif_block);
         }
         
         sNodeBlock? else_block = null;
@@ -333,7 +333,7 @@ sNode*? exp_node(sInfo* info) version 4
             else_block = parse_block(info);
         }
         
-        return borrow new sNode(new sIfNode(if_exp, if_block!, elif_exps, elif_blocks, else_block));
+        return borrow new sNode(new sIfNode(if_exp, if_block, elif_exps, elif_blocks, else_block));
     }
     else {
         return inherit(info);

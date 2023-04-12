@@ -260,7 +260,7 @@ bool sFunNode*::compile(sFunNode* self, sInfo* info)
         
         LLVMBuildStore(gBuilder, param, llvm_value.value);
 
-        var_!->llvm_value = llvm_value.value;
+        var_->llvm_value = llvm_value.value;
     }
 
     if(!compile_block(node_block, info)) {
@@ -326,7 +326,7 @@ unsigned int sReturnNode*::id(sReturnNode* self)
 
 bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
 {
-    if(!self.value!.compile->(info)) {
+    if(!self.value.compile->(info)) {
         return false;
     }
     
@@ -511,7 +511,7 @@ sNode*? expression(sInfo* info) version 2
                 return null;
             }
             
-            return new sNode(new sFunNode(name, params, result_type!, node_block));
+            return new sNode(new sFunNode(name, params, result_type, node_block));
         }
         else if(*info->p == '(') {
             string name = string(word);

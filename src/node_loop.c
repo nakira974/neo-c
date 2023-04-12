@@ -721,12 +721,6 @@ BOOL compile_and_and(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-/*
-    if(!check_nullable_type(info->type, info)) {
-        return TRUE;
-    }
-*/
 
     sNodeType* left_type = info->type;
 
@@ -767,12 +761,6 @@ BOOL compile_and_and(unsigned int node, sCompileInfo* info)
     if(!compile(right_node, info)) {
         return FALSE;
     }
-    
-/*
-    if(!check_nullable_type(info->type, info)) {
-        return TRUE;
-    }
-*/
 
     sNodeType* right_type = info->type;
 
@@ -854,12 +842,6 @@ BOOL compile_or_or(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-/*
-    if(!check_nullable_type(info->type, info)) {
-        return TRUE;
-    }
-*/
 
     sNodeType* left_type = info->type;
 
@@ -899,12 +881,6 @@ BOOL compile_or_or(unsigned int node, sCompileInfo* info)
     if(!compile(right_node, info)) {
         return FALSE;
     }
-    
-/*
-    if(!check_nullable_type(info->type, info)) {
-        return TRUE;
-    }
-*/
 
     sNodeType* right_type = info->type;
 

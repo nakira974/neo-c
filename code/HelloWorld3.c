@@ -114,7 +114,7 @@ int main()
 
     v3.push_back(&x);
 
-    printf("%d\n", *v3.item(0, null));
+    printf("%d\n", *v3.item(0, null!));
 
     buffer*% b1 = new buffer.initialize();
 

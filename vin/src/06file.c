@@ -252,7 +252,7 @@ void Vi*::closeActiveWin(Vi* self)
 
     self.repositionWindows();
 
-    self.activeWin = self.wins.item(0, null);
+    self.activeWin = self.wins.item(0, null!);
 }
 
 void Vi*::exitFromApp(Vi* self) version 6
@@ -266,7 +266,7 @@ void Vi*::exitFromApp(Vi* self) version 6
 void Vi*::toggleWin(Vi* self) {
     if(self.toggleWin >= 0 && self.toggleWin < self.wins.length()) {
         int toggle_win = self.wins.find(self.activeWin, -1);
-        self.activeWin = self.wins.item(self.toggleWin, null);
+        self.activeWin = self.wins.item(self.toggleWin, null!);
         self.toggleWin = toggle_win;
     }
 }
@@ -275,7 +275,7 @@ void Vi*::nextWin(Vi* self) {
     if(next_win >= 0 && next_win < self.wins.length()) 
     {
         int toggle_win = self.wins.find(self.activeWin, -1);
-        self.activeWin = self.wins.item(next_win, null);
+        self.activeWin = self.wins.item(next_win, null!);
         self.toggleWin = toggle_win;
     }
 }
@@ -284,7 +284,7 @@ void Vi*::prevWin(Vi* self) {
     int prev_win = self.wins.find(self.activeWin, -1) - 1;
     if(self.toggleWin >= 0 && self.toggleWin < self.wins.length()) {
         int toggle_win = self.wins.find(self.activeWin, -1);
-        self.activeWin = self.wins.item(prev_win, null);
+        self.activeWin = self.wins.item(prev_win, null!);
         self.toggleWin = toggle_win;
     }
 }

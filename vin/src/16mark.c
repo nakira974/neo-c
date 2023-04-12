@@ -33,7 +33,7 @@ void ViWin*::markAtCurrentPoint(ViWin* self, wchar_t c)
 
 void ViWin*::returnAtMarkedPoint(ViWin* self, wchar_t c) 
 {
-    auto point = self.mark.at(c, null);
+    auto point = self.mark.at(c, null!);
     
     if(point != null) {
         self.saveReturnPoint();
@@ -77,7 +77,7 @@ void ViWin*::returnBack(ViWin* self)
 
 void ViWin*::returnBackOfStack(ViWin* self) 
 {
-    auto point = self.returnPointStack.item(-1, null);
+    auto point = self.returnPointStack.item(-1, null!);
     
     if(point != null) {
         self.cursorY = point.v1;

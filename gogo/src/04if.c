@@ -165,7 +165,7 @@ bool sIfNode*::compile(sIfNode* self, sInfo* info)
     if(else_block != null) {
         llvm_change_block(cond_else_block, info);
 
-        if(!compile_block(else_block!, info))
+        if(!compile_block(else_block, info))
         {
             return false;
         }

@@ -19,7 +19,7 @@ wchar_t*? ViWin*::selector2(ViWin* self, list<wstring>* lines)
 
         /// view ///
         for(int y=0; y<maxy && y < maxy2; y++) {
-            auto it = lines.item(scrolltop+y, null);
+            auto it = lines.item(scrolltop+y, null!);
 
             auto line = it.substring(0, maxx-1);
 
@@ -101,7 +101,7 @@ wchar_t*? ViWin*::selector2(ViWin* self, list<wstring>* lines)
     }
 
     if(!canceled) {
-        result = nullable lines.item(scrolltop+cursor, null);
+        result = nullable lines.item(scrolltop+cursor, null!);
     }
 
     return result;
@@ -109,7 +109,7 @@ wchar_t*? ViWin*::selector2(ViWin* self, list<wstring>* lines)
 
 void ViWin*::completion(ViWin* self, Vi* nvi) version 13
 {
-    auto line = self.texts.item(self.scroll+self.cursorY, null);
+    auto line = self.texts.item(self.scroll+self.cursorY, null!);
 
     wchar_t* p = line + self.cursorX;
     p--;

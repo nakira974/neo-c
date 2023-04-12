@@ -21,7 +21,7 @@ regex_struct*% regex(char* str, bool ignore_case, bool multiline, bool global, b
     result.ungreedy;
     result.options = options;
 
-    result.re = pcre_compile(str, options, &err, &erro_ofs, NULL);
+    result.re = pcre_compile(str, options, &err, &erro_ofs, NULL!);
 
     if(result.re == NULL) {
 fprintf(stderr, "regex error (%s)\n", str);
@@ -61,7 +61,7 @@ regex_struct*% regex_struct*::clone(regex_struct* reg)
     const char* err;
     int erro_ofs;
 
-    result.re = pcre_compile(result.str, result.options, &err, &erro_ofs, NULL);
+    result.re = pcre_compile(result.str, result.options, &err, &erro_ofs, NULL!);
 
     if(result.re == NULL) {
         return dummy_heap NULL;

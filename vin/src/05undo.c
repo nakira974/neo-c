@@ -46,7 +46,7 @@ void ViWin*::redo(ViWin* self)
     {
         self.undoIndex++;
 
-        auto undo = clone self.undo.item(self.undoIndex, null);
+        auto undo = clone self.undo.item(self.undoIndex, null!);
         auto cursor_x = self.undoCursorX.item(self.undoIndex, -1);
         auto scroll = self.undoScroll.item(self.undoIndex, -1);
         auto cursor_y = self.undoCursorY.item(self.undoIndex, -1);
@@ -72,7 +72,7 @@ void ViWin*::undo(ViWin* self)
     if(self.undoIndex > 0) {
         self.undoIndex--;
 
-        auto undo = clone self.undo.item(self.undoIndex, null);
+        auto undo = clone self.undo.item(self.undoIndex, null!);
         auto cursor_x = self.undoCursorX.item(self.undoIndex, -1);
         auto cursor_y = self.undoCursorY.item(self.undoIndex, -1);
         auto scroll = self.undoScroll.item(self.undoIndex, -1);

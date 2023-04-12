@@ -7,7 +7,7 @@ void ViWin*::toggleBraceForward(ViWin* self, wchar_t head, wchar_t tail)
 
     int nest = 0;
 
-    auto line = self.texts.item(cursor_y, null);
+    auto line = self.texts.item(cursor_y, null!);
 
     wchar_t* p = line + self.cursorX+1;
 
@@ -79,7 +79,7 @@ void ViWin*::toggleBraceBack(ViWin* self, wchar_t head, wchar_t tail)
 
     int nest = 0;
 
-    auto line = self.texts.item(cursor_y, null);
+    auto line = self.texts.item(cursor_y, null!);
 
     wchar_t* p = line + self.cursorX-1;
 
@@ -216,7 +216,7 @@ void ViWin*::toggleCommentBackward(ViWin* self)
 
 void ViWin*::gotoBraceEnd(ViWin* self, Vi* nvi) version 11
 {
-    auto line = self.texts.item(self.scroll+self.cursorY, null);
+    auto line = self.texts.item(self.scroll+self.cursorY, null!);
 
     auto c = line[self.cursorX];
     wchar_t c1 = 0;

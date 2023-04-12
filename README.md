@@ -8,7 +8,7 @@ Yet another modern compiler. It has a collection and string library using Boehm 
 もう一つのモダンコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 0.9.9r
+version 0.9.9t
 
 ``` C
 #include <comelang.h>
@@ -154,16 +154,8 @@ int main()
     
     printf("AAA".read());  // print out 12345\n12345\n
     
-    int*? a = null;
-    
-    guard(a) {
-        fprintf(stderr, "a is null\n");
-        return 1;
-    }
-    
-    //printf("%d\n", *a!);  // exception. printout source code file name and source code line number
-    
-    int* b = a;         /// no compile error
+    //puts(null);          // exception. print out source file name and line
+    //puts(null!);         // segmentaion fault
 
     var data = new sData(3,5);
     
@@ -1067,38 +1059,26 @@ bool string::operator_equals(char* left, char* right);
 # Guarding from the segmetation of null poiner
 
 ``` C
-    //int* a = null;   /// compile error
-    
-    int*? a = null;
-    
-    //printf("%d\n", *a!);   // exception. print out the file name of source code and the line number
-    
-    int b = 123;
-    
-    // a = &b;  // compile error
-    
-    a = nullable &b;
-    
-    printf("%d\n", *a!);  // null check and get the value of a
-    
-    // b = *a;  /// compile error
-    
-    b = *(nonullable a);
-```
-
-``` C
 #include <comelang.h>
+
+int fun(int* p)
+{
+    if(p != null) {
+        puts(a);
+    }
+}
 
 int main(int argc, char** argv)
 {
-    int*? a = null;
+    int* a = null;
     
-    guard(a) {
-        fprintf(stderr, "a is null\n");
-        return 1;
-    }
+    //puts(a);   /// exception print out source file name and lines;
     
-    int* b = a;
+    //puts(a!);  // segmentaion fault;
+    
+    // fun(a);   // exception print out source file name and lines
+    
+    fun(a!);     // ok
     
     return 0;
 }

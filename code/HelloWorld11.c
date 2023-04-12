@@ -8,7 +8,7 @@ int main()
     
     auto li2 = ["AAA", "BBB", "CCC"];
     
-    xassert("list value test2", li2.item(0, null).equals("AAA") && li2.item(1, null).equals("BBB") && li2.item(2, null).equals("CCC") && li2.length() == 3);
+    xassert("list value test2", li2.item(0, null!).equals("AAA") && li2.item(1, null!).equals("BBB") && li2.item(2, null!).equals("CCC") && li2.length() == 3);
     
     auto ma1 = ["AAA":1, "BBB":2, "CCC":3];
     

@@ -2789,18 +2789,6 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 return FALSE;
             }
         }
-        else if(*info->p == '!' && *(info->p+1) != '=') {
-            info->p++;
-            skip_spaces_and_lf(info);
-            
-            char var_name[VAR_NAME_MAX];
-
-            xstrncpy(var_name, buf, VAR_NAME_MAX);
-
-            *node = sNodeTree_create_load_variable(var_name, info);
-            
-            *node = sNodeTree_create_unwrap(*node, FALSE, info);
-        }
 /*
         else if(*info->p == '@' && (*(info->p+1) == '(' || *(info->p+1) == '{' || *(info->p+1) == '[' || *(info->p+1) == '<'))
         {
@@ -2979,13 +2967,6 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 };
 
                 *node = sNodeTree_create_function_call(fun_name, params, num_params, FALSE, FALSE, info->mFunVersion, info);
-                
-                if(*info->p == '!' && *(info->p+1) != '=') {
-                    info->p++;
-                    skip_spaces_and_lf(info);
-                    
-                    *node = sNodeTree_create_unwrap(*node, FALSE, info);
-                }
             }
             else {
                 unsigned int nodes[NODES_MAX];
@@ -3088,13 +3069,6 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
             };
 
             *node = sNodeTree_create_function_call(fun_name, params, num_params, FALSE, FALSE, info->mFunVersion, info);
-            
-            if(*info->p == '!' && *(info->p+1) != '=') {
-                info->p++;
-                skip_spaces_and_lf(info);
-                
-                *node = sNodeTree_create_unwrap(*node, FALSE, info);
-            }
         }
 */
         else if(info->mBlockLevel == 0 && *info->p == '(') {
@@ -3123,13 +3097,6 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
             };
 
             *node = sNodeTree_create_function_call(fun_name, params, num_params, FALSE, FALSE, info->mFunVersion, info);
-            
-            if(*info->p == '!' && *(info->p+1) != '=') {
-                info->p++;
-                skip_spaces_and_lf(info);
-                
-                *node = sNodeTree_create_unwrap(*node, FALSE, info);
-            }
         }
         else {
             *node = sNodeTree_create_load_function(buf, info, sline_before);

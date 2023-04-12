@@ -21,7 +21,7 @@ void ViWin*::textsView(ViWin* self, Vi* nvi)
     int maxx = getmaxx(self.win);
 
     if(self.texts.length() > 0) {
-        auto cursor_line = self.texts.item(self.scroll + self.cursorY, null).printable();
+        auto cursor_line = self.texts.item(self.scroll + self.cursorY, null!).printable();
             
         int cursor_height = (wcswidth(cursor_line, cursor_line.length()) / (maxx-1));
 
@@ -37,9 +37,10 @@ void ViWin*::textsView(ViWin* self, Vi* nvi)
             else if(self.cursorY == it2 && nvi.activeWin.equals(self)) 
             {
                 if(printable_line.length() == 0) {
-                    wattron(self.win, A_REVERSE);
-                    mvwprintw(self.win, it2, 0, "$");
-                    wattroff(self.win, A_REVERSE);
+		     using unsafe;
+		     wattron(self.win, A_REVERSE);
+		     mvwprintw(self.win, it2, 0, "$");
+		     wattroff(self.win, A_REVERSE);
                 }
                 else if(wcswidth(printable_line, wcslen(printable_line)) > maxx-2)
                 {
@@ -236,7 +237,7 @@ void ViWin*::input(ViWin* self, Vi* nvi) version 2
 {
     auto key = self.getKey(true);
 
-    auto event = nvi.events.item(key, null);
+    auto event = nvi.events.item(key, null!);
 
     if(event != null) {
         event(nvi, key);
@@ -291,7 +292,7 @@ void ViWin*::modifyOverCursorXValue(ViWin* self)
         self.cursorX = 0;
     }
     else {
-        auto cursor_line = self.texts.item(self.scroll+self.cursorY, null);
+        auto cursor_line = self.texts.item(self.scroll+self.cursorY, null!);
 
         if(cursor_line) {
             if(self.cursorX >= cursor_line.length())
@@ -314,7 +315,7 @@ void ViWin*::modifyOverCursorXValue2(ViWin* self)
         self.cursorX = 0;
     }
     else {
-        auto cursor_line = self.texts.item(self.scroll+self.cursorY, null);
+        auto cursor_line = self.texts.item(self.scroll+self.cursorY, null!);
 
         if(cursor_line) {
             if(self.cursorX >= cursor_line.length())
@@ -539,7 +540,7 @@ Vi*% Vi*::initialize(Vi*% self) version 2
     self.events = new vector<void (*lambda)(Vi*, int)>.initialize();
     
     for(int i=0; i<KEY_MAX; i++) {
-        self.events.push_back(null);
+        self.events.push_back(null!);
     }
 
     self.events.replace('l', void lambda(Vi* self, int key) 

@@ -267,7 +267,6 @@ BOOL cast_posibility(sNodeType* left_type, sNodeType* right_type);
 BOOL auto_cast_posibility(sNodeType* left_type, sNodeType* right_type, BOOL op);
 
 BOOL substitution_posibility(sNodeType* left_type, sNodeType* right_type, LLVMValueRef right_obj, struct sCompileInfoStruct* info);
-BOOL check_nullable_type(char* var_name, sNodeType* node_type, struct sCompileInfoStruct* info);
 BOOL type_identify(sNodeType* left, sNodeType* right);
 BOOL type_equalability(sNodeType* left_type, sNodeType* right_type);
 BOOL type_identify_with_class_name(sNodeType* left, char* right_class_name);
@@ -1034,6 +1033,7 @@ struct sNodeTreeStruct
         struct {
             BOOL mLoad;
             BOOL mInhibitUnwrap;
+	    BOOL mSafeMode;
         } sUnwrap;
     } uValue;
 };

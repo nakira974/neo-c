@@ -63,7 +63,7 @@
         
         info2.stack_num = 0;
         
-        if(!compile_block(block!, &info2)) {
+        if(!compile_block(block, &info2)) {
             return false;
         }
 
@@ -76,12 +76,12 @@
     
     append_str_to_codes(info, wstring(name));
     
-    info.codes.append_int(codes ? codes!.length():0);
+    info.codes.append_int(codes ? codes.length():0);
     
     if(codes) {
-        info.codes.append(codes!.buf, codes!.length());
+        info.codes.append(codes.buf, codes.length());
         
-        delete codes!;
+        delete codes;
     }
     
     info.stack_num -= params.length() + 1;
@@ -99,7 +99,7 @@ sNode*? exp_node(sInfo* info) version 9
         string fun_name = string("read");
         vector<sNode*%>*% params = new vector<sNode*%>();
         sNodeBlock? block = null
-        result = borrow new sNode(new sFunNode(fun_name, clone result!, params, block));
+        result = borrow new sNode(new sFunNode(fun_name, clone result, params, block));
     }
     else {
         result = inherit(info);
@@ -146,9 +146,9 @@ sNode*? exp_node(sInfo* info) version 9
                     exit(1);
                 }
                 
-                params.push_back(clone node!);
+                params.push_back(clone node);
                 
-                delete node!;
+                delete node;
                 
                 if(*info->p == ',') {
                     info->p++;
@@ -162,9 +162,9 @@ sNode*? exp_node(sInfo* info) version 9
             block = parse_block(info);
         }
         
-        sNode*? result2 = borrow new sNode(new sFunNode(fun_name, clone result!, params, block));
+        sNode*? result2 = borrow new sNode(new sFunNode(fun_name, clone result, params, block));
         
-        delete result!;
+        delete result;
         
         result = result2;
     }

@@ -74,7 +74,7 @@ void ViWin*::enterNewLine(ViWin* self)
 
 void ViWin*::enterNewLine2(ViWin* self)
 {
-    auto line = self.texts.item(self.scroll+self.cursorY, null);
+    auto line = self.texts.item(self.scroll+self.cursorY, null!);
     int num_spaces = 0;
     for(int i=0; i<line.length(); i++)
     {
@@ -156,7 +156,7 @@ void ViWin*::inputInsertMode(ViWin* self, Vi* nvi)
         self.backSpace();
     }
     else if(key == 9) {
-        auto str = self.texts.item(self.scroll+self.cursorY, null).substring(0, self.cursorX);
+        auto str = self.texts.item(self.scroll+self.cursorY, null!).substring(0, self.cursorX);
         bool all_space = true;
         for(int i=0; i<str.length(); i++) {
             if(str[i] != ' ' && str[i] != '\t') {

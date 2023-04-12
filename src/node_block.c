@@ -42,6 +42,7 @@ BOOL parse_block_easy(ALLOC sNodeBlock** node_block, BOOL extern_c_lang, BOOL re
 
 BOOL parse_block(sNodeBlock* node_block, BOOL extern_c_lang, BOOL single_expression, BOOL result_type_is_void, BOOL return_self, BOOL function_body, sParserInfo* info)
 {
+    BOOL safe_mode = gNCSafeMode;
     BOOL has_result = FALSE;
     info->change_sline = FALSE;
     node_block->mLVTable = info->lv_table;
@@ -332,6 +333,7 @@ BOOL parse_block(sNodeBlock* node_block, BOOL extern_c_lang, BOOL single_express
     if(!extern_c_lang) {
         info->mBlockLevel--;
     }
+    gNCSafeMode = safe_mode;
 
     return TRUE;
 }

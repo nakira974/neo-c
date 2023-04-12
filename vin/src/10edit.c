@@ -25,7 +25,7 @@ void ViWin*::deleteOneLine(ViWin* self, Vi* nvi) version 10
         nvi.yankKind = kYankKindLine;
         
         for(int i=0; i<self.digitInput+1; i++) {
-            auto line = self.texts.item(self.scroll+self.cursorY, null);
+            auto line = self.texts.item(self.scroll+self.cursorY, null!);
             
             if(line != null) {
                 nvi.yank.push_back(clone line);
@@ -40,7 +40,7 @@ void ViWin*::deleteOneLine(ViWin* self, Vi* nvi) version 10
         self.digitInput = 0;
     }
     else {
-        auto line = self.texts.item(self.scroll+self.cursorY, null);
+        auto line = self.texts.item(self.scroll+self.cursorY, null!);
         if(line != null) {
             self.pushUndo();
             nvi.yank.reset();
@@ -63,7 +63,7 @@ void ViWin*::deleteOneLine2(ViWin* self, Vi* nvi)
         nvi.yankKind = kYankKindLine;
         
         for(int i=0; i<self.digitInput+1; i++) {
-            auto line = self.texts.item(self.scroll+self.cursorY, null);
+            auto line = self.texts.item(self.scroll+self.cursorY, null!);
             
             if(line != null) {
                 nvi.yank.push_back(clone line);
@@ -78,7 +78,7 @@ void ViWin*::deleteOneLine2(ViWin* self, Vi* nvi)
         self.saveYankToFile(nvi);
     }
     else {
-        auto line = self.texts.item(self.scroll+self.cursorY, null);
+        auto line = self.texts.item(self.scroll+self.cursorY, null!);
         if(line != null) {
             self.pushUndo();
             self.texts.delete(self.scroll+self.cursorY, self.scroll+self.cursorY+1);
@@ -378,7 +378,7 @@ void ViWin*::deleteCursorCharactor(ViWin* self)
     if(self.digitInput > 0) {
         int num = self.digitInput + 1;
         
-        auto line = self.texts.item(self.scroll+self.cursorY, null);
+        auto line = self.texts.item(self.scroll+self.cursorY, null!);
         
         for(int i= 0; i<num; i++) {
             line.delete(self.cursorX, self.cursorX+1);
@@ -389,7 +389,7 @@ void ViWin*::deleteCursorCharactor(ViWin* self)
         self.digitInput = 0;
     }
     else {
-        auto line = self.texts.item(self.scroll+self.cursorY, null);
+        auto line = self.texts.item(self.scroll+self.cursorY, null!);
         line.delete(self.cursorX, self.cursorX+1);
     
         self.modifyOverCursorXValue();
@@ -403,7 +403,7 @@ void ViWin*::deleteBack(ViWin* self)
     if(self.digitInput > 0) {
         int num = self.digitInput + 1;
         
-        auto line = self.texts.item(self.scroll+self.cursorY, null);
+        auto line = self.texts.item(self.scroll+self.cursorY, null!);
         
         for(int i= 0; i<num; i++) {
             if(self.cursorX > 0) {
@@ -417,7 +417,7 @@ void ViWin*::deleteBack(ViWin* self)
         self.digitInput = 0;
     }
     else {
-        auto line = self.texts.item(self.scroll+self.cursorY, null);
+        auto line = self.texts.item(self.scroll+self.cursorY, null!);
         
         if(self.cursorX > 0) {
             self.cursorX--;
@@ -430,7 +430,7 @@ void ViWin*::deleteBack(ViWin* self)
 
 void ViWin*::getCursorNumber(ViWin* self, int* head, int* tail) 
 {
-    auto line = self.texts.item(self.scroll+self.cursorY, null);
+    auto line = self.texts.item(self.scroll+self.cursorY, null!);
     
     auto c = line[self.cursorX];
 
@@ -486,7 +486,7 @@ void ViWin*::incrementNumber(ViWin* self)
     if(self.digitInput > 0) {
         int num = self.digitInput + 1;
         
-        auto line = self.texts.item(self.scroll+self.cursorY, null);
+        auto line = self.texts.item(self.scroll+self.cursorY, null!);
         
         int head;
         int tail;
@@ -509,7 +509,7 @@ void ViWin*::incrementNumber(ViWin* self)
         self.digitInput = 0;
     }
     else {
-        auto line = self.texts.item(self.scroll+self.cursorY, null);
+        auto line = self.texts.item(self.scroll+self.cursorY, null!);
         
         int head;
         int tail;
@@ -541,7 +541,7 @@ void ViWin*::replaceCursorCharactor(ViWin* self)
     if(self.digitInput > 0) {
         int num = self.digitInput + 1;
         
-        auto line = self.texts.item(self.scroll+self.cursorY, null);
+        auto line = self.texts.item(self.scroll+self.cursorY, null!);
         
         for(int i= 0; i<num; i++) {
             line.replace(self.cursorX+i, (wchar_t)key);
@@ -551,7 +551,7 @@ void ViWin*::replaceCursorCharactor(ViWin* self)
     }
     else {
 */
-        auto line = self.texts.item(self.scroll+self.cursorY, null);
+        auto line = self.texts.item(self.scroll+self.cursorY, null!);
         line[self.cursorX] = (wchar_t)key;
 //    }
 }
@@ -561,14 +561,14 @@ void ViWin*::deleteUntilTail(ViWin* self)
     self.pushUndo();
     
     if(self.digitInput > 0) {
-        auto line = self.texts.item(self.scroll+self.cursorY, null);
+        auto line = self.texts.item(self.scroll+self.cursorY, null!);
         
         line.delete(self.cursorX, -1);
         
         int num = self.digitInput + 1;
         
         for(int i=1; i<num; i++) {
-            auto line = self.texts.item(self.scroll+self.cursorY+1, null);
+            auto line = self.texts.item(self.scroll+self.cursorY+1, null!);
             
             if(line != null) {
                 self.texts.delete(self.scroll+self.cursorY+1, self.scroll+self.cursorY+1+1);
@@ -582,7 +582,7 @@ void ViWin*::deleteUntilTail(ViWin* self)
         self.digitInput = 0;
     }
     else {
-        auto line = self.texts.item(self.scroll+self.cursorY, null);
+        auto line = self.texts.item(self.scroll+self.cursorY, null!);
         line.delete(self.cursorX, -1);
         
         self.modifyOverCursorXValue();
@@ -594,8 +594,8 @@ void ViWin*::joinLines(ViWin* self)
     self.pushUndo();
 
     if(self.scroll+self.cursorY+1 < self.texts.length()) {
-        auto line = self.texts.item(self.scroll+self.cursorY, null);
-        auto next_line = self.texts.item(self.scroll+self.cursorY+1, null);
+        auto line = self.texts.item(self.scroll+self.cursorY, null!);
+        auto next_line = self.texts.item(self.scroll+self.cursorY+1, null!);
 
         auto line2 = xsprintf("%ls %ls", line, next_line).to_wstring();
 
@@ -615,7 +615,7 @@ void ViWin*::yankOneLine(ViWin* self, Vi* nvi)
         nvi.yankKind = kYankKindLine;
         
         for(int i=0; i<self.digitInput+1; i++) {
-            auto line = self.texts.item(self.scroll+self.cursorY+i, null);
+            auto line = self.texts.item(self.scroll+self.cursorY+i, null!);
             
             if(line != null) {
                 nvi.yank.push_back(clone line);
@@ -626,7 +626,7 @@ void ViWin*::yankOneLine(ViWin* self, Vi* nvi)
         self.saveYankToFile(nvi);
     }
     else {
-        auto line = self.texts.item(self.scroll+self.cursorY, null);
+        auto line = self.texts.item(self.scroll+self.cursorY, null!);
 
         if(line != null) {
             self.pushUndo();
@@ -643,8 +643,8 @@ void ViWin*::joinLines2(ViWin* self) version 10
     self.pushUndo();
 
     if(self.scroll+self.cursorY+1 < self.texts.length()) {
-        auto line = self.texts.item(self.scroll+self.cursorY, null);
-        auto next_line = clone self.texts.item(self.scroll+self.cursorY+1, null);
+        auto line = self.texts.item(self.scroll+self.cursorY, null!);
+        auto next_line = clone self.texts.item(self.scroll+self.cursorY+1, null!);
 
         self.texts.replace(self.scroll+self.cursorY, xsprintf("%ls%ls", line, next_line).to_wstring());
         self.texts.delete(self.scroll+self.cursorY+1, self.scroll+self.cursorY+1+1);
@@ -658,7 +658,7 @@ void ViWin*::forwardToNextCharacter1(ViWin* self, int key)
     self.mRepeatFowardNextCharacterKind = kRFNC1;
     self.mRepeatFowardNextCharacter = key;
     
-    auto line = self.texts.item(self.scroll+self.cursorY, null);
+    auto line = self.texts.item(self.scroll+self.cursorY, null!);
     
     if(self.digitInput > 0) {
         for(int i=0; i<self.digitInput+1; i++) {
@@ -688,7 +688,7 @@ void ViWin*::forwardToNextCharacter2(ViWin* self, int key)
     self.mRepeatFowardNextCharacterKind = kRFNC2;
     self.mRepeatFowardNextCharacter = key;
     
-    auto line = self.texts.item(self.scroll+self.cursorY, null);
+    auto line = self.texts.item(self.scroll+self.cursorY, null!);
     
     if(self.digitInput > 0) {
         for(int i=0; i<self.digitInput+1; i++) {
@@ -731,7 +731,7 @@ void ViWin*::backwardToNextCharacter1(ViWin* self)
 {
     auto key = self.getKey(false);
     
-    auto line = self.texts.item(self.scroll+self.cursorY, null);
+    auto line = self.texts.item(self.scroll+self.cursorY, null!);
     
     if(self.digitInput > 0) {
         for(int i=0; i<self.digitInput+1; i++) {
@@ -760,7 +760,7 @@ void ViWin*::backwardToNextCharacter2(ViWin* self)
 {
     auto key = self.getKey(false);
     
-    auto line = self.texts.item(self.scroll+self.cursorY, null);
+    auto line = self.texts.item(self.scroll+self.cursorY, null!);
     
     if(self.digitInput > 0) {
         for(int i=0; i<self.digitInput+1; i++) {
@@ -789,7 +789,7 @@ void ViWin*::changeCase(ViWin* self)
 {
     self.pushUndo();
 
-    auto line = self.texts.item(self.scroll+self.cursorY, null);
+    auto line = self.texts.item(self.scroll+self.cursorY, null!);
     
     if(self.digitInput > 0) {
         for(int i=0; i<self.digitInput+1; i++) {
@@ -834,7 +834,7 @@ void ViWin*::changeCase(ViWin* self)
 
 void ViWin*::moveToHead(ViWin* self) 
 {
-    auto line = self.texts.item(self.scroll+self.cursorY, null);
+    auto line = self.texts.item(self.scroll+self.cursorY, null!);
     
     int i;
     for(i=0; i<line.length(); i++) {

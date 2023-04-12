@@ -37,7 +37,7 @@ void ViWin*::search(ViWin* self, Vi* nvi)
         return;
     }
     
-    auto cursor_line = self.texts.item(self.scroll+self.cursorY, null);
+    auto cursor_line = self.texts.item(self.scroll+self.cursorY, null!);
 
     int x = cursor_line.substring(self.cursorX+1, -1).index(nvi.searchString, -1);
 
@@ -89,7 +89,7 @@ void ViWin*::searchReverse(ViWin* self, Vi* nvi)
         return;
     }
     
-    auto cursor_line = self.texts.item(self.scroll+self.cursorY, null);
+    auto cursor_line = self.texts.item(self.scroll+self.cursorY, null!);
 
     int x;
     if(self.cursorX < nvi.searchString.length())

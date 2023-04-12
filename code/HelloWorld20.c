@@ -90,6 +90,13 @@ int cZYZZZZZZZZZZZZZZZZZZZZZZZZZZZ(char*% a)
     return 0;
 }
 
+int funXYZ(int a=123, string b = string("ABC"), list<int>*% c = [1,2,3])
+{
+    xassert("default parametor test", a == 123 && b === string("ABC") && c === [1,2,3]);
+    
+    return 0;
+}
+
 int main(int argc, char** argv)
 {
     string a = string("AAAA");
@@ -158,6 +165,8 @@ int main(int argc, char** argv)
     char*% cZYZ = null;
     
     cZYZZZZZZZZZZZZZZZZZZZZZZZZZZZ(string("AAA"));
+    
+    funXYZ();
     
     return 0;
 }

@@ -1969,7 +1969,7 @@ impl map <T, T2>
     list<T>*% keys(map<T, T2>* self) {
         auto result = new list<T>.initialize();
         
-        foreach(it, self) {
+        foreach(it, self.key_list) {
             if(is_gc_heap(it)) {
                 result.push_back(clone it);
             }
@@ -1984,10 +1984,10 @@ impl map <T, T2>
         return result;
     }
     
-    list<T>*% values(map<T, T2>* self) {
-        auto result = new list<T>.initialize();
+    list<T2>*% values(map<T, T2>* self) {
+        auto result = new list<T2>.initialize();
         
-        foreach(it, self) {
+        foreach(it, self.key_list) {
             T2& default_value;
             memset(&default_value!, 0, sizeof(T2));
         
@@ -2038,50 +2038,31 @@ impl map <T, T2>
     }
     
     T& begin(map<T, T2>* self) {
-        self.it = 0;
-        while(self.it < self.size) {
-            if(self.item_existance[self.it]) {
-                return self.keys[self.it++];
-            }
-            self.it++;
+        self.key_list.it = self.key_list.head;
+
+        if(self.key_list.it) {
+            return self.key_list.it.item;
         }
         
         T& result;
         memset(&result, 0, sizeof(T));
-
         return result;
     }
 
     T& next(map<T, T2>* self) {
-        while(self.it < self.size) {
-            if(self.item_existance[self.it]) {
-                return self.keys[self.it++];
-            }
-            self.it++;
+        self.key_list.it = self.key_list.it.next;
+
+        if(self.key_list.it) {
+            return self.key_list.it.item;
         }
         
         T& result;
         memset(&result, 0, sizeof(T));
-
         return result;
     }
 
     bool end(map<T, T2>* self) {
-        int count = 0;
-        for(int i=self.it-1; i<self.size; i++) {
-            if(self.item_existance[i]) {
-                count ++;
-            }
-        }
-
-        if(count == 0) {
-            return true;
-        }
-        else {
-            return false;
-        }
-        
-        return true;
+        return self.key_list.it == null;
     }
 }
 

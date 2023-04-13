@@ -168,6 +168,13 @@ int main(int argc, char** argv)
     
     funXYZ();
     
+    var ma = ["AAA":1, "BBB":2];
+    ma["CCC"] = 3;
+    
+    xassert("map key", ma.keys() === ["AAA", "BBB", "CCC"]);
+    xassert("map key", ma.values() === [1, 2, 3]);
+    xassert("map test", ma === ["AAA":1, "BBB":2, "CCC":3]);
+    
     return 0;
 }
 

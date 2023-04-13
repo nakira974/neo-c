@@ -2013,21 +2013,26 @@ impl map <T, T2>
             return false;
         }
 
+        int n = 0;
         bool result = true;
         foreach(it, left.key_list) {
-            T2& default_value;
-            T2& it2 = left.at(it, default_value!);
-
-            if(right.find(it)) {
-                T2& default_value;
-                T2& item = right.at(it, default_value!);
-                if(!it2.equals(item)) {
+            T default_value;
+            T it2 = right.key_list.item(n, default_value!);
+            
+            if(it.equals(it2)) {
+                T2 default_value2;
+                T2& item = left.at(it, default_value2!);
+                T2& item2 = left.at(it2, default_value2!);
+                
+                if(!item.equals(item2)) {
                     result = false;
                 }
             }
             else {
                 result = false;
             }
+            
+            n++;
         }
 
         return result;
@@ -2063,6 +2068,23 @@ impl map <T, T2>
 
     bool end(map<T, T2>* self) {
         return self.key_list.it == null;
+    }
+    
+    map<T,T2>* each(map<T,T2>* self, void* parent, void (*block_)(void*, T&,T2&,bool*)) {
+        list_item<T>?* it = self.key_list.head;
+        while(it != null) {
+            T2 default_value;
+            T2 item = self.at(it.item, default_value!);
+            bool end_flag = false;
+            block_(parent, it.item, item, &end_flag);
+
+            if(end_flag == true) {
+                break;
+            }
+            it = it.next;
+        }
+
+        return self;
     }
 }
 

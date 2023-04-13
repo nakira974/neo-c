@@ -174,6 +174,8 @@ int main(int argc, char** argv)
     xassert("map key", ma.keys() === ["AAA", "BBB", "CCC"]);
     xassert("map key", ma.values() === [1, 2, 3]);
     xassert("map test", ma === ["AAA":1, "BBB":2, "CCC":3]);
+    xassert("map", ["AAA":1, "BBB":2] === ["AAA":1, "BBB":2]);
+    xassert("map", ["AAA":1, "BBB":2] !== ["BBB":2, "AAA":1]);
     
     return 0;
 }

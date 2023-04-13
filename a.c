@@ -2,11 +2,11 @@
 
 int main(int argc, char** argv)
 {
-    var ma = ["AAA":1, "BBB":2];
-    ma["CCC"] = 3;
+    xassert("map", ["AAA":1, "BBB":2] === ["AAA":1, "BBB":2]);
     
-    foreach(it, ma) {
+    ["AAA":1, "BBB":2, "CCC":3].each {
         puts(it);
+        printf("%d\n", it2);
     }
     
     return 0;

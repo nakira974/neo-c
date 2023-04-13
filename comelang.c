@@ -432,7 +432,7 @@ buffer* buffer*::append(buffer* self, char* mem, size_t size)
     using unsafe;
     
     if(self.len + size + 1 + 1 >= self.size) {
-        char* old_buf = self.buf;
+        char*% old_buf = clone self.buf;
         int old_len = self.len;
         int new_size = (self.size + size + 1) * 2;
         self.buf = new char[new_size];
@@ -443,7 +443,6 @@ buffer* buffer*::append(buffer* self, char* mem, size_t size)
 
     memcpy(self.buf + self.len, mem, size);
     self.len += size;
-
     self.buf[self.len] = '\0';
     
     return self;

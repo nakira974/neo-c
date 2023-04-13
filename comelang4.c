@@ -481,6 +481,7 @@ string FILE::read(FILE* f)
         char buf2[BUFSIZ];
         
         int size = fread(buf2, 1, BUFSIZ, f);
+        
         buf.append(buf2, size);
 
         if(size < BUFSIZ) {

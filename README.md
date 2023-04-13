@@ -8,7 +8,7 @@ Yet another modern compiler. It has a collection and string library using Boehm 
 もう一つのモダンコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 0.9.9u
+version 0.9.9v
 
 ``` C
 #include <comelang.h>
@@ -672,10 +672,6 @@ mapの要素になる為には型にハッシュ値の計算の為にget_hash_ke
 ```
     ["A":1, "B":2, "C":3].keys() === ["A", "B", "C"]
 ```
-
-However, this is not always true. Because the map is in no particular order, the return value may be ["B", "A", "C"], etc.
-
-ただしこれはtrueになるとは限りません。mapは順不同に入っているため戻り値が["B", "A", "C"]などとなるかもしれないからです。
 
 ```
     ["A":1, "B":2, "C":3].values() === [1,2,3]

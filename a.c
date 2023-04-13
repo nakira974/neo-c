@@ -1,25 +1,18 @@
 #include <comelang.h>
 
-int fun(int a=123, string b = string("ABC"), list<int>*% c = [1,2,3])
-{
-    printf("a %d b %s\n", a, b);
-    
-    foreach(it, c) {
-        printf("%d\n", it);
-    }
-    
-    var d = clone c;
-    
-    foreach(it, d) {
-        printf("%d\n", it);
-    }
-    
-    return 0;
-}
-
 int main(int argc, char** argv)
 {
-    fun(b:string("DEF"));
+    var m = new map<char*, int>();
+    m.insert("AAA", 1);
+    m.insert("BBB", 2);
+    m.insert("KKK", 3);
+    m.insert("CCC", 3);
+    var m2 = new map<char*, int>();
+    m2.insert("AAA", 1);
+    m2.insert("BBB", 2);
+    m2.insert("CCC", 3);
+    m.insert("KKK", 3);
+    xassert("map equals", m === m2);
     
     return 0;
 }

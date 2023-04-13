@@ -1508,6 +1508,8 @@ struct map<T, T2>
     T2&* items;
     int size;
     int len;
+    
+    list<T>* key_list;
 
     int it;
 };
@@ -1528,6 +1530,8 @@ impl map <T, T2>
 
         self.size = MAP_TABLE_DEFAULT_SIZE;
         self.len = 0;
+        
+        self.key_list = borrow new list<T>();
 
         self.it = 0;
 
@@ -1552,6 +1556,8 @@ impl map <T, T2>
         self.len = 0;
 
         self.it = 0;
+        
+        self.key_list = borrow new list<T>();
         
         for(int i=0; i<num_keys; i++) {
             self.insert(keys[i], values[i]);
@@ -1578,6 +1584,8 @@ impl map <T, T2>
             }
         }
         delete self.keys;
+        
+        delete self.key_list;
 
         delete self.item_existance;
     }
@@ -1881,6 +1889,13 @@ impl map <T, T2>
             }
         }
         
+        if(isheap(T)) {
+            self.key_list.push_back(clone key);
+        }
+        else {
+            self.key_list.push_back(key);
+        }
+        
         return self;
     }
 
@@ -1999,7 +2014,7 @@ impl map <T, T2>
         }
 
         bool result = true;
-        foreach(it, left) {
+        foreach(it, left.key_list) {
             T2& default_value;
             T2& it2 = left.at(it, default_value!);
 

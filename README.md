@@ -1089,9 +1089,6 @@ Cで書かれた関数にはNULLを渡すことがありますが、普通はNUL
 
 NULL may be passed to a function written in C, but normally it can be passed with NULL!. However, attron (A_REVERSE) of curses cannot pass NULL!, so a runtime error occurs. use c { attron(A_REVERSE); } to prevent it. No null checking is done at runtime.
 
-
-```
-
 # mixin-layers system
 
 Mixin-layers is a programming technique that creates an application so that layers are layered. The mechanism is to allow overwriting of a function and call the overwritten function from the overwritten function.

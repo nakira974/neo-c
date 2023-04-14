@@ -503,7 +503,7 @@ each accesses all elements with an iterator
 eachは全ての要素にイテレータでアクセスします。
 
 ```
-    int sun = 0;
+    int sum = 0;
     [1,2,3,4,5].each {
         sum += it;
     }
@@ -512,7 +512,8 @@ eachは全ての要素にイテレータでアクセスします。
 
 ```
     int sum = 0;
-    foreach(it, [1,2,3,4,5,6]) {
+    var m = [1,2,3,4,5,6];
+    foreach(it, m) {
         if(it > 3) {
             break;
         }
@@ -1082,6 +1083,13 @@ int main(int argc, char** argv)
     
     return 0;
 }
+```
+
+Cで書かれた関数にはNULLを渡すことがありますが、普通はNULL!とすればわたすことができます。しかし、cursesのattron(A_REVERSE)などはNULL!を渡すことができないため実行時エラーとなります。防ぐためにはusing c {attron(A_REVERSE); }としてください。NULLチェックが実行時には行われません。
+
+NULL may be passed to a function written in C, but normally it can be passed with NULL!. However, attron (A_REVERSE) of curses cannot pass NULL!, so a runtime error occurs. use c { attron(A_REVERSE); } to prevent it. No null checking is done at runtime.
+
+
 ```
 
 # mixin-layers system

@@ -1144,7 +1144,7 @@ int main()
 }
 ```
 
-`[a-zA-Z][a-zA-Z_0-9]* is a comment of expression.
+@[a-zA-Z][a-zA-Z_0-9]* is a comment of expression.
 
 # BoehmGC
 

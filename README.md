@@ -1138,7 +1138,7 @@ int fun(bool flag)
 
 int main()
 {
-    fun(false`flag);
+    fun(false@flag);
 
     return 0;
 }

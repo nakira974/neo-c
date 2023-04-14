@@ -19,7 +19,7 @@ void node_final(char* sname)
     snprintf(sname2, PATH_MAX, "%s.ll", sname);
 
     LLVMDumpModule(gModule); // dump module to STDOUT
-    LLVMPrintModuleToFile(gModule, sname2, NULL);
+    LLVMPrintModuleToFile(gModule, sname2, NULL!);
 
     // clean memory
     LLVMDisposeBuilder(gBuilder);
@@ -246,7 +246,7 @@ int main(int argc, char** argv)
         if(argv[i] === "run") {
         }
         else {
-            sname = nullable string(argv[i]);
+            sname = string(argv[i]);
         }
     }
     

@@ -122,7 +122,7 @@ bool vm(sInfo* info) version 5
         case OP_PRINT: {
             info->op++;
             
-            ZVALUE*? value = nullable info.stack[-1];
+            ZVALUE*? value = info.stack[-1];
             
             puts(value.to_string());
             

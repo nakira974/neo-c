@@ -24,9 +24,9 @@ wchar_t*? ViWin*::selector2(ViWin* self, list<wstring>* lines)
             auto line = it.substring(0, maxx-1);
 
             if(cursor == y) {
-                attron(A_REVERSE);
+                using c { attron(A_REVERSE); }
                 mvprintw(y, 0, "%ls", line);
-                attroff(A_REVERSE);
+                using c { attroff(A_REVERSE); }
             }
             else {
                 mvprintw(y, 0, "%ls", line);

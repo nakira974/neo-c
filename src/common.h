@@ -111,7 +111,6 @@ struct sVarTableStruct;
 extern BOOL gNCDebug;
 extern BOOL gNCUsingC;
 extern BOOL gNCGC;
-extern BOOL gExternC;
 extern BOOL gNCClang;
 extern BOOL gNCNoMacro;
 extern BOOL gNCType;
@@ -771,7 +770,12 @@ struct sNodeTreeStruct
             BOOL mGlobal;
             BOOL mExtern;
             BOOL mSafeMode;
+            BOOL mNCCome;
         } sDefineVariable;
+
+        struct {
+            BOOL mNCCome;
+        } sDummyHeap;
 
         struct {
             char* mFunName;
@@ -797,7 +801,12 @@ struct sNodeTreeStruct
 
         struct {
             char mVarName[VAR_NAME_MAX];
+            BOOL mNCCome;
         } sManaged;
+
+        struct {
+            BOOL mNCCome;
+        } sDelete;
 
         struct {
             char* mString;
@@ -847,6 +856,7 @@ struct sNodeTreeStruct
             int mGenericsFunNum;
             BOOL mImmutable;
             BOOL mFlagAsmFunName;
+            BOOL mNCCome;
         } sFunction;
 
         struct {
@@ -1035,6 +1045,7 @@ struct sNodeTreeStruct
             BOOL mLoad;
             BOOL mInhibitUnwrap;
 	    BOOL mSafeMode;
+	    BOOL mNCCome;
         } sUnwrap;
     } uValue;
 };

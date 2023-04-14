@@ -8,16 +8,16 @@ void ViWin*::searchModeView(ViWin* self, Vi* nvi)
 
     self.textsView(nvi);
 
-    wattron(self.win, A_REVERSE);
+    using C { wattron(self.win, A_REVERSE); }
     if(nvi.searchReverse) {
         mvwprintw(self.win, self.height-1, 0, "?%ls", nvi.searchString);
     }
     else {
         mvwprintw(self.win, self.height-1, 0, "/%ls", nvi.searchString);
     }
-    wattroff(self.win, A_REVERSE);
+    using c { wattroff(self.win, A_REVERSE); }
 
-    wrefresh(self.win);
+    using c { wrefresh(self.win); }
 }
 
 void ViWin*::view(ViWin* self, Vi* nvi) version 9

@@ -83,7 +83,7 @@ sNode* op_add_node(sParserInfo* info)
             sNode* right = op_add_node(info);
             
             if(right == null) {
-                return nonullable null;
+                return null;
             }
             
             return new sNode(new sAddNode(result, right, info));
@@ -95,7 +95,7 @@ sNode* op_add_node(sParserInfo* info)
             sNode* right = op_add_node(info);
             
             if(right == null) {
-                return nonullable null;
+                return null;
             }
             
             return new sNode(new sSubNode(result, right, info));
@@ -222,7 +222,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 97
             break;
             
         default: {
-            bool result = inherit(codes, params, info);
+            bool result = inherit(codes, params!, info);
             if(!result) {
                 return false;
             }

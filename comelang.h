@@ -670,7 +670,7 @@ impl list <T>
         
 
         if(self.len == 0) {
-            list_item<T>*? litem = nullable borrow new list_item<T>;
+            list_item<T>*? litem = borrow new list_item<T>;
             
             litem.prev = null;
             litem.next = null;
@@ -680,7 +680,7 @@ impl list <T>
             self.head = litem;
         }
         else if(self.len == 1) {
-            list_item<T>*? litem = nullable borrow new list_item<T>;
+            list_item<T>*? litem = borrow new list_item<T>;
 
             litem.prev = self.head;
             litem.next = null;
@@ -690,7 +690,7 @@ impl list <T>
             self.head.next = litem;
         }
         else {
-            list_item<T>*? litem = nullable borrow new list_item<T>;
+            list_item<T>*? litem = borrow new list_item<T>;
 
             litem.prev = self.tail;
             litem.next = null;
@@ -749,7 +749,7 @@ impl list <T>
         }
 
         if(position == 0) {
-            list_item<T>*? litem = nullable borrow new list_item<T>;
+            list_item<T>*? litem = borrow new list_item<T>;
 
             litem.prev = null;
             litem.next = self.head;
@@ -761,7 +761,7 @@ impl list <T>
             self.len++;
         }
         else if(self.len == 1) {
-            auto litem = nullable borrow new list_item<T>;
+            auto litem = borrow new list_item<T>;
 
             litem.prev = self.head;
             litem.next = self.tail;
@@ -777,7 +777,7 @@ impl list <T>
             auto i = 0;
             while(it != null) {
                 if(position == i) {
-                    list_item<T>*? litem = nullable borrow new list_item<T>;
+                    list_item<T>*? litem = borrow new list_item<T>;
 
                     litem.prev = it.prev;
                     litem.next = it;

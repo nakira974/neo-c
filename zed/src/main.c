@@ -246,7 +246,7 @@ int main(int argc, char** argv)
         }
         else {
             if(command == null) {
-                command = nullable string(argv[i]);
+                command = string(argv[i]);
             }
         }
     }

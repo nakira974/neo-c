@@ -121,7 +121,7 @@ void fix_cursor(sInfo* info);
 
 bool change_directory(sInfo* info, char* path, char* cursor_file)
 {
-    auto absolute_path = realpath(path, NULL);
+    auto absolute_path = realpath(path, NULL!);
     
     auto absolute_path2 = string(absolute_path);
     
@@ -194,14 +194,14 @@ void view(sInfo* info)
         int x = (index / maxy) * cols;
         int y = index % maxy;
         if(it2+head == info.cursor) {
-            attron(A_REVERSE);
+            using c { attron(A_REVERSE); }
             if(is_dir) {
                 mvprintw(y, x, "%s/", it.substring(0, cols-1));
             }
             else {
                 mvprintw(y, x, "%s", it.substring(0, cols));
             }
-            attroff(A_REVERSE);
+            using c { attroff(A_REVERSE); }
         }
         else {
             if(is_dir) {
@@ -213,9 +213,9 @@ void view(sInfo* info)
         }
     }
 
-    attron(A_REVERSE);
+    using c { attron(A_REVERSE); }
     mvprintw(maxy, 0, "%s page %d files %d head %d tail %d press ? for manual", info.path, info.page, info.files.length(), head, tail);
-    attroff(A_REVERSE);
+    using c { attroff(A_REVERSE); }
 
     refresh();
 }
@@ -223,13 +223,13 @@ void view(sInfo* info)
 
 string cursor_path(sInfo* info)
 {
-    char* file_name = info.files.item(info.cursor, null);
+    char* file_name = info.files.item(info.cursor, null!);
     return xsprintf("%s/%s", info.path, file_name);
 }
 
 string cursor_file(sInfo* info)
 {
-    return string(info.files.item(info.cursor, null));
+    return string(info.files.item(info.cursor, null!));
 }
 
 void search_file(sInfo* info)
@@ -314,7 +314,7 @@ void input(sInfo* info)
             bool is_dir = S_ISDIR(stat_.st_mode);
 
             if(is_dir) {
-                change_directory(info, path, null);
+                change_directory(info, path, null!);
             }
             else {
                 endwin();
@@ -333,7 +333,7 @@ void input(sInfo* info)
         case '~': {
             string path = string(getenv("HOME"));
 
-            change_directory(info, path, null);
+            change_directory(info, path, null!);
             }
             break;
 

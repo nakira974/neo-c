@@ -33,7 +33,7 @@
     info.loop_head = head;
     
     vector<int>*? breaks_before = info.breaks;
-    info.breaks = nullable new vector<int>();
+    info.breaks = new vector<int>();
     
     if(!while_exp.compile->(info)) {
         return false;
@@ -55,8 +55,8 @@
     int* p = (int*)(info.codes.buf + end_point);
     *p = info.codes.len;
     
-    for(int i=0; i<info->breaks!.length(); i++) {
-        int break_point = info->breaks![i];
+    for(int i=0; i<info->breaks.length(); i++) {
+        int break_point = info->breaks[i];
         
         int* p = (int*)(info.codes.buf + break_point);
         
@@ -96,7 +96,7 @@
     info.codes.append_int(OP_GOTO);
     
     int break_point = info.codes.len;
-    info->breaks!.push_back(break_point);
+    info->breaks.push_back(break_point);
     
     info.codes.append_int(0);
     

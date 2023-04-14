@@ -4,7 +4,6 @@
 char* gVersion;
 BOOL gNCGC = FALSE;
 BOOL gNCDebug = FALSE;
-BOOL gExternC = TRUE;
 char gFName[PATH_MAX];
 sVarTable* gModuleVarTable;
 BOOL gNCType = FALSE;
@@ -338,7 +337,7 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
 
 int main(int argc, char** argv)
 {
-    gVersion = "0.9.9x";
+    gVersion = "0.9.9za";
     
     setlocale(LC_ALL, "");
     

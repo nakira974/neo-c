@@ -194,7 +194,7 @@ bool vm(sInfo* info) version 4
             int value = *info->op;
             info->op++;
             
-            ZVALUE*? conditional = nullable info.stack[-1];
+            ZVALUE*? conditional = info.stack[-1];
             
             if(conditional.kind == kBoolValue) {
                 bool exp = conditional.boolValue;
@@ -266,7 +266,7 @@ sNodeBlock? parse_block(sInfo* info)
         }
     }
     
-    return nullable result;
+    return result;
 }
 
 bool is_word(char* str, sInfo* info)

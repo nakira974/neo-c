@@ -251,10 +251,10 @@ sNode* exp_node(sParserInfo* info) version 10
                 return null;
             }
             
-            else_nodes = nullable parse_block(info);
+            else_nodes = parse_block(info);
         }
         
-        result = new sNode(new sWhileNode(while_exp, while_nodes, else_nodes, info));
+        result = new sNode(new sWhileNode(while_exp, while_nodes, else_nodes!, info));
     }
     else if(word_cmp(info->p, "for")) {
         info->p += strlen("for");
@@ -376,7 +376,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 90
             
             if(in_global_context) {
                 if(info.module_name) {
-                    sModule* module = gModules.at(info.module_name, null);
+                    sModule* module = gModules.at(info.module_name, null!);
                     
                     if(module == null) {
                         info->exception.kind = kExceptionValue;
@@ -389,7 +389,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 90
             }
             else {
                 if(info.module_name) {
-                    sModule* module = gModules.at(info.module_name, null);
+                    sModule* module = gModules.at(info.module_name, null!);
                     
                     if(module == null) {
                         info->exception.kind = kExceptionValue;
@@ -398,7 +398,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 90
                     }
                     
                     if(info.class_name) {
-                        sClass* klass = module->classes.at(info.class_name, null);
+                        sClass* klass = module->classes.at(info.class_name, null!);
                         
                         if(klass == null) {
                             info->exception.kind = kExceptionValue;
@@ -419,7 +419,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 90
             break;
             
         default: {
-            bool result = inherit(codes, params, info);
+            bool result = inherit(codes, params!, info);
             if(!result) {
                 return false;
             }

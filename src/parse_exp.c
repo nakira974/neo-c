@@ -741,7 +741,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
             char* p2 = info->p;
             int sline2 = info->sline;
 
-            if(!gExternC) {
+            if(gNCCome) {
                 if(!expression(node, FALSE, info)) {
                     return FALSE;
                 }
@@ -758,7 +758,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
             }
             
             /// tuple ///
-            if(*info->p == ',' && !gExternC) {
+            if(*info->p == ',' && gNCCome) {
                 info->p = p2;
                 info->sline = sline2;
                 
@@ -2348,45 +2348,84 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 info->p += strlen("comelang");
                 skip_spaces_and_lf(info);
                 
-                gExternC = FALSE;
                 gNCCome = TRUE;
+
+                *node = sNodeTree_create_null(info);
             }
             else if(*info->p == 'c' || *info->p =='C') {
                 info->p++;
                 skip_spaces_and_lf(info);
-                
-                gExternC = TRUE;
+
+                if(*info->p == '{') {
+                    BOOL nc_come = gNCCome;
+                    gNCCome = FALSE;
+
+                    sNodeBlock* node_block = NULL;
+                    BOOL result_type_is_void = TRUE;
+                    if(!parse_block_easy(ALLOC &node_block, FALSE, result_type_is_void, FALSE, info))
+                    {
+                        return FALSE;
+                    };
+
+                    gNCCome = nc_come;
+                    
+                    *node = sNodeTree_create_normal_block(node_block, info);
+                }
+                else {
+                    gNCCome = FALSE;
+                    *node = sNodeTree_create_null(info);
+                }
             }
             else if(memcmp(info->p, "safe", strlen("safe")) == 0) {
                 info->p += strlen("safe");
                 skip_spaces_and_lf(info);
                 
                 gNCSafeMode = TRUE;
+                *node = sNodeTree_create_null(info);
             }
             else if(memcmp(info->p, "unsafe", strlen("unsafe")) == 0) {
                 info->p += strlen("unsafe");
                 skip_spaces_and_lf(info);
                 
-                gNCSafeMode = FALSE;
+                if(*info->p == '{') {
+                    BOOL safe_mode = gNCSafeMode;
+                    gNCSafeMode = FALSE;
+
+                    sNodeBlock* node_block = NULL;
+                    BOOL result_type_is_void = TRUE;
+                    if(!parse_block_easy(ALLOC &node_block, FALSE, result_type_is_void, FALSE, info))
+                    {
+                        return FALSE;
+                    };
+
+                    gNCSafeMode = safe_mode;
+                    
+                    *node = sNodeTree_create_normal_block(node_block, info);
+                }
+                else {
+                    gNCSafeMode = FALSE;
+                    *node = sNodeTree_create_null(info);
+                }
             }
             else if(memcmp(info->p, "gc", strlen("gc")) == 0) {
                 info->p += strlen("gc");
                 skip_spaces_and_lf(info);
                 
                 gNCGC = TRUE;
+                *node = sNodeTree_create_null(info);
             }
             else if(memcmp(info->p, "no-gc", strlen("no-gc")) == 0) {
                 info->p += strlen("no-gc");
                 skip_spaces_and_lf(info);
                 
                 gNCGC = FALSE;
+
+                *node = sNodeTree_create_null(info);
             }
             else {
                 parser_err_msg(info, "invalid using language");
                 return FALSE;
             }
-            
-            *node = sNodeTree_create_null(info);
         }
         //else if(strcmp(buf, "struct") == 0 && *info->p != '{' && define_struct) {
         else if((strcmp(buf, "struct") == 0 || (strcmp(buf, "protocol") == 0) || strcmp(buf, "interface") == 0) && *info->p != '{' && define_struct) {
@@ -2430,7 +2469,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 }
             }
         }
-        else if(!gExternC && strcmp(buf, "template") == 0) {
+        else if(gNCCome && strcmp(buf, "template") == 0) {
             if(strcmp(info->impl_struct_name, "") == 0)
             {
                 if(!parse_method_generics_function(node, NULL, info)) {
@@ -2499,21 +2538,21 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 return FALSE;
             }
         }
-        else if(!gExternC && strcmp(buf, "true") == 0) {
+        else if(gNCCome && strcmp(buf, "true") == 0) {
             *node = sNodeTree_create_true(info);
         }
-        else if(!gExternC && strcmp(buf, "false") == 0) {
+        else if(gNCCome && strcmp(buf, "false") == 0) {
             *node = sNodeTree_create_false(info);
         }
-        else if(!gExternC && strcmp(buf, "null") == 0) {
+        else if(gNCCome && strcmp(buf, "null") == 0) {
             *node = sNodeTree_create_null(info);
         }
-        else if(!gExternC && strcmp(buf, "clone") == 0) {
+        else if(gNCCome && strcmp(buf, "clone") == 0) {
             if(!parse_clone(node, info)) {
                 return FALSE;
             }
         }
-        else if(!gExternC && strcmp(buf, "new") == 0) {
+        else if(gNCCome && strcmp(buf, "new") == 0) {
             if(!parse_new(node, info)) {
                 return FALSE;
             }

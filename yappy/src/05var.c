@@ -237,11 +237,11 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 94
             bool in_global_context = (bool)*info->p;
             info->p++;
             
-            sModule* module = gModules.at(string(var_name2), null);
+            sModule* module = gModules.at(string(var_name2), null!);
             
-            sModule* module2 = gModules.at(string(info.module_name), null);
+            sModule* module2 = gModules.at(string(info.module_name), null!);
             
-            sClass* klass = module2.classes.at(string(var_name2), null);
+            sClass* klass = module2.classes.at(string(var_name2), null!);
             
             if(module) {
                 info->stack[info->stack_num].kind = kModuleValue;
@@ -307,7 +307,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 94
             
             if(in_global_context) {
                 if(info.module_name) {
-                    sModule* module = gModules.at(info.module_name, null);
+                    sModule* module = gModules.at(info.module_name, null!);
                     
                     if(module == null) {
                         info->exception.kind = kExceptionValue;
@@ -315,7 +315,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 94
                         return false;
                     }
                     if(info.class_name) {
-                        sClass* klass = module->classes.at(info.class_name, null);
+                        sClass* klass = module->classes.at(info.class_name, null!);
                         
                         if(klass == null) {
                             info->exception.kind = kExceptionValue;
@@ -334,7 +334,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 94
             }
             else {
                 if(info.module_name) {
-                    sModule* module = gModules.at(info.module_name, null);
+                    sModule* module = gModules.at(info.module_name, null!);
                     
                     if(module == null) {
                         info->exception.kind = kExceptionValue;
@@ -343,7 +343,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 94
                     }
                     
                     if(info.class_name) {
-                        sClass* klass = module->classes.at(info.class_name, null);
+                        sClass* klass = module->classes.at(info.class_name, null!);
                         
                         if(klass == null) {
                             info->exception.kind = kExceptionValue;
@@ -364,7 +364,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 94
             break;
             
         default: {
-            bool result = inherit(codes, params, info);
+            bool result = inherit(codes, params!, info);
             if(!result) {
                 return false;
             }

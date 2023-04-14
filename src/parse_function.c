@@ -1323,6 +1323,12 @@ BOOL parse_funcation_call_params(int* num_params, unsigned int* params, sParserI
                     parser_err_msg(info, "require expression");
                     break;
                 }
+
+                if(*info->p == '#') {
+                    if(!parse_sharp(info)) {
+                        return FALSE;
+                    }
+                }
                 
                 BOOL null_value = FALSE;
                 
@@ -1352,6 +1358,12 @@ BOOL parse_funcation_call_params(int* num_params, unsigned int* params, sParserI
                 if(*num_params >= PARAMS_MAX) {
                     parser_err_msg(info, "overflow parametor number for method call");
                     return FALSE;
+                }
+
+                if(*info->p == '#') {
+                    if(!parse_sharp(info)) {
+                        return FALSE;
+                    }
                 }
 
                 if(*info->p == '@') {

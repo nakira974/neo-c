@@ -53,7 +53,7 @@ bool vm(sInfo* info) version 8
                         if(params.length() == 0) {
                             string str = obj.intValue.to_string();
                             
-                            result = nullable new ZVALUE(kind:kStrValue, str_value:str.to_wstring());
+                            result = new ZVALUE(kind:kStrValue, str_value:str.to_wstring());
                         }
                     }
                     }
@@ -64,7 +64,7 @@ bool vm(sInfo* info) version 8
                         if(params.length() == 0) {
                             string str = obj.fileValue.read();
                             
-                            result = nullable new ZVALUE(kind:kStrValue, str_value:str.to_wstring());
+                            result = new ZVALUE(kind:kStrValue, str_value:str.to_wstring());
                         }
                     }
                     else if(fun_name === "sub_block") {
@@ -114,7 +114,7 @@ bool vm(sInfo* info) version 8
                                 return info2.result_value.strValue.to_string();
                             }
                             
-                            result = nullable new ZVALUE(kind:kStrValue, str_value:str.to_wstring());
+                            result = new ZVALUE(kind:kStrValue, str_value:str.to_wstring());
                         }
                     }
                     }
@@ -135,7 +135,7 @@ bool vm(sInfo* info) version 8
                             
                             string str = list2.join(param0);
                             
-                            result = nullable new ZVALUE(kind:kStrValue, str_value:str.to_wstring());
+                            result = new ZVALUE(kind:kStrValue, str_value:str.to_wstring());
                         }
                     }
                     else if(fun_name === "filter") {
@@ -172,7 +172,7 @@ bool vm(sInfo* info) version 8
                                 return info2.result_value.boolValue;
                             }
                             
-                            result = nullable new ZVALUE(kind:kListValue, list_value:list1);
+                            result = new ZVALUE(kind:kListValue, list_value:list1);
                         }
                     }
                     else if(fun_name === "map") {
@@ -204,7 +204,7 @@ bool vm(sInfo* info) version 8
                                 return info2.result_value;
                             }
                             
-                            result = nullable new ZVALUE(kind:kListValue, list_value:list1);
+                            result = new ZVALUE(kind:kListValue, list_value:list1);
                         }
                     }
                     else if(fun_name === "each") {
@@ -234,7 +234,7 @@ bool vm(sInfo* info) version 8
                                 }
                             }
                             
-                            result = nullable new ZVALUE(kind:kListValue, list_value:list1);
+                            result = new ZVALUE(kind:kListValue, list_value:list1);
                         }
                     }
                     else if(fun_name === "add") {
@@ -245,7 +245,7 @@ bool vm(sInfo* info) version 8
                             
                             list1.push_back(clone param0);
                             
-                            result = nullable new ZVALUE(kind:kListValue, list_value:list1);
+                            result = new ZVALUE(kind:kListValue, list_value:list1);
                         }
                     }
                     else if(fun_name === "insert") {
@@ -257,7 +257,7 @@ bool vm(sInfo* info) version 8
                             
                             list1.insert(param0, clone param1);
                             
-                            result = nullable new ZVALUE(kind:kListValue, list_value:list1);
+                            result = new ZVALUE(kind:kListValue, list_value:list1);
                         }
                     }
                     else if(fun_name === "delete") {
@@ -269,7 +269,7 @@ bool vm(sInfo* info) version 8
                             
                             list1.delete(param0, param1);
                             
-                            result = nullable new ZVALUE(kind:kListValue, list_value:list1);
+                            result = new ZVALUE(kind:kListValue, list_value:list1);
                         }
                     }
                     else if(fun_name === "replace") {
@@ -281,7 +281,7 @@ bool vm(sInfo* info) version 8
                             
                             list1.replace(param0, clone param1);
                             
-                            result = nullable new ZVALUE(kind:kListValue, list_value:list1);
+                            result = new ZVALUE(kind:kListValue, list_value:list1);
                         }
                     }
                     else if(fun_name === "sublist") {
@@ -293,7 +293,7 @@ bool vm(sInfo* info) version 8
                             
                             list<ZVALUE*%>*% list2 = list1.sublist(param0, param1);
                             
-                            result = nullable new ZVALUE(kind:kListValue, list_value:list2);
+                            result = new ZVALUE(kind:kListValue, list_value:list2);
                         }
                     }
                     else if(fun_name === "uniq") {
@@ -302,7 +302,7 @@ bool vm(sInfo* info) version 8
                             
                             list<ZVALUE*%>*% list2 = list1.uniq();
                             
-                            result = nullable new ZVALUE(kind:kListValue, list_value:list2);
+                            result = new ZVALUE(kind:kListValue, list_value:list2);
                         }
                     }
                     else if(fun_name === "reverse") {
@@ -311,7 +311,7 @@ bool vm(sInfo* info) version 8
                             
                             list<ZVALUE*%>*% list2 = list1.reverse();
                             
-                            result = nullable new ZVALUE(kind:kListValue, list_value:list2);
+                            result = new ZVALUE(kind:kListValue, list_value:list2);
                         }
                     }
                     else if(fun_name === "sort") {
@@ -320,7 +320,7 @@ bool vm(sInfo* info) version 8
                             
                             list<ZVALUE*%>*% list2 = list1.sort();
                             
-                            result = nullable new ZVALUE(kind:kListValue, list_value:list2);
+                            result = new ZVALUE(kind:kListValue, list_value:list2);
                         }
                     }
                     else if(fun_name === "find") {
@@ -331,7 +331,7 @@ bool vm(sInfo* info) version 8
                             
                             int n = list1.find(param0, -1);
                             
-                            result = nullable new ZVALUE(kind:kIntValue, int_value:n);
+                            result = new ZVALUE(kind:kIntValue, int_value:n);
                         }
                     }
                     else if(fun_name === "length") {
@@ -340,7 +340,7 @@ bool vm(sInfo* info) version 8
                             
                             int n = list1.length();
                             
-                            result = nullable new ZVALUE(kind:kIntValue, int_value:n);
+                            result = new ZVALUE(kind:kIntValue, int_value:n);
                         }
                     }
                     }
@@ -353,7 +353,7 @@ bool vm(sInfo* info) version 8
                             
                             int n = map1.length();
                             
-                            result = nullable new ZVALUE(kind:kIntValue, int_value:n);
+                            result = new ZVALUE(kind:kIntValue, int_value:n);
                         }
                     }
                     else if(fun_name === "find") {
@@ -364,7 +364,7 @@ bool vm(sInfo* info) version 8
                             
                             bool n = map1.find(param0);
                             
-                            result = nullable new ZVALUE(kind:kBoolValue, bool_value:n);
+                            result = new ZVALUE(kind:kBoolValue, bool_value:n);
                         }
                     }
                     else if(fun_name === "keys") {
@@ -373,7 +373,7 @@ bool vm(sInfo* info) version 8
                             
                             list<ZVALUE*%>*% l = map1.keys();
                             
-                            result = nullable new ZVALUE(kind:kListValue, list_value:l);
+                            result = new ZVALUE(kind:kListValue, list_value:l);
                         }
                     }
                     else if(fun_name === "values") {
@@ -382,7 +382,7 @@ bool vm(sInfo* info) version 8
                             
                             list<ZVALUE*%>*% l = map1.values();
                             
-                            result = nullable new ZVALUE(kind:kListValue, list_value:l);
+                            result = new ZVALUE(kind:kListValue, list_value:l);
                         }
                     }
                     }

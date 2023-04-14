@@ -108,7 +108,7 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
 
                 /// call methods ///
                 if(*info->p == '(' || *info->p == '{' || type_name_after_word) {
-                    if(gExternC) {
+                    if(!gNCCome) {
                         *node = sNodeTree_create_unwrap(*node, FALSE, info);
                         unsigned int obj_node = *node;
                         
@@ -146,13 +146,6 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
                             };
         
                             *node = sNodeTree_create_function_call(fun_name, params, num_params, TRUE, FALSE, info->mFunVersion, info);
-                            
-                            if(*info->p == '!' && *(info->p+1) != '=') {
-                                info->p++;
-                                skip_spaces_and_lf(info);
-                                
-                                *node = sNodeTree_create_unwrap(*node, FALSE, info);
-                            }
                         }
                     }
                 }
@@ -456,17 +449,7 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
                             *node = sNodeTree_create_lambda_call(*node, params, num_params, info);
                         }
                         else {
-                            if(*info->p == '!' && *(info->p+1) != '=') {
-                                info->p++;
-                                skip_spaces_and_lf(info);
-                                
-                                *node = sNodeTree_create_load_field(buf, obj_node, info);
-                                
-                                *node = sNodeTree_create_unwrap(*node, FALSE, info);
-                            }
-                            else {
-                                *node = sNodeTree_create_load_field(buf, obj_node, info);
-                            }
+                            *node = sNodeTree_create_load_field(buf, obj_node, info);
                         }
                     }
                 }

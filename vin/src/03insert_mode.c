@@ -6,9 +6,9 @@ void ViWin*::insertModeView(ViWin* self, Vi* nvi)
 
     self.textsView(nvi);
 
-    wattron(self.win, A_REVERSE);
+    using C { wattron(self.win, A_REVERSE); }
     mvwprintw(self.win, self.height-1, 0, "INSERT MODE x %d y %d scroll %d", self.cursorX, self.scroll+self.cursorY, self.scroll);
-    wattroff(self.win, A_REVERSE);
+    using C { wattroff(self.win, A_REVERSE); }
 
     wrefresh(self.win);
 }

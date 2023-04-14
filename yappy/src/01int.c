@@ -51,7 +51,7 @@ sNode* exp_node(sParserInfo* info) version 1
         return new sNode(new sIntNode(n));
     }
     
-    return nonullable null;
+    return null;
 }
 
 bool expression(sNode** node, sParserInfo* info) version 1
@@ -146,10 +146,10 @@ void add_module(char* module_name)
 
 sClass* add_class(char* class_name, char* class_module_name, char* module_name)
 {
-    sModule* module = gModules.at(module_name, null);
+    sModule* module = gModules.at(module_name, null!);
     
     if(module) {
-        sClass* klass = new  sClass(class_name, null, class_module_name);
+        sClass* klass = new  sClass(class_name, null!, class_module_name);
         module.classes.insert(string(class_name), klass);
         
         return klass;
@@ -366,7 +366,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 98
                 break;
                 
             default: {
-                bool result = inherit(codes, params, info);
+                bool result = inherit(codes, params!, info);
                 if(!result) {
                     return false;
                 }

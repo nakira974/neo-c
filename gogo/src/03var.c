@@ -85,7 +85,7 @@ sVar*? get_variable_from_table(sVarTable* table, char* name)
 
 sVarTable* init_block_vtable(sVarTable*? lv_table)
 {
-    sVarTable* new_table = new sVarTable(lv_table);
+    sVarTable* new_table = new sVarTable(lv_table!);
 
     if(lv_table) {
         new_table->block_level = lv_table->block_level + 1;
@@ -150,7 +150,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         return true;
     }
     
-    sVar* var2 = nonullable var_;
+    sVar* var2 = var_;
     
     sType* left_type = null;
     sType* right_type = null;
@@ -306,7 +306,7 @@ bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
         return true;
     }
     
-    sVar* var2 = nonullable var_;
+    sVar* var2 = var_;
 
     bool global = var2->type->global_;
     bool constant = var2->type->constant_;
@@ -384,7 +384,7 @@ sNode*? word_expression(string word, sInfo* info) version 3
             return new sNode(new sStoreNode(name, type, right_node, alloc:true, info))
         }
         else {
-            return new sNode(new sStoreNode(name, type, null, alloc:true, info))
+            return new sNode(new sStoreNode(name, type, null!, alloc:true, info))
         }
     }
     else if(get_variable_from_table(info.lv_table, word)) {
@@ -399,7 +399,7 @@ sNode*? word_expression(string word, sInfo* info) version 3
                 return null;
             }
             
-            return new sNode(new sStoreNode(word, null, right_node, alloc:false, info));
+            return new sNode(new sStoreNode(word, null!, right_node, alloc:false, info));
         }
         else {
             return new sNode(new sLoadNode(word, info));

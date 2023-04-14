@@ -152,6 +152,7 @@ unsigned int sNodeTree_create_define_variable(char* var_name, BOOL extern_, BOOL
     gNodes[node].uValue.sDefineVariable.mGlobal = global;
     gNodes[node].uValue.sDefineVariable.mExtern = extern_;
     gNodes[node].uValue.sDefineVariable.mSafeMode = gNCSafeMode;
+    gNodes[node].uValue.sDefineVariable.mNCCome = gNCCome;
     
     gNodes[node].mLeft = 0;
     gNodes[node].mRight = 0;
@@ -220,6 +221,7 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
     BOOL extern_ = gNodes[node].uValue.sDefineVariable.mExtern;
     BOOL safe_mode = gNodes[node].uValue.sDefineVariable.mSafeMode;
     int sline = gNodes[node].mLine;
+    BOOL nc_come = gNodes[node].uValue.sDefineVariable.mNCCome;
     
     sVar* var_ = get_variable_from_table(info->pinfo->lv_table, var_name);
 
@@ -425,7 +427,7 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
 
             LLVMValueRef alloca_value = LLVMBuildAlloca(gBuilder, llvm_type, var_name);
             
-            if(gNCCome || global || ((var_type->mClass->mFlags & CLASS_FLAGS_STRUCT) && var_type->mPointerNum == 0 && !type_identify_with_class_name(var_type, "__builtin_va_list"))) 
+            if(nc_come || global || ((var_type->mClass->mFlags & CLASS_FLAGS_STRUCT) && var_type->mPointerNum == 0 && !type_identify_with_class_name(var_type, "__builtin_va_list"))) 
             {
                 call_zero_clearer(alloca_value, var_type, info);
             }
@@ -7714,6 +7716,8 @@ unsigned int sNodeTree_create_dummy_heap(unsigned int object_node, sParserInfo* 
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
+    
+    gNodes[node].uValue.sDummyHeap.mNCCome = gNCCome;
 
     gNodes[node].mLeft = object_node;
     gNodes[node].mRight = 0;
@@ -7724,6 +7728,7 @@ unsigned int sNodeTree_create_dummy_heap(unsigned int object_node, sParserInfo* 
 
 BOOL compile_dummy_heap(unsigned int node, sCompileInfo* info)
 {
+    BOOL nc_come = gNodes[node].uValue.sDummyHeap.mNCCome;
     unsigned int left_node = gNodes[node].mLeft;
 
     if(left_node == 0) {
@@ -7738,7 +7743,7 @@ BOOL compile_dummy_heap(unsigned int node, sCompileInfo* info)
     LVALUE llvm_value = *get_value_from_stack(-1);
     dec_stack_ptr(1, info);
 
-    if(!gExternC) {
+    if(nc_come) {
         if(!gNCGC) {
             llvm_value.type->mHeap = TRUE;
         }
@@ -7763,6 +7768,8 @@ unsigned int sNodeTree_create_managed(char* var_name, sParserInfo* info)
     gNodes[node].mLine = info->sline;
 
     xstrncpy(gNodes[node].uValue.sManaged.mVarName, var_name, VAR_NAME_MAX);
+    
+    gNodes[node].uValue.sManaged.mNCCome = gNCCome;
 
     gNodes[node].mLeft = 0;
     gNodes[node].mRight = 0;
@@ -7775,6 +7782,7 @@ unsigned int sNodeTree_create_managed(char* var_name, sParserInfo* info)
 BOOL compile_managed(unsigned int node, sCompileInfo* info)
 {
     char* var_name = gNodes[node].uValue.sLoadVariable.mVarName;
+    BOOL nc_come = gNodes[node].uValue.sManaged.mNCCome;
 
     sVar* var_ = get_variable_from_table(info->pinfo->lv_table, var_name);
 
@@ -7791,7 +7799,7 @@ BOOL compile_managed(unsigned int node, sCompileInfo* info)
         return TRUE;
     }
 
-    if(!gExternC) {
+    if(nc_come) {
         var_->mType->mHeap = FALSE;
     }
 
@@ -7808,6 +7816,8 @@ unsigned int sNodeTree_create_delete(unsigned int object_node, sParserInfo* info
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
+    
+    gNodes[node].uValue.sDelete.mNCCome = gNCCome;
 
     gNodes[node].mLeft = object_node;
     gNodes[node].mRight = 0;
@@ -7819,6 +7829,7 @@ unsigned int sNodeTree_create_delete(unsigned int object_node, sParserInfo* info
 BOOL compile_delete(unsigned int node, sCompileInfo* info)
 {
     unsigned int left_node = gNodes[node].mLeft;
+    BOOL nc_come = gNodes[node].uValue.sDelete.mNCCome;
 
     if(left_node == 0) {
         compile_err_msg(info, "require delete target object");
@@ -7843,7 +7854,7 @@ BOOL compile_delete(unsigned int node, sCompileInfo* info)
 
     //node_type->mHeap = TRUE;
     
-    if(!gExternC) {
+    if(nc_come) {
         free_object(node_type, llvm_value.value, TRUE, info);
     }
     remove_object_from_right_values(llvm_value.value, info);
@@ -8112,6 +8123,7 @@ unsigned int sNodeTree_create_unwrap(unsigned int left, BOOL load_, sParserInfo*
     gNodes[node].uValue.sUnwrap.mLoad = load_;
     gNodes[node].uValue.sUnwrap.mInhibitUnwrap = FALSE;
     gNodes[node].uValue.sUnwrap.mSafeMode = gNCSafeMode;
+    gNodes[node].uValue.sUnwrap.mNCCome = gNCCome;
 
     gNodes[node].mLeft = left;
     gNodes[node].mRight = 0;
@@ -8126,6 +8138,7 @@ BOOL compile_unwrap(unsigned int node, sCompileInfo* info)
     
     BOOL load_ = gNodes[node].uValue.sUnwrap.mLoad;
     BOOL inhibit_unwrap = gNodes[node].uValue.sUnwrap.mInhibitUnwrap;
+    BOOL nc_come = gNodes[node].uValue.sUnwrap.mNCCome;
     BOOL safe_mode = gNodes[node].uValue.sUnwrap.mSafeMode;
 
     if(left_node == 0) {
@@ -8142,7 +8155,9 @@ BOOL compile_unwrap(unsigned int node, sCompileInfo* info)
     LVALUE llvm_value = *get_value_from_stack(-1);
     dec_stack_ptr(1, info);
     
-    if(left_type->mPointerNum > 0 && gNCCome && !inhibit_unwrap && safe_mode) {
+    if(left_type->mPointerNum > 0 && !inhibit_unwrap && nc_come)
+    //if(left_type->mPointerNum > 0 && nc_come && !inhibit_unwrap && safe_mode) 
+    {
         LLVMValueRef value = llvm_value.value;
         
         LLVMTypeRef llvm_type = create_llvm_type_with_class_name("char*");

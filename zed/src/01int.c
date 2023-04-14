@@ -933,8 +933,8 @@ bool vm(sInfo* info) version 1
         case OP_IADD: {
             info->op++;
             
-            ZVALUE*? left_value = nullable info.stack[-2];
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE*? left_value = info.stack[-2];
+            ZVALUE*? right_value = info.stack[-1];
             
             if(left_value.kind == kIntValue && right_value.kind == kIntValue) {
                 int lvalue = left_value.intValue;
@@ -990,8 +990,8 @@ bool vm(sInfo* info) version 1
         case OP_ISUB: {
             info->op++;
             
-            ZVALUE*? left_value = nullable info.stack[-2];
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE*? left_value = info.stack[-2];
+            ZVALUE*? right_value = info.stack[-1];
             
             int lvalue = left_value.intValue;
             int rvalue = right_value.intValue;
@@ -1008,8 +1008,8 @@ bool vm(sInfo* info) version 1
         case OP_IMUL: {
             info->op++;
             
-            ZVALUE*? left_value = nullable info.stack[-2];
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE*? left_value = info.stack[-2];
+            ZVALUE*? right_value = info.stack[-1];
             
             if(left_value.kind == kIntValue && right_value.kind == kIntValue) {
                 int lvalue = left_value.intValue;
@@ -1065,8 +1065,8 @@ bool vm(sInfo* info) version 1
         case OP_IDIV: {
             info->op++;
             
-            ZVALUE*? left_value = nullable info.stack[-2];
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE*? left_value = info.stack[-2];
+            ZVALUE*? right_value = info.stack[-1];
             
             int lvalue = left_value.intValue;
             int rvalue = right_value.intValue;
@@ -1083,8 +1083,8 @@ bool vm(sInfo* info) version 1
         case OP_IMOD: {
             info->op++;
             
-            ZVALUE*? left_value = nullable info.stack[-2];
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE*? left_value = info.stack[-2];
+            ZVALUE*? right_value = info.stack[-1];
             
             int lvalue = left_value.intValue;
             int rvalue = right_value.intValue;
@@ -1101,8 +1101,8 @@ bool vm(sInfo* info) version 1
         case OP_IEQ: {
             info->op++;
             
-            ZVALUE*? left_value = nullable info.stack[-2];
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE*? left_value = info.stack[-2];
+            ZVALUE*? right_value = info.stack[-1];
             
             bool value = left_value === right_value;
             
@@ -1116,8 +1116,8 @@ bool vm(sInfo* info) version 1
         case OP_INOTEQ: {
             info->op++;
             
-            ZVALUE*? left_value = nullable info.stack[-2];
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE*? left_value = info.stack[-2];
+            ZVALUE*? right_value = info.stack[-1];
             
             bool value = left_value !== right_value;
             
@@ -1131,8 +1131,8 @@ bool vm(sInfo* info) version 1
         case OP_IGT: {
             info->op++;
             
-            ZVALUE*? left_value = nullable info.stack[-2];
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE*? left_value = info.stack[-2];
+            ZVALUE*? right_value = info.stack[-1];
             
             int lvalue = left_value.intValue;
             int rvalue = right_value.intValue;
@@ -1149,8 +1149,8 @@ bool vm(sInfo* info) version 1
         case OP_ILT: {
             info->op++;
             
-            ZVALUE*? left_value = nullable info.stack[-2];
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE*? left_value = info.stack[-2];
+            ZVALUE*? right_value = info.stack[-1];
             
             int lvalue = left_value.intValue;
             int rvalue = right_value.intValue;
@@ -1167,8 +1167,8 @@ bool vm(sInfo* info) version 1
         case OP_IGTEQ: {
             info->op++;
             
-            ZVALUE*? left_value = nullable info.stack[-2];
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE*? left_value = info.stack[-2];
+            ZVALUE*? right_value = info.stack[-1];
             
             int lvalue = left_value.intValue;
             int rvalue = right_value.intValue;
@@ -1185,8 +1185,8 @@ bool vm(sInfo* info) version 1
         case OP_ILTEQ: {
             info->op++;
             
-            ZVALUE*? left_value = nullable info.stack[-2];
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE*? left_value = info.stack[-2];
+            ZVALUE*? right_value = info.stack[-1];
             
             int lvalue = left_value.intValue;
             int rvalue = right_value.intValue;
@@ -1203,8 +1203,8 @@ bool vm(sInfo* info) version 1
         case OP_IANDAND: {
             info->op++;
             
-            ZVALUE*? left_value = nullable info.stack[-2];
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE*? left_value = info.stack[-2];
+            ZVALUE*? right_value = info.stack[-1];
             
             bool lvalue = left_value.boolValue;
             bool rvalue = right_value.boolValue;
@@ -1221,8 +1221,8 @@ bool vm(sInfo* info) version 1
         case OP_IOROR: {
             info->op++;
             
-            ZVALUE*? left_value = nullable info.stack[-2];
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE*? left_value = info.stack[-2];
+            ZVALUE*? right_value = info.stack[-1];
             
             bool lvalue = left_value.boolValue;
             bool rvalue = right_value.boolValue;

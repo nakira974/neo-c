@@ -60,7 +60,7 @@ sClass* sClass*::clone(sClass* klass)
 
 sClass* get_class(char* class_name_)
 {
-    sClass* klass = gClasses.at(class_name_, null);
+    sClass* klass = gClasses.at(class_name_, null!);
     
     if(klass == null) {
         fprintf(stderr, "unexpected err in get_class (%s)\n", class_name_);

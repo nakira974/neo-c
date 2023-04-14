@@ -67,7 +67,7 @@
             return false;
         }
 
-        codes = nullable borrow clone info2.codes;
+        codes = borrow clone info2.codes;
         
     }
     
@@ -99,7 +99,7 @@ sNode*? exp_node(sInfo* info) version 9
         string fun_name = string("read");
         vector<sNode*%>*% params = new vector<sNode*%>();
         sNodeBlock? block = null
-        result = borrow new sNode(new sFunNode(fun_name, clone result, params, block));
+        result = borrow new sNode(new sFunNode(fun_name, clone result, params, block!));
     }
     else {
         result = inherit(info);
@@ -162,7 +162,7 @@ sNode*? exp_node(sInfo* info) version 9
             block = parse_block(info);
         }
         
-        sNode*? result2 = borrow new sNode(new sFunNode(fun_name, clone result, params, block));
+        sNode*? result2 = borrow new sNode(new sFunNode(fun_name, clone result, params, block!));
         
         delete result;
         

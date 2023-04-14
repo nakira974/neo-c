@@ -818,8 +818,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCom
         }
         
         
-        if(finalizer == NULL && !is_number_class(node_type) && !gExternC && !node_type->mClass->mProtocol)
-        //if(finalizer == NULL && !node_type->mClass->mProtocol && !is_number_class(node_type) && node_type->mNumGenericsTypes == 0 && !gExternC)
+        if(finalizer == NULL && !is_number_class(node_type) && gNCCome && !node_type->mClass->mProtocol)
         {
             finalizer = create_finalizer_automatically(node_type, fun_name, info);
         }

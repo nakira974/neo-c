@@ -39,6 +39,7 @@ unsigned int sNodeTree_create_function(char* fun_name, char* asm_fname, sParserP
     gNodes[node].uValue.sFunction.mFinalize = finalize;
     gNodes[node].uValue.sFunction.mGenericsFunNum = generics_fun_num;
     gNodes[node].uValue.sFunction.mImmutable = immutable_;
+    gNodes[node].uValue.sFunction.mNCCome = gNCCome;
 
     if(struct_name && strcmp(struct_name, "") != 0) {
         xstrncpy(gNodes[node].uValue.sFunction.mStructName, struct_name, VAR_NAME_MAX);
@@ -83,7 +84,7 @@ static BOOL is_method_generics_function(sFunction* fun)
 
 void call_come_gc_final(sCompileInfo* info)
 {
-    if(!gNCGC && strcmp(gFunctionName, "main") == 0 && !gExternC) {
+    if(!gNCGC && strcmp(gFunctionName, "main") == 0 && gNCCome) {
         if(gNCDebug) {
             setNullCurrentDebugLocation(info->sline, info);
         }
@@ -133,6 +134,7 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
     BOOL var_arg = gNodes[node].uValue.sFunction.mVarArg;
     int version = gNodes[node].uValue.sFunction.mVersion;
     int generics_fun_num = gNodes[node].uValue.sFunction.mGenericsFunNum;
+    BOOL nc_come = gNodes[node].uValue.sFunction.mNCCome;
 
     /// rename variables ///
     int num_params = gNodes[node].uValue.sFunction.mNumParams;
@@ -433,7 +435,7 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
     sNodeType* return_result_type = info->return_result_type;
     info->return_result_type = create_node_type_with_class_name("void");
     
-    if(strcmp(fun_name, "main") == 0 && !gExternC) {
+    if(strcmp(fun_name, "main") == 0 && nc_come) {
         if(gNCGC) {
             if(gNCDebug) {
                 setNullCurrentDebugLocation(info->sline, info);
@@ -963,6 +965,10 @@ BOOL compile_method_block(unsigned int node, sCompileInfo* info)
     int block_text_sline = gNodes[node].uValue.sMethodBlock.mBlockTextSLine;
 
     int sline = info->sline;
+    
+    if(fun == NULL) {
+        return TRUE;
+    }
 
     /// params ///
     if(fun->mNumParams < 2) {

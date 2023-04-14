@@ -45,7 +45,7 @@ void parse_redirect(sInfo* info)
             
             auto tmp = (file_name, true);
             
-            info->redirect_stdout = nullable tmp;
+            info->redirect_stdout = tmp;
         }
         else if(*info->p == '>') {
             info->p ++;
@@ -55,7 +55,7 @@ void parse_redirect(sInfo* info)
             
             auto tmp = (file_name, false);
             
-            info->redirect_stdout = nullable tmp;
+            info->redirect_stdout = tmp;
         }
         else if(*info->p == '2' && *(info->p+1) == '>' && *(info->p+2) == '>') {
             info->p += 3;
@@ -65,7 +65,7 @@ void parse_redirect(sInfo* info)
             
             auto tmp = (file_name, true);
             
-            info->redirect_stderr = nullable tmp;
+            info->redirect_stderr = tmp;
         }
         else if(memcmp(info->p, "2>&1", 4) == 0) {
             info->p += 4;
@@ -80,7 +80,7 @@ void parse_redirect(sInfo* info)
             
             auto tmp = (file_name, false);
             
-            info->redirect_stderr = nullable tmp;
+            info->redirect_stderr = tmp;
         }
         else {
             break;
@@ -91,7 +91,7 @@ void parse_redirect(sInfo* info)
 static bool expand_glob(char* str, vector<string>* result, sInfo* info)
 {
     glob_t glob_result;
-    int rc = glob(str, 0, NULL, &glob_result);
+    int rc = glob(str, 0, NULL!, &glob_result);
 
     if(rc == GLOB_NOSPACE) {
         fprintf(stderr, "out of space during glob operation\n");
@@ -214,7 +214,7 @@ bool parse(sInfo* info)
         else if(line.match(/^cd /)) {
             auto li = line.scan(/^cd +(.+)/);
             
-            auto str = li.item(1, null);
+            auto str = li.item(1, null!);
             
             if(str) {
                 char path[PATH_MAX];
@@ -227,8 +227,8 @@ bool parse(sInfo* info)
         else if(line.match(/^export /)) {
             auto li = line.scan(/^export +(.+)=(.+)/);
             
-            auto name = li.item(1, null);
-            auto value = li.item(2, null);
+            auto name = li.item(1, null!);
+            auto value = li.item(2, null!);
             
             if(name && value) {
                 setenv(name, value, 1);
@@ -259,8 +259,8 @@ bool parse(sInfo* info)
 
 bool redirect(int n, sInfo* info)
 {
-    tuple2<string,bool>*? redirect_stdout = info->args_redirect_stdout![n];
-    tuple2<string,bool>*? redirect_stderr = info->args_redirect_stderr![n];
+    tuple2<string,bool>*? redirect_stdout = info->args_redirect_stdout[n];
+    tuple2<string,bool>*? redirect_stderr = info->args_redirect_stderr[n];
     
     if(redirect_stdout) {
         string file_name = redirect_stdout.0;
@@ -407,8 +407,8 @@ bool run(char* source)
             
             info->args_list.push_back(info->args);
             info->args_mix_stdout.push_back(info->mix_stdout);
-            info->args_redirect_stdout.push_back(info->redirect_stdout);
-            info->args_redirect_stderr.push_back(info->redirect_stderr);
+            info->args_redirect_stdout.push_back(info->redirect_stdout!);
+            info->args_redirect_stderr.push_back(info->redirect_stderr!);
             
             if(*info->p == '|' && *(info->p+1) != '|') {
                 info->p++;
@@ -495,20 +495,20 @@ void set_signal()
     
     sa.sa_sigaction = sigchld_action;
     sa.sa_flags = SA_RESTART|SA_SIGINFO;
-    sigaction(SIGCHLD, &sa, NULL).except {
+    sigaction(SIGCHLD, &sa, NULL!).except {
         perror("sigaction1");
         exit(1);
     }
 
     memset(&sa, 0, sizeof(sa));
-    sigaction(SIGCONT, &sa, NULL).except {
+    sigaction(SIGCONT, &sa, NULL!).except {
         perror("sigaction3");
         exit(1);
     }
 
     memset(&sa, 0, sizeof(sa));
     sa.sa_handler = SIG_DFL;
-    sigaction(SIGWINCH, &sa, NULL).except {
+    sigaction(SIGWINCH, &sa, NULL!).except {
         perror("sigaction4");
         exit(1);
     }
@@ -516,7 +516,7 @@ void set_signal()
     memset(&sa, 0, sizeof(sa));
     sa.sa_handler = SIG_IGN;
     sa.sa_flags = 0;
-    sigaction(SIGTTOU, &sa, NULL).except {
+    sigaction(SIGTTOU, &sa, NULL!).except {
         perror("sigaction5");
         exit(1);
     }
@@ -524,7 +524,7 @@ void set_signal()
     memset(&sa, 0, sizeof(sa));
     sa.sa_handler = SIG_IGN;
     sa.sa_flags = 0;
-    sigaction(SIGTTIN, &sa, NULL).except {
+    sigaction(SIGTTIN, &sa, NULL!).except {
         perror("sigaction6");
         exit(1);
     }
@@ -532,7 +532,7 @@ void set_signal()
     memset(&sa, 0, sizeof(sa));
     sa.sa_handler = sig_tstp;
     sa.sa_flags = 0;
-    sigaction(SIGTSTP, &sa, NULL).except {
+    sigaction(SIGTSTP, &sa, NULL!).except {
         perror("sigaction7");
         exit(1);
     }
@@ -540,7 +540,7 @@ void set_signal()
     memset(&sa, 0, sizeof(sa));
     sa.sa_handler = SIG_IGN;
     sa.sa_flags = 0;
-    sigaction(SIGQUIT, &sa, NULL).except {
+    sigaction(SIGQUIT, &sa, NULL!).except {
         perror("sigaction8");
         exit(1);
     }
@@ -548,7 +548,7 @@ void set_signal()
     memset(&sa, 0, sizeof(sa));
     sa.sa_handler = SIG_IGN;
     sa.sa_flags = 0;
-    sigaction(SIGPIPE, &sa, NULL).except {
+    sigaction(SIGPIPE, &sa, NULL!).except {
         perror("sigaction10");
         exit(1);
     }
@@ -556,13 +556,11 @@ void set_signal()
     memset(&sa, 0, sizeof(sa));
     sa.sa_flags = SA_SIGINFO;
     sa.sa_handler = (sig_t)sig_int;
-    if(sigaction(SIGINT, &sa, null) < 0) {
+    if(sigaction(SIGINT, &sa, null!) < 0) {
         perror("sigaction2");
         exit(1);
     }
 }
-
-using C;
 
 void sigchld_block(int block)
 {
@@ -571,7 +569,7 @@ void sigchld_block(int block)
     sigemptyset(&sigset);
     sigaddset(&sigset, SIGCHLD);
 
-    if(sigprocmask((block?SIG_BLOCK:SIG_UNBLOCK), &sigset, NULL) != 0)
+    if(sigprocmask((block?SIG_BLOCK:SIG_UNBLOCK), &sigset, NULL!) != 0)
     {
         fprintf(stderr, "error\n");
         exit(1);
@@ -606,7 +604,7 @@ void set_signal_optc()
     memset(&sa, 0, sizeof(sa));
     sa.sa_sigaction = sigchld_action;
     sa.sa_flags = SA_SIGINFO|SA_RESTART;
-    if(sigaction(SIGCHLD, &sa, NULL) < 0) {
+    if(sigaction(SIGCHLD, &sa, NULL!) < 0) {
         perror("sigaction1");
         exit(1);
     }
@@ -614,7 +612,7 @@ void set_signal_optc()
     memset(&sa, 0, sizeof(sa));
     sa.sa_flags = SA_SIGINFO;
     sa.sa_handler = sig_int_optc;
-    if(sigaction(SIGINT, &sa, NULL) < 0) {
+    if(sigaction(SIGINT, &sa, NULL!) < 0) {
         perror("sigaction2");
         exit(1);
     }
@@ -622,7 +620,7 @@ void set_signal_optc()
     memset(&sa, 0, sizeof(sa));
     sa.sa_sigaction = sig_tstp_optc;
     sa.sa_flags = SA_RESTART;
-    if(sigaction(SIGTSTP, &sa, NULL) < 0) {
+    if(sigaction(SIGTSTP, &sa, NULL!) < 0) {
         perror("sigaction7");
         exit(1);
     }
@@ -630,14 +628,14 @@ void set_signal_optc()
     memset(&sa, 0, sizeof(sa));
     sa.sa_sigaction = sig_cont_optc;
     sa.sa_flags = SA_RESTART;
-    if(sigaction(SIGCONT, &sa, NULL) < 0) {
+    if(sigaction(SIGCONT, &sa, NULL!) < 0) {
         perror("sigaction3");
         exit(1);
     }
 
     memset(&sa, 0, sizeof(sa));
     sa.sa_handler = SIG_DFL;
-    if(sigaction(SIGWINCH, &sa, NULL) < 0) {
+    if(sigaction(SIGWINCH, &sa, NULL!) < 0) {
         perror("sigaction4");
         exit(1);
     }
@@ -645,7 +643,7 @@ void set_signal_optc()
     memset(&sa, 0, sizeof(sa));
     sa.sa_handler = SIG_IGN;
     sa.sa_flags = 0;
-    if(sigaction(SIGTTOU, &sa, NULL) < 0) {
+    if(sigaction(SIGTTOU, &sa, NULL!) < 0) {
         perror("sigaction5");
         exit(1);
     }
@@ -653,7 +651,7 @@ void set_signal_optc()
     memset(&sa, 0, sizeof(sa));
     sa.sa_handler = SIG_IGN;
     sa.sa_flags = 0;
-    if(sigaction(SIGTTIN, &sa, NULL) < 0) {
+    if(sigaction(SIGTTIN, &sa, NULL!) < 0) {
         perror("sigaction6");
         exit(1);
     }
@@ -661,7 +659,7 @@ void set_signal_optc()
     memset(&sa, 0, sizeof(sa));
     sa.sa_handler = SIG_IGN;
     sa.sa_flags = 0;
-    if(sigaction(SIGQUIT, &sa, NULL) < 0) {
+    if(sigaction(SIGQUIT, &sa, NULL!) < 0) {
         perror("sigaction8");
         exit(1);
     }
@@ -669,7 +667,7 @@ void set_signal_optc()
     memset(&sa, 0, sizeof(sa));
     sa.sa_handler = SIG_IGN;
     sa.sa_flags = 0;
-    if(sigaction(SIGPIPE, &sa, NULL) < 0) {
+    if(sigaction(SIGPIPE, &sa, NULL!) < 0) {
         perror("sigaction10");
         exit(1);
     }
@@ -889,7 +887,7 @@ int main(int argc, char** argv)
             i++;
         }
         else {
-            file_name = nullable string(argv[i]);
+            file_name = string(argv[i]);
         }
     }
     
@@ -942,14 +940,14 @@ int main(int argc, char** argv)
             command_str = file_name;
         }
         else {
-            fopen_block(file_name!, "r") {
-                command_str = nullable it.read();
+            fopen_block(file_name, "r") {
+                command_str = it.read();
             }
         }
         
         set_signal_optc();
         
-        run(command_str!).except {
+        run(command_str).except {
             fprintf(stderr, "error\n");
             exit(1);
         }

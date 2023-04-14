@@ -114,7 +114,7 @@ sNodeBlock*, bool parse_block(sInfo* info)
     expect_next_character_with_one_forward("{", info);
     
     sVarTable* lv_table = info.lv_table;
-    node_block.lv_table = init_block_vtable(info->lv_table);
+    node_block.lv_table = init_block_vtable(info->lv_table!);
     info.lv_table = node_block.lv_table;
     
     while(true) {
@@ -206,7 +206,7 @@ bool sFunNode*::compile(sFunNode* self, sInfo* info)
     int i = 0;
     foreach(it, params) {
         llvm_param_types[i] = create_llvm_type_from_node_type(it.mType);
-        info.lv_table.add_variable(it.mName, nullable it.mType);
+        info.lv_table.add_variable(it.mName, it.mType);
         
         i++;
     }
@@ -214,7 +214,7 @@ bool sFunNode*::compile(sFunNode* self, sInfo* info)
     LLVMTypeRef llvm_result_type = create_llvm_type_from_node_type(result_type);
     LLVMTypeRef llvm_fun_type;
     if(params.length() == 0) {
-        llvm_fun_type = LLVMFunctionType(llvm_result_type, NULL, 0, var_arg);
+        llvm_fun_type = LLVMFunctionType(llvm_result_type, NULL!, 0, var_arg);
     }
     else {
         llvm_fun_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);

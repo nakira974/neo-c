@@ -615,7 +615,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                 else if(*info->p == '%') {
                     info->p++;
                     skip_spaces_and_lf(info);
-                    if(!gExternC && !gNCGC) {
+                    if(gNCCome && !gNCGC) {
                         (*result_type)->mHeap = TRUE;
                     }
                 }

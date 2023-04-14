@@ -37,10 +37,9 @@ void ViWin*::textsView(ViWin* self, Vi* nvi)
             else if(self.cursorY == it2 && nvi.activeWin.equals(self)) 
             {
                 if(printable_line.length() == 0) {
-		     using unsafe;
-		     wattron(self.win, A_REVERSE);
-		     mvwprintw(self.win, it2, 0, "$");
-		     wattroff(self.win, A_REVERSE);
+                    using c { wattron(self.win, A_REVERSE); }
+                    mvwprintw(self.win, it2, 0, "$");
+                    using c { wattroff(self.win, A_REVERSE); }
                 }
                 else if(wcswidth(printable_line, wcslen(printable_line)) > maxx-2)
                 {
@@ -53,9 +52,9 @@ void ViWin*::textsView(ViWin* self, Vi* nvi)
 
                         if(x == self.cursorX) {
                             wmove(self.win, cursor_y, cursor_x);
-                            wattron(self.win, A_REVERSE);
+                            using c { wattron(self.win, A_REVERSE); }
                             wprintw(self.win, "%ls", c);
-                            wattroff(self.win, A_REVERSE);
+                            using c { wattroff(self.win, A_REVERSE); }
                         }
                         else {
                             wmove(self.win, cursor_y, cursor_x);
@@ -74,9 +73,9 @@ void ViWin*::textsView(ViWin* self, Vi* nvi)
                         }
                     }
                     if(self.cursorX == it.length()) {
-                        wattron(self.win, A_REVERSE);
+                        using c { wattron(self.win, A_REVERSE); }
                         wprintw(self.win, "$");
-                        wattroff(self.win, A_REVERSE);
+                        using c { wattroff(self.win, A_REVERSE); }
                     }
                     else {
                         wprintw(self.win, "$");
@@ -96,14 +95,14 @@ void ViWin*::textsView(ViWin* self, Vi* nvi)
                     wstring printable_cursor_string = cursor_string.printable();
 
                     if(printable_cursor_string[0] == '\0') {
-                        wattron(self.win, A_REVERSE);
+                        using c { wattron(self.win, A_REVERSE); }
                         mvwprintw(self.win, it2, x, " ", printable_cursor_string);
-                        wattroff(self.win, A_REVERSE);
+                        using c { wattroff(self.win, A_REVERSE); }
                     }
                     else {
-                        wattron(self.win, A_REVERSE);
+                        using c { wattron(self.win, A_REVERSE); }
                         mvwprintw(self.win, it2, x, "%ls", printable_cursor_string);
-                        wattroff(self.win, A_REVERSE);
+                        using c { wattroff(self.win, A_REVERSE); }
                     }
 
                     x += wcswidth(printable_cursor_string, printable_cursor_string.length());
@@ -114,9 +113,9 @@ void ViWin*::textsView(ViWin* self, Vi* nvi)
                     mvwprintw(self.win, it2, x, "%ls", printable_tail_string);
                     
                     if(self.cursorX == it.length()) {
-                        wattron(self.win, A_REVERSE);
+                        using c { wattron(self.win, A_REVERSE); }
                         wprintw(self.win, "$");
-                        wattroff(self.win, A_REVERSE);
+                        using c { wattroff(self.win, A_REVERSE); }
                     }
                     else {
                         wprintw(self.win, "$");
@@ -147,72 +146,14 @@ void ViWin*::textsView(ViWin* self, Vi* nvi)
     }
 }
 
-/*
-void ViWin*::textsView(ViWin* self, Vi* nvi)
-{
-    int maxy = getmaxy(self.win);
-    int maxx = getmaxx(self.win);
-
-    int it2 = 0;
-    foreach(it, self.texts.sublist(self.scroll, self.scroll+maxy-1))
-    {
-        auto line = it.substring(0, maxx-1);
-
-        if(self.cursorY == it2 && nvi.activeWin.equals(self)) {
-            if(line.length() == 0) {
-                wattron(self.win, A_REVERSE);
-                mvwprintw(self.win, it2, 0, " ");
-                wattroff(self.win, A_REVERSE);
-            }
-            else if(self.cursorX == line.length())
-            {
-                mvwprintw(self.win, it2, 0, "%ls", line);
-                wstring line2 = line.printable();
-
-                wattron(self.win, A_REVERSE);
-                mvwprintw(self.win, it2, wcswidth(line2, line2.length()), " ");
-                wattroff(self.win, A_REVERSE);
-            }
-            else {
-                int x = 0;
-                wstring head_string = line.substring(0, self.cursorX);
-                wstring printable_head_string = head_string.printable();
-
-                mvwprintw(self.win, it2, 0, "%ls", printable_head_string);
-
-                x += wcswidth(printable_head_string, printable_head_string.length());
-
-                wstring cursor_string = line.substring(self.cursorX, self.cursorX+1);
-                wstring printable_cursor_string = cursor_string.printable();
-
-                wattron(self.win, A_REVERSE);
-                mvwprintw(self.win, it2, x, "%ls", printable_cursor_string);
-                wattroff(self.win, A_REVERSE);
-
-                x += wcswidth(printable_cursor_string, printable_cursor_string.length());
-
-                wstring tail_string = line.substring(self.cursorX+1, -1);
-
-                mvwprintw(self.win, it2, x, "%ls", tail_string);
-            }
-        }
-        else {
-            mvwprintw(self.win, it2, 0, "%ls", line);
-        }
-
-        it2++;
-    }
-}
-*/
-
 void ViWin*::statusBarView(ViWin* self, Vi* nvi) version 2
 {
     int maxy = getmaxy(self.win);
     int maxx = getmaxx(self.win);
 
-    wattron(self.win, A_REVERSE);
+    using c { wattron(self.win, A_REVERSE); }
     mvwprintw(self.win, self.height-1, 0, "x %d y %d scroll %d", self.cursorX, self.cursorY, self.scroll);
-    wattroff(self.win, A_REVERSE);
+    using c { wattroff(self.win, A_REVERSE); }
 
     wrefresh(self.win);
 }

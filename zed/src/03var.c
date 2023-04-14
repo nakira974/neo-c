@@ -178,7 +178,7 @@ bool vm(sInfo* info) version 3
             
             wstring var_name = get_str_from_codes(info);
             
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE*? right_value = info.stack[-1];
             
             gVars.insert(var_name, clone right_value);
             
@@ -191,7 +191,7 @@ bool vm(sInfo* info) version 3
             
             wstring var_name = get_str_from_codes(info);
             
-            ZVALUE* zvalue = gVars.at(var_name, null);
+            ZVALUE* zvalue = gVars.at(var_name, null!);
             
             if(zvalue == null) {
                 fprintf(stderr, "undeclared var(%ls)\n", var_name);
@@ -207,7 +207,7 @@ bool vm(sInfo* info) version 3
             
             wstring var_name = get_str_from_codes(info);
             
-            ZVALUE* map = gVars.at(var_name, null);
+            ZVALUE* map = gVars.at(var_name, null!);
             
             if(map == null || (map.kind != kMapValue && map.kind != kListValue)) {
                 fprintf(stderr, "invalid obj value for array index\n");
@@ -322,7 +322,7 @@ sNode*? exp_node(sInfo* info) version 3
     buffer*%? var_name = null;
     
     if(xisalpha(*info->p)) {
-        var_name = nullable new buffer();
+        var_name = new buffer();
         
         while(xisalnum(*info->p) || *info->p == '_') {
             var_name.append_char(*info->p);

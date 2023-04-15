@@ -487,7 +487,7 @@ sFunction* create_finalizer_automatically(sNodeType* node_type, char* fun_name, 
                 
                 if(field_type->mHeap) {
                     char source2[1024];
-                    snprintf(source2, 1024, "if(self != null && self.%s != null) { delete (self.%s!); }\n", name, name);
+                    snprintf(source2, 1024, "if(self != null && self.%s != null) { delete (borrow self.%s); }\n", name, name);
                     
                     sBuf_append_str(&source, source2);
                 }

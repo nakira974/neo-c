@@ -270,9 +270,9 @@ impl vector<T>
                 delete borrow self.items[i];
             }
         }
-	if(self && self.items) {
+        if(self && self.items) {
             free_object((char*)self.items);
-	}
+        }
     }
     
     immutable vector<T>* to_immutable(vector<T>* self) {

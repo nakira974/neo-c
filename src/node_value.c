@@ -203,6 +203,7 @@ BOOL compile_int_value(unsigned int node, sCompileInfo* info)
 
     llvm_value.value = LLVMConstInt(llvm_type, value, TRUE);
     llvm_value.type = create_node_type_with_class_name("int");
+    asprintf(&llvm_value.come_value, "%d", value);
     llvm_value.address = NULL;
     llvm_value.var = NULL;
 

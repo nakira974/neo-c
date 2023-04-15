@@ -299,7 +299,6 @@ void show_type_core(sNodeType* type, int* num_classes, char** classes, BOOL no_o
     }
 }
 
-
 void show_node_type(sNodeType* type)
 {
     char* classes[128];
@@ -313,6 +312,17 @@ void show_node_type(sNodeType* type)
     int i;
     for(i=0; i<num_classes; i++) {
         free(classes[i]);
+    }
+}
+
+void make_type_name_string(sBuf* output, sNodeType* node_type)
+{
+    char* class_name = node_type->mClass->mName;
+    sBuf_append_str(output, class_name);
+    
+    int i;
+    for(i=0; i<node_type->mPointerNum; i++) {
+        sBuf_append_str(output, "*");
     }
 }
 

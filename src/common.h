@@ -65,7 +65,7 @@
 #define CLASS_NUM_MAX 4096
 #define PARSER_ERR_MSG_MAX 5
 #define COMPILE_ERR_MSG_MAX 5
-#define NEO_C_STACK_SIZE 512
+#define NEO_C_STACK_SIZE 128
 //#define LOCAL_VARIABLE_MAX 2048
 #define LOCAL_VARIABLE_MAX 4096
 #define PARAMS_MAX 48
@@ -121,6 +121,7 @@ extern BOOL gNCTypedef;
 extern BOOL gNCHeader;
 extern BOOL gNCSafeMode;
 extern BOOL gNCCome;
+extern BOOL gNCTranspile;
 extern char gFName[PATH_MAX];
 extern struct sVarTableStruct* gModuleVarTable;
 
@@ -256,6 +257,8 @@ typedef struct sNodeTypeStruct sNodeType;
 void init_node_types();
 void free_node_types();
 
+void make_type_name_string(sBuf* output, sNodeType* node_type);
+
 BOOL check_the_same_fields(sNodeType* left_node, sNodeType* right_node);
 
 BOOL solve_typeof(sNodeType** node_type, struct sCompileInfoStruct* info);
@@ -281,6 +284,33 @@ BOOL get_type_of_method_generics(sNodeType** method_generics_types, sNodeType* f
 void create_type_name_from_node_type(char* type_name, int type_name_max, sNodeType* node_type, BOOL neo_c);
 BOOL is_left_type_bigger_size(sNodeType* left_type, sNodeType* right_type);
 
+////////////////////
+/// transpiler.c
+////////////////////
+#define COME_FUN_MAX 4096
+#define COME_CODE_MAX 64
+
+struct sComeFunStruct
+{
+    char mName[VAR_NAME_MAX];
+    sBuf mSource;
+    
+    sNodeType* mResultType;
+    int mNumParams;
+    char* mParamNames[PARAMS_MAX];
+    sNodeType* mParamTypes[PARAMS_MAX];
+};
+
+typedef struct sComeFunStruct sComeFun;
+
+struct sCompileInfoStruct;
+
+void transpiler_init();
+void transpiler_final();
+void add_come_function(char* fun_name, sNodeType* result_type, int num_params, sNodeType** param_types, char** param_names);
+sComeFun* get_come_function(char* fun_name);
+void add_come_code(struct sCompileInfoStruct* info, const char* msg, ...);
+void output_function(sBuf* output, sComeFun* fun);
 
 //////////////////////////////
 /// vtable.c
@@ -290,6 +320,7 @@ struct sVarStruct;
 struct LVALUEStruct {
     sNodeType* type;
     LLVMValueRef value;
+    char come_value[COME_CODE_MAX];
     LLVMValueRef address;
     struct sVarStruct* var;
 };
@@ -696,6 +727,8 @@ struct sCompileInfoStruct
     int inline_caller_sline;
     
     BOOL creating_generics_function;
+    
+    sComeFun* come_fun;
 };
 
 typedef struct sCompileInfoStruct sCompileInfo;
@@ -1075,6 +1108,13 @@ extern LLVMModuleRef  gModule;
 extern LLVMContextRef gContext;
 extern LLVMValueRef gFunction;
 extern char gFunctionName[VAR_NAME_MAX];
+
+struct sComeModule
+{
+    sBuf mSource;
+};
+
+extern struct sComeModule gComeModule;
 
 extern LLVMValueRef gCallerSName;
 extern LLVMValueRef gCallerSLine;

@@ -278,6 +278,12 @@ no-gc-test:
 	PWD=`pwd` ./comelang -no-gc code/HelloWorld20.c
 	./code/HelloWorld20
 
+trans-test:
+	@echo "Compile to transpiler test code..."
+	PWD=`pwd` ./comelang -t code/HelloWorld.c
+#	PWD=`pwd` clang -o code/HelloWorld code/HelloWorld.c.c
+#	./code/HelloWorld
+
 tcc-test:
 	PWD=`pwd` ./comelang -no-gc code/tcctest.c
 	./code/tcctest

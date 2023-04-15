@@ -15,9 +15,11 @@ BOOL gNCTypedef = FALSE;
 BOOL gNCNoMacro = FALSE;
 BOOL gNCSafeMode = FALSE;
 BOOL gNCCome = FALSE;
+BOOL gNCTranspile = FALSE;
 
 static void compiler_init(char* sname)
 {
+    transpiler_init();
     node_var_init();
     node_function_init();
     node_loop_init();
@@ -31,6 +33,7 @@ static void compiler_init(char* sname)
 
 static void compiler_final(char* sname)
 {
+    transpiler_final();
     final_vtable();
     class_final();
     free_node_types();
@@ -414,6 +417,9 @@ int main(int argc, char** argv)
             no_linker = TRUE;
             xstrncat(optiones, "-c ", 1024);
             xstrncat(clang_optiones, "-c ", 1024);
+        }
+        else if(strcmp(argv[i], "-t") == 0) {
+            gNCTranspile = TRUE;
         }
 /*
         else if(strcmp(argv[i], "header") == 0)

@@ -284,6 +284,17 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
             llvm_fun = LLVMAddFunction(gModule, asm_fun_name, llvm_fun_type);
         }
     }
+    
+    char* param_names2[PARAMS_MAX];
+    for(i=0; i<PARAMS_MAX; i++) {
+        param_names2[i] = param_names[i];
+    }
+    
+    add_come_function(fun_name, result_type, num_params, param_types, param_names2);
+    
+    
+    sComeFun* come_fun = info->come_fun;
+    info->come_fun = get_come_function(fun_name);
 
     if(static_) {
         LLVMSetLinkage(llvm_fun, LLVMInternalLinkage);
@@ -305,11 +316,6 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
     info->empty_function = node_block->mNumNodes == 0;
 
     char* block_text = NULL;
-
-    char* param_names2[PARAMS_MAX];
-    for(i=0; i<PARAMS_MAX; i++) {
-        param_names2[i] = param_names[i];
-    }
     
     char param_default_values[PARAMS_MAX][METHOD_DEFAULT_PARAM_MAX];
     for(i=0; i<PARAMS_MAX; i++) {
@@ -461,6 +467,8 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
                 fprintf(stderr, "come_boehm_gc_init not found\n");
                 exit(2);
             }
+            
+            add_come_code(info, "come_boehm_gc_init()");
         }
         else {
             if(gNCDebug) {
@@ -487,6 +495,8 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
                 fprintf(stderr, "come_gc_init not found\n");
                 exit(2);
             }
+            
+            add_come_code(info, "come_gc_init()");
         }
     }
 
@@ -635,6 +645,8 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
     
     llvm_change_block(current_block_before, info);
     info->inline_result_variable = inline_result_variable;
+    
+    info->come_fun = come_fun;
 
     return TRUE;
 }

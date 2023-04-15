@@ -1336,7 +1336,7 @@ BOOL parse_funcation_call_params(int* num_params, unsigned int* params, sParserI
                     null_value = TRUE;
                 }
                 else {
-                    if(*info->p == '!') {
+                    if(*info->p == '!' && *(info->p +1) != '=') {
                         info->p++;
                         skip_spaces_and_lf(info);
                         null_value = TRUE;

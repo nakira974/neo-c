@@ -170,6 +170,7 @@ BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_meth
         llvm_value.type = result_type;
         llvm_value.address = info->inline_result_variable;
         llvm_value.var = NULL;
+        llvm_value.c_value = NULL;
 
         dec_stack_ptr(num_params, info);
         push_value_to_stack_ptr(&llvm_value, info);
@@ -269,6 +270,7 @@ BOOL omit_exception_catch(sFunction* fun, sCompileInfo* info)
     llvm_value.type = clone_node_type(result_type);
     llvm_value.address = field_address;
     llvm_value.var = NULL;
+    llvm_value.c_value = NULL;
 
     dec_stack_ptr(1, info);
     push_value_to_stack_ptr(&llvm_value, info);
@@ -1046,6 +1048,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
             llvm_value.type = clone_node_type(result_type);
             llvm_value.address = NULL;
             llvm_value.var = NULL;
+            llvm_value.c_value = NULL;
 
             dec_stack_ptr(num_params, info);
             push_value_to_stack_ptr(&llvm_value, info);
@@ -1211,6 +1214,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
             llvm_value.type = result_type;
             llvm_value.address = info->inline_result_variable;
             llvm_value.var = NULL;
+            llvm_value.c_value = NULL;
 
             dec_stack_ptr(num_params, info);
             push_value_to_stack_ptr(&llvm_value, info);
@@ -1310,6 +1314,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
             llvm_value.type = clone_node_type(result_type);
             llvm_value.address = NULL;
             llvm_value.var = NULL;
+            llvm_value.c_value = NULL;
 
             dec_stack_ptr(num_params, info);
             push_value_to_stack_ptr(&llvm_value, info);
@@ -1475,6 +1480,7 @@ BOOL compile_lambda_call(unsigned int node, sCompileInfo* info)
         llvm_value.type = result_type;
         llvm_value.address = NULL;
         llvm_value.var = NULL;
+        llvm_value.c_value = NULL;
 
         push_value_to_stack_ptr(&llvm_value, info);
 

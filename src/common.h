@@ -320,7 +320,7 @@ struct sVarStruct;
 struct LVALUEStruct {
     sNodeType* type;
     LLVMValueRef value;
-    char come_value[COME_CODE_MAX];
+    char* c_value;
     LLVMValueRef address;
     struct sVarStruct* var;
 };
@@ -1608,6 +1608,7 @@ LLVMValueRef call_va_arg_inst(LLVMBasicBlockRef block, LLVMValueRef value, LLVMT
 
 void call_come_final(sCompileInfo* info);
 void call_come_gc_final(sCompileInfo* info);
+char* xsprintf(const char* msg, ...);
 
 #endif
 

@@ -103,6 +103,18 @@ void add_come_code(struct sCompileInfoStruct* info, const char* msg, ...)
     sBuf_append_str(&info->come_fun->mSource, msg2);
 }
 
+char* xsprintf(const char* msg, ...)
+{
+    char msg2[1024];
+
+    va_list args;
+    va_start(args, msg);
+    vsnprintf(msg2, 1024, msg, args);
+    va_end(args);
+    
+    return GC_strdup(msg2);
+}
+
 void output_function(sBuf* output, sComeFun* fun)
 {
     sBuf result_type_str;

@@ -81,6 +81,7 @@ BOOL compile_c_string_value(unsigned int node, sCompileInfo* info)
     
         LVALUE llvm_value;
         llvm_value.value = value2;
+        llvm_value.c_value = xsprintf("\"%s\"", buf);
         llvm_value.type = create_node_type_with_class_name("char*");
         llvm_value.type->mUnsigned = TRUE;
         llvm_value.address = value2;
@@ -98,6 +99,7 @@ BOOL compile_c_string_value(unsigned int node, sCompileInfo* info)
     
         LVALUE llvm_value;
         llvm_value.value = value2;
+        llvm_value.c_value = xsprintf("\"%s\"", buf);
         llvm_value.type = create_node_type_with_class_name("char*");
         llvm_value.type->mUnsigned = TRUE;
         llvm_value.address = value2;
@@ -147,6 +149,7 @@ BOOL compile_wc_string_value(unsigned int node, sCompileInfo* info)
     
         LVALUE llvm_value;
         llvm_value.value = value2;
+        llvm_value.c_value = xsprintf("L\"%ls\"", buf);
         llvm_value.type = create_node_type_with_class_name("int*");
         llvm_value.address = value2;
         llvm_value.var = NULL;
@@ -163,6 +166,7 @@ BOOL compile_wc_string_value(unsigned int node, sCompileInfo* info)
     
         LVALUE llvm_value;
         llvm_value.value = value2;
+        llvm_value.c_value = xsprintf("L\"%ls\"", buf);
         llvm_value.type = create_node_type_with_class_name("int*");
         llvm_value.address = value2;
         llvm_value.var = NULL;
@@ -203,7 +207,7 @@ BOOL compile_int_value(unsigned int node, sCompileInfo* info)
 
     llvm_value.value = LLVMConstInt(llvm_type, value, TRUE);
     llvm_value.type = create_node_type_with_class_name("int");
-    asprintf(&llvm_value.come_value, "%d", value);
+    llvm_value.c_value = xsprintf("%d", value);
     llvm_value.address = NULL;
     llvm_value.var = NULL;
 
@@ -241,6 +245,7 @@ BOOL compile_uint_value(unsigned int node, sCompileInfo* info)
     LLVMTypeRef llvm_type = create_llvm_type_with_class_name("int");
 
     llvm_value.value = LLVMConstInt(llvm_type, value, FALSE);
+    llvm_value.c_value = xsprintf("%u", value);
     llvm_value.type = create_node_type_with_class_name("int");
     llvm_value.address = NULL;
     llvm_value.var = NULL;
@@ -280,6 +285,7 @@ BOOL compile_long_value(unsigned long long int node, sCompileInfo* info)
     LLVMTypeRef llvm_type = create_llvm_type_with_class_name("long");
 
     llvm_value.value = LLVMConstInt(llvm_type, value, TRUE);
+    llvm_value.c_value = xsprintf("%ld", value);
     llvm_value.type = create_node_type_with_class_name("long");
     llvm_value.address = NULL;
     llvm_value.var = NULL;
@@ -318,6 +324,7 @@ BOOL compile_ulong_value(unsigned long long int node, sCompileInfo* info)
     LLVMTypeRef llvm_type = create_llvm_type_with_class_name("long");
 
     llvm_value.value = LLVMConstInt(llvm_type, value, FALSE);
+    llvm_value.c_value = xsprintf("%ld", value);
     llvm_value.type = create_node_type_with_class_name("long");
     llvm_value.address = NULL;
     llvm_value.var = NULL;
@@ -352,6 +359,7 @@ BOOL compile_true(unsigned int node, sCompileInfo* info)
 
     LVALUE llvm_value;
     llvm_value.value = LLVMConstInt(llvm_type, 1, FALSE);
+    llvm_value.c_value = xsprintf("1");
     llvm_value.type = create_node_type_with_class_name("bool");
     llvm_value.address = NULL;
     llvm_value.var = NULL;
@@ -386,6 +394,7 @@ BOOL compile_null(unsigned int node, sCompileInfo* info)
 
     LVALUE llvm_value;
     llvm_value.value = LLVMConstInt(llvm_type, 0, FALSE);
+    llvm_value.c_value = xsprintf("NULL");
     LLVMTypeRef llvm_type2 = create_llvm_type_with_class_name("void*");
     llvm_value.value = LLVMBuildCast(gBuilder, LLVMBitCast, llvm_value.value, llvm_type2, "castAH");
     llvm_value.type = create_node_type_with_class_name("void*");
@@ -422,6 +431,7 @@ BOOL compile_false(unsigned int node, sCompileInfo* info)
 
     LVALUE llvm_value;
     llvm_value.value = LLVMConstInt(llvm_type, 0, FALSE);
+    llvm_value.c_value = xsprintf("0");
     llvm_value.type = create_node_type_with_class_name("bool");
     llvm_value.address = NULL;
     llvm_value.var = NULL;
@@ -441,6 +451,7 @@ BOOL compile_char_value(unsigned int node, sCompileInfo* info)
 
     LVALUE llvm_value;
     llvm_value.value = LLVMConstInt(llvm_type, c, FALSE);
+    llvm_value.c_value = xsprintf("%c", c);
     llvm_value.type = create_node_type_with_class_name("char");
     llvm_value.address = NULL;
     llvm_value.var = NULL;
@@ -480,6 +491,7 @@ BOOL compile_float_value(unsigned int node, sCompileInfo* info)
     LLVMTypeRef llvm_type = create_llvm_type_with_class_name("float");
 
     llvm_value.value = LLVMConstReal(llvm_type, (double)value);
+    llvm_value.c_value = xsprintf("%f", value);
     llvm_value.type = create_node_type_with_class_name("float");
     llvm_value.address = NULL;
     llvm_value.var = NULL;
@@ -517,6 +529,7 @@ BOOL compile_double_value(unsigned int node, sCompileInfo* info)
 
     LLVMTypeRef llvm_type = create_llvm_type_with_class_name("double");
 
+    llvm_value.c_value = xsprintf("%lf", value);
     llvm_value.value = LLVMConstReal(llvm_type, value);
     llvm_value.type = create_node_type_with_class_name("double");
     llvm_value.var = NULL;
@@ -575,6 +588,7 @@ BOOL compile_wchar_value(unsigned int node, sCompileInfo* info)
 
     LVALUE llvm_value;
     llvm_value.value = LLVMConstInt(llvm_type, c, FALSE);
+    llvm_value.c_value = xsprintf("%lc", c);
     llvm_value.type = create_node_type_with_class_name("int");
     llvm_value.address = NULL;
     llvm_value.var = NULL;
@@ -641,6 +655,7 @@ BOOL compile_regex_value(unsigned int node, sCompileInfo* info)
     /// result ///
     LVALUE llvm_value;
     llvm_value.value = result;
+    llvm_value.c_value = NULL;
     llvm_value.type = regex_type;
     llvm_value.address = NULL;
     llvm_value.var = NULL;
@@ -796,6 +811,7 @@ BOOL compile_list_value(unsigned int node, sCompileInfo* info)
     
     LVALUE llvm_value;
     llvm_value.value = LLVMBuildCall2(gBuilder, function_type, llvm_fun, llvm_params, num_params, "fun_result2");
+    llvm_value.c_value = NULL;
     llvm_value.type = clone_node_type(list_type);
     llvm_value.address = NULL;
     llvm_value.var = NULL;
@@ -984,6 +1000,7 @@ BOOL compile_map_value(unsigned int node, sCompileInfo* info)
     
     LVALUE llvm_value;
     llvm_value.value = LLVMBuildCall2(gBuilder, function_type, llvm_fun, llvm_params, num_params, "fun_result2");
+    llvm_value.c_value = NULL;
     llvm_value.type = clone_node_type(map_type);
     llvm_value.address = NULL;
     llvm_value.var = NULL;
@@ -1123,6 +1140,7 @@ BOOL compile_tuple_value(unsigned int node, sCompileInfo* info)
     
     LVALUE llvm_value;
     llvm_value.value = LLVMBuildCall2(gBuilder, function_type, llvm_fun, llvm_params, num_params, "fun_result2");
+    llvm_value.c_value = NULL;
     llvm_value.type = clone_node_type(tuple_type);
     llvm_value.address = NULL;
     llvm_value.var = NULL;

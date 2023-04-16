@@ -794,6 +794,7 @@ BOOL compile_and_and(unsigned int node, sCompileInfo* info)
     
     LVALUE llvm_value;
     llvm_value.value = LLVMBuildLoad2(gBuilder, create_llvm_type_with_class_name("bool"), result_var, "andand_result_value");
+    llvm_value.c_value = NULL;
     llvm_value.type = create_node_type_with_class_name("bool");
     llvm_value.address = result_var;
     llvm_value.var = NULL;
@@ -915,6 +916,7 @@ BOOL compile_or_or(unsigned int node, sCompileInfo* info)
 
     LVALUE llvm_value;
     llvm_value.value = LLVMBuildLoad2(gBuilder, llvm_type2, result_var, "oror_result_value");
+    llvm_value.c_value = NULL;
     llvm_value.type = create_node_type_with_class_name("bool");
     llvm_value.address = result_var;
     llvm_value.var = NULL;
@@ -1270,8 +1272,12 @@ BOOL compile_return(unsigned int node, sCompileInfo* info)
                 }
                 else {
                     LLVMBuildRet(gBuilder, llvm_value.value);
-                    add_come_code(info, "return;\n", llvm_value.come_value);
-                    //add_come_code(info, "return %s;\n", llvm_value.come_value);
+                    if(llvm_value.c_value) {
+                        add_come_code(info, "return %s;\n", llvm_value.c_value);
+                    }
+                    else {
+                        add_come_code(info, "return;\n");
+                    }
                 }
             }
     
@@ -1844,6 +1850,7 @@ BOOL compile_create_label(unsigned int node, sCompileInfo* info)
     
     LVALUE llvm_value;
     llvm_value.value = get_block_address(block);
+    llvm_value.c_value = NULL;
     llvm_value.type = create_node_type_with_class_name("void*");
     llvm_value.address = get_block_address(block);
     llvm_value.var = NULL;
@@ -2141,6 +2148,7 @@ BOOL compile_conditional(unsigned int node, sCompileInfo* info)
         LLVMTypeRef llvm_type = create_llvm_type_from_node_type(value1_result_type);
 
         llvm_value.value = LLVMBuildLoad2(gBuilder, llvm_type, result_value, "conditional_result_value");
+        llvm_value.c_value = NULL;
         llvm_value.type = clone_node_type(value1_result_type);
         llvm_value.address = NULL;
         llvm_value.var = NULL;

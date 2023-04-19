@@ -169,13 +169,8 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
                             *node = 0;
                         }
                         else {
-                            if(strcmp(var_name, "protocol_obj") == 0) {
-                                *node = sNodeTree_create_store_field_of_protocol(*node, right_node, info);
-                            }
-                            else {
-                                *node = sNodeTree_create_unwrap(*node, FALSE, info);
-                                *node = sNodeTree_create_store_field(var_name, *node, right_node, info);
-                            }
+                            *node = sNodeTree_create_unwrap(*node, FALSE, info);
+                            *node = sNodeTree_create_store_field(var_name, *node, right_node, info);
                         }
                     }
                     else {

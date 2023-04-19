@@ -1,83 +1,59 @@
 #include <comelang.h>
 #include <stdio.h>
 
-/*
-int fun(int x = 123, int y = 345, int z = 456) 
+protocol sIA
 {
-    printf("x %d y %d z %d\n", x, y, z);
-}
-
-struct sData 
-{
-    int x;
-    int y;
-    int z;
+    void show();
 };
 
-int sData*::fun(sData* self, int x = 123, int y = 345, int z = 456)
+struct sDataA
 {
-    self.x = x;
-    self.y = y;
-    self.z = z;
-}
+    sIA*% a;
+    sIA*% b;
+};
 
-void sData*::show(sData* self)
+sDataA*% sDataA*::initialize(sDataA*% self, sIA*% a, sIA*% b)
 {
-    printf("x %d y %d z %d\n", self.x, self.y, self.z);
-}
-
-int putc(int c, FILE* f) version 2
-{
-    int result = inherit(c, f);
-    puts("");
+    self.a = a;
+    self.b = b;
     
-    return result;
+    return self;
 }
 
-struct sData2
+void sDataA*::show(sDataA* self)
 {
-    map<string,int>*% m1;
+    puts("sDataA::show");
+}
+
+struct sDataB
+{
+    string a;
+    string b;
 };
 
-void sData2::finalize(sData2* self)
+sDataB*% sDataB*::initialize(sDataB*% self, string a, string b)
 {
-    delete borrow self.m1;
-}
-*/
-
-struct sInfo
-{
-    smart_pointer<char>*% p;
-};
-
-void funX(sInfo* info)
-{
-    info->p++
+    self.a = a;
+    self.b = b;
+    
+    return self;
 }
 
-void funX2(sInfo* info)
+void sDataB*::show(sDataA* self)
 {
-    info->p++;
+    puts("sDataB::show");
 }
 
 int main(int argc, char** argv) 
 {
-    using unsafe; 
+    vector<sIA*%>*% v = new vector<sIA*%>();
+    sIA*% a = new sIA(new sDataB(string("AAA"), string("BBB")));
+    sIA*% b = new sIA(new sDataB(string("AAA"), string("BBB")));
+    v.push_back(new sIA(new sDataA(clone a, clone b)));
+    v.push_back(new sIA(new sDataA(clone a, clone b)));
     
-    auto info = new sInfo;
-    
-/*
-    info->p = "ABC".to_buffer().to_pointer();
-    
-    funX(info);
-    funX2(info);
-    
-    auto p = "ABC".to_buffer().to_pointer();
-    
-    p++;
-    
-    xassert("auto pointer test", *info->p == 'C' && *p == 'B');
-*/
-    
+    //delete a;
+    //delete b;
+
     return 0;
 }

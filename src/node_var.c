@@ -586,7 +586,16 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
     if(left_type->mHeap && right_type->mHeap) {
         if(gNodes[right_node].mNodeType == kNodeTypeLoadField || gNodes[right_node].mNodeType == kNodeTypeLoadVariable || gNodes[right_node].mNodeType == kNodeTypeNormalBlock) 
         {
-            increment_ref_count(rvalue.value, right_type, info);
+            if(right_type->mClass->mProtocol) {
+                sVar* var_ = rvalue.var;
+                if(var_) {
+                    var_->mLLVMValue.value = NULL;
+                }
+                //increment_ref_count(rvalue.value, right_type, info);
+            }
+            else {
+                increment_ref_count(rvalue.value, right_type, info);
+            }
         }
     }
     
@@ -1033,7 +1042,16 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
         if(left_type->mHeap && right_type2->mHeap) {
             if(gNodes[right_node].mNodeType == kNodeTypeLoadField || gNodes[right_node].mNodeType == kNodeTypeLoadVariable || gNodes[right_node].mNodeType == kNodeTypeNormalBlock) 
             {
-                increment_ref_count(rvalue.value, right_type2, info);
+                if(right_type->mClass->mProtocol) {
+                    sVar* var_ = rvalue.var;
+                    if(var_) {
+                        var_->mLLVMValue.value = NULL;
+                    }
+                    //increment_ref_count(rvalue.value, right_type2, info);
+                }
+                else {
+                    increment_ref_count(rvalue.value, right_type2, info);
+                }
             }
         }
         
@@ -2364,7 +2382,16 @@ BOOL compile_store_element(unsigned int node, sCompileInfo* info)
         if(var_type->mHeap && right_type->mHeap) {
             if(gNodes[rnode].mNodeType == kNodeTypeLoadField || gNodes[rnode].mNodeType == kNodeTypeLoadVariable || gNodes[rnode].mNodeType == kNodeTypeNormalBlock) 
             {
-                increment_ref_count(rvalue.value, right_type, info);
+                if(right_type->mClass->mProtocol) {
+                    sVar* var_ = rvalue.var;
+                    if(var_) {
+                        var_->mLLVMValue.value = NULL;
+                    }
+                    //increment_ref_count(rvalue.value, right_type, info);
+                }
+                else {
+                    increment_ref_count(rvalue.value, right_type, info);
+                }
             }
         }
         
@@ -5411,6 +5438,266 @@ unsigned int sNodeTree_create_object(sNodeType* node_type, unsigned int object_n
     return node;
 }
 
+BOOL store_obj_to_protocol(unsigned int interface_node, unsigned int obj_node, sCompileInfo* info)
+{
+    /// compile obj node ///
+    if(!compile(obj_node, info)) {
+        return FALSE;
+    }
+
+    sNodeType* obj_type = clone_node_type(info->type);
+
+    LVALUE obj_value = *get_value_from_stack(-1);
+    
+    if(!gNCGC) {
+        remove_object_from_right_values(obj_value.value, info);
+    }
+    
+    /// compile left node ///
+    if(!compile(interface_node, info)) {
+        return FALSE;
+    }
+
+    sNodeType* protocol_type = clone_node_type(info->type);
+
+    LVALUE protocol_value = *get_value_from_stack(-1);
+    
+/*
+    if(!gNCGC) {
+        remove_object_from_right_values(protocol_value.value, info);
+    }
+*/
+    
+    if(!protocol_type->mClass->mProtocol) {
+        compile_err_msg(info, "This is not protocol type");
+        return TRUE;
+    }
+    
+    if(protocol_type->mHeap && !obj_type->mHeap) {
+        compile_err_msg(info, "Require heap object for protocol.obj right value");
+        show_node_type(protocol_type);
+        show_node_type(obj_type);
+        return TRUE;
+    }
+    
+    sCLClass* protocol_class = protocol_type->mClass;
+    
+    sCLClass* obj_class = obj_type->mClass;
+    char* obj_class_name = CLASS_NAME(obj_class);
+    
+    sNodeType* protocol_type2 = clone_node_type(protocol_type);
+    protocol_type2->mPointerNum = 0;
+    
+    int field_index = 0;
+    LLVMValueRef field_address = LLVMBuildStructGEP2(gBuilder, create_llvm_type_from_node_type(protocol_type2), protocol_value.value, field_index, "fieldRRR");
+    
+    LLVMTypeRef llvm_type = create_llvm_type_with_class_name("void*");
+    LLVMValueRef llvm_obj_value = LLVMBuildCast(gBuilder, LLVMBitCast, obj_value.value, llvm_type, "fun_cast");
+    
+    LLVMBuildStore(gBuilder, llvm_obj_value, field_address);
+    
+    int i;
+    for(i=1; i<protocol_class->mNumFields; i++) {
+        char* field_name = protocol_class->mFieldName[i];
+        sNodeType* field = protocol_class->mFields[i];
+        
+        if(type_identify_with_class_name(field, "lambda")) {
+            char struct_name[VAR_NAME_MAX];
+            xstrncpy(struct_name, obj_class_name, VAR_NAME_MAX);
+            
+            if(strcmp(field_name, "finalize") != 0 && strcmp(field_name, "clone") != 0) {
+                int j;
+                for(j=0; j<obj_type->mPointerNum; j++) {
+                    xstrncat(struct_name, "p", VAR_NAME_MAX);
+                }
+            }
+            
+            char fun_name[VAR_NAME_MAX];
+            snprintf(fun_name, VAR_NAME_MAX, "%s_%s", struct_name, field_name);
+            
+            LLVMValueRef llvm_fun = LLVMGetNamedFunction(gModule, fun_name);
+            
+            if(llvm_fun == NULL) {
+                if(i == 1) {
+                    sFunction* fun = create_finalizer_automatically(obj_type, fun_name, info);
+                    if(fun != NULL) {
+                        llvm_fun = fun->mLLVMFunction;
+                    }
+                    
+                    if(llvm_fun == NULL) {
+                        compile_err_msg(info, "function not found %s", fun_name);
+                        return FALSE;
+                    }
+                    
+                    LLVMTypeRef llvm_result_type = create_llvm_type_with_class_name("void");
+                    
+                    LLVMTypeRef llvm_param_types[PARAMS_MAX];
+                    
+                    llvm_param_types[0] = create_llvm_type_with_class_name("char*");
+                    int num_params = 1;
+                    BOOL var_arg = FALSE;
+                    
+                    LLVMTypeRef finalizer_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
+                    LLVMTypeRef finalizer_type_pointer = LLVMPointerType(finalizer_type, 0);
+                    
+                    
+                    sNodeType* protocol_type2 = clone_node_type(protocol_type);
+                    
+                    protocol_type2->mPointerNum = 0;
+                    
+                    int field_index = i;
+                    
+                    LLVMValueRef indices[5];
+                    
+                    indices[0] = LLVMConstInt(LLVMInt32Type(), 0, FALSE);
+                    indices[1] = LLVMConstInt(LLVMInt32Type(), field_index, FALSE);
+                    
+                    LLVMValueRef field_address = LLVMBuildInBoundsGEP2(gBuilder, create_llvm_type_from_node_type(protocol_type2), protocol_value.value, indices, 2, "fieldQQQQUOXY");
+                    
+                    LLVMValueRef field_value = LLVMBuildLoad2(gBuilder, finalizer_type_pointer, field_address, "loadX");
+                    LLVMValueRef llvm_fun2 = LLVMBuildCast(gBuilder, LLVMBitCast, llvm_fun, finalizer_type_pointer, "fun_cast");
+                    
+                    LLVMBuildStore(gBuilder, llvm_fun2, field_address);
+                }
+                else if(i == 2) {
+                    sFunction* fun = create_cloner_automatically(obj_type, fun_name, info);
+                    if(fun != NULL) {
+                        llvm_fun = fun->mLLVMFunction;
+                    }
+                    
+                    if(llvm_fun == NULL) {
+                        compile_err_msg(info, "function not found %s", fun_name);
+                        return FALSE;
+                    }
+                    
+                    LLVMTypeRef llvm_result_type = create_llvm_type_with_class_name("void*");
+                    
+                    LLVMTypeRef llvm_param_types[PARAMS_MAX];
+                    
+                    llvm_param_types[0] = create_llvm_type_with_class_name("char*");
+                    int num_params = 1;
+                    BOOL var_arg = FALSE;
+                    
+                    LLVMTypeRef cloner_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
+                    LLVMTypeRef cloner_type_pointer = LLVMPointerType(cloner_type, 0);
+                    
+                    sNodeType* protocol_type2 = clone_node_type(protocol_type);
+                    
+                    protocol_type2->mPointerNum = 0;
+                    
+                    int field_index = i;
+                    
+                    LLVMValueRef indices[5];
+                    
+                    indices[0] = LLVMConstInt(LLVMInt32Type(), 0, FALSE);
+                    indices[1] = LLVMConstInt(LLVMInt32Type(), field_index, FALSE);
+                    
+                    LLVMValueRef field_address = LLVMBuildInBoundsGEP2(gBuilder, create_llvm_type_from_node_type(protocol_type2), protocol_value.value, indices, 2, "fieldQQQQUOXY");
+                    
+                    LLVMValueRef field_value = LLVMBuildLoad2(gBuilder, cloner_type_pointer, field_address, "loadKKK");
+                    LLVMValueRef llvm_fun2 = LLVMBuildCast(gBuilder, LLVMBitCast, llvm_fun, cloner_type_pointer, "fun_cast");
+                    
+                    LLVMBuildStore(gBuilder, llvm_fun2, field_address);
+                }
+                else {
+                    compile_err_msg(info, "function not found %s", fun_name);
+                    return FALSE;
+                }
+            }
+            else {
+                if(i == 1) {
+                    LLVMTypeRef llvm_result_type = create_llvm_type_with_class_name("void");
+                    
+                    LLVMTypeRef llvm_param_types[PARAMS_MAX];
+                    
+                    llvm_param_types[0] = create_llvm_type_with_class_name("char*");
+                    int num_params = 1;
+                    BOOL var_arg = FALSE;
+                    
+                    LLVMTypeRef finalizer_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
+                    LLVMTypeRef finalizer_type_pointer = LLVMPointerType(finalizer_type, 0);
+                    
+                    
+                    sNodeType* protocol_type2 = clone_node_type(protocol_type);
+                    
+                    protocol_type2->mPointerNum = 0;
+                    
+                    int field_index = i;
+                    
+                    LLVMValueRef indices[5];
+                    
+                    indices[0] = LLVMConstInt(LLVMInt32Type(), 0, FALSE);
+                    indices[1] = LLVMConstInt(LLVMInt32Type(), field_index, FALSE);
+                    
+                    LLVMValueRef field_address = LLVMBuildInBoundsGEP2(gBuilder, create_llvm_type_from_node_type(protocol_type2), protocol_value.value, indices, 2, "fieldQQQQUOXY");
+                    
+                    LLVMValueRef field_value = LLVMBuildLoad2(gBuilder, finalizer_type_pointer, field_address, "loadX");
+                    LLVMValueRef llvm_fun2 = LLVMBuildCast(gBuilder, LLVMBitCast, llvm_fun, finalizer_type_pointer, "fun_cast");
+                    
+                    LLVMBuildStore(gBuilder, llvm_fun2, field_address);
+                }
+                else if(i == 2) {
+                    LLVMTypeRef llvm_result_type = create_llvm_type_with_class_name("void*");
+                    
+                    LLVMTypeRef llvm_param_types[PARAMS_MAX];
+                    
+                    llvm_param_types[0] = create_llvm_type_with_class_name("char*");
+                    int num_params = 1;
+                    BOOL var_arg = FALSE;
+                    
+                    LLVMTypeRef cloner_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
+                    LLVMTypeRef cloner_type_pointer = LLVMPointerType(cloner_type, 0);
+                    
+                    sNodeType* protocol_type2 = clone_node_type(protocol_type);
+                    
+                    protocol_type2->mPointerNum = 0;
+                    
+                    int field_index = i;
+                    
+                    LLVMValueRef indices[5];
+                    
+                    indices[0] = LLVMConstInt(LLVMInt32Type(), 0, FALSE);
+                    indices[1] = LLVMConstInt(LLVMInt32Type(), field_index, FALSE);
+                    
+                    LLVMValueRef field_address = LLVMBuildInBoundsGEP2(gBuilder, create_llvm_type_from_node_type(protocol_type2), protocol_value.value, indices, 2, "fieldQQQQUOXY");
+                    
+                    LLVMValueRef field_value = LLVMBuildLoad2(gBuilder, cloner_type_pointer, field_address, "loadKKK");
+                    LLVMValueRef llvm_fun2 = LLVMBuildCast(gBuilder, LLVMBitCast, llvm_fun, cloner_type_pointer, "fun_cast");
+                    
+                    LLVMBuildStore(gBuilder, llvm_fun2, field_address);
+                }
+                else {
+                    sNodeType* protocol_type2 = clone_node_type(protocol_type);
+                    
+                    protocol_type2->mPointerNum = 0;
+                    
+                    LLVMValueRef field_address = LLVMBuildStructGEP2(gBuilder, create_llvm_type_from_node_type(protocol_type2), protocol_value.value, i, "field");
+                    
+                    LLVMTypeRef field_llvm_type = create_llvm_type_from_node_type(field);
+                    LLVMValueRef field_value = LLVMBuildLoad2(gBuilder, field_llvm_type, field_address, "load");
+                    LLVMValueRef llvm_fun2 = LLVMBuildCast(gBuilder, LLVMBitCast, llvm_fun, field_llvm_type, "fun_cast");
+                    
+                    LLVMBuildStore(gBuilder, llvm_fun2, field_address);
+                }
+            }
+        }
+    }
+    
+    if(!protocol_type->mHeap && !gNCGC) {
+        compile_err_msg(info, "Protocol type should be allocated in heap");
+        return TRUE;
+    }
+
+    dec_stack_ptr(2, info);
+    push_value_to_stack_ptr(&protocol_value, info);
+
+    info->type = clone_node_type(protocol_type);
+    
+    info->type->mHeap = TRUE;
+    
+    return TRUE;
+}
+
 BOOL compile_object(unsigned int node, sCompileInfo* info)
 {
     sNodeType* node_type = gNodes[node].uValue.sObject.mType;
@@ -5539,14 +5826,13 @@ BOOL compile_object(unsigned int node, sCompileInfo* info)
         unsigned int obj_node = sNodeTree_create_object(node_type, 0, 0, NULL, sname, sline, gc, info->pinfo);
         
         unsigned int right_node = params[0];
-        unsigned int store_protocol = sNodeTree_create_store_field_of_protocol(obj_node, right_node, info->pinfo);
-        
-        if(!compile(store_protocol, info)) {
+        if(!store_obj_to_protocol(obj_node, right_node, info)) {
             return FALSE;
         }
         
         info->type = clone_node_type(node_type);
         info->type->mPointerNum++;
+        info->type->mHeap = TRUE;
         
         return TRUE;
     }
@@ -5918,7 +6204,16 @@ BOOL compile_store_field(unsigned int node, sCompileInfo* info)
     if(field_type->mHeap && right_type->mHeap) {
         if(gNodes[rnode].mNodeType == kNodeTypeLoadField || gNodes[rnode].mNodeType == kNodeTypeLoadVariable || gNodes[rnode].mNodeType == kNodeTypeNormalBlock) 
         {
-            increment_ref_count(rvalue.value, right_type, info);
+            if(right_type->mClass->mProtocol) {
+                sVar* var_ = rvalue.var;
+                if(var_) {
+                    var_->mLLVMValue.value = NULL;
+                }
+                //increment_ref_count(rvalue.value, right_type, info);
+            }
+            else {
+                increment_ref_count(rvalue.value, right_type, info);
+            }
         }
         
         remove_object_from_right_values(rvalue.value, info);
@@ -5988,331 +6283,6 @@ BOOL compile_store_field(unsigned int node, sCompileInfo* info)
     return TRUE;
 }
 
-unsigned int sNodeTree_create_store_field_of_protocol(unsigned int left_node, unsigned int right_node, sParserInfo* info)
-{
-    unsigned int node = alloc_node();
-
-    gNodes[node].mNodeType = kNodeTypeStoreFieldOfProtocol;
-
-    xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
-    gNodes[node].mLine = info->sline;
-
-    xstrncpy(gNodes[node].uValue.sStoreField.mVarName, "obj", VAR_NAME_MAX);
-
-    gNodes[node].mLeft = left_node;
-    gNodes[node].mRight = right_node;
-    gNodes[node].mMiddle = 0;
-
-    return node;
-}
-
-BOOL compile_store_field_of_protocol(unsigned int node, sCompileInfo* info)
-{
-    /// compile left node ///
-    unsigned int lnode = gNodes[node].mLeft;
-
-    if(!compile(lnode, info)) {
-        return FALSE;
-    }
-
-    sNodeType* protocol_type = clone_node_type(info->type);
-    
-    if(protocol_type->mPointerNum == 0) {
-        compile_err_msg(info, "Require heap value of protocol");
-        return TRUE;
-    }
-
-    LVALUE lvalue = *get_value_from_stack(-1);
-    
-/*
-    if(!gNCGC) {
-        remove_object_from_right_values(lvalue.value, info);
-    }
-*/
-
-    /// compile right node ///
-    unsigned int rnode = gNodes[node].mRight;
-
-    if(!compile(rnode, info)) {
-        return FALSE;
-    }
-
-    sNodeType* right_type = clone_node_type(info->type);
-
-    LVALUE rvalue = *get_value_from_stack(-1);
-    
-    if(!gNCGC) {
-        remove_object_from_right_values(rvalue.value, info);
-    }
-    
-    if(!protocol_type->mClass->mProtocol) {
-        compile_err_msg(info, "This is not protocol type");
-        return TRUE;
-    }
-    
-    if(protocol_type->mHeap && !right_type->mHeap) {
-        compile_err_msg(info, "Require heap object for protocol.obj right value");
-        show_node_type(protocol_type);
-        show_node_type(right_type);
-        return TRUE;
-    }
-    
-    LLVMValueRef protocol_value = lvalue.value;
-    sCLClass* protocol_class = protocol_type->mClass;
-    
-    sCLClass* right_class = right_type->mClass;
-    char* right_class_name = CLASS_NAME(right_class);
-    
-    sNodeType* protocol_type2 = clone_node_type(protocol_type);
-    protocol_type2->mPointerNum = 0;
-    
-    int field_index = 0;
-    LLVMValueRef field_address = LLVMBuildStructGEP2(gBuilder, create_llvm_type_from_node_type(protocol_type2), protocol_value, field_index, "fieldRRR");
-    
-    LLVMTypeRef llvm_type = create_llvm_type_with_class_name("void*");
-    LLVMValueRef rvalue2 = LLVMBuildCast(gBuilder, LLVMBitCast, rvalue.value, llvm_type, "fun_cast");
-    
-    if(field_address && protocol_type->mHeap) {
-//        free_protocol_object(protocol_type, protocol_value, info);
-    }
-    
-    LLVMBuildStore(gBuilder, rvalue2, field_address);
-    
-/*
-    if(protocol_type->mHeap) {
-        remove_object_from_right_values(rvalue.value, info);
-    }
-*/
-    
-    int i;
-    for(i=1; i<protocol_class->mNumFields; i++) {
-        char* field_name = protocol_class->mFieldName[i];
-        sNodeType* field = protocol_class->mFields[i];
-        
-        if(type_identify_with_class_name(field, "lambda")) {
-            char struct_name[VAR_NAME_MAX];
-            xstrncpy(struct_name, right_class_name, VAR_NAME_MAX);
-            
-            if(strcmp(field_name, "finalize") != 0 && strcmp(field_name, "clone") != 0) {
-                int j;
-                for(j=0; j<right_type->mPointerNum; j++) {
-                    xstrncat(struct_name, "p", VAR_NAME_MAX);
-                }
-            }
-            
-            char fun_name[VAR_NAME_MAX];
-            snprintf(fun_name, VAR_NAME_MAX, "%s_%s", struct_name, field_name);
-            
-            LLVMValueRef llvm_fun = LLVMGetNamedFunction(gModule, fun_name);
-            
-            if(llvm_fun == NULL) {
-                if(i == 1) {
-                    sFunction* fun = create_finalizer_automatically(right_type, fun_name, info);
-                    if(fun != NULL) {
-                        llvm_fun = fun->mLLVMFunction;
-                    }
-                    
-                    if(llvm_fun == NULL) {
-                        compile_err_msg(info, "function not found %s", fun_name);
-                        return FALSE;
-                    }
-                    
-                    LLVMTypeRef llvm_result_type = create_llvm_type_with_class_name("void");
-                    
-                    LLVMTypeRef llvm_param_types[PARAMS_MAX];
-                    
-                    llvm_param_types[0] = create_llvm_type_with_class_name("char*");
-                    int num_params = 1;
-                    BOOL var_arg = FALSE;
-                    
-                    LLVMTypeRef finalizer_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
-                    LLVMTypeRef finalizer_type_pointer = LLVMPointerType(finalizer_type, 0);
-                    
-                    
-                    sNodeType* protocol_type2 = clone_node_type(protocol_type);
-                    
-                    protocol_type2->mPointerNum = 0;
-                    
-                    int field_index = i;
-                    
-                    LLVMValueRef indices[5];
-                    
-                    indices[0] = LLVMConstInt(LLVMInt32Type(), 0, FALSE);
-                    indices[1] = LLVMConstInt(LLVMInt32Type(), field_index, FALSE);
-                    
-                    LLVMValueRef field_address = LLVMBuildInBoundsGEP2(gBuilder, create_llvm_type_from_node_type(protocol_type2), protocol_value, indices, 2, "fieldQQQQUOXY");
-                    
-                    LLVMValueRef field_value = LLVMBuildLoad2(gBuilder, finalizer_type_pointer, field_address, "loadX");
-                    LLVMValueRef llvm_fun2 = LLVMBuildCast(gBuilder, LLVMBitCast, llvm_fun, finalizer_type_pointer, "fun_cast");
-                    
-                    LLVMBuildStore(gBuilder, llvm_fun2, field_address);
-                }
-                else if(i == 2) {
-                    sFunction* fun = create_cloner_automatically(right_type, fun_name, info);
-                    if(fun != NULL) {
-                        llvm_fun = fun->mLLVMFunction;
-                    }
-                    
-                    if(llvm_fun == NULL) {
-                        compile_err_msg(info, "function not found %s", fun_name);
-                        return FALSE;
-                    }
-                    
-                    LLVMTypeRef llvm_result_type = create_llvm_type_with_class_name("void*");
-                    
-                    LLVMTypeRef llvm_param_types[PARAMS_MAX];
-                    
-                    llvm_param_types[0] = create_llvm_type_with_class_name("char*");
-                    int num_params = 1;
-                    BOOL var_arg = FALSE;
-                    
-                    LLVMTypeRef cloner_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
-                    LLVMTypeRef cloner_type_pointer = LLVMPointerType(cloner_type, 0);
-                    
-                    sNodeType* protocol_type2 = clone_node_type(protocol_type);
-                    
-                    protocol_type2->mPointerNum = 0;
-                    
-                    int field_index = i;
-                    
-                    LLVMValueRef indices[5];
-                    
-                    indices[0] = LLVMConstInt(LLVMInt32Type(), 0, FALSE);
-                    indices[1] = LLVMConstInt(LLVMInt32Type(), field_index, FALSE);
-                    
-                    LLVMValueRef field_address = LLVMBuildInBoundsGEP2(gBuilder, create_llvm_type_from_node_type(protocol_type2), protocol_value, indices, 2, "fieldQQQQUOXY");
-                    
-                    LLVMValueRef field_value = LLVMBuildLoad2(gBuilder, cloner_type_pointer, field_address, "loadKKK");
-                    LLVMValueRef llvm_fun2 = LLVMBuildCast(gBuilder, LLVMBitCast, llvm_fun, cloner_type_pointer, "fun_cast");
-                    
-                    LLVMBuildStore(gBuilder, llvm_fun2, field_address);
-                }
-                else {
-                    compile_err_msg(info, "function not found %s", fun_name);
-                    return FALSE;
-                }
-            }
-            else {
-                if(i == 1) {
-                    LLVMTypeRef llvm_result_type = create_llvm_type_with_class_name("void");
-                    
-                    LLVMTypeRef llvm_param_types[PARAMS_MAX];
-                    
-                    llvm_param_types[0] = create_llvm_type_with_class_name("char*");
-                    int num_params = 1;
-                    BOOL var_arg = FALSE;
-                    
-                    LLVMTypeRef finalizer_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
-                    LLVMTypeRef finalizer_type_pointer = LLVMPointerType(finalizer_type, 0);
-                    
-                    
-                    sNodeType* protocol_type2 = clone_node_type(protocol_type);
-                    
-                    protocol_type2->mPointerNum = 0;
-                    
-                    int field_index = i;
-                    
-                    LLVMValueRef indices[5];
-                    
-                    indices[0] = LLVMConstInt(LLVMInt32Type(), 0, FALSE);
-                    indices[1] = LLVMConstInt(LLVMInt32Type(), field_index, FALSE);
-                    
-                    LLVMValueRef field_address = LLVMBuildInBoundsGEP2(gBuilder, create_llvm_type_from_node_type(protocol_type2), protocol_value, indices, 2, "fieldQQQQUOXY");
-                    
-                    LLVMValueRef field_value = LLVMBuildLoad2(gBuilder, finalizer_type_pointer, field_address, "loadX");
-                    LLVMValueRef llvm_fun2 = LLVMBuildCast(gBuilder, LLVMBitCast, llvm_fun, finalizer_type_pointer, "fun_cast");
-                    
-                    LLVMBuildStore(gBuilder, llvm_fun2, field_address);
-                }
-                else if(i == 2) {
-                    LLVMTypeRef llvm_result_type = create_llvm_type_with_class_name("void*");
-                    
-                    LLVMTypeRef llvm_param_types[PARAMS_MAX];
-                    
-                    llvm_param_types[0] = create_llvm_type_with_class_name("char*");
-                    int num_params = 1;
-                    BOOL var_arg = FALSE;
-                    
-                    LLVMTypeRef cloner_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
-                    LLVMTypeRef cloner_type_pointer = LLVMPointerType(cloner_type, 0);
-                    
-                    sNodeType* protocol_type2 = clone_node_type(protocol_type);
-                    
-                    protocol_type2->mPointerNum = 0;
-                    
-                    int field_index = i;
-                    
-                    LLVMValueRef indices[5];
-                    
-                    indices[0] = LLVMConstInt(LLVMInt32Type(), 0, FALSE);
-                    indices[1] = LLVMConstInt(LLVMInt32Type(), field_index, FALSE);
-                    
-                    LLVMValueRef field_address = LLVMBuildInBoundsGEP2(gBuilder, create_llvm_type_from_node_type(protocol_type2), protocol_value, indices, 2, "fieldQQQQUOXY");
-                    
-                    LLVMValueRef field_value = LLVMBuildLoad2(gBuilder, cloner_type_pointer, field_address, "loadKKK");
-                    LLVMValueRef llvm_fun2 = LLVMBuildCast(gBuilder, LLVMBitCast, llvm_fun, cloner_type_pointer, "fun_cast");
-                    
-                    LLVMBuildStore(gBuilder, llvm_fun2, field_address);
-                }
-                else {
-/*
-                    LLVMTypeRef llvm_result_type = create_llvm_type_with_class_name("void*");
-                    
-                    LLVMTypeRef llvm_param_types[PARAMS_MAX];
-                    
-                    llvm_param_types[0] = create_llvm_type_with_class_name("char*");
-                    int num_params = 1;
-                    BOOL var_arg = FALSE;
-                    
-                    LLVMTypeRef cloner_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
-                    LLVMTypeRef cloner_type_pointer = LLVMPointerType(cloner_type, 0);
-                    
-                    sNodeType* protocol_type2 = clone_node_type(protocol_type);
-                    
-                    protocol_type2->mPointerNum = 0;
-                    
-                    int field_index = i;
-                    
-                    LLVMValueRef indices[5];
-                    
-                    indices[0] = LLVMConstInt(LLVMInt32Type(), 0, FALSE);
-                    indices[1] = LLVMConstInt(LLVMInt32Type(), field_index, FALSE);
-                    
-                    LLVMValueRef field_address = LLVMBuildInBoundsGEP2(gBuilder, create_llvm_type_from_node_type(protocol_type2), protocol_value, indices, 2, "fieldQQQQUOXY");
-                    
-                    LLVMValueRef field_value = LLVMBuildLoad2(gBuilder, cloner_type_pointer, field_address, "loadKKK");
-                    LLVMValueRef llvm_fun2 = LLVMBuildCast(gBuilder, LLVMBitCast, llvm_fun, cloner_type_pointer, "fun_cast");
-                    
-                    LLVMBuildStore(gBuilder, llvm_fun2, field_address);
-*/
-                    sNodeType* protocol_type2 = clone_node_type(protocol_type);
-                    
-                    protocol_type2->mPointerNum = 0;
-                    
-                    LLVMValueRef field_address = LLVMBuildStructGEP2(gBuilder, create_llvm_type_from_node_type(protocol_type2), protocol_value, i, "field");
-                    
-                    LLVMTypeRef field_llvm_type = create_llvm_type_from_node_type(field);
-                    LLVMValueRef field_value = LLVMBuildLoad2(gBuilder, field_llvm_type, field_address, "load");
-                    LLVMValueRef llvm_fun2 = LLVMBuildCast(gBuilder, LLVMBitCast, llvm_fun, field_llvm_type, "fun_cast");
-                    
-                    LLVMBuildStore(gBuilder, llvm_fun2, field_address);
-                }
-            }
-        }
-    }
-    
-    if(!protocol_type->mHeap && !gNCGC) {
-        compile_err_msg(info, "Protocol type should be allocated in heap");
-        return TRUE;
-    }
-
-    dec_stack_ptr(2, info);
-    push_value_to_stack_ptr(&lvalue, info);
-
-    info->type = clone_node_type(right_type);
-    
-    return TRUE;
-}
 
 unsigned int sNodeTree_create_load_field(char* name, unsigned int left_node, sParserInfo* info)
 {

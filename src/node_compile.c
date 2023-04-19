@@ -261,12 +261,6 @@ BOOL compile(unsigned int node, sCompileInfo* info)
             }
             break;
             
-        case kNodeTypeStoreFieldOfProtocol:
-            if(!compile_store_field_of_protocol(node, info)) {
-                return FALSE;
-            }
-            break;
-
         case kNodeTypeLoadField:
             if(!compile_load_field(node, info)) {
                 return FALSE;

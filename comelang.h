@@ -2017,7 +2017,7 @@ impl map <T, T2>
         bool result = true;
         foreach(it, left.key_list) {
             T default_value;
-            T it2 = right.key_list.item(n, default_value!);
+            T it2 = dummy_heap right.key_list.item(n, default_value!);
             
             if(it.equals(it2)) {
                 T2 default_value2;
@@ -2807,7 +2807,7 @@ inline smart_pointer<int>*% buffer*::to_int_pointer(buffer* self)
     auto result = new smart_pointer<int>;
     
     result.memory = clone self;
-    result.p = result.memory.buf;
+    result.p = (int*)result.memory.buf;
     
     return result;
 }
@@ -2817,7 +2817,7 @@ inline smart_pointer<short>*% buffer*::to_short_pointer(buffer* self)
     auto result = new smart_pointer<short>;
     
     result.memory = clone self;
-    result.p = result.memory.buf;
+    result.p = (short*)result.memory.buf;
     
     return result;
 }
@@ -2827,7 +2827,7 @@ inline smart_pointer<long>*% buffer*::to_long_pointer(buffer* self)
     auto result = new smart_pointer<long>;
     
     result.memory = clone self;
-    result.p = result.memory.buf;
+    result.p = (long*)result.memory.buf;
     
     return result;
 }

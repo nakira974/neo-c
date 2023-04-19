@@ -14,6 +14,8 @@ void* igc_calloc(size_t count, size_t size)
     
     char* mem = calloc(1, sizeof(int)+count*size);
     
+//printf("calloc %p\n", mem);
+    
     int* ref_count = (int*)mem;
     
     (*ref_count)++;

@@ -6545,7 +6545,7 @@ unsigned int sNodeTree_create_load_array_element(unsigned int array, unsigned in
     return node;
 }
 
-BOOL load_element_core(BOOL getting_refference, int num_dimention, sNodeType* left_type, BOOL global, LVALUE lvalue, LVALUE* rvalue, dec_stack_value, sCompileInfo* info)
+BOOL load_element_core(BOOL getting_refference, int num_dimention, sNodeType* left_type, BOOL global, LVALUE lvalue, LVALUE* rvalue, int dec_stack_value, sCompileInfo* info)
 {
     char class_name[VAR_NAME_MAX];
     xstrncpy(class_name, CLASS_NAME(left_type->mClass), VAR_NAME_MAX);

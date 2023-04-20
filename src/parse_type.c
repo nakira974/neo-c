@@ -895,6 +895,8 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                             return FALSE;
                         }
                     }
+                    if(*info->p == '(') {
+                    }
 
                     BOOL no_function_pointer_result_function = FALSE;
                     if(*info->p == ')' && !array_param) {
@@ -908,7 +910,10 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                     }
 
                     if(*info->p == '(') {
-                        if(function_pointer_result_function && !no_function_pointer_result_function) {
+                        if(func_pointer_name && strcmp(func_pointer_name, "anon_fun") == 0)
+                        {
+                        }
+                        else if(function_pointer_result_function && !no_function_pointer_result_function) {
                             *function_pointer_result_function = TRUE;
                             info->p = p;
                             info->sline = sline;

@@ -6283,7 +6283,6 @@ BOOL compile_store_field(unsigned int node, sCompileInfo* info)
     return TRUE;
 }
 
-
 unsigned int sNodeTree_create_load_field(char* name, unsigned int left_node, sParserInfo* info)
 {
     unsigned int node = alloc_node();

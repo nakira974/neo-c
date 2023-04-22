@@ -168,7 +168,7 @@ void finalize_modules() version 2
     delete gVars;
 }
 
-bool vm(sInfo* info) version 5
+bool vm(sInfo* info) version 6
 {
     switch(*info->op) {
         case OP_STORE: {
@@ -262,7 +262,7 @@ bool vm(sInfo* info) version 5
             
             wstring var_name = get_str_from_codes(info);
             
-            ZVALUE* map = gVars.at(var_name, null);
+            ZVALUE* map = gVars.at(var_name, null!);
             
             if(map == null || (map.kind != kMapValue && map.kind != kListValue)) {
                 fprintf(stderr, "invalid obj value for array index\n");
@@ -286,7 +286,7 @@ bool vm(sInfo* info) version 5
                         exit(2);
                     }
                     
-                    ZVALUE* item = map.listValue.item(index_value, null);
+                    ZVALUE* item = map.listValue.item(index_value, null!);
                     
                     if(item == null) {
                         fprintf(stderr, "invalid list index\n");
@@ -315,7 +315,7 @@ bool vm(sInfo* info) version 5
     return true;
 }
 
-sNode* exp_node(sInfo* info) version 3
+sNode* exp_node(sInfo* info) version 4
 {
     sNode* result = null;
     
@@ -342,9 +342,7 @@ sNode* exp_node(sInfo* info) version 3
                 exit(2);
             }
             
-            sNode* result = borrow new sNode(new sStoreNode(var_name.to_string().to_wstring(), dummy_heap node));
-            
-            return result;
+            result = borrow new sNode(new sStoreNode(var_name.to_string().to_wstring(), dummy_heap node));
         }
         else {
            result = borrow new sNode(new sLoadNode(var_name.to_string().to_wstring()));
@@ -381,18 +379,16 @@ sNode* exp_node(sInfo* info) version 3
                 exit(2);
             }
             
-            sNode* result2 = borrow new sNode(new sStoreElementNode(var_name.to_string(), clone node, dummy_heap node2));
+            sNode* result2 = borrow new sNode(new sStoreElementNode(var_name.to_string(), dummy_heap node, dummy_heap node2));
             
             delete result;
-            delete node;
             
             result = result2;
         }
         else {
-            sNode* result2 = borrow new sNode(new sLoadElementNode(var_name.to_string(), clone node))
+            sNode* result2 = borrow new sNode(new sLoadElementNode(var_name.to_string(), dummy_heap node))
             
             delete result;
-            delete node;
             
             result = result2;
         }

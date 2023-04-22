@@ -2867,7 +2867,6 @@ impl smart_pointer<T>
         
         result.memory = self.memory;
         int n = self.p - self.memory.buf;
-        self.memory = null;
         result.p = ((T*)result.memory.buf) + n + value;
         
         if(result.p > result.memory.buf + result.memory.len) {
@@ -2898,9 +2897,8 @@ impl smart_pointer<T>
         
         smart_pointer<T>*% result = new smart_pointer<T>;
         
-        result.memory = clone self.memory;
+        result.memory = self.memory;
         int n = self.p - self.memory.buf;
-        self.memory = null;
         result.p = ((T*)result.memory.buf) + n - value;
         
         if(result.p < result.memory.buf) {
@@ -2965,7 +2963,6 @@ impl smart_pointer<T>
         return self.memory.to_string();
     }
 }
-
 
 buffer*% string::to_buffer(char* self);
 inline buffer*% char*::to_buffer(char* self) {

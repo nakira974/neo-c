@@ -264,7 +264,7 @@ bool vm(sInfo* info) version 3
             
             wstring var_name = get_str_from_codes(info);
             
-            ZVALUE* map = gVars.at(var_name, null);
+            ZVALUE* map = gVars.at(var_name, null!);
             
             if(map == null || (map.kind != kMapValue && map.kind != kListValue)) {
                 fprintf(stderr, "invalid obj value for array index\n");
@@ -288,7 +288,7 @@ bool vm(sInfo* info) version 3
                         exit(2);
                     }
                     
-                    ZVALUE* item = map.listValue.item(index_value, null);
+                    ZVALUE* item = map.listValue.item(index_value, null!);
                     
                     if(item == null) {
                         fprintf(stderr, "invalid list index\n");

@@ -163,7 +163,6 @@ wstring get_str_from_codes(sInfo* info);
 bool vm(sInfo* info) version 5;
 sNode* exp_node(sInfo* info) version 3;
 
-/*
 ////////////////////////////
 // src/06var.c
 ////////////////////////////
@@ -171,8 +170,7 @@ extern ZVALUE gNullValue;
 
 void initialize_modules() version 2;
 void finalize_modules() version 2;
-bool vm(sInfo* info) version 5;
-sNode* exp_node(sInfo* info) version 3;
+bool vm(sInfo* info) version 6;
+sNode* exp_node(sInfo* info) version 4;
 
 void append_var(wstring name, ZVALUE* value);
-*/

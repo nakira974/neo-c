@@ -333,7 +333,7 @@ sNode*? exp_node(sInfo* info) version 4
             else_block = parse_block(info);
         }
         
-        return borrow new sNode(new sIfNode(if_exp, if_block, elif_exps, elif_blocks, else_block));
+        return borrow new sNode(new sIfNode(if_exp, if_block, elif_exps, elif_blocks, else_block!));
     }
     else {
         return inherit(info);

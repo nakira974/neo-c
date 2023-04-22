@@ -550,8 +550,54 @@ sFunction* create_finalizer_automatically(sNodeType* node_type, char* fun_name, 
     return finalizer;
 }
 
+void increment_protocol_obj_ref_count(LLVMValueRef obj, sNodeType* protocol_type, sCompileInfo* info) 
+{
+    sCLClass* protocol_class = protocol_type->mClass;
+    sNodeType* protocol_type2 = clone_node_type(protocol_type);
+    protocol_type2->mPointerNum = 0;
+    
+    int field_index = 0;
+    
+    LLVMValueRef indices[5];
+    
+    indices[0] = LLVMConstInt(LLVMInt32Type(), 0, FALSE);
+    indices[1] = LLVMConstInt(LLVMInt32Type(), field_index, FALSE);
+    
+    LLVMValueRef field_address = LLVMBuildInBoundsGEP2(gBuilder, create_llvm_type_from_node_type(protocol_type2), obj, indices, 2, "fieldQQQQUOX");
+    
+    LLVMValueRef protocol_obj = LLVMBuildLoad2(gBuilder, create_llvm_type_with_class_name("void*"), field_address, "protocol_obj");
+    int num_params = 1;
+    
+    LLVMValueRef protocol_obj2 = LLVMBuildCast(gBuilder, LLVMBitCast, protocol_obj, create_llvm_type_with_class_name("void*"), "castUOUO");
+
+    LLVMValueRef llvm_params[PARAMS_MAX];
+    memset(llvm_params, 0, sizeof(LLVMValueRef)*PARAMS_MAX);
+    
+    sNodeType* left_type = create_node_type_with_class_name("void*");
+    
+    llvm_params[0] = protocol_obj2;
+    
+    sNodeType* result_type = create_node_type_with_class_name("void");
+
+    LLVMTypeRef llvm_param_types[PARAMS_MAX];
+
+    llvm_param_types[0] = create_llvm_type_with_class_name("void*");
+
+    LLVMTypeRef llvm_result_type = create_llvm_type_from_node_type(result_type);
+
+    BOOL var_arg = FALSE;
+
+    LLVMTypeRef function_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
+    
+    LLVMValueRef llvm_fun = LLVMGetNamedFunction(gModule, "igc_increment_ref_count");
+    LLVMBuildCall2(gBuilder, function_type, llvm_fun, llvm_params, num_params, "");
+}
+
 void increment_ref_count(LLVMValueRef obj, sNodeType* node_type, sCompileInfo* info)
 {
+    if(node_type->mClass->mProtocol) {
+        increment_protocol_obj_ref_count(obj, node_type, info);
+    }
     int num_params = 1;
 
     LLVMValueRef llvm_params[PARAMS_MAX];

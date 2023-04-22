@@ -583,19 +583,10 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
     }
     
     /// std::move ///
-    if(left_type->mHeap && right_type->mHeap) {
+    if(left_type->mHeap && right_type->mHeap && !right_type->mDummyHeap) {
         if(gNodes[right_node].mNodeType == kNodeTypeLoadField || gNodes[right_node].mNodeType == kNodeTypeLoadVariable || gNodes[right_node].mNodeType == kNodeTypeNormalBlock) 
         {
-            if(right_type->mClass->mProtocol) {
-                sVar* var_ = rvalue.var;
-                if(var_) {
-                    var_->mLLVMValue.value = NULL;
-                }
-                //increment_ref_count(rvalue.value, right_type, info);
-            }
-            else {
-                increment_ref_count(rvalue.value, right_type, info);
-            }
+            increment_ref_count(rvalue.value, right_type, info);
         }
     }
     
@@ -1039,19 +1030,10 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
         }
         
         /// std::move ///
-        if(left_type->mHeap && right_type2->mHeap) {
+        if(left_type->mHeap && right_type2->mHeap && !right_type->mDummyHeap) {
             if(gNodes[right_node].mNodeType == kNodeTypeLoadField || gNodes[right_node].mNodeType == kNodeTypeLoadVariable || gNodes[right_node].mNodeType == kNodeTypeNormalBlock) 
             {
-                if(right_type->mClass->mProtocol) {
-                    sVar* var_ = rvalue.var;
-                    if(var_) {
-                        var_->mLLVMValue.value = NULL;
-                    }
-                    //increment_ref_count(rvalue.value, right_type2, info);
-                }
-                else {
-                    increment_ref_count(rvalue.value, right_type2, info);
-                }
+                increment_ref_count(rvalue.value, right_type2, info);
             }
         }
         
@@ -2379,19 +2361,10 @@ BOOL compile_store_element(unsigned int node, sCompileInfo* info)
         }
     
         /// std::move ///
-        if(var_type->mHeap && right_type->mHeap) {
+        if(var_type->mHeap && right_type->mHeap && !right_type->mDummyHeap) {
             if(gNodes[rnode].mNodeType == kNodeTypeLoadField || gNodes[rnode].mNodeType == kNodeTypeLoadVariable || gNodes[rnode].mNodeType == kNodeTypeNormalBlock) 
             {
-                if(right_type->mClass->mProtocol) {
-                    sVar* var_ = rvalue.var;
-                    if(var_) {
-                        var_->mLLVMValue.value = NULL;
-                    }
-                    //increment_ref_count(rvalue.value, right_type, info);
-                }
-                else {
-                    increment_ref_count(rvalue.value, right_type, info);
-                }
+                increment_ref_count(rvalue.value, right_type, info);
             }
         }
         
@@ -6201,19 +6174,10 @@ BOOL compile_store_field(unsigned int node, sCompileInfo* info)
     }
 
     /// std::move ///
-    if(field_type->mHeap && right_type->mHeap) {
+    if(field_type->mHeap && right_type->mHeap && !right_type->mDummyHeap) {
         if(gNodes[rnode].mNodeType == kNodeTypeLoadField || gNodes[rnode].mNodeType == kNodeTypeLoadVariable || gNodes[rnode].mNodeType == kNodeTypeNormalBlock) 
         {
-            if(right_type->mClass->mProtocol) {
-                sVar* var_ = rvalue.var;
-                if(var_) {
-                    var_->mLLVMValue.value = NULL;
-                }
-                //increment_ref_count(rvalue.value, right_type, info);
-            }
-            else {
-                increment_ref_count(rvalue.value, right_type, info);
-            }
+            increment_ref_count(rvalue.value, right_type, info);
         }
         
         remove_object_from_right_values(rvalue.value, info);

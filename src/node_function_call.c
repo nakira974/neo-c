@@ -897,42 +897,29 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         if(fun_param_type->mHeap && param.type->mHeap) 
         {
             if(param.type->mDummyHeap) {
-                if(param.type->mClass->mProtocol) {
-                    sVar* var_ = param.var;
-                    if(var_) {
-                        var_->mLLVMValue.value = NULL;
-                        var_->mType->mHeap = FALSE;
-                        param.type->mHeap = FALSE;
+/*
+                sVar* var_ = param.var;
+                if(var_) {
+                    sNodeType* node_type2 = clone_node_type(var_->mType);
+            
+                    if(!solve_type(&node_type2, generics_type, num_method_generics_types, method_generics_types, info)) {
+                        return FALSE;
                     }
+                    
+                    increment_ref_count(llvm_params[i], node_type2, info);
                 }
-                else {
-                    sVar* var_ = param.var;
-                    if(var_) {
-                        sNodeType* node_type2 = clone_node_type(var_->mType);
-                
-                        if(!solve_type(&node_type2, generics_type, num_method_generics_types, method_generics_types, info)) {
-                            return FALSE;
-                        }
-                        
-                        increment_ref_count(llvm_params[i], node_type2, info);
-                    }
-                }
+*/
             }
             else {
                 sVar* var_ = param.var;
                 if(var_) {
-                    if(param.type->mClass->mProtocol) {
-                        var_->mLLVMValue.value = NULL;
+                    sNodeType* node_type2 = clone_node_type(var_->mType);
+            
+                    if(!solve_type(&node_type2, generics_type, num_method_generics_types, method_generics_types, info)) {
+                        return FALSE;
                     }
-                    else {
-                        sNodeType* node_type2 = clone_node_type(var_->mType);
-                
-                        if(!solve_type(&node_type2, generics_type, num_method_generics_types, method_generics_types, info)) {
-                            return FALSE;
-                        }
-                        
-                        increment_ref_count(llvm_params[i], node_type2, info);
-                    }
+                    
+                    increment_ref_count(llvm_params[i], node_type2, info);
                 }
             }
         }

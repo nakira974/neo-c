@@ -298,6 +298,7 @@ int main(int argc, char** argv)
     
     /// vm ///
     info.op = info.codes.to_int_pointer();
+    info.head = (char*)info.op.p;
     
     while(*info.op) {
         if(!vm(&info)) {

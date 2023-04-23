@@ -60,12 +60,15 @@ struct sInfo
     buffer*% codes;
     vector<sNode*%>*% nodes;
     smart_pointer<int>*% op;
+    char* head;
     vector<ZVALUE*%>*% stack;
     
     ZVALUE*% result_value;
     
     int stack_num;
 };
+
+typedef vector<sNode*%>*% sNodeBlock;
 
 #define OP_INT_VALUE 1
 #define OP_IADD 2
@@ -174,3 +177,9 @@ bool vm(sInfo* info) version 6;
 sNode* exp_node(sInfo* info) version 4;
 
 void append_var(wstring name, ZVALUE* value);
+
+////////////////////////////
+// src/07if.c
+////////////////////////////
+sNode* exp_node(sInfo* info) version 5;
+bool vm(sInfo* info) version 7;

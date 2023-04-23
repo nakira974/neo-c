@@ -682,12 +682,7 @@ sFunction* create_equals_automatically(sNodeType* node_type, char* fun_name, sCo
             }
             
             char source2[1024];
-            if(field_type->mNullable) {
-                snprintf(source2, 1024, "if(left != null && right != null && !left!.%s.equals(right!.%s)) { return false; }\n", name, name);
-            }
-            else {
-                snprintf(source2, 1024, "if(left != null && right != null && !left.%s.equals(right.%s)) { return false; }\n", name, name);
-            }
+            snprintf(source2, 1024, "if(left != null && right != null && !left.%s.equals(right.%s)) { return false; }\n", name, name);
             
             sBuf_append_str(&source, source2);
         }
@@ -1183,18 +1178,10 @@ sFunction* create_cloner_automatically(sNodeType* node_type, char* fun_name, sCo
             }
             
             if(field_type->mHeap) {
-                if(field_type->mNullable) {
-                    char source2[1024];
-                    snprintf(source2, 1024, "if(self != null && self.%s != null) { result.%s = nullable clone self.%s!;}\n", name, name, name);
-                    
-                    sBuf_append_str(&source, source2);
-                }
-                else {
-                    char source2[1024];
-                    snprintf(source2, 1024, "if(self != null && self.%s != null) { result.%s = clone self.%s;}\n", name, name, name);
-                    
-                    sBuf_append_str(&source, source2);
-                }
+                char source2[1024];
+                snprintf(source2, 1024, "if(self != null && self.%s != null) { result.%s = clone self.%s;}\n", name, name, name);
+                
+                sBuf_append_str(&source, source2);
             }
             else if(field_type->mArrayDimentionNum > 0) {
                 char source2[1024];

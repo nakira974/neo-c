@@ -1,7 +1,6 @@
-#include <comelang.h>
 #include "common.h"
 
- struct sIfNode
+struct sIfNode
 {
     int id;
     sNode*% if_exp;
@@ -11,8 +10,9 @@
     sNodeBlock? else_block;
 };
 
- sIfNode*% sIfNode*::initialize(sIfNode*% self, sNode*% if_exp, sNodeBlock if_block, vector<sNode*%>*% elif_exps
-                                , vector<sNodeBlock>*% elif_blocks, sNodeBlock? else_block)
+sIfNode*% sIfNode*::initialize(sIfNode*% self, sNode*% if_exp
+, sNodeBlock if_block, vector<sNode*%>*% elif_exps
+, vector<sNodeBlock>*% elif_blocks, sNodeBlock? else_block)
 {
     self.id = gNodeID++;
     self.if_exp = if_exp;
@@ -24,29 +24,29 @@
     return self;
 }
 
- unsigned int sIfNode*::id(sIfNode* self)
+unsigned int sIfNode*::id(sIfNode* self)
 {
     return self.id;
 }
 
- struct sTrueNode
+struct sTrueNode
 {
     int id;
     bool dummy;
 };
 
- sTrueNode*% sTrueNode*::initialize(sTrueNode*% self)
+sTrueNode*% sTrueNode*::initialize(sTrueNode*% self)
 {
     self.id = gNodeID++;
     return self;
 }
 
- unsigned int sTrueNode*::id(sTrueNode* self)
+unsigned int sTrueNode*::id(sTrueNode* self)
 {
     return self.id;
 }
 
- bool sTrueNode*::compile(sTrueNode* self, sInfo* info)
+bool sTrueNode*::compile(sTrueNode* self, sInfo* info)
 {
     info.codes.append_int(OP_TRUE_VALUE);
     
@@ -55,24 +55,24 @@
     return true;
 }
 
- struct sFalseNode
+struct sFalseNode
 {
     int id;
     bool dummy;
 };
 
- sFalseNode*% sFalseNode*::initialize(sFalseNode*% self)
+sFalseNode*% sFalseNode*::initialize(sFalseNode*% self)
 {
     self.id = gNodeID++;
     return self;
 }
 
- unsigned int sFalseNode*::id(sTrueNode* self)
+unsigned int sFalseNode*::id(sTrueNode* self)
 {
     return self.id;
 }
 
- bool sFalseNode*::compile(sFalseNode* self, sInfo* info)
+bool sFalseNode*::compile(sFalseNode* self, sInfo* info)
 {
     info.codes.append_int(OP_FALSE_VALUE);
     
@@ -95,7 +95,7 @@ bool compile_block(sNodeBlock& block, sInfo* info)
     return true;
 }
 
- bool sIfNode*::compile(sIfNode* self, sInfo* info)
+bool sIfNode*::compile(sIfNode* self, sInfo* info)
 {
     sNode* if_exp = self.if_exp;
     sNodeBlock& if_block = self.if_block;
@@ -125,6 +125,8 @@ bool compile_block(sNodeBlock& block, sInfo* info)
     end_points.push_back(end_point);
     info.codes.append_int(0);
     
+    using unsafe;
+    
     int* p = (int*)(info.codes.buf + false_jump_point);
     *p = info.codes.len;
     
@@ -152,6 +154,8 @@ bool compile_block(sNodeBlock& block, sInfo* info)
         end_points.push_back(end_point);
         info.codes.append_int(0);
         
+        using unsafe;
+        
         int* p = (int*)(info.codes.buf + false_jump_point);
         *p = info.codes.len;
     }
@@ -167,24 +171,27 @@ bool compile_block(sNodeBlock& block, sInfo* info)
         
         int* p = (int*)(info.codes.buf + end_point);
         
+        using unsafe;
+        
         *p = info.codes.length();
     }
     
     return true;
 }
 
-bool vm(sInfo* info) version 4
+bool vm(sInfo* info) version 7
 {
     inherit(info);
     
     switch(*info->op) {
         case OP_GOTO: {
+            using unsafe;
             info->op++;
             
             int value = *info->op;
             info->op++;
             
-            info->op = (int*)((char*)info->head + value);
+            info->op.p = (int*)((char*)info->head + value);
             }
             break;
             
@@ -194,13 +201,14 @@ bool vm(sInfo* info) version 4
             int value = *info->op;
             info->op++;
             
-            ZVALUE*? conditional = info.stack[-1];
+            ZVALUE* conditional = info.stack[-1];
             
             if(conditional.kind == kBoolValue) {
                 bool exp = conditional.boolValue;
                 
                 if(!exp) {
-                    info.op = (int*)((char*)info->head + value);
+                    using unsafe;
+                    info.op.p = (int*)((char*)info->head + value);
                 }
                 
                 info.stack.delete_back();
@@ -230,7 +238,7 @@ bool vm(sInfo* info) version 4
     return true;
 }
 
-sNodeBlock? parse_block(sInfo* info)
+sNodeBlock parse_block(sInfo* info)
 {
     vector<sNode*%>*% result = new vector<sNode*%>();
     
@@ -243,16 +251,14 @@ sNodeBlock? parse_block(sInfo* info)
     skip_spaces(info);
     
     while(true) {
-        sNode*? node = expression(info);
+        sNode* node = expression(info);
         
         if(node == null) {
             fprintf(stderr, "require if block expression\n");
             exit(1);
         }
         
-        result.push_back(clone node);
-        
-        delete node;
+        result.push_back(dummy_heap node);
         
         if(*info->p == ';') {
             info->p++;
@@ -271,10 +277,11 @@ sNodeBlock? parse_block(sInfo* info)
 
 bool is_word(char* str, sInfo* info)
 {
-    return strlen(info->p) >= strlen(str) && memcmp(info->p, str, strlen(str)) == 0 && (strlen(info->p) == strlen(str) || !xisalnum(*(info->p + strlen(str))));
+    using unsafe;
+    return strlen(info->p.p) >= strlen(str) && memcmp(info->p.p, str, strlen(str)) == 0 && (strlen(info->p.p) == strlen(str) || !xisalnum(*(info->p.p + strlen(str))));
 }
 
-sNode*? exp_node(sInfo* info) version 4
+sNode* exp_node(sInfo* info) version 5
 {
     if(is_word("true", info)) {
         info->p += strlen("true");
@@ -292,7 +299,7 @@ sNode*? exp_node(sInfo* info) version 4
         info->p += strlen("if");
         skip_spaces(info);
         
-        sNode*? node = expression(info);
+        sNode* node = expression(info);
         
         if(node == null) {
             fprintf(stderr, "require if conditional expression\n");
@@ -301,16 +308,16 @@ sNode*? exp_node(sInfo* info) version 4
         
         sNode*% if_exp = dummy_heap node;
         
-        sNodeBlock? if_block = parse_block(info);
+        sNodeBlock if_block = parse_block(info);
         
         vector<sNode*%>*% elif_exps = new vector<sNode*%>();
         vector<sNodeBlock>*% elif_blocks = new vector<sNodeBlock>();
         
-        if(memcmp(info->p, "elif", 4) == 0 && !xisalnum(*(info->p+4))) {
+        if(memcmp(info->p.p, "elif", 4) == 0 && !xisalnum(*(info->p+4))) {
             info->p += strlen("elif");
             skip_spaces(info);
             
-            sNode*? node = expression(info);
+            sNode* node = expression(info);
             
             if(node == null) {
                 fprintf(stderr, "reuire elif conditional expression\n");
@@ -319,14 +326,14 @@ sNode*? exp_node(sInfo* info) version 4
             
             elif_exps.push_back(dummy_heap node);
             
-            sNodeBlock? elif_block = parse_block(info);
+            sNodeBlock elif_block = parse_block(info);
             
             elif_blocks.push_back(elif_block);
         }
         
-        sNodeBlock? else_block = null;
+        sNodeBlock else_block = null;
         
-        if(memcmp(info->p, "else", 4) == 0 && !xisalnum(*(info->p+4))) {
+        if(memcmp(info->p.p, "else", 4) == 0 && !xisalnum(*(info->p+4))) {
             info->p += strlen("else");
             skip_spaces(info);
             

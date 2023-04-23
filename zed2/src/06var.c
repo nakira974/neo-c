@@ -331,7 +331,7 @@ sNode* exp_node(sInfo* info) version 4
         
         skip_spaces(info);
         
-        if(*info->p == '=') {
+        if(*info->p == '=' && *(info->p+1) != '=') {
             info->p++;
             skip_spaces(info);
             

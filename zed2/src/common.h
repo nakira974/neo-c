@@ -66,6 +66,9 @@ struct sInfo
     ZVALUE*% result_value;
     
     int stack_num;
+    
+    vector<int>*% breaks;
+    int loop_head;
 };
 
 typedef vector<sNode*%>*% sNodeBlock;
@@ -183,3 +186,12 @@ void append_var(wstring name, ZVALUE* value);
 ////////////////////////////
 sNode* exp_node(sInfo* info) version 5;
 bool vm(sInfo* info) version 7;
+
+bool compile_block(sNodeBlock& block, sInfo* info);
+bool is_word(char* str, sInfo* info);
+sNodeBlock parse_block(sInfo* info);
+
+////////////////////////////
+// src/08loop.c
+////////////////////////////
+sNode* exp_node(sInfo* info) version 6;

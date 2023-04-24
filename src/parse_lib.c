@@ -642,22 +642,18 @@ BOOL parse_variable_name(char* buf, int buf_size, sParserInfo* info, sNodeType* 
             }
             
             int array_size = 0;
-            if(!gNCHeader) {
-                if(!get_const_value_from_node(&array_size, array_size_node, info))
-                {
-                    if(array_size_is_dynamic && info->mBlockLevel > 0) {
-                        node_type->mDynamicArrayNum = array_size_node;
-                        expect_next_character_with_one_forward("]", info);
-    
-                        return TRUE;
-                    }
-                    else {
-                        parser_err_msg(info, "Require Consta Value for array size");
-                        return TRUE;
-                    }
+            if(!get_const_value_from_node(&array_size, array_size_node, info))
+            {
+                if(array_size_is_dynamic && info->mBlockLevel > 0) {
+                    node_type->mDynamicArrayNum = array_size_node;
+                    expect_next_character_with_one_forward("]", info);
+
+                    return TRUE;
                 }
-            }
-            else {
+                else {
+                    parser_err_msg(info, "Require Consta Value for array size");
+                    return TRUE;
+                }
             }
 
             if(param_in_function) {

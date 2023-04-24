@@ -2,9 +2,6 @@
 
 BOOL compile(unsigned int node, sCompileInfo* info)
 {
-    if(gNCHeader) {
-        return TRUE;
-    }
     if(node == 0) {
         return TRUE;
     }

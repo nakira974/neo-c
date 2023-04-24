@@ -695,30 +695,12 @@ BOOL parse_come_function(unsigned int* node, char* struct_name, sParserInfo* inf
         }
         info->function_result_type = clone_node_type(result_type);
 
-        if(gNCHeader) {
-            while(*info->p != '{') {
-                info->p--;
-            }
-            if(!skip_block(info)) {
-                sNodeBlock_free(node_block);
-                return FALSE;
-            }
+        if(!parse_block(node_block, FALSE, FALSE, result_type_is_void, FALSE, TRUE, info)) {
+            sNodeBlock_free(node_block);
+            return FALSE;
         }
-        else {
-            if(!parse_block(node_block, FALSE, FALSE, result_type_is_void, FALSE, TRUE, info)) {
-                sNodeBlock_free(node_block);
-                return FALSE;
-            }
-    
-            if(gNCType) {
-                if(*info->p != '\0') {
-                    expect_next_character_with_one_forward("}", info);
-                }
-            }
-            else {
-                expect_next_character_with_one_forward("}", info);
-            }
-        }
+
+        expect_next_character_with_one_forward("}", info);
 
         info->lv_table = old_table;
 
@@ -892,30 +874,12 @@ BOOL parse_function(unsigned int* node, sNodeType* result_type, char* fun_name, 
         }
         info->function_result_type = clone_node_type(result_type);
 
-        if(gNCHeader) {
-            while(*info->p != '{') {
-                info->p--;
-            }
-            if(!skip_block(info)) {
-                sNodeBlock_free(node_block);
-                return FALSE;
-            }
+        if(!parse_block(node_block, FALSE, FALSE, result_type_is_void, FALSE, TRUE, info)) {
+            sNodeBlock_free(node_block);
+            return FALSE;
         }
-        else {
-            if(!parse_block(node_block, FALSE, FALSE, result_type_is_void, FALSE, TRUE, info)) {
-                sNodeBlock_free(node_block);
-                return FALSE;
-            }
-    
-            if(gNCType) {
-                if(*info->p != '\0') {
-                    expect_next_character_with_one_forward("}", info);
-                }
-            }
-            else {
-                expect_next_character_with_one_forward("}", info);
-            }
-        }
+
+        expect_next_character_with_one_forward("}", info);
 
         info->lv_table = old_table;
 
@@ -1783,14 +1747,7 @@ BOOL parse_function_pointer_result_function(unsigned int* node, BOOL* array_poin
                 return FALSE;
             }
     
-            if(gNCType) {
-                if(*info->p != '\0') {
-                    expect_next_character_with_one_forward("}", info);
-                }
-            }
-            else {
-                expect_next_character_with_one_forward("}", info);
-            }
+            expect_next_character_with_one_forward("}", info);
     
             info->lv_table = old_table;
     

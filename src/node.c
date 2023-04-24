@@ -3010,7 +3010,7 @@ void free_nodes(char* sname)
     snprintf(sname2, PATH_MAX, "%s.ll", sname);
 
     //LLVMDumpModule(gModule); // dump module to STDOUT
-    if(!gNCType && !gNCGlobal && !gNCFunction && !gNCClass && !gNCTypedef && strcmp(sname, "") != 0) {
+    if(strcmp(sname, "") != 0) {
         LLVMPrintModuleToFile(gModule, sname2, NULL);
     }
 
@@ -4661,10 +4661,6 @@ BOOL get_const_value_from_node(int* array_size, unsigned int array_size_node, sP
     
     delete_last_instrunction(prev_block, &cinfo);
 
-    if(gNCHeader) {
-        return TRUE;
-    }
-
     sNodeType* node_type = cinfo.type;
 
     LVALUE llvm_value = *get_value_from_stack(-1);
@@ -5181,7 +5177,7 @@ void compile_err_msg(sCompileInfo* info, const char* msg, ...)
     
     info->err_num++;
 
-    if(output_num < COMPILE_ERR_MSG_MAX && !info->pinfo->no_output_err_msg) { // && !gNCHeader) {
+    if(output_num < COMPILE_ERR_MSG_MAX && !info->pinfo->no_output_err_msg) {
         if(info->in_generics_function) {
             fprintf(stdout, "%s:%d generics function error\n", info->generics_sname, info->generics_sline);
             fprintf(stdout, "%s:%d: %s\n", info->sname, info->sline, msg2);
@@ -5244,10 +5240,6 @@ BOOL compile_block(sNodeBlock* block, BOOL force_hash_result, sCompileInfo* info
             }
             
             if(!compile(node, info)) {
-                if(gNCType && !gNCGlobal && !gNCFunction && !gNCClass && !gNCTypedef) {
-                    show_node_type(info->type);
-                    gNCType = FALSE;
-                }
                 info->pinfo->lv_table = old_table;
                 return FALSE;
             }
@@ -5273,10 +5265,6 @@ BOOL compile_block(sNodeBlock* block, BOOL force_hash_result, sCompileInfo* info
                     node = sNodeTree_create_return(node, info->pinfo);
                     
                     if(!compile(node, info)) {
-                        if(gNCType && !gNCGlobal && !gNCFunction && !gNCClass && !gNCTypedef) {
-                            show_node_type(info->type);
-                            gNCType = FALSE;
-                        }
                         info->pinfo->lv_table = old_table;
                         return FALSE;
                     }
@@ -5338,33 +5326,16 @@ BOOL compile_block(sNodeBlock* block, BOOL force_hash_result, sCompileInfo* info
     
     info->pinfo->lv_table = old_table;
     
-    if(gNCType && block->mTerminated) {
-        if(!gNCGlobal && !gNCFunction && !gNCClass && !gNCTypedef) {
-            show_node_type(info->type);
-            gNCType = FALSE;
-            return FALSE;
-        }
-        return TRUE;
-    }
-
     return TRUE;
 }
 
 BOOL compile_conditional_expression(unsigned int node, sCompileInfo* info)
 {
     if(!compile(node, info)) {
-        if(gNCType && !gNCGlobal && !gNCFunction && !gNCClass && !gNCTypedef) {
-            show_node_type(info->type);
-            gNCType = FALSE;
-        }
         return FALSE;
     }
     
     if(gNodes[node].mTerminated) {
-        if(gNCType && !gNCGlobal && !gNCFunction && !gNCClass && !gNCTypedef) {
-            show_node_type(info->type);
-            gNCType = FALSE;
-        }
         return FALSE;
     }
 

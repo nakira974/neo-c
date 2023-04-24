@@ -8,7 +8,7 @@ Yet another modern compiler. It has a collection and string library using Boehm 
 もう一つのモダンコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 1.0.0
+version 1.0.1
 
 ``` C
 #include <comelang.h>
@@ -2198,121 +2198,8 @@ int main(int argc, char** argv)
 
 # Reflection
 
-``` C
-> vim a.c
-struct sB {
-    int a;
-    char* b;
-    struct sB* c;
-};
-
-int main() {
-    sB b;
-    b;
-> comelang type a.c
-struct sB
-#0 int a
-#1 char* b
-#2 struct sB*
-```
-
-comelang type file name outputs the type of last expression and the type inner contents. It's useful for reflection. You will make a program output a program with any script languaged or comelang its self.
-
-comelang type ファイル名で最後の式の型とその内容を出力することができます。これはリフレクションで便利です。プログラムを生成するプログラムを任意のスクリプト言語やcomelang自身で作ることができるでしょう。
-
-``` C
-> vim a.c
-int gGlobal1;
-int gGlobal2;
-> comelang global a.c
-gGlobal1 int
-gGlobal2 int
-```
-
-``` C
-> vim a.c
-int fun(int a, int b)
-{
-    return a + b;
-}
-
-int fun2()
-{
-    return 123;
-}
-> comelang function a.c
-fun extern 0 var args 0 gnerics function 0 num params 2
-a int
-b int
-result type int
-fun2 extern 0 var args 0 gnerics function 0 num params 0
-result type int
-```
-
-``` C
-> vim a.c
-struct sA 
-{
-    int a;
-    int b;
-};
-
-enum eEnumA { kA, kB };
-> comelang class a.c
-struct sA
-#0 int a
-#1 int b
-enum eEnumA
-kA 0
-kB 1
-```
-
-``` C
-> vim a.c
-typedef int tType;
-typedef int tType2;
-> comelang typedef a.c
-tType int
-tType2 int
-```
+removed.
 
 9. MACRO
 
-~~~ C
-```
-ruby <<EOS
-    puts("int gGlobal2;");
-EOS
-```
-~~~
-
-The output of the enclosed code is pasted into the source code. With this and reflection, you'll be able to generate code with reflection at compile time.
-
-囲まれたコードの出力がソースコードに貼り付けます。これとリフレクションを使えばコンパイルタイムにリフレクションでコードを生成できるでしょう。
-
-Do not expand macros with the -n option.
-
--nオプションを使うとマクロを展開しません。
-
-Compile Time Reflection and code generation is below:
-
-~~~ shell
-> vim g.c
-~~~
-
-``` C
-int gGlobal;
-
-
-ruby <<EOS
-    type = "`comelang -n global $SOURCE_NAME | grep gGlobal`".split()[1];
-    puts(type + " gGlobal2;");
-EOS
-```
-~~~ shell
-> comelang global g.c
-gGlobal int
-gGlobal2 int
-~~~
-
-SOURCE_NAMEという環境変数にコンパイル中のソースファイル名が入ってます。
+removed.

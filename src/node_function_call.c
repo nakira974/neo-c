@@ -75,7 +75,7 @@ BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_meth
         return FALSE;
     }
 
-    if(info2.err_num > 0 && !gNCHeader) {
+    if(info2.err_num > 0) {
         fprintf(stderr, "Parser error number is %d. ", info2.err_num);
         return FALSE;
     }
@@ -1142,7 +1142,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
             return FALSE;
         }
 
-        if(info2.err_num > 0 && !gNCHeader) {
+        if(info2.err_num > 0) {
             fprintf(stderr, "Parser error number is %d. ", info2.err_num);
             return FALSE;
         }

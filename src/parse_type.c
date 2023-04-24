@@ -357,7 +357,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                 else {
                     sCLClass* klass = get_class(union_name);
 
-                    if(klass == NULL && gNCHeader) {
+                    if(klass == NULL) {
                         return FALSE;
                     }
                 }

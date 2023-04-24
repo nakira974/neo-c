@@ -619,177 +619,154 @@ BOOL parse_struct(unsigned int* node, char* struct_name, int size_struct_name, B
         struct_class = alloc_struct(struct_name, anonymous, TRUE, parent_class, protocol_);
     }
     
-/*
-    if(gNCHeader) {
-        if(!skip_block(info)) {
+    expect_next_character_with_one_forward("{", info);
+    
+    if(protocol_)  {
+        sNodeType* node_type = create_node_type_with_class_name("protocol_obj_t");
+
+        if(!gNCGC) {
+            node_type->mHeap = TRUE;
+        }
+        fields[num_fields] = node_type;
+        field_names[num_fields] = strdup("_protocol_obj");
+
+        num_fields++;
+        
+        sNodeType* node_type2 = create_node_type_with_class_name("lambda");
+        node_type2->mNumParams = 1;
+        node_type2->mParamTypes[0] = create_node_type_with_class_name("void*");
+        node_type2->mResultType = create_node_type_with_class_name("void");
+        node_type2->mPointerNum = 1;
+
+        fields[num_fields] = node_type2;
+        field_names[num_fields] = strdup("finalize");
+
+        num_fields++;
+        
+        sNodeType* node_type3 = create_node_type_with_class_name("lambda");
+        node_type3->mNumParams = 1;
+        node_type3->mParamTypes[0] = create_node_type_with_class_name("void*");
+        node_type3->mResultType = create_node_type_with_class_name("void*");
+        if(!gNCGC) {
+            node_type3->mResultType->mHeap = TRUE;
+        }
+        node_type3->mPointerNum = 1;
+
+        fields[num_fields] = node_type3;
+        field_names[num_fields] = strdup("clone");
+
+        num_fields++;
+    }
+
+    xstrncpy(info->parse_struct_name, struct_name, VAR_NAME_MAX);
+    
+    int n = 0;
+    while(TRUE) {
+        if(*info->p == '}') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            break;
+        }
+        if(*info->p == '#') {
+            if(!parse_sharp(info)) {
+                info->in_struct = in_struct;
+                return FALSE;
+            }
+        }
+        char asm_fname[VAR_NAME_MAX];
+        BOOL flag_asm_fun_name = FALSE;
+        if(!parse_attribute(info, asm_fname, &flag_asm_fun_name)) {
+            info->in_struct = in_struct;
             return FALSE;
         }
-    }
-    else {
-*/
-        expect_next_character_with_one_forward("{", info);
+
+        sNodeType* field = NULL;
+        char buf[VAR_NAME_MAX];
         
-        if(protocol_)  {
-            sNodeType* node_type = create_node_type_with_class_name("protocol_obj_t");
-    
-            if(!gNCGC) {
-                node_type->mHeap = TRUE;
-            }
-            fields[num_fields] = node_type;
-            field_names[num_fields] = strdup("_protocol_obj");
-    
-            num_fields++;
-            
-            sNodeType* node_type2 = create_node_type_with_class_name("lambda");
-            node_type2->mNumParams = 1;
-            node_type2->mParamTypes[0] = create_node_type_with_class_name("void*");
-            node_type2->mResultType = create_node_type_with_class_name("void");
-            node_type2->mPointerNum = 1;
-    
-            fields[num_fields] = node_type2;
-            field_names[num_fields] = strdup("finalize");
-    
-            num_fields++;
-            
-            sNodeType* node_type3 = create_node_type_with_class_name("lambda");
-            node_type3->mNumParams = 1;
-            node_type3->mParamTypes[0] = create_node_type_with_class_name("void*");
-            node_type3->mResultType = create_node_type_with_class_name("void*");
-            if(!gNCGC) {
-                node_type3->mResultType->mHeap = TRUE;
-            }
-            node_type3->mPointerNum = 1;
-    
-            fields[num_fields] = node_type3;
-            field_names[num_fields] = strdup("clone");
-    
-            num_fields++;
+        if(!parse_type(&field, info, buf, FALSE, TRUE, NULL, FALSE, TRUE, FALSE, FALSE, protocol_)) {
+            info->in_struct = in_struct;
+            return FALSE;
         }
-    
-        xstrncpy(info->parse_struct_name, struct_name, VAR_NAME_MAX);
+
+        if(!parse_attribute(info, asm_fname, &flag_asm_fun_name)) {
+            info->in_struct = in_struct;
+            return FALSE;
+        }
+
+        char saved_buf[VAR_NAME_MAX];
+        xstrncpy(saved_buf, buf, VAR_NAME_MAX);
+
+        sNodeType* saved_field = clone_node_type(field);
+
+        fields[num_fields] = field;
         
-        int n = 0;
-        while(TRUE) {
-            if(*info->p == '}') {
-                info->p++;
-                skip_spaces_and_lf(info);
-                break;
+        if(protocol_ && type_identify_with_class_name(field, "lambda")) {
+            if(field->mNumParams == 0) {
+                field->mParamTypes[0] = create_node_type_with_class_name("protocol_obj_t");
+                field->mNumParams++;
             }
-            if(*info->p == '#') {
-                if(!parse_sharp(info)) {
-                    info->in_struct = in_struct;
-                    return FALSE;
-                }
-            }
-            char asm_fname[VAR_NAME_MAX];
-            BOOL flag_asm_fun_name = FALSE;
-            if(!parse_attribute(info, asm_fname, &flag_asm_fun_name)) {
-                info->in_struct = in_struct;
-                return FALSE;
-            }
-    
-            sNodeType* field = NULL;
-            char buf[VAR_NAME_MAX];
-            
-            if(!parse_type(&field, info, buf, FALSE, TRUE, NULL, FALSE, TRUE, FALSE, FALSE, protocol_)) {
-                info->in_struct = in_struct;
-                return FALSE;
-            }
-    
-            if(!parse_attribute(info, asm_fname, &flag_asm_fun_name)) {
-                info->in_struct = in_struct;
-                return FALSE;
-            }
-    
-            char saved_buf[VAR_NAME_MAX];
-            xstrncpy(saved_buf, buf, VAR_NAME_MAX);
-    
-            sNodeType* saved_field = clone_node_type(field);
-    
-            fields[num_fields] = field;
-            
-            if(protocol_ && type_identify_with_class_name(field, "lambda")) {
-                if(field->mNumParams == 0) {
-                    field->mParamTypes[0] = create_node_type_with_class_name("protocol_obj_t");
-                    field->mNumParams++;
-                }
-                else if(!type_identify_with_class_name(field->mParamTypes[0], "protocol_obj_t"))
-                {
-                    int i;
-                    for(i=0; i<field->mNumParams; i++) {
-                        field->mParamTypes[field->mNumParams-i] = field->mParamTypes[field->mNumParams-i-1];
-                    }
-                    
-                    field->mParamTypes[0] = create_node_type_with_class_name("protocol_obj_t");
-                    field->mNumParams++;
-                }
-            }
-    
-            if(*info->p == ';') {
-                info->p++;
-                skip_spaces_and_lf(info);
-    
-                if(buf[0] == '\0') {
-                    create_anonymous_name(buf, VAR_NAME_MAX);
-                }
-            }
-            else if(buf[0] == '\0') {
-                if(!parse_variable_name(buf, VAR_NAME_MAX, info, field, FALSE, FALSE))
-                {
-                    info->in_struct = in_struct;
-                    return FALSE;
-                }
-            }
-    
-            if(!parse_attribute(info, asm_fname, &flag_asm_fun_name)) {
-                info->in_struct = in_struct;
-                return FALSE;
-            }
-    
-            field_names[num_fields] = strdup(buf);
-    
-            num_fields++;
-    
-            if(num_fields >= STRUCT_FIELD_MAX) {
-                parser_err_msg(info, "overflow struct field");
-    
+            else if(!type_identify_with_class_name(field->mParamTypes[0], "protocol_obj_t"))
+            {
                 int i;
-                for(i=0; i<num_fields; i++) {
-                    free(field_names[i]);
+                for(i=0; i<field->mNumParams; i++) {
+                    field->mParamTypes[field->mNumParams-i] = field->mParamTypes[field->mNumParams-i-1];
                 }
+                
+                field->mParamTypes[0] = create_node_type_with_class_name("protocol_obj_t");
+                field->mNumParams++;
+            }
+        }
+
+        if(*info->p == ';') {
+            info->p++;
+            skip_spaces_and_lf(info);
+
+            if(buf[0] == '\0') {
+                create_anonymous_name(buf, VAR_NAME_MAX);
+            }
+        }
+        else if(buf[0] == '\0') {
+            if(!parse_variable_name(buf, VAR_NAME_MAX, info, field, FALSE, FALSE))
+            {
                 info->in_struct = in_struct;
                 return FALSE;
             }
-    
-            if(*info->p == ',') {
-                while(*info->p == ',') {
-                    info->p++;
-                    skip_spaces_and_lf(info);
-                    char buf2[VAR_NAME_MAX];
-                    xstrncpy(buf2, saved_buf, VAR_NAME_MAX);
-    
-                    sNodeType* field2 = clone_node_type(saved_field);
-    
-                    fields[num_fields] = field2;
-    
-                    if(buf2[0] == '\0') {
-                        if(!parse_variable_name(buf2, VAR_NAME_MAX, info, field2, FALSE, FALSE))
-                        {
-                            int i;
-                            for(i=0; i<num_fields; i++) {
-                                free(field_names[i]);
-                            }
-                            info->in_struct = in_struct;
-                            return FALSE;
-                        }
-                    }
-    
-                    field_names[num_fields] = strdup(buf2);
-    
-                    num_fields++;
-    
-                    if(num_fields >= STRUCT_FIELD_MAX) {
-                        parser_err_msg(info, "overflow struct field");
+        }
+
+        if(!parse_attribute(info, asm_fname, &flag_asm_fun_name)) {
+            info->in_struct = in_struct;
+            return FALSE;
+        }
+
+        field_names[num_fields] = strdup(buf);
+
+        num_fields++;
+
+        if(num_fields >= STRUCT_FIELD_MAX) {
+            parser_err_msg(info, "overflow struct field");
+
+            int i;
+            for(i=0; i<num_fields; i++) {
+                free(field_names[i]);
+            }
+            info->in_struct = in_struct;
+            return FALSE;
+        }
+
+        if(*info->p == ',') {
+            while(*info->p == ',') {
+                info->p++;
+                skip_spaces_and_lf(info);
+                char buf2[VAR_NAME_MAX];
+                xstrncpy(buf2, saved_buf, VAR_NAME_MAX);
+
+                sNodeType* field2 = clone_node_type(saved_field);
+
+                fields[num_fields] = field2;
+
+                if(buf2[0] == '\0') {
+                    if(!parse_variable_name(buf2, VAR_NAME_MAX, info, field2, FALSE, FALSE))
+                    {
                         int i;
                         for(i=0; i<num_fields; i++) {
                             free(field_names[i]);
@@ -798,29 +775,13 @@ BOOL parse_struct(unsigned int* node, char* struct_name, int size_struct_name, B
                         return FALSE;
                     }
                 }
-            }
-    
-            if(!parse_attribute(info, asm_fname, &flag_asm_fun_name)) {
-                int i;
-                for(i=0; i<num_fields; i++) {
-                    free(field_names[i]);
-                }
-                info->in_struct = in_struct;
-                return FALSE;
-            }
-    
-            if(*info->p == ';') {
-                info->p++;
-                skip_spaces_and_lf(info);
-            }
-    
-            if(*info->p == '}') {
-                info->p++;
-                skip_spaces_and_lf(info);
-                break;
-            }
-            else if(*info->p == '#') {
-                if(!parse_sharp(info)) {
+
+                field_names[num_fields] = strdup(buf2);
+
+                num_fields++;
+
+                if(num_fields >= STRUCT_FIELD_MAX) {
+                    parser_err_msg(info, "overflow struct field");
                     int i;
                     for(i=0; i<num_fields; i++) {
                         free(field_names[i]);
@@ -828,15 +789,45 @@ BOOL parse_struct(unsigned int* node, char* struct_name, int size_struct_name, B
                     info->in_struct = in_struct;
                     return FALSE;
                 }
-    
-                if(*info->p == '}') {
-                    info->p++;
-                    skip_spaces_and_lf(info);
-                    break;
-                }
             }
         }
-//    }
+
+        if(!parse_attribute(info, asm_fname, &flag_asm_fun_name)) {
+            int i;
+            for(i=0; i<num_fields; i++) {
+                free(field_names[i]);
+            }
+            info->in_struct = in_struct;
+            return FALSE;
+        }
+
+        if(*info->p == ';') {
+            info->p++;
+            skip_spaces_and_lf(info);
+        }
+
+        if(*info->p == '}') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            break;
+        }
+        else if(*info->p == '#') {
+            if(!parse_sharp(info)) {
+                int i;
+                for(i=0; i<num_fields; i++) {
+                    free(field_names[i]);
+                }
+                info->in_struct = in_struct;
+                return FALSE;
+            }
+
+            if(*info->p == '}') {
+                info->p++;
+                skip_spaces_and_lf(info);
+                break;
+            }
+        }
+    }
 
     char asm_fname[VAR_NAME_MAX];
     BOOL flag_asm_fun_name = FALSE;
@@ -860,7 +851,6 @@ BOOL parse_struct(unsigned int* node, char* struct_name, int size_struct_name, B
     
     char* tail = info->p;
     
-    if(!gNCHeader) {
         if(terminated == NULL) {
 /*
             if(open) {
@@ -889,10 +879,6 @@ BOOL parse_struct(unsigned int* node, char* struct_name, int size_struct_name, B
             *node = sNodeTree_struct(struct_type, info, sname, sline, undefined_struct);
 //        }
             
-    }
-    else {
-        *node = sNodeTree_create_null(info);
-    }
     
     if(!parse_attribute(info, asm_fname, &flag_asm_fun_name)) {
         info->in_struct = in_struct;
@@ -973,107 +959,87 @@ BOOL parse_union(unsigned int* node, char* union_name, int size_union_name, BOOL
         union_class = alloc_union(union_name, FALSE, FALSE);
     }
 
-    if(gNCHeader) {
-        if(!skip_block(info)) {
+    expect_next_character_with_one_forward("{", info);
+
+    xstrncpy(info->parse_struct_name, union_name, VAR_NAME_MAX);
+
+    int n = 0;
+    while(TRUE) {
+        if(*info->p == '#') {
+            if(!parse_sharp(info)) {
+                return FALSE;
+            }
+        }
+        char asm_fname[VAR_NAME_MAX];
+        BOOL flag_asm_fun_name = FALSE;
+        if(!parse_attribute(info, asm_fname, &flag_asm_fun_name)) {
             return FALSE;
         }
-    }
-    else {
-        expect_next_character_with_one_forward("{", info);
-    
-        xstrncpy(info->parse_struct_name, union_name, VAR_NAME_MAX);
-    
-        int n = 0;
-        while(TRUE) {
-            if(*info->p == '#') {
-                if(!parse_sharp(info)) {
-                    return FALSE;
-                }
+
+        sNodeType* field = NULL;
+        char buf[VAR_NAME_MAX];
+        if(!parse_type(&field, info, buf, FALSE, TRUE, NULL, FALSE, TRUE, FALSE, FALSE, FALSE)) {
+            return FALSE;
+        }
+
+        if(!parse_attribute(info, asm_fname, &flag_asm_fun_name)) {
+            return FALSE;
+        }
+
+        char saved_buf[VAR_NAME_MAX];
+        xstrncpy(saved_buf, buf, VAR_NAME_MAX);
+
+        sNodeType* saved_field = clone_node_type(field);
+
+        fields[num_fields] = field;
+
+        if(*info->p == ';') {
+            info->p++;
+            skip_spaces_and_lf(info);
+
+            if(strcmp(buf, "") == 0) {
+                create_anonymous_name(buf, VAR_NAME_MAX);
             }
-            char asm_fname[VAR_NAME_MAX];
-            BOOL flag_asm_fun_name = FALSE;
-            if(!parse_attribute(info, asm_fname, &flag_asm_fun_name)) {
+        }
+        else if(buf[0] == '\0') {
+            if(!parse_variable_name(buf, VAR_NAME_MAX, info, field, FALSE, FALSE))
+            {
                 return FALSE;
             }
-    
-            sNodeType* field = NULL;
-            char buf[VAR_NAME_MAX];
-            if(!parse_type(&field, info, buf, FALSE, TRUE, NULL, FALSE, TRUE, FALSE, FALSE, FALSE)) {
-                return FALSE;
+        }
+
+        if(!parse_attribute(info, asm_fname, &flag_asm_fun_name)) {
+            return FALSE;
+        }
+
+        field_names[num_fields] = strdup(buf);
+
+        num_fields++;
+
+        if(num_fields >= STRUCT_FIELD_MAX) {
+            parser_err_msg(info, "overflow struct field");
+
+            int i;
+            for(i=0; i<num_fields; i++) {
+                free(field_names[i]);
             }
-    
-            if(!parse_attribute(info, asm_fname, &flag_asm_fun_name)) {
-                return FALSE;
-            }
-    
-            char saved_buf[VAR_NAME_MAX];
-            xstrncpy(saved_buf, buf, VAR_NAME_MAX);
-    
-            sNodeType* saved_field = clone_node_type(field);
-    
-            fields[num_fields] = field;
-    
-            if(*info->p == ';') {
+            return FALSE;
+        }
+
+        if(*info->p == ',') {
+            while(*info->p == ',') {
                 info->p++;
                 skip_spaces_and_lf(info);
-    
-                if(strcmp(buf, "") == 0) {
-                    create_anonymous_name(buf, VAR_NAME_MAX);
-                }
-            }
-            else if(buf[0] == '\0') {
-                if(!parse_variable_name(buf, VAR_NAME_MAX, info, field, FALSE, FALSE))
-                {
-                    return FALSE;
-                }
-            }
-    
-            if(!parse_attribute(info, asm_fname, &flag_asm_fun_name)) {
-                return FALSE;
-            }
-    
-            field_names[num_fields] = strdup(buf);
-    
-            num_fields++;
-    
-            if(num_fields >= STRUCT_FIELD_MAX) {
-                parser_err_msg(info, "overflow struct field");
-    
-                int i;
-                for(i=0; i<num_fields; i++) {
-                    free(field_names[i]);
-                }
-                return FALSE;
-            }
-    
-            if(*info->p == ',') {
-                while(*info->p == ',') {
-                    info->p++;
-                    skip_spaces_and_lf(info);
-                    char buf2[VAR_NAME_MAX];
-                    xstrncpy(buf2, saved_buf, VAR_NAME_MAX);
-    
-                    sNodeType* field2 = clone_node_type(saved_field);
-    
-                    fields[num_fields] = field2;
-    
-                    if(buf2[0] == '\0') {
-                        if(!parse_variable_name(buf2, VAR_NAME_MAX, info, field2, FALSE, FALSE))
-                        {
-                            int i;
-                            for(i=0; i<num_fields; i++) {
-                                free(field_names[i]);
-                            }
-                            return FALSE;
-                        }
-                    }
-    
-                    field_names[num_fields] = strdup(buf2);
-    
-                    num_fields++;
-    
-                    if(num_fields >= STRUCT_FIELD_MAX) {
-                        parser_err_msg(info, "overflow struct field");
+                char buf2[VAR_NAME_MAX];
+                xstrncpy(buf2, saved_buf, VAR_NAME_MAX);
+
+                sNodeType* field2 = clone_node_type(saved_field);
+
+                fields[num_fields] = field2;
+
+                if(buf2[0] == '\0') {
+                    if(!parse_variable_name(buf2, VAR_NAME_MAX, info, field2, FALSE, FALSE))
+                    {
                         int i;
                         for(i=0; i<num_fields; i++) {
                             free(field_names[i]);
@@ -1081,40 +1047,53 @@ BOOL parse_union(unsigned int* node, char* union_name, int size_union_name, BOOL
                         return FALSE;
                     }
                 }
-            }
-    
-            if(!parse_attribute(info, asm_fname, &flag_asm_fun_name)) {
-                int i;
-                for(i=0; i<num_fields; i++) {
-                    free(field_names[i]);
-                }
-                return FALSE;
-            }
-    
-            if(*info->p == ';') {
-                info->p++;
-                skip_spaces_and_lf(info);
-            }
-    
-            if(*info->p == '}') {
-                info->p++;
-                skip_spaces_and_lf(info);
-                break;
-            }
-            else if(*info->p == '#') {
-                if(!parse_sharp(info)) {
+
+                field_names[num_fields] = strdup(buf2);
+
+                num_fields++;
+
+                if(num_fields >= STRUCT_FIELD_MAX) {
+                    parser_err_msg(info, "overflow struct field");
                     int i;
                     for(i=0; i<num_fields; i++) {
                         free(field_names[i]);
                     }
                     return FALSE;
                 }
-    
-                if(*info->p == '}') {
-                    info->p++;
-                    skip_spaces_and_lf(info);
-                    break;
+            }
+        }
+
+        if(!parse_attribute(info, asm_fname, &flag_asm_fun_name)) {
+            int i;
+            for(i=0; i<num_fields; i++) {
+                free(field_names[i]);
+            }
+            return FALSE;
+        }
+
+        if(*info->p == ';') {
+            info->p++;
+            skip_spaces_and_lf(info);
+        }
+
+        if(*info->p == '}') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            break;
+        }
+        else if(*info->p == '#') {
+            if(!parse_sharp(info)) {
+                int i;
+                for(i=0; i<num_fields; i++) {
+                    free(field_names[i]);
                 }
+                return FALSE;
+            }
+
+            if(*info->p == '}') {
+                info->p++;
+                skip_spaces_and_lf(info);
+                break;
             }
         }
     }
@@ -1190,159 +1169,152 @@ BOOL parse_enum(unsigned int* node, char* name, int name_size, BOOL* terminated,
     char** element_names = calloc(1, sizeof(char*)*ENUM_ELEMENT_MAX);
     int* element_values = calloc(1, sizeof(int)*ENUM_ELEMENT_MAX);
     
-    if(gNCHeader) {
-        if(!skip_block(info)) {
-            return FALSE;
-        }
+    if(!parse_sharp(info)) {
+        return FALSE;
+    }
+    
+/*
+    BOOL alpha = FALSE;
+    if(xisalpha(*info->p)) {
+        alpha = TRUE;
     }
     else {
-        if(!parse_sharp(info)) {
-            return FALSE;
-        }
-        
-/*
-        BOOL alpha = FALSE;
-        if(xisalpha(*info->p)) {
-            alpha = TRUE;
-        }
-        else {
 */
-            expect_next_character_with_one_forward("{", info);
+        expect_next_character_with_one_forward("{", info);
 //        }
+    
+    if(!parse_sharp(info)) {
+        return FALSE;
+    }
+
+    int value = 0;
+
+    while(TRUE) {
+        if(!parse_sharp(info)) {
+            return FALSE;
+        }
+        char asm_fname[VAR_NAME_MAX];
+        BOOL flag_asm_fun_name = FALSE;
+        if(!parse_attribute(info, asm_fname, &flag_asm_fun_name)) {
+            return FALSE;
+        }
+        if(!parse_sharp(info)) {
+            return FALSE;
+        }
+
+        char var_name[VAR_NAME_MAX];
+        if(!parse_word(var_name, VAR_NAME_MAX, info, TRUE, FALSE)) 
+        {
+            return FALSE;
+        }
+        if(!parse_attribute(info, asm_fname, &flag_asm_fun_name)) {
+            return FALSE;
+        }
+        if(!parse_sharp(info)) {
+            return FALSE;
+        }
+        
+        if(*info->p == '=') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            if(!parse_sharp(info)) {
+                return FALSE;
+            }
+
+            unsigned int node2;
+            if(!expression(&node2, FALSE, info)) {
+                return FALSE;
+            }
+            
+            if(terminated == NULL) {
+                if(!get_const_value_from_node(&value, node2, info)) {
+                    fprintf(stderr, "%s %d: can't create const value(x)\n", info->sname, info->sline);
+
+                    *node = sNodeTree_create_null(info);
+                }
+            }
+            
+            if(!parse_sharp(info)) {
+                return FALSE;
+            }
+        }
+
+        if(terminated == NULL) {
+            sVar* var_ = get_variable_from_this_table_only(info->lv_table, var_name);
+
+            if(var_ == NULL) {
+                unsigned int right_node = sNodeTree_create_int_value(value, info);
+
+                BOOL alloc_ = TRUE;
+                BOOL global = info->mBlockLevel == 0;
+                unsigned int node = sNodeTree_create_store_variable(var_name, right_node, alloc_, global, info);
+
+                sNodeType* result_type = create_node_type_with_class_name("int");
+                result_type->mConstant = TRUE;
+
+                check_already_added_variable(info->lv_table, var_name, info);
+                BOOL readonly = TRUE;
+                if(!add_variable_to_table(info->lv_table, var_name, result_type, readonly, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE, FALSE))
+                {
+                    fprintf(stderr, "overflow variable table\n");
+                    exit(2);
+                }
+
+                sCompileInfo cinfo;
+
+                memset(&cinfo, 0, sizeof(sCompileInfo));
+                cinfo.pinfo = info;
+
+                if(!compile(node, &cinfo)) {
+                    return FALSE;
+                }
+
+                dec_stack_ptr(1, &cinfo);
+            }
+        }
         
         if(!parse_sharp(info)) {
             return FALSE;
         }
-    
-        int value = 0;
-    
-        while(TRUE) {
-            if(!parse_sharp(info)) {
-                return FALSE;
-            }
-            char asm_fname[VAR_NAME_MAX];
-            BOOL flag_asm_fun_name = FALSE;
-            if(!parse_attribute(info, asm_fname, &flag_asm_fun_name)) {
-                return FALSE;
-            }
-            if(!parse_sharp(info)) {
-                return FALSE;
-            }
-    
-            char var_name[VAR_NAME_MAX];
-            if(!parse_word(var_name, VAR_NAME_MAX, info, TRUE, FALSE)) 
-            {
-                return FALSE;
-            }
-            if(!parse_attribute(info, asm_fname, &flag_asm_fun_name)) {
-                return FALSE;
-            }
-            if(!parse_sharp(info)) {
-                return FALSE;
-            }
-            
-            if(*info->p == '=') {
-                info->p++;
-                skip_spaces_and_lf(info);
-                
-                if(!parse_sharp(info)) {
-                    return FALSE;
-                }
-    
-                unsigned int node2;
-                if(!expression(&node2, FALSE, info)) {
-                    return FALSE;
-                }
-                
-                if(terminated == NULL) {
-                    if(!get_const_value_from_node(&value, node2, info)) {
-                        fprintf(stderr, "%s %d: can't create const value(x)\n", info->sname, info->sline);
-    
-                        *node = sNodeTree_create_null(info);
-                    }
-                }
-                
-                if(!parse_sharp(info)) {
-                    return FALSE;
-                }
-            }
-    
-            if(terminated == NULL) {
-                sVar* var_ = get_variable_from_this_table_only(info->lv_table, var_name);
-    
-                if(var_ == NULL) {
-                    unsigned int right_node = sNodeTree_create_int_value(value, info);
-    
-                    BOOL alloc_ = TRUE;
-                    BOOL global = info->mBlockLevel == 0;
-                    unsigned int node = sNodeTree_create_store_variable(var_name, right_node, alloc_, global, info);
-    
-                    sNodeType* result_type = create_node_type_with_class_name("int");
-                    result_type->mConstant = TRUE;
-    
-                    check_already_added_variable(info->lv_table, var_name, info);
-                    BOOL readonly = TRUE;
-                    if(!add_variable_to_table(info->lv_table, var_name, result_type, readonly, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE, FALSE))
-                    {
-                        fprintf(stderr, "overflow variable table\n");
-                        exit(2);
-                    }
-    
-                    sCompileInfo cinfo;
-    
-                    memset(&cinfo, 0, sizeof(sCompileInfo));
-                    cinfo.pinfo = info;
-    
-                    if(!compile(node, &cinfo)) {
-                        return FALSE;
-                    }
-    
-                    dec_stack_ptr(1, &cinfo);
-                }
-            }
-            
-            if(!parse_sharp(info)) {
-                return FALSE;
-            }
-    
-            if(*info->p == ',') {
-                info->p++;
-                skip_spaces_and_lf(info);
-            }
-            
-            while(*info->p == '#') {
-                if(!parse_sharp(info)) {
-                    return FALSE;
-                }
-            }
-    
-            element_values[num_element] = value;
-            element_names[num_element] = strdup(var_name);
-    
-            if(num_element >= ENUM_ELEMENT_MAX) {
-                fprintf(stderr, "overflow enum element number\n");
-                exit(2);
-            }
-    
-            num_element++;
-            
-            if(*info->p == '}') {
-                info->p++;
-                skip_spaces_and_lf(info);
-                break;
-            }
-/*
-            if(alpha) {
-                break;
-            }
-*/
-            
-            if(!parse_sharp(info)) {
-                return FALSE;
-            }
-    
-            value++;
+
+        if(*info->p == ',') {
+            info->p++;
+            skip_spaces_and_lf(info);
         }
+        
+        while(*info->p == '#') {
+            if(!parse_sharp(info)) {
+                return FALSE;
+            }
+        }
+
+        element_values[num_element] = value;
+        element_names[num_element] = strdup(var_name);
+
+        if(num_element >= ENUM_ELEMENT_MAX) {
+            fprintf(stderr, "overflow enum element number\n");
+            exit(2);
+        }
+
+        num_element++;
+        
+        if(*info->p == '}') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            break;
+        }
+/*
+        if(alpha) {
+            break;
+        }
+*/
+        
+        if(!parse_sharp(info)) {
+            return FALSE;
+        }
+
+        value++;
     }
 
     if(*info->p == ';') {
@@ -1524,14 +1496,7 @@ BOOL parse_lambda(unsigned int* node, sNodeType* result_type, sParserInfo* info)
     }
 
     if(!single_expression) {
-        if(gNCType) {
-            if(*info->p != '\0') {
-                expect_next_character_with_one_forward("}", info);
-            }
-        }
-        else {
-            expect_next_character_with_one_forward("}", info);
-        }
+        expect_next_character_with_one_forward("}", info);
     }
 
     info->lv_table = old_table;

@@ -25,14 +25,7 @@ BOOL parse_block_easy(ALLOC sNodeBlock** node_block, BOOL extern_c_lang, BOOL re
     }
 
     if(!single_expression) {
-        if(gNCType) {
-            if(*info->p != '\0') {
-                expect_next_character_with_one_forward("}", info);
-            }
-        }
-        else {
-            expect_next_character_with_one_forward("}", info);
-        }
+        expect_next_character_with_one_forward("}", info);
     }
 
     info->lv_table = old_table;
@@ -177,10 +170,6 @@ BOOL parse_block(sNodeBlock* node_block, BOOL extern_c_lang, BOOL single_express
                 break;
             }
             else if(*info->p == '\0') {
-                if(gNCType) {
-                    node_block->mTerminated = TRUE;
-                    break;
-                }
                 parser_err_msg(info, "require } before the source end");
                 return TRUE;
             }
@@ -279,10 +268,6 @@ BOOL parse_block(sNodeBlock* node_block, BOOL extern_c_lang, BOOL single_express
                 break;
             }
             else if(*info->p == '\0') {
-                if(gNCType) {
-                    node_block->mTerminated = TRUE;
-                    break;
-                }
                 char buf[512];
                 snprintf(buf, 512, "require } before the source end");
                 parser_err_msg(info, buf);
@@ -498,9 +483,6 @@ BOOL skip_block(sParserInfo* info)
                 nest--;
             }
             else if(*info->p == '\0') {
-                if(gNCType) {
-                    break;
-                }
                 parser_err_msg(info, "The block requires } character for closing block");
                 return TRUE;
             }

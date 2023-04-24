@@ -442,14 +442,7 @@ BOOL parse_for(unsigned int* node, sParserInfo* info)
     }
 
     if(!single_expression) {
-        if(gNCType) {
-            if(*info->p != '\0') {
-                expect_next_character_with_one_forward("}", info);
-            }
-        }
-        else {
-            expect_next_character_with_one_forward("}", info);
-        }
+        expect_next_character_with_one_forward("}", info);
     }
 
     *node = sNodeTree_for_expression(expression_node, expression_node2, expression_node3, MANAGED for_node_block, info);

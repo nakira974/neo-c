@@ -153,114 +153,6 @@ BOOL get_command_result2(sBuf* command_result, char* cmdline)
     return TRUE;
 }
 
-static BOOL parse_compiletime_macro(unsigned int* node, sParserInfo* info)
-{
-    sBuf cmdline;
-
-    sBuf_init(&cmdline);
-    while(TRUE) {
-        if(*info->p == '`' && *(info->p+1) == '`' && *(info->p+2) == '`') {
-            info->p+=3;
-            skip_spaces_and_lf(info);
-            break;
-        }
-        else if(*info->p == '\0') {
-            fprintf(stderr, "unclosed macro\n");
-            exit(2);
-        }
-        else {
-            sBuf_append_char(&cmdline, *info->p);
-            info->p++;
-        }
-    }
-
-    if(gNCNoMacro) {
-        *node = sNodeTree_create_null(info);
-    }
-    else {
-        sBuf command_result;
-        sBuf_init(&command_result);
-
-        if(!get_command_result2(&command_result, cmdline.mBuf))
-        {
-            return FALSE;
-        }
-
-        sParserInfo pinfo;
-
-        pinfo = *info;
-
-        pinfo.p = command_result.mBuf;
-
-        xstrncpy(pinfo.sname, "macro", PATH_MAX);
-        pinfo.sline = 1;
-
-        sCompileInfo cinfo;
-        memset(&cinfo, 0, sizeof(sCompileInfo));
-
-        xstrncpy(cinfo.fun_name, "macro", VAR_NAME_MAX);
-
-        cinfo.pinfo = &pinfo;
-
-        while(*pinfo.p) {
-            skip_spaces_and_lf(&pinfo);
-
-            unsigned int node = 0;
-
-            if(*pinfo.p == '#') {
-                if(!parse_sharp(&pinfo)) {
-                    return FALSE;
-                }
-            }
-            else if(parse_cmp(pinfo.p, "__extension__") == 0)
-            {
-                pinfo.p += 13;
-                skip_spaces_and_lf(&pinfo);
-            }
-            else {
-                if(!expression(&node, TRUE, &pinfo)) {
-                    return FALSE;
-                }
-
-                if(node == 0) {
-                    parser_err_msg(&pinfo, "require an expression(1)");
-                    break;
-                }
-
-                if(pinfo.err_num == 0)
-                {
-                    cinfo.sline = gNodes[node].mLine;
-                    xstrncpy(cinfo.sname, gNodes[node].mSName, PATH_MAX);
-
-                    if(!compile(node, &cinfo)) {
-                        return FALSE;
-                    }
-
-                    arrange_stack(&cinfo, 0);
-                }
-            }
-
-            if(*pinfo.p == ';') {
-                pinfo.p++;
-                skip_spaces_and_lf(&pinfo);
-            }
-            skip_spaces_and_lf(&pinfo);
-        }
-        
-        if(cinfo.err_num > 0) {
-            fprintf(stderr, "Compile error number is %d. ", cinfo.err_num);
-            exit(1);
-        }
-
-        *node = sNodeTree_create_null(info);
-
-        free(command_result.mBuf);
-        free(cmdline.mBuf);
-    }
-
-    return TRUE;
-}
-
 BOOL compile_source(char* fname, char** source, BOOL optimize, sVarTable* module_var_table)
 {
     sParserInfo info;
@@ -343,51 +235,6 @@ BOOL compile_source(char* fname, char** source, BOOL optimize, sVarTable* module
 
         info.change_sline = FALSE;
 
-        if(*info.p == '`' && *(info.p+1) == '`' && *(info.p+2) == '`') {
-            info.p += 3;
-            skip_spaces_and_lf(&info);
-
-            sBuf cmdline;
-
-            sBuf_init(&cmdline);
-            while(TRUE) {
-                if(*info.p == '`' && *(info.p+1) == '`' && *(info.p+2) == '`') {
-                    info.p+=3;
-                    skip_spaces_and_lf(&info);
-                    break;
-                }
-                else if(*info.p == '\0') {
-                    fprintf(stderr, "unclosed macro\n");
-                    exit(2);
-                }
-                else {
-                    sBuf_append_char(&cmdline, *info.p);
-                    info.p++;
-                }
-            }
-
-            if(gNCNoMacro) {
-            }
-            else {
-                sBuf_init(&command_result);
-
-                if(!get_command_result2(&command_result, cmdline.mBuf))
-                {
-                    return FALSE;
-                }
-
-                in_macro = TRUE;
-                p_macro_saved = info.p;
-                sline_macro_saved = info.sline;
-
-                info.p = command_result.mBuf;
-            }
-
-            free(cmdline.mBuf);
-
-            skip_spaces_and_lf(&info);
-        }
-
         if(*info.p == '#') {
             if(!parse_sharp(&info)) {
                 free(info.mConst.mBuf);
@@ -424,14 +271,12 @@ BOOL compile_source(char* fname, char** source, BOOL optimize, sVarTable* module
                 cinfo.sline = gNodes[node].mLine;
                 xstrncpy(cinfo.sname, gNodes[node].mSName, PATH_MAX);
 
-                if(!gNCHeader) {
-                    if(!compile(node, &cinfo)) {
-                        free(info.mConst.mBuf);
-                        return FALSE;
-                    }
-    
-                    arrange_stack(&cinfo, 0);
+                if(!compile(node, &cinfo)) {
+                    free(info.mConst.mBuf);
+                    return FALSE;
                 }
+
+                arrange_stack(&cinfo, 0);
             }
         }
 
@@ -521,44 +366,12 @@ BOOL compile_source(char* fname, char** source, BOOL optimize, sVarTable* module
     }
 
     if(info.err_num > 0 || cinfo.err_num > 0) {
-        if(!gNCType && !gNCHeader) {
-            fprintf(stderr, "Parser error number is %d. Compile error number is %d\n", info.err_num, cinfo.err_num);
-            free(info.mConst.mBuf);
-            exit(2);
-        }
+        fprintf(stderr, "Parser error number is %d. Compile error number is %d\n", info.err_num, cinfo.err_num);
+        free(info.mConst.mBuf);
+        exit(2);
     }
 
     free(info.mConst.mBuf);
-
-    if(gNCGlobal) {
-        sVarTable* table = module_var_table;
-
-        sVar* p;
-
-        p = table->mLocalVariables;
-
-        while(1) {
-            if(p->mName[0] != 0) {
-                printf("%s ", p->mName);
-                show_node_type(p->mType);
-            }
-
-            p++;
-
-            if(p == table->mLocalVariables + LOCAL_VARIABLE_MAX) {
-                break;
-            }
-        }
-    }
-    else if(gNCClass) {
-        show_classes();
-    }
-    else if(gNCTypedef) {
-        show_typedefs();
-    }
-    else if(gNCFunction) {
-        show_funcs();
-    }
     
     return TRUE;
 }

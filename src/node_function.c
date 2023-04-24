@@ -504,10 +504,7 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
         return FALSE;
     }
 
-    if(gNCType && node_block->mTerminated) {
-        if(!gNCGlobal && !gNCFunction && !gNCClass && !gNCTypedef) {
-            //show_node_type(info->type);
-        }
+    if(node_block->mTerminated) {
         info->function_node_block = function_node_block;
         return TRUE;
     }
@@ -1485,7 +1482,7 @@ BOOL create_generics_function(LLVMValueRef* llvm_fun, sFunction* fun, char* fun_
             return FALSE;
         }
 
-        if(info2.err_num > 0 && !gNCHeader) {
+        if(info2.err_num > 0) {
             fprintf(stderr, "Parser error number is %d. ", info2.err_num);
             return FALSE;
         }
@@ -1545,7 +1542,7 @@ BOOL create_generics_function(LLVMValueRef* llvm_fun, sFunction* fun, char* fun_
         if(!compile(node, &cinfo)) {
             return FALSE;
         }
-        if(cinfo.err_num > 0 && !gNCHeader) {
+        if(cinfo.err_num > 0) {
             fprintf(stderr, "Compile error number is %d. ", cinfo.err_num);
             return FALSE;
         }

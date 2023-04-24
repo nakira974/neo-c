@@ -2902,7 +2902,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 return FALSE;
             }
         }
-        else if(gNCHeader || is_type_name(buf, info) || strcmp(buf, "typeof") == 0) 
+        else if(is_type_name(buf, info) || strcmp(buf, "typeof") == 0) 
         {
             info->p = p_before;
             info->sline = sline_before;

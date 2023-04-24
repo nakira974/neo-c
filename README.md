@@ -2200,6 +2200,6 @@ int main(int argc, char** argv)
 
 removed.
 
-9. MACRO
+# MACRO
 
 removed.

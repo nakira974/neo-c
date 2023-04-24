@@ -401,6 +401,8 @@ void free_objects(sVarTable* table, struct sCompileInfoStruct* info);
 
 BOOL check_dangiling_pointer(sVarTable* lv_table, struct sCompileInfoStruct* info);
 
+void clear_current_lv_table_llvm_value(sVarTable* table);
+
 //////////////////////////////
 /// node_block.c
 //////////////////////////////
@@ -784,6 +786,7 @@ struct sNodeTreeStruct
             BOOL mGlobal;
             BOOL mStoreAddress;
             BOOL mNoStdMove;
+            sVarTable* mLVTable;
         } sStoreVariable;
         
         struct {

@@ -195,3 +195,27 @@ sNodeBlock parse_block(sInfo* info);
 // src/08loop.c
 ////////////////////////////
 sNode* exp_node(sInfo* info) version 6;
+
+////////////////////////////
+// src/09print.c
+////////////////////////////
+bool vm(sInfo* info) version 8;
+
+sNode* exp_node(sInfo* info) version 7;
+
+////////////////////////////
+// src/11regex.c
+////////////////////////////
+sNode* exp_node(sInfo* info) version 9;
+bool vm(sInfo* info) version 9;
+
+////////////////////////////
+// src/10fun.c
+////////////////////////////
+sNode* exp_node(sInfo* info) version 8;
+bool vm(sInfo* info) version 10;
+
+////////////////////////////
+// src/12str_fun.c
+////////////////////////////
+bool str_method(char* fun_name, list<ZVALUE*%>* params, ZVALUE* obj, ZVALUE** result, buffer* codes, sInfo* info);

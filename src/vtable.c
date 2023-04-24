@@ -625,3 +625,25 @@ BOOL check_dangiling_pointer(sVarTable* lv_table, sCompileInfo* info)
     
     return TRUE;
 }
+
+void clear_current_lv_table_llvm_value(sVarTable* table)
+{
+    sVarTable* it = table;
+
+    while(it) {
+        sVar* p = it->mLocalVariables;
+
+        while(1) {
+            if(p->mName[0] != 0) {
+                memset(&p->mLLVMValue, 0, sizeof(LVALUE));
+            }
+
+            p++;
+
+            if(p == it->mLocalVariables + LOCAL_VARIABLE_MAX) {
+                break;
+            }
+        }
+        break;
+    }
+}

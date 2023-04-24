@@ -735,8 +735,6 @@ BOOL parse_come_function(unsigned int* node, char* struct_name, sParserInfo* inf
     gNCSafeMode = safe_mode;
 
     return TRUE;
-
-    return TRUE;
 }
 
 BOOL parse_function(unsigned int* node, sNodeType* result_type, char* fun_name, char* struct_name, char* definition_top, sParserInfo* info)

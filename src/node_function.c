@@ -164,12 +164,6 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
         
         
         if(!method_generics_function && !lambda_function) {
-/*
-            if(!fun->mExtern) {
-                compile_err_msg(info, "Multiple function definition %s", fun_name);
-                return FALSE;
-            }
-*/
             if(fun->mResultType == NULL) {
                 compile_err_msg(info, "invalid function result type");
                 return FALSE;
@@ -202,6 +196,10 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
                 compile_err_msg(info, "Different extern function param number and definition of the function param number %s", fun_name);
                 return TRUE;
             }
+        }
+
+        if(lambda_function) {
+            clear_current_lv_table_llvm_value(block_var_table);
         }
     }
 
@@ -969,6 +967,7 @@ BOOL compile_method_block(unsigned int node, sCompileInfo* info)
     
     char* block_text = gNodes[node].uValue.sMethodBlock.mBlockText;
     sVarTable* lv_table = gNodes[node].uValue.sMethodBlock.mVarTable;
+    
     sNodeType* result_type = gNodes[node].uValue.sMethodBlock.mResultType;
 
     sFunction* fun = get_function_from_table(info->calling_fun_name);
@@ -1111,7 +1110,9 @@ BOOL compile_method_block(unsigned int node, sCompileInfo* info)
     unsigned int node2 = sNodeTree_create_function(fun_name, "", params, num_params, result_type2, MANAGED node_block, lambda_, block_var_table, NULL, operator_fun, construct_fun, simple_lambda_param, &pinfo, FALSE, FALSE, 0, FALSE, -1, fun_name, sline, immutable_);
     info->inline_result_variable = inline_result_variable;
 
-    return compile(node2, info);
+    BOOL result = compile(node2, info);
+    
+    return result;
 }
 
 unsigned int sNodeTree_create_external_function(char* fun_name, char* asm_fname, sParserParam* params, int num_params, BOOL var_arg, sNodeType* result_type, char* struct_name, BOOL operator_fun, int version, BOOL immutable_, BOOL flag_asm_fun_name, sParserInfo* info)

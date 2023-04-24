@@ -462,6 +462,7 @@ unsigned int sNodeTree_create_store_variable(char* var_name, int right, BOOL all
     gNodes[node].uValue.sStoreVariable.mAlloc = alloc;
     gNodes[node].uValue.sStoreVariable.mGlobal = global;
     gNodes[node].uValue.sStoreVariable.mStoreAddress = info->store_address;
+    gNodes[node].uValue.sStoreVariable.mLVTable = info->lv_table;
 
     gNodes[node].mLeft = 0;
     gNodes[node].mRight = right;
@@ -481,10 +482,11 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
     BOOL alloc = gNodes[node].uValue.sStoreVariable.mAlloc;
     BOOL global = gNodes[node].uValue.sStoreVariable.mGlobal;
     int sline = gNodes[node].mLine;
+    sVarTable* lv_table = gNodes[node].uValue.sStoreVariable.mLVTable;
     
     unsigned int right_node = gNodes[node].mRight;
     
-    sVar* var_ = get_variable_from_table(info->pinfo->lv_table, var_name);
+    sVar* var_ = get_variable_from_table(lv_table, var_name);
     
     if(var_ == NULL) {
         compile_err_msg(info, "undeclared variable %s(2)", var_name);
@@ -635,7 +637,7 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
     
     if(obj_before && left_type->mHeap) {
         LLVMTypeRef llvm_type = create_llvm_type_from_node_type(left_type);
-        LLVMValueRef obj2 = LLVMBuildLoad2(gBuilder, llvm_type, obj_before, "obj");
+        LLVMValueRef obj2 = LLVMBuildLoad2(gBuilder, llvm_type, obj_before, "objXX");
         free_object(left_type, obj2, FALSE, info);
     }
     
@@ -1050,7 +1052,7 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
                 
                 if(obj && left_type->mHeap) {
                     LLVMTypeRef llvm_type = create_llvm_type_from_node_type(left_type);
-                    LLVMValueRef obj2 = LLVMBuildLoad2(gBuilder, llvm_type, obj, "obj");
+                    LLVMValueRef obj2 = LLVMBuildLoad2(gBuilder, llvm_type, obj, "objY");
                     free_object(left_type, obj2, FALSE, info);
                 }
                 
@@ -1082,7 +1084,7 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
                     
                     if(obj && left_type->mHeap) {
                         LLVMTypeRef llvm_type = create_llvm_type_from_node_type(left_type);
-                        LLVMValueRef obj2 = LLVMBuildLoad2(gBuilder, llvm_type, obj, "obj");
+                        LLVMValueRef obj2 = LLVMBuildLoad2(gBuilder, llvm_type, obj, "objZ");
                         free_object(left_type, obj2, FALSE, info);
                     }
     
@@ -1124,7 +1126,7 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
                 
                 if(obj && left_type->mHeap) {
                     LLVMTypeRef llvm_type = create_llvm_type_from_node_type(left_type);
-                    LLVMValueRef obj2 = LLVMBuildLoad2(gBuilder, llvm_type, obj, "obj");
+                    LLVMValueRef obj2 = LLVMBuildLoad2(gBuilder, llvm_type, obj, "objA");
                     free_object(left_type, obj2, FALSE, info);
                 }
     
@@ -1147,7 +1149,7 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
             
             if(obj && left_type->mHeap) {
                 LLVMTypeRef llvm_type = create_llvm_type_from_node_type(left_type);
-                LLVMValueRef obj2 = LLVMBuildLoad2(gBuilder, llvm_type, obj, "obj");
+                LLVMValueRef obj2 = LLVMBuildLoad2(gBuilder, llvm_type, obj, "objB");
                 free_object(left_type, obj2, FALSE, info);
             }
             
@@ -1179,7 +1181,7 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
             
             if(obj && left_type->mHeap) {
                 LLVMTypeRef llvm_type = create_llvm_type_from_node_type(left_type);
-                LLVMValueRef obj2 = LLVMBuildLoad2(gBuilder, llvm_type, obj, "obj");
+                LLVMValueRef obj2 = LLVMBuildLoad2(gBuilder, llvm_type, obj, "objC");
                 free_object(left_type, obj2, FALSE, info);
             }
     
@@ -5858,7 +5860,7 @@ BOOL compile_object(unsigned int node, sCompileInfo* info)
 
         LLVMTypeRef llvm_type2 = create_llvm_type_from_node_type(node_type2);
 
-        address = LLVMBuildPointerCast(gBuilder, address, llvm_type2, "obj");
+        address = LLVMBuildPointerCast(gBuilder, address, llvm_type2, "objD");
 
         /// result ///
         LVALUE llvm_value;
@@ -5930,7 +5932,7 @@ BOOL compile_object(unsigned int node, sCompileInfo* info)
 
         LLVMTypeRef llvm_type2 = create_llvm_type_from_node_type(node_type2);
 
-        address = LLVMBuildPointerCast(gBuilder, address, llvm_type2, "obj");
+        address = LLVMBuildPointerCast(gBuilder, address, llvm_type2, "objW");
 
         /// result ///
         LVALUE llvm_value;
@@ -6233,7 +6235,7 @@ BOOL compile_store_field(unsigned int node, sCompileInfo* info)
     
     if(field_address && field_type->mHeap) {
         LLVMTypeRef llvm_type = create_llvm_type_from_node_type(field_type);
-        LLVMValueRef obj2 = LLVMBuildLoad2(gBuilder, llvm_type, field_address, "obj");
+        LLVMValueRef obj2 = LLVMBuildLoad2(gBuilder, llvm_type, field_address, "objXY");
         free_object(field_type, obj2, FALSE, info);
     }
     

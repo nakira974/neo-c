@@ -1961,6 +1961,31 @@ a.c 12: out of range of smart pointer
 
 int main(int argc, char** argv)
 {
+    buffer*% buf = new buffer();
+    
+    buf.append_int(1);
+    buf.append_int(2);
+    buf.append_int(3);
+    
+    smart_pointer<int>*% p = buf.to_int_pointer();
+    
+    printf("%d\n", *p); // 1;
+    p++;
+    printf("%d\n", *p); // 2;
+    p++;
+    printf("%d\n", *p); // 3;
+    p++;
+    //p++;              // exception. print out source file name and line.
+    
+    return 0;
+}
+```
+
+``` C
+#include <comelang.h>
+
+int main(int argc, char** argv)
+{
     using unsafe;
     
     int a[10];

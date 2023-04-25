@@ -240,6 +240,8 @@ string ZVALUE*::to_string(ZVALUE* self)
 
 int main(int argc, char** argv)
 {
+    setlocale(LC_ALL, "");
+    
     string command = null;
     for(int i=1; i<argc; i++) {
         if(argv[i][0] == '-') {

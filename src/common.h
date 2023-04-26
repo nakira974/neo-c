@@ -251,7 +251,7 @@ typedef struct sNodeTypeStruct sNodeType;
 void init_node_types();
 void free_node_types();
 
-void make_type_name_string(sBuf* output, sNodeType* node_type);
+char* make_type_name_string(sNodeType* node_type);
 
 BOOL check_the_same_fields(sNodeType* left_node, sNodeType* right_node);
 
@@ -293,6 +293,9 @@ struct sComeFunStruct
     int mNumParams;
     char* mParamNames[PARAMS_MAX];
     sNodeType* mParamTypes[PARAMS_MAX];
+    
+    struct sComeFunStruct* mNext;
+    struct sComeFunStruct* mPrev;
 };
 
 typedef struct sComeFunStruct sComeFun;
@@ -732,7 +735,7 @@ extern LLVMBuilderRef gBuilder;
 
 enum eNodeType { kNodeTypeIntValue, kNodeTypeList, kNodeTypeMap, kNodeTypeFloatValue, kNodeTypeDoubleValue, kNodeTypeUIntValue, kNodeTypeLongValue, kNodeTypeULongValue, kNodeTypeAdd, kNodeTypeSub, kNodeTypeStoreVariable, kNodeTypeStoreVariableMultiple, kNodeTypeLoadVariable, kNodeTypeLoadChannelElement, kNodeTypeDefineVariable, kNodeTypeIsHeap, kNodeTypeCString, kNodeTypeRegex, kNodeTypeFunction, kNodeTypeExternalFunction, kNodeTypeFunctionCall, kNodeTypeComeFunctionCall, kNodeTypeIf, kNodeTypeGuard, kNodeTypeEquals, kNodeTypeNotEquals, kNodeTypeEquals2, kNodeTypeNotEquals2, kNodeTypeStruct, kNodeTypeObject, kNodeTypeStackObject, kNodeTypeStoreField, kNodeTypeStoreFieldOfProtocol, kNodeTypeLoadField, kNodeTypeWhile, kNodeTypeDoWhile, kNodeTypeGteq, kNodeTypeLeeq, kNodeTypeGt, kNodeTypeLe, kNodeTypeLogicalDenial, kNodeTypeTrue, kNodeTypeFalse, kNodeTypeAndAnd, kNodeTypeOrOr, kNodeTypeFor, kNodeTypeLambdaCall, kNodeTypeDerefference, kNodeTypeRefference, kNodeTypeRefferenceLoadField, kNodeTypeNull, kNodeTypeClone, kNodeTypeLoadElement, kNodeTypeStoreElement, kNodeTypeChar, kNodeTypeMult, kNodeTypeDiv, kNodeTypeMod, kNodeTypeCast, kNodeTypeGenericsFunction, kNodeTypeInlineFunction, kNodeTypeTypeDef, kNodeTypeUnion, kNodeTypeLeftShift, kNodeTypeRightShift, kNodeTypeAnd, kNodeTypeXor, kNodeTypeOr, kNodeTypeReturn, kNodeTypeSizeOf, kNodeTypeSizeOfExpression, kNodeTypeNodes, kNodeTypeLoadFunction, kNodeTypeArrayWithInitialization, kNodeTypeStructInitializer, kNodeTypeNormalBlock, kNodeTypeSelect, kNodeTypePSelect, kNodeTypeSwitch, kNodeTypeBreak, kNodeTypeContinue, kNodeTypeCase, kNodeTypeLabel, kNodeTypeGoto, kNodeTypeConditional, kNodeTypeAlignOf, kNodeTypeAlignOfExpression, kNodeTypeComplement, kNodeTypeStoreAddress, kNodeTypeLoadAddressValue, kNodeTypePlusPlus, kNodeTypeMinusMinus, kNodeTypeEqualPlus, kNodeTypeEqualMinus, kNodeTypeEqualMult, kNodeTypeEqualDiv, kNodeTypeEqualMod, kNodeTypeEqualLShift, kNodeTypeEqualRShift, kNodeTypeEqualAnd, kNodeTypeEqualXor, kNodeTypeEqualOr, kNodeTypeComma, kNodeTypeFunName, kNodeTypeJoin, kNodeTypeWriteChannel, kNodeTypeReadChannel, kNodeTypeStack, kNodeTypeMethodBlock, kNodeTypeDefer, kNodeTypeManaged, kNodeTypeDelete, kNodeTypeDummyHeap, kNodeTypeBorrow, kNodeTypeNoMove, kNodeTypeNullable, kNodeTypeNoNullable, kNodeTypeIsGCHeap, kNodeTypeUnwrap, kNodeTypeDupeFunction, kNodeTypeSName, kNodeTypeSLine, kNodeTypeCallerSName, kNodeTypeCallerSLine, kNodeTypeStoreDerefference, kNodeTypeVaArg };
 
-enum { kNodeTypeLChar = kNodeTypeVaArg + 1, kNodeTypeWCString, kNodeTypeCreateLabel, kNodeTypeNullValue, kNodeTypeMacro, kNodeTypeIsGC, kNodeTypeTuple };
+enum { kNodeTypeLChar = kNodeTypeVaArg + 1, kNodeTypeWCString, kNodeTypeCreateLabel, kNodeTypeNullValue, kNodeTypeMacro, kNodeTypeIsGC, kNodeTypeTuple, kNodeTypeParen };
 
 static const BOOL gMultDivPlusPlusEnableNode[] = {
     1, 1, 1, 1, 1, 1, 1,     1, 1, 1, 0, 0, 1,     1, 0, 0, 1, 1, 0, 0,     1, 1, 0, 0, 1, 1, 1,     1, 0, 0, 0, 1, 1,     1, 0, 0, 1, 1, 1, 1, 1,     1, 1, 1, 1, 0, 1, 1, 1,     1, 1, 1, 1, 1, 1, 1, 1, 1,     1, 0, 0, 0, 1, 1, 1,     1, 1, 0, 1, 1, 0, 0,     0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0, 1, 1,     1, 0, 0, 1, 1, 0,     0, 0, 0, 0, 0, 0, 0,     0, 0, 1, 0, 0, 1, 1, 0,     0, 0, 0, 0, 0, 0, 0, 1,     1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0 
@@ -1109,6 +1112,7 @@ extern char gFunctionName[VAR_NAME_MAX];
 struct sComeModule
 {
     sBuf mSource;
+    char* mLastCode;
 };
 
 extern struct sComeModule gComeModule;
@@ -1605,6 +1609,12 @@ LLVMValueRef call_va_arg_inst(LLVMBasicBlockRef block, LLVMValueRef value, LLVMT
 void call_come_final(sCompileInfo* info);
 void call_come_gc_final(sCompileInfo* info);
 char* xsprintf(const char* msg, ...);
+
+void add_come_code_directory(struct sCompileInfoStruct* info, const char* msg, ...);
+void transpiler_clear_last_code();
+unsigned int sNodeTree_create_paren(unsigned int left_node, sParserInfo* info);
+BOOL compile_paren(unsigned int node, sCompileInfo* info);
+
 
 #endif
 

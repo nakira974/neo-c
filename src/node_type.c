@@ -315,16 +315,26 @@ void show_node_type(sNodeType* type)
     }
 }
 
-void make_type_name_string(sBuf* output, sNodeType* node_type)
+char* make_type_name_string(sNodeType* node_type)
 {
+    sBuf output;
+    sBuf_init(&output);
+    
     char* class_name = node_type->mClass->mName;
-    sBuf_append_str(output, class_name);
+    sBuf_append_str(&output, class_name);
     
     int i;
     for(i=0; i<node_type->mPointerNum; i++) {
-        sBuf_append_str(output, "*");
+        sBuf_append_str(&output, "*");
     }
+    
+    char* result = xsprintf("%s", output.mBuf);
+    
+    free(output.mBuf);
+    
+    return result;
 }
+
 
 void show_node_type_one_line(sNodeType* type)
 {

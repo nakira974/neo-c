@@ -2,27 +2,29 @@
 
 struct sComeModule gComeModule;
 sComeFun gComeFunctions[COME_FUN_MAX];
+struct sComeFunStruct* gComeFunctionHead;
 
 void transpiler_init()
 {
     sBuf_init(&gComeModule.mSource);
     memset(gComeFunctions, 0, sizeof(sComeFun)*COME_FUN_MAX);
+    gComeFunctionHead = NULL;
 }
 
 void transpiler_final()
 {
     if(gNCTranspile) {
-        int i;
-        for(i=0; i<COME_FUN_MAX; i++) {
-            if(gComeFunctions[i].mName[0] != 0) {
-                sBuf fun_output;
-                sBuf_init(&fun_output);
-                output_function(&fun_output, gComeFunctions + i);
-                
-                printf("%s", fun_output.mBuf);
-                
-                free(fun_output.mBuf);
-            }
+        sComeFun* it = gComeFunctionHead;
+        while(it) {
+            sBuf fun_output;
+            sBuf_init(&fun_output);
+            output_function(&fun_output, it);
+            
+            printf("%s", fun_output.mBuf);
+            
+            free(fun_output.mBuf);
+            
+            it = it->mNext;
         }
     }
     free(gComeModule.mSource.mBuf);
@@ -44,6 +46,18 @@ void add_come_function(char* fun_name, sNodeType* result_type, int num_params, s
                 it->mParamNames[i] = GC_strdup(param_names[i]);
             }
             sBuf_init(&it->mSource);
+            
+            if(gComeFunctionHead == NULL) {
+                gComeFunctionHead = it;
+            }
+            else {
+                sComeFun* it2 = gComeFunctionHead;
+                while(it2->mNext) {
+                    it2 = it2->mNext;
+                }
+                
+                it2->mNext = it;
+            }
             break;
         }
         else {
@@ -89,10 +103,23 @@ sComeFun* get_come_function(char* fun_name)
 
 void add_come_code(struct sCompileInfoStruct* info, const char* msg, ...)
 {
-    if(info->come_fun == NULL) {
-        fprintf(stderr, "fun is null at add_come_code\n");
-        exit(1);
-    }
+    char msg2[COME_CODE_MAX];
+
+    va_list args;
+    va_start(args, msg);
+    vsnprintf(msg2, COME_CODE_MAX, msg, args);
+    va_end(args);
+    
+    gComeModule.mLastCode = xsprintf("%s", msg2);
+}
+
+void transpiler_clear_last_code()
+{
+    gComeModule.mLastCode = NULL;
+}
+
+void add_come_code_directory(struct sCompileInfoStruct* info, const char* msg, ...)
+{
     char msg2[COME_CODE_MAX];
 
     va_list args;
@@ -117,14 +144,10 @@ char* xsprintf(const char* msg, ...)
 
 void output_function(sBuf* output, sComeFun* fun)
 {
-    sBuf result_type_str;
-    sBuf_init(&result_type_str);
-    make_type_name_string(&result_type_str, fun->mResultType);
+    char* result_type_str = make_type_name_string(fun->mResultType);
     
-    sBuf_append_str(output, result_type_str.mBuf);
+    sBuf_append_str(output, result_type_str);
     sBuf_append_str(output, " ");
-    
-    free(result_type_str.mBuf);
     
     sBuf_append_str(output, fun->mName);
     sBuf_append_str(output, "(");
@@ -133,14 +156,9 @@ void output_function(sBuf* output, sComeFun* fun)
     for(i=0; i<fun->mNumParams; i++) {
         sNodeType* param_type = fun->mParamTypes[i];
         
-        sBuf param_type_str;
-        sBuf_init(&param_type_str);
+        char* param_type_str = make_type_name_string(fun->mParamTypes[i]);
         
-        make_type_name_string(&param_type_str, fun->mParamTypes[i]);
-        
-        sBuf_append_str(output, param_type_str.mBuf);
-        
-        free(param_type_str.mBuf);
+        sBuf_append_str(output, param_type_str);
         
         sBuf_append_str(output, " ");
         sBuf_append_str(output, fun->mParamNames[i]);
@@ -149,7 +167,7 @@ void output_function(sBuf* output, sComeFun* fun)
             sBuf_append_str(output, ", ");
         }
     }
-    sBuf_append_str(output, ")\n{");
+    sBuf_append_str(output, ")\n{\n");
     
     sBuf_append_str(output, fun->mSource.mBuf);
     

@@ -767,6 +767,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 }
             }
             else {
+                *node = sNodeTree_create_paren(*node, info);
                 expect_next_character_with_one_forward(")", info);
             }
         }

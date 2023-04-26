@@ -843,6 +843,13 @@ BOOL compile(unsigned int node, sCompileInfo* info)
                 return FALSE;
             }
             break;
+            
+        case kNodeTypeParen: 
+            if(!compile_paren(node, info))
+            {
+                return FALSE;
+            }
+            break;
     }
 
     return node;

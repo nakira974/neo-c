@@ -14,19 +14,6 @@ int main(int argc, char** argv)
     fun("AAA");
     fun2("AAA");
     1+1;
-    1*2;
-    1/2;
-    1>>2;
-    ~1;
-    1<<2;
-    1|2;
-    1&2;
-    1&&2;
-    1||2;
-    1^2;
-    (1+1)*2;
-    int a;
-    int b = 1;
     return 0;
 }
 /*

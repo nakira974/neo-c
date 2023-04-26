@@ -1311,6 +1311,41 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         if(!solve_type(&result_type, generics_type, num_method_generics_types, method_generics_types, info)) {
             return FALSE;
         }
+        
+        sBuf buf;
+        
+        sBuf_init(&buf);
+        if(fun->mAsmFunName) {
+#ifdef __DARWIN__
+            if(fun->mFlagAsmFunName) {
+                sBuf_append_str(&buf, fun->mAsmFunName);
+            }
+            else {
+                sBuf_append_str(&buf, fun_name);
+            }
+#else
+            sBuf_append_str(&buf, fun->mAsmFunName);
+#endif
+        }
+        else {
+            sBuf_append_str(&buf, fun_name);
+        }
+
+        sBuf_append_str(&buf, "(");
+
+        int i;
+        for(i=0; i<num_params; i++) {
+            if(lvalue_params[i].c_value) {
+                sBuf_append_str(&buf, lvalue_params[i].c_value);
+            }
+            
+            if(i!=num_params-1) {
+                sBuf_append_str(&buf, ",");
+            }
+        }
+
+        sBuf_append_str(&buf, ")");
+        add_come_code(info, "%s", buf.mBuf);
 
         if(type_identify_with_class_name(result_type, "void") && result_type->mPointerNum == 0) {
             LLVMTypeRef llvm_result_type = create_llvm_type_from_node_type(result_type);
@@ -1337,7 +1372,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
             llvm_value.type = clone_node_type(result_type);
             llvm_value.address = NULL;
             llvm_value.var = NULL;
-            llvm_value.c_value = NULL;
+            llvm_value.c_value = xsprintf("%s", buf.mBuf);
 
             dec_stack_ptr(num_params, info);
             push_value_to_stack_ptr(&llvm_value, info);
@@ -1346,6 +1381,8 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
             
             result_value = llvm_value.value;
         }
+        
+        free(buf.mBuf);
     }
 
     if(!solve_type(&info->type, generics_type, num_method_generics_types, method_generics_types, info)) {

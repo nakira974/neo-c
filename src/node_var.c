@@ -424,6 +424,10 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
             if(gNCDebug) {
                 setNullCurrentDebugLocation(info->sline, info);
             }
+            
+            char* type_name = make_type_name_string(var_type);
+            add_come_code_directory(info, "%s %s;\n", type_name, var_name);
+            add_come_code_directory(info, "memset(&%s, 0, sizeof(%s));\n", var_name, type_name);
 
             LLVMValueRef alloca_value = LLVMBuildAlloca(gBuilder, llvm_type, var_name);
             
@@ -445,6 +449,8 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
     }
 
     info->type = create_node_type_with_class_name("void");
+    
+    transpiler_clear_last_code();
 
     return TRUE;
 }
@@ -2719,7 +2725,7 @@ BOOL compile_sizeof(unsigned int node, sCompileInfo* info)
     llvm_value.type = create_node_type_with_class_name("int");
     llvm_value.address = NULL;
     llvm_value.var = NULL;
-    llvm_value.c_value = NULL;
+    llvm_value.c_value = xsprintf("sizeof(%s)", make_type_name_string(node_type2));
 
     push_value_to_stack_ptr(&llvm_value, info);
 
@@ -2735,7 +2741,7 @@ BOOL compile_sizeof(unsigned int node, sCompileInfo* info)
     llvm_value.type = create_node_type_with_class_name("long");
     llvm_value.address = NULL;
     llvm_value.var = NULL;
-    llvm_value.c_value = NULL;
+    llvm_value.c_value = xsprintf("sizeof(%s)", make_type_name_string(node_type2));
 
     push_value_to_stack_ptr(&llvm_value, info);
 

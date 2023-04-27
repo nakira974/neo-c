@@ -7,7 +7,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
     if(fun_name === "chomp") {
         if(params.length() == 0) {
             string str = obj.strValue.to_string().chomp();
-            (*result) = new ZVALUE(kind:kStrValue, str_value:str.to_wstring());
+            (*result) = borrow new ZVALUE(kind:kStrValue, str_value:str.to_wstring());
         }
     }
     else if(fun_name === "lower_case") {
@@ -15,7 +15,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
             string str = obj.strValue.to_string();
             string str2 = str.lower_case();
             
-            (*result) =  new ZVALUE(kind:kStrValue, str_value:str2.to_wstring());
+            (*result) = borrow  new ZVALUE(kind:kStrValue, str_value:str2.to_wstring());
         }
     }
     else if(fun_name === "reverse") {
@@ -23,7 +23,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
             string str = obj.strValue.to_string();
             string str2 = str.reverse();
             
-            (*result) =  new ZVALUE(kind:kStrValue, str_value:str2.to_wstring());
+            (*result) = borrow  new ZVALUE(kind:kStrValue, str_value:str2.to_wstring());
         }
     }
     else if(fun_name === "upper_case") {
@@ -31,7 +31,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
             string str = obj.strValue.to_string();
             string str2 = str.upper_case();
             
-            (*result) =  new ZVALUE(kind:kStrValue, str_value:str2.to_wstring());
+            (*result) = borrow  new ZVALUE(kind:kStrValue, str_value:str2.to_wstring());
         }
     }
     else if(fun_name === "length") {
@@ -39,14 +39,14 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
             string str = obj.strValue.to_string();
             int len = str.length();
             
-            (*result) =  new ZVALUE(kind:kIntValue, int_value:len);
+            (*result) = borrow  new ZVALUE(kind:kIntValue, int_value:len);
         }
     }
     else if(fun_name === "printable") {
         if(params.length() == 0) {
             string str = obj.strValue.to_string().printable();
             
-            (*result) =  new ZVALUE(kind:kStrValue, str_value:str.to_wstring());
+            (*result) = borrow  new ZVALUE(kind:kStrValue, str_value:str.to_wstring());
         }
     }
     else if(fun_name === "scan") {
@@ -61,7 +61,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
                 list2.push_back(new ZVALUE(kind:kStrValue, str_value:it.to_wstring()));
             }
             
-            (*result) =  new ZVALUE(kind:kListValue, list_value:clone list2);
+            (*result) = borrow  new ZVALUE(kind:kListValue, list_value:clone list2);
         }
     }
     else if(fun_name === "compare") {
@@ -70,7 +70,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
             
             int result2 = obj.strValue.to_string().compare(param0);
             
-            (*result) =  new ZVALUE(kind:kIntValue, int_value:result2);
+            (*result) = borrow  new ZVALUE(kind:kIntValue, int_value:result2);
         }
     }
     else if(fun_name === "sub") {
@@ -80,7 +80,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
             
             string str = obj.strValue.to_string().sub(param0, param1);
             
-            (*result) =  new ZVALUE(kind:kStrValue, str_value:str.to_wstring());
+            (*result) = borrow  new ZVALUE(kind:kStrValue, str_value:str.to_wstring());
         }
     }
     else if(fun_name === "delete") {
@@ -90,7 +90,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
             
             char* str = obj.strValue.to_string().delete(param0, param1);
             
-            (*result) =  new ZVALUE(kind:kStrValue, str_value:str.to_wstring());
+            (*result) = borrow  new ZVALUE(kind:kStrValue, str_value:str.to_wstring());
         }
     }
     else if(fun_name === "index_count") {
@@ -101,7 +101,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
             
             int n = obj.strValue.to_string().index_count(param0, param1, param2);
             
-            (*result) =  new ZVALUE(kind:kIntValue, int_value:n);
+            (*result) = borrow  new ZVALUE(kind:kIntValue, int_value:n);
         }
     }
     else if(fun_name === "index_regex_count") {
@@ -112,7 +112,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
             
             int n = obj.strValue.to_string().index_regex_count(param0, param1, param2);
             
-            (*result) =  new ZVALUE(kind:kIntValue, int_value:n);
+            (*result) = borrow  new ZVALUE(kind:kIntValue, int_value:n);
         }
     }
     else if(fun_name === "rindex_regex_count") {
@@ -123,7 +123,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
             
             int n = obj.strValue.to_string().rindex_regex_count(param0, param1, param2);
             
-            (*result) =  new ZVALUE(kind:kIntValue, int_value:n);
+            (*result) = borrow  new ZVALUE(kind:kIntValue, int_value:n);
         }
     }
     else if(fun_name === "substring") {
@@ -133,7 +133,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
             
             string str = obj.strValue.to_string().substring(param0, param1);
             
-            (*result) =  new ZVALUE(kind:kStrValue, str_value:str.to_wstring());
+            (*result) = borrow  new ZVALUE(kind:kStrValue, str_value:str.to_wstring());
         }
     }
     else if(fun_name === "split_maxsplit") {
@@ -149,7 +149,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
                 list2.push_back(new ZVALUE(kind:kStrValue, str_value:it.to_wstring()));
             }
             
-            (*result) =  new ZVALUE(kind:kListValue, list_value:clone list2);
+            (*result) = borrow  new ZVALUE(kind:kListValue, list_value:clone list2);
         }
     }
     else if(fun_name === "index") {
@@ -159,7 +159,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
             
             int result2 = obj.strValue.to_string().index(param0, param1);
             
-            (*result) =  new ZVALUE(kind:kIntValue, int_value:result2);
+            (*result) = borrow  new ZVALUE(kind:kIntValue, int_value:result2);
         }
     }
     else if(fun_name === "index_regex") {
@@ -169,7 +169,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
             
             int result2 = obj.strValue.to_string().index_regex(param0, param1);
             
-            (*result) =  new ZVALUE(kind:kIntValue, int_value:result2);
+            (*result) = borrow  new ZVALUE(kind:kIntValue, int_value:result2);
         }
     }
     else if(fun_name === "replace") {
@@ -179,7 +179,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
             
             char* result2 = obj.strValue.to_string().replace(param0, param1[0]);
             
-            (*result) =  new ZVALUE(kind:kStrValue, str_value:result2.to_wstring());
+            (*result) = borrow  new ZVALUE(kind:kStrValue, str_value:result2.to_wstring());
         }
     }
     else if(fun_name === "rindex") {
@@ -189,7 +189,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
             
             int result2 = obj.strValue.to_string().rindex(param0, param1);
             
-            (*result) =  new ZVALUE(kind:kIntValue, int_value:result2);
+            (*result) = borrow  new ZVALUE(kind:kIntValue, int_value:result2);
         }
     }
     else if(fun_name === "rindex_count") {
@@ -200,7 +200,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
             
             int result2 = obj.strValue.to_string().rindex_count(param0, param1, param2);
             
-            (*result) =  new ZVALUE(kind:kIntValue, int_value:result2);
+            (*result) = borrow  new ZVALUE(kind:kIntValue, int_value:result2);
         }
     }
     else if(fun_name === "index_regex") {
@@ -210,7 +210,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
             
             int result2 = obj.strValue.to_string().index_regex(param0, param1);
             
-            (*result) =  new ZVALUE(kind:kIntValue, int_value:result2);
+            (*result) = borrow  new ZVALUE(kind:kIntValue, int_value:result2);
         }
     }
     else if(fun_name === "rindex_regex") {
@@ -220,7 +220,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
             
             int result2 = obj.strValue.to_string().rindex_regex(param0, param1);
             
-            (*result) =  new ZVALUE(kind:kIntValue, int_value:result2);
+            (*result) = borrow  new ZVALUE(kind:kIntValue, int_value:result2);
         }
     }
     else if(fun_name === "multiply") {
@@ -229,7 +229,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
             
             string result2 = obj.strValue.to_string().multiply(param0);
             
-            (*result) =  new ZVALUE(kind:kStrValue, str_value:result2.to_wstring());
+            (*result) = borrow  new ZVALUE(kind:kStrValue, str_value:result2.to_wstring());
         }
     }
     else if(fun_name === "match") {
@@ -238,7 +238,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
             
             bool result2 = obj.strValue.to_string().match(param0);
             
-            (*result) =  new ZVALUE(kind:kBoolValue, bool_value:result2);
+            (*result) = borrow  new ZVALUE(kind:kBoolValue, bool_value:result2);
         }
     }
     else if(fun_name === "match_count") {
@@ -248,7 +248,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
             
             int n = obj.strValue.to_string().match_count(param0, param1);
             
-            (*result) =  new ZVALUE(kind:kIntValue, int_value:n);
+            (*result) = borrow  new ZVALUE(kind:kIntValue, int_value:n);
         }
     }
     else if(fun_name === "split") {
@@ -264,14 +264,14 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
                 list2.push_back(new ZVALUE(kind:kStrValue, str_value:it.to_wstring()));
             }
             
-            (*result) =  new ZVALUE(kind:kListValue, list_value:clone list2);
+            (*result) = borrow  new ZVALUE(kind:kListValue, list_value:clone list2);
         }
     }
     else if(fun_name === "strip") {
         if(params.length() == 0) {
             string str = obj.strValue.to_string().strip();
             
-            (*result) =  new ZVALUE(kind:kStrValue, str_value:str.to_wstring());
+            (*result) = borrow  new ZVALUE(kind:kStrValue, str_value:str.to_wstring());
         }
     }
     else if(fun_name === "split_char") {
@@ -286,7 +286,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
                 list2.push_back(new ZVALUE(kind:kStrValue, str_value:it.to_wstring()));
             }
             
-            (*result) =  new ZVALUE(kind:kListValue, list_value:clone list2);
+            (*result) = borrow  new ZVALUE(kind:kListValue, list_value:clone list2);
         }
     }
     else if(fun_name === "sub_count") {
@@ -297,7 +297,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
             
             string result2 = obj.strValue.to_string().sub_count(param0, param1, param2);
             
-            (*result) =  new ZVALUE(kind:kStrValue, str_value:result2.to_wstring());
+            (*result) = borrow  new ZVALUE(kind:kStrValue, str_value:result2.to_wstring());
         }
     }
     else if(fun_name === "sub_block") {
@@ -349,7 +349,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
                 return info2.result_value.strValue.to_string();
             };
             
-            (*result) =  new ZVALUE(kind:kStrValue, str_value:str.to_wstring());
+            (*result) = borrow  new ZVALUE(kind:kStrValue, str_value:str.to_wstring());
         }
     }
     else if(fun_name === "sub_block_count") {
@@ -402,7 +402,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
                 return info2.result_value.strValue.to_string();
             };
             
-            (*result) =  new ZVALUE(kind:kStrValue, str_value:str.to_wstring());
+            (*result) = borrow  new ZVALUE(kind:kStrValue, str_value:str.to_wstring());
         }
     }
     else if(fun_name === "scan_block") {
@@ -460,7 +460,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
                 list2.push_back(new ZVALUE(kind:kStrValue, str_value:it.to_wstring()));
             };
             
-            (*result) =  new ZVALUE(kind:kListValue, list_value:clone list2);
+            (*result) = borrow  new ZVALUE(kind:kListValue, list_value:clone list2);
         }
     }
     else if(fun_name === "scan_block_count") {
@@ -519,7 +519,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
                 list2.push_back(new ZVALUE(kind:kStrValue, str_value:it.to_wstring()));
             };
             
-            (*result) =  new ZVALUE(kind:kListValue, list_value:clone list2);
+            (*result) = borrow  new ZVALUE(kind:kListValue, list_value:clone list2);
         }
     }
     

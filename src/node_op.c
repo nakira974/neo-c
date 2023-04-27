@@ -4066,7 +4066,7 @@ BOOL compile_paren(unsigned int node, sCompileInfo* info)
     dec_stack_ptr(1, info);
     push_value_to_stack_ptr(&llvm_value, info);
 
-    info->type= left_node_type;
+    info->type = left_node_type;
 
     return TRUE;
 }

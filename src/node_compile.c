@@ -11,12 +11,6 @@ BOOL compile(unsigned int node, sCompileInfo* info)
     }
     
     switch(gNodes[node].mNodeType) {
-        case kNodeTypeMacro:
-            if(!compile_macro(node, info)) {
-                return FALSE;
-            }
-            break;
-            
         case kNodeTypeVaArg:
             if(!compile_va_arg(node, info)) {
                 return FALSE;

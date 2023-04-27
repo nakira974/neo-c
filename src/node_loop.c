@@ -1410,66 +1410,6 @@ BOOL compile_nodes(unsigned int node, sCompileInfo* info)
     return TRUE;
 }
 
-unsigned int sNodeTree_create_macro(unsigned int* nodes, int num_nodes, BOOL in_macro, sParserInfo* info)
-{
-    unsigned node = alloc_node();
-
-    gNodes[node].mNodeType = kNodeTypeMacro;
-
-    xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
-    gNodes[node].mLine = info->sline;
-
-    gNodes[node].uValue.sNodes.mNodes = GC_malloc(sizeof(unsigned int)* num_nodes);
-    int i;
-    for(i=0; i<num_nodes; i++) {
-        gNodes[node].uValue.sNodes.mNodes[i] = nodes[i];
-    }
-    gNodes[node].uValue.sNodes.mNumNodes = num_nodes;
-    gNodes[node].uValue.sNodes.mInMacro = in_macro;
-
-    gNodes[node].mLeft = 0;
-    gNodes[node].mRight = 0;
-    gNodes[node].mMiddle = 0;
-
-    return node;
-}
-
-BOOL compile_macro(unsigned int node, sCompileInfo* info)
-{
-    int num_nodes = gNodes[node].uValue.sNodes.mNumNodes;
-    unsigned int nodes[NODES_MAX];
-    int i;
-    for(i=0; i<num_nodes; i++) {
-        nodes[i] = gNodes[node].uValue.sNodes.mNodes[i];
-    }
-    BOOL in_macro = gNodes[node].uValue.sNodes.mInMacro;
-
-    int stack_num_before = info->stack_num;
-
-    for(i=0; i<num_nodes; i++) {
-        unsigned int node = nodes[i];
-
-        xstrncpy(info->sname, gNodes[node].mSName, PATH_MAX);
-        info->sline = gNodes[node].mLine;
-        
-        if(!compile(node, info)) {
-            return FALSE;
-        }
-        
-
-        if(i == num_nodes -1) 
-        {
-        }
-        else {
-            arrange_stack(info, stack_num_before);
-            
-            info->type = create_node_type_with_class_name("void");
-        }
-    }
-
-    return TRUE;
-}
-
 unsigned int sNodeTree_create_normal_block(struct sNodeBlockStruct* node_block, sParserInfo* info)
 {
     unsigned int node = alloc_node();

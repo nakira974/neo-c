@@ -170,52 +170,53 @@ bool vm(sInfo* info) version 5;
 sNode* exp_node(sInfo* info) version 3;
 
 ////////////////////////////
-// src/06var.c
+// src/06regex.c
+////////////////////////////
+sNode* exp_node(sInfo* info) version 4;
+bool vm(sInfo* info) version 6;
+
+////////////////////////////
+// src/07var.c
 ////////////////////////////
 extern ZVALUE gNullValue;
 
 void initialize_modules() version 2;
 void finalize_modules() version 2;
-bool vm(sInfo* info) version 6;
-sNode* exp_node(sInfo* info) version 4;
+bool vm(sInfo* info) version 7;
+sNode* exp_node(sInfo* info) version 5;
 
 void append_var(wstring name, ZVALUE* value);
 
 ////////////////////////////
-// src/07if.c
+// src/08if.c
 ////////////////////////////
-sNode* exp_node(sInfo* info) version 5;
-bool vm(sInfo* info) version 7;
+sNode* exp_node(sInfo* info) version 6;
+bool vm(sInfo* info) version 8;
 
 bool compile_block(sNodeBlock& block, sInfo* info);
 bool is_word(char* str, sInfo* info);
 sNodeBlock parse_block(sInfo* info);
 
 ////////////////////////////
-// src/08loop.c
+// src/09loop.c
 ////////////////////////////
-sNode* exp_node(sInfo* info) version 6;
-
-////////////////////////////
-// src/09print.c
-////////////////////////////
-bool vm(sInfo* info) version 8;
-
 sNode* exp_node(sInfo* info) version 7;
 
 ////////////////////////////
-// src/11regex.c
+// src/10print.c
 ////////////////////////////
-sNode* exp_node(sInfo* info) version 9;
 bool vm(sInfo* info) version 9;
 
-////////////////////////////
-// src/10fun.c
-////////////////////////////
 sNode* exp_node(sInfo* info) version 8;
-bool vm(sInfo* info) version 10;
 
 ////////////////////////////
-// src/12str_fun.c
+// src/11fun.c
 ////////////////////////////
-bool str_method(char* fun_name, list<ZVALUE*%>* params, ZVALUE* obj, ZVALUE** result, buffer* codes, sInfo* info);
+sNode* exp_node(sInfo* info) version 9;
+bool vm(sInfo* info) version 10;
+bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* params, buffer* codes, sInfo* info) version 1;
+
+////////////////////////////
+// src/11fun2.c
+////////////////////////////
+bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* params, buffer* codes, sInfo* info) version 2;

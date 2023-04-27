@@ -604,10 +604,10 @@ S["OBJS"]="src/parse_value.o src/parse_lib.o src/parse_type.o src/parse_function
 "t.o src/buffer.o src/xfunc.o src/node.o src/node_function_call.o src/node_function_lib.o src/node_function.o src/node_compile.o src/node_loop.o src/"\
 "node_op.o src/node_value.o src/node_var.o src/vtable.o src/node_type.o src/klass.o src/node_block.o src/typedef.o src/compiler.o src/macro.o src/tra"\
 "nspiler.o"
-S["CXXFLAGS2"]="-I/usr/lib/llvm-14/include -std=c++14   -fno-exceptions -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -L/usr/l"\
-"ib/llvm-14/lib  -lLLVM-14   -O2 -I . -I src -DPREFIX=\"\\\"${DESTDIR}/\\\" -L/usr/local/lib\""
-S["CXXFLAGS"]="-I/usr/lib/llvm-14/include -std=c++14   -fno-exceptions -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -L/usr/l"\
-"ib/llvm-14/lib  -lLLVM-14   -O2 -I . -I src -DPREFIX=\"\\\"${DESTDIR}/\\\" -L/usr/local/lib\""
+S["CXXFLAGS2"]="-I/usr/lib/llvm-10/include -std=c++14   -fno-exceptions -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -L/usr/l"\
+"ib/llvm-10/lib  -lLLVM-10   -O2 -I . -I src -DPREFIX=\"\\\"${DESTDIR}/\\\" -L/usr/local/lib\""
+S["CXXFLAGS"]="-I/usr/lib/llvm-10/include -std=c++14   -fno-exceptions -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -L/usr/l"\
+"ib/llvm-10/lib  -lLLVM-10   -O2 -I . -I src -DPREFIX=\"\\\"${DESTDIR}/\\\" -L/usr/local/lib\""
 S["CXX"]="clang++"
 S["DESTDIR"]="/usr/local"
 S["CLANG"]=""
@@ -620,8 +620,8 @@ S["EXEEXT"]=""
 S["ac_ct_CC"]="gcc"
 S["CPPFLAGS"]=""
 S["LDFLAGS"]=""
-S["CFLAGS"]="-I/usr/lib/llvm-14/include  -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -Isrc/ -I. -DPREFIX=\"\\\"${DESTDIR}/\\"\
-"\"\" -fPIC -L/usr/local/lib -DCONFIG_H -I/usr/local/include -DLLVM_VERSION=14 -DCLANG=\"\\\"clang\\\"\" -DGCC=\"\\\"clang\\\"\""
+S["CFLAGS"]="-I/usr/lib/llvm-10/include  -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -Isrc/ -I. -DPREFIX=\"\\\"${DESTDIR}/\\"\
+"\"\" -fPIC -L/usr/local/lib -DCONFIG_H -I/usr/local/include -DLLVM_VERSION=10 -DCLANG=\"\\\"clang\\\"\" -DGCC=\"\\\"clang\\\"\""
 S["CC"]="clang"
 S["target_alias"]=""
 S["host_alias"]=""
@@ -724,7 +724,6 @@ D["__64BIT_CPU__"]=" 1"
 D["__LINUX__"]=" 1"
 D["HAVE_MATH_H"]=" 1"
 D["HAVE_ICONV_H"]=" 1"
-D["HAVE_LCHMOD"]=" 1"
   for (key in D) D_is_set[key] = 1
   FS = ""
 }

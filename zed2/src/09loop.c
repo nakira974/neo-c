@@ -105,7 +105,7 @@ bool sBreakNode*::compile(sBreakNode* self, sInfo* info)
     
     return true;
 }
-sNode* exp_node(sInfo* info) version 6
+sNode* exp_node(sInfo* info) version 7
 {
     if(is_word("while", info)) {
         info->p += strlen("while");

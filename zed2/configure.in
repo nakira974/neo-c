@@ -217,7 +217,8 @@ fi
 
 export CFLAGS
 
-OBJS="src/main.o src/01int.o src/02op.o src/03op2.o src/04str.o src/05list.o src/06var.o src/07if.o src/08loop.o src/09print.o src/10fun.o src/11regex.o"
+OBJS="src/main.o src/01int.o src/02op.o src/03op2.o src/04str.o src/05list.o src/06regex.o src/07var.o src/08if.o src/09loop.o src/10print.o src/11fun.o src/12fun2.o"
+main.c
 
 AC_CHECK_FUNCS(execvpe)
 

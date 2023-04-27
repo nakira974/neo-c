@@ -114,7 +114,7 @@ bool sStderrNode*::compile(sStderrNode* self, sInfo* info)
 }
 
 
-bool vm(sInfo* info) version 8
+bool vm(sInfo* info) version 9
 {
     inherit(info);
     
@@ -155,7 +155,7 @@ bool vm(sInfo* info) version 8
     return true;
 }
 
-sNode* exp_node(sInfo* info) version 7
+sNode* exp_node(sInfo* info) version 8
 {
     if(*info->p == '.') {
         return borrow new sNode(new sStdinNode());

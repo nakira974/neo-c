@@ -179,7 +179,7 @@ bool sIfNode*::compile(sIfNode* self, sInfo* info)
     return true;
 }
 
-bool vm(sInfo* info) version 7
+bool vm(sInfo* info) version 8
 {
     inherit(info);
     
@@ -281,7 +281,7 @@ bool is_word(char* str, sInfo* info)
     return strlen(info->p.p) >= strlen(str) && memcmp(info->p.p, str, strlen(str)) == 0 && (strlen(info->p.p) == strlen(str) || !xisalnum(*(info->p.p + strlen(str))));
 }
 
-sNode* exp_node(sInfo* info) version 5
+sNode* exp_node(sInfo* info) version 6
 {
     if(is_word("true", info)) {
         info->p += strlen("true");

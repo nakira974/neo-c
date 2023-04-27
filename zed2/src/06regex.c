@@ -38,7 +38,7 @@ bool sRegexNode*::compile(sRegexNode* self, sInfo* info)
     return true;
 }
 
-bool vm(sInfo* info) version 9
+bool vm(sInfo* info) version 6
 {
     inherit(info);
     
@@ -62,7 +62,7 @@ bool vm(sInfo* info) version 9
     return true;
 }
 
-sNode* exp_node(sInfo* info) version 9
+sNode* exp_node(sInfo* info) version 4
 {
     if(*info->p == '/') {
         info->p++;

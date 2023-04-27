@@ -168,7 +168,7 @@ void finalize_modules() version 2
     delete gVars;
 }
 
-bool vm(sInfo* info) version 6
+bool vm(sInfo* info) version 7
 {
     switch(*info->op) {
         case OP_STORE: {
@@ -315,7 +315,7 @@ bool vm(sInfo* info) version 6
     return true;
 }
 
-sNode* exp_node(sInfo* info) version 4
+sNode* exp_node(sInfo* info) version 5
 {
     sNode* result = null;
     

@@ -6,7 +6,6 @@
 #endif
 #include "buffer.h"
 #include "xfunc.h"
-#include "alignment.h"
 
 #include <stddef.h>
 #include <stdio.h>

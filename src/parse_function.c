@@ -1449,38 +1449,6 @@ BOOL parse_inherit(unsigned int* node, sParserInfo* info)
 }
 
 
-BOOL parse_macro(unsigned int* node, sParserInfo* info)
-{
-    BOOL safe_mode = gNCSafeMode;
-    char buf[VAR_NAME_MAX+1];
-    if(!parse_word(buf, VAR_NAME_MAX, info, TRUE, FALSE))
-    {
-        return FALSE;
-    }
-
-    char* p = info->p + 1;
-
-    if(!skip_block(info)) {
-        return FALSE;
-    }
-
-    sBuf body;
-    sBuf_init(&body);
-
-    sBuf_append(&body, p, info->p-p-3);
-
-    append_macro(buf, body.mBuf);
-
-    free(body.mBuf);
-
-    *node = sNodeTree_create_null(info);
-
-    skip_spaces_and_lf(info);
-    gNCSafeMode = safe_mode;
-
-    return TRUE;
-}
-
 BOOL parse_impl(unsigned int* node, sParserInfo* info)
 {
     char struct_name[VAR_NAME_MAX];
@@ -1560,54 +1528,6 @@ void parse_impl_end(sParserInfo* info)
 {
     strcpy(info->impl_struct_name, "");
     info->mNumGenerics = 0;
-}
-
-BOOL parse_call_macro(unsigned int* node, char* name, sParserInfo* info)
-{
-    char name2[VAR_NAME_MAX];
-    xstrncpy(name2, name, VAR_NAME_MAX);
-
-    char* p = info->p + 1;
-
-    if(*info->p == '(') {
-        if(!skip_paren('(', ')', info)) {
-            return FALSE;
-        }
-    }
-    else if(*info->p == '{') {
-        if(!skip_paren('{', '}', info)) {
-            return FALSE;
-        }
-    }
-    else if(*info->p == '[') {
-        if(!skip_paren('[', ']', info)) {
-            return FALSE;
-        }
-    }
-    else if(*info->p == '<') {
-        if(!skip_paren('<', '>', info)) {
-            return FALSE;
-        }
-    }
-    else {
-        parser_err_msg(info, "Require (,{,[ or <");
-        return TRUE;
-    }
-
-    sBuf params;
-    sBuf_init(&params);
-
-    sBuf_append(&params, p, info->p-p-1);
-
-    skip_spaces_and_lf(info);
-
-    if(!call_macro(node, name2, params.mBuf, info)) {
-        return FALSE;
-    }
-
-    free(params.mBuf);
-
-    return TRUE;
 }
 
 BOOL parse_function_pointer_result_function(unsigned int* node, BOOL* array_pointer_result_function_type, sParserInfo* info)

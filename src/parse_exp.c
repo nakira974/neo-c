@@ -2326,14 +2326,6 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
             n++;
             *node = sNodeTree_create_stack(current_stack_frame_type_name, info);
         }
-/*
-        else if(strcmp(buf, "macro") == 0) {
-            if(!parse_macro(node, info))
-            {
-                return FALSE;
-            }
-        }
-*/
         else if(strcmp(buf, "defer") == 0) {
             if(!parse_defer(node, info))
             {
@@ -2831,17 +2823,6 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 return FALSE;
             }
         }
-/*
-        else if(*info->p == '@' && (*(info->p+1) == '(' || *(info->p+1) == '{' || *(info->p+1) == '[' || *(info->p+1) == '<'))
-        {
-            info->p++;
-            skip_spaces_and_lf(info);
-
-            if(!parse_call_macro(node, buf, info)) {
-                return FALSE;
-            }
-        }
-*/
         /// local variable ///
         else if(get_variable_from_table(info->lv_table, buf))
         {

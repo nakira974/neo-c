@@ -526,19 +526,6 @@ BOOL compile(unsigned int node, sCompileInfo* info)
             }
             break;
 
-        case kNodeTypeSelect:
-            if(!compile_select(node, info)) {
-                return FALSE;
-            }
-            break;
-
-        case kNodeTypePSelect:
-            if(!compile_pselect(node, info)) {
-                return FALSE;
-            }
-            break;
-
-
         case kNodeTypeStructInitializer:
             if(!compile_struct_initializer(node, info))
             {

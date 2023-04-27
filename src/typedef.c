@@ -29,17 +29,6 @@ void free_typedef()
     free(gTypeDefTable);
 }
 
-void show_typedefs()
-{
-    int i;
-    for(i=0; i<gSizeTypeDef; i++) {
-        if(gTypeDefTable[i].mName && gTypeDefTable[i].mUser) {
-            printf("%s ", gTypeDefTable[i].mName);
-            show_node_type(gTypeDefTable[i].mItem);
-        }
-    }
-}
-
 void final_typedef()
 {
     free_typedef();

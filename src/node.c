@@ -747,62 +747,6 @@ sFunction* create_equals_automatically(sNodeType* node_type, char* fun_name, sCo
     return equaler;
 }
 
-void check_null_value_for_pointer(LLVMValueRef value, sCompileInfo* info)
-{
-    if(gNCCome) {
-        LLVMValueRef llvm_fun = LLVMGetNamedFunction(gModule, "check_null_pointer");
-        
-        if(llvm_fun) {
-#if defined(__32BIT_CPU__)
-            LLVMTypeRef llvm_type2 = create_llvm_type_with_class_name("int");
-#else
-            LLVMTypeRef llvm_type2 = create_llvm_type_with_class_name("long");
-#endif
-            LLVMValueRef value2 = LLVMBuildCast(gBuilder, LLVMPtrToInt, value, llvm_type2, "castAK2");
-            LLVMValueRef null_value = LLVMConstInt(llvm_type2, 0, FALSE);
-            LLVMValueRef null_value2 = LLVMBuildCast(gBuilder, LLVMBitCast, null_value, llvm_type2, "castAK2");
-            
-            LLVMBasicBlockRef cond_end_block = LLVMAppendBasicBlockInContext(gContext, gFunction, "cond_endX");
-            LLVMBasicBlockRef cond_block = LLVMAppendBasicBlockInContext(gContext, gFunction, "cond_blockX");
-            LLVMValueRef cond_value = LLVMBuildICmp(gBuilder, LLVMIntEQ, value2, null_value2, "nullcheckX");
-            
-            LLVMBuildCondBr(gBuilder, cond_value, cond_block, cond_end_block);
-            
-            llvm_change_block(cond_block, info);
-        
-            int num_params = 2;
-    
-            LLVMValueRef llvm_params[PARAMS_MAX];
-            memset(llvm_params, 0, sizeof(LLVMValueRef)*PARAMS_MAX);
-            
-            LLVMTypeRef llvm_type = create_llvm_type_with_class_name("int");
-            llvm_params[0] = LLVMConstInt(llvm_type, info->sline, TRUE);
-            
-            LLVMTypeRef llvm_type3 = create_llvm_type_with_class_name("char*");
-            llvm_params[1] = LLVMBuildPointerCast(gBuilder, LLVMBuildGlobalString(gBuilder, info->sname, info->sname), llvm_type3, "func_name");
-            
-            sNodeType* result_type = create_node_type_with_class_name("void");
-
-            LLVMTypeRef llvm_param_types[PARAMS_MAX];
-
-            llvm_param_types[0] = create_llvm_type_with_class_name("int");
-            llvm_param_types[1] = create_llvm_type_with_class_name("char*");
-
-            LLVMTypeRef llvm_result_type = create_llvm_type_from_node_type(result_type);
-        
-            BOOL var_arg = FALSE;
-
-            LLVMTypeRef function_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
-            
-            LLVMBuildCall2(gBuilder, function_type, llvm_fun, llvm_params, num_params, "");
-            
-            LLVMBuildBr(gBuilder, cond_end_block);
-            
-            llvm_change_block(cond_end_block, info);
-        }
-    }
-}
-
 
 void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCompileInfo* info)
 {

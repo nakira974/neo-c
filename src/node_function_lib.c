@@ -130,55 +130,6 @@ void free_funcs()
     }
 }
 
-void show_func(sFunction* fun, BOOL code)
-{
-    printf("%s(", fun->mName);
-
-    int j;
-    for(j=0; j<fun->mNumParams; j++) {
-        show_node_type_one_line(fun->mParamTypes[j]);
-        printf(" %s", fun->mParamNames[j]);
-
-        if(j!=fun->mNumParams-1) {
-            printf(",");
-        }
-    }
-    printf(") ");
-
-    if(fun->mAsmFunName) {
-        printf("asm fun name %s ", fun->mAsmFunName);
-    }
-    printf("extern %d var args %d gnerics function %d ", fun->mExtern, fun->mVarArgs, fun->mGenericsFunction);
-
-    printf("num params %d\n", fun->mNumParams);
-
-    printf("[result type] ");
-    show_node_type(fun->mResultType);
-
-    if(fun->mNumGenerics > 0) {
-        printf("num gererincs %d\n", fun->mNumGenerics);
-
-        for(j=0; j<fun->mNumGenerics; j++) {
-            puts(fun->mGenericsTypeNames[j]);
-        }
-    }
-
-    if(fun->mSource) {
-        printf("{\n%s\n}\n", fun->mSource);
-    }
-}
-
-void show_funcs()
-{
-    int i;
-    for(i=0; i<gSizeFuncs; i++) {
-        if(gFuncs[i].mName) {
-            sFunction* fun = gFuncs[i].mFun;
-            show_func(fun, FALSE);
-        }
-    }
-}
-
 void node_function_final()
 {
     free_funcs();

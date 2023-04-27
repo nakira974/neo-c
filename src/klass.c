@@ -198,20 +198,6 @@ void rehash_classes()
     gSizeClasses = new_size_classes;
 }
 
-void show_classes()
-{
-    int i;
-    for(i=0; i<gSizeClasses; i++) {
-        if(gClasses[i].mName && gClasses[i].mClass->mUser) {
-            sCLClass* klass = gClasses[i].mClass;
-
-            sNodeType* node_type = create_node_type_with_class_pointer(klass);
-
-            show_node_type(node_type);
-        }
-    }
-}
-
 static sCLClass* alloc_class(char* class_name_, BOOL primitive_, BOOL struct_, BOOL number_type, BOOL unsigned_number, int generics_number, int method_generics_number, BOOL union_, BOOL anonymous, BOOL enum_, BOOL anonymous_var_name, BOOL user, sCLClass* parent, BOOL protocol_)
 {
     if(gNumClasses >= gSizeClasses/3) {

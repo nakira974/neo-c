@@ -595,8 +595,6 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
 BOOL parse_while(unsigned int* node, sParserInfo* info);
 BOOL parse_do(unsigned int* node, sParserInfo* info);
 BOOL parse_for(unsigned int* node, sParserInfo* info);
-BOOL parse_select(unsigned int* node, sParserInfo* info);
-BOOL parse_pselect(unsigned int* node, sParserInfo* info);
 BOOL parse_alloca(unsigned int* node, sParserInfo* info);
 BOOL parse_sizeof(unsigned int* node, sParserInfo* info);
 BOOL parse_alignof(unsigned int* node, sParserInfo* info);
@@ -624,8 +622,6 @@ void parse_impl_end(sParserInfo* info);
 BOOL parse_new(unsigned int* node, sParserInfo* info);
 BOOL parse_var(unsigned int* node, sParserInfo* info, BOOL readonly);
 BOOL parse_inherit(unsigned int* node, sParserInfo* info);
-BOOL parse_come(unsigned int* node, sParserInfo* info);
-BOOL parse_macro(unsigned int* node, sParserInfo* info);
 BOOL parse_defer(unsigned int* node, sParserInfo* info);
 BOOL parse_call_macro(unsigned int* node, char* name, sParserInfo* info);
 BOOL parse_function_pointer_result_function(unsigned int* node, BOOL* array_pointer_result_function_type, sParserInfo* info);
@@ -1546,11 +1542,8 @@ unsigned int sNodeTree_while_expression(unsigned int expression_node, MANAGED st
 unsigned int sNodeTree_create_throw(sParserInfo* info);
 unsigned int sNodeTree_do_while_expression(unsigned int expression_node, MANAGED struct sNodeBlockStruct* while_node_block, sParserInfo* info);
 unsigned int sNodeTree_create_defer(unsigned int expression_node, sParserInfo* info);
-unsigned int sNodeTree_create_select(int num_pipes, char** pipes, struct sNodeBlockStruct** pipe_blocks, sParserInfo* info);
-unsigned int sNodeTree_create_pselect(int num_pipes, char** pipes, struct sNodeBlockStruct** pipe_blocks, struct sNodeBlockStruct* default_block, sParserInfo* info);
 
 BOOL compile_comma(unsigned int node, sCompileInfo* info);
-BOOL compile_macro(unsigned int node, sCompileInfo* info);
 BOOL compile_conditional(unsigned int node, sCompileInfo* info);
 BOOL compile_goto_expression(unsigned int node, sCompileInfo* info);
 BOOL compile_label_expression(unsigned int node, sCompileInfo* info);
@@ -1568,9 +1561,6 @@ BOOL compile_and_and(unsigned int node, sCompileInfo* info);
 BOOL compile_or_or(unsigned int node, sCompileInfo* info);
 BOOL compile_for_expression(unsigned int node, sCompileInfo* info);
 BOOL compile_return(unsigned int node, sCompileInfo* info);
-BOOL compile_join(unsigned int node, sCompileInfo* info);
-BOOL compile_select(unsigned int node, sCompileInfo* info);
-BOOL compile_pselect(unsigned int node, sCompileInfo* info);
 
 /////////////
 /// macro.c

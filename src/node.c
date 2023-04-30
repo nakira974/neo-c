@@ -24,17 +24,6 @@ LLVMTypeRef create_llvm_type_from_node_type(sNodeType* node_type);
 static void clear_right_value_objects(sCompileInfo* info)
 {
 }
-/*
-    struct sRightValueObject* 
-    struct sRightValueObject* it = info->right_value_objects;
-    while(it) {
-        struct sRightValueObject* it_next = it->next;
-        free(it);
-        it = it_next;
-    }
-
-    info->right_value_objects = NULL;
-*/
 
 void append_object_to_right_values(LLVMValueRef obj, sNodeType* node_type, sCompileInfo* info)
 {
@@ -244,62 +233,6 @@ void free_protocol_object(sNodeType* protocol_type, LLVMValueRef protocol_value,
                 LLVMBuildCall2(gBuilder, function_type, llvm_fun2, llvm_params, num_params, "");
             }
         }
-    }
-    
-    {
-        sCLClass* protocol_class = protocol_type->mClass;
-        sNodeType* protocol_type2 = clone_node_type(protocol_type);
-        protocol_type2->mPointerNum = 0;
-        
-        int field_index = 0;
-        
-        LLVMValueRef indices[5];
-        
-        indices[0] = LLVMConstInt(LLVMInt32Type(), 0, FALSE);
-        indices[1] = LLVMConstInt(LLVMInt32Type(), field_index, FALSE);
-        
-        LLVMValueRef field_address = LLVMBuildInBoundsGEP2(gBuilder, create_llvm_type_from_node_type(protocol_type2), protocol_value, indices, 2, "fieldQQQQUOX");
-        
-        LLVMValueRef protocol_obj = LLVMBuildLoad2(gBuilder, create_llvm_type_with_class_name("void*"), field_address, "protocol_obj");
-        
-        /// free object ///
-        int num_params = 1;
-    
-        LLVMValueRef llvm_params[PARAMS_MAX];
-        memset(llvm_params, 0, sizeof(LLVMValueRef)*PARAMS_MAX);
-    
-        //char* fun_name2 = "ncfree";
-/*
-        char* fun_name2 = "igc_decrement_ref_count";
-        //char* fun_name2 = "free";
-    
-        LLVMTypeRef llvm_type2 = create_llvm_type_with_class_name("char*");
-    
-        LLVMValueRef obj = LLVMBuildCast(gBuilder, LLVMBitCast, protocol_obj, llvm_type2, "castAK");
-    
-        llvm_params[0] = obj;
-        
-        LLVMValueRef llvm_fun = LLVMGetNamedFunction(gModule, fun_name2);
-        
-        if(llvm_fun == NULL) {
-            compile_err_msg(info, "require %s funtion", fun_name2);
-            return;
-        }
-        
-        sNodeType* result_type = create_node_type_with_class_name("void");
-
-        LLVMTypeRef llvm_param_types[PARAMS_MAX];
-
-        llvm_param_types[0] = create_llvm_type_with_class_name("char*");
-
-        LLVMTypeRef llvm_result_type = create_llvm_type_from_node_type(result_type);
-        
-        BOOL var_arg = FALSE;
-
-        LLVMTypeRef function_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
-        
-        LLVMBuildCall2(gBuilder, function_type, llvm_fun, llvm_params, num_params, "");
-*/
     }
 }
 
@@ -747,7 +680,6 @@ sFunction* create_equals_automatically(sNodeType* node_type, char* fun_name, sCo
     return equaler;
 }
 
-
 void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCompileInfo* info)
 {
     if(!gNCGC && (node_type->mAllocaValue || node_type->mPointerNum > 0)) {
@@ -801,7 +733,6 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCom
         if(finalizer == NULL) {
             finalizer = get_function_from_table(fun_name);
         }
-        
         
         if(finalizer == NULL && !is_number_class(node_type) && gNCCome && !node_type->mClass->mProtocol)
         {
@@ -1416,7 +1347,6 @@ void set_caller_sline(int sline)
     
     LLVMBuildStore(gBuilder, value, gCallerSLine);
 }
-
 
 void init_nodes(char* sname)
 {
@@ -3427,7 +3357,6 @@ LVALUE* get_value_from_stack(int offset)
     transpiler_clear_last_code();
     return gLLVMStack + offset;
 }
-
 
 void create_generics_struct_name(char* struct_name, size_t size, sNodeType* struct_type)
 {

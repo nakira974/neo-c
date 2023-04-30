@@ -160,7 +160,7 @@ unsigned int sNodeTree_create_define_variable(char* var_name, BOOL extern_, BOOL
 
     return node;
 }
-        
+
 void call_zero_clearer(LLVMValueRef obj, sNodeType* node_type, sCompileInfo* info)
 {
     int num_params = 3;
@@ -5958,8 +5958,6 @@ BOOL compile_object(unsigned int node, sCompileInfo* info)
     return TRUE;
 }
 
-
-
 unsigned int sNodeTree_create_stack_object(sNodeType* node_type, unsigned int object_num, char* sname, int sline, sParserInfo* info)
 {
     unsigned node = alloc_node();
@@ -8247,7 +8245,6 @@ unsigned int sNodeTree_create_va_arg(unsigned int ap, sNodeType* node_type, sPar
 
     return node;
 }
-
 
 BOOL compile_va_arg(unsigned int node, sCompileInfo* info)
 {

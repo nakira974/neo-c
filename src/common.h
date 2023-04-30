@@ -590,7 +590,6 @@ BOOL parse_funcation_call_params(int* num_params, unsigned int* params, sParserI
 BOOL parse_if(unsigned int* node, sParserInfo* info);
 BOOL parse_throw(unsigned int* node, sParserInfo* info);
 BOOL parse_catch(unsigned int* node, sParserInfo* info);
-BOOL parse_guard(unsigned int* node, sParserInfo* info);
 BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserInfo* info);
 BOOL parse_while(unsigned int* node, sParserInfo* info);
 BOOL parse_do(unsigned int* node, sParserInfo* info);
@@ -1242,7 +1241,6 @@ BOOL call_operator_function(char* fun_base_name, sNodeType* left_type, int num_p
 
 unsigned int sNodeTree_create_plus_plus(unsigned int left_node, sParserInfo* info);
 unsigned int sNodeTree_create_va_arg(unsigned int ap, sNodeType* node_type, sParserInfo* info);
-unsigned int sNodeTree_guard_expression(char* var_name, MANAGED struct sNodeBlockStruct* if_node_block, sParserInfo* info, char* sname, int sline);
 unsigned int sNodeTree_create_dupe_function(char* old_fun_name, char* new_fun_name, sParserInfo* info);
 unsigned int sNodeTree_create_unwrap(unsigned int left, BOOL load_, sParserInfo* info);
 unsigned int sNodeTree_create_nullable(unsigned int object_node, sParserInfo* info);
@@ -1288,7 +1286,6 @@ BOOL compile_va_arg(unsigned int node, sCompileInfo* info);
 BOOL compile_store_derefference(unsigned int node, sCompileInfo* info);
 BOOL compile_refference_load_field(unsigned int node, sCompileInfo* info);
 BOOL compile_store_field_of_protocol(unsigned int node, sCompileInfo* info);
-BOOL compile_guard_expression(unsigned int node, sCompileInfo* info);
 BOOL compile_equal_or(unsigned int node, sCompileInfo* info);
 BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info);
 BOOL compile_dupe_function(unsigned int node, sCompileInfo* info);

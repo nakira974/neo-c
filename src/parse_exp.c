@@ -2508,11 +2508,6 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 return FALSE;
             }
         }
-        else if(strcmp(buf, "guard") == 0) {
-            if(!parse_guard(node, info)) {
-                return FALSE;
-            }
-        }
         else if(strcmp(buf, "switch") == 0) {
             if(!parse_switch(node, info)) {
                 return FALSE;

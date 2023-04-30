@@ -206,44 +206,6 @@ BOOL parse_catch(unsigned int* node, sParserInfo* info)
     return TRUE;
 }
 
-BOOL parse_guard(unsigned int* node, sParserInfo* info)
-{
-    char sname[PATH_MAX];
-    xstrncpy(sname, info->sname, PATH_MAX);
-    int sline = info->sline;
-
-    expect_next_character_with_one_forward("(", info);
-    
-    char buf[VAR_NAME_MAX];
-    if(!parse_word(buf, VAR_NAME_MAX, info, TRUE, FALSE)) {
-        return FALSE;
-    }
-
-    /// expression ///
-    expect_next_character_with_one_forward(")", info);
-
-    sNodeBlock* if_node_block = NULL;
-    BOOL result_type_is_void = TRUE;
-    if(!parse_block_easy(ALLOC &if_node_block, FALSE, result_type_is_void, FALSE, info))
-    {
-        return FALSE;
-    }
-
-    unsigned int elif_expression_nodes[ELIF_NUM_MAX];
-    memset(elif_expression_nodes, 0, sizeof(unsigned int)*ELIF_NUM_MAX);
-
-    sNodeBlock* elif_node_blocks[ELIF_NUM_MAX];
-    memset(elif_node_blocks, 0, sizeof(sNodeBlock*)*ELIF_NUM_MAX);
-
-    int elif_num = 0;
-
-    sNodeBlock* else_node_block = NULL;
-
-    *node = sNodeTree_guard_expression(buf,  MANAGED if_node_block, info, sname, sline);
-
-    return TRUE;
-}
-
 BOOL parse_while(unsigned int* node, sParserInfo* info)
 {
     expect_next_character_with_one_forward("(", info);

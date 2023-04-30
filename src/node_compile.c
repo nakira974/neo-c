@@ -228,12 +228,6 @@ BOOL compile(unsigned int node, sCompileInfo* info)
             }
             break;
             
-        case kNodeTypeGuard:
-            if(!compile_guard_expression(node, info)) {
-                return FALSE;
-            }
-            break;
-
         case kNodeTypeObject:
             if(!compile_object(node, info)) {
                 return FALSE;

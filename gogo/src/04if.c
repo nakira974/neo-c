@@ -189,7 +189,7 @@ sNode*? word_expression(string word, sInfo* info) version 4
     if(word === "if") {
         sNode*? if_exp = expression(info);
         
-        guard (if_exp) {
+        if (if_exp == null) {
             fprintf(stderr, "%s %d: invalid if exp\n", info.sname, info.sline);
             return null;
         }

@@ -1,10 +1,4 @@
-
-////////////////////////////
-// src/01int.c
-////////////////////////////
 #include <comelang.h>
-
-using unsafe;
 
 struct sInfo;
 
@@ -57,26 +51,28 @@ string ZVALUE*::to_string(ZVALUE* self);
 unsigned int ZVALUE*::get_hash_key(ZVALUE* self);
 bool ZVALUE*::equals(ZVALUE* self, ZVALUE* right);
 bool ZVALUE*::operator_equals(ZVALUE* self, ZVALUE* right);
+bool ZVALUE*::operator_not_equals(ZVALUE* self, ZVALUE* right);
 int ZVALUE*::compare(ZVALUE* self, ZVALUE* right);
 
 struct sInfo
 {
-    char* p;
+    smart_pointer<char>*% p;
     string command;
     buffer*% codes;
     vector<sNode*%>*% nodes;
-    int* head;
-    int* op;
+    smart_pointer<int>*% op;
+    char* head;
     vector<ZVALUE*%>*% stack;
-    
-    int loop_head;
-    
-    vector<int>*%? breaks;
     
     ZVALUE*% result_value;
     
     int stack_num;
+    
+    vector<int>*% breaks;
+    int loop_head;
 };
+
+typedef vector<sNode*%>*% sNodeBlock;
 
 #define OP_INT_VALUE 1
 #define OP_IADD 2
@@ -118,85 +114,110 @@ struct sInfo
 #define OP_LOAD_ELEMENT 64
 #define OP_STORE_ELEMENT 65
 
-void skip_spaces(sInfo* info);
-
-
-sNode*? exp_node(sInfo* info) version 1;
-sNode*? expression(sInfo* info) version 1;
-bool parse(sInfo* info) version 1;
-void arrange_stack(sInfo* info);
-bool vm(sInfo* info) version 1;
-
-////////////////////////////
-// src/02str.c
-////////////////////////////
-void append_str_to_codes(sInfo* info, wstring& str);
-wstring get_str_from_codes(sInfo* info);
-bool vm(sInfo* info) version 2;
-sNode*? exp_node(sInfo* info) version 2;
-
-////////////////////////////
-// src/03var.c
-////////////////////////////
-extern ZVALUE gNullValue;
-void initialize_modules();
-void finalize_modules();
-bool vm(sInfo* info) version 3;
-sNode*? exp_node(sInfo* info) version 3;
-void append_var(wstring name, ZVALUE* value);
-
-////////////////////////////
-// src/04if.c
-////////////////////////////
-
-typedef vector<sNode*%>*% sNodeBlock;
-
-
-bool compile_block(sNodeBlock& block, sInfo* info);
-bool vm(sInfo* info) version 4;
-sNodeBlock? parse_block(sInfo* info);
-bool is_word(char* str, sInfo* info);
-sNode*? exp_node(sInfo* info) version 4;
-
-////////////////////////////
-// src/05loop.c
-////////////////////////////
-sNode*? exp_node(sInfo* info) version 5;
-
-////////////////////////////
-// src/06print.c
-////////////////////////////
-bool vm(sInfo* info) version 5;
-sNode*? exp_node(sInfo* info) version 6;
-
-////////////////////////////
-// src/07regex.c
-////////////////////////////
-bool vm(sInfo* info) version 6;
-sNode*? exp_node(sInfo* info) version 7;
-
-////////////////////////////
-// src/08list.c
-////////////////////////////
-bool vm(sInfo* info) version 7;
-sNode*? exp_node(sInfo* info) version 8;
-
-////////////////////////////
-// src/09fun.c
-////////////////////////////
-bool vm(sInfo* info) version 8;
-sNode*? exp_node(sInfo* info) version 9;
-
 ////////////////////////////
 // src/main.c
 ////////////////////////////
 extern int gNodeID ;
+
 void skip_spaces(sInfo* info);
 unsigned int ZVALUE*::get_hash_key(ZVALUE* self);
 bool ZVALUE*::equals(ZVALUE* self, ZVALUE* right);
 int ZVALUE*::compare(ZVALUE* self, ZVALUE* right);
 bool ZVALUE*::operator_equals(ZVALUE* self, ZVALUE* right);
 string ZVALUE*::to_string(ZVALUE* self);
-int main(int argc, char** argv);
 
-bool str_method(char* fun_name, list<ZVALUE*%>* params, ZVALUE* obj, ZVALUE** result, buffer* codes, sInfo* info);
+////////////////////////////
+// src/01int.c
+////////////////////////////
+void initialize_modules() version 1;
+void finalize_modules() version 1;
+
+sNode* exp_node(sInfo* info) version 1;
+sNode* expression(sInfo* info) version 1;
+bool vm(sInfo* info) version 1;
+
+bool parse(sInfo* info) version 1;
+void arrange_stack(sInfo* info);
+
+////////////////////////////
+// src/02op.c
+////////////////////////////
+sNode* expression(sInfo* info) version 2;
+bool vm(sInfo* info) version 2;
+
+sNode* op_add_node(sInfo* info);
+sNode* op_mult_node(sInfo* info) version 1;
+
+////////////////////////////
+// src/03op2.c
+////////////////////////////
+sNode* op_mult_node(sInfo* info) version 2;
+sNode* expression(sInfo* info) version 3;
+bool vm(sInfo* info) version 3;
+
+////////////////////////////
+// src/04str.c
+////////////////////////////
+sNode* exp_node(sInfo* info) version 2;
+bool vm(sInfo* info) version 4;
+
+void append_str_to_codes(sInfo* info, wchar_t* str);
+wstring get_str_from_codes(sInfo* info);
+
+////////////////////////////
+// src/05list.c
+////////////////////////////
+bool vm(sInfo* info) version 5;
+sNode* exp_node(sInfo* info) version 3;
+
+////////////////////////////
+// src/06regex.c
+////////////////////////////
+sNode* exp_node(sInfo* info) version 4;
+bool vm(sInfo* info) version 6;
+
+////////////////////////////
+// src/07var.c
+////////////////////////////
+extern ZVALUE gNullValue;
+
+void initialize_modules() version 2;
+void finalize_modules() version 2;
+bool vm(sInfo* info) version 7;
+sNode* exp_node(sInfo* info) version 5;
+
+void append_var(wstring name, ZVALUE* value);
+
+////////////////////////////
+// src/08if.c
+////////////////////////////
+sNode* exp_node(sInfo* info) version 6;
+bool vm(sInfo* info) version 8;
+
+bool compile_block(sNodeBlock& block, sInfo* info);
+bool is_word(char* str, sInfo* info);
+sNodeBlock parse_block(sInfo* info);
+
+////////////////////////////
+// src/09loop.c
+////////////////////////////
+sNode* exp_node(sInfo* info) version 7;
+
+////////////////////////////
+// src/10print.c
+////////////////////////////
+bool vm(sInfo* info) version 9;
+
+sNode* exp_node(sInfo* info) version 8;
+
+////////////////////////////
+// src/11fun.c
+////////////////////////////
+sNode* exp_node(sInfo* info) version 9;
+bool vm(sInfo* info) version 10;
+bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* params, buffer* codes, sInfo* info) version 1;
+
+////////////////////////////
+// src/11fun2.c
+////////////////////////////
+bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* params, buffer* codes, sInfo* info) version 2;

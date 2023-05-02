@@ -17,11 +17,6 @@ then
     (cd zed && make distclean)
 fi
 
-if [ -e zed2/Makefile ]
-then
-    (cd zed2 && make distclean)
-fi
-
 if [ -e shsh/Makefile ]
 then
     (cd shsh && make distclean)
@@ -81,5 +76,4 @@ echo vin
 echo zed
 (cd zed && rm -rf .git && git init && bash update.sh)
 
-echo zed2
-(cd zed2 && rm -rf .git && git init && bash update.sh)
+

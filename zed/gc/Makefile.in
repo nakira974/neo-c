@@ -7,8 +7,8 @@ bindir=@bindir@
 datadir=@datadir@
 mandir=@mandir@
 sharedstatedir=@sharedstatedir@
-sysconfdir=@sysconfdir@/zed2
-datarootdir=@datarootdir@/zed2
+sysconfdir=@sysconfdir@/zed
+datarootdir=@datarootdir@/zed
 docdir=@datadir@/doc
 libdir=@libdir@
 
@@ -26,10 +26,10 @@ OBJS=@OBJS@
 ##########################################################
 # main
 ##########################################################
-all: zed2
+all: zed
 
-zed2: config.h $(OBJS) 
-	$(CC) -o zed2 $(OBJS) $(CFLAGS) $(LIBS)
+zed: config.h $(OBJS) 
+	$(CC) -o zed $(OBJS) $(CFLAGS) $(LIBS)
 
 #########################################################
 # Object files
@@ -42,13 +42,13 @@ $(OBJ): src/*.h Makefile configure
 install:
 
 	mkdir -p "$(DESTDIR)/bin"
-	$(INSTALL) -m 755 ./zed2 "$(DESTDIR)/bin"
+	$(INSTALL) -m 755 ./zed "$(DESTDIR)/bin"
 
 #########################################################
 # uninstall
 #########################################################
 uninstall:
-	rm -f "$(DESTDIR)"/bin/zed2
+	rm -f "$(DESTDIR)"/bin/zed
 
 #########################################################
 # permission
@@ -64,7 +64,7 @@ permission:
 # clean
 ########################################################
 clean:
-	rm -fR zed2 zed2.dSYM src/*.o config.log config.status *.stackdump autom4te.cache .DS_Store core.* core a.out src/*.ll src/*.i code/__pycache__
+	rm -fR zed zed.dSYM src/*.o config.log config.status *.stackdump autom4te.cache .DS_Store core.* core a.out src/*.ll src/*.i code/__pycache__
 
 distclean: clean
 	rm -fR  config.h Makefile autom4te.cache

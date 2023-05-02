@@ -242,7 +242,7 @@ int main(int argc, char** argv)
 {
     setlocale(LC_ALL, "");
     
-    string command = null;
+    string? command = null;
     for(int i=1; i<argc; i++) {
         if(argv[i][0] == '-') {
         }
@@ -260,17 +260,17 @@ int main(int argc, char** argv)
         return 1;
     }
     
-    info.command = command;
+    info.command = command!;
     
-    info.nodes = new vector<sNode*%>();
-    info.codes = new buffer();
+    info.nodes = new vector<sNode*%>.initialize();
+    info.codes = new buffer.initialize();
     
-    info.stack = new vector<ZVALUE*%>();
+    info.stack = new vector<ZVALUE*%>.initialize();
     
     initialize_modules();
     
     /// parse ///
-    info.p = info.command.to_buffer().to_pointer();
+    info.p = info.command;
     
     while(*info.p) {
         if(!parse(&info)) {
@@ -299,8 +299,8 @@ int main(int argc, char** argv)
     info.codes.append_int(0);  /// terminator
     
     /// vm ///
-    info.op = info.codes.to_int_pointer();
-    info.head = (char*)info.op.p;
+    info.op = (int*)info.codes.buf;
+    info.head = (int*)info.codes.buf;
     
     while(*info.op) {
         if(!vm(&info)) {

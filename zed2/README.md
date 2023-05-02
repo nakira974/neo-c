@@ -44,4 +44,6 @@ USAGE
     [1,3,4,10]
     > zed2 'sum=0; [1,4,3,10].each { sum = sum + it }; sum'
     18
+    > zed2 '"HELLO WORLD".scan(/./).map { if it != " " { it + "B" } else { it } }.join("")'
+    HBEBLBLBOB BWBOBRBLBDB
 ```

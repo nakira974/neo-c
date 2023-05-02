@@ -1259,6 +1259,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         LLVMTypeRef llvm_param_types[PARAMS_MAX];
         
         if(fun->mVarArgs) {
+            int i;
             for(i=0; i<fun->mNumParams; i++) {
                 sNodeType* node_type = clone_node_type(fun->mParamTypes[i]);
     
@@ -1274,6 +1275,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
             }
         }
         else {
+            int i;
             for(i=0; i<fun->mNumParams; i++) {
                 sNodeType* node_type = clone_node_type(fun->mParamTypes[i]);
     

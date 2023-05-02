@@ -129,9 +129,6 @@ src/parse_exp.c.o: src/parse_exp.c
 src/parse_op.c.o: src/parse_op.c
 	./comelang -o src/parse_op.c.o -c src/parse_op.c $(CFLAGS) -fPIC
 
-src/alignment.c.o: src/alignment.c
-	./comelang -o src/alignment.c.o -c src/alignment.c $(CFLAGS) -fPIC
-
 src/buffer.c.o: src/buffer.c
 	./comelang -o src/buffer.c.o -c src/buffer.c $(CFLAGS) -fPIC
 
@@ -186,11 +183,11 @@ src/typedef.c.o: src/typedef.c
 src/compiler.c.o: src/compiler.c
 	./comelang -o src/compiler.c.o -c src/compiler.c $(CFLAGS) -fPIC
 
-src/macro.c.o: src/macro.c
-	./comelang -o src/macro.c.o -c src/macro.c $(CFLAGS) -fPIC
-
 src/main.c.o: src/main.c
 	./comelang -o src/main.c.o -c src/main.c $(CFLAGS) -fPIC
+
+src/transpiler.c.o: src/transpiler.c
+	./comelang -o src/transpiler.c.o -c src/transpiler.c $(CFLAGS) -fPIC
 
 #########################################
 # Object files

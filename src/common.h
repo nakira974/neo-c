@@ -1203,7 +1203,6 @@ typedef struct sLabelStruct sLabel;
 
 
 void create_generics_struct_name(char* struct_name, size_t size, sNodeType* struct_type);
-void create_generics_struct_name2(char* class_name, char* struct_name, size_t size, sNodeType* struct_type);
 LLVMTypeRef create_llvm_type_from_node_type(sNodeType* node_type);
 LLVMTypeRef create_llvm_type_with_class_name(char* class_name);
 BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, LVALUE* rvalue, struct sCompileInfoStruct* info);

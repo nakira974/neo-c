@@ -488,7 +488,7 @@ Returns the sum of 1,2,3,4,5,6.
 ```
 
 ```
-    immutalbe list<char*>* li = ["AAA", "BBB"];
+    immutalbe list<char*>*% li = ["AAA", "BBB"];
     
     li.push_back("CCC");  /// compile error
 ```
@@ -972,7 +972,7 @@ You can be assured that the state of that argument will not change.
 immutable and mutable can be assigned to each other. However, the function specified by mutalbe cannot be called for the variable specified by immutable.
 
 変数はimmutableを指定することができます。immutableを指定された変数はmutable指定されたメソッドを呼び出すことができません。
-例えばlist<T>::push_backはmutable指定されています。そのためimmutable list<int>*などと宣言された変数にpush_backを呼び出すとコンパイルエラーとなります。
+例えばlist<T>::push_backはmutable指定されています。そのためimmutable list<int>*%などと宣言された変数にpush_backを呼び出すとコンパイルエラーとなります。
 
 immutableの意味ですが、immutable指定された変数は状態が変わらないことを保証します。equalsの結果は変化しません。
 list, vector, map, bufferもそのように設計されています。immutableのメリットですが関数の引数にオブジェクトを渡す場合immutable指定しておけば
@@ -1816,7 +1816,7 @@ template <R> R fun(R a, int b)
 
 int main() 
 {
-    sStruct<int>* data = new sStruct<int>;
+    sStruct<int>*% data = new sStruct<int>;
 
     xassert("method generics test", fun(1,2) == 3);
     xassert("method generics test", data.fun2(1,2) == 3);

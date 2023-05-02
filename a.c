@@ -181,7 +181,6 @@ int main(int argc, char** argv)
             }
             else if(fun_name === "each") {
                 if(params.length() == 0) {
-                a;
                     obj.listValue.each {
                         using unsafe;
                         

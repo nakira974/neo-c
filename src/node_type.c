@@ -81,7 +81,6 @@ sNodeType* clone_node_type(sNodeType* node_type)
     }
     node_type2->mSizeNum = node_type->mSizeNum;
     node_type2->mNullable = node_type->mNullable;
-    node_type2->mGuarded = node_type->mGuarded;
     node_type2->mImmutable = node_type->mImmutable;
     node_type2->mPointerNum = node_type->mPointerNum;
     node_type2->mHeap = node_type->mHeap;
@@ -92,7 +91,6 @@ sNodeType* clone_node_type(sNodeType* node_type)
     node_type2->mRegister = node_type->mRegister;
     node_type2->mVolatile = node_type->mVolatile;
     node_type2->mStatic = node_type->mStatic;
-    node_type2->mUniq = node_type->mUniq;
     node_type2->mDummyHeap = node_type->mDummyHeap;
     node_type2->mDynamicArrayNum = node_type->mDynamicArrayNum;
     node_type2->mArrayInitializeNum = node_type->mArrayInitializeNum;
@@ -519,35 +517,6 @@ BOOL is_number_class(sNodeType* node_type)
     return n;
 }
 
-BOOL check_the_same_fields(sNodeType* left_node, sNodeType* right_node)
-{
-    sCLClass* left_class = left_node->mClass;
-    sCLClass* right_class = right_node->mClass;
-
-    if(left_class->mNumFields != right_class->mNumFields)
-    {
-        return FALSE;
-    }
-
-    if(left_class->mNumFields == 0) {
-        return FALSE;
-    }
-
-    int i;
-    for(i=0; i<left_class->mNumFields; i++) {
-        sNodeType* left_field = left_class->mFields[i];
-        sNodeType* right_field = right_class->mFields[i];
-
-        if(!type_identify(left_field, right_field))
-        {
-            return FALSE;
-        }
-
-    }
-
-    return TRUE;
-}
-
 BOOL lambda_posibility(sNodeType* left_type, sNodeType* right_type)
 {
     if(left_type->mNumParams != right_type->mNumParams) {
@@ -745,18 +714,6 @@ BOOL substitution_posibility(sNodeType* left_type, sNodeType* right_type, LLVMVa
 /*
     if(!left_type->mNullable && right_type->mNullable) {
         return FALSE;
-    }
-*/
-    
-/*
-    if(left_type->mNullable != right_type->mNullable) {
-        if(left_type->mNullable && !right_type->mNullable) {
-        }
-        else if(!left_type->mNullable && right_type->mGuarded) {
-        }
-        else {
-            return FALSE;
-        }
     }
 */
     if(left_type->mHeap && !right_type->mHeap && right_obj && LLVMIsNull(right_obj) == 0)

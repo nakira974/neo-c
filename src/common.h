@@ -108,10 +108,7 @@ struct sVarTableStruct;
 /// main.c 
 //////////////////////////////
 extern BOOL gNCDebug;
-extern BOOL gNCUsingC;
 extern BOOL gNCGC;
-extern BOOL gNCClang;
-extern BOOL gNCNoMacro;
 extern BOOL gNCSafeMode;
 extern BOOL gNCCome;
 extern BOOL gNCTranspile;
@@ -146,15 +143,11 @@ struct sCLClassStruct {
 
     void* mUndefinedStructType;
 
-    int mVersion;
-
     char* mEnumElementNames[ENUM_ELEMENT_MAX];
     int mEnumElementValues[ENUM_ELEMENT_MAX];
     int mNumElementNum;
 
     BOOL mUser;
-    
-    BOOL mOpen;
     
     struct sCLClassStruct* mParent;
     BOOL mProtocol;
@@ -191,14 +184,12 @@ struct sNodeTypeStruct {
     int mArrayNum[ARRAY_DIMENTION_MAX];
     int mArrayDimentionNum;
     BOOL mNullable;
-    BOOL mGuarded;
     BOOL mUnsigned;
     int mPointerNum;
     BOOL mConstant;
     BOOL mRegister;
     BOOL mVolatile;
     BOOL mStatic;
-    BOOL mUniq;
     int mSizeNum;
     BOOL mImmutable;
 
@@ -251,8 +242,6 @@ void init_node_types();
 void free_node_types();
 
 char* make_type_name_string(sNodeType* node_type);
-
-BOOL check_the_same_fields(sNodeType* left_node, sNodeType* right_node);
 
 BOOL solve_typeof(sNodeType** node_type, struct sCompileInfoStruct* info);
 sNodeType* clone_node_type(sNodeType* node_type);
@@ -343,7 +332,6 @@ struct sVarStruct {
     struct sVarStruct* mRefferenceVar;
     
     BOOL mReturnValue;
-    BOOL mCalledMutable;
     
     BOOL mNoFree;
 };
@@ -415,7 +403,6 @@ struct sNodeBlockStruct
     int mSLine;
     
     BOOL mHasResult;
-    int mExternCLang;
 
     BOOL mTerminated;
     BOOL mFunctionBody;
@@ -734,8 +721,6 @@ enum { kNodeTypeLChar = kNodeTypeVaArg + 1, kNodeTypeWCString, kNodeTypeCreateLa
 static const BOOL gMultDivPlusPlusEnableNode[] = {
     1, 1, 1, 1, 1, 1, 1,     1, 1, 1, 0, 0, 1,     1, 0, 0, 1, 1, 0, 0,     1, 1, 0, 0, 1, 1, 1,     1, 0, 0, 0, 1, 1,     1, 0, 0, 1, 1, 1, 1, 1,     1, 1, 1, 1, 0, 1, 1, 1,     1, 1, 1, 1, 1, 1, 1, 1, 1,     1, 0, 0, 0, 1, 1, 1,     1, 1, 0, 1, 1, 0, 0,     0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0, 1, 1,     1, 0, 0, 1, 1, 0,     0, 0, 0, 0, 0, 0, 0,     0, 0, 1, 0, 0, 1, 1, 0,     0, 0, 0, 0, 0, 0, 0, 1,     1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0 
 };
-
-extern int gCompilePhase;
 
 struct sStructInitializer {
     char* mName;

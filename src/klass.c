@@ -119,8 +119,6 @@ static sCLClass* create_class(char* class_name_, BOOL primitive_, BOOL struct_, 
     klass->mMethodGenericsNum = method_generics_number;
     klass->mUndefinedStructType = NULL;
 
-    klass->mVersion = 0;
-
     klass->mFieldName = NULL;
     klass->mFields = NULL;
 

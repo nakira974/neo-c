@@ -46,8 +46,6 @@ BOOL parse_block(sNodeBlock* node_block, BOOL extern_c_lang, BOOL single_express
 
     skip_spaces_and_lf(info);
 
-    node_block->mExternCLang = extern_c_lang;
-
     if(!extern_c_lang) {
         info->mBlockLevel++;
     }
@@ -341,8 +339,6 @@ BOOL create_block(sNodeBlock** node_block, int num_nodes, unsigned int nodes[], 
     
     xstrncpy((*node_block)->mSName, info->sname, PATH_MAX);
     (*node_block)->mSLine = info->sline;
-
-    (*node_block)->mExternCLang = extern_c_lang;
 
     if(!extern_c_lang) {
         info->mBlockLevel++;

@@ -567,8 +567,6 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
     }
     
     if(!fun->mImmutable && var_) {
-        var_->mCalledMutable = TRUE;
-        
         if(var_->mRefferencedVar) {
             compile_err_msg(info, "%s is refferenced var by %s, so can't call mutable method", var_->mName, var_->mRefferencedVar->mName);
             return TRUE;

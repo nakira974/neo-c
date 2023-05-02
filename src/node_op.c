@@ -61,8 +61,6 @@ BOOL call_operator_function(char* fun_base_name, sNodeType* left_type, int num_p
     
     if(operator_fun != NULL) {
         if(!operator_fun->mImmutable && var_) {
-            var_->mCalledMutable = TRUE;
-            
             if(var_->mRefferencedVar) {
                 compile_err_msg(info, "%s is refferenced var by %s, so can't call mutable method", var_->mName, var_->mRefferencedVar->mName);
                 return TRUE;

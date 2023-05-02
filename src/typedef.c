@@ -77,11 +77,6 @@ void rehash_typedef()
 
 void add_typedef(char* name, sNodeType* node_type, BOOL user)
 {
-/*
-    if(gCompilePhase == 1 || gCompilePhase == 2) {
-        return;
-    }
-*/
     if(gNumTypeDef >= gSizeTypeDef/3) {
         rehash_typedef();
     }

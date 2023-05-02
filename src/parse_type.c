@@ -1417,7 +1417,6 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
     (*result_type)->mRegister = register_;
     (*result_type)->mVolatile = volatile_;
     (*result_type)->mStatic = static_;
-    (*result_type)->mUniq = uniq;
     (*result_type)->mImmutable = immutable_;
     
     if(no_heap) {

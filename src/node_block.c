@@ -467,6 +467,11 @@ BOOL skip_block(sParserInfo* info)
                 info->p++;
                 dquort = !dquort;
             }
+            else if(*info->p == '#') {
+                if(!parse_sharp(info)) {
+                    return FALSE;
+                }
+            }
             else if(*info->p == '{') {
                 info->p++;
 

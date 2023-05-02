@@ -305,7 +305,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
     if(inherit) {
         xstrncpy(fun_name, gFunctionName, VAR_NAME_MAX);
     }
-
+    
     int num_generics = gNodes[node].uValue.sFunctionCall.mNumGenerics;
     char generics_type_names[GENERICS_TYPES_MAX][VAR_NAME_MAX];
 

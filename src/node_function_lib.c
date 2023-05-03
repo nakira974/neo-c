@@ -55,7 +55,6 @@ sFunction* create_fun(char* name, int num_params, char** param_names, sNodeType*
     p->mVarArgs = var_args;
     p->mNumGenerics = num_generics;
     p->mExtern = extern_;
-    p->mUser = user;
     p->mImmutable = immutable_;
     p->mFlagAsmFunName = flag_asm_fun_name;
     p->mLLVMFunctionType = llvm_function_type;

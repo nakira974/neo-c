@@ -5331,7 +5331,6 @@ BOOL compile_struct(unsigned int node, sCompileInfo* info)
         }
     }
     else {
-
         char* struct_name = CLASS_NAME(node_type->mClass);
         create_llvm_struct_type(struct_name, node_type, NULL, undefined_body);
     }
@@ -5431,7 +5430,7 @@ BOOL store_obj_to_protocol(unsigned int interface_node, unsigned int obj_node, s
     }
 */
     
-    if(!protocol_type->mClass->mProtocol) {
+    if(!protocol_type->mClass->mFlags & CLASS_FLAGS_PROTOCOL) {
         compile_err_msg(info, "This is not protocol type");
         return TRUE;
     }
@@ -5769,7 +5768,7 @@ BOOL compile_object(unsigned int node, sCompileInfo* info)
 
     sFunction* constructor_fun = get_function_from_table(class_name);
     
-    BOOL protocol_ = node_type->mClass->mProtocol;
+    BOOL protocol_ = node_type->mClass->mFlags & CLASS_FLAGS_PROTOCOL;
     
     if(constructor_fun && num_params >= 0 && num_params == constructor_fun->mNumParams) {
         unsigned int node2 = sNodeTree_create_function_call(class_name, params, num_params, FALSE, FALSE, 0, info->pinfo);

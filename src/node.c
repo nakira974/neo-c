@@ -394,7 +394,7 @@ sFunction* create_finalizer_automatically(sNodeType* node_type, char* fun_name, 
         
         sBuf_append_char(&source, '{');
         
-        if(klass->mProtocol) {
+        if(klass->mFlags & CLASS_FLAGS_PROTOCOL) {
             char* name = "_protocol_obj";
             char source2[1024];
             snprintf(source2, 1024, "if(self != null && self.%s != null && self.finalize) { void (*finalizer)(void*) = self.finalize; finalizer(self._protocol_obj); igc_decrement_ref_count(self.%s); }\n", name, name);
@@ -437,7 +437,7 @@ sFunction* create_finalizer_automatically(sNodeType* node_type, char* fun_name, 
         for(i=0; i<num_params; i++) {
             sParserParam* param = params + i;
     
-            (void)add_variable_to_table(pinfo.lv_table, param->mName, param->mType, gNullLVALUE, -1, FALSE, FALSE, FALSE);
+            (void)add_variable_to_table(pinfo.lv_table, param->mName, param->mType, gNullLVALUE, -1, FALSE, FALSE);
         }
         
         if(parse_block_easy(&node_block, extern_c_lang, result_type_is_void, TRUE, &pinfo)) {
@@ -521,7 +521,7 @@ void increment_protocol_obj_ref_count(LLVMValueRef obj, sNodeType* protocol_type
 
 void increment_ref_count(LLVMValueRef obj, sNodeType* node_type, sCompileInfo* info)
 {
-    if(node_type->mClass->mProtocol) {
+    if(node_type->mClass->mFlags & CLASS_FLAGS_PROTOCOL) {
         increment_protocol_obj_ref_count(obj, node_type, info);
     }
     int num_params = 1;
@@ -633,7 +633,7 @@ sFunction* create_equals_automatically(sNodeType* node_type, char* fun_name, sCo
         for(i=0; i<num_params; i++) {
             sParserParam* param = params + i;
     
-            (void)add_variable_to_table(pinfo.lv_table, param->mName, param->mType, gNullLVALUE, -1, FALSE, FALSE, FALSE);
+            (void)add_variable_to_table(pinfo.lv_table, param->mName, param->mType, gNullLVALUE, -1, FALSE, FALSE);
         }
         
         if(parse_block_easy(&node_block, extern_c_lang, result_type_is_void, TRUE, &pinfo)) {
@@ -726,7 +726,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCom
             finalizer = get_function_from_table(fun_name);
         }
         
-        if(finalizer == NULL && !is_number_class(node_type) && gNCCome && !node_type->mClass->mProtocol)
+        if(finalizer == NULL && !is_number_class(node_type) && gNCCome && !(node_type->mClass->mFlags & CLASS_FLAGS_PROTOCOL))
         {
             finalizer = create_finalizer_automatically(node_type, fun_name, info);
         }
@@ -899,7 +899,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCom
             }
         }
         else {
-            if(node_type->mClass->mProtocol && node_type->mPointerNum == 1) {
+            if((node_type->mClass->mFlags & CLASS_FLAGS_PROTOCOL) && node_type->mPointerNum == 1) {
                 free_protocol_object(node_type, obj, info);
             }
             
@@ -1081,7 +1081,7 @@ sFunction* create_cloner_automatically(sNodeType* node_type, char* fun_name, sCo
         for(i=0; i<num_params; i++) {
             sParserParam* param = params + i;
     
-            (void)add_variable_to_table(pinfo.lv_table, param->mName, param->mType, gNullLVALUE, -1, FALSE, FALSE, FALSE);
+            (void)add_variable_to_table(pinfo.lv_table, param->mName, param->mType, gNullLVALUE, -1, FALSE, FALSE);
         }
         
         if(parse_block_easy(&node_block, extern_c_lang, result_type_is_void, TRUE, &pinfo)) {
@@ -1155,7 +1155,7 @@ LLVMValueRef clone_object(sNodeType* node_type, LLVMValueRef obj, sCompileInfo* 
         
         cloner = get_function_from_table(fun_name);
         
-        if(cloner == NULL && !node_type->mClass->mProtocol && !is_number_class(node_type) && node_type->mNumGenericsTypes == 0) {
+        if(cloner == NULL && !(node_type->mClass->mFlags & CLASS_FLAGS_PROTOCOL) && !is_number_class(node_type) && node_type->mNumGenericsTypes == 0) {
             cloner = create_cloner_automatically(node_type, fun_name, info);
         }
         
@@ -1307,7 +1307,7 @@ LLVMValueRef clone_object(sNodeType* node_type, LLVMValueRef obj, sCompileInfo* 
             }
         }
         
-        if(node_type->mClass->mProtocol && node_type->mPointerNum == 1) {
+        if((node_type->mClass->mFlags & CLASS_FLAGS_PROTOCOL) && node_type->mPointerNum == 1) {
             clone_protocol_object(node_type, obj, info);
         }
     }
@@ -3797,7 +3797,7 @@ BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, 
         (*right_type)->mHeap = heap;
     }
 
-    else if(type_identify_with_class_name(left_type, "protocol_obj_t") && right_class->mProtocol) {
+    else if(type_identify_with_class_name(left_type, "protocol_obj_t") && (right_class->mFlags & CLASS_FLAGS_PROTOCOL)) {
         if(rvalue && rvalue->value) {
             sNodeType* right_type2 = clone_node_type(*right_type);
             right_type2->mPointerNum = 0;
@@ -4648,9 +4648,6 @@ uint64_t get_size_from_node_type(sNodeType* node_type, int* alignment)
         }
     }
     else {
-        if(node_type2->mClass->mUndefinedStructType) {
-        }
-
         if(node_type->mPointerNum == 0 && (node_type->mClass->mFlags & CLASS_FLAGS_STRUCT)) {
             LLVMTypeRef llvm_type = create_llvm_type_from_node_type(node_type);
             result = get_alloc_size(llvm_type);

@@ -4,7 +4,6 @@ struct sTypeDefTable
 {
     char* mName;
     sNodeType* mItem;
-    BOOL mUser;
 };
 
 static struct sTypeDefTable* gTypeDefTable;
@@ -89,7 +88,6 @@ void add_typedef(char* name, sNodeType* node_type, BOOL user)
         if(p->mName == NULL) {
             p->mName = strdup(name);
             p->mItem = clone_node_type(node_type);
-            p->mUser = user;
 
             gNumTypeDef++;
             break;

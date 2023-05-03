@@ -107,7 +107,7 @@ static sCLClass* create_class(char* class_name_, BOOL primitive_, BOOL struct_, 
     
     klass->mFlags = 0;
 
-    klass->mFlags |= (primitive_ ? CLASS_FLAGS_PRIMITIVE:0) | (struct_ ? CLASS_FLAGS_STRUCT:0) | (number_type ? CLASS_FLAGS_NUMBER:0) | (unsigned_number ? CLASS_FLAGS_UNSIGNED_NUMBER:0) | (union_ ? CLASS_FLAGS_UNION:0) | (anonymous ? CLASS_FLAGS_ANONYMOUS:0) | (enum_ ? CLASS_FLAGS_ENUM:0) | (anonymous_var_name ? CLASS_FLAGS_ANONYMOUS_VAR_NAME:0);
+    klass->mFlags |= (primitive_ ? CLASS_FLAGS_PRIMITIVE:0) | (struct_ ? CLASS_FLAGS_STRUCT:0) | (number_type ? CLASS_FLAGS_NUMBER:0) | (unsigned_number ? CLASS_FLAGS_UNSIGNED_NUMBER:0) | (union_ ? CLASS_FLAGS_UNION:0) | (anonymous ? CLASS_FLAGS_ANONYMOUS:0) | (enum_ ? CLASS_FLAGS_ENUM:0) | (anonymous_var_name ? CLASS_FLAGS_ANONYMOUS_VAR_NAME:0) |  (protocol_ ? CLASS_FLAGS_PROTOCOL:0);
 
     if(generics_number >= 0) {
         klass->mFlags |= CLASS_FLAGS_GENERICS;
@@ -117,18 +117,12 @@ static sCLClass* create_class(char* class_name_, BOOL primitive_, BOOL struct_, 
     }
     klass->mGenericsNum = generics_number;
     klass->mMethodGenericsNum = method_generics_number;
-    klass->mUndefinedStructType = NULL;
 
     klass->mFieldName = NULL;
     klass->mFields = NULL;
 
     klass->mNumFields = 0;
 
-    klass->mUser = user;
-    
-    klass->mParent = parent;
-    klass->mProtocol = protocol_;
-    
     return klass;
 }
 
@@ -311,41 +305,16 @@ void add_fields_to_struct(sCLClass* klass, int num_fields, char** field_names, s
         klass->mNumFields = 0;
     }
     
-    /// append parent fieds ///
-    sCLClass* parent_class = klass->mParent;
+    klass->mFieldName = calloc(1, sizeof(char*)*num_fields);
+    klass->mFields = calloc(1, sizeof(sNodeType*)*num_fields);
     
-    if(parent_class) {
-        int num_fields2 = num_fields + parent_class->mNumFields;
-    
-        klass->mFieldName = calloc(1, sizeof(char*)*num_fields2);
-        klass->mFields = calloc(1, sizeof(sNodeType*)*num_fields2);
-        
-        int i;
-        for(i=0; i<parent_class->mNumFields; i++) {
-            klass->mFieldName[i] = strdup(parent_class->mFieldName[i]);
-            klass->mFields[i] = clone_node_type(parent_class->mFields[i]);
-        }
-    
-        /// go ///
-        for(i=0; i<num_fields; i++) {
-            klass->mFieldName[i+parent_class->mNumFields] = strdup(field_names[i]);
-            klass->mFields[i+parent_class->mNumFields] = clone_node_type(fields[i]);
-        }
-    
-        klass->mNumFields = num_fields2;
+    int i;
+    for(i=0; i<num_fields; i++) {
+        klass->mFieldName[i] = strdup(field_names[i]);
+        klass->mFields[i] = clone_node_type(fields[i]);
     }
-    else {
-        klass->mFieldName = calloc(1, sizeof(char*)*num_fields);
-        klass->mFields = calloc(1, sizeof(sNodeType*)*num_fields);
-        
-        int i;
-        for(i=0; i<num_fields; i++) {
-            klass->mFieldName[i] = strdup(field_names[i]);
-            klass->mFields[i] = clone_node_type(fields[i]);
-        }
-    
-        klass->mNumFields = num_fields;
-    }
+
+    klass->mNumFields = num_fields;
 }
 
 void add_fields_to_open_class(sCLClass* klass, int num_fields, char** field_names, struct sNodeTypeStruct** fields)

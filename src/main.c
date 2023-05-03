@@ -2,7 +2,7 @@
 #include <libgen.h>
 
 char* gVersion;
-BOOL gNCGC = FALSE;
+BOOL gNCGC = TRUE;
 BOOL gNCDebug = FALSE;
 char gFName[PATH_MAX];
 sVarTable* gModuleVarTable;
@@ -319,7 +319,7 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
 
 int main(int argc, char** argv)
 {
-    gVersion = "1.0.1";
+    gVersion = "1.0.2";
     
     setlocale(LC_ALL, "");
     

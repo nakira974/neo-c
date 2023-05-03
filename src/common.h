@@ -128,6 +128,7 @@ extern struct sVarTableStruct* gModuleVarTable;
 #define CLASS_FLAGS_ANONYMOUS 0x080
 #define CLASS_FLAGS_ENUM 0x100
 #define CLASS_FLAGS_ANONYMOUS_VAR_NAME 0x200
+#define CLASS_FLAGS_PROTOCOL 0x400
 
 struct sCLClassStruct {
     long long mFlags;
@@ -140,17 +141,10 @@ struct sCLClassStruct {
     char** mFieldName;
     struct sNodeTypeStruct** mFields;
     int mNumFields;
-
-    void* mUndefinedStructType;
-
+    
     char* mEnumElementNames[ENUM_ELEMENT_MAX];
     int mEnumElementValues[ENUM_ELEMENT_MAX];
     int mNumElementNum;
-
-    BOOL mUser;
-    
-    struct sCLClassStruct* mParent;
-    BOOL mProtocol;
 };
 
 #define CLASS_NAME(klass) (klass->mName)
@@ -325,8 +319,6 @@ struct sVarStruct {
     struct sVarStruct* mRefferenceVar;
     
     BOOL mReturnValue;
-    
-    BOOL mNoFree;
 };
 
 typedef struct sVarStruct sVar;
@@ -359,7 +351,7 @@ void create_current_stack_frame_struct(char* type_name, sVarTable* lv_table);
 void check_already_added_variable(sVarTable* table, char* name, struct sParserInfoStruct* info);
 
 // result: (true) success (false) overflow the table or a variable which has the same name exists
-BOOL add_variable_to_table(sVarTable* table, char* name, sNodeType* type_, LVALUE llvm_value, int index, BOOL global, BOOL alloca_value, BOOL no_free);
+BOOL add_variable_to_table(sVarTable* table, char* name, sNodeType* type_, LVALUE llvm_value, int index, BOOL global, BOOL alloca_value);
 
 // result: (null) not found (sVar*) found
 sVar* get_variable_from_table(sVarTable* table, char* name);
@@ -396,8 +388,6 @@ struct sNodeBlockStruct
     int mSLine;
     
     BOOL mHasResult;
-
-    BOOL mTerminated;
     BOOL mFunctionBody;
 };
 
@@ -1049,8 +1039,8 @@ struct sNodeTreeStruct
         struct {
             BOOL mLoad;
             BOOL mInhibitUnwrap;
-	    BOOL mSafeMode;
-	    BOOL mNCCome;
+            BOOL mSafeMode;
+            BOOL mNCCome;
         } sUnwrap;
     } uValue;
 };
@@ -1132,7 +1122,6 @@ struct sFunctionStruct
     int mNumMethodGenerics;
     char* mMethodGenericsTypeNames[GENERICS_TYPES_MAX];
     char* mAsmFunName;
-    BOOL mUser;
     char* mSource;
     char mSName[PATH_MAX];
     int mSLine;

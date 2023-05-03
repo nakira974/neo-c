@@ -8,7 +8,7 @@ Yet another modern compiler. It has a collection and string library using Boehm 
 もう一つのモダンコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 1.0.1
+version 1.0.2
 
 ``` C
 #include <comelang.h>
@@ -206,7 +206,7 @@ a.c,b.c,c.c
 
 1. It is compatible with C language in some content. The C preprocessor also works.
 
-2. The default heap system is original refference count heap system. With -gc option enable Boehm GC with reffrece count.
+2. The default heap system is boehm GC with reffrence count, optionally my original refference count heap system with -no-gc option.
 
 3. It has Generics, Method Generics, inline function, debug info (-g option), and lambda.
 
@@ -238,7 +238,7 @@ a.c,b.c,c.c
 
 1. C言語とある程度の互換性があります。Cプリプロセッサーも動きます。
 
-2. オリジナルのリファレンスカウントを使ったヒープ管理をします。-gcオプションでboehmGCを使ったヒープ管理をします。
+2. boehmGCを使ったヒープ管理をします。オプションとして-no-gcとするとオリジナルのリファレンスカウントGCが使えます。
 
 3. ジェネリクス、メソッドジェネリクス、インライン関数、デバッグ情報、ラムダをサポートします。
 
@@ -330,6 +330,13 @@ in termux
 bash xhome_build.sh
 ```
 
+# History
+
+From version 1.0.2 The default GC system is boehmGC. I think it's easier than my original heap system. Let's enjoy easy programing.
+
+バージョン1.0.2よりデフォルトのGCシステムがboehmGCになりました。こっちのほうが簡単なんで。簡単なプログラミングを楽しみましょう。
+
+
 # Language specifications
 
 It is almost the same as C language. Since it is not POSIX compliant, it is not compatible with C language in every detail, but I think that anyone who can use C language can use it immediately. If you don't use the heap system and do #include <comelang.h>, you can just use it as a C compiler. 
@@ -364,12 +371,11 @@ If you want to object file only, use -c option.
 
 # Boehm GC libraries
 
-With -gc option for boehm GC, enable boehmGC and disable original heap system. The default heap system is original heap system.
+With -no-gc option for my orignal refference count gc, enable my original refference count GC and disable boehmGC. The default heap system is boehm GC.
 
-オリジナルヒープシステムはデフォルトです。boehmGCを使うには-gcをオプションに加えてください。
+boehmGCはデフォルトです。オリジナルのリファレンスカウントGCを使うには-no-gcをオプションに加えてください。
 
 comelang uses boethm gc with reffrence count, so no stop the world in your application.
-
 
 boehmGCはリファレンスカウントをデフォルトにしているため、画面が固まることもないとおもいます。
 
@@ -2229,17 +2235,19 @@ removed.
 
 removed.
 
-# Postscript
+# あとがき
 
 ダンジリングポインタについては僕は防ぐのは自明なので、あんまどうでもいいですね
-。あれがわかってないとC言語わかっているとは言えないような。というかCPUとメモリについて。
-まあ、一応今防ぐ仕組み入ってますが、消すかもしれません
-自明すぎて
-ダンジリングポインタでセグってC言語嫌いになられては嫌ですが
-やっぱ入れとくか
-一応ある程度はメモリセーフです。comelang
-コンパイラ自体がセグることは論外ですがたまにあります
-実行時の実行ファイルはあまりセグらないと思います
+。
+あれがわかってないとC言語わかっているとは言えないような。
+というかCPUとメモリについて。
+まあ、一応今防ぐ仕組み入ってますが、消すかもしれません。
+自明すぎて。
+ダンジリングポインタでセグってC言語嫌いになられては嫌ですが。
+やっぱ入れとくか。
+一応ある程度はメモリセーフです。comelang。
+コンパイラ自体がセグることは論外ですがたまにあります。
+実行時の実行ファイルはあまりセグらないと思います.
 まあリファクタリングとメモリセーフが課題ですかね
 メモリの管理については慣れが必要です
 まあ、結局メモリとCPUがわかってないと無理かもしれません
@@ -2265,6 +2273,7 @@ zedはきれいなソースですよ。多分初心者が読んでも読める�
 borrow , dummy_heapあたりは難しいと思います
 ただ慣れれば割と楽にかけるとは思います
 まあ、あとはリファクタリングとメモリセーフを追求します。
+
 C言語については思い残すところがありません。30年間楽しみをありがとう。
 UNIX, C, vi, sed, awk, perl, ruby, pythonあたりの製作者に深く感謝です。
 30年間楽しませてもらいました。まだまだ楽しみたいと思います。

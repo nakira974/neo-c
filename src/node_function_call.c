@@ -52,7 +52,7 @@ BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_meth
     sVarTable* block_var_table = info2.lv_table;
 
     for(i=0; i<num_params; i++) {
-        if(!add_variable_to_table(info2.lv_table, param_names[i], fun->mParamTypes[i], gNullLVALUE, -1, FALSE, FALSE, FALSE))
+        if(!add_variable_to_table(info2.lv_table, param_names[i], fun->mParamTypes[i], gNullLVALUE, -1, FALSE, FALSE))
         {
             compile_err_msg(info, "overflow variable table");
             return FALSE;
@@ -1116,7 +1116,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         sVarTable* block_var_table = info2.lv_table;
 
         for(i=0; i<num_params; i++) {
-            if(!add_variable_to_table(info2.lv_table, param_names[i], fun->mParamTypes[i], gNullLVALUE, -1, FALSE, FALSE, FALSE))
+            if(!add_variable_to_table(info2.lv_table, param_names[i], fun->mParamTypes[i], gNullLVALUE, -1, FALSE, FALSE))
             {
                 compile_err_msg(info, "overflow variable table");
                 return FALSE;

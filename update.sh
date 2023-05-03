@@ -76,4 +76,7 @@ echo vin
 echo zed
 (cd zed && rm -rf .git && git init && bash update.sh)
 
+echo zed2
+(cd zed2 && rm -rf .git && git init && bash update.sh)
+
 

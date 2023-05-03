@@ -1,14 +1,14 @@
 #include <comelang.h>
 #include "common.h"
 
-struct sStoreNode
+ struct sStoreNode
 {
     int id;
     wstring var_name;
     sNode*% right;
 };
 
-sStoreNode*% sStoreNode*::initialize(sStoreNode*% self, wstring var_name, sNode*% right)
+ sStoreNode*% sStoreNode*::initialize(sStoreNode*% self, wstring var_name, sNode*% right)
 {
     self.id = gNodeID++;
     self.var_name = var_name;
@@ -17,7 +17,7 @@ sStoreNode*% sStoreNode*::initialize(sStoreNode*% self, wstring var_name, sNode*
     return self;
 }
 
-bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
+ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
 {
     if(!self.right.compile->(info)) {
         return false;
@@ -31,18 +31,18 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
     return true;
 }
 
-unsigned int sStoreNode*::id(sStoreNode* self)
+ unsigned int sStoreNode*::id(sStoreNode* self)
 {
     return self.id;
 }
 
-struct sLoadNode
+ struct sLoadNode
 {
     int id;
     wstring var_name;
 };
 
-sLoadNode*% sLoadNode*::initialize(sLoadNode*% self, wstring var_name)
+ sLoadNode*% sLoadNode*::initialize(sLoadNode*% self, wstring var_name)
 {
     self.id = gNodeID++;
     self.var_name = var_name;
@@ -50,7 +50,7 @@ sLoadNode*% sLoadNode*::initialize(sLoadNode*% self, wstring var_name)
     return self;
 }
 
-bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
+ bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
 {
     info.codes.append_int(OP_LOAD);
     
@@ -61,19 +61,19 @@ bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
     return true;
 }
 
-unsigned int sLoadNode*::id(sLoadNode* self)
+ unsigned int sLoadNode*::id(sLoadNode* self)
 {
     return self.id;
 }
 
-struct sLoadElementNode
+ struct sLoadElementNode
 {
     int id;
     string var_name;
     sNode*% index;
 };
 
-sLoadElementNode*% sLoadElementNode*::initialize(sLoadElementNode*% self, string var_name, sNode*% index)
+ sLoadElementNode*% sLoadElementNode*::initialize(sLoadElementNode*% self, string var_name, sNode*% index)
 {
     self.id = gNodeID++;
     
@@ -83,12 +83,12 @@ sLoadElementNode*% sLoadElementNode*::initialize(sLoadElementNode*% self, string
     return self;
 }
 
-unsigned int sLoadElementNode*::id(sLoadElementNode* self)
+ unsigned int sLoadElementNode*::id(sLoadElementNode* self)
 {
     return self.id;
 }
 
-bool sLoadElementNode*::compile(sLoadElementNode* self, sInfo* info)
+ bool sLoadElementNode*::compile(sLoadElementNode* self, sInfo* info)
 {
     sNode* index = self.index;
     
@@ -106,7 +106,7 @@ bool sLoadElementNode*::compile(sLoadElementNode* self, sInfo* info)
     return true;
 }
 
-struct sStoreElementNode
+ struct sStoreElementNode
 {
     int id;
     string var_name;
@@ -114,7 +114,7 @@ struct sStoreElementNode
     sNode*% right;
 };
 
-sStoreElementNode*% sStoreElementNode*::initialize(sStoreElementNode*% self, string var_name, sNode*% index, sNode*% right)
+ sStoreElementNode*% sStoreElementNode*::initialize(sStoreElementNode*% self, string var_name, sNode*% index, sNode*% right)
 {
     self.id = gNodeID++;
     
@@ -125,12 +125,12 @@ sStoreElementNode*% sStoreElementNode*::initialize(sStoreElementNode*% self, str
     return self;
 }
 
-unsigned int sStoreElementNode*::id(sStoreElementNode* self)
+ unsigned int sStoreElementNode*::id(sStoreElementNode* self)
 {
     return self.id;
 }
 
-bool sStoreElementNode*::compile(sStoreElementNode* self, sInfo* info)
+ bool sStoreElementNode*::compile(sStoreElementNode* self, sInfo* info)
 {
     sNode* index = self.index;
     
@@ -153,30 +153,32 @@ bool sStoreElementNode*::compile(sStoreElementNode* self, sInfo* info)
     return true;
 }
 
-map<wstring, ZVALUE*%>* gVars;
+ map<wstring, ZVALUE*%>* gVars;
 
 ZVALUE gNullValue;
 
-void initialize_modules() version 2
+void initialize_modules()
 {
     gVars = borrow new map<wstring, ZVALUE*%>();
     gNullValue.kind = kNullValue;
 }
 
-void finalize_modules() version 2
+void finalize_modules()
 {
     delete gVars;
 }
 
-bool vm(sInfo* info) version 7
+bool vm(sInfo* info) version 3
 {
+    inherit(info);
+    
     switch(*info->op) {
         case OP_STORE: {
             info->op++;
             
             wstring var_name = get_str_from_codes(info);
             
-            ZVALUE* right_value = info.stack[-1];
+            ZVALUE*? right_value = info.stack[-1];
             
             gVars.insert(var_name, clone right_value);
             
@@ -308,18 +310,16 @@ bool vm(sInfo* info) version 7
             }
             break;
             
-        default:
-            return inherit(info);
     }
     
     return true;
 }
 
-sNode* exp_node(sInfo* info) version 5
+sNode*? exp_node(sInfo* info) version 3
 {
-    sNode* result = null;
+    sNode*? result = null;
     
-    buffer*% var_name = null;
+    buffer*%? var_name = null;
     
     if(xisalpha(*info->p)) {
         var_name = new buffer();
@@ -335,14 +335,18 @@ sNode* exp_node(sInfo* info) version 5
             info->p++;
             skip_spaces(info);
             
-            sNode* node = expression(info);
+            sNode*? node = expression(info);
             
             if(node == null) {
                 fprintf(stderr, "require right value\n");
                 exit(2);
             }
             
-            result = borrow new sNode(new sStoreNode(var_name.to_string().to_wstring(), dummy_heap node));
+            sNode*? result = borrow new sNode(new sStoreNode(var_name.to_string().to_wstring(), clone node));
+            
+            delete node;
+            
+            return result;
         }
         else {
            result = borrow new sNode(new sLoadNode(var_name.to_string().to_wstring()));
@@ -356,7 +360,7 @@ sNode* exp_node(sInfo* info) version 5
         info->p++;
         skip_spaces(info);
         
-        sNode* node = expression(info);
+        sNode*? node = expression(info);
         
         if(node == null) {
             fprintf(stderr, "require index value\n");
@@ -372,23 +376,26 @@ sNode* exp_node(sInfo* info) version 5
             info->p++;
             skip_spaces(info);
             
-            sNode* node2 = expression(info);
+            sNode*? node2 = expression(info);
             
             if(node2 == null) {
                 fprintf(stderr, "require right value\n");
                 exit(2);
             }
             
-            sNode* result2 = borrow new sNode(new sStoreElementNode(var_name.to_string(), dummy_heap node, dummy_heap node2));
+            sNode*? result2 = borrow new sNode(new sStoreElementNode(var_name.to_string(), clone node, clone node2));
             
             delete result;
+            delete node;
+            delete node2;
             
             result = result2;
         }
         else {
-            sNode* result2 = borrow new sNode(new sLoadElementNode(var_name.to_string(), dummy_heap node))
+            sNode*? result2 = borrow new sNode(new sLoadElementNode(var_name.to_string(), clone node))
             
             delete result;
+            delete node;
             
             result = result2;
         }

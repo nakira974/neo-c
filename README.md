@@ -232,9 +232,9 @@ a.c,b.c,c.c
 
 15. Simple exception statment
 
-16. Detect dangling pointer
+16. Detect dangling pointer in some content.
 
-17 In safe mode, runtime is memory safe. no segmention fault
+17 In safe mode, runtime is memory safe. no segmention fault in some content.jjjjjkkkkkjj
 
 1. C言語とある程度の互換性があります。Cプリプロセッサーも動きます。
 
@@ -2229,7 +2229,7 @@ removed.
 
 removed.
 
-# あとがき
+# Postscript
 
 ダンジリングポインタについては僕は防ぐのは自明なので、あんまどうでもいいですね
 。あれがわかってないとC言語わかっているとは言えないような。というかCPUとメモリについて。
@@ -2277,7 +2277,8 @@ comelangが作れました。割と良いものが作れたと思います。
 come together!
 
 
-Postscript
+# Postscript
+
 As for the dangling pointer, it's self-evident for me to prevent it, so I don't care. If you don't understand that, you can't say you understand the C language. About CPU and memory. Well, I have a mechanism to prevent it now, but I might delete it. is. It's out of the question that the comelang compiler itself segregates, but it happens sometimes.I don't think the executable file at runtime will segregate much.I guess refactoring and memory safety are issues.It's necessary to get used to managing memory.Well, after all, memory and CPU It may be impossible if you don't understand it However, STW does not occur, and the performance is reasonable. And it's faster than Python, isn't it? Also, zed is pretty good as a result. I think zed is enough for text processing. /) { if it == " " { it } else { it + "B" }' => HBEBBLLBOB WBOBBRBLBDB Isn't it fun? I would like to say that you should read the source manual, but I will write it again. The source is written in mixin-layers, so I think it can be used as a VM sample. mixin-layers. Mixin-layers is a technique to create software layer by layer, which is the same as photoshop layers. Debugging can also be started from a small layer, and bugs can be found. Even if there are multiple layers, the software is complete at any layer, so zed is a clean source. I think even beginners can read it. Well, I think it's better to use boehmGC as the default when it comes to readability, but I think borrow and dummy_heap are difficult. Pursue refactoring and memory safety. I have no regrets about the C language. Thank you for 30 years of fun. I am deeply grateful to the creators of UNIX, C, vi, sed, awk, perl, ruby, and python. I have enjoyed it for 30 years. I still want to enjoy it.
 
 comelang is dedicated to his wife, Yuka, and his dog, Hachi, a Shiba Inu. My wife treated me with a big heart, even though I'm a computer geek, and my marriage was going well, so I was able to create comelang. I think I made something pretty good. I still enjoy it. Let's have fun together. come together!

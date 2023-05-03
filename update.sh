@@ -17,6 +17,11 @@ then
     (cd zed && make distclean)
 fi
 
+if [ -e zed2/Makefile ]
+then
+    (cd zed2 && make distclean)
+fi
+
 if [ -e shsh/Makefile ]
 then
     (cd shsh && make distclean)

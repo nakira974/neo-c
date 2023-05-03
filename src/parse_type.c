@@ -524,8 +524,6 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                 pointer_num = (*result_type)->mPointerNum;
                 //typedef_pointer_num = (*result_type)->mPointerNum;
                 immutable_ = (*result_type)->mImmutable;
-                
-                xstrncpy((*result_type)->mTypeName, type_name, VAR_NAME_MAX);
             }
         }
 
@@ -1437,11 +1435,6 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
     }
     
     (*result_type)->mOriginalPointerNum = parser_pointer_num;
-
-    if(strcmp((*result_type)->mTypeName, "") != 0)
-    {
-        (*result_type)->mTypePointerNum = parser_pointer_num;
-    }
     
     if(func_pointer_name && parse_parametor_type_name) {
         char* p = info->p;

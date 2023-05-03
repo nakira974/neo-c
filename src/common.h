@@ -130,7 +130,7 @@ extern struct sVarTableStruct* gModuleVarTable;
 #define CLASS_FLAGS_ANONYMOUS_VAR_NAME 0x200
 
 struct sCLClassStruct {
-    clint64 mFlags;
+    long long mFlags;
 
     char* mName;
 
@@ -175,7 +175,8 @@ sCLClass* clone_class(sCLClass* klass);
 //////////////////////////////
 /// node_type.c
 //////////////////////////////
-struct sNodeTypeStruct {
+struct sNodeTypeStruct 
+{
     sCLClass* mClass;
 
     struct sNodeTypeStruct* mGenericsTypes[GENERICS_TYPES_MAX];
@@ -183,6 +184,12 @@ struct sNodeTypeStruct {
 
     int mArrayNum[ARRAY_DIMENTION_MAX];
     int mArrayDimentionNum;
+
+    struct sNodeTypeStruct* mParamTypes[PARAMS_MAX];  // lambda
+    struct sNodeTypeStruct* mResultType;
+    BOOL mVarArgs;
+    int mNumParams;
+    
     BOOL mNullable;
     BOOL mUnsigned;
     int mPointerNum;
@@ -192,11 +199,6 @@ struct sNodeTypeStruct {
     BOOL mStatic;
     int mSizeNum;
     BOOL mImmutable;
-
-    struct sNodeTypeStruct* mParamTypes[PARAMS_MAX];
-    struct sNodeTypeStruct* mResultType;
-    BOOL mVarArgs;
-    int mNumParams;
 
     BOOL mHeap;
     BOOL mDummyHeap;
@@ -208,13 +210,6 @@ struct sNodeTypeStruct {
     int mArrayInitializeNum;
 
     unsigned int mTypeOfExpression;
-
-    int mFinalizeGenericsFunNum;
-
-    int mNumFields;
-
-    char mTypeName[VAR_NAME_MAX];
-    int mTypePointerNum;
 
     char mOriginalTypeName[VAR_NAME_MAX];
     int mOriginalPointerNum;
@@ -321,12 +316,10 @@ struct sVarStruct {
 
     int mBlockLevel;
 
-    BOOL mReadOnly;
     LVALUE mLLVMValue;
 
     BOOL mGlobal;
     BOOL mAllocaValue;
-    BOOL mParamVar;
     
     struct sVarStruct* mRefferencedVar;
     struct sVarStruct* mRefferenceVar;
@@ -366,7 +359,7 @@ void create_current_stack_frame_struct(char* type_name, sVarTable* lv_table);
 void check_already_added_variable(sVarTable* table, char* name, struct sParserInfoStruct* info);
 
 // result: (true) success (false) overflow the table or a variable which has the same name exists
-BOOL add_variable_to_table(sVarTable* table, char* name, sNodeType* type_, BOOL readonly, LVALUE llvm_value, int index, BOOL global, BOOL alloca_value, BOOL param, BOOL no_free);
+BOOL add_variable_to_table(sVarTable* table, char* name, sNodeType* type_, LVALUE llvm_value, int index, BOOL global, BOOL alloca_value, BOOL no_free);
 
 // result: (null) not found (sVar*) found
 sVar* get_variable_from_table(sVarTable* table, char* name);

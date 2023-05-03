@@ -77,12 +77,6 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
         left_node = sNodeTree_create_unwrap(left_node, FALSE, info);
         sVar* var_ = get_variable_from_table(info->lv_table, var_name);
 
-        if(var_ && var_->mReadOnly) {
-            parser_err_msg(info, "This is readonly variable.");
-            *node = 0;
-            return TRUE;
-        }
-
         unsigned int right_node = sNodeTree_create_int_value(1, info);
 
         *node = sNodeTree_create_sub(left_node, right_node, 0, TRUE, info);
@@ -2953,7 +2947,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                         BOOL global = info->mBlockLevel == 0;
                         BOOL alloc = TRUE;
                         check_already_added_variable(info->lv_table, name, info);
-                        if(!add_variable_to_table(info->lv_table, name, result_type, FALSE, gNullLVALUE, -1, global, FALSE, FALSE, FALSE))
+                        if(!add_variable_to_table(info->lv_table, name, result_type, gNullLVALUE, -1, global, FALSE, FALSE))
                         {
                             fprintf(stderr, "overflow variable table\n");
                             exit(2);

@@ -544,12 +544,6 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
         left_type = var_->mType;
     }
     
-    BOOL readonly = var_->mReadOnly;
-    
-    if(readonly) {
-        left_type->mImmutable = TRUE;
-    }
-    
     if(is_typeof_type(left_type))
     {
         if(!solve_typeof(&left_type, info))
@@ -1044,12 +1038,6 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
                 increment_ref_count(rvalue.value, right_type2, info);
             }
         }
-        
-        BOOL readonly = var_->mReadOnly;
-        
-        if(readonly) {
-            left_type->mImmutable = TRUE;
-        }
     
         BOOL constant = var_->mType->mConstant;
         if(alloc) {
@@ -1144,9 +1132,6 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
             }
         }
         else if(constant) {
-            if(var_->mReadOnly) {
-                compile_err_msg(info, "%s is readonly and immutable", var_names[j]);
-            }
             if(var_->mType->mConstant && !var_->mGlobal) {
                 compile_err_msg(info, "%s is constant(3)", var_names[j]);
             }
@@ -1164,9 +1149,6 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
             info->type = left_type;
         }
         else {
-            if(var_->mReadOnly) {
-                compile_err_msg(info, "%s is readonly and immutable", var_names[j]);
-            }
             if(var_->mType->mConstant && !var_->mGlobal) {
                 compile_err_msg(info, "%s is constant(4)", var_names[j]);
             }

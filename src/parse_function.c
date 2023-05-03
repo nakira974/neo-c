@@ -675,8 +675,7 @@ BOOL parse_come_function(unsigned int* node, char* struct_name, sParserInfo* inf
         for(i=0; i<num_params; i++) {
             sParserParam* param = params + i;
 
-            BOOL readonly = FALSE;
-            if(!add_variable_to_table(info->lv_table, param->mName, param->mType, readonly, gNullLVALUE, -1, FALSE, FALSE, TRUE, FALSE))
+            if(!add_variable_to_table(info->lv_table, param->mName, param->mType, gNullLVALUE, -1, FALSE, FALSE, FALSE))
             {
                 return FALSE;
             }
@@ -854,8 +853,7 @@ BOOL parse_function(unsigned int* node, sNodeType* result_type, char* fun_name, 
         for(i=0; i<num_params; i++) {
             sParserParam* param = params + i;
 
-            BOOL readonly = FALSE;
-            if(!add_variable_to_table(info->lv_table, param->mName, param->mType, readonly, gNullLVALUE, -1, FALSE, FALSE, TRUE, FALSE))
+            if(!add_variable_to_table(info->lv_table, param->mName, param->mType, gNullLVALUE, -1, FALSE, FALSE, FALSE))
             {
                 return FALSE;
             }
@@ -1007,8 +1005,7 @@ BOOL parse_class(unsigned int* node, sParserInfo* info)
         for(i=0; i<num_params; i++) {
             sParserParam* param = params + i;
     
-            BOOL readonly = FALSE;
-            if(!add_variable_to_table(info->lv_table, param->mName, param->mType, readonly, gNullLVALUE, -1, FALSE, FALSE, TRUE, FALSE))
+            if(!add_variable_to_table(info->lv_table, param->mName, param->mType, gNullLVALUE, -1, FALSE, FALSE, FALSE))
             {
                 return FALSE;
             }
@@ -1650,8 +1647,7 @@ BOOL parse_function_pointer_result_function(unsigned int* node, BOOL* array_poin
             for(i=0; i<num_params; i++) {
                 sParserParam* param = params + i;
     
-                BOOL readonly = FALSE;
-                if(!add_variable_to_table(info->lv_table, param->mName, param->mType, readonly, gNullLVALUE, -1, FALSE, FALSE, TRUE, FALSE))
+                if(!add_variable_to_table(info->lv_table, param->mName, param->mType, gNullLVALUE, -1, FALSE, FALSE, FALSE))
                 {
                     return FALSE;
                 }

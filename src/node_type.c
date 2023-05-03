@@ -116,11 +116,6 @@ sNodeType* clone_node_type(sNodeType* node_type)
     }
     node_type2->mVarArgs = node_type->mVarArgs;
 
-    node_type2->mNumFields = node_type->mNumFields;
-
-    xstrncpy(node_type2->mTypeName, node_type->mTypeName, VAR_NAME_MAX);
-    node_type2->mTypePointerNum = node_type->mTypePointerNum;
-    
     node_type2->mArrayPointer = node_type->mArrayPointer;
     node_type2->mOmitArrayNum = node_type->mOmitArrayNum;
     node_type2->mOriginalOmitArrayNum = node_type->mOriginalOmitArrayNum;

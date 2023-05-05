@@ -1,10 +1,14 @@
 #include <comelang.h>
 
+struct sInfo
+{
+    string a;
+    string b;
+};
+
 int main(int argc, char** argv)
 {
-    string result2 = wstring("ABC").to_string().replace(1, 'D');
-    
-    puts(result2);
+    sInfo info;
     
     return 0;
 }

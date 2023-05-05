@@ -1341,6 +1341,22 @@ void set_caller_sline(int sline)
 
 void init_nodes(char* sname)
 {
+    LLVMInitializeNativeTarget();
+    LLVMInitializeNativeAsmPrinter();
+    char* triple = LLVMGetDefaultTargetTriple();
+    char* error;
+    LLVMTargetRef target_ref;
+    if (LLVMGetTargetFromTriple(triple, &target_ref, &error)) {
+        printf("Error: %s\n", error);
+        exit(0);
+    }
+    LLVMTargetMachineRef tm_ref = LLVMCreateTargetMachine(
+          target_ref, triple, "", "", LLVMCodeGenLevelDefault
+          , LLVMRelocStatic, LLVMCodeModelJITDefault);
+    
+    LLVMDisposeMessage(triple);
+
+    
     // create context, module and builder
     gContext = LLVMContextCreate();
 /*
@@ -1350,6 +1366,12 @@ void init_nodes(char* sname)
 */
     gModule = LLVMModuleCreateWithNameInContext(sname, gContext);
     gBuilder = LLVMCreateBuilderInContext(gContext);
+
+    LLVMSetTarget(gModule, LLVMGetDefaultTargetTriple());
+    LLVMTargetDataRef datalayout = LLVMCreateTargetDataLayout(tm_ref);
+    char* datalayout_str = LLVMCopyStringRepOfTargetData(datalayout);
+    LLVMSetDataLayout(gModule, datalayout_str);
+    LLVMDisposeMessage(datalayout_str);
 
     gLLVMStack = (LVALUE*)calloc(1, sizeof(LVALUE)*NEO_C_STACK_SIZE);
     gLLVMStackHead = gLLVMStack;

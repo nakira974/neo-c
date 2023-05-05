@@ -275,12 +275,11 @@ impl vector<T>
         }
     }
     
-    immutable vector<T>* to_immutable(vector<T>* self) {
-        return self;
+    immutable vector<T>*% to_immutable(vector<T>* self) {
+        return clone self;
     }
     
     vector<T>*% operator_add(vector<T>* left, vector<T>* right) {
-    
         vector<T>*% result = new vector<T>.initialize();
         
         foreach(it, left) {
@@ -345,7 +344,7 @@ impl vector<T>
         return self.item(index, default_value!);
     }
     
-    vector<T>* push_back(vector<T>* self, T` item) mutable {
+    void push_back(vector<T>* self, T` item) mutable {
         managed item;
         
         if(self.len == self.size) {
@@ -366,8 +365,6 @@ impl vector<T>
 
         self.items[self.len] = dummy_heap item;
         self.len++;
-        
-        return self;
     }
 
     T& item(vector<T>* self, int index, T& default_value) 
@@ -401,7 +398,7 @@ impl vector<T>
         return true;
     }
     
-    vector<T>* replace(vector<T>* self, int index, T value) mutable
+    vector<T>*% replace(vector<T>* self, int index, T value) mutable
     {
         managed value;
 
@@ -418,7 +415,7 @@ impl vector<T>
             self.items[index] = value;
         }
         
-        return self;
+        return clone self;
     }
     
     int find(vector<T>* self, T& item, int default_value) {
@@ -438,7 +435,7 @@ impl vector<T>
         return self.len;
     }
 
-    vector<T>* reset(vector<T>* self) mutable {
+    vector<T>*% reset(vector<T>* self) mutable {
         if(isheap(T)) {
             for(int i=0; i<self.len; i++) 
             {
@@ -454,7 +451,7 @@ impl vector<T>
         
         self.len = 0;
         
-        return self;
+        return clone self;
     }
 
     T& begin(vector<T>* self) {
@@ -475,7 +472,7 @@ impl vector<T>
         return self.it >= self.len;
     }
     
-    vector<T>* delete_back(vector<T>* self) {
+    vector<T>*% delete_back(vector<T>* self) {
         if(self.len > 0) {
             if(isheap(T)) {
                 delete borrow self.items[self.len-1];
@@ -485,7 +482,7 @@ impl vector<T>
             self.len--;
         }
         
-        return self;
+        return clone self;
     }
 }
 
@@ -542,6 +539,44 @@ impl list <T>
             delete prev_it;
         }
     }
+    
+    void push_back2(list<T>* self, T` item) mutable
+    {
+        managed item;
+
+        if(self.len == 0) {
+            list_item<T>*? litem = borrow new list_item<T>;
+            
+            litem.prev = null;
+            litem.next = null;
+            litem.item = item;
+            
+            self.tail = litem;
+            self.head = litem;
+        }
+        else if(self.len == 1) {
+            list_item<T>*? litem = borrow new list_item<T>;
+
+            litem.prev = self.head;
+            litem.next = null;
+            litem.item = item;
+            
+            self.tail = litem;
+            self.head.next = litem;
+        }
+        else {
+            list_item<T>*? litem = borrow new list_item<T>;
+
+            litem.prev = self.tail;
+            litem.next = null;
+            litem.item = item;
+            
+            self.tail.next = litem;
+            self.tail = litem;
+        }
+
+        self.len++;
+    }
 
     list<T>*% clone(list<T>* self) {
         auto result = new list<T>.initialize();
@@ -549,13 +584,13 @@ impl list <T>
         list_item<T>*? it = self.head;
         while(it != null) {
             if(isheap(T)) {
-                result.push_back(clone it.item);
+                result.push_back2(clone it.item);
             }
             else if(is_gc_heap(it.item)) {
-                result.push_back(clone it.item);
+                result.push_back2(clone it.item);
             }
             else {
-                result.push_back(dummy_heap it.item);
+                result.push_back2(dummy_heap it.item);
             }
 
             it = it.next;
@@ -564,8 +599,8 @@ impl list <T>
         return result;
     }
     
-    immutable list<T>* to_immutable(list<T>* self) {
-        return self;
+    immutable list<T>*% to_immutable(list<T>* self) {
+        return clone self;
     }
     
     unsigned int get_hash_key(list<T>* self) {
@@ -664,10 +699,9 @@ impl list <T>
     {
         return self.len;
     }
-    list<T>* push_back(list<T>* self, T` item) mutable
+    void push_back(list<T>* self, T` item) mutable
     {
         managed item;
-        
 
         if(self.len == 0) {
             list_item<T>*? litem = borrow new list_item<T>;
@@ -701,8 +735,6 @@ impl list <T>
         }
 
         self.len++;
-        
-        return self;
     }
     
     T& item(list<T>* self, int position, T& default_value) 
@@ -724,7 +756,7 @@ impl list <T>
         return default_value;
     }
 
-    list<T>* insert(list<T>* self, int position, T` item) mutable
+    list<T>*% insert(list<T>* self, int position, T` item) mutable
     {
         managed item;
 
@@ -745,7 +777,7 @@ impl list <T>
             else {
                 self.push_back(dummy_heap item);
             }
-            return self;
+            return clone self;
         }
 
         if(position == 0) {
@@ -794,10 +826,10 @@ impl list <T>
             }
         }
         
-        return self;
+        return clone self;
     }
 
-    list<T>* reset(list<T>* self) mutable {
+    list<T>*% reset(list<T>* self) mutable {
         list_item<T>*? it = self.head;
         while(it != null) {
             if(isheap(T)) {
@@ -813,10 +845,10 @@ impl list <T>
 
         self.len = 0;
         
-        return self;
+        return clone self;
     }
 
-    list<T>* delete(list<T>* self, int head, int tail) mutable
+    list<T>*% delete(list<T>* self, int head, int tail) mutable
     {
         if(head < 0) {
             head += self.len;
@@ -840,7 +872,7 @@ impl list <T>
         }
 
         if(head == tail) {
-            return self;
+            return clone self;
         }
 
         if(head == 0 && tail == self.len) 
@@ -947,10 +979,10 @@ impl list <T>
             }
         }
         
-        return self;
+        return clone self;
     }
 
-    list<T>* replace(list<T>* self, int position, T item) mutable
+    list<T>*% replace(list<T>* self, int position, T item) mutable
     {
         managed item;
 
@@ -973,7 +1005,7 @@ impl list <T>
             i++;
         }
         
-        return self;
+        return clone self;
     }
 
     int find(list<T>* self, T& item, int default_value) {
@@ -1590,8 +1622,104 @@ impl map <T, T2>
         delete self.item_existance;
     }
     
-    immutable map<T, T2>* to_immutable(map<T, T2>* self) {
-        return self;
+    void insert2(map<T,T2>* self, T` key, T2` item) mutable
+    {
+        managed key;
+        managed item;
+
+        if(self.len*2 >= self.size) {
+            self.rehash();
+        }
+
+        int hash = key.get_hash_key() % self.size;
+        int it = hash;
+
+        while(true) {
+            if(self.item_existance[it])
+            {
+                if(self.keys[it].equals(key)) 
+                {
+                    if(isheap(T)) {
+                        delete dummy_heap self.keys[it];
+                    }
+                    if(isheap(T2)) {
+                        delete dummy_heap self.items[it];
+                    }
+                    self.keys[it] = key;
+                    self.items[it] = item;
+
+                    break;
+                }
+
+                it++;
+
+                if(it >= self.size) {
+                    it = 0;
+                }
+                else if(it == hash) {
+                    fprintf(stderr, "unexpected error in map.insert\n");
+                    exit(2);
+                }
+            }
+            else {
+                self.item_existance[it] = true;
+                self.keys[it] = key;
+                self.items[it] = item;
+
+                self.len++;
+
+                break;
+            }
+        }
+        
+        if(isheap(T)) {
+            self.key_list.push_back(clone key);
+        }
+        else {
+            self.key_list.push_back(key);
+        }
+    }
+    
+    map<T, T2>*% clone(map<T, T2>* self)
+    {
+        auto result = new map<T,T2>.initialize();
+
+        for(auto it = self.begin(); !self.end(); it = self.next()) {
+            T2& default_value;
+            auto it2 = self.at(it, default_value!);
+
+            if(is_gc_heap(it) && is_gc_heap(it2)) {
+                result.insert2(clone it, clone it2);
+            }
+            else if(is_gc_heap(it) && !is_gc_heap(it2)) {
+                result.insert2(clone it, dummy_heap it2);
+            }
+            else if(!is_gc_heap(it) && is_gc_heap(it2)) {
+                result.insert2(dummy_heap it, clone it2);
+            }
+            else if(isheap(T)) {
+                if(isheap(T2)) {
+                    result.insert2(clone it, clone it2);
+                }
+                else {
+                    result.insert2(clone it, dummy_heap it2);
+                }
+            }
+            else {
+                if(isheap(T2)) {
+                    result.insert2(dummy_heap it, clone it2);
+                }
+                else {
+                    result.insert2(dummy_heap it, dummy_heap it2);
+                }
+            }
+        }
+
+        return result;
+    }
+    
+    immutable map<T, T2>*% to_immutable(map<T, T2>* self) {
+        return clone self;
     }
     
     unsigned int get_hash_key(map<T, T2>* self) {
@@ -1839,7 +1967,7 @@ impl map <T, T2>
         self.len = len;
     }
 
-    map<T,T2>* insert(map<T,T2>* self, T` key, T2` item) mutable
+    map<T,T2>*% insert(map<T,T2>* self, T` key, T2` item) mutable
     {
         managed key;
         managed item;
@@ -1896,46 +2024,9 @@ impl map <T, T2>
             self.key_list.push_back(key);
         }
         
-        return self;
+        return clone self;
     }
 
-    map<T, T2>*% clone(map<T, T2>* self)
-    {
-        auto result = new map<T,T2>.initialize();
-
-        for(auto it = self.begin(); !self.end(); it = self.next()) {
-            T2& default_value;
-            auto it2 = self.at(it, default_value!);
-
-            if(is_gc_heap(it) && is_gc_heap(it2)) {
-                result.insert(clone it, clone it2);
-            }
-            else if(is_gc_heap(it) && !is_gc_heap(it2)) {
-                result.insert(clone it, dummy_heap it2);
-            }
-            else if(!is_gc_heap(it) && is_gc_heap(it2)) {
-                result.insert(dummy_heap it, clone it2);
-            }
-            else if(isheap(T)) {
-                if(isheap(T2)) {
-                    result.insert(clone it, clone it2);
-                }
-                else {
-                    result.insert(clone it, dummy_heap it2);
-                }
-            }
-            else {
-                if(isheap(T2)) {
-                    result.insert(dummy_heap it, clone it2);
-                }
-                else {
-                    result.insert(dummy_heap it, dummy_heap it2);
-                }
-            }
-        }
-
-        return result;
-    }
 
     bool find(map<T, T2>* self, T& key) {
         int hash = ((T)key).get_hash_key() % self.size;
@@ -2070,7 +2161,7 @@ impl map <T, T2>
         return self.key_list.it == null;
     }
     
-    map<T,T2>* each(map<T,T2>* self, void* parent, void (*block_)(void*, T&,T2&,bool*)) {
+    map<T,T2>*% each(map<T,T2>* self, void* parent, void (*block_)(void*, T&,T2&,bool*)) {
         list_item<T>?* it = self.key_list.head;
         while(it != null) {
             T2 default_value;
@@ -2084,7 +2175,7 @@ impl map <T, T2>
             it = it.next;
         }
 
-        return self;
+        return clone self;
     }
 }
 
@@ -2129,8 +2220,8 @@ impl tuple1 <T>
         return self.v1;
     }
     
-    immutable tuple1<T>* to_immutable(tuple1<T>* self) {
-        return self;
+    immutable tuple1<T>*% to_immutable(tuple1<T>* self) {
+        return clone self;
     }
 
     bool equals(tuple1<T>* left, tuple1<T>* right)
@@ -2177,8 +2268,8 @@ impl tuple2 <T, T2>
         }
     }
     
-    immutable tuple2<T,T2>* to_immutable(tuple2<T, T2>* self) {
-        return self;
+    immutable tuple2<T,T2>*% to_immutable(tuple2<T, T2>* self) {
+        return clone self;
     }
     tuple2<T,T2>*% clone(tuple2<T, T2>* self)
     {
@@ -2254,8 +2345,8 @@ impl tuple3 <T, T2, T3>
         return self;
     }
     
-    immutable tuple3<T,T2,T3>* to_immutable(tuple3<T, T2, T3>* self) {
-        return self;
+    immutable tuple3<T,T2,T3>*% to_immutable(tuple3<T, T2, T3>* self) {
+        return clone self;
     }
     tuple3<T,T2, T3>*% clone(tuple3<T, T2, T3>* self)
     {
@@ -2363,8 +2454,8 @@ impl tuple4 <T, T2, T3, T4>
         return self;
     }
     
-    immutable tuple4<T,T2,T3,T4>* to_immutable(tuple4<T, T2, T3, T4>* self) {
-        return self;
+    immutable tuple4<T,T2,T3,T4>*% to_immutable(tuple4<T, T2, T3, T4>* self) {
+        return clone self;
     }
     tuple4<T,T2, T3, T4>*% clone(tuple4<T, T2, T3, T4>* self)
     {
@@ -2494,8 +2585,8 @@ impl tuple5 <T, T2, T3, T4, T5>
         
         return self;
     }
-    immutable tuple5<T,T2,T3,T4,T5>* to_immutable(tuple5<T, T2, T3, T4, T5>* self) {
-        return self;
+    immutable tuple5<T,T2,T3,T4,T5>*% to_immutable(tuple5<T, T2, T3, T4, T5>* self) {
+        return clone self;
     }
     tuple5<T,T2, T3, T4, T5>*% clone(tuple5<T, T2, T3, T4, T5>* self)
     {
@@ -2627,8 +2718,8 @@ impl tuple6 <T, T2, T3, T4, T5, T6>
         
         return self;
     }
-    immutable tuple6<T,T2,T3,T4,T5,T6>* to_immutable(tuple6<T, T2, T3, T4, T5,T6>* self) {
-        return self;
+    immutable tuple6<T,T2,T3,T4,T5,T6>*% to_immutable(tuple6<T, T2, T3, T4, T5,T6>* self) {
+        return clone self;
     }
     tuple6<T,T2, T3, T4, T5, T6>*% clone(tuple6<T, T2, T3, T4, T5, T6>* self)
     {
@@ -2771,18 +2862,18 @@ impl buffer*
     
     void reset(buffer* self);
     
-    inline immutable buffer* to_immutable(buffer* self) {
-        return self;
+    inline immutable buffer*% to_immutable(buffer* self) {
+        return clone self;
     }
     
-    buffer* append(buffer* self, char* mem, size_t size) mutable;
-    buffer* append_char(buffer* self, char c) mutable;
-    buffer* append_str(buffer* self, char* str) mutable;
-    buffer* append_nullterminated_str(buffer* self, char* str) mutable;
+    buffer*% append(buffer* self, char* mem, size_t size) mutable;
+    buffer*% append_char(buffer* self, char c) mutable;
+    buffer*% append_str(buffer* self, char* str) mutable;
+    buffer*% append_nullterminated_str(buffer* self, char* str) mutable;
     string to_string(buffer* self);
-    buffer* append_int(buffer* self, int value) mutable;
-    buffer* append_long(buffer* self, long value) mutable;
-    buffer* append_short(buffer* self, short value) mutable;
+    buffer*% append_int(buffer* self, int value) mutable;
+    buffer*% append_long(buffer* self, long value) mutable;
+    buffer*% append_short(buffer* self, short value) mutable;
     void alignment(buffer* self) mutable;
     int compare(buffer* left, buffer* right);
 }
@@ -3014,7 +3105,7 @@ impl list<T>
 
         return result;
     } 
-    list<T>* each(list<T>* self, void* parent, void (*block_)(void*, T&,int,bool*)) {
+    list<T>*% each(list<T>* self, void* parent, void (*block_)(void*, T&,int,bool*)) {
         list_item<T>?* it = self.head;
         int i = 0;
         while(it != null) {
@@ -3028,7 +3119,7 @@ impl list<T>
             i++;
         }
 
-        return self;
+        return clone self;
     }
     template <R> list<R>*% map(list<T>* self, void* parent, R (*block)(void*, T&))
     {
@@ -3112,8 +3203,8 @@ inline int string::index_regex(char* self, regex_struct* reg, int default_value)
     return charp_index_regex(self, reg, default_value);
 }
 
-char* char*::replace(char* self, int index, char c);
-inline char* string::replace(char* self, int index, char c)
+string char*::replace(char* self, int index, char c);
+inline string string::replace(char* self, int index, char c)
 {
     return charp_replace(self, index, c);
 }
@@ -3162,11 +3253,12 @@ inline string string::printable(char* str)
     return charp_printable(str);
 }
 
-char* char*::delete(char* str, int head, int tail) ;
-inline char* string::delete(char* str, int head, int tail) 
+string char*::delete(char* str, int head, int tail) ;
+inline string string::delete(char* str, int head, int tail) 
 {
     return charp_delete(str, head, tail);
 }
+
 
 string wchar_t*::to_string(wchar_t* wstr);
 inline string wstring::to_string(wchar_t* wstr) 
@@ -3195,8 +3287,8 @@ inline int wstring::length(wchar_t* str)
     return wchar_tp_length(str);
 }
 
-wchar_t* wchar_t*::delete(wchar_t* str, int head, int tail) ;
-inline wchar_t* wstring::delete(wchar_t* str, int head, int tail) 
+wstring wchar_t*::delete(wchar_t* str, int head, int tail) ;
+inline wstring wstring::delete(wchar_t* str, int head, int tail) 
 {
     return wchar_tp_delete(str, head, tail);
 }
@@ -3251,13 +3343,6 @@ list<string>*% char*::split_maxsplit(char* self, regex_struct* reg, int maxsplit
 inline list<string>*% string::split_maxsplit(char* self, regex_struct* reg, int maxsplit)
 {
     return charp_split_maxsplit(self, reg, maxsplit);
-}
-
-char* char*::delete(char* str, int head, int tail);
-
-inline char* string::delete(char* str, int head, int tail)
-{
-    return charp_delete(str, head, tail);
 }
 
 int char*::index_count(char* str, char* search_str, int count, int default_value);
@@ -3370,7 +3455,6 @@ inline bool regex_struct::equals(regex_struct* left, regex_struct* right) {
     return regex_structp_equals(&left, &right);
 }
 
-
 list<string>*% char*::scan_group_strings(char* self, regex_struct* reg, list<string>* group_strings, int* num_group_string_in_regex);
 
 inline list<string>*% string::scan_group_strings(char* self, regex_struct* reg, list<string>* group_strings, int* num_group_string_in_regex)
@@ -3408,7 +3492,7 @@ inline string char*::read(char* file_name) {
     return string_read(file_name);
 }
 
-inline char* string::write(char* self, char* file_name, bool append=false) {
+inline string string::write(char* self, char* file_name, bool append=false) {
     FILE* f;
     if(append) {
        f = fopen(file_name, "a");
@@ -3421,15 +3505,15 @@ inline char* string::write(char* self, char* file_name, bool append=false) {
     
     f.fclose()
     
-    return self;
+    return string(self);
 }
 
-inline char* char*::write(char* self, char* file_name, bool append=false) {
+inline string char*::write(char* self, char* file_name, bool append=false) {
     return string_write(self, file_name, append);
 }
 
-char* char*::puts(char* self);
-inline char* string::puts(char* self) {
+string char*::puts(char* self);
+inline string string::puts(char* self) {
     return charp_puts(self);
 }
 
@@ -3445,9 +3529,9 @@ inline int int::print(int self)
     return self;
 }
 
-char* char*::print(char* self);
+string char*::print(char* self);
 
-inline char* string::print(char* self) {
+inline string string::print(char* self) {
     return charp_print(self);
 }
 
@@ -3458,9 +3542,9 @@ inline string string::strip(char* self) {
 }
 
 
-char* char*::printf(char* self, const char* msg);
+string char*::printf(char* self, const char* msg);
 
-inline char* string::printf(char* self, const char* msg) {
+inline string string::printf(char* self, const char* msg) {
     return charp_printf(self, msg);
 }
 

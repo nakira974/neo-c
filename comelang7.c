@@ -62,12 +62,12 @@ int char*::index_regex(char* self, regex_struct* reg, int default_value)
 }
 
 
-char* char*::replace(char* self, int index, char c)
+string char*::replace(char* self, int index, char c)
 {
     int len = strlen(self);
 
     if(strcmp(self, "") == 0) {
-        return self;
+        return string(self);
     }
     
     if(index < 0) {
@@ -84,7 +84,7 @@ char* char*::replace(char* self, int index, char c)
     
     self[index] = c;
     
-    return self;
+    return string(self);
 }
 
 string char*::multiply(char* str, int n)

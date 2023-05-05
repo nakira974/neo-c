@@ -14,19 +14,15 @@ void* igc_calloc(size_t count, size_t size)
     
     char* mem = calloc(1, sizeof(int)+count*size);
     
-//printf("calloc %p\n", mem);
-    
     int* ref_count = (int*)mem;
     
     (*ref_count)++;
     
-//printf("igc_calloc %p size %ld count %ld\n", mem + sizeof(int),size, count);
     return mem + sizeof(int);
 }
 
 void igc_increment_ref_count(void* mem)
 {
-//printf("igc_increment_ref_count %p\n", mem);
     using unsafe;
     
     if(mem == NULL) {
@@ -36,14 +32,11 @@ void igc_increment_ref_count(void* mem)
     int* ref_count = (int*)((char*)mem - sizeof(int));
     
     (*ref_count)++;
-    
-//printf("ref_count %d\n", *ref_count);
 }
 
 
 void igc_decrement_ref_count(void* mem)
 {
-//printf("igc_decrement_ref_count %p\n", mem);
     using unsafe;
     
     if(mem == NULL) {
@@ -53,7 +46,6 @@ void igc_decrement_ref_count(void* mem)
     int* ref_count = (int*)((char*)mem - sizeof(int));
     
     (*ref_count)--;
-//printf("ref_count %d\n", *ref_count);
     
     int count = *ref_count;
     if(count == 0) {
@@ -74,7 +66,6 @@ void free_object(void* mem)
 
 void call_finalizer(void* fun, void* mem, int call_finalizer_only)
 {
-//printf("call_finalizer mem %p %d\n", mem, call_finalizer_only);
     if(mem == NULL) {
         return;
     }
@@ -89,7 +80,6 @@ void call_finalizer(void* fun, void* mem, int call_finalizer_only)
         using unsafe;
         
         int* ref_count = (int*)((char*)mem - sizeof(int));
-//printf("ref_count %d\n", *ref_count);
         
         (*ref_count)--;
         
@@ -108,7 +98,6 @@ void call_finalizer(void* fun, void* mem, int call_finalizer_only)
 
 void ncfree(void* mem)
 {
-//printf("ncfree %p\n", mem);
     if(mem) {
         free(mem);
     }
@@ -117,40 +106,31 @@ void ncfree(void* mem)
 void* nccalloc(size_t nmemb, size_t size)
 {
     void* result = calloc(nmemb, size);
-//printf("nccalloc %p %d\n", result, size);
     return result;
 }
 
 void* gc_nccalloc(size_t nmemb, size_t size)
 {
     void* result = GC_malloc(nmemb * size);
-//printf("GC_malloc %p %d\n", result, size);
     return result;
 }
 
 void*%? ncmemdup(void*% block)
 {
-//puts("ncmemdup1");
     managed block;
 
     if(!block) {
         return dummy_heap null;
     }
-//puts("ncmemdup2");
     char* mem = (char*)block - sizeof(int);
 
-//puts("ncmemdup3");
-//printf("malloc size mem %p\n", mem);
 #ifdef __DARWIN_ARM__
     size_t size = malloc_size(mem);
 #else
     size_t size = malloc_usable_size(mem);
 #endif
 
-//puts("ncmemdup4");
     void* ret = calloc(1, size);
-
-//printf("memdup mem %p calloc %p\n", mem, ret);
 
     int* ref_count = ret;
     
@@ -168,15 +148,12 @@ void*%? ncmemdup(void*% block)
 
     (*ref_count) = 1;
     
-//printf("ncmemdup ret %p\n", (char*)ret + sizeof(int));
-
     return dummy_heap (char*)ret + sizeof(int);
 }
 
 void* call_cloner(void* fun, void* mem)
 {
     if(fun && mem) {
-//printf("call_cloner mem %p\n", mem);
         void* (*cloner)(void*) = fun;
         return cloner(mem);
     }
@@ -429,7 +406,7 @@ void buffer*::reset(buffer* self)
     self.len = 0;
 }
 
-buffer* buffer*::append(buffer* self, char* mem, size_t size)
+buffer*% buffer*::append(buffer* self, char* mem, size_t size)
 {
     using unsafe;
     
@@ -447,10 +424,10 @@ buffer* buffer*::append(buffer* self, char* mem, size_t size)
     self.len += size;
     self.buf[self.len] = '\0';
     
-    return self;
+    return clone self;
 }
 
-buffer* buffer*::append_char(buffer* self, char c)
+buffer*% buffer*::append_char(buffer* self, char c)
 {
     if(self.len + 1 + 1 + 1 >= self.size) {
         int new_size = (self.size + 10 + 1) * 2;
@@ -463,20 +440,20 @@ buffer* buffer*::append_char(buffer* self, char c)
 
     self.buf[self.len] = '\0';
     
-    return self;
+    return clone self;
 }
 
-buffer* buffer*::append_str(buffer* self, char* str)
+buffer*% buffer*::append_str(buffer* self, char* str)
 {
     return self.append(str, strlen(str));
 }
 
-buffer* buffer*::append_nullterminated_str(buffer* self, char* str)
+buffer*% buffer*::append_nullterminated_str(buffer* self, char* str)
 {
     self.append(str, strlen(str));
     self.append_char('\0');
     
-    return self;
+    return clone self;
 }
 
 string buffer*::to_string(buffer* self)
@@ -484,17 +461,17 @@ string buffer*::to_string(buffer* self)
     return (string(self.buf));
 }
 
-buffer* buffer*::append_int(buffer* self, int value) 
+buffer*% buffer*::append_int(buffer* self, int value) 
 {
     return self.append((char*)&value, sizeof(int));
 }
 
-buffer* buffer*::append_long(buffer* self, long value) 
+buffer*% buffer*::append_long(buffer* self, long value) 
 {
     return self.append((char*)&value, sizeof(long));
 }
 
-buffer* buffer*::append_short(buffer* self, short value) 
+buffer*% buffer*::append_short(buffer* self, short value) 
 {
     return self.append((char*)&value, sizeof(short));
 }

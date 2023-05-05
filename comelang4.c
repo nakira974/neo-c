@@ -527,18 +527,18 @@ void FILE::fclose(FILE* f)
     fclose(f);
 }
 
-char* char*::puts(char* self)
+string char*::puts(char* self)
 {
     (void)puts(self);
     
-    return self;
+    return string(self);
 }
 
-char* char*::print(char* self)
+string char*::print(char* self)
 {
     printf("%s", self);
     
-    return self;
+    return string(self);
 }
 
 string char*::strip(char* self)

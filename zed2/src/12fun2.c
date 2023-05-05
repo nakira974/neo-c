@@ -88,9 +88,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
             int param0 = params[0].intValue;
             int param1 = params[1].intValue;
             
-            string str = obj.strValue.to_string();
-            
-            char* str2 = str.delete(param0, param1);
+            string str2 = obj.strValue.to_string().delete(param0, param1);
             
             (*result) = borrow  new ZVALUE(kind:kStrValue, str_value:str2.to_wstring());
         }
@@ -181,7 +179,7 @@ bool str_method(ZVALUE** result, string fun_name, ZVALUE* obj, list<ZVALUE*%>* p
             
             string str = obj.strValue.to_string();
             
-            char* result2 = str.replace(param0, param1[0]);
+            string result2 = str.replace(param0, param1[0]);
             
             (*result) = borrow  new ZVALUE(kind:kStrValue, str_value:result2.to_wstring());
         }

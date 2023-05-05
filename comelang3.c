@@ -1,14 +1,14 @@
 #include "comelang.h"
 
 
-char* char*::delete(char* str, int head, int tail) 
+string char*::delete(char* str, int head, int tail) 
 {
     using unsafe;
     
     int len = strlen(str);
 
     if(strcmp(str, "") == 0) {
-        return str;
+        return string(str);
     }
     
     if(head < 0) {
@@ -24,7 +24,7 @@ char* char*::delete(char* str, int head, int tail)
     }
 
     if(tail < 0) {
-        return str;
+        return string(str);
     }
 
     if(tail >= len) {
@@ -35,7 +35,7 @@ char* char*::delete(char* str, int head, int tail)
 
     memcpy(str + head, sub_str, sub_str.length()+1);
 
-    return str;
+    return string(str);
 }
 
 wstring wchar_t*::substring(wchar_t* str, int head, int tail)

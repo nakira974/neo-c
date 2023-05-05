@@ -1,10 +1,10 @@
 #include "comelang.h"
 
-char* char*::printf(char* self, const char* msg)
+string char*::printf(char* self, const char* msg)
 {
     (void)printf(msg, self);
     
-    return self;
+    return string(self);
 }
 
 int int::printf(int self, const char* msg)
@@ -120,14 +120,14 @@ int wchar_t*::length(wchar_t* str)
     return wcslen(str);
 }
 
-wchar_t* wchar_t*::delete(wchar_t* str, int head, int tail) 
+wstring wchar_t*::delete(wchar_t* str, int head, int tail) 
 {
     using unsafe;
     
     int len = wcslen(str);
 
     if(len == 0) {
-        return str;
+        return str.to_string().to_wstring();
     }
     
     if(head < 0) {
@@ -143,7 +143,7 @@ wchar_t* wchar_t*::delete(wchar_t* str, int head, int tail)
     }
 
     if(tail < 0) {
-        return str;
+        return str.to_string().to_wstring();
     }
 
     if(tail >= len) {
@@ -154,7 +154,7 @@ wchar_t* wchar_t*::delete(wchar_t* str, int head, int tail)
 
     memcpy(str + head, sub_str, sizeof(wchar_t)*(sub_str.length()+1));
 
-    return str;
+    return str.to_string().to_wstring();
 }
 
 int wchar_t*::index(wchar_t* str, wchar_t* search_str, int default_value)

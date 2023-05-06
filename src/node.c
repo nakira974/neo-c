@@ -5170,16 +5170,18 @@ BOOL compile_block(sNodeBlock* block, BOOL force_hash_result, sCompileInfo* info
             xstrncpy(info->sname, sname, VAR_NAME_MAX);
             info->sline = sline;
             
-            if(gComeModule.mLastCode) {
-               sBuf_append_str(&info->come_fun->mSource, gComeModule.mLastCode);
-               sBuf_append_str(&info->come_fun->mSource, ";\n");
-            }
-            else if(info->stack_num > 0) {
-                LVALUE llvm_value = *get_value_from_stack(-1);
-                if(llvm_value.c_value) {
-                    sBuf_append_str(&info->come_fun->mSource, llvm_value.c_value);
+            if(gNCTranspile) {
+                if(gComeModule.mLastCode) {
+                   sBuf_append_str(&info->come_fun->mSource, gComeModule.mLastCode);
+                   sBuf_append_str(&info->come_fun->mSource, ";\n");
                 }
-                sBuf_append_str(&info->come_fun->mSource, ";\n");
+                else if(info->stack_num > 0) {
+                    LVALUE llvm_value = *get_value_from_stack(-1);
+                    if(llvm_value.c_value) {
+                        sBuf_append_str(&info->come_fun->mSource, llvm_value.c_value);
+                    }
+                    sBuf_append_str(&info->come_fun->mSource, ";\n");
+                }
             }
 
             arrange_stack(info, stack_num_before);

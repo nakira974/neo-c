@@ -5430,7 +5430,7 @@ BOOL store_obj_to_protocol(unsigned int interface_node, unsigned int obj_node, s
     }
 */
     
-    if(!protocol_type->mClass->mFlags & CLASS_FLAGS_PROTOCOL) {
+    if(!(protocol_type->mClass->mFlags & CLASS_FLAGS_PROTOCOL)) {
         compile_err_msg(info, "This is not protocol type");
         return TRUE;
     }

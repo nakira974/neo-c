@@ -8,7 +8,7 @@ Yet another modern compiler. It has a collection and string library using Boehm 
 もう一つのモダンコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 1.0.3
+version 1.0.4
 
 ``` C
 #include <comelang.h>
@@ -337,6 +337,8 @@ From version 1.0.2 The default GC system is boehmGC. I think it's easier than my
 バージョン1.0.2よりデフォルトのGCシステムがboehmGCになりました。こっちのほうが簡単なんで。簡単なプログラミングを楽しみましょう。
 
 From version 1.0.3 push_backがselfを返さなくなりました。[1,2,3,4].push_back(5).push_back(6)はうごきません。コスト的な問題です。あとオリジナルのリファレンスカウントGCでライブラリにバグがあったため修正しています。boehmGCの方は特に問題がないです。オリジナルのリファレンスカウントGCは難しいですが利点は小さなメモリで動く点です。オリジナルのリファレンスカウントGCで作ったvinとzed2はラズパイZEROでも動くと思います。
+
+From version 1.0.4 ラズパイで動作確認しました。bash xfast_build.shでcomelangで作ったソフトウェアも動いてます。
 
 
 # Language specifications

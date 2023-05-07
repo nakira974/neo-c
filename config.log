@@ -76,11 +76,235 @@ gcc: fatal error: no input files
 compilation terminated.
 configure:2902: $? = 1
 configure:2891: gcc -qversion >&5
+gcc: error: unrecognized command-line option '-qversion'; did you mean '--version'?
+gcc: fatal error: no input files
+compilation terminated.
+configure:2902: $? = 1
+configure:2891: gcc -version >&5
+gcc: error: unrecognized command-line option '-version'
+gcc: fatal error: no input files
+compilation terminated.
+configure:2902: $? = 1
+configure:2922: checking whether the C compiler works
+configure:2944: gcc    conftest.c  >&5
+configure:2948: $? = 0
+configure:2998: result: yes
+configure:3001: checking for C compiler default output file name
+configure:3003: result: a.out
+configure:3009: checking for suffix of executables
+configure:3016: gcc -o conftest    conftest.c  >&5
+configure:3020: $? = 0
+configure:3043: result: 
+configure:3065: checking whether we are cross compiling
+configure:3073: gcc -o conftest    conftest.c  >&5
+configure:3077: $? = 0
+configure:3084: ./conftest
+configure:3088: $? = 0
+configure:3103: result: no
+configure:3108: checking for suffix of object files
+configure:3131: gcc -c   conftest.c >&5
+configure:3135: $? = 0
+configure:3157: result: o
+configure:3161: checking whether the compiler supports GNU C
+configure:3181: gcc -c   conftest.c >&5
+configure:3181: $? = 0
+configure:3191: result: yes
+configure:3202: checking whether gcc accepts -g
+configure:3223: gcc -c -g  conftest.c >&5
+configure:3223: $? = 0
+configure:3267: result: yes
+configure:3287: checking for gcc option to enable C11 features
+configure:3302: gcc  -c -g -O2  conftest.c >&5
+configure:3302: $? = 0
+configure:3320: result: none needed
+configure:3446: checking for a BSD-compatible install
+configure:3519: result: /usr/bin/install -c
+configure:3535: checking for stdio.h
+configure:3535: gcc -c -g -O2  conftest.c >&5
+configure:3535: $? = 0
+configure:3535: result: yes
+configure:3535: checking for stdlib.h
+configure:3535: gcc -c -g -O2  conftest.c >&5
+configure:3535: $? = 0
+configure:3535: result: yes
+configure:3535: checking for string.h
+configure:3535: gcc -c -g -O2  conftest.c >&5
+configure:3535: $? = 0
+configure:3535: result: yes
+configure:3535: checking for inttypes.h
+configure:3535: gcc -c -g -O2  conftest.c >&5
+configure:3535: $? = 0
+configure:3535: result: yes
+configure:3535: checking for stdint.h
+configure:3535: gcc -c -g -O2  conftest.c >&5
+configure:3535: $? = 0
+configure:3535: result: yes
+configure:3535: checking for strings.h
+configure:3535: gcc -c -g -O2  conftest.c >&5
+configure:3535: $? = 0
+configure:3535: result: yes
+configure:3535: checking for sys/stat.h
+configure:3535: gcc -c -g -O2  conftest.c >&5
+configure:3535: $? = 0
+configure:3535: result: yes
+configure:3535: checking for sys/types.h
+configure:3535: gcc -c -g -O2  conftest.c >&5
+configure:3535: $? = 0
+configure:3535: result: yes
+configure:3535: checking for unistd.h
+configure:3535: gcc -c -g -O2  conftest.c >&5
+configure:3535: $? = 0
+configure:3535: result: yes
+configure:3560: checking whether byte ordering is bigendian
+configure:3576: gcc -c -g -O2  conftest.c >&5
+conftest.c:20:16: error: unknown type name 'not'
+   20 |                not a universal capable compiler
+      |                ^~~
+conftest.c:20:22: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'universal'
+   20 |                not a universal capable compiler
+      |                      ^~~~~~~~~
+conftest.c:20:22: error: unknown type name 'universal'
+configure:3576: $? = 1
+configure: failed program was:
+| /* confdefs.h */
+| #define PACKAGE_NAME ""
+| #define PACKAGE_TARNAME ""
+| #define PACKAGE_VERSION ""
+| #define PACKAGE_STRING ""
+| #define PACKAGE_BUGREPORT ""
+| #define PACKAGE_URL ""
+| #define HAVE_STDIO_H 1
+| #define HAVE_STDLIB_H 1
+| #define HAVE_STRING_H 1
+| #define HAVE_INTTYPES_H 1
+| #define HAVE_STDINT_H 1
+| #define HAVE_STRINGS_H 1
+| #define HAVE_SYS_STAT_H 1
+| #define HAVE_SYS_TYPES_H 1
+| #define HAVE_UNISTD_H 1
+| #define STDC_HEADERS 1
+| /* end confdefs.h.  */
+| #ifndef __APPLE_CC__
+| 	       not a universal capable compiler
+| 	     #endif
+| 	     typedef int dummy;
+| 
+configure:3622: gcc -c -g -O2  conftest.c >&5
+configure:3622: $? = 0
+configure:3641: gcc -c -g -O2  conftest.c >&5
+conftest.c: In function 'main':
+conftest.c:26:18: error: unknown type name 'not'; did you mean 'ino_t'?
+   26 |                  not big endian
+      |                  ^~~
+      |                  ino_t
+conftest.c:26:26: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'endian'
+   26 |                  not big endian
+      |                          ^~~~~~
+configure:3641: $? = 1
+configure: failed program was:
+| /* confdefs.h */
+| #define PACKAGE_NAME ""
+| #define PACKAGE_TARNAME ""
+| #define PACKAGE_VERSION ""
+| #define PACKAGE_STRING ""
+| #define PACKAGE_BUGREPORT ""
+| #define PACKAGE_URL ""
+| #define HAVE_STDIO_H 1
+| #define HAVE_STDLIB_H 1
+| #define HAVE_STRING_H 1
+| #define HAVE_INTTYPES_H 1
+| #define HAVE_STDINT_H 1
+| #define HAVE_STRINGS_H 1
+| #define HAVE_SYS_STAT_H 1
+| #define HAVE_SYS_TYPES_H 1
+| #define HAVE_UNISTD_H 1
+| #define STDC_HEADERS 1
+| /* end confdefs.h.  */
+| #include <sys/types.h>
+| 		#include <sys/param.h>
+| 
+| int
+| main (void)
+| {
+| #if BYTE_ORDER != BIG_ENDIAN
+| 		 not big endian
+| 		#endif
+| 
+|   ;
+|   return 0;
+| }
+configure:3775: result: no
+configure:3826: checking CPU type
+configure:3939: checking Operating System
+configure:4056: checking for main in -lutil
+configure:4076: gcc -o conftest -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H   conftest.c -lutil   >&5
+configure:4076: $? = 0
+configure:4086: result: yes
+configure:4137: checking for main in -ldl
+configure:4157: clang -o conftest -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H -I/usr/local/include   conftest.c -ldl   -lutil >&5
+configure:4157: $? = 0
+configure:4167: result: yes
+configure:4177: checking for math.h
+configure:4177: clang -c -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H -I/usr/local/include  conftest.c >&5
+clang: warning: argument unused during compilation: '-L/usr/local/lib' [-Wunused-command-line-argument]
+configure:4177: $? = 0
+configure:4177: result: yes
+configure:4186: checking for main in -lm
+configure:4206: clang -o conftest -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H -I/usr/local/include   conftest.c -lm   -lutil -ldl >&5
+configure:4206: $? = 0
+configure:4216: result: yes
+configure:4226: checking for main in -lgc
+configure:4246: clang -o conftest -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H -I/usr/local/include   conftest.c -lgc   -lutil -ldl -lm >&5
+configure:4246: $? = 0
+configure:4256: result: yes
+configure:4266: checking for main in -lpcre
+configure:4286: clang -o conftest -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H -I/usr/local/include   conftest.c -lpcre   -lutil -ldl -lm -lgc >&5
+configure:4286: $? = 0
+configure:4296: result: yes
+configure:4306: checking for main in -lpthread
+configure:4326: clang -o conftest -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H -I/usr/local/include   conftest.c -lpthread   -lutil -ldl -lm -lgc >&5
+configure:4326: $? = 0
+configure:4336: result: yes
+configure:4346: checking for iconv.h
+configure:4346: clang -c -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H -I/usr/local/include  conftest.c >&5
+clang: warning: argument unused during compilation: '-L/usr/local/lib' [-Wunused-command-line-argument]
+configure:4346: $? = 0
+configure:4346: result: yes
+configure:4359: checking for main in -lrt
+configure:4379: clang -o conftest -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H -I/usr/local/include   conftest.c -lrt   -lutil -ldl -lm -lgc >&5
+configure:4379: $? = 0
+configure:4389: result: yes
+configure:4450: checking for lchmod
+configure:4450: clang -o conftest -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H -I/usr/local/include   conftest.c  -lutil -ldl -lm -lgc -lrt >&5
+configure:4450: $? = 0
+configure:4450: result: yes
+configure:4630: creating ./config.status
+
+## ---------------------- ##
+## Running config.status. ##
+## ---------------------- ##
+
+This file was extended by config.status, which was
+generated by GNU Autoconf 2.71.  Invocation command line was
+
+  CONFIG_FILES    = 
+  CONFIG_HEADERS  = 
+  CONFIG_LINKS    = 
+  CONFIG_COMMANDS = 
+  $ ./config.status 
+
+on golem
+
+config.status:814: creating Makefile
+config.status:814: creating config.h
+config.status:989: config.h is unchanged
 
 ## ---------------- ##
 ## Cache variables. ##
 ## ---------------- ##
 
+ac_cv_c_bigendian=no
+ac_cv_c_compiler_gnu=yes
 ac_cv_env_CC_set=
 ac_cv_env_CC_value=
 ac_cv_env_CFLAGS_set=
@@ -97,35 +321,66 @@ ac_cv_env_host_alias_set=
 ac_cv_env_host_alias_value=
 ac_cv_env_target_alias_set=
 ac_cv_env_target_alias_value=
+ac_cv_func_lchmod=yes
+ac_cv_header_iconv_h=yes
+ac_cv_header_inttypes_h=yes
+ac_cv_header_math_h=yes
+ac_cv_header_stdint_h=yes
+ac_cv_header_stdio_h=yes
+ac_cv_header_stdlib_h=yes
+ac_cv_header_string_h=yes
+ac_cv_header_strings_h=yes
+ac_cv_header_sys_stat_h=yes
+ac_cv_header_sys_types_h=yes
+ac_cv_header_unistd_h=yes
+ac_cv_lib_dl=ac_cv_lib_dl_main
+ac_cv_lib_dl_main=yes
+ac_cv_lib_gc=ac_cv_lib_gc_main
+ac_cv_lib_gc_main=yes
+ac_cv_lib_m=ac_cv_lib_m_main
+ac_cv_lib_m_main=yes
+ac_cv_lib_pcre=ac_cv_lib_pcre_main
+ac_cv_lib_pcre_main=yes
+ac_cv_lib_pthread=ac_cv_lib_pthread_main
+ac_cv_lib_pthread_main=yes
+ac_cv_lib_rt=ac_cv_lib_rt_main
+ac_cv_lib_rt_main=yes
+ac_cv_lib_util=ac_cv_lib_util_main
+ac_cv_lib_util_main=yes
+ac_cv_objext=o
+ac_cv_path_install='/usr/bin/install -c'
 ac_cv_prog_ac_ct_CC=gcc
+ac_cv_prog_cc_c11=
+ac_cv_prog_cc_g=yes
+ac_cv_prog_cc_stdc=
 
 ## ----------------- ##
 ## Output variables. ##
 ## ----------------- ##
 
-CC='gcc'
-CFLAGS=''
+CC='clang'
+CFLAGS='-I/usr/lib/llvm-14/include  -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H -I/usr/local/include -DLLVM_VERSION=14 -DCLANG="\"clang\"" -DGCC="\"clang\""'
 CLANG=''
 CPPFLAGS=''
-CXX=''
-CXXFLAGS2=''
-CXXFLAGS=''
-DEFS=''
-DESTDIR=''
+CXX='clang++'
+CXXFLAGS2='-I/usr/lib/llvm-14/include -std=c++14   -fno-exceptions -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -L/usr/lib/llvm-14/lib  -lLLVM-14   -O2 -I . -I src -DPREFIX="\"${DESTDIR}/\" -L/usr/local/lib"'
+CXXFLAGS='-I/usr/lib/llvm-14/include -std=c++14   -fno-exceptions -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -L/usr/lib/llvm-14/lib  -lLLVM-14   -O2 -I . -I src -DPREFIX="\"${DESTDIR}/\" -L/usr/local/lib"'
+DEFS='-DHAVE_CONFIG_H'
+DESTDIR='/usr/local'
 ECHO_C=''
 ECHO_N='-n'
 ECHO_T=''
 EXEEXT=''
-INSTALL_DATA=''
-INSTALL_PROGRAM=''
-INSTALL_SCRIPT=''
+INSTALL_DATA='${INSTALL} -m 644'
+INSTALL_PROGRAM='${INSTALL}'
+INSTALL_SCRIPT='${INSTALL}'
 LDFLAGS=''
 LIBOBJS=''
-LIBS=''
+LIBS=' -lutil -ldl -lm -lgc -lrt'
 LTLIBOBJS=''
-OBJEXT=''
-OBJS=''
-OS=''
+OBJEXT='o'
+OBJS='src/parse_value.o src/parse_lib.o src/parse_type.o src/parse_function.o src/parse_loop.o src/parse_var.o src/parse_exp.o src/parse_op.o src/buffer.o src/xfunc.o src/node.o src/node_function_call.o src/node_function_lib.o src/node_function.o src/node_compile.o src/node_loop.o src/node_op.o src/node_value.o src/node_var.o src/vtable.o src/node_type.o src/klass.o src/node_block.o src/typedef.o src/compiler.o src/transpiler.o'
+OS='LINUX'
 PACKAGE_BUGREPORT=''
 PACKAGE_NAME=''
 PACKAGE_STRING=''
@@ -133,7 +388,7 @@ PACKAGE_TARNAME=''
 PACKAGE_URL=''
 PACKAGE_VERSION=''
 PATH_SEPARATOR=':'
-SELF_HOST_OBJS=''
+SELF_HOST_OBJS='src/parse_value.c.o src/parse_lib.c.o src/parse_type.c.o src/parse_function.c.o src/parse_loop.c.o src/parse_var.c.o src/parse_exp.c.o src/parse_op.c.o src/buffer.c.o src/xfunc.c.o src/node.c.o src/vtable.c.o src/node_type.c.o src/klass.c.o src/node_block.c.o src/typedef.c.o src/compiler.c.o src/node_function_call.c.o src/node_function_lib.c.o src/node_function.c.o src/node_loop.c.o src/node_op.c.o src/node_value.c.o src/node_var.c.o src/node_compile.c.o src/main.c.o src/transpiler.c.o'
 SHELL='/bin/bash'
 ac_ct_CC='gcc'
 bindir='${exec_prefix}/bin'
@@ -142,7 +397,7 @@ datadir='${datarootdir}'
 datarootdir='${prefix}/share'
 docdir='${datarootdir}/doc/${PACKAGE}'
 dvidir='${docdir}'
-exec_prefix='NONE'
+exec_prefix='${prefix}'
 host_alias=''
 htmldir='${docdir}'
 includedir='${prefix}/include'
@@ -154,7 +409,7 @@ localstatedir='${prefix}/var'
 mandir='${datarootdir}/man'
 oldincludedir='/usr/include'
 pdfdir='${docdir}'
-prefix='NONE'
+prefix='/usr/local'
 program_transform_name='s,x,x,'
 psdir='${docdir}'
 runstatedir='${localstatedir}/run'
@@ -174,6 +429,21 @@ target_alias=''
 #define PACKAGE_STRING ""
 #define PACKAGE_BUGREPORT ""
 #define PACKAGE_URL ""
+#define HAVE_STDIO_H 1
+#define HAVE_STDLIB_H 1
+#define HAVE_STRING_H 1
+#define HAVE_INTTYPES_H 1
+#define HAVE_STDINT_H 1
+#define HAVE_STRINGS_H 1
+#define HAVE_SYS_STAT_H 1
+#define HAVE_SYS_TYPES_H 1
+#define HAVE_UNISTD_H 1
+#define STDC_HEADERS 1
+#define __X86_64_CPU__ 1
+#define __64BIT_CPU__ 1
+#define __LINUX__ 1
+#define HAVE_MATH_H 1
+#define HAVE_ICONV_H 1
+#define HAVE_LCHMOD 1
 
-configure: caught signal 2
-configure: exit 1
+configure: exit 0

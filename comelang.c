@@ -391,7 +391,6 @@ buffer*% buffer*::clone(buffer* self)
     result.len = self.len;
     memcpy(result.buf, self.buf, self.len);
     
-    
     return result;
 }
 
@@ -406,7 +405,7 @@ void buffer*::reset(buffer* self)
     self.len = 0;
 }
 
-buffer*% buffer*::append(buffer* self, char* mem, size_t size)
+void buffer*::append(buffer* self, char* mem, size_t size)
 {
     using unsafe;
     
@@ -423,11 +422,9 @@ buffer*% buffer*::append(buffer* self, char* mem, size_t size)
     memcpy(self.buf + self.len, mem, size);
     self.len += size;
     self.buf[self.len] = '\0';
-    
-    return clone self;
 }
 
-buffer*% buffer*::append_char(buffer* self, char c)
+void buffer*::append_char(buffer* self, char c)
 {
     if(self.len + 1 + 1 + 1 >= self.size) {
         int new_size = (self.size + 10 + 1) * 2;
@@ -439,21 +436,17 @@ buffer*% buffer*::append_char(buffer* self, char c)
     self.len++;
 
     self.buf[self.len] = '\0';
-    
-    return clone self;
 }
 
-buffer*% buffer*::append_str(buffer* self, char* str)
+void buffer*::append_str(buffer* self, char* str)
 {
-    return self.append(str, strlen(str));
+    self.append(str, strlen(str));
 }
 
-buffer*% buffer*::append_nullterminated_str(buffer* self, char* str)
+void buffer*::append_nullterminated_str(buffer* self, char* str)
 {
     self.append(str, strlen(str));
     self.append_char('\0');
-    
-    return clone self;
 }
 
 string buffer*::to_string(buffer* self)
@@ -461,19 +454,19 @@ string buffer*::to_string(buffer* self)
     return (string(self.buf));
 }
 
-buffer*% buffer*::append_int(buffer* self, int value) 
+void buffer*::append_int(buffer* self, int value) 
 {
-    return self.append((char*)&value, sizeof(int));
+    self.append((char*)&value, sizeof(int));
 }
 
-buffer*% buffer*::append_long(buffer* self, long value) 
+void buffer*::append_long(buffer* self, long value) 
 {
-    return self.append((char*)&value, sizeof(long));
+    self.append((char*)&value, sizeof(long));
 }
 
-buffer*% buffer*::append_short(buffer* self, short value) 
+void buffer*::append_short(buffer* self, short value) 
 {
-    return self.append((char*)&value, sizeof(short));
+    self.append((char*)&value, sizeof(short));
 }
 
 void buffer*::alignment(buffer* self) 

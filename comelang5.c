@@ -1,6 +1,6 @@
 #include "comelang.h"
 
-string char*::printf(char* self, const char* msg)
+void char*::printf(char* self, const char* msg)
 {
     (void)printf(msg, self);
     

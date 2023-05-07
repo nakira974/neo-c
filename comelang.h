@@ -398,7 +398,7 @@ impl vector<T>
         return true;
     }
     
-    vector<T>*% replace(vector<T>* self, int index, T value) mutable
+    void replace(vector<T>* self, int index, T value) mutable
     {
         managed value;
 
@@ -414,8 +414,6 @@ impl vector<T>
 
             self.items[index] = value;
         }
-        
-        return clone self;
     }
     
     int find(vector<T>* self, T& item, int default_value) {
@@ -435,7 +433,7 @@ impl vector<T>
         return self.len;
     }
 
-    vector<T>*% reset(vector<T>* self) mutable {
+    void reset(vector<T>* self) mutable {
         if(isheap(T)) {
             for(int i=0; i<self.len; i++) 
             {
@@ -450,8 +448,6 @@ impl vector<T>
         self.items = borrow new T[self.size];
         
         self.len = 0;
-        
-        return clone self;
     }
 
     T& begin(vector<T>* self) {
@@ -472,7 +468,7 @@ impl vector<T>
         return self.it >= self.len;
     }
     
-    vector<T>*% delete_back(vector<T>* self) {
+    void delete_back(vector<T>* self) {
         if(self.len > 0) {
             if(isheap(T)) {
                 delete borrow self.items[self.len-1];
@@ -481,8 +477,6 @@ impl vector<T>
             
             self.len--;
         }
-        
-        return clone self;
     }
 }
 
@@ -756,7 +750,7 @@ impl list <T>
         return default_value;
     }
 
-    list<T>*% insert(list<T>* self, int position, T` item) mutable
+    void insert(list<T>* self, int position, T` item) mutable
     {
         managed item;
 
@@ -777,7 +771,7 @@ impl list <T>
             else {
                 self.push_back(dummy_heap item);
             }
-            return clone self;
+            return;
         }
 
         if(position == 0) {
@@ -825,11 +819,9 @@ impl list <T>
                 i++;
             }
         }
-        
-        return clone self;
     }
 
-    list<T>*% reset(list<T>* self) mutable {
+    void reset(list<T>* self) mutable {
         list_item<T>*? it = self.head;
         while(it != null) {
             if(isheap(T)) {
@@ -844,11 +836,9 @@ impl list <T>
         self.tail = null;
 
         self.len = 0;
-        
-        return clone self;
     }
 
-    list<T>*% delete(list<T>* self, int head, int tail) mutable
+    void delete(list<T>* self, int head, int tail) mutable
     {
         if(head < 0) {
             head += self.len;
@@ -872,7 +862,7 @@ impl list <T>
         }
 
         if(head == tail) {
-            return clone self;
+            return;
         }
 
         if(head == 0 && tail == self.len) 
@@ -978,11 +968,9 @@ impl list <T>
                 tail_it.prev = head_prev_it;
             }
         }
-        
-        return clone self;
     }
 
-    list<T>*% replace(list<T>* self, int position, T item) mutable
+    void replace(list<T>* self, int position, T item) mutable
     {
         managed item;
 
@@ -1004,8 +992,6 @@ impl list <T>
             it = it.next;
             i++;
         }
-        
-        return clone self;
     }
 
     int find(list<T>* self, T& item, int default_value) {
@@ -1967,7 +1953,7 @@ impl map <T, T2>
         self.len = len;
     }
 
-    map<T,T2>*% insert(map<T,T2>* self, T` key, T2` item) mutable
+    void insert(map<T,T2>* self, T` key, T2` item) mutable
     {
         managed key;
         managed item;
@@ -2023,8 +2009,6 @@ impl map <T, T2>
         else {
             self.key_list.push_back(key);
         }
-        
-        return clone self;
     }
 
 
@@ -2161,7 +2145,7 @@ impl map <T, T2>
         return self.key_list.it == null;
     }
     
-    map<T,T2>*% each(map<T,T2>* self, void* parent, void (*block_)(void*, T&,T2&,bool*)) {
+    void each(map<T,T2>* self, void* parent, void (*block_)(void*, T&,T2&,bool*)) {
         list_item<T>?* it = self.key_list.head;
         while(it != null) {
             T2 default_value;
@@ -2174,8 +2158,6 @@ impl map <T, T2>
             }
             it = it.next;
         }
-
-        return clone self;
     }
 }
 
@@ -2866,14 +2848,14 @@ impl buffer*
         return clone self;
     }
     
-    buffer*% append(buffer* self, char* mem, size_t size) mutable;
-    buffer*% append_char(buffer* self, char c) mutable;
-    buffer*% append_str(buffer* self, char* str) mutable;
-    buffer*% append_nullterminated_str(buffer* self, char* str) mutable;
+    void append(buffer* self, char* mem, size_t size) mutable;
+    void append_char(buffer* self, char c) mutable;
+    void append_str(buffer* self, char* str) mutable;
+    void append_nullterminated_str(buffer* self, char* str) mutable;
     string to_string(buffer* self);
-    buffer*% append_int(buffer* self, int value) mutable;
-    buffer*% append_long(buffer* self, long value) mutable;
-    buffer*% append_short(buffer* self, short value) mutable;
+    void append_int(buffer* self, int value) mutable;
+    void append_long(buffer* self, long value) mutable;
+    void append_short(buffer* self, short value) mutable;
     void alignment(buffer* self) mutable;
     int compare(buffer* left, buffer* right);
 }
@@ -3105,7 +3087,7 @@ impl list<T>
 
         return result;
     } 
-    list<T>*% each(list<T>* self, void* parent, void (*block_)(void*, T&,int,bool*)) {
+    void each(list<T>* self, void* parent, void (*block_)(void*, T&,int,bool*)) {
         list_item<T>?* it = self.head;
         int i = 0;
         while(it != null) {
@@ -3118,8 +3100,6 @@ impl list<T>
             it = it.next;
             i++;
         }
-
-        return clone self;
     }
     template <R> list<R>*% map(list<T>* self, void* parent, R (*block)(void*, T&))
     {
@@ -3512,9 +3492,9 @@ inline string char*::write(char* self, char* file_name, bool append=false) {
     return string_write(self, file_name, append);
 }
 
-string char*::puts(char* self);
-inline string string::puts(char* self) {
-    return charp_puts(self);
+void char*::puts(char* self);
+inline void string::puts(char* self) {
+    charp_puts(self);
 }
 
 inline int int::puts(int self)
@@ -3529,10 +3509,10 @@ inline int int::print(int self)
     return self;
 }
 
-string char*::print(char* self);
+void char*::print(char* self);
 
-inline string string::print(char* self) {
-    return charp_print(self);
+inline void string::print(char* self) {
+    charp_print(self);
 }
 
 string char*::strip(char* self);
@@ -3542,10 +3522,10 @@ inline string string::strip(char* self) {
 }
 
 
-string char*::printf(char* self, const char* msg);
+void char*::printf(char* self, const char* msg);
 
-inline string string::printf(char* self, const char* msg) {
-    return charp_printf(self, msg);
+inline void string::printf(char* self, const char* msg) {
+    charp_printf(self, msg);
 }
 
 int int::printf(int self, const char* msg);

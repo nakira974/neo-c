@@ -209,7 +209,8 @@ bool vm(sInfo* info) version 8
                     }
                     else if(fun_name === "each") {
                         if(params.length() == 0) {
-                            list<ZVALUE*%>* list1 = obj.listValue.each {
+                            list<ZVALUE*%>* list1 = obj.listValue;
+                            list1.each {
                                 ZVALUE*% value = clone it;
                                 append_var(name:"it".to_wstring(), value: value);
                                 

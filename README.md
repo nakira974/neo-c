@@ -8,7 +8,7 @@ Yet another modern compiler. It has a collection and string library using Boehm 
 もう一つのモダンコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 1.0.5
+version 1.0.6
 
 ``` C
 #include <comelang.h>
@@ -341,6 +341,12 @@ From version 1.0.3 push_backがselfを返さなくなりました。[1,2,3,4].pu
 From version 1.0.4 ラズパイで動作確認しました。bash xfast_build.shでcomelangで作ったソフトウェアも動いてます。
 
 From version 1.0.5 iPhone(iSH)で動作確認しました。bash xfast_build.shですべてコンパイルできます。
+
+From version 1.0.6 パフォーマンス上問題となるselfを返すメソッドがselfを返さなくなってます。buffer*::append_str(char*)など。using no-null-check;が入ってます。これもパフォーマンスのためです。iSHやラズパイでvinが遅かったためです。
+
+From version 1.0.6 A method that returns self does not return self, which is a performance problem~
+It's getting buffer*::append_str(char*), etc. It contains using no-null-check;
+. This is also for performance. Because vin was slow on iSH and Raspberry Pi.
 
 # Language specifications
 
@@ -794,7 +800,10 @@ int main()
     
     xassert("scan test", li8[0] === "A" && li8[1] === "B" && li8[2] === "C");
     
-    xassert("to_buffer test", "ABC".to_buffer().append_str("DEF").to_string() === "ABCDEF");
+    var bufX = "ABC".to_buffer();
+    bufX.append_str("DEF");
+    
+    xassert("to_buffer test", bufX.to_string() === "ABCDEF");
     xassert("split block test", "ABC,DEF,GHI".split_block(/,/) { it.substring(0,1); }.join("") === "ADG");
     xassert("split block test", "ABC,DEF,GHI".split_block_count(/,/, 2) { it.substring(0,1); }.join("") === "AD");
     xassert("regex test", "ABC".scan(/./).join("") === "ABC");
@@ -1101,6 +1110,12 @@ int main(int argc, char** argv)
 Cで書かれた関数にはNULLを渡すことがありますが、普通はNULL!とすればわたすことができます。しかし、cursesのattron(A_REVERSE)などはNULL!を渡すことができないため実行時エラーとなります。防ぐためにはusing c {attron(A_REVERSE); }としてください。NULLチェックが実行時には行われません。
 
 NULL may be passed to a function written in C, but normally it can be passed with NULL!. However, attron (A_REVERSE) of curses cannot pass NULL!, so a runtime error occurs. use c { attron(A_REVERSE); } to prevent it. No null checking is done at runtime.
+
+using no-null-check; とすると以降のコードでnullチェックが行われません。パフォーマンスが問題になる場合は使ってみてください。
+
+If using no-null-check; is used, null checks will not be performed in the subsequent code. Performance~
+If performance is an issue, try using it.
+
 
 # mixin-layers system
 
@@ -2085,7 +2100,6 @@ no faults.
 配列もセーフモードでは宣言禁止です。配列を使う場合はusing unsafeしてください。
 
 Arrays are also not allowed to be declared in safe mode. Use unsafe when using arrays.
-
 
 # fn
 

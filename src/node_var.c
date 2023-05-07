@@ -272,7 +272,7 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
     if(type_identify_with_class_name(var_type, "__builtin_va_list") || type_identify_with_class_name(var_type, "va_list")) {
         llvm_type = LLVMArrayType(llvm_type, 1);
     }
-#elif defined(__LINUX__) && defined(__32BIT_CPU__)
+#elif defined(__LINUX__) && defined(__32BIT_CPU__) && !defined(__RASPBERRY_PI__)
     if(type_identify_with_class_name(var_type, "__builtin_va_list") || type_identify_with_class_name(var_type, "va_list")) {
         llvm_type = create_llvm_type_with_class_name("char*");
     }
@@ -8375,60 +8375,6 @@ BOOL compile_va_arg(unsigned int node, sCompileInfo* info)
     info->type = clone_node_type(node_type);
 
     return TRUE;
-#elif defined(__LINUX__) && defined(__32BIT_CPU__)
-    sNodeType* node_type = gNodes[node].uValue.sVaArg2.mNodeType;
-    sNodeType* node_type3 = clone_node_type(node_type);
-    node_type3->mPointerNum++;
-    unsigned int ap = gNodes[node].uValue.sVaArg2.mAP;
-    
-    if(!compile(ap, info)) {
-        return FALSE;
-    }
-    
-    LVALUE ap_value = *get_value_from_stack(-1);
-    
-    sNodeType* node_type2 = clone_node_type(info->type);
-    
-    if(!(type_identify_with_class_name(node_type2, "__builtin_va_list") || type_identify_with_class_name(node_type2, "va_list") || type_identify_with_class_name(node_type2, "__va_list")))
-    {
-        compile_err_msg(info, "Require va_list");
-        return TRUE;
-    }
-    
-    LLVMValueRef ap3 = LLVMBuildLoad2(gBuilder, create_llvm_type_with_class_name("char*"), ap_value.value, "loadOOO");
-    
-    LLVMValueRef indices[2];
-
-    LLVMTypeRef llvm_type2 = create_llvm_type_with_class_name("int");
-
-    indices[0] = LLVMConstInt(llvm_type2, 4, FALSE);
-    
-    LLVMValueRef ap4 = LLVMBuildGEP2(gBuilder, create_llvm_type_with_class_name("char"), ap3, indices, 1, "gepAI");
-    
-    LLVMBuildStore(gBuilder, ap4, ap_value.value);
-    LLVMTypeRef llvm_type3 = create_llvm_type_from_node_type(node_type3);
-    LLVMValueRef ap5 = LLVMBuildCast(gBuilder, LLVMBitCast, ap3, llvm_type3, "cast");
-    
-    sNodeType* node_type4 = clone_node_type(node_type3);
-    node_type4->mPointerNum--;
-    LLVMTypeRef llvm_type4 = create_llvm_type_from_node_type(node_type4);
-    LLVMValueRef ap6 = LLVMBuildLoad2(gBuilder, llvm_type4, ap5, "loadUV");
-    
-    node_type3->mPointerNum--;
-    
-    LVALUE llvm_value;
-    
-    llvm_value.value = ap6;
-    llvm_value.type = clone_node_type(node_type3);
-    llvm_value.address = NULL;
-    llvm_value.var = NULL;
-    llvm_value.c_value = NULL;
-    
-    push_value_to_stack_ptr(&llvm_value, info);
-    
-    info->type = clone_node_type(node_type3);
-
-    return TRUE;
 #elif __RASPBERRY_PI__
     sNodeType* node_type = gNodes[node].uValue.sVaArg2.mNodeType;
     sNodeType* node_type3 = clone_node_type(node_type);
@@ -8463,6 +8409,60 @@ BOOL compile_va_arg(unsigned int node, sCompileInfo* info)
     LLVMValueRef ap4 = LLVMBuildGEP2(gBuilder, create_llvm_type_with_class_name("char"), ap3, indices, 1, "gepAI");
     
     LLVMBuildStore(gBuilder, ap4, ap2);
+    LLVMTypeRef llvm_type3 = create_llvm_type_from_node_type(node_type3);
+    LLVMValueRef ap5 = LLVMBuildCast(gBuilder, LLVMBitCast, ap3, llvm_type3, "cast");
+    
+    sNodeType* node_type4 = clone_node_type(node_type3);
+    node_type4->mPointerNum--;
+    LLVMTypeRef llvm_type4 = create_llvm_type_from_node_type(node_type4);
+    LLVMValueRef ap6 = LLVMBuildLoad2(gBuilder, llvm_type4, ap5, "loadUV");
+    
+    node_type3->mPointerNum--;
+    
+    LVALUE llvm_value;
+    
+    llvm_value.value = ap6;
+    llvm_value.type = clone_node_type(node_type3);
+    llvm_value.address = NULL;
+    llvm_value.var = NULL;
+    llvm_value.c_value = NULL;
+    
+    push_value_to_stack_ptr(&llvm_value, info);
+    
+    info->type = clone_node_type(node_type3);
+
+    return TRUE;
+#elif defined(__LINUX__) && defined(__32BIT_CPU__)
+    sNodeType* node_type = gNodes[node].uValue.sVaArg2.mNodeType;
+    sNodeType* node_type3 = clone_node_type(node_type);
+    node_type3->mPointerNum++;
+    unsigned int ap = gNodes[node].uValue.sVaArg2.mAP;
+    
+    if(!compile(ap, info)) {
+        return FALSE;
+    }
+    
+    LVALUE ap_value = *get_value_from_stack(-1);
+    
+    sNodeType* node_type2 = clone_node_type(info->type);
+    
+    if(!(type_identify_with_class_name(node_type2, "__builtin_va_list") || type_identify_with_class_name(node_type2, "va_list") || type_identify_with_class_name(node_type2, "__va_list")))
+    {
+        compile_err_msg(info, "Require va_list");
+        return TRUE;
+    }
+    
+    LLVMValueRef ap3 = LLVMBuildLoad2(gBuilder, create_llvm_type_with_class_name("char*"), ap_value.value, "loadOOO");
+    
+    LLVMValueRef indices[2];
+
+    LLVMTypeRef llvm_type2 = create_llvm_type_with_class_name("int");
+
+    indices[0] = LLVMConstInt(llvm_type2, 4, FALSE);
+    
+    LLVMValueRef ap4 = LLVMBuildGEP2(gBuilder, create_llvm_type_with_class_name("char"), ap3, indices, 1, "gepAI");
+    
+    LLVMBuildStore(gBuilder, ap4, ap_value.value);
     LLVMTypeRef llvm_type3 = create_llvm_type_from_node_type(node_type3);
     LLVMValueRef ap5 = LLVMBuildCast(gBuilder, LLVMBitCast, ap3, llvm_type3, "cast");
     

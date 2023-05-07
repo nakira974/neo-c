@@ -973,12 +973,29 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
             }
         }
     }
-#elif defined(__LINUX__) && defined(__32BIT_CPU__)
+#elif __RASPBERRY_PI__
     else {
         int i;
         for(i=0;i<num_params; i++) {
             if(type_identify_with_class_name(param_types[i], "__builtin_va_list") || type_identify_with_class_name(param_types[i], "va_list")) {
-		LLVMTypeRef llvm_type2 = create_llvm_type_with_class_name("char*");
+                LLVMValueRef indices[2];
+
+                LLVMTypeRef llvm_type = create_llvm_type_with_class_name("int");
+
+                indices[0] = LLVMConstInt(llvm_type, 0, FALSE);
+                indices[1] = LLVMConstInt(llvm_type, 0, FALSE);
+
+                llvm_params[i] = LLVMBuildGEP(gBuilder, llvm_params[i], indices, 2, "gepXYZ");
+
+                sNodeType* node_type = create_node_type_with_class_name("int");
+                node_type->mArrayDimentionNum = 1;
+                node_type->mArrayNum[0] = 1;
+
+                LLVMTypeRef llvm_type2 = create_llvm_type_from_node_type(node_type);
+
+                LLVMTypeRef llvm_type3 = LLVMPointerType(llvm_type2, 0);
+
+                llvm_params[i] = LLVMBuildCast(gBuilder, LLVMBitCast, llvm_params[i], llvm_type3, "icastXXX");
                 llvm_params[i] = LLVMBuildLoad2(gBuilder, llvm_type2, llvm_params[i], "va_list");
             }
         }
@@ -1006,6 +1023,16 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
                 LLVMTypeRef llvm_type3 = LLVMPointerType(llvm_type2, 0);
 
                 llvm_params[i] = LLVMBuildCast(gBuilder, LLVMBitCast, llvm_params[i], llvm_type3, "icastXXX");
+                llvm_params[i] = LLVMBuildLoad2(gBuilder, llvm_type2, llvm_params[i], "va_list");
+            }
+        }
+    }
+#elif defined(__LINUX__) && defined(__32BIT_CPU__)
+    else {
+        int i;
+        for(i=0;i<num_params; i++) {
+            if(type_identify_with_class_name(param_types[i], "__builtin_va_list") || type_identify_with_class_name(param_types[i], "va_list")) {
+		LLVMTypeRef llvm_type2 = create_llvm_type_with_class_name("char*");
                 llvm_params[i] = LLVMBuildLoad2(gBuilder, llvm_type2, llvm_params[i], "va_list");
             }
         }

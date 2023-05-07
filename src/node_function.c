@@ -1208,6 +1208,13 @@ BOOL compile_external_function(unsigned int node, sCompileInfo* info)
         else {
             llvm_param_types[i] = create_llvm_type_from_node_type(param_types[i]);
         }
+#elif defined(__LINUX__) && (__32BIT_CPU__)
+        if(type_identify_with_class_name(param_types[i], "__builtin_va_list") || type_identify_with_class_name(param_types[i], "va_list")) {
+            llvm_param_types[i] = create_llvm_type_with_class_name("char*");
+        }
+        else {
+            llvm_param_types[i] = create_llvm_type_from_node_type(param_types[i]);
+        }
 #else
         if(type_identify_with_class_name(param_types[i], "__builtin_va_list") || type_identify_with_class_name(param_types[i], "va_list")) {
             llvm_param_types[i] = create_llvm_type_from_node_type(param_types[i]);

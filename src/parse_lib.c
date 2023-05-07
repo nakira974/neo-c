@@ -155,7 +155,7 @@ void expect_next_character_with_one_forward(char* characters, sParserInfo* info)
         parser_err_msg(info, buf);
         info->p++;
         skip_spaces_and_lf(info);
-        
+
 info->p = 0;
 *info->p = 'a';
     }

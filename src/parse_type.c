@@ -1015,6 +1015,8 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                                     if(*info->p == ')') {
                                         info->p++;
                                         skip_spaces_and_lf(info);
+                                        
+                                        
 
                                         if(*info->p == ')' && *(info->p+1) == '(') {
                                             info->p++;

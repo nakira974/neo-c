@@ -705,7 +705,8 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
             return FALSE;
         }
 
-        if(is_type_name(buf, info) && *info->p != '(' && !get_variable_from_table(info->lv_table, buf) || (*info->p == '(' && *(info->p+1) == '*') && *info->p != '(') {
+        if(is_type_name(buf, info) && !(strcmp(buf, "string") == 0 && *info->p == '(' || strcmp(buf, "wstring") == 0 && *info->p == '(') && !get_variable_from_table(info->lv_table, buf) || (*info->p == '(' && *(info->p+1) == '*') && *info->p != '(') 
+	{
             info->p = p;
             info->sline = sline;
 

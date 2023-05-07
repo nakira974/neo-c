@@ -973,6 +973,16 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
             }
         }
     }
+#elif defined(__LINUX__) && defined(__32BIT_CPU__)
+    else {
+        int i;
+        for(i=0;i<num_params; i++) {
+            if(type_identify_with_class_name(param_types[i], "__builtin_va_list") || type_identify_with_class_name(param_types[i], "va_list")) {
+		LLVMTypeRef llvm_type2 = create_llvm_type_with_class_name("char*");
+                llvm_params[i] = LLVMBuildLoad2(gBuilder, llvm_type2, llvm_params[i], "va_list");
+            }
+        }
+    }
 #elif __RASPBERRY_PI__
     else {
         int i;

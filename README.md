@@ -218,23 +218,21 @@ a.c,b.c,c.c
 
 7. It has using regex library(pcre) string libraries.
 
-8. For command line pipes, comelang can run C code with -e command option.
+8. defer
 
-10. defer
+9. Default parametor values, and label parametor are supported.
 
-11. Default parametor values, and label parametor are supported.
+10. operator overload.
 
-12. operator overload.
+11. Guard from the segmentation of null pointer.
 
-13. Guard from the segmentation of null pointer.
+12. Smart pointer
 
-14. Smart pointer
+13. Simple exception statment
 
-15. Simple exception statment
+14. Detect dangling pointer in some content.
 
-16. Detect dangling pointer in some content.
-
-17 In safe mode, runtime is memory safe. no segmention fault in some content.jjjjjkkkkkjj
+15 In safe mode, runtime is memory safe. no segmention fault in some content.
 
 1. C言語とある程度の互換性があります。Cプリプロセッサーも動きます。
 
@@ -250,23 +248,21 @@ a.c,b.c,c.c
 
 7. 正規表現を使った文字列ライブラリがあります。
 
-8. コマンドラインのパイプのためにcomelangは-eコマンドオプションによってCコードを実行できます。
+8. 遅延評価(defer)があります。
 
-10. 遅延評価(defer)があります。
+9. デフォルト引数、引数のラベルをサポートします。
 
-11. デフォルト引数、引数のラベルをサポートします。
+10. 演算子オーバーロードがあります。
 
-12. 演算子オーバーロードがあります。
+11. null pointerのセグメンテーションを防ぐ機能があります。
 
-13. null pointerのセグメンテーションを防ぐ機能があります。
+12. 範囲チェックするポインターがあります
 
-14. 範囲チェックするポインターがあります
+13. 簡易な例外処理があります。
 
-15. 簡易な例外処理があります。
+14. できる限りダンジリングポインタを検出する機能があります。
 
-16. できる限りダンジリングポインタを検出する機能があります。
-
-17. セーフモードではできるかぎりメモリセーフです。
+15. セーフモードではできるかぎりメモリセーフです。
 
 # INSTALL
 
@@ -312,7 +308,7 @@ For termux.
 git clone https://github.com/ab25cq/comelang
 
 cd comelang
-bash xhome_build.sh
+bash home_build.sh
 ```
 
 
@@ -330,7 +326,7 @@ in termux
 bash xhome_build.sh
 ```
 
-# History
+# Histories
 
 From version 1.0.2 The default GC system is boehmGC. I think it's easier than my original heap system. Let's enjoy easy programing.
 

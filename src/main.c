@@ -3,6 +3,7 @@
 
 char* gVersion;
 BOOL gNCGC = TRUE;
+BOOL gNCNoNullCheck = FALSE;
 BOOL gNCDebug = FALSE;
 char gFName[PATH_MAX];
 sVarTable* gModuleVarTable;
@@ -159,7 +160,7 @@ static BOOL compile_ll_file(char* fname, char* bname, char* clang_optiones, BOOL
 #ifdef __DARWIN_ARM__
     snprintf(cmd, 1024, "%s -o %s -c %s.ll %s -fPIC -I/opt/homebrew/opt/llvm@16/include -L/opt/homebrew/opt/llvm@16/lib -L/opt/homebrew/lib -I/opt/homebrew/include -L/usr/local/opt/libgc/lib -L/opt/homebrew/opt/boehmgc/lib -I/opt/homebrew/opt/pcre/include -fPIC -L/opt/homebrew/opt/boehmgc/lib ", CLANG, bname2, fname, clang_optiones);
 #else
-    snprintf(cmd, 1024, "%s -o %s -c %s.ll %s -fPIC -L/opt/homebrew/lib -I/opt/homebrew/include -L/usr/local/opt/libgc/lib -L/opt/homebrew/opt/boehmgc/lib -fPIC -L/opt/homebrew/opt/boehmgc/lib ", CLANG, bname2, fname, clang_optiones);
+    snprintf(cmd, 1024, "%s -o %s -c %s.ll %s -fPIC -fPIC ", CLANG, bname2, fname, clang_optiones);
 #endif
     
     int rc = system(cmd);

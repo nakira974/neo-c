@@ -3892,7 +3892,7 @@ fi
 printf %s "checking Operating System... " >&6; }
 
 CFLAGS='-DPREFIX="\"${DESTDIR}/\"" -gc'
-CFLAGS="-fPIC $CFLAGS"
+CFLAGS="-fPIC -rdynamic $CFLAGS"
 
 AR_LIB=
 
@@ -3917,7 +3917,7 @@ elif test `uname -s` = "FreeBSD"; then
     printf "%s\n" "#define __FREEBSD__ 1" >>confdefs.h
 
 
-    CFLAGS="-Isrc/ -I. -I$myprefix/include -L$myprefix/lib $CFLAGS"
+    CFLAGS="-Isrc/ -I. -L . -I$myprefix/include -L$myprefix/lib $CFLAGS"
 elif uname -s | grep -q CYGWIN_NT; then
     echo CYGWIN
 
@@ -3927,9 +3927,9 @@ elif uname -s | grep -q CYGWIN_NT; then
 
 
     if test $myprefix = /usr/local; then
-        CFLAGS="-Isrc/ -I. $CFLAGS"
+        CFLAGS="-Isrc/ -I. -L . $CFLAGS"
     else
-        CFLAGS="-Isrc/ -I. -I$myprefix/include -L$myprefix/lib $CFLAGS"
+        CFLAGS="-Isrc/ -I. -L . -I$myprefix/include -L$myprefix/lib $CFLAGS"
     fi
 else
     echo "Linux"
@@ -3940,9 +3940,9 @@ else
 
 
     if test $myprefix = /usr/local; then
-        CFLAGS="-Isrc/ -I. $CFLAGS"
+        CFLAGS="-Isrc/ -I. -L . $CFLAGS"
     else
-        CFLAGS="-Isrc/ -I. -I$myprefix/include -L$myprefix/lib $CFLAGS"
+        CFLAGS="-Isrc/ -I. -L . -I$myprefix/include -L$myprefix/lib $CFLAGS"
     fi
 
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for main in -lutil" >&5
@@ -3993,10 +3993,10 @@ then
     CFLAGS="$CFLAGS -I/usr/local/include"
 fi
 
-#if test -d /usr/local/lib
-#then
-#    CFLAGS="$CFLAGS -L /usr/local/lib"
-#fi
+if test -d /usr/local/lib
+then
+    CFLAGS="$CFLAGS -L /usr/local/lib"
+fi
 
 if test -d /opt/local/include
 then

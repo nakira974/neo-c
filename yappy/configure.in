@@ -83,7 +83,7 @@ fi
 AC_MSG_CHECKING(Operating System)
 
 CFLAGS='-DPREFIX="\"${DESTDIR}/\"" -gc'
-CFLAGS="-fPIC -rdynamic $CFLAGS"
+CFLAGS="-fPIC $CFLAGS"
 
 AR_LIB=
 
@@ -106,7 +106,7 @@ elif test `uname -s` = "FreeBSD"; then
 
     AC_DEFINE(__FREEBSD__, 1)
 
-    CFLAGS="-Isrc/ -I. -L . -I$myprefix/include -L$myprefix/lib $CFLAGS"
+    CFLAGS="-Isrc/ -I. -I$myprefix/include -L$myprefix/lib $CFLAGS"
 elif uname -s | grep -q CYGWIN_NT; then
     echo CYGWIN
 
@@ -115,9 +115,9 @@ elif uname -s | grep -q CYGWIN_NT; then
     AC_DEFINE(__CYGWIN__, 1)
 
     if test $myprefix = /usr/local; then
-        CFLAGS="-Isrc/ -I. -L . $CFLAGS"
+        CFLAGS="-Isrc/ -I. $CFLAGS"
     else 
-        CFLAGS="-Isrc/ -I. -L . -I$myprefix/include -L$myprefix/lib $CFLAGS"
+        CFLAGS="-Isrc/ -I. -I$myprefix/include -L$myprefix/lib $CFLAGS"
     fi
 else
     echo "Linux"
@@ -127,9 +127,9 @@ else
     AC_DEFINE(__LINUX__, 1)
 
     if test $myprefix = /usr/local; then
-        CFLAGS="-Isrc/ -I. -L . $CFLAGS"
+        CFLAGS="-Isrc/ -I. $CFLAGS"
     else
-        CFLAGS="-Isrc/ -I. -L . -I$myprefix/include -L$myprefix/lib $CFLAGS"
+        CFLAGS="-Isrc/ -I. -I$myprefix/include -L$myprefix/lib $CFLAGS"
     fi
 
     AC_HAVE_LIBRARY(util, [ LIBS="$LIBS -lutil" ], [])
@@ -143,10 +143,10 @@ then
     CFLAGS="$CFLAGS -I/usr/local/include"
 fi
 
-if test -d /usr/local/lib
-then
-    CFLAGS="$CFLAGS -L /usr/local/lib"
-fi
+#if test -d /usr/local/lib
+#then
+#    CFLAGS="$CFLAGS -L /usr/local/lib"
+#fi
 
 if test -d /opt/local/include
 then

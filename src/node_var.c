@@ -8108,7 +8108,7 @@ unsigned int sNodeTree_create_unwrap(unsigned int left, BOOL load_, sParserInfo*
     gNodes[node].mLine = info->sline;
     
     gNodes[node].uValue.sUnwrap.mLoad = load_;
-    gNodes[node].uValue.sUnwrap.mInhibitUnwrap = FALSE;
+    gNodes[node].uValue.sUnwrap.mInhibitUnwrap = gNCNoNullCheck;
     gNodes[node].uValue.sUnwrap.mSafeMode = gNCSafeMode;
     gNodes[node].uValue.sUnwrap.mNCCome = gNCCome;
 

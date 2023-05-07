@@ -114,6 +114,7 @@ extern BOOL gNCGC;
 extern BOOL gNCSafeMode;
 extern BOOL gNCCome;
 extern BOOL gNCTranspile;
+extern BOOL gNCNoNullCheck;
 extern char gFName[PATH_MAX];
 extern struct sVarTableStruct* gModuleVarTable;
 

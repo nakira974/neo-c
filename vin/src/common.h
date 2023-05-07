@@ -5,6 +5,7 @@
 #include "config.h" 
 
 using unsafe;
+using no-null-check;
 
 #include <comelang.h> 
 

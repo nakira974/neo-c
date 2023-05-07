@@ -2373,6 +2373,14 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 gNCSafeMode = TRUE;
                 *node = sNodeTree_create_null(info);
             }
+            else if(memcmp(info->p, "no-null-check", strlen("no-null-check")) == 0) 
+            {
+                info->p += strlen("no-unll-check");
+                skip_spaces_and_lf(info);
+                
+                gNCNoNullCheck = TRUE;
+                *node = sNodeTree_create_null(info);
+            }
             else if(memcmp(info->p, "unsafe", strlen("unsafe")) == 0) {
                 info->p += strlen("unsafe");
                 skip_spaces_and_lf(info);

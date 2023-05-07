@@ -8,7 +8,7 @@ Yet another modern compiler. It has a collection and string library using Boehm 
 もう一つのモダンコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 1.0.4
+version 1.0.5
 
 ``` C
 #include <comelang.h>
@@ -272,7 +272,7 @@ a.c,b.c,c.c
 
 Required libraries are clang, g++, gcc, llvm-dev, pcre-dev, gc-dev, readline-dev, ncurses-dev, make, autoconf, valgrind, gdb, lldb, musl-dev(alpine linux)
 
-For Linux, WSL, MacOS(Darwin), userland(android), raspiberry pi
+For Linux, WSL, MacOS(Darwin), userland(android), raspiberry pi, iSH(iPhone)
 
 Fast Build. No self host
 
@@ -312,7 +312,7 @@ For termux.
 git clone https://github.com/ab25cq/comelang
 
 cd comelang
-bash home_build.sh
+bash xhome_build.sh
 ```
 
 
@@ -340,6 +340,7 @@ From version 1.0.3 push_backがselfを返さなくなりました。[1,2,3,4].pu
 
 From version 1.0.4 ラズパイで動作確認しました。bash xfast_build.shでcomelangで作ったソフトウェアも動いてます。
 
+From version 1.0.5 iPhone(iSH)で動作確認しました。bash xfast_build.shですべてコンパイルできます。
 
 # Language specifications
 

@@ -1,4 +1,4 @@
-export PATH=$PATH:$HOME/bin
 
-#bash home_build.sh 
-cd vin && bash home_build.sh && cd .. && cd zed && bash home_build.sh && cd .. && cd zed2 && bash home_build.sh && cd .. && cd shsh && bash home_build.sh && cd .. && cd mf && bash home_build.sh && cd .. && cd yappy && bash home_build.sh && cd ..
+bash install_pkg.sh
+
+bash home_build.sh && bash home_ohter_build.sh

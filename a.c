@@ -1,11 +1,9 @@
 #include <comelang.h>
 #include <signal.h>
 
-void set_signal();
+extern int gA;
 
-int set_signal()
-{
-}
+char gA;
 
 int main(int argc, char** argv)
 {

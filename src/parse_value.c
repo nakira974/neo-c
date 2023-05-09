@@ -3509,7 +3509,18 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
         *node = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
     }
     
-    if(get_variable_from_this_table_only(info->lv_table, name) == NULL) {
+    sVar* var_ = get_variable_from_this_table_only(info->lv_table, name);
+    
+    if(var_) {
+        if(var_->mType && result_type && !type_identify(var_->mType, result_type)) 
+        {
+            parser_err_msg(info, xsprintf("Different type from previous definition(%s)", name));
+            show_node_type(var_->mType);
+            show_node_type(result_type);
+        }
+    }
+    
+    if(var_ == NULL) {
         check_already_added_variable(info->lv_table, name, info);
         if(!add_variable_to_table(info->lv_table, name, result_type, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE))
         {

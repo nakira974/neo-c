@@ -1496,6 +1496,7 @@ BOOL compile_lambda_call(unsigned int node, sCompileInfo* info)
     dec_stack_ptr(1, info);
 
     sNodeType* param_types[PARAMS_MAX];
+    LVALUE lvalue_params[PARAMS_MAX];
 
     int i;
     for(i=0; i<num_params; i++) {
@@ -1508,11 +1509,12 @@ BOOL compile_lambda_call(unsigned int node, sCompileInfo* info)
         param_types[i] = info->type;
 
         LVALUE param = *get_value_from_stack(-1);
+        
+        lvalue_params[i] = param;
     }
 
     /// convert param type ///
     LLVMValueRef llvm_params[PARAMS_MAX];
-    LVALUE* lvalue_params[PARAMS_MAX];
             
     LLVMTypeRef llvm_param_types[PARAMS_MAX];
         
@@ -1521,8 +1523,6 @@ BOOL compile_lambda_call(unsigned int node, sCompileInfo* info)
         sNodeType* right_type = param_types[i];
 
         LVALUE* param = get_value_from_stack(-num_params+i);
-
-        lvalue_params[i] = param;
         
         if(left_type == NULL || right_type == NULL) {
             compile_err_msg(info, "null lambda type param %d num params %d", i, num_params);
@@ -1544,6 +1544,25 @@ BOOL compile_lambda_call(unsigned int node, sCompileInfo* info)
     }
 
     dec_stack_ptr(num_params, info);
+    
+    sBuf buf;
+    
+    sBuf_init(&buf);
+
+    sBuf_append_str(&buf, xsprintf("%s(", lambda_value.c_value));
+
+    for(i=0; i<num_params; i++) {
+        if(lvalue_params[i].c_value) {
+            sBuf_append_str(&buf, lvalue_params[i].c_value);
+        }
+        
+        if(i!=num_params-1) {
+            sBuf_append_str(&buf, ",");
+        }
+    }
+
+    sBuf_append_str(&buf, ")");
+    add_come_code(info, "%s", buf.mBuf);
 
     if(type_identify_with_class_name(lambda_type->mResultType, "void") && lambda_type->mResultType->mPointerNum == 0)
     {
@@ -1573,7 +1592,7 @@ BOOL compile_lambda_call(unsigned int node, sCompileInfo* info)
         llvm_value.type = result_type;
         llvm_value.address = NULL;
         llvm_value.var = NULL;
-        llvm_value.c_value = NULL;
+        llvm_value.c_value = xsprintf("%s", buf.mBuf);
 
         push_value_to_stack_ptr(&llvm_value, info);
 
@@ -1583,6 +1602,8 @@ BOOL compile_lambda_call(unsigned int node, sCompileInfo* info)
 
         info->type = result_type;
     }
+    
+    free(buf.mBuf);
 
     return TRUE;
 }

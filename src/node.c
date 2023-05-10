@@ -4583,12 +4583,10 @@ BOOL create_llvm_struct_type(char* struct_name, sNodeType* node_type, sNodeType*
             num_fields = klass->mNumFields;
     
             LLVMStructSetBody(struct_type, field_types, num_fields, FALSE);
-            return TRUE;
         }
     }
     else {
         if(undefined_body) {
-            return TRUE;
         }
         else {
             LLVMTypeRef field_types[STRUCT_FIELD_MAX];
@@ -4610,6 +4608,8 @@ BOOL create_llvm_struct_type(char* struct_name, sNodeType* node_type, sNodeType*
             LLVMStructSetBody(llvm_type, field_types, num_fields, FALSE);
         }
     }
+    
+    output_struct(struct_name, node_type, generics_type, undefined_body);
 
     return TRUE;
 }

@@ -223,3 +223,58 @@ void header_function(sBuf* output, sComeFun* fun)
     
     sBuf_append_str(output, ");\n");
 }
+
+void output_struct(char* struct_name, sNodeType* struct_type, sNodeType* generics_type, BOOL undefined_body)
+{
+    if(undefined_body) {
+        sBuf_append_str(&gComeModule.mSourceHead, xsprintf("struct %s;\n", struct_name));
+    }
+    else {
+        sCLClass* klass = struct_type->mClass;
+        
+        sBuf_append_str(&gComeModule.mSourceHead, xsprintf("struct %s\n{\n", struct_name));
+        
+        int i;
+        for(i=0; i<klass->mNumFields; i++) {
+            char* name = klass->mFieldName[i];
+            sNodeType* field = clone_node_type(klass->mFields[i]);
+    
+            if(!solve_generics(&field, generics_type)) {
+                fprintf(stderr, "can't solve generics types(2)");
+                exit(1);
+            }
+            
+            if(type_identify_with_class_name(field, "lambda")) {
+                sBuf_append_str(&gComeModule.mSourceHead, "    ");
+                char* str = make_lambda_type_name_string(field, name);
+                
+                sBuf_append_str(&gComeModule.mSourceHead, str);
+                sBuf_append_str(&gComeModule.mSourceHead, ";\n");
+            }
+            else {
+                char* str = xsprintf("    %s %s;\n", make_type_name_string(field), name);
+                
+                sBuf_append_str(&gComeModule.mSourceHead, str);
+            }
+        }
+        sBuf_append_str(&gComeModule.mSourceHead, "};\n");
+    }
+}
+
+char* make_lambda_type_name_string(sNodeType* node_type, char* var_name)
+{
+    char buf[256];
+    snprintf(buf, 256, "%s(*%s)(", make_type_name_string(node_type->mResultType), var_name);
+    
+    int i;
+    for(i=0; i<node_type->mNumParams; i++) {
+        xstrncat(buf, make_type_name_string(node_type->mParamTypes[i]), 256);
+        if(i != node_type->mNumParams-1) {
+            xstrncat(buf, ",", 256);
+        }
+    }
+    
+    xstrncat(buf, ")", 256);
+    
+    return xsprintf("%s", buf);
+}

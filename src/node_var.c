@@ -838,6 +838,8 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
             
             xstrncat(buf, ")", 256);
             llvm_value.c_value = xsprintf("%s=%s", buf, rvalue.c_value);
+            
+            llvm_value.c_value = xsprintf("%s=%s", make_lambda_type_name_string(left_type, var_name), rvalue.c_value);
         }
         else {
             llvm_value.c_value = xsprintf("%s %s=%s", make_type_name_string(left_type), var_name, rvalue.c_value);
@@ -3102,7 +3104,7 @@ BOOL compile_load_function(unsigned int node, sCompileInfo* info)
     llvm_value.type = lambda_type;
     llvm_value.address = fun->mLLVMFunction;
     llvm_value.var = NULL;
-    llvm_value.c_value = NULL;
+    llvm_value.c_value = xsprintf("%s", fun_name);
 
     push_value_to_stack_ptr(&llvm_value, info);
 

@@ -1,5 +1,8 @@
-#include <stdio.h>
-#include <stdlib.h>
+
+struct sA
+{
+    int a;
+};
 
 int fun(int x, int y)
 {
@@ -8,7 +11,9 @@ int fun(int x, int y)
 
 int main(int argc, char** argv)
 {
-    printf("%d\n", fun(1,2));
+    int (*f)(int, int) = fun;
+    
+    fun(f(1,2), 3);
     
     return 0;
 }

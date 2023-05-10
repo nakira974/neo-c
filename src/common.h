@@ -285,10 +285,12 @@ struct sCompileInfoStruct;
 void transpiler_init();
 void transpiler_final();
 void add_come_function(char* fun_name, sNodeType* result_type, int num_params, sNodeType** param_types, char** param_names);
+void output_struct(char* struct_name, sNodeType* struct_type, sNodeType* generics_type, BOOL undefined_body);
 sComeFun* get_come_function(char* fun_name);
 void add_come_code(struct sCompileInfoStruct* info, const char* msg, ...);
 void output_function(sBuf* output, sComeFun* fun);
 void header_function(sBuf* output, sComeFun* fun);
+char* make_lambda_type_name_string(sNodeType* node_type, char* var_name);
 
 //////////////////////////////
 /// vtable.c

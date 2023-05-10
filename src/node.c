@@ -79,7 +79,7 @@ void free_right_value_objects(sCompileInfo* info)
                     show_node_type(node_type);
                 }
 
-                free_object(node_type, it->obj, TRUE, info);
+                free_object(node_type, it->obj, NULL, TRUE, info);
 
                 it->freed = TRUE;
             }
@@ -672,7 +672,7 @@ sFunction* create_equals_automatically(sNodeType* node_type, char* fun_name, sCo
     return equaler;
 }
 
-void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCompileInfo* info)
+void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL force_delete, sCompileInfo* info)
 {
     if(!gNCGC && (node_type->mAllocaValue || node_type->mPointerNum > 0)) {
         LLVMTypeRef llvm_type = create_llvm_type_with_class_name("char*");
@@ -738,7 +738,8 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCom
                 LLVMValueRef llvm_fun = NULL;
                 
                 BOOL immutable_ = finalizer->mImmutable;
-                if(!create_generics_function(&llvm_fun, finalizer, fun_name, node_type, 0, NULL, immutable_, info)) {
+                char* llvm_fun_name = NULL;
+                if(!create_generics_function(&llvm_fun, &llvm_fun_name, finalizer, fun_name, node_type, 0, NULL, immutable_, info)) {
                     fprintf(stderr, "can't craete generics finalizer %s\n", fun_name);
                     return;
                 }
@@ -796,6 +797,8 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCom
                     LLVMTypeRef function_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
                     
                     LLVMBuildCall2(gBuilder, function_type, llvm_fun3, llvm_params2, num_params2, "");
+                    
+                    add_come_code_directory(info, xsprintf("igc_decrement_ref_count(%s)\n", c_value));
                 }
                 else {
                     sNodeType* result_type = create_node_type_with_class_name("void");
@@ -813,6 +816,8 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCom
                     LLVMTypeRef function_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
                     
                     LLVMBuildCall2(gBuilder, function_type, llvm_fun2, llvm_params, num_params, "");
+                    
+                    add_come_code_directory(info, xsprintf("call_finalizer(%s,%s,%d)\n", llvm_fun_name, c_value, node_type->mAllocaValue));
                 }
             }
             else {
@@ -880,6 +885,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCom
                     LLVMTypeRef function_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
                     
                     LLVMBuildCall2(gBuilder, function_type, llvm_fun3, llvm_params3, num_params3, "");
+                    add_come_code_directory(info, xsprintf("call_finalizer(%s,%s,%d)\n", fun_name, c_value, node_type->mAllocaValue));
                 }
                 else {
                     sNodeType* result_type = create_node_type_with_class_name("void");
@@ -895,6 +901,8 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCom
         
                     LLVMTypeRef function_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
                     LLVMBuildCall2(gBuilder, function_type, llvm_fun2, llvm_params2, num_params2, "");
+                    
+                    add_come_code_directory(info, xsprintf("igc_decrement_ref_count(%s)\n", c_value));
                 }
             }
         }
@@ -945,6 +953,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCom
         
                 /// remove right value objects from list
                 //remove_object_from_right_values(obj, info);
+                add_come_code_directory(info, xsprintf("igc_decrement_ref_count(%s)\n", c_value));
             }
             else if(node_type->mHeap) {
                 /// free ///
@@ -986,6 +995,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCom
         
                 /// remove right value objects from list
                 //remove_object_from_right_values(obj, info);
+                add_come_code_directory(info, xsprintf("igc_decrement_ref_count(%s)\n", c_value));
             }
         }
 
@@ -1165,7 +1175,8 @@ LLVMValueRef clone_object(sNodeType* node_type, LLVMValueRef obj, sCompileInfo* 
                 
                 BOOL immutable_ = cloner->mImmutable;
 
-                if(!create_generics_function(&llvm_fun, cloner, fun_name, node_type, 0, NULL, immutable_, info)) {
+                char* llvm_fun_name = NULL;
+                if(!create_generics_function(&llvm_fun, &llvm_fun_name, cloner, fun_name, node_type, 0, NULL, immutable_, info)) {
                     fprintf(stderr, "can't craete generics cloner %s\n", fun_name);
                     exit(1);
                 }

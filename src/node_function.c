@@ -1368,7 +1368,7 @@ BOOL compile_external_function(unsigned int node, sCompileInfo* info)
     return TRUE;
 }
 
-BOOL create_generics_function(LLVMValueRef* llvm_fun, sFunction* fun, char* fun_name, sNodeType* generics_type, int num_method_generics_types, sNodeType** method_generics_types, BOOL immutable_, sCompileInfo* info)
+BOOL create_generics_function(LLVMValueRef* llvm_fun, char** llvm_fun_name, sFunction* fun, char* fun_name, sNodeType* generics_type, int num_method_generics_types, sNodeType** method_generics_types, BOOL immutable_, sCompileInfo* info)
 {
     sNodeType* generics_type_before = info->generics_type;
     if(generics_type) {
@@ -1391,6 +1391,8 @@ BOOL create_generics_function(LLVMValueRef* llvm_fun, sFunction* fun, char* fun_
 
     char real_fun_name[REAL_FUN_NAME_MAX];
     create_generics_fun_name(real_fun_name, REAL_FUN_NAME_MAX, fun_name,  generics_type, num_method_generics_types, method_generics_types);
+    
+    *llvm_fun_name = xsprintf("%s", real_fun_name);
     
     *llvm_fun = LLVMGetNamedFunction(gModule, real_fun_name);
 

@@ -400,13 +400,13 @@ void free_objects(sVarTable* table, sCompileInfo* info)
                     {
                         if(p->mType->mConstant) {
                             LLVMValueRef obj = p->mLLVMValue.value;
-                            free_object(p->mType, obj, FALSE, info);
+                            free_object(p->mType, obj, p->mName, FALSE, info);
                             remove_object_from_right_values(obj, info);
                         }
                         else {
                             LLVMTypeRef llvm_type = create_llvm_type_from_node_type(p->mType);
                             LLVMValueRef obj = LLVMBuildLoad2(gBuilder, llvm_type, p->mLLVMValue.value, "vtable_obj");
-                            free_object(p->mType, obj, FALSE, info);
+                            free_object(p->mType, obj, p->mName, FALSE, info);
                             remove_object_from_right_values(obj, info);
                         }
 
@@ -431,7 +431,7 @@ void free_objects(sVarTable* table, sCompileInfo* info)
                     }
                     
                     if(exist_heap_fields) {
-                        free_object(node_type, obj, FALSE, info);
+                        free_object(node_type, obj, p->mName, FALSE, info);
                     }
                 }
             }
@@ -463,13 +463,13 @@ static void free_block_variables(sVarTable* table, LLVMValueRef ret_value, sComp
                         if(p->mLLVMValue.value != ret_value) {
                             if(p->mType->mConstant) {
                                 LLVMValueRef obj = p->mLLVMValue.value;
-                                free_object(p->mType, obj, FALSE, info);
+                                free_object(p->mType, obj, p->mName, FALSE, info);
                                 remove_object_from_right_values(obj, info);
                             }
                             else {
                                 LLVMTypeRef llvm_type = create_llvm_type_from_node_type(p->mType);
                                 LLVMValueRef obj = LLVMBuildLoad2(gBuilder, llvm_type, p->mLLVMValue.value, "vtable_obj");
-                                free_object(p->mType, obj, FALSE, info);
+                                free_object(p->mType, obj, p->mName, FALSE, info);
                                 remove_object_from_right_values(obj, info);
                             }
                         }
@@ -495,7 +495,7 @@ static void free_block_variables(sVarTable* table, LLVMValueRef ret_value, sComp
                     }
                     
                     if(exist_heap_fields) {
-                        free_object(node_type, obj, FALSE, info);
+                        free_object(node_type, obj, p->mName, FALSE, info);
                     }
                 }
             }

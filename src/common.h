@@ -1056,7 +1056,7 @@ void increment_ref_count(LLVMValueRef obj, sNodeType* node_type, sCompileInfo* i
 void append_object_to_right_values(LLVMValueRef obj, sNodeType* node_type, sCompileInfo* info);
 void remove_object_from_right_values(LLVMValueRef obj, sCompileInfo* info);
 void free_right_value_objects(sCompileInfo* info);
-void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCompileInfo* info);
+void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL force_delete, sCompileInfo* info);
 void free_protocol_object(sNodeType* protocol_type, LLVMValueRef protocol_obj, sCompileInfo* info);
 BOOL is_right_values(LLVMValueRef obj, sCompileInfo* info);
 void check_null_value_for_pointer(LLVMValueRef value, sCompileInfo* info);
@@ -1468,7 +1468,7 @@ unsigned int sNodeTree_create_method_block(MANAGED char* block, char* block_text
 
 void create_real_fun_name(char* real_fun_name, size_t size_real_fun_name, char* fun_name, char* struct_name);
 void llvm_change_block(LLVMBasicBlockRef current_block, sCompileInfo* info);
-BOOL create_generics_function(LLVMValueRef* llvm_fun, sFunction* fun, char* fun_name, sNodeType* generics_type, int num_method_generics_types, sNodeType** method_generics_types, BOOL immutable, sCompileInfo* info);
+BOOL create_generics_function(LLVMValueRef* llvm_fun, char** llvm_fun_name, sFunction* fun, char* fun_name, sNodeType* generics_type, int num_method_generics_types, sNodeType** method_generics_types, BOOL immutable, sCompileInfo* info);
 BOOL solve_type(sNodeType** node_type, sNodeType* generics_type, int num_method_generics_types, sNodeType** method_generics_types, sCompileInfo* info);
 BOOL solve_method_generics(sNodeType** node_type, int num_method_generics_types, sNodeType** method_generics_types);
 void create_generics_fun_name(char* real_fun_name, int size_real_fun_name, char* fun_name,  sNodeType* generics_type, int num_method_generics_types, sNodeType** method_generics_types);

@@ -1066,7 +1066,8 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         
         BOOL immutable_ = fun->mImmutable;
 
-        if(!create_generics_function(&llvm_fun, fun, fun_name, generics_type, num_method_generics_types, method_generics_types, immutable_, info)) {
+        char* llvm_fun_name = NULL;
+        if(!create_generics_function(&llvm_fun, &llvm_fun_name, fun, fun_name, generics_type, num_method_generics_types, method_generics_types, immutable_, info)) {
             return FALSE;
         }
         

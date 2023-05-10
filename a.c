@@ -1,7 +1,8 @@
+using comelang;
 
 struct sA
 {
-    int a;
+    int*% a;
 };
 
 int fun(int x, int y)
@@ -11,9 +12,9 @@ int fun(int x, int y)
 
 int main(int argc, char** argv)
 {
-    int (*f)(int, int) = fun;
+    sA*% obj = new sA;
     
-    fun(f(1,2), 3);
+    fun(*obj.a, *obj.a);
     
     return 0;
 }

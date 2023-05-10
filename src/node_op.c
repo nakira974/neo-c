@@ -76,7 +76,8 @@ BOOL call_operator_function(char* fun_base_name, sNodeType* left_type, int num_p
             
             BOOL immutable_ = operator_fun->mImmutable;
             
-            if(!create_generics_function(&llvm_fun, operator_fun, fun_name, left_type, 0, NULL, immutable_, info)) {
+            char* llvm_fun_name = NULL;
+            if(!create_generics_function(&llvm_fun, llvm_fun_name, operator_fun, fun_name, left_type, 0, NULL, immutable_, info)) {
                 fprintf(stderr, "can't craete generics function %s\n", fun_name);
                 exit(1);
             }

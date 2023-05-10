@@ -178,6 +178,11 @@ static BOOL compile_ll_file(char* fname, char* bname, char* clang_optiones, BOOL
         (void)system(cmd);
     }
     
+    snprintf(cmd, 1024, "rm -f %s.bc", fname);
+    
+    //puts(cmd);
+    (void)system(cmd);
+    
     return TRUE;
 }
 

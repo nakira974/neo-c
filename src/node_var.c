@@ -821,9 +821,41 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
         info->type = clone_node_type(right_type);
     }
     
-    dec_stack_ptr(1, info);
-    
-    push_value_to_stack_ptr(&rvalue, info);
+    if(alloc) {
+        LVALUE llvm_value = rvalue;
+        
+        if(type_identify_with_class_name(left_type, "lambda")) {
+            char buf[256];
+            snprintf(buf, 256, "%s(*%s)(", make_type_name_string(left_type->mResultType), var_name);
+            
+            int i;
+            for(i=0; i<left_type->mNumParams; i++) {
+                xstrncat(buf, make_type_name_string(left_type->mParamTypes[i]), 256);
+                if(i != left_type->mNumParams-1) {
+                    xstrncat(buf, ",", 256);
+                }
+            }
+            
+            xstrncat(buf, ")", 256);
+            llvm_value.c_value = xsprintf("%s=%s", buf, rvalue.c_value);
+        }
+        else {
+            llvm_value.c_value = xsprintf("%s %s=%s", make_type_name_string(left_type), var_name, rvalue.c_value);
+        }
+        
+        dec_stack_ptr(1, info);
+        
+        push_value_to_stack_ptr(&llvm_value, info);
+    }
+    else {
+        LVALUE llvm_value = rvalue;
+        
+        llvm_value.c_value = xsprintf("%s=%s", var_name, rvalue.c_value);
+        
+        dec_stack_ptr(1, info);
+        
+        push_value_to_stack_ptr(&llvm_value, info);
+    }
 
     if(left_type->mHeap) {
         remove_object_from_right_values(rvalue.value, info);
@@ -5026,7 +5058,7 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
             llvm_value.type = var_type2;
             llvm_value.address = var_address;
             llvm_value.var = var_;
-            llvm_value.c_value = NULL;
+            llvm_value.c_value = xsprintf("%s", var_name);
     
             push_value_to_stack_ptr(&llvm_value, info);
             
@@ -5039,7 +5071,7 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
     
             llvm_value.type = clone_node_type(var_type);
             llvm_value.var = var_;
-            llvm_value.c_value = NULL;
+            llvm_value.c_value = xsprintf("%s", var_name);
     
             push_value_to_stack_ptr(&llvm_value, info);
             
@@ -5054,7 +5086,7 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
             llvm_value.type = var_type2;
             llvm_value.address = var_address;
             llvm_value.var = var_;
-            llvm_value.c_value = NULL;
+            llvm_value.c_value = xsprintf("%s", var_name);
     
             push_value_to_stack_ptr(&llvm_value, info);
             
@@ -5067,7 +5099,7 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
             llvm_value.type = var_type2;
             llvm_value.address = var_address;
             llvm_value.var = var_;
-            llvm_value.c_value = NULL;
+            llvm_value.c_value = xsprintf("%s", var_name);
     
             push_value_to_stack_ptr(&llvm_value, info);
             
@@ -5080,7 +5112,7 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
 
         llvm_value.type = clone_node_type(var_type);
         llvm_value.var = var_;
-        llvm_value.c_value = NULL;
+        llvm_value.c_value = xsprintf("%s", var_name);
 
         push_value_to_stack_ptr(&llvm_value, info);
         
@@ -5092,7 +5124,7 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
         llvm_value.type = var_type;
         llvm_value.address = var_address;
         llvm_value.var = var_;
-        llvm_value.c_value = NULL;
+        llvm_value.c_value = xsprintf("%s", var_name);
 
         push_value_to_stack_ptr(&llvm_value, info);
 
@@ -5107,7 +5139,7 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
             llvm_value.type = clone_node_type(var_type);
             llvm_value.address = var_address;
             llvm_value.var = var_;
-            llvm_value.c_value = NULL;
+            llvm_value.c_value = xsprintf("%s", var_name);
 
             push_value_to_stack_ptr(&llvm_value, info);
 
@@ -5203,7 +5235,7 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
             llvm_value.type = var_type;
             llvm_value.address = var_address;
             llvm_value.var = var_;
-            llvm_value.c_value = NULL;
+            llvm_value.c_value = xsprintf("%s", var_name);
 
             push_value_to_stack_ptr(&llvm_value, info);
 
@@ -5217,7 +5249,7 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
             llvm_value.type = var_type;
             llvm_value.address = var_address;
             llvm_value.var = var_;
-            llvm_value.c_value = NULL;
+            llvm_value.c_value = xsprintf("%s", var_name);
 
             push_value_to_stack_ptr(&llvm_value, info);
 
@@ -5240,7 +5272,7 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
             llvm_value.type = var_type;
             llvm_value.address = var_address;
             llvm_value.var = var_;
-            llvm_value.c_value = NULL;
+            llvm_value.c_value = xsprintf("%s", var_name);
 
             push_value_to_stack_ptr(&llvm_value, info);
 

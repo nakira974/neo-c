@@ -7,6 +7,7 @@ struct sComeFunStruct* gComeFunctionHead;
 void transpiler_init()
 {
     sBuf_init(&gComeModule.mSource);
+    sBuf_init(&gComeModule.mSourceHead);
     memset(gComeFunctions, 0, sizeof(sComeFun)*COME_FUN_MAX);
     gComeFunctionHead = NULL;
 }
@@ -14,7 +15,22 @@ void transpiler_init()
 void transpiler_final()
 {
     if(gNCTranspile) {
+        printf("%s", gComeModule.mSourceHead.mBuf);
+        
         sComeFun* it = gComeFunctionHead;
+        while(it) {
+            sBuf fun_output;
+            sBuf_init(&fun_output);
+            header_function(&fun_output, it);
+            
+            printf("%s", fun_output.mBuf);
+            
+            free(fun_output.mBuf);
+            
+            it = it->mNext;
+        }
+        
+        it = gComeFunctionHead;
         while(it) {
             sBuf fun_output;
             sBuf_init(&fun_output);
@@ -28,6 +44,7 @@ void transpiler_final()
         }
     }
     free(gComeModule.mSource.mBuf);
+    free(gComeModule.mSourceHead.mBuf);
 }
 
 void add_come_function(char* fun_name, sNodeType* result_type, int num_params, sNodeType** param_types, char** param_names)
@@ -167,9 +184,42 @@ void output_function(sBuf* output, sComeFun* fun)
             sBuf_append_str(output, ", ");
         }
     }
+    
+    sBuf_append_str(&gComeModule.mSourceHead, output->mBuf);
+    sBuf_append_str(&gComeModule.mSourceHead, ");\n");
+    
     sBuf_append_str(output, ")\n{\n");
     
     sBuf_append_str(output, fun->mSource.mBuf);
     
     sBuf_append_str(output, "}\n");
+}
+
+void header_function(sBuf* output, sComeFun* fun)
+{
+    char* result_type_str = make_type_name_string(fun->mResultType);
+    
+    sBuf_append_str(output, result_type_str);
+    sBuf_append_str(output, " ");
+    
+    sBuf_append_str(output, fun->mName);
+    sBuf_append_str(output, "(");
+    
+    int i;
+    for(i=0; i<fun->mNumParams; i++) {
+        sNodeType* param_type = fun->mParamTypes[i];
+        
+        char* param_type_str = make_type_name_string(fun->mParamTypes[i]);
+        
+        sBuf_append_str(output, param_type_str);
+        
+        sBuf_append_str(output, " ");
+        sBuf_append_str(output, fun->mParamNames[i]);
+        
+        if(i != fun->mNumParams-1) {
+            sBuf_append_str(output, ", ");
+        }
+    }
+    
+    sBuf_append_str(output, ");\n");
 }

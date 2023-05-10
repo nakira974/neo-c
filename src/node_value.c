@@ -81,13 +81,68 @@ BOOL compile_c_string_value(unsigned int node, sCompileInfo* info)
     
         LVALUE llvm_value;
         llvm_value.value = value2;
-        llvm_value.c_value = xsprintf("\"%s\"", buf);
+        
+        char* p = buf;
+        sBuf buf2;
+        sBuf_init(&buf2);
+        while(*p) {
+            switch(*p) {
+                case '\n':
+                    sBuf_append_char(&buf2, '\\');
+                    sBuf_append_char(&buf2, 'n');
+                    break;
+
+                case '\t':
+                    sBuf_append_char(&buf2, '\\');
+                    sBuf_append_char(&buf2, 't');
+                    break;
+
+                case '\r':
+                    sBuf_append_char(&buf2, '\\');
+                    sBuf_append_char(&buf2, 'r');
+                    break;
+
+                case '\v':
+                    sBuf_append_char(&buf2, '\\');
+                    sBuf_append_char(&buf2, 'v');
+                    break;
+
+                case '\f':
+                    sBuf_append_char(&buf2, '\\');
+                    sBuf_append_char(&buf2, 'f');
+                    break;
+
+                case '\a':
+                    sBuf_append_char(&buf2, '\\');
+                    sBuf_append_char(&buf2, 'a');
+                    break;
+
+                case '\b':
+                    sBuf_append_char(&buf2, '\\');
+                    sBuf_append_char(&buf2, 'b');
+                    break;
+
+                case '\\':
+                    sBuf_append_char(&buf2, '\\');
+                    sBuf_append_char(&buf2, '\\');
+                    break;
+
+                default:
+                    sBuf_append_char(&buf2, *p);
+                    break;
+                    
+            }
+            p++;
+        }
+        llvm_value.c_value = xsprintf("\"%s\"", buf2.mBuf);
         llvm_value.type = create_node_type_with_class_name("char*");
         llvm_value.type->mUnsigned = TRUE;
         llvm_value.address = value2;
         llvm_value.var = NULL;
     
         push_value_to_stack_ptr(&llvm_value, info);
+        
+        free(buf2.mBuf);
     }
     else {
         LLVMTypeRef llvm_type = create_llvm_type_with_class_name("char*");

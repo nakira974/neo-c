@@ -288,6 +288,7 @@ void add_come_function(char* fun_name, sNodeType* result_type, int num_params, s
 sComeFun* get_come_function(char* fun_name);
 void add_come_code(struct sCompileInfoStruct* info, const char* msg, ...);
 void output_function(sBuf* output, sComeFun* fun);
+void header_function(sBuf* output, sComeFun* fun);
 
 //////////////////////////////
 /// vtable.c
@@ -1076,6 +1077,7 @@ extern char gFunctionName[VAR_NAME_MAX];
 
 struct sComeModule
 {
+    sBuf mSourceHead;
     sBuf mSource;
     char* mLastCode;
 };

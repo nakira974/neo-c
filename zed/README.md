@@ -46,4 +46,6 @@ USAGE
     18
     > zed '"HELLO WORLD".scan(/./).map { if it == " " { it } else { it + "B" } }.join("")'
     HBEBLBLBOB WBOBRBLBDB
+    > ls | zed '.scan(/./).sort().uniq()'
+    [-,.,2,3,4,5,6,7,8,9,A,C,D,E,I,L,M,N,R,S,_,a,b,c,d,e,f,g,h,i,k,l,m,n,o,p,r,s,t,u,v,x,y,z]
 ```

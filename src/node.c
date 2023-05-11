@@ -1703,6 +1703,7 @@ void init_nodes(char* sname)
             fprintf(stderr, "overflow function number\n");
             exit(1);
         }
+        add_come_function(name, result_type, num_params, param_types, param_names2, TRUE);
     }
 */
 
@@ -1856,6 +1857,7 @@ void init_nodes(char* sname)
             fprintf(stderr, "overflow function number\n");
             exit(1);
         }
+        add_come_function(name, result_type, num_params, param_types, param_names2, TRUE);
     }
     /// come_boehm_gc_init ///
     {
@@ -1884,6 +1886,7 @@ void init_nodes(char* sname)
             fprintf(stderr, "overflow function number\n");
             exit(1);
         }
+        add_come_function(name, result_type, num_params, param_types, param_names2, TRUE);
     }
     /// come_gc_final ///
     {
@@ -1912,6 +1915,7 @@ void init_nodes(char* sname)
             fprintf(stderr, "overflow function number\n");
             exit(1);
         }
+        add_come_function(name, result_type, num_params, param_types, param_names2, TRUE);
     }
     /// igc_calloc ///
     {
@@ -1964,6 +1968,7 @@ void init_nodes(char* sname)
             fprintf(stderr, "overflow function number\n");
             exit(1);
         }
+        add_come_function(name, result_type, num_params, param_types, param_names2, TRUE);
     }
     /// igc_increment_ref_count ///
     {
@@ -2003,6 +2008,7 @@ void init_nodes(char* sname)
             fprintf(stderr, "overflow function number\n");
             exit(1);
         }
+        add_come_function(name, result_type, num_params, param_types, param_names2, TRUE);
     }
     /// igc_decrement_ref_count ///
     {
@@ -2042,6 +2048,7 @@ void init_nodes(char* sname)
             fprintf(stderr, "overflow function number\n");
             exit(1);
         }
+        add_come_function(name, result_type, num_params, param_types, param_names2, TRUE);
     }
     
     /// unwrap_exception ///
@@ -2088,6 +2095,7 @@ void init_nodes(char* sname)
             fprintf(stderr, "overflow function number\n");
             exit(1);
         }
+        add_come_function(name, result_type, num_params, param_types, param_names2, TRUE);
     }
 
     {
@@ -5188,7 +5196,8 @@ BOOL compile_block(sNodeBlock* block, BOOL force_hash_result, sCompileInfo* info
                 }
                 else if(info->stack_num > 0) {
                     LVALUE llvm_value = *get_value_from_stack(-1);
-                    if(llvm_value.c_value) {
+                    if(llvm_value.c_value && gNodes[node].mNodeType != kNodeTypeReturn && gNodes[node].mNodeType != kNodeTypeGoto) 
+                    {
                         sBuf_append_str(&info->come_fun->mSource, llvm_value.c_value);
                         sBuf_append_str(&info->come_fun->mSource, ";\n");
                         (gLLVMStack -1)->c_value = NULL;

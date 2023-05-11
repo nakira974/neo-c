@@ -1,54 +1,29 @@
 #define NULL ((void*)0)
 using comelang;
 
+void* igc_calloc(size_t count, size_t size);
 void call_finalizer(void* fun, void* mem, int call_finalizer_only);
+void igc_decrement_ref_count(void* mem);
+void igc_increment_ref_count(void* mem);
 
 using unsafe;
 
-struct sA
-{
-    int*% a;
-};
-
-struct sB
-{
-    int a;
-    int b;
-    int c;
-};
-
-int fun(int a, int b)
-{
-    return a + b;
-}
-
+char* strncpy(char* str, char* str2, int n);
 int strlen(char* str);
-void strncpy(char*, char*, int);
 void puts(char* str);
 
-char*% string2(char* str)
+inline char*% fun(char* x, char* y)
 {
-    int len = strlen(str) + 1;
-    
-    char*% result = new char[len];
-
-    strncpy(result, str, len);
-
-    return result;
+    char*% str = new char[128];
+    strncpy(str, x, 128);
+    strncpy(str, y, 128);
+    return str;
 }
 
 int main(int argc, char** argv)
 {
-    sA*% obj = new sA;
-    new sA;
-    
-    obj.a = new int;
-    
-    *obj.a = 123;
-    
-    fun(*obj.a, *obj.a);
-    
-    string2("ABC");
+    char*% a = fun("ABC", "DEF");
+    char*% b = fun("GGG", "HHH");
     
     return 0;
 }

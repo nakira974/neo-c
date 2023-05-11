@@ -1127,6 +1127,10 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         set_caller_sline(info->sline);
         set_caller_sname(info->sname);
         
+        info->num_inline++;
+        char* inline_func_end_label = info->inline_func_end_label;
+        info->inline_func_end_label = xsprintf("inline_func_end_label%d", info->num_inline);
+        
         if(strcmp(fun->mName, info->in_inline_function_name) == 0 && info->in_inline_function) {
             compile_err_msg(info, "inline function can't call itself(%s)\n", fun_name);
             return TRUE;
@@ -1205,6 +1209,12 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
             info->inline_result_variable = LLVMBuildAlloca(gBuilder, llvm_type, "inline_result_variable");
         }
         
+        if(!(type_identify_with_class_name(result_type, "void") && result_type->mPointerNum == 0))
+        {
+            add_come_code_directory(info, "%s inline_result_variable%d;\n", make_type_name_string(result_type), info->num_inline);
+        }
+        
+        add_come_code_directory(info, "{\n");
 
         for(i=0; i<num_params; i++) {
             LLVMTypeRef llvm_type = create_llvm_type_from_node_type(param_types[i]);
@@ -1213,6 +1223,8 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
             sVar* var_ = get_variable_from_table(block_var_table, param_names[i]);
             
             LLVMBuildStore(gBuilder, llvm_params[i], param);
+            
+            add_come_code_directory(info, "%s %s = %s;\n", make_type_name_string(param_types[i]), param_names[i], lvalue_params[i].c_value);
 
             if(fun->mParamTypes[i] != NULL) {
                 sNodeType* node_type = clone_node_type(fun->mParamTypes[i]);
@@ -1251,6 +1263,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         if(!compile_block(node_block, force_hash_result, info)) {
             return FALSE;
         }
+        transpiler_clear_last_code();
 
         gComeFunctionResultType = come_function_result_type;
 
@@ -1270,12 +1283,13 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         }
         else {
             LLVMTypeRef llvm_type = create_llvm_type_from_node_type(result_type);
+            
             LVALUE llvm_value;
             llvm_value.value = LLVMBuildLoad2(gBuilder, llvm_type, info->inline_result_variable, "inline_result_variable");
             llvm_value.type = result_type;
             llvm_value.address = info->inline_result_variable;
             llvm_value.var = NULL;
-            llvm_value.c_value = NULL;
+            llvm_value.c_value = xsprintf("inline_result_variable%d", info->num_inline);
 
             dec_stack_ptr(num_params, info);
             push_value_to_stack_ptr(&llvm_value, info);
@@ -1291,12 +1305,16 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         xstrncpy(info->in_inline_function_name, inline_function_before, VAR_NAME_MAX);
         
         xstrncpy(gFunctionName, function_name, VAR_NAME_MAX);
+        add_come_code_directory(info, "\n%s:\n", info->inline_func_end_label);
+        
+        info->inline_func_end_label = inline_func_end_label;
         
         if(result_value) {
             if(info->type->mHeap) {
                 append_object_to_right_values(result_value, info->type, info);
             }
         }
+        add_come_code_directory(info, "0;\n}\n");
     }
     /// call normal function ///
     else {

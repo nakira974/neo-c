@@ -659,6 +659,8 @@ struct sCompileInfoStruct
     char in_inline_function_name[VAR_NAME_MAX];
     int inline_sline;
     LLVMBasicBlockRef inline_func_end;
+    char* inline_func_end_label;
+    int num_inline;
 
     BOOL in_lambda_function;
     int lambda_sline;

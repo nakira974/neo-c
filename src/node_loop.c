@@ -1189,6 +1189,9 @@ BOOL compile_return(unsigned int node, sCompileInfo* info)
                 free_objects_on_return(info->function_node_block, info, llvm_value.address, FALSE);
                 LLVMBuildStore(gBuilder, llvm_value.value, info->inline_result_variable);
                 LLVMBuildBr(gBuilder, info->inline_func_end);
+                
+                add_come_code_directory(info, "inline_result_variable%d = %s;\n", info->num_inline, llvm_value.c_value);
+                add_come_code_directory(info, "goto %s;\n", info->inline_func_end_label);
             }
             else {
                 free_objects_on_return(info->function_node_block, info, llvm_value.address, TRUE);

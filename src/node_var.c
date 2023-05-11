@@ -2657,8 +2657,11 @@ BOOL compile_cast(unsigned int node, sCompileInfo* info)
             compile_err_msg(info, "Cast failed");
             return TRUE;
         }
+        
+        LVALUE llvm_value = lvalue;
+        llvm_value.c_value = xsprintf("((%s)%s)", make_type_name_string(right_type), lvalue.c_value);
 
-        push_value_to_stack_ptr(&lvalue, info);
+        push_value_to_stack_ptr(&llvm_value, info);
 
         info->type = clone_node_type(left_type);
     }
@@ -4574,7 +4577,10 @@ BOOL compile_store_address(unsigned int node, sCompileInfo* info)
             LVALUE rvalue = *get_value_from_stack(-1);
             dec_stack_ptr(1, info);
             
-            push_value_to_stack_ptr(&rvalue, info);
+            LVALUE llvm_value = rvalue;
+            llvm_value.c_value = xsprintf("*%s=%s", lvalue.c_value, rvalue.c_value);
+            
+            push_value_to_stack_ptr(&llvm_value, info);
             
             info->type = clone_node_type(right_type);
             return TRUE;
@@ -4643,14 +4649,20 @@ BOOL compile_store_address(unsigned int node, sCompileInfo* info)
     
         LLVMBuildStore(gBuilder, value, address);
         
-        push_value_to_stack_ptr(&rvalue, info);
+        LVALUE llvm_value = rvalue;
+        llvm_value.c_value = xsprintf("*%s=%s", lvalue.c_value, rvalue.c_value);
+        
+        push_value_to_stack_ptr(&llvm_value, info);
     }
     else {
         LLVMValueRef address = lvalue.value;
         LLVMValueRef value = rvalue.value;
         LLVMBuildStore(gBuilder, value, address);
         
-        push_value_to_stack_ptr(&rvalue, info);
+        LVALUE llvm_value = rvalue;
+        llvm_value.c_value = xsprintf("*%s=%s", lvalue.c_value, rvalue.c_value);
+        
+        push_value_to_stack_ptr(&llvm_value, info);
     }
     
     info->type = clone_node_type(right_type);
@@ -4752,6 +4764,9 @@ BOOL compile_store_derefference(unsigned int node, sCompileInfo* info)
     
         LLVMBuildStore(gBuilder, value, address);
         
+        LVALUE llvm_value = rvalue;
+        llvm_value.c_value = xsprintf("*%s=%s", lvalue.c_value, rvalue.c_value);
+        
         push_value_to_stack_ptr(&rvalue, info);
     }
     else {
@@ -4759,6 +4774,9 @@ BOOL compile_store_derefference(unsigned int node, sCompileInfo* info)
         LLVMValueRef value = rvalue.value;
     
         LLVMBuildStore(gBuilder, value, address);
+        
+        LVALUE llvm_value = rvalue;
+        llvm_value.c_value = xsprintf("*%s=%s", lvalue.c_value, rvalue.c_value);
         
         push_value_to_stack_ptr(&rvalue, info);
     }
@@ -5901,8 +5919,6 @@ BOOL compile_object(unsigned int node, sCompileInfo* info)
 
         push_value_to_stack_ptr(&llvm_value, info);
 
-        //append_object_to_right_values(address, node_type2, info);
-
         info->type = clone_node_type(node_type2);
     }
     else {
@@ -5962,6 +5978,8 @@ BOOL compile_object(unsigned int node, sCompileInfo* info)
         LLVMTypeRef llvm_type2 = create_llvm_type_from_node_type(node_type2);
 
         address = LLVMBuildPointerCast(gBuilder, address, llvm_type2, "objW");
+        
+        char* var_name = append_object_to_right_values(address, node_type2, info);
 
         /// result ///
         LVALUE llvm_value;
@@ -5969,11 +5987,9 @@ BOOL compile_object(unsigned int node, sCompileInfo* info)
         llvm_value.type = clone_node_type(node_type2);
         llvm_value.address = NULL;
         llvm_value.var = NULL;
-        llvm_value.c_value = xsprintf("igc_calloc(%s,%d)", object_num_c_value, alloc_size);
+        llvm_value.c_value = xsprintf("(%s = igc_calloc(%s,%d))", var_name, object_num_c_value, alloc_size);
 
         push_value_to_stack_ptr(&llvm_value, info);
-        
-        append_object_to_right_values(address, node_type2, info);
         
         info->type = clone_node_type(node_type2);
     }
@@ -6269,7 +6285,15 @@ BOOL compile_store_field(unsigned int node, sCompileInfo* info)
     LLVMBuildStore(gBuilder, rvalue.value, field_address);
 
     dec_stack_ptr(2, info);
-    push_value_to_stack_ptr(&rvalue, info);
+    
+    LVALUE llvm_value = rvalue;
+    if(left_type->mPointerNum > 0) {
+        llvm_value.c_value = xsprintf("%s->%s=%s",lvalue.c_value, var_name, rvalue.c_value);
+    }
+    else {
+        llvm_value.c_value = xsprintf("%s.%s=%s",lvalue.c_value, var_name, rvalue.c_value);
+    }
+    push_value_to_stack_ptr(&llvm_value, info);
 
     info->type = clone_node_type(right_type);
 
@@ -8743,7 +8767,7 @@ BOOL compile_null_value(unsigned int node, sCompileInfo* info)
     llvm_value.type = clone_node_type(result_type);
     llvm_value.address = NULL;
     llvm_value.var = NULL;
-    llvm_value.c_value = NULL;
+    llvm_value.c_value = xsprintf("((void*)0)");
 
     push_value_to_stack_ptr(&llvm_value, info);
 

@@ -288,7 +288,7 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
         param_names2[i] = param_names[i];
     }
     
-    add_come_function(fun_name, result_type, num_params, param_types, param_names2);
+    add_come_function(fun_name, result_type, num_params, param_types, param_names2, FALSE);
     
     
     sComeFun* come_fun = info->come_fun;
@@ -1273,6 +1273,7 @@ BOOL compile_external_function(unsigned int node, sCompileInfo* info)
             else {
                 llvm_fun = LLVMAddFunction(gModule, asm_fun_name, function_type);
             }
+            add_come_function(new_fun_name, result_type, num_params, param_types, param_names2, TRUE);
         }
     }
     else {
@@ -1315,6 +1316,7 @@ BOOL compile_external_function(unsigned int node, sCompileInfo* info)
             else {
                 llvm_fun = LLVMAddFunction(gModule, asm_fun_name, function_type);
             }
+            add_come_function(new_fun_name, result_type, num_params, param_types, param_names2, TRUE);
         }
         else {
             if(strcmp(asm_fun_name, "") == 0) {
@@ -1360,6 +1362,7 @@ BOOL compile_external_function(unsigned int node, sCompileInfo* info)
                 fprintf(stderr, "overflow function table\n");
                 return FALSE;
             }
+            add_come_function(fun_name, result_type, num_params, param_types, param_names2, TRUE);
         }
     }
 

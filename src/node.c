@@ -25,15 +25,22 @@ static void clear_right_value_objects(sCompileInfo* info)
 {
 }
 
-void append_object_to_right_values(LLVMValueRef obj, sNodeType* node_type, sCompileInfo* info)
+int gRightValueNum = 0;
+
+char* append_object_to_right_values(LLVMValueRef obj, sNodeType* node_type, sCompileInfo* info)
 {
     struct sRightValueObject* new_list_item = calloc(1, sizeof(struct sRightValueObject));
     new_list_item->obj = obj;
     new_list_item->node_type = clone_node_type(node_type);
     new_list_item->next = info->right_value_objects;
     new_list_item->freed = FALSE;
+    
+    xstrncpy(new_list_item->var_name, xsprintf("right_value%d", gRightValueNum++), VAR_NAME_MAX);
     xstrncpy(new_list_item->fun_name, gFunctionName, VAR_NAME_MAX);
     info->right_value_objects = new_list_item;
+    add_declare_right_value_var(info, new_list_item->var_name);
+    
+    return new_list_item->var_name;
 }
 
 void remove_object_from_right_values(LLVMValueRef obj, sCompileInfo* info)
@@ -79,7 +86,7 @@ void free_right_value_objects(sCompileInfo* info)
                     show_node_type(node_type);
                 }
 
-                free_object(node_type, it->obj, NULL, TRUE, info);
+                free_object(node_type, it->obj, it->var_name, TRUE, info);
 
                 it->freed = TRUE;
             }
@@ -397,7 +404,7 @@ sFunction* create_finalizer_automatically(sNodeType* node_type, char* fun_name, 
         if(klass->mFlags & CLASS_FLAGS_PROTOCOL) {
             char* name = "_protocol_obj";
             char source2[1024];
-            snprintf(source2, 1024, "if(self != null && self.%s != null && self.finalize) { void (*finalizer)(void*) = self.finalize; finalizer(self._protocol_obj); igc_decrement_ref_count(self.%s); }\n", name, name);
+            snprintf(source2, 1024, "if(self != ((void*)0) && self.%s != ((void*)0) && self.finalize) { void (*finalizer)(void*) = self.finalize; finalizer(self._protocol_obj); igc_decrement_ref_count(self.%s); }\n", name, name);
             
             sBuf_append_str(&source, source2);
         }
@@ -414,7 +421,7 @@ sFunction* create_finalizer_automatically(sNodeType* node_type, char* fun_name, 
                 
                 if(field_type->mHeap) {
                     char source2[1024];
-                    snprintf(source2, 1024, "if(self != null && self.%s != null) { delete (borrow self.%s); }\n", name, name);
+                    snprintf(source2, 1024, "if(self != ((void*)0) && self.%s != ((void*)0)) { delete (borrow self.%s); }\n", name, name);
                     
                     sBuf_append_str(&source, source2);
                 }
@@ -608,7 +615,7 @@ sFunction* create_equals_automatically(sNodeType* node_type, char* fun_name, sCo
             }
             
             char source2[1024];
-            snprintf(source2, 1024, "if(left != null && right != null && !left.%s.equals(right.%s)) { return false; }\n", name, name);
+            snprintf(source2, 1024, "if(left != ((void*)0) && right != ((void*)0) && !left.%s.equals(right.%s)) { return false; }\n", name, name);
             
             sBuf_append_str(&source, source2);
         }
@@ -798,7 +805,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL for
                     
                     LLVMBuildCall2(gBuilder, function_type, llvm_fun3, llvm_params2, num_params2, "");
                     
-                    add_come_code_directory(info, xsprintf("igc_decrement_ref_count(%s)\n", c_value));
+                    if(c_value) { add_come_code_directory(info, xsprintf("igc_decrement_ref_count(%s);\n", c_value)); }
                 }
                 else {
                     sNodeType* result_type = create_node_type_with_class_name("void");
@@ -817,7 +824,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL for
                     
                     LLVMBuildCall2(gBuilder, function_type, llvm_fun2, llvm_params, num_params, "");
                     
-                    add_come_code_directory(info, xsprintf("call_finalizer(%s,%s,%d)\n", llvm_fun_name, c_value, node_type->mAllocaValue));
+                    add_come_code_directory(info, xsprintf("call_finalizer(%s,%s,%d);\n", llvm_fun_name, c_value, node_type->mAllocaValue));
                 }
             }
             else {
@@ -885,7 +892,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL for
                     LLVMTypeRef function_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
                     
                     LLVMBuildCall2(gBuilder, function_type, llvm_fun3, llvm_params3, num_params3, "");
-                    add_come_code_directory(info, xsprintf("call_finalizer(%s,%s,%d)\n", fun_name, c_value, node_type->mAllocaValue));
+                    add_come_code_directory(info, xsprintf("call_finalizer(%s,%s,%d);\n", fun_name, c_value, node_type->mAllocaValue));
                 }
                 else {
                     sNodeType* result_type = create_node_type_with_class_name("void");
@@ -902,7 +909,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL for
                     LLVMTypeRef function_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
                     LLVMBuildCall2(gBuilder, function_type, llvm_fun2, llvm_params2, num_params2, "");
                     
-                    add_come_code_directory(info, xsprintf("igc_decrement_ref_count(%s)\n", c_value));
+                    if(c_value) add_come_code_directory(info, xsprintf("igc_decrement_ref_count(%s);\n", c_value));
                 }
             }
         }
@@ -953,7 +960,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL for
         
                 /// remove right value objects from list
                 //remove_object_from_right_values(obj, info);
-                add_come_code_directory(info, xsprintf("igc_decrement_ref_count(%s)\n", c_value));
+                if(c_value) add_come_code_directory(info, xsprintf("igc_decrement_ref_count(%s);\n", c_value));
             }
             else if(node_type->mHeap) {
                 /// free ///
@@ -995,7 +1002,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL for
         
                 /// remove right value objects from list
                 //remove_object_from_right_values(obj, info);
-                add_come_code_directory(info, xsprintf("igc_decrement_ref_count(%s)\n", c_value));
+                if(c_value) add_come_code_directory(info, xsprintf("igc_decrement_ref_count(%s);\n", c_value));
             }
         }
 
@@ -1056,7 +1063,7 @@ sFunction* create_cloner_automatically(sNodeType* node_type, char* fun_name, sCo
             
             if(field_type->mHeap) {
                 char source2[1024];
-                snprintf(source2, 1024, "if(self != null && self.%s != null) { result.%s = clone self.%s;}\n", name, name, name);
+                snprintf(source2, 1024, "if(self != ((void*)0) && self.%s != ((void*)0)) { result.%s = clone self.%s;}\n", name, name, name);
                 
                 sBuf_append_str(&source, source2);
             }
@@ -5173,13 +5180,6 @@ BOOL compile_block(sNodeBlock* block, BOOL force_hash_result, sCompileInfo* info
                     last_expression_is_return = FALSE;
                 }
             }
-
-            if(!last_expression_is_return) {
-                free_right_value_objects(info);
-            }
-
-            xstrncpy(info->sname, sname, VAR_NAME_MAX);
-            info->sline = sline;
             
             if(gNCTranspile) {
                 if(gComeModule.mLastCode) {
@@ -5190,10 +5190,18 @@ BOOL compile_block(sNodeBlock* block, BOOL force_hash_result, sCompileInfo* info
                     LVALUE llvm_value = *get_value_from_stack(-1);
                     if(llvm_value.c_value) {
                         sBuf_append_str(&info->come_fun->mSource, llvm_value.c_value);
+                        sBuf_append_str(&info->come_fun->mSource, ";\n");
+                        (gLLVMStack -1)->c_value = NULL;
                     }
-                    sBuf_append_str(&info->come_fun->mSource, ";\n");
                 }
             }
+
+            if(!last_expression_is_return) {
+                free_right_value_objects(info);
+            }
+
+            xstrncpy(info->sname, sname, VAR_NAME_MAX);
+            info->sline = sline;
 
             arrange_stack(info, stack_num_before);
             

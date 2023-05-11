@@ -77,7 +77,7 @@ BOOL call_operator_function(char* fun_base_name, sNodeType* left_type, int num_p
             BOOL immutable_ = operator_fun->mImmutable;
             
             char* llvm_fun_name = NULL;
-            if(!create_generics_function(&llvm_fun, llvm_fun_name, operator_fun, fun_name, left_type, 0, NULL, immutable_, info)) {
+            if(!create_generics_function(&llvm_fun, &llvm_fun_name, operator_fun, fun_name, left_type, 0, NULL, immutable_, info)) {
                 fprintf(stderr, "can't craete generics function %s\n", fun_name);
                 exit(1);
             }
@@ -193,20 +193,35 @@ BOOL call_operator_function(char* fun_base_name, sNodeType* left_type, int num_p
             sBuf_append_str(&buf, ")");
             add_come_code(info, "%s", buf.mBuf);
             
-            LVALUE llvm_value;
-            llvm_value.value = obj;
-            llvm_value.c_value = xsprintf("%s", buf.mBuf);
-            llvm_value.type = result_type;
-            llvm_value.address = NULL;
-            llvm_value.var = NULL;
-    
-            dec_stack_ptr(num_params, info);
-            if(obj) {
-                push_value_to_stack_ptr(&llvm_value, info);
-            }
-            
             if(obj && result_type->mHeap) {
-                append_object_to_right_values(obj, result_type, info);
+                char* var_name = append_object_to_right_values(obj, result_type, info);
+                
+                LVALUE llvm_value;
+                llvm_value.value = obj;
+                llvm_value.c_value = xsprintf("(%s = %s)", var_name, buf.mBuf);
+                llvm_value.type = result_type;
+                llvm_value.address = NULL;
+                llvm_value.var = NULL;
+        
+                dec_stack_ptr(num_params, info);
+                
+                if(obj) {
+                    push_value_to_stack_ptr(&llvm_value, info);
+                }
+            }
+            else {
+                LVALUE llvm_value;
+                llvm_value.value = obj;
+                llvm_value.c_value = xsprintf("%s", buf.mBuf);
+                llvm_value.type = result_type;
+                llvm_value.address = NULL;
+                llvm_value.var = NULL;
+        
+                dec_stack_ptr(num_params, info);
+                
+                if(obj) {
+                    push_value_to_stack_ptr(&llvm_value, info);
+                }
             }
             
             free(buf.mBuf);

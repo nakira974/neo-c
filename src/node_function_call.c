@@ -1115,6 +1115,12 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
             
             result_value = llvm_value.value;
         }
+        
+        if(result_value) {
+            if(info->type->mHeap) {
+                append_object_to_right_values(result_value, info->type, info);
+            }
+        }
     }
     /// call inline function ///
     else if(fun->mBlockText) {
@@ -1285,6 +1291,12 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         xstrncpy(info->in_inline_function_name, inline_function_before, VAR_NAME_MAX);
         
         xstrncpy(gFunctionName, function_name, VAR_NAME_MAX);
+        
+        if(result_value) {
+            if(info->type->mHeap) {
+                append_object_to_right_values(result_value, info->type, info);
+            }
+        }
     }
     /// call normal function ///
     else {
@@ -1349,6 +1361,13 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         sBuf buf;
         
         sBuf_init(&buf);
+        
+        if(result_type->mHeap) {
+            sBuf_append_str(&buf, xsprintf("(right_value%d=", gRightValueNum));
+        }
+        else {
+            sBuf_append_str(&buf, "(");
+        }
         if(fun->mAsmFunName) {
 #ifdef __DARWIN__
             if(fun->mFlagAsmFunName) {
@@ -1378,7 +1397,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
             }
         }
 
-        sBuf_append_str(&buf, ")");
+        sBuf_append_str(&buf, "))");
         add_come_code(info, "%s", buf.mBuf);
 
         if(type_identify_with_class_name(result_type, "void") && result_type->mPointerNum == 0) {
@@ -1406,14 +1425,26 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
             llvm_value.type = clone_node_type(result_type);
             llvm_value.address = NULL;
             llvm_value.var = NULL;
-            llvm_value.c_value = xsprintf("%s", buf.mBuf);
-
-            dec_stack_ptr(num_params, info);
-            push_value_to_stack_ptr(&llvm_value, info);
 
             info->type = clone_node_type(result_type);
             
             result_value = llvm_value.value;
+            
+            if(result_value) {
+                if(info->type->mHeap) {
+                    char* var_name = append_object_to_right_values(result_value, info->type, info);
+                    llvm_value.c_value = xsprintf("(%s = %s)", var_name, buf.mBuf);
+                }
+                else {
+                    llvm_value.c_value = xsprintf("%s", buf.mBuf);
+                }
+            }
+            else {
+                llvm_value.c_value = xsprintf("%s", buf.mBuf);
+            }
+
+            dec_stack_ptr(num_params, info);
+            push_value_to_stack_ptr(&llvm_value, info);
         }
         
         free(buf.mBuf);
@@ -1421,12 +1452,6 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
 
     if(!solve_type(&info->type, generics_type, num_method_generics_types, method_generics_types, info)) {
         return FALSE;
-    }
-    
-    if(result_value) {
-        if(info->type->mHeap) {
-            append_object_to_right_values(result_value, info->type, info);
-        }
     }
     
     if(!parse_catch && result_type->mException) {

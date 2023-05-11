@@ -314,6 +314,10 @@ char* make_type_name_string(sNodeType* node_type)
     sBuf_init(&output);
     
     char* class_name = node_type->mClass->mName;
+    
+    if(node_type->mClass->mFlags & CLASS_FLAGS_STRUCT) {
+        sBuf_append_str(&output, "struct ");
+    }
     sBuf_append_str(&output, class_name);
     
     int i;

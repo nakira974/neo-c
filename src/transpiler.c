@@ -15,7 +15,7 @@ void transpiler_init()
 void transpiler_final()
 {
     if(gNCTranspile) {
-        printf("%s", gComeModule.mSourceHead.mBuf);
+        printf("%s\n", gComeModule.mSourceHead.mBuf);
         
         sComeFun* it = gComeFunctionHead;
         while(it) {
@@ -30,15 +30,19 @@ void transpiler_final()
             it = it->mNext;
         }
         
+        puts("");
+        
         it = gComeFunctionHead;
         while(it) {
-            sBuf fun_output;
-            sBuf_init(&fun_output);
-            output_function(&fun_output, it);
-            
-            printf("%s", fun_output.mBuf);
-            
-            free(fun_output.mBuf);
+            if(!it->mExternal) {
+                sBuf fun_output;
+                sBuf_init(&fun_output);
+                output_function(&fun_output, it);
+                
+                printf("%s", fun_output.mBuf);
+                
+                free(fun_output.mBuf);
+            }
             
             it = it->mNext;
         }
@@ -47,7 +51,7 @@ void transpiler_final()
     free(gComeModule.mSourceHead.mBuf);
 }
 
-void add_come_function(char* fun_name, sNodeType* result_type, int num_params, sNodeType** param_types, char** param_names)
+void add_come_function(char* fun_name, sNodeType* result_type, int num_params, sNodeType** param_types, char** param_names, BOOL external)
 {
     unsigned int hash_key = get_hash_key(fun_name, COME_FUN_MAX);
     
@@ -57,12 +61,14 @@ void add_come_function(char* fun_name, sNodeType* result_type, int num_params, s
             xstrncpy(it->mName, fun_name, VAR_NAME_MAX);
             it->mResultType = clone_node_type(result_type);
             it->mNumParams = num_params;
+            it->mExternal = external;
             int i;
             for(i=0; i<num_params; i++) {
                 it->mParamTypes[i] = clone_node_type(param_types[i]);
                 it->mParamNames[i] = GC_strdup(param_names[i]);
             }
             sBuf_init(&it->mSource);
+            sBuf_init(&it->mSourceHead);
             
             if(gComeFunctionHead == NULL) {
                 gComeFunctionHead = it;
@@ -147,6 +153,12 @@ void add_come_code_directory(struct sCompileInfoStruct* info, const char* msg, .
     sBuf_append_str(&info->come_fun->mSource, msg2);
 }
 
+void add_declare_right_value_var(struct sCompileInfoStruct* info, char* var_name)
+{
+    char* buf = xsprintf("void* %s;\n", var_name);
+    sBuf_append_str(&info->come_fun->mSourceHead, buf);
+}
+
 char* xsprintf(const char* msg, ...)
 {
     char msg2[1024];
@@ -190,6 +202,7 @@ void output_function(sBuf* output, sComeFun* fun)
     
     sBuf_append_str(output, ")\n{\n");
     
+    sBuf_append_str(output, fun->mSourceHead.mBuf);
     sBuf_append_str(output, fun->mSource.mBuf);
     
     sBuf_append_str(output, "}\n");

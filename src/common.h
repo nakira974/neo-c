@@ -268,11 +268,13 @@ struct sComeFunStruct
 {
     char mName[VAR_NAME_MAX];
     sBuf mSource;
+    sBuf mSourceHead;
     
     sNodeType* mResultType;
     int mNumParams;
     char* mParamNames[PARAMS_MAX];
     sNodeType* mParamTypes[PARAMS_MAX];
+    BOOL mExternal;
     
     struct sComeFunStruct* mNext;
     struct sComeFunStruct* mPrev;
@@ -284,7 +286,7 @@ struct sCompileInfoStruct;
 
 void transpiler_init();
 void transpiler_final();
-void add_come_function(char* fun_name, sNodeType* result_type, int num_params, sNodeType** param_types, char** param_names);
+void add_come_function(char* fun_name, sNodeType* result_type, int num_params, sNodeType** param_types, char** param_names, BOOL external);
 void output_struct(char* struct_name, sNodeType* struct_type, sNodeType* generics_type, BOOL undefined_body);
 sComeFun* get_come_function(char* fun_name);
 void add_come_code(struct sCompileInfoStruct* info, const char* msg, ...);
@@ -613,6 +615,7 @@ struct sRightValueObject {
     sNodeType* node_type;
     struct sRightValueObject* next;
     char fun_name[VAR_NAME_MAX];
+    char var_name[VAR_NAME_MAX];
     BOOL freed;
 };
 
@@ -1051,9 +1054,8 @@ struct sNodeTreeStruct
     } uValue;
 };
 
-
 void increment_ref_count(LLVMValueRef obj, sNodeType* node_type, sCompileInfo* info);
-void append_object_to_right_values(LLVMValueRef obj, sNodeType* node_type, sCompileInfo* info);
+char* append_object_to_right_values(LLVMValueRef obj, sNodeType* node_type, sCompileInfo* info);
 void remove_object_from_right_values(LLVMValueRef obj, sCompileInfo* info);
 void free_right_value_objects(sCompileInfo* info);
 void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL force_delete, sCompileInfo* info);
@@ -1569,10 +1571,13 @@ void call_come_final(sCompileInfo* info);
 void call_come_gc_final(sCompileInfo* info);
 char* xsprintf(const char* msg, ...);
 
+extern int gRightValueNum;
+
 void add_come_code_directory(struct sCompileInfoStruct* info, const char* msg, ...);
 void transpiler_clear_last_code();
 unsigned int sNodeTree_create_paren(unsigned int left_node, sParserInfo* info);
 BOOL compile_paren(unsigned int node, sCompileInfo* info);
+void add_declare_right_value_var(struct sCompileInfoStruct* info, char* var_name);
 
 
 #endif

@@ -90,6 +90,7 @@ void add_typedef(char* name, sNodeType* node_type, BOOL user)
             p->mItem = clone_node_type(node_type);
 
             gNumTypeDef++;
+            
             break;
         }
         else {

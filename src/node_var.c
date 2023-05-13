@@ -1149,7 +1149,9 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
                 llvm_change_block(this_block, info);
                 
                 if(right_type2->mHeap) {
-                    rvalue2.value = clone_object(right_type2, rvalue2.value, info);
+                    char* c_value = NULL;
+                    rvalue2.value = clone_object(right_type2, rvalue2.value, rvalue2.c_value, &c_value, info);
+                    rvalue2.c_value = c_value;
                 }
     
                 LLVMBuildStore(gBuilder, rvalue2.value, alloca_value);
@@ -1202,7 +1204,9 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
             obj = var_->mLLVMValue.value;
             
             if(right_type2->mHeap) {
-                rvalue2.value = clone_object(right_type2, rvalue2.value, info);
+                char* c_value = NULL;
+                rvalue2.value = clone_object(right_type2, rvalue2.value, rvalue2.c_value, &c_value, info);
+                rvalue2.c_value = c_value;
             }
             
             if(obj && left_type->mHeap) {
@@ -1287,13 +1291,14 @@ BOOL compile_clone(unsigned int node, sCompileInfo* info)
         left_type2->mHeap = TRUE;
     }
 
-    LLVMValueRef obj = clone_object(left_type, lvalue.value, info);
+    char* c_value = NULL;
+    LLVMValueRef obj = clone_object(left_type, lvalue.value, lvalue.c_value, &c_value, info);
 
     dec_stack_ptr(1, info);
 
     LVALUE llvm_value;
     llvm_value.value = obj;
-    llvm_value.c_value = NULL;
+    llvm_value.c_value = c_value;
     llvm_value.type = clone_node_type(left_type2);
     llvm_value.address = NULL;
     llvm_value.var = NULL;
@@ -2687,6 +2692,9 @@ unsigned int sNodeTree_create_typedef(char* name, sNodeType* node_type, sParserI
     gNodes[node].mLeft = 0;
     gNodes[node].mRight = 0;
     gNodes[node].mMiddle = 0;
+    
+    xstrncpy(gNodes[node].uValue.sTypedef.mName, name, VAR_NAME_MAX);
+    gNodes[node].uValue.sTypedef.mNodeType = clone_node_type(node_type);
 
     add_typedef(name, clone_node_type(node_type), TRUE);
 
@@ -2695,6 +2703,12 @@ unsigned int sNodeTree_create_typedef(char* name, sNodeType* node_type, sParserI
 
 BOOL compile_typedef(unsigned int node, sCompileInfo* info)
 {
+    char name[VAR_NAME_MAX];
+    xstrncpy(name, gNodes[node].uValue.sTypedef.mName, VAR_NAME_MAX);
+    sNodeType* node_type = gNodes[node].uValue.sTypedef.mNodeType;
+    
+    add_come_code_directory_top_level(info, "typedef %s %s;\n", make_type_name_string(node_type), name);
+    
     info->type = create_node_type_with_class_name("void");
 
     return TRUE;
@@ -5459,6 +5473,15 @@ unsigned int sNodeTree_create_object(sNodeType* node_type, unsigned int object_n
 
 BOOL store_obj_to_protocol(unsigned int interface_node, unsigned int obj_node, sCompileInfo* info)
 {
+    /// compile left node ///
+    if(!compile(interface_node, info)) {
+        return FALSE;
+    }
+
+    sNodeType* protocol_type = clone_node_type(info->type);
+
+    LVALUE protocol_value = *get_value_from_stack(-1);
+    
     /// compile obj node ///
     if(!compile(obj_node, info)) {
         return FALSE;
@@ -5468,18 +5491,15 @@ BOOL store_obj_to_protocol(unsigned int interface_node, unsigned int obj_node, s
 
     LVALUE obj_value = *get_value_from_stack(-1);
     
+    static int protocol_interface_tmp = 0;
+    char* var_name = xsprintf("protocol_interface_tmp%d", protocol_interface_tmp++);
+    
+    add_come_code_directory(info, "%s %s = %s;\n", make_type_name_string(protocol_type), var_name, protocol_value.c_value);
+    add_come_code_directory(info, "%s->_protocol_obj = (void*)%s;\n", var_name, obj_value.c_value);
+    
     if(!gNCGC) {
         remove_object_from_right_values(obj_value.value, info);
     }
-    
-    /// compile left node ///
-    if(!compile(interface_node, info)) {
-        return FALSE;
-    }
-
-    sNodeType* protocol_type = clone_node_type(info->type);
-
-    LVALUE protocol_value = *get_value_from_stack(-1);
     
 /*
     if(!gNCGC) {
@@ -5577,6 +5597,8 @@ BOOL store_obj_to_protocol(unsigned int interface_node, unsigned int obj_node, s
                     LLVMValueRef llvm_fun2 = LLVMBuildCast(gBuilder, LLVMBitCast, llvm_fun, finalizer_type_pointer, "fun_cast");
                     
                     LLVMBuildStore(gBuilder, llvm_fun2, field_address);
+                    
+                    add_come_code_directory(info, "%s->%s = (void*)%s;\n", var_name, field_name, fun->mName);
                 }
                 else if(i == 2) {
                     sFunction* fun = create_cloner_automatically(obj_type, fun_name, info);
@@ -5617,6 +5639,8 @@ BOOL store_obj_to_protocol(unsigned int interface_node, unsigned int obj_node, s
                     LLVMValueRef llvm_fun2 = LLVMBuildCast(gBuilder, LLVMBitCast, llvm_fun, cloner_type_pointer, "fun_cast");
                     
                     LLVMBuildStore(gBuilder, llvm_fun2, field_address);
+                    
+                    add_come_code_directory(info, "%s->%s = (void*)%s;\n", var_name, field_name, fun->mName);
                 }
                 else {
                     compile_err_msg(info, "function not found %s", fun_name);
@@ -5654,6 +5678,8 @@ BOOL store_obj_to_protocol(unsigned int interface_node, unsigned int obj_node, s
                     LLVMValueRef llvm_fun2 = LLVMBuildCast(gBuilder, LLVMBitCast, llvm_fun, finalizer_type_pointer, "fun_cast");
                     
                     LLVMBuildStore(gBuilder, llvm_fun2, field_address);
+                    
+                    add_come_code_directory(info, "%s->%s = (void*)%s;\n", var_name, field_name, fun_name);
                 }
                 else if(i == 2) {
                     LLVMTypeRef llvm_result_type = create_llvm_type_with_class_name("void*");
@@ -5684,6 +5710,8 @@ BOOL store_obj_to_protocol(unsigned int interface_node, unsigned int obj_node, s
                     LLVMValueRef llvm_fun2 = LLVMBuildCast(gBuilder, LLVMBitCast, llvm_fun, cloner_type_pointer, "fun_cast");
                     
                     LLVMBuildStore(gBuilder, llvm_fun2, field_address);
+                    
+                    add_come_code_directory(info, "%s->%s = (void*)%s;\n", var_name, field_name, fun_name);
                 }
                 else {
                     sNodeType* protocol_type2 = clone_node_type(protocol_type);
@@ -5697,6 +5725,8 @@ BOOL store_obj_to_protocol(unsigned int interface_node, unsigned int obj_node, s
                     LLVMValueRef llvm_fun2 = LLVMBuildCast(gBuilder, LLVMBitCast, llvm_fun, field_llvm_type, "fun_cast");
                     
                     LLVMBuildStore(gBuilder, llvm_fun2, field_address);
+                    
+                    add_come_code_directory(info, "%s->%s = (void*)%s;\n", var_name, field_name, fun_name);
                 }
             }
         }
@@ -5708,6 +5738,8 @@ BOOL store_obj_to_protocol(unsigned int interface_node, unsigned int obj_node, s
     }
 
     dec_stack_ptr(2, info);
+    
+    protocol_value.c_value = xsprintf("%s", var_name);
     push_value_to_stack_ptr(&protocol_value, info);
 
     info->type = clone_node_type(protocol_type);

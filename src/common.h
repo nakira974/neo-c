@@ -262,7 +262,7 @@ BOOL is_left_type_bigger_size(sNodeType* left_type, sNodeType* right_type);
 /// transpiler.c
 ////////////////////
 #define COME_FUN_MAX 4096
-#define COME_CODE_MAX 64
+#define COME_CODE_MAX 256
 
 struct sComeFunStruct
 {
@@ -1053,6 +1053,11 @@ struct sNodeTreeStruct
             BOOL mSafeMode;
             BOOL mNCCome;
         } sUnwrap;
+        
+        struct {
+            char mName[VAR_NAME_MAX];
+            sNodeType* mNodeType;
+        } sTypedef;
     } uValue;
 };
 
@@ -1061,7 +1066,7 @@ char* append_object_to_right_values(LLVMValueRef obj, sNodeType* node_type, sCom
 void remove_object_from_right_values(LLVMValueRef obj, sCompileInfo* info);
 void free_right_value_objects(sCompileInfo* info);
 void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL force_delete, sCompileInfo* info);
-void free_protocol_object(sNodeType* protocol_type, LLVMValueRef protocol_obj, sCompileInfo* info);
+void free_protocol_object(sNodeType* protocol_type, LLVMValueRef protocol_value, char* protocol_value_c_source, sCompileInfo* info);
 BOOL is_right_values(LLVMValueRef obj, sCompileInfo* info);
 void check_null_value_for_pointer(LLVMValueRef value, sCompileInfo* info);
 
@@ -1109,7 +1114,7 @@ void sNodeBlock_free(sNodeBlock* block);
 void append_node_to_node_block(sNodeBlock* node_block, unsigned int node);
 
 void compile_err_msg(sCompileInfo* info, const char* msg, ...);
-LLVMValueRef clone_object(sNodeType* node_type, LLVMValueRef obj, sCompileInfo* info);
+LLVMValueRef clone_object(sNodeType* node_type, LLVMValueRef obj, char* obj_c_value, char** c_value, sCompileInfo* info);
 
 void show_node(unsigned int node);
 BOOL compile(unsigned int node, sCompileInfo* info);
@@ -1575,6 +1580,7 @@ char* xsprintf(const char* msg, ...);
 
 extern int gRightValueNum;
 
+void add_come_code_directory_top_level(const char* msg, ...);
 void add_come_code_directory(struct sCompileInfoStruct* info, const char* msg, ...);
 void transpiler_clear_last_code();
 unsigned int sNodeTree_create_paren(unsigned int left_node, sParserInfo* info);

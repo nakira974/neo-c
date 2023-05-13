@@ -1550,7 +1550,7 @@ BOOL compile_lambda_call(unsigned int node, sCompileInfo* info)
             return FALSE;
         }
 
-        param_types[i] = info->type;
+        param_types[i] = clone_node_type(info->type);
 
         LVALUE param = *get_value_from_stack(-1);
         
@@ -1594,10 +1594,18 @@ BOOL compile_lambda_call(unsigned int node, sCompileInfo* info)
     sBuf_init(&buf);
 
     sBuf_append_str(&buf, xsprintf("%s(", lambda_value.c_value));
-
+    
     for(i=0; i<num_params; i++) {
-        if(lvalue_params[i].c_value) {
-            sBuf_append_str(&buf, lvalue_params[i].c_value);
+        if(i==0 && (param_types[i]->mClass->mFlags & CLASS_FLAGS_PROTOCOL))
+        {
+            if(lvalue_params[i].c_value) {
+                sBuf_append_str(&buf, xsprintf("%s->_protocol_obj", lvalue_params[i].c_value));
+            }
+        }
+        else {
+            if(lvalue_params[i].c_value) {
+                sBuf_append_str(&buf, lvalue_params[i].c_value);
+            }
         }
         
         if(i!=num_params-1) {

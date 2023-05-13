@@ -112,7 +112,7 @@ BOOL is_right_values(LLVMValueRef obj, sCompileInfo* info)
 LLVMTypeRef create_llvm_type_with_class_name(char* class_name);
 sFunction* get_function_from_table(char* name);
 
-void free_protocol_object(sNodeType* protocol_type, LLVMValueRef protocol_value, sCompileInfo* info)
+void free_protocol_object(sNodeType* protocol_type, LLVMValueRef protocol_value, char* protocol_value_c_source, sCompileInfo* info)
 {
     sCLClass* protocol_class = protocol_type->mClass;
     sNodeType* protocol_type2 = clone_node_type(protocol_type);
@@ -205,6 +205,8 @@ void free_protocol_object(sNodeType* protocol_type, LLVMValueRef protocol_value,
             }
             
             LLVMBuildCall2(gBuilder, function_type, llvm_fun3, llvm_params2, num_params2, "");
+            
+            add_come_code_directory(info, "igc_decrement_ref_count(%s._porotocol_obj);\n", protocol_value_c_source);
         }
         else {
             int num_params = 3;
@@ -236,11 +238,13 @@ void free_protocol_object(sNodeType* protocol_type, LLVMValueRef protocol_value,
             LLVMTypeRef function_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
             
             LLVMBuildCall2(gBuilder, function_type, llvm_fun2, llvm_params, num_params, "");
+            
+            add_come_code_directory(info, "call_finalizer(%s->finalize, %s->_protocol_obj, 0);\n", protocol_value_c_source, protocol_value_c_source);
         }
     }
 }
 
-void clone_protocol_object(sNodeType* protocol_type, LLVMValueRef protocol_value, sCompileInfo* info)
+static void clone_protocol_object(sNodeType* protocol_type, LLVMValueRef protocol_value, char* protocol_c_value, char** c_value, char* new_obj_name, sCompileInfo* info)
 {
     sCLClass* protocol_class = protocol_type->mClass;
     sNodeType* protocol_type2 = clone_node_type(protocol_type);
@@ -324,6 +328,7 @@ void clone_protocol_object(sNodeType* protocol_type, LLVMValueRef protocol_value
     field_address = LLVMBuildInBoundsGEP2(gBuilder, create_llvm_type_from_node_type(protocol_type2), protocol_value, indices, 2, "fieldQQQQUOX");
     
     LLVMBuildStore(gBuilder, new_protocol_value, field_address);
+    *c_value = xsprintf("((%s)%s)->_protocol_obj = call_cloner(%s->clone, %s->_protocol_obj);\n", make_type_name_string(protocol_type), new_obj_name, protocol_c_value, protocol_c_value);
 }
 
 static void create_generics_name(char* real_name, int size_real_name, sNodeType* generics_type)
@@ -371,6 +376,11 @@ static void create_generics_name(char* real_name, int size_real_name, sNodeType*
 
 sFunction* create_finalizer_automatically(sNodeType* node_type, char* fun_name, sCompileInfo* info)
 {
+    char* last_code = gComeModule.mLastCode;
+    gComeModule.mLastCode = NULL;
+    char* last_stack_c_value = (gLLVMStack -1)->c_value;
+    (gLLVMStack-1)->c_value = NULL;
+    
     sNodeType* come_function_result_type = gComeFunctionResultType;
     
     BOOL in_automatically_created_function = info->in_automatically_created_function;
@@ -480,6 +490,8 @@ sFunction* create_finalizer_automatically(sNodeType* node_type, char* fun_name, 
     info->in_automatically_created_function = in_automatically_created_function;
     gComeFunctionResultType = come_function_result_type;
     
+    gComeModule.mLastCode = last_code;
+    (gLLVMStack-1)->c_value = last_stack_c_value;
     return finalizer;
 }
 
@@ -570,6 +582,11 @@ void increment_ref_count(LLVMValueRef obj, sNodeType* node_type, sCompileInfo* i
 
 sFunction* create_equals_automatically(sNodeType* node_type, char* fun_name, sCompileInfo* info)
 {
+    char* last_code = gComeModule.mLastCode;
+    gComeModule.mLastCode = NULL;
+    char* last_stack_c_value = (gLLVMStack -1)->c_value;
+    (gLLVMStack-1)->c_value = NULL;
+    
     sNodeType* come_function_result_type = gComeFunctionResultType;
     
     BOOL in_automatically_created_function = info->in_automatically_created_function;
@@ -675,6 +692,9 @@ sFunction* create_equals_automatically(sNodeType* node_type, char* fun_name, sCo
     
     info->in_automatically_created_function = in_automatically_created_function;
     gComeFunctionResultType = come_function_result_type;
+    
+    gComeModule.mLastCode = last_code;
+    (gLLVMStack-1)->c_value = last_stack_c_value;
     
     return equaler;
 }
@@ -915,7 +935,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL for
         }
         else {
             if((node_type->mClass->mFlags & CLASS_FLAGS_PROTOCOL) && node_type->mPointerNum == 1) {
-                free_protocol_object(node_type, obj, info);
+                free_protocol_object(node_type, obj, c_value, info);
             }
             
             /// free memmory ///
@@ -1014,6 +1034,11 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL for
 
 sFunction* create_cloner_automatically(sNodeType* node_type, char* fun_name, sCompileInfo* info)
 {
+    char* last_code = gComeModule.mLastCode;
+    gComeModule.mLastCode = NULL;
+    char* last_stack_c_value = (gLLVMStack -1)->c_value;
+    (gLLVMStack-1)->c_value = NULL;
+    
     sNodeType* come_function_result_type = gComeFunctionResultType;
     
     BOOL in_automatically_created_function = info->in_automatically_created_function;
@@ -1133,11 +1158,14 @@ sFunction* create_cloner_automatically(sNodeType* node_type, char* fun_name, sCo
     
     info->in_automatically_created_function = in_automatically_created_function;
     gComeFunctionResultType = come_function_result_type;
+    
+    gComeModule.mLastCode = last_code;
+    (gLLVMStack-1)->c_value = last_stack_c_value;
 
     return cloner;
 }
 
-LLVMValueRef clone_object(sNodeType* node_type, LLVMValueRef obj, sCompileInfo* info)
+LLVMValueRef clone_object(sNodeType* node_type, LLVMValueRef obj, char* obj_c_value, char** c_value, sCompileInfo* info)
 {
     sCLClass* klass = node_type->mClass;
 
@@ -1176,6 +1204,8 @@ LLVMValueRef clone_object(sNodeType* node_type, LLVMValueRef obj, sCompileInfo* 
             cloner = create_cloner_automatically(node_type, fun_name, info);
         }
         
+        char* new_obj_name = NULL;
+        
         if(cloner != NULL) {
             if(cloner->mGenericsFunction) {
                 LLVMValueRef llvm_fun = NULL;
@@ -1212,6 +1242,8 @@ LLVMValueRef clone_object(sNodeType* node_type, LLVMValueRef obj, sCompileInfo* 
                 LLVMTypeRef function_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
 
                 obj = LLVMBuildCall2(gBuilder, function_type, llvm_fun, llvm_params, num_params, "funAAA");
+                
+                *c_value = xsprintf("%s(%s);\n", llvm_fun_name, obj_c_value);
             }
             else {
                 int num_params = 1;
@@ -1239,9 +1271,16 @@ LLVMValueRef clone_object(sNodeType* node_type, LLVMValueRef obj, sCompileInfo* 
 
                 LLVMValueRef llvm_fun = LLVMGetNamedFunction(gModule, fun_name);
                 obj = LLVMBuildCall2(gBuilder, function_type, llvm_fun, llvm_params, num_params, "funBBB");
+                
+                *c_value = xsprintf("%s(%s);\n", fun_name, obj_c_value);
             }
         }
         else {
+            if((node_type->mClass->mFlags & CLASS_FLAGS_PROTOCOL) && node_type->mPointerNum == 1) {
+                new_obj_name = xsprintf("right_value%d", gRightValueNum++);
+                add_declare_right_value_var(info, new_obj_name);
+            }
+            
             if(gNCGC) {
                 /// ncmemdup ///
                 int num_params = 1;
@@ -1281,6 +1320,12 @@ LLVMValueRef clone_object(sNodeType* node_type, LLVMValueRef obj, sCompileInfo* 
                 LLVMTypeRef llvm_type2 = create_llvm_type_from_node_type(node_type);
     
                 obj = LLVMBuildCast(gBuilder, LLVMBitCast, obj, llvm_type2, "castAM");
+                if(new_obj_name) {
+                    *c_value = xsprintf("(%s = gc_ncmemdup(%s));\n", new_obj_name, obj_c_value);
+                }
+                else {
+                    *c_value = xsprintf("gc_ncmemdup(%s);\n", obj_c_value);
+                }
             }
             else {
                 /// ncmemdup ///
@@ -1322,11 +1367,19 @@ LLVMValueRef clone_object(sNodeType* node_type, LLVMValueRef obj, sCompileInfo* 
                 LLVMTypeRef llvm_type2 = create_llvm_type_from_node_type(node_type);
     
                 obj = LLVMBuildCast(gBuilder, LLVMBitCast, obj, llvm_type2, "castAM");
+                if(new_obj_name) {
+                    *c_value = xsprintf("(%s = ncmemdup(%s));\n", new_obj_name, obj_c_value);
+                }
+                else {
+                    *c_value = xsprintf("ncmemdup(%s);\n", obj_c_value);
+                }
             }
         }
         
         if((node_type->mClass->mFlags & CLASS_FLAGS_PROTOCOL) && node_type->mPointerNum == 1) {
-            clone_protocol_object(node_type, obj, info);
+            char* c_value2 = NULL;
+            clone_protocol_object(node_type, obj, obj_c_value, &c_value2, new_obj_name, info);
+            *c_value = xsprintf("%s %s", *c_value, c_value2);
         }
     }
 
@@ -1632,6 +1685,184 @@ void init_nodes(char* sname)
     node_type7 = create_node_type_with_class_pointer(va_list_struct);
 #endif
     BOOL immutable_ = TRUE;
+    {
+        char* name = "call_cloner";
+        int num_params = 2;
+        char param_names[PARAMS_MAX][VAR_NAME_MAX];
+        sNodeType* param_types[PARAMS_MAX];
+        char* block_text = NULL;
+        BOOL var_arg = FALSE;
+
+        xstrncpy(param_names[0], "fun", VAR_NAME_MAX);
+        param_types[0] = create_node_type_with_class_name("void*");
+        
+        xstrncpy(param_names[1], "mem", VAR_NAME_MAX);
+        param_types[1] = create_node_type_with_class_name("void*");
+
+        sNodeType* result_type = create_node_type_with_class_name("void*");
+
+        LLVMTypeRef llvm_param_types[PARAMS_MAX];
+
+        int i;
+        for(i=0; i<num_params; i++) {
+            llvm_param_types[i] = create_llvm_type_from_node_type(param_types[i]);
+        }
+
+        LLVMTypeRef llvm_result_type = create_llvm_type_from_node_type(result_type);
+
+        LLVMTypeRef function_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
+        LLVMValueRef llvm_fun = LLVMAddFunction(gModule, name, function_type);
+
+        char* param_names2[PARAMS_MAX];
+        for(i=0; i<num_params; i++) {
+            param_names2[i] = param_names[i];
+        }
+
+        BOOL generics_function = FALSE;
+        BOOL var_args = FALSE;
+        if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
+        {
+            fprintf(stderr, "overflow function number\n");
+            exit(1);
+        }
+        
+        add_come_code_directory_top_level("%s", "void* call_cloner(void* fun, void* mem);\n");
+    }
+    
+    {
+        char* name = "call_finalizer";
+        int num_params = 3;
+        char param_names[PARAMS_MAX][VAR_NAME_MAX];
+        sNodeType* param_types[PARAMS_MAX];
+        char* block_text = NULL;
+        BOOL var_arg = FALSE;
+
+        xstrncpy(param_names[0], "fun", VAR_NAME_MAX);
+        param_types[0] = create_node_type_with_class_name("void*");
+        
+        xstrncpy(param_names[1], "mem", VAR_NAME_MAX);
+        param_types[1] = create_node_type_with_class_name("void*");
+        
+        xstrncpy(param_names[2], "call_finalizer_only", VAR_NAME_MAX);
+        param_types[2] = create_node_type_with_class_name("int");
+
+        sNodeType* result_type = create_node_type_with_class_name("void");
+
+        LLVMTypeRef llvm_param_types[PARAMS_MAX];
+
+        int i;
+        for(i=0; i<num_params; i++) {
+            llvm_param_types[i] = create_llvm_type_from_node_type(param_types[i]);
+        }
+
+        LLVMTypeRef llvm_result_type = create_llvm_type_from_node_type(result_type);
+
+        LLVMTypeRef function_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
+        LLVMValueRef llvm_fun = LLVMAddFunction(gModule, name, function_type);
+
+        char* param_names2[PARAMS_MAX];
+        for(i=0; i<num_params; i++) {
+            param_names2[i] = param_names[i];
+        }
+
+        BOOL generics_function = FALSE;
+        BOOL var_args = FALSE;
+        if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
+        {
+            fprintf(stderr, "overflow function number\n");
+            exit(1);
+        }
+        
+        add_come_code_directory_top_level("%s", "void call_finalizer(void* fun, void* mem, int call_finalizer_only);\n");
+    }
+    
+    {
+        char* name = "ncmemdup";
+        int num_params = 1;
+        char param_names[PARAMS_MAX][VAR_NAME_MAX];
+        sNodeType* param_types[PARAMS_MAX];
+        char* block_text = NULL;
+        BOOL var_arg = FALSE;
+
+        xstrncpy(param_names[0], "mem", VAR_NAME_MAX);
+        param_types[0] = create_node_type_with_class_name("void*");
+        if(!gNCGC) {
+            param_types[0]->mHeap = TRUE;
+        }
+
+        sNodeType* result_type = create_node_type_with_class_name("void*");
+        if(!gNCGC) {
+            result_type->mHeap = TRUE;
+        }
+        result_type->mNullable = TRUE;
+
+        LLVMTypeRef llvm_param_types[PARAMS_MAX];
+
+        int i;
+        for(i=0; i<num_params; i++) {
+            llvm_param_types[i] = create_llvm_type_from_node_type(param_types[i]);
+        }
+
+        LLVMTypeRef llvm_result_type = create_llvm_type_from_node_type(result_type);
+
+        LLVMTypeRef function_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
+        LLVMValueRef llvm_fun = LLVMAddFunction(gModule, name, function_type);
+
+        char* param_names2[PARAMS_MAX];
+        for(i=0; i<num_params; i++) {
+            param_names2[i] = param_names[i];
+        }
+
+        BOOL generics_function = FALSE;
+        BOOL var_args = FALSE;
+        if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
+        {
+            fprintf(stderr, "overflow function number\n");
+            exit(1);
+        }
+        
+        add_come_code_directory_top_level("%s", "void* ncmemdup(void* block);\n");
+    }
+    {
+        char* name = "gc_ncmemdup";
+        int num_params = 1;
+        char param_names[PARAMS_MAX][VAR_NAME_MAX];
+        sNodeType* param_types[PARAMS_MAX];
+        char* block_text = NULL;
+        BOOL var_arg = FALSE;
+
+        xstrncpy(param_names[0], "mem", VAR_NAME_MAX);
+        param_types[0] = create_node_type_with_class_name("void*");
+
+        sNodeType* result_type = create_node_type_with_class_name("void*");
+
+        LLVMTypeRef llvm_param_types[PARAMS_MAX];
+
+        int i;
+        for(i=0; i<num_params; i++) {
+            llvm_param_types[i] = create_llvm_type_from_node_type(param_types[i]);
+        }
+
+        LLVMTypeRef llvm_result_type = create_llvm_type_from_node_type(result_type);
+
+        LLVMTypeRef function_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
+        LLVMValueRef llvm_fun = LLVMAddFunction(gModule, name, function_type);
+
+        char* param_names2[PARAMS_MAX];
+        for(i=0; i<num_params; i++) {
+            param_names2[i] = param_names[i];
+        }
+
+        BOOL generics_function = FALSE;
+        BOOL var_args = FALSE;
+        if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
+        {
+            fprintf(stderr, "overflow function number\n");
+            exit(1);
+        }
+        
+        add_come_code_directory_top_level("%s", "void* gc_ncmemdup(void* block);\n");
+    }
     
     {
         char* name = "llvm.va_start";
@@ -5200,7 +5431,6 @@ BOOL compile_block(sNodeBlock* block, BOOL force_hash_result, sCompileInfo* info
                     {
                         sBuf_append_str(&info->come_fun->mSource, llvm_value.c_value);
                         sBuf_append_str(&info->come_fun->mSource, ";\n");
-                        (gLLVMStack -1)->c_value = NULL;
                     }
                 }
             }

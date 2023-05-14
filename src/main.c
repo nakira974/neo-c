@@ -237,6 +237,10 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
             fprintf(stderr, "return code is error on clang\n");
             exit(2);
         }
+        
+        snprintf(cmd, 1024, "rm -f %s.bc", fname);
+        
+        (void)system(cmd);
     }
     
     if(fname[0] == '\0') {
@@ -323,7 +327,7 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
         
         if(!output_assembler_source) {
             char cmd[1024];
-            snprintf(cmd, 1024, "rm -f %s.ll %s.o", fname, fname);
+            snprintf(cmd, 1024, "rm -f %s.ll %s.o %s.bc", fname, fname, fname);
             
             (void)system(cmd);
         }

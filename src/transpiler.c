@@ -4,12 +4,21 @@ struct sComeModule gComeModule;
 sComeFun gComeFunctions[COME_FUN_MAX];
 struct sComeFunStruct* gComeFunctionHead;
 
+struct sOutputStruct 
+{
+    char* mName;
+    struct sOutputStruct* mNext;
+};
+
+struct sOutputStruct* gHeadOutputStruct;
+
 void transpiler_init()
 {
     sBuf_init(&gComeModule.mSource);
     sBuf_init(&gComeModule.mSourceHead);
     memset(gComeFunctions, 0, sizeof(sComeFun)*COME_FUN_MAX);
     gComeFunctionHead = NULL;
+    gHeadOutputStruct = NULL;
     
     add_come_code_directory_top_level("%s", "typedef void* protocol_obj_t;\n");
 }
@@ -258,6 +267,19 @@ void header_function(sBuf* output, sComeFun* fun)
 
 void output_struct(char* struct_name, sNodeType* struct_type, sNodeType* generics_type, BOOL undefined_body)
 {
+    struct sOutputStruct* it = gHeadOutputStruct;
+    while(it) {
+        if(strcmp(it->mName, struct_name) == 0) {
+            return;
+        }
+        it = it->mNext;
+    }
+    struct sOutputStruct* output_struct = GC_malloc(sizeof(struct sOutputStruct));
+    
+    output_struct->mName = xsprintf("%s", struct_name);;
+    output_struct->mNext = gHeadOutputStruct;
+    gHeadOutputStruct = output_struct;
+    
     if(undefined_body) {
         sBuf_append_str(&gComeModule.mSourceHead, xsprintf("struct %s;\n", struct_name));
     }

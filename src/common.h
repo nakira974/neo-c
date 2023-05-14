@@ -1150,7 +1150,7 @@ typedef struct sFunctionStruct sFunction;
 
 extern sNodeType* gComeFunctionResultType;
 
-sFunction* create_finalizer_automatically(sNodeType* node_type, char* fun_name, sCompileInfo* info);
+sFunction* create_finalizer_automatically(sNodeType* node_type, char* fun_name, char** real_fun_name, sCompileInfo* info);
 sFunction* create_cloner_automatically(sNodeType* node_type, char* fun_name, sCompileInfo* info);
 sFunction* create_equals_automatically(sNodeType* node_type, char* fun_name, sCompileInfo* info);
 void setCurrentDebugLocation(int sline, sCompileInfo* info);

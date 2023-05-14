@@ -5558,7 +5558,9 @@ BOOL store_obj_to_protocol(unsigned int interface_node, unsigned int obj_node, s
             
             if(llvm_fun == NULL) {
                 if(i == 1) {
-                    sFunction* fun = create_finalizer_automatically(obj_type, fun_name, info);
+                    char* real_fun_name = NULL;
+                    sFunction* fun = create_finalizer_automatically(obj_type, fun_name, &real_fun_name, info);
+                    xstrncpy(fun_name, real_fun_name, VAR_NAME_MAX);
                     if(fun != NULL) {
                         llvm_fun = fun->mLLVMFunction;
                     }

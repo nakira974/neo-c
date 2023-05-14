@@ -1378,7 +1378,7 @@ BOOL type_equalability(sNodeType* left_type, sNodeType* right_type)
     if(strcmp(CLASS_NAME(left_type->mClass), CLASS_NAME(right_type->mClass)) != 0) {
         return FALSE;
     }
-    if(left_type->mPointerNum != right_type->mPointerNum || left_type->mHeap != right_type->mHeap || left_type->mNullable != right_type->mNullable)
+    if(left_type->mPointerNum != right_type->mPointerNum || left_type->mHeap != right_type->mHeap)
     {
         return FALSE;
     }

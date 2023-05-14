@@ -29,7 +29,8 @@ void puts(char* str);
 int main(int argc, char** argv);
 struct sA_int* sA_initialize_int(struct sA_int* self, int a, int b);
 struct sA_char* sA_initialize_char(struct sA_char* self, char a, char b);
-void sA_finalize(struct sA_int* self);
+void sA_finalize_sA_int(struct sA_int* self);
+void sA_finalize_sA_char(struct sA_char* self);
 
 int main(int argc, char** argv)
 {
@@ -39,8 +40,8 @@ void* right_value3;
 void* right_value5;
 struct sA_int* a=(right_value2 = (right_value2=sA_initialize_int((right_value0 = igc_calloc(1,16)),111,222)));
 struct sA_char* b=(right_value5 = (right_value5=sA_initialize_char((right_value3 = igc_calloc(1,16)),111,222)));
-call_finalizer(sA_finalize,a,0);
-call_finalizer(sA_finalize,b,0);
+call_finalizer(sA_finalize_sA_int,a,0);
+call_finalizer(sA_finalize_sA_char,b,0);
 return 0;
 }
 
@@ -62,7 +63,14 @@ self->c=(right_value4 = igc_calloc(128,1));
 return self;
 }
 
-void sA_finalize(struct sA_int* self)
+void sA_finalize_sA_int(struct sA_int* self)
+{
+if(self!=(((void*)0))&&self->c!=(((void*)0))) {
+igc_decrement_ref_count((self->c));
+}
+}
+
+void sA_finalize_sA_char(struct sA_char* self)
 {
 if(self!=(((void*)0))&&self->c!=(((void*)0))) {
 igc_decrement_ref_count((self->c));

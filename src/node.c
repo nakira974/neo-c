@@ -374,8 +374,18 @@ static void create_generics_name(char* real_name, int size_real_name, sNodeType*
     }
 }
 
-sFunction* create_finalizer_automatically(sNodeType* node_type, char* fun_name, sCompileInfo* info)
+sFunction* create_finalizer_automatically(sNodeType* node_type, char* fun_name, char** real_fun_name, sCompileInfo* info)
 {
+    if(node_type->mNumGenericsTypes) {
+        char struct_name[VAR_NAME_MAX];
+        create_generics_struct_name(struct_name, VAR_NAME_MAX, node_type);
+        
+        *real_fun_name = xsprintf("%s_%s", fun_name, struct_name);
+    }
+    else {
+        *real_fun_name = xsprintf("%s", fun_name);
+    }
+    
     char* last_code = gComeModule.mLastCode;
     gComeModule.mLastCode = NULL;
     char* last_stack_c_value = (gLLVMStack -1)->c_value;
@@ -475,12 +485,12 @@ sFunction* create_finalizer_automatically(sNodeType* node_type, char* fun_name, 
             
             LLVMBasicBlockRef current_block = info->current_block; //LLVMGetLastBasicBlock(gFunction);
     
-            unsigned int node = sNodeTree_create_function(fun_name, asm_fname, params, num_params, result_type, node_block, lambda_, block_var_table, struct_name, operator_fun, constructor_fun, simple_lambda_param, &pinfo, generics_function, var_arg, version, finalize, generics_fun_num, simple_fun_name, sline, immutable_);
+            unsigned int node = sNodeTree_create_function(*real_fun_name, asm_fname, params, num_params, result_type, node_block, lambda_, block_var_table, struct_name, operator_fun, constructor_fun, simple_lambda_param, &pinfo, generics_function, var_arg, version, finalize, generics_fun_num, simple_fun_name, sline, immutable_);
             
             free(source.mBuf);
             
             if(compile(node, info)) {
-                finalizer = get_function_from_table(fun_name);
+                finalizer = get_function_from_table(*real_fun_name);
             }
     
             llvm_change_block(current_block, info);
@@ -755,7 +765,9 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL for
         
         if(finalizer == NULL && !is_number_class(node_type) && gNCCome && !(node_type->mClass->mFlags & CLASS_FLAGS_PROTOCOL))
         {
-            finalizer = create_finalizer_automatically(node_type, fun_name, info);
+            char* real_fun_name = NULL;
+            finalizer = create_finalizer_automatically(node_type, fun_name, &real_fun_name, info);
+            xstrncpy(fun_name, real_fun_name, VAR_NAME_MAX);
         }
 
         /// call finalizer ///

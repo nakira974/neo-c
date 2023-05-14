@@ -637,7 +637,9 @@ mapもあります。
 ```
     var m = new map<char*,int>();
     
-    m.insert("AAA", 1).insert("BBB", 2).insert("CCC", 3);
+    m.insert("AAA", 1)
+    m.insert("BBB", 2)
+    m.insert("CCC", 3);
     
     if(m === ["AAA":1, "BBB":2, "CCC":3]) {
         puts("OK");

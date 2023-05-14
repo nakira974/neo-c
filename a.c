@@ -30,6 +30,7 @@ sA<T>*% initialize(sA<T>*% self, T a, T b)
 int main(int argc, char** argv)
 {
     sA<int>*% a = new sA<int>.initialize(111, 222);
+    sA<char>*% b = new sA<char>.initialize(111, 222);
     
     return 0;
 }

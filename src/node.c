@@ -912,7 +912,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL for
                     LLVMTypeRef function_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
                     
                     LLVMBuildCall2(gBuilder, function_type, llvm_fun3, llvm_params3, num_params3, "");
-                    add_come_code_directory(info, xsprintf("call_finalizer(%s,%s,%d);\n", fun_name, c_value, node_type->mAllocaValue));
+                    if(c_value) add_come_code_directory(info, xsprintf("igc_decrement_ref_count(%s);\n", c_value));
                 }
                 else {
                     sNodeType* result_type = create_node_type_with_class_name("void");
@@ -929,7 +929,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL for
                     LLVMTypeRef function_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
                     LLVMBuildCall2(gBuilder, function_type, llvm_fun2, llvm_params2, num_params2, "");
                     
-                    if(c_value) add_come_code_directory(info, xsprintf("igc_decrement_ref_count(%s);\n", c_value));
+                    add_come_code_directory(info, xsprintf("call_finalizer(%s,%s,%d);\n", fun_name, c_value, node_type->mAllocaValue));
                 }
             }
         }

@@ -9,22 +9,10 @@ struct sA_int
     int b;
     char* c;
 };
-struct sA_int
+struct sA_char
 {
-    int a;
-    int b;
-    char* c;
-};
-struct sA_int
-{
-    int a;
-    int b;
-    char* c;
-};
-struct sA_int
-{
-    int a;
-    int b;
+    char a;
+    char b;
     char* c;
 };
 
@@ -39,19 +27,24 @@ char* strncpy(char* str, char* str2, int n);
 int strlen(char* str);
 void puts(char* str);
 int main(int argc, char** argv);
-struct sA* sA_initialize_int(struct sA* self, int a, int b);
-void sA_finalize(struct sA* self);
+struct sA_int* sA_initialize_int(struct sA_int* self, int a, int b);
+struct sA_char* sA_initialize_char(struct sA_char* self, char a, char b);
+void sA_finalize(struct sA_int* self);
 
 int main(int argc, char** argv)
 {
 void* right_value0;
 void* right_value2;
-struct sA* a=(null);
-igc_decrement_ref_count(a);
+void* right_value3;
+void* right_value5;
+struct sA_int* a=(right_value2 = (right_value2=sA_initialize_int((right_value0 = igc_calloc(1,16)),111,222)));
+struct sA_char* b=(right_value5 = (right_value5=sA_initialize_char((right_value3 = igc_calloc(1,16)),111,222)));
+call_finalizer(sA_finalize,a,0);
+call_finalizer(sA_finalize,b,0);
 return 0;
 }
 
-struct sA* sA_initialize_int(struct sA* self, int a, int b)
+struct sA_int* sA_initialize_int(struct sA_int* self, int a, int b)
 {
 void* right_value1;
 self->a=a;
@@ -60,7 +53,16 @@ self->c=(right_value1 = igc_calloc(128,1));
 return self;
 }
 
-void sA_finalize(struct sA* self)
+struct sA_char* sA_initialize_char(struct sA_char* self, char a, char b)
+{
+void* right_value4;
+self->a=a;
+self->b=b;
+self->c=(right_value4 = igc_calloc(128,1));
+return self;
+}
+
+void sA_finalize(struct sA_int* self)
 {
 if(self!=(((void*)0))&&self->c!=(((void*)0))) {
 igc_decrement_ref_count((self->c));

@@ -246,7 +246,7 @@ BOOL call_operator_function(char* fun_base_name, sNodeType* left_type, int num_p
                 dec_stack_ptr(num_params, info);
             }
             else {
-                if(!call_inline_function(fun, generics_type, num_method_generics_types, method_generics_types, llvm_params, info)) {
+                if(!call_inline_function(fun, generics_type, num_method_generics_types, method_generics_types, llvm_params, params, info)) {
                     return FALSE;
                 }
             }

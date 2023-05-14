@@ -7,44 +7,54 @@ char* strncpy(char* str, char* str2, int n);
 int strlen(char* str);
 void puts(char* str);
 
-protocol IA
+/*
+struct sA<T>
 {
-    void show();
+    T a;
+    T b;
+    char*% c;
 };
 
-struct sA
+impl sA<T>
 {
-    char* a;
-    char*% b;
-};
-
-struct sA*% sA*::initialize(struct sA*% self, char* a, char* b)
+sA<T>*% initialize(sA<T>*% self, T a, T b)
 {
     self.a = a;
-    self.b = clone b;
+    self.b = b;
+    self.c = new char[128];
     
     return self;
 }
 
-void sA*::show(sA* self)
-{
-    puts(self.a);
-    puts(self.b);
 }
 
 int main(int argc, char** argv)
 {
-    char* a = "ABC";
-    char*% b = new char[128];
-    strncpy(b, "DFE", 128);
+    sA<int>*% a = new sA<int>.initialize(111, 222);
     
-    IA*% ia = new IA(new sA(a, b));
+    return 0;
+}
+
+*/
+
+struct sA
+{
+    int a;
+    int b;
+};
+
+int sA*::operator_add(sA* left, sA* right)
+{
+    return left.a + right.b;
+}
+
+
+int main()
+{
+    sA*% a = new sA;
+    sA*% b = new sA;
     
-    ia->show->();
-    
-    IA*% ib = clone ia;
-    
-    ib->show->();
+    int c = a + b;
     
     return 0;
 }

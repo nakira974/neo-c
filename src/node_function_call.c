@@ -1,6 +1,6 @@
 #include "common.h"
 
-BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_method_generics_types, sNodeType** method_generics_types, LLVMValueRef* llvm_params, sCompileInfo* info)
+BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_method_generics_types, sNodeType** method_generics_types, LLVMValueRef* llvm_params, LVALUE* lvalue_params, sCompileInfo* info)
 {
     LLVMValueRef result_value = NULL;
     
@@ -9,6 +9,10 @@ BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_meth
     
     char* param_names[PARAMS_MAX];
     sNodeType* param_types[PARAMS_MAX];
+    
+    info->num_inline++;
+    char* inline_func_end_label = info->inline_func_end_label;
+    info->inline_func_end_label = xsprintf("inline_func_end_label%d", info->num_inline);
     
     int i;
     for(i=0; i<num_params; i++) {
@@ -96,6 +100,13 @@ BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_meth
         LLVMTypeRef llvm_type = create_llvm_type_from_node_type(result_type);
         info->inline_result_variable = LLVMBuildAlloca(gBuilder, llvm_type, "inline_result_variable");
     }
+    
+    if(!(type_identify_with_class_name(result_type, "void") && result_type->mPointerNum == 0))
+    {
+        add_come_code_directory(info, "%s inline_result_variable%d;\n", make_type_name_string(result_type), info->num_inline);
+    }
+    
+    add_come_code_directory(info, "{\n");
 
     for(i=0; i<num_params; i++) {
         LLVMTypeRef llvm_type = create_llvm_type_from_node_type(param_types[i]);
@@ -104,6 +115,8 @@ BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_meth
         sVar* var_ = get_variable_from_table(block_var_table, param_names[i]);
         
         LLVMBuildStore(gBuilder, llvm_params[i], param);
+        
+        add_come_code_directory(info, "%s %s = %s;\n", make_type_name_string(param_types[i]), param_names[i], lvalue_params[i].c_value);
 
         if(fun->mParamTypes[i] != NULL) {
             sNodeType* node_type = clone_node_type(fun->mParamTypes[i]);
@@ -142,6 +155,7 @@ BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_meth
     if(!compile_block(node_block, force_hash_result, info)) {
         return FALSE;
     }
+    transpiler_clear_last_code();
 
     gComeFunctionResultType = come_function_result_type;
 
@@ -169,7 +183,7 @@ BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_meth
         llvm_value.type = result_type;
         llvm_value.address = info->inline_result_variable;
         llvm_value.var = NULL;
-        llvm_value.c_value = NULL;
+        llvm_value.c_value = xsprintf("inline_result_variable%d", info->num_inline);
 
         dec_stack_ptr(num_params, info);
         push_value_to_stack_ptr(&llvm_value, info);
@@ -182,20 +196,25 @@ BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_meth
     if(!solve_type(&info->type, generics_type, num_method_generics_types, method_generics_types, info)) {
         return FALSE;
     }
+    add_come_code_directory(info, "\n%s:\n", info->inline_func_end_label);
     
     if(result_value) {
-        if(info->type->mHeap) {
-            append_object_to_right_values(result_value, info->type, info);
+        if(result_type->mHeap) {
+            append_object_to_right_values(result_value, result_type, info);
         }
     }
 
+    add_come_code_directory(info, "0;\n}\n");
     info->inline_result_variable = inline_result_variable;
     info->inline_func_end = inline_func_end_before;
+    
+    info->inline_func_end_label = inline_func_end_label;
     
     xstrncpy(gFunctionName, function_name, VAR_NAME_MAX);
     
     return TRUE;
 }
+
 
 unsigned int sNodeTree_create_function_call(char* fun_name, unsigned int* params, int num_params, BOOL method, BOOL inherit, int version, sParserInfo* info)
 {

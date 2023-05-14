@@ -1456,7 +1456,7 @@ void node_function_final();
 void show_funcs();
 void show_func(sFunction* fun, BOOL code);
 
-BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_method_generics_types, sNodeType** method_generics_types, LLVMValueRef* llvm_params, sCompileInfo* info);
+BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_method_generics_types, sNodeType** method_generics_types, LLVMValueRef* llvm_params, LVALUE* lvalue_params, sCompileInfo* info);
 BOOL add_function_to_table(char* name, int num_params, char** param_names, sNodeType** param_types, char** param_default_values, BOOL* param_labels, sNodeType* result_type, LLVMValueRef llvm_fun, char* block_text, BOOL generics_function, BOOL var_args, int num_generics, char** generics_type_names, int num_method_generics, char** mgenerics_type_names, BOOL extern_, char* asm_fun_name, BOOL user, char* source, char* sname, int sline, BOOL immutable, BOOL flag_asm_fun_name, LLVMTypeRef llvm_function_type);
 BOOL dupe_function(char* old_fun_name, char* new_fun_name);
 void remove_function_from_table(char* name);

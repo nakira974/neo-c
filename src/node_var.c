@@ -2707,7 +2707,7 @@ BOOL compile_typedef(unsigned int node, sCompileInfo* info)
     xstrncpy(name, gNodes[node].uValue.sTypedef.mName, VAR_NAME_MAX);
     sNodeType* node_type = gNodes[node].uValue.sTypedef.mNodeType;
     
-    add_come_code_directory_top_level(info, "typedef %s %s;\n", make_type_name_string(node_type), name);
+    add_come_code_directory_top_level("typedef %s %s;\n", make_type_name_string(node_type), name);
     
     info->type = create_node_type_with_class_name("void");
 
@@ -5603,7 +5603,9 @@ BOOL store_obj_to_protocol(unsigned int interface_node, unsigned int obj_node, s
                     add_come_code_directory(info, "%s->%s = (void*)%s;\n", var_name, field_name, fun->mName);
                 }
                 else if(i == 2) {
-                    sFunction* fun = create_cloner_automatically(obj_type, fun_name, info);
+                    char* real_fun_name = NULL;
+                    sFunction* fun = create_cloner_automatically(obj_type, fun_name, &real_fun_name, info);
+                    xstrncpy(fun_name, real_fun_name, VAR_NAME_MAX);
                     if(fun != NULL) {
                         llvm_fun = fun->mLLVMFunction;
                     }

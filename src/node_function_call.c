@@ -575,7 +575,9 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
     if(fun == NULL) {
         if(strcmp(original_fun_name, "equals") == 0) {
             sNodeType* node_type = clone_node_type(param_types[0]);
-            fun = create_equals_automatically(node_type, fun_name, info);
+            char* real_fun_name = NULL;
+            fun = create_equals_automatically(node_type, fun_name, &real_fun_name, info);
+            xstrncpy(fun_name, real_fun_name, VAR_NAME_MAX);
         }
     }
     

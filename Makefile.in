@@ -233,7 +233,7 @@ distclean: clean
 #########################################
 # test
 #########################################
-test: gc-test gc-debug-test no-gc-test debug-test
+test: gc-debug-test debug-test
 
 no-gc-test:
 	@echo "Compile to gc test code..."

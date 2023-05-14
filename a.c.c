@@ -3,10 +3,29 @@ void* call_cloner(void* fun, void* mem);
 void call_finalizer(void* fun, void* mem, int call_finalizer_only);
 void* ncmemdup(void* block);
 void* gc_ncmemdup(void* block);
-struct sA
+struct sA_int
 {
     int a;
     int b;
+    char* c;
+};
+struct sA_int
+{
+    int a;
+    int b;
+    char* c;
+};
+struct sA_int
+{
+    int a;
+    int b;
+    char* c;
+};
+struct sA_int
+{
+    int a;
+    int b;
+    char* c;
 };
 
 void come_gc_init();
@@ -19,28 +38,32 @@ void unwrap_exception(char* sname, int sline, char* mem);
 char* strncpy(char* str, char* str2, int n);
 int strlen(char* str);
 void puts(char* str);
-int sAp_operator_add(struct sA* left, struct sA* right);
-int main();
+int main(int argc, char** argv);
+struct sA* sA_initialize_int(struct sA* self, int a, int b);
 void sA_finalize(struct sA* self);
 
-int sAp_operator_add(struct sA* left, struct sA* right)
-{
-return left->a+right->b;
-}
-
-int main()
+int main(int argc, char** argv)
 {
 void* right_value0;
-void* right_value1;
-struct sA* a=(right_value0 = igc_calloc(1,8));
-struct sA* b=(right_value1 = igc_calloc(1,8));
-int c=sAp_operator_add(a,b);
+void* right_value2;
+struct sA* a=(null);
 igc_decrement_ref_count(a);
-igc_decrement_ref_count(b);
 return 0;
+}
+
+struct sA* sA_initialize_int(struct sA* self, int a, int b)
+{
+void* right_value1;
+self->a=a;
+self->b=b;
+self->c=(right_value1 = igc_calloc(128,1));
+return self;
 }
 
 void sA_finalize(struct sA* self)
 {
+if(self!=(((void*)0))&&self->c!=(((void*)0))) {
+igc_decrement_ref_count((self->c));
+}
 }
 

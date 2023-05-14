@@ -7,7 +7,6 @@ char* strncpy(char* str, char* str2, int n);
 int strlen(char* str);
 void puts(char* str);
 
-/*
 struct sA<T>
 {
     T a;
@@ -35,27 +34,4 @@ int main(int argc, char** argv)
     return 0;
 }
 
-*/
-
-struct sA
-{
-    int a;
-    int b;
-};
-
-int sA*::operator_add(sA* left, sA* right)
-{
-    return left.a + right.b;
-}
-
-
-int main()
-{
-    sA*% a = new sA;
-    sA*% b = new sA;
-    
-    int c = a + b;
-    
-    return 0;
-}
 

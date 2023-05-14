@@ -1101,6 +1101,40 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
             return FALSE;
         }
         
+        sBuf buf;
+        
+        sBuf_init(&buf);
+        
+        if(result_type->mHeap) {
+            sBuf_append_str(&buf, xsprintf("(right_value%d=", gRightValueNum));
+        }
+        else {
+            sBuf_append_str(&buf, "(");
+        }
+        
+        if(llvm_fun_name) {
+            sBuf_append_str(&buf, llvm_fun_name);
+        }
+        else {
+            sBuf_append_str(&buf, fun_name);
+        }
+
+        sBuf_append_str(&buf, "(");
+
+        int i;
+        for(i=0; i<num_params; i++) {
+            if(lvalue_params[i].c_value) {
+                sBuf_append_str(&buf, lvalue_params[i].c_value);
+            }
+            
+            if(i!=num_params-1) {
+                sBuf_append_str(&buf, ",");
+            }
+        }
+
+        sBuf_append_str(&buf, "))");
+        add_come_code(info, "%s", buf.mBuf);
+        
         if(type_identify_with_class_name(result_type, "void") && result_type->mPointerNum == 0) {
         
             LLVMTypeRef llvm_result_type = create_llvm_type_from_node_type(result_type);
@@ -1125,21 +1159,29 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
             llvm_value.type = clone_node_type(result_type);
             llvm_value.address = NULL;
             llvm_value.var = NULL;
-            llvm_value.c_value = NULL;
-
-            dec_stack_ptr(num_params, info);
-            push_value_to_stack_ptr(&llvm_value, info);
 
             info->type = clone_node_type(result_type);
             
             result_value = llvm_value.value;
+            
+            if(result_value) {
+                if(info->type->mHeap) {
+                    char* var_name = append_object_to_right_values(result_value, info->type, info);
+                    llvm_value.c_value = xsprintf("(%s = %s)", var_name, buf.mBuf);
+                }
+                else {
+                    llvm_value.c_value = xsprintf("%s", buf.mBuf);
+                }
+            }
+            else {
+                llvm_value.c_value = xsprintf("%s", buf.mBuf);
+            }
+
+            dec_stack_ptr(num_params, info);
+            push_value_to_stack_ptr(&llvm_value, info);
         }
         
-        if(result_value) {
-            if(info->type->mHeap) {
-                append_object_to_right_values(result_value, info->type, info);
-            }
-        }
+        free(buf.mBuf);
     }
     /// call inline function ///
     else if(fun->mBlockText) {

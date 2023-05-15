@@ -1,27 +1,14 @@
-using comelang;
-using unsafe;
-
 #include <stdlib.h>
 #include <stdio.h>
 
-#define NULL ((void*)0)
-
-typedef long long size_t;
-
-void *malloc(size_t size);
-void free(void *ptr);
-void *calloc(size_t nmemb, size_t size);
-void *realloc(void *ptr, size_t size);
-
-void exit(int status);
-
-int fprintf(FILE * restrict stream, const char * restrict format, ...);
-
 #ifdef __DARWIN_ARM__
-size_t malloc_size(const void *ptr);
+#include <malloc/malloc.h>
 #else
-size_t malloc_usable_size (void *ptr);
+#include <malloc.h>
 #endif
+
+using comelang;
+using unsafe;
 
 void come_gc_init()
 {

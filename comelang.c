@@ -1,5 +1,7 @@
 #include <comelang.h>
 
+using unsafe;
+
 void come_gc_init()
 {
 }
@@ -10,40 +12,37 @@ void come_gc_final()
 
 void* igc_calloc(size_t count, size_t size)
 {
-    using unsafe;
-    
-    char* mem = calloc(1, sizeof(int)+count*size);
+    char* mem = calloc(1, sizeof(int)+sizeof(long)+count*size);
     
     int* ref_count = (int*)mem;
     
     (*ref_count)++;
     
-    return mem + sizeof(int);
+    long* size2 = (long*)(mem + sizeof(int));
+    
+    *size2 = size*count + sizeof(long) + sizeof(int);
+    
+    return mem + sizeof(int) + sizeof(long);
 }
 
 void igc_increment_ref_count(void* mem)
 {
-    using unsafe;
-    
     if(mem == NULL) {
         return;
     }
     
-    int* ref_count = (int*)((char*)mem - sizeof(int));
+    int* ref_count = (int*)((char*)mem - sizeof(int) - sizeof(long));
     
     (*ref_count)++;
 }
 
-
 void igc_decrement_ref_count(void* mem)
 {
-    using unsafe;
-    
     if(mem == NULL) {
         return;
     }
     
-    int* ref_count = (int*)((char*)mem - sizeof(int));
+    int* ref_count = (int*)((char*)mem - sizeof(int) - sizeof(long));
     
     (*ref_count)--;
     
@@ -59,7 +58,7 @@ void free_object(void* mem)
         return;
     }
     
-    int* ref_count = (int*)((char*)mem - sizeof(int));
+    int* ref_count = (int*)((char*)mem - sizeof(int) - sizeof(long));
     
     ncfree(ref_count);
 }
@@ -77,9 +76,7 @@ void call_finalizer(void* fun, void* mem, int call_finalizer_only)
         }
     }
     else {
-        using unsafe;
-        
-        int* ref_count = (int*)((char*)mem - sizeof(int));
+        int* ref_count = (int*)((char*)mem - sizeof(int) - sizeof(long));
         
         (*ref_count)--;
         
@@ -116,20 +113,16 @@ void*%? ncmemdup(void*% block)
     if(!block) {
         return dummy_heap null;
     }
-    char* mem = (char*)block - sizeof(int);
+    char* mem = (char*)block - sizeof(int) - sizeof(long);
+    
+    long* size_p = (long*)(mem + sizeof(int));
 
-#ifdef __DARWIN_ARM__
-    size_t size = malloc_size(mem);
-#else
-    size_t size = malloc_usable_size(mem);
-#endif
+    size_t size = *size_p;
 
     void* ret = calloc(1, size);
 
     int* ref_count = ret;
     
-    using unsafe;
-
     if (ret) {
         char* p = ret;
         char* p2 = mem;
@@ -142,7 +135,10 @@ void*%? ncmemdup(void*% block)
 
     (*ref_count) = 1;
     
-    return dummy_heap (char*)ret + sizeof(int);
+    long* size_p2 = (long*)((char*)ret + sizeof(int));
+    *size_p2 = size;
+    
+    return dummy_heap (char*)ret + sizeof(int) + sizeof(long);
 }
 
 void* call_cloner(void* fun, void* mem)

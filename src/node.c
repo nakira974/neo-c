@@ -5288,7 +5288,6 @@ BOOL create_llvm_union_type(char* union_name, sNodeType* node_type, sNodeType* g
     }
     else {
         if(undefined_body) {
-            return TRUE;
         }
         else {
             LLVMTypeRef field_types[STRUCT_FIELD_MAX];
@@ -5318,6 +5317,8 @@ BOOL create_llvm_union_type(char* union_name, sNodeType* node_type, sNodeType* g
             LLVMStructSetBody(llvm_type, field_types, num_fields, FALSE);
         }
     }
+    
+    output_union(union_name, node_type, generics_type, undefined_body);
 
     return TRUE;
 }

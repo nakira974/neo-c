@@ -155,3 +155,11 @@ void* call_cloner(void* fun, void* mem)
     return null;
 }
 
+
+void unwrap_exception(char* sname, int sline, char* mem)
+{
+    if(mem == null) {
+        fprintf(stderr, "%s %d: unwrap exception. The value is null\n", sname, sline);
+        exit(2);
+    }
+}

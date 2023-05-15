@@ -202,34 +202,93 @@ char* xsprintf(const char* msg, ...)
     return GC_strdup(msg2);
 }
 
-void output_function(sBuf* output, sComeFun* fun)
+char* make_define_var(sNodeType* node_type, char* name)
 {
-    char* result_type_str = make_type_name_string(fun->mResultType);
+    sBuf buf;
+    sBuf_init(&buf);
     
-    sBuf_append_str(output, result_type_str);
-    sBuf_append_str(output, " ");
-    
-    sBuf_append_str(output, fun->mName);
-    sBuf_append_str(output, "(");
-    
-    int i;
-    for(i=0; i<fun->mNumParams; i++) {
-        sNodeType* param_type = fun->mParamTypes[i];
+    if(type_identify_with_class_name(node_type, "lambda")) {
+        char* str = make_lambda_type_name_string(node_type, name);
         
-        char* param_type_str = make_type_name_string(fun->mParamTypes[i]);
+        sBuf_append_str(&buf, str);
+    }
+    else if(node_type->mSizeNum > 0) {
+        sBuf_append_str(&buf, "int ");
+        sBuf_append_str(&buf, xsprintf("%s:%d;\n", name, node_type->mSizeNum));
+    }
+    else {
+        char* node_type_str = make_type_name_string(node_type);
         
-        sBuf_append_str(output, param_type_str);
+        sBuf_append_str(&buf, node_type_str);
         
-        sBuf_append_str(output, " ");
-        sBuf_append_str(output, fun->mParamNames[i]);
-        
-        if(i != fun->mNumParams-1) {
-            sBuf_append_str(output, ", ");
-        }
+        sBuf_append_str(&buf, " ");
+        sBuf_append_str(&buf, name);
     }
     
-    sBuf_append_str(&gComeModule.mSourceHead, output->mBuf);
-    sBuf_append_str(&gComeModule.mSourceHead, ");\n");
+    char* result = xsprintf("%s", buf.mBuf);
+    
+    free(buf.mBuf);
+    
+    return result;
+}
+
+void output_function(sBuf* output, sComeFun* fun)
+{
+    if(fun->mResultType->mResultType) {
+        sBuf output2;
+        sBuf_init(&output2);
+        
+        sBuf_append_str(&output2, fun->mName);
+        sBuf_append_str(&output2, "(");
+        
+        int i;
+        for(i=0; i<fun->mNumParams; i++) {
+            sNodeType* param_type = fun->mParamTypes[i];
+            char* name = fun->mParamNames[i];
+            
+            char* str = make_define_var(param_type, name);
+            sBuf_append_str(&output2, str);
+            
+            if(i != fun->mNumParams-1) {
+                sBuf_append_str(&output2, ", ");
+            }
+        }
+        sBuf_append_str(&output2, ")");
+        
+        char* str = make_lambda_type_name_string(fun->mResultType, output2.mBuf);
+        
+        sBuf_append_str(output, str);
+        
+        sBuf_append_str(&gComeModule.mSourceHead, output->mBuf);
+        sBuf_append_str(&gComeModule.mSourceHead, ";\n");
+        
+        free(output2.mBuf);
+    }
+    else {
+        char* result_type_str = make_type_name_string(fun->mResultType);
+        
+        sBuf_append_str(output, result_type_str);
+        sBuf_append_str(output, " ");
+        
+        sBuf_append_str(output, fun->mName);
+        sBuf_append_str(output, "(");
+        
+        int i;
+        for(i=0; i<fun->mNumParams; i++) {
+            sNodeType* param_type = fun->mParamTypes[i];
+            char* name = fun->mParamNames[i];
+            
+            char* str = make_define_var(param_type, name);
+            sBuf_append_str(output, str);
+            
+            if(i != fun->mNumParams-1) {
+                sBuf_append_str(output, ", ");
+            }
+        }
+        
+        sBuf_append_str(&gComeModule.mSourceHead, output->mBuf);
+        sBuf_append_str(&gComeModule.mSourceHead, ");\n");
+    }
     
     sBuf_append_str(output, ")\n{\n");
     
@@ -241,36 +300,63 @@ void output_function(sBuf* output, sComeFun* fun)
 
 void header_function(sBuf* output, sComeFun* fun)
 {
-    char* result_type_str = make_type_name_string(fun->mResultType);
-    
-    sBuf_append_str(output, result_type_str);
-    sBuf_append_str(output, " ");
-    
-    sBuf_append_str(output, fun->mName);
-    sBuf_append_str(output, "(");
-    
-    int i;
-    for(i=0; i<fun->mNumParams; i++) {
-        sNodeType* param_type = fun->mParamTypes[i];
+    if(fun->mResultType->mResultType) {
+        sBuf output2;
+        sBuf_init(&output2);
         
-        char* param_type_str = make_type_name_string(fun->mParamTypes[i]);
+        sBuf_append_str(&output2, fun->mName);
+        sBuf_append_str(&output2, "(");
         
-        sBuf_append_str(output, param_type_str);
-        
-        sBuf_append_str(output, " ");
-        sBuf_append_str(output, fun->mParamNames[i]);
-        
-        if(i == fun->mNumParams-1) {
-            if(fun->mVarArgs) {
-                sBuf_append_str(output, ", ...");
+        int i;
+        for(i=0; i<fun->mNumParams; i++) {
+            sNodeType* param_type = fun->mParamTypes[i];
+            char* name = fun->mParamNames[i];
+            
+            char* str = make_define_var(param_type, name);
+            sBuf_append_str(&output2, str);
+            
+            if(i != fun->mNumParams-1) {
+                sBuf_append_str(&output2, ", ");
             }
         }
-        else {
-            sBuf_append_str(output, ", ");
-        }
+        sBuf_append_str(&output2, ")");
+        
+        char* str = make_lambda_type_name_string(fun->mResultType, output2.mBuf);
+        
+        sBuf_append_str(output, str);
+        sBuf_append_str(output, ";\n");
+        
+        free(output2.mBuf);
     }
-    
-    sBuf_append_str(output, ");\n");
+    else {
+        char* result_type_str = make_type_name_string(fun->mResultType);
+        
+        sBuf_append_str(output, result_type_str);
+        sBuf_append_str(output, " ");
+        
+        sBuf_append_str(output, fun->mName);
+        sBuf_append_str(output, "(");
+        
+        int i;
+        for(i=0; i<fun->mNumParams; i++) {
+            sNodeType* param_type = fun->mParamTypes[i];
+            char* name = fun->mParamNames[i];
+            
+            char* str = make_define_var(param_type, name);
+            sBuf_append_str(output, str);
+            
+            if(i == fun->mNumParams-1) {
+                if(fun->mVarArgs) {
+                    sBuf_append_str(output, ", ...");
+                }
+            }
+            else {
+                sBuf_append_str(output, ", ");
+            }
+        }
+        
+        sBuf_append_str(output, ");\n");
+    }
 }
 
 void output_struct(char* struct_name, sNodeType* struct_type, sNodeType* generics_type, BOOL undefined_body)
@@ -306,37 +392,147 @@ void output_struct(char* struct_name, sNodeType* struct_type, sNodeType* generic
                 exit(1);
             }
             
-            if(type_identify_with_class_name(field, "lambda")) {
-                sBuf_append_str(&gComeModule.mSourceHead, "    ");
-                char* str = make_lambda_type_name_string(field, name);
-                
-                sBuf_append_str(&gComeModule.mSourceHead, str);
-                sBuf_append_str(&gComeModule.mSourceHead, ";\n");
-            }
-            else {
-                char* str = xsprintf("    %s %s;\n", make_type_name_string(field), name);
-                
-                sBuf_append_str(&gComeModule.mSourceHead, str);
-            }
+            char* str = make_define_var(field, name);
+            
+            sBuf_append_str(&gComeModule.mSourceHead, "    ");
+            sBuf_append_str(&gComeModule.mSourceHead, str);
+            sBuf_append_str(&gComeModule.mSourceHead, ";\n");
         }
         sBuf_append_str(&gComeModule.mSourceHead, "};\n");
     }
 }
 
-char* make_lambda_type_name_string(sNodeType* node_type, char* var_name)
+void output_union(char* struct_name, sNodeType* union_type, sNodeType* generics_type, BOOL undefined_body)
 {
-    char buf[256];
-    snprintf(buf, 256, "%s(*%s)(", make_type_name_string(node_type->mResultType), var_name);
+    struct sOutputStruct* it = gHeadOutputStruct;
+    while(it) {
+        if(strcmp(it->mName, struct_name) == 0) {
+            return;
+        }
+        it = it->mNext;
+    }
+    struct sOutputStruct* output_struct = GC_malloc(sizeof(struct sOutputStruct));
     
-    int i;
-    for(i=0; i<node_type->mNumParams; i++) {
-        xstrncat(buf, make_type_name_string(node_type->mParamTypes[i]), 256);
-        if(i != node_type->mNumParams-1) {
-            xstrncat(buf, ",", 256);
+    output_struct->mName = xsprintf("%s", struct_name);;
+    output_struct->mNext = gHeadOutputStruct;
+    gHeadOutputStruct = output_struct;
+    
+    if(undefined_body) {
+        sBuf_append_str(&gComeModule.mSourceHead, xsprintf("union %s;\n", struct_name));
+    }
+    else {
+        sCLClass* klass = union_type->mClass;
+        
+        sBuf_append_str(&gComeModule.mSourceHead, xsprintf("union %s\n{\n", struct_name));
+        
+        int i;
+        for(i=0; i<klass->mNumFields; i++) {
+            char* name = klass->mFieldName[i];
+            sNodeType* field = clone_node_type(klass->mFields[i]);
+    
+            if(!solve_generics(&field, generics_type)) {
+                fprintf(stderr, "can't solve generics types(2)");
+                exit(1);
+            }
+            
+            char* str = make_define_var(field, name);
+            
+            sBuf_append_str(&gComeModule.mSourceHead, "    ");
+            sBuf_append_str(&gComeModule.mSourceHead, str);
+            sBuf_append_str(&gComeModule.mSourceHead, ";\n");
+        }
+        sBuf_append_str(&gComeModule.mSourceHead, "};\n");
+    }
+}
+
+void output_typedef(char* name, sNodeType* node_type)
+{
+    sCLClass* klass = node_type->mClass;
+    
+    sBuf_append_str(&gComeModule.mSourceHead, "typedef ");
+    
+    char* str = make_define_var(node_type, name);
+    sBuf_append_str(&gComeModule.mSourceHead, str);
+    
+    sBuf_append_str(&gComeModule.mSourceHead, ";\n");
+}
+
+char* make_type_name_string(sNodeType* node_type)
+{
+    sBuf output;
+    sBuf_init(&output);
+    
+    char* class_name = node_type->mClass->mName;
+    
+    if(node_type->mNumGenericsTypes > 0) {
+        char struct_name[512];
+        create_generics_struct_name(struct_name, 512, node_type);
+        
+        sBuf_append_str(&output, "struct ");
+        sBuf_append_str(&output, struct_name);
+    }
+    else {
+        if(node_type->mClass->mFlags & CLASS_FLAGS_STRUCT) {
+            sBuf_append_str(&output, "struct ");
+            sBuf_append_str(&output, class_name);
+        }
+        else if(node_type->mClass->mFlags & CLASS_FLAGS_UNION) {
+            sBuf_append_str(&output, "union ");
+            sBuf_append_str(&output, class_name);
+        }
+        else if(strcmp(class_name, "long_double") == 0) {
+            sBuf_append_str(&output, "long double");
+        }
+        else {
+            sBuf_append_str(&output, class_name);
         }
     }
     
-    xstrncat(buf, ")", 256);
+    int i;
+    for(i=0; i<node_type->mPointerNum; i++) {
+        sBuf_append_str(&output, "*");
+    }
     
-    return xsprintf("%s", buf);
+    char* result = xsprintf("%s", output.mBuf);
+    
+    free(output.mBuf);
+    
+    return result;
+}
+
+char* make_lambda_type_name_string(sNodeType* node_type, char* var_name)
+{
+    char buf[256];
+    if(type_identify_with_class_name(node_type->mResultType, "lambda")) {
+        snprintf(buf, 256, "(*%s)(", var_name);
+        
+        int i;
+        for(i=0; i<node_type->mNumParams; i++) {
+            xstrncat(buf, make_type_name_string(node_type->mParamTypes[i]), 256);
+            if(i != node_type->mNumParams-1) {
+                xstrncat(buf, ",", 256);
+            }
+        }
+        
+        xstrncat(buf, ")", 256);
+        
+        char* var_name2 = xsprintf("%s", buf);
+        return make_lambda_type_name_string(node_type->mResultType, var_name2);
+    }
+    else {
+
+        snprintf(buf, 256, "%s (*%s)(", make_type_name_string(node_type->mResultType), var_name);
+        
+        int i;
+        for(i=0; i<node_type->mNumParams; i++) {
+            xstrncat(buf, make_type_name_string(node_type->mParamTypes[i]), 256);
+            if(i != node_type->mNumParams-1) {
+                xstrncat(buf, ",", 256);
+            }
+        }
+        
+        xstrncat(buf, ")", 256);
+        
+        return xsprintf("%s", buf);
+    }
 }

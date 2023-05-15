@@ -1,12 +1,27 @@
 using comelang;
 using unsafe;
 
+#include <stdlib.h>
+#include <stdio.h>
+
+#define NULL ((void*)0)
+
 typedef long long size_t;
 
 void *malloc(size_t size);
 void free(void *ptr);
 void *calloc(size_t nmemb, size_t size);
 void *realloc(void *ptr, size_t size);
+
+void exit(int status);
+
+int fprintf(FILE * restrict stream, const char * restrict format, ...);
+
+#ifdef __DARWIN_ARM__
+size_t malloc_size(const void *ptr);
+#else
+size_t malloc_usable_size (void *ptr);
+#endif
 
 void come_gc_init()
 {
@@ -16,10 +31,16 @@ void come_gc_final()
 {
 }
 
+void ncfree(void* mem)
+{
+    if(mem) {
+        free(mem);
+    }
+}
+
+
 void* igc_calloc(size_t count, size_t size)
 {
-    using unsafe;
-    
     char* mem = calloc(1, sizeof(int)+count*size);
     
     int* ref_count = (int*)mem;
@@ -31,8 +52,6 @@ void* igc_calloc(size_t count, size_t size)
 
 void igc_increment_ref_count(void* mem)
 {
-    using unsafe;
-    
     if(mem == NULL) {
         return;
     }
@@ -42,11 +61,8 @@ void igc_increment_ref_count(void* mem)
     (*ref_count)++;
 }
 
-
 void igc_decrement_ref_count(void* mem)
 {
-    using unsafe;
-    
     if(mem == NULL) {
         return;
     }
@@ -85,8 +101,6 @@ void call_finalizer(void* fun, void* mem, int call_finalizer_only)
         }
     }
     else {
-        using unsafe;
-        
         int* ref_count = (int*)((char*)mem - sizeof(int));
         
         (*ref_count)--;
@@ -103,14 +117,6 @@ void call_finalizer(void* fun, void* mem, int call_finalizer_only)
         }
     }
 }
-
-void ncfree(void* mem)
-{
-    if(mem) {
-        free(mem);
-    }
-}
-
 void* nccalloc(size_t nmemb, size_t size)
 {
     void* result = calloc(nmemb, size);
@@ -136,8 +142,6 @@ void*%? ncmemdup(void*% block)
 
     int* ref_count = ret;
     
-    using unsafe;
-
     if (ret) {
         char* p = ret;
         char* p2 = mem;
@@ -161,5 +165,13 @@ void* call_cloner(void* fun, void* mem)
     }
     
     return null;
+}
+
+void unwrap_exception(char* sname, int sline, char* mem)
+{
+    if(mem == null) {
+        fprintf(stderr, "%s %d: unwrap exception. The value is null\n", sname, sline);
+        exit(2);
+    }
 }
 

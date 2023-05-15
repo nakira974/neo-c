@@ -429,9 +429,9 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
                 setNullCurrentDebugLocation(info->sline, info);
             }
             
-            char* type_name = make_type_name_string(var_type);
-            add_come_code_directory(info, "%s %s;\n", type_name, var_name);
-            add_come_code_directory(info, "memset(&%s, 0, sizeof(%s));\n", var_name, type_name);
+            char* define_str = make_define_var(var_type, var_name);
+            add_come_code_directory(info, "%s;\n", define_str);
+            add_come_code_directory(info, "memset(&%s, 0, sizeof(%s));\n", var_name, make_type_name_string(var_type));
 
             LLVMValueRef alloca_value = LLVMBuildAlloca(gBuilder, llvm_type, var_name);
             
@@ -824,26 +824,9 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
     if(alloc) {
         LVALUE llvm_value = rvalue;
         
-        if(type_identify_with_class_name(left_type, "lambda")) {
-            char buf[256];
-            snprintf(buf, 256, "%s(*%s)(", make_type_name_string(left_type->mResultType), var_name);
-            
-            int i;
-            for(i=0; i<left_type->mNumParams; i++) {
-                xstrncat(buf, make_type_name_string(left_type->mParamTypes[i]), 256);
-                if(i != left_type->mNumParams-1) {
-                    xstrncat(buf, ",", 256);
-                }
-            }
-            
-            xstrncat(buf, ")", 256);
-            llvm_value.c_value = xsprintf("%s=%s", buf, rvalue.c_value);
-            
-            llvm_value.c_value = xsprintf("%s=%s", make_lambda_type_name_string(left_type, var_name), rvalue.c_value);
-        }
-        else {
-            llvm_value.c_value = xsprintf("%s %s=%s", make_type_name_string(left_type), var_name, rvalue.c_value);
-        }
+        char* define_str = make_define_var(left_type, var_name);
+        
+        llvm_value.c_value = xsprintf("%s=%s", define_str, rvalue.c_value);
         
         dec_stack_ptr(1, info);
         
@@ -2722,7 +2705,7 @@ BOOL compile_typedef(unsigned int node, sCompileInfo* info)
     xstrncpy(name, gNodes[node].uValue.sTypedef.mName, VAR_NAME_MAX);
     sNodeType* node_type = gNodes[node].uValue.sTypedef.mNodeType;
     
-    add_come_code_directory_top_level("typedef %s %s;\n", make_type_name_string(node_type), name);
+    output_typedef(name, node_type);
     
     info->type = create_node_type_with_class_name("void");
 

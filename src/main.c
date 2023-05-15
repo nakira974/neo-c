@@ -216,6 +216,16 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
     
     if(strcmp(fname, "") != 0) {
         char cmd[1024];
+#ifdef __DARWIN_ARM__
+        snprintf(cmd, 1024, "%s -c -o %s.o %s.ll -fPIC -I/opt/homebrew/opt/llvm@16/include -L/opt/homebrew/opt/llvm@16/lib -I/opt/homebrew/opt/pcre/include ", CLANG, fname, fname);
+    
+        int rc = system(cmd);
+        if(rc != 0) {
+            fprintf(stderr, "return code is error on clang\n");
+            exit(2);
+        }
+        
+#else
         snprintf(cmd, 1024, "opt -o %s.bc %s.ll  ", fname, fname);
         //puts(cmd);
     
@@ -224,10 +234,6 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
             fprintf(stderr, "return code is error on clang\n");
             exit(2);
         }
-        
-#ifdef __DARWIN_ARM__
-        snprintf(cmd, 1024, "%s -c -o %s.o %s.bc -fPIC -I/opt/homebrew/opt/llvm@16/include -L/opt/homebrew/opt/llvm@16/lib -I/opt/homebrew/opt/pcre/include ", CLANG, fname, fname);
-#else
         snprintf(cmd, 1024, "%s -c -o %s.o %s.bc -fPIC ", CLANG, fname, fname);
 #endif
         //puts(cmd);

@@ -308,38 +308,6 @@ void show_node_type(sNodeType* type)
     }
 }
 
-char* make_type_name_string(sNodeType* node_type)
-{
-    sBuf output;
-    sBuf_init(&output);
-    
-    char* class_name = node_type->mClass->mName;
-    
-    if(node_type->mNumGenericsTypes > 0) {
-        char struct_name[512];
-        create_generics_struct_name(struct_name, 512, node_type);
-        
-        sBuf_append_str(&output, "struct ");
-        sBuf_append_str(&output, struct_name);
-    }
-    else {
-        if(node_type->mClass->mFlags & CLASS_FLAGS_STRUCT) {
-            sBuf_append_str(&output, "struct ");
-        }
-        sBuf_append_str(&output, class_name);
-    }
-    
-    int i;
-    for(i=0; i<node_type->mPointerNum; i++) {
-        sBuf_append_str(&output, "*");
-    }
-    
-    char* result = xsprintf("%s", output.mBuf);
-    
-    free(output.mBuf);
-    
-    return result;
-}
 
 
 void show_node_type_one_line(sNodeType* type)

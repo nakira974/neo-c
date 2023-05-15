@@ -288,7 +288,7 @@ BOOL omit_exception_catch(sFunction* fun, sCompileInfo* info)
     llvm_value.type = clone_node_type(result_type);
     llvm_value.address = field_address;
     llvm_value.var = NULL;
-    llvm_value.c_value = NULL;
+    llvm_value.c_value = xsprintf("%s.v1", tuple_value.c_value);
 
     dec_stack_ptr(1, info);
     push_value_to_stack_ptr(&llvm_value, info);
@@ -1135,9 +1135,9 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         }
 
         sBuf_append_str(&buf, "))");
-        add_come_code(info, "%s", buf.mBuf);
         
         if(type_identify_with_class_name(result_type, "void") && result_type->mPointerNum == 0) {
+            add_come_code(info, "%s", buf.mBuf);
         
             LLVMTypeRef llvm_result_type = create_llvm_type_from_node_type(result_type);
         
@@ -1479,9 +1479,9 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         }
 
         sBuf_append_str(&buf, "))");
-        add_come_code(info, "%s", buf.mBuf);
 
         if(type_identify_with_class_name(result_type, "void") && result_type->mPointerNum == 0) {
+            add_come_code(info, "%s", buf.mBuf);
             LLVMTypeRef llvm_result_type = create_llvm_type_from_node_type(result_type);
                 
             BOOL var_arg = fun->mVarArgs;
@@ -1677,10 +1677,10 @@ BOOL compile_lambda_call(unsigned int node, sCompileInfo* info)
     }
 
     sBuf_append_str(&buf, ")");
-    add_come_code(info, "%s", buf.mBuf);
 
     if(type_identify_with_class_name(lambda_type->mResultType, "void") && lambda_type->mResultType->mPointerNum == 0)
     {
+        add_come_code(info, "%s", buf.mBuf);
         LLVMTypeRef llvm_result_type = create_llvm_type_with_class_name("void");
             
         BOOL var_arg = FALSE;

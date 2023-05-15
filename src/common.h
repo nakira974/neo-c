@@ -276,6 +276,8 @@ struct sComeFunStruct
     sNodeType* mParamTypes[PARAMS_MAX];
     BOOL mExternal;
     
+    BOOL mVarArgs;
+    
     struct sComeFunStruct* mNext;
     struct sComeFunStruct* mPrev;
 };
@@ -286,7 +288,7 @@ struct sCompileInfoStruct;
 
 void transpiler_init();
 void transpiler_final();
-void add_come_function(char* fun_name, sNodeType* result_type, int num_params, sNodeType** param_types, char** param_names, BOOL external);
+void add_come_function(char* fun_name, sNodeType* result_type, int num_params, sNodeType** param_types, char** param_names, BOOL external, BOOL var_arg);
 void output_struct(char* struct_name, sNodeType* struct_type, sNodeType* generics_type, BOOL undefined_body);
 sComeFun* get_come_function(char* fun_name);
 void add_come_code(struct sCompileInfoStruct* info, const char* msg, ...);
@@ -1097,6 +1099,8 @@ extern struct sComeModule gComeModule;
 
 extern LLVMValueRef gCallerSName;
 extern LLVMValueRef gCallerSLine;
+extern char* gCallerSNameCValue;
+extern int gCallerSLineCValue;
 
 void set_caller_sline(int sline);
 void set_caller_sname(char* sname);

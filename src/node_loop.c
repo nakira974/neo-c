@@ -1210,15 +1210,15 @@ BOOL compile_return(unsigned int node, sCompileInfo* info)
                 if(type_identify_with_class_name(result_type, "void") && result_type->mPointerNum == 0)
                 {
                     LLVMBuildRet(gBuilder, NULL);
-                    add_come_code(info, "return");
+                    add_come_code(info, "return;");
                 }
                 else {
                     LLVMBuildRet(gBuilder, llvm_value.value);
                     if(llvm_value.c_value) {
-                        add_come_code(info, "return %s", llvm_value.c_value);
+                        add_come_code(info, "return %s;", llvm_value.c_value);
                     }
                     else {
-                        add_come_code(info, "return");
+                        add_come_code(info, "return;");
                     }
                 }
             }
@@ -1751,7 +1751,7 @@ BOOL compile_create_label(unsigned int node, sCompileInfo* info)
     
     LVALUE llvm_value;
     llvm_value.value = get_block_address(block);
-    llvm_value.c_value = NULL;
+    llvm_value.c_value = xsprintf("%s:\n", label_name2);
     llvm_value.type = create_node_type_with_class_name("void*");
     llvm_value.address = get_block_address(block);
     llvm_value.var = NULL;
@@ -1885,7 +1885,10 @@ BOOL compile_conditional(unsigned int node, sCompileInfo* info)
     if(LLVMIsConstant(conditional_value.value)) {
         compile_time_value = LLVMConstIntGetZExtValue(conditional_value.value);
     }
-
+    
+    LVALUE lvalue1;
+    LVALUE lvalue2;
+    
     LVALUE llvm_value;
     if(compile_time_value != -1) {
         if(compile_time_value) {
@@ -1897,6 +1900,8 @@ BOOL compile_conditional(unsigned int node, sCompileInfo* info)
             {
                 return FALSE;
             }
+            
+            lvalue1 = *get_value_from_stack(-1);
         }
         else {
             unsigned int value2_node  = gNodes[node].mMiddle;
@@ -1907,6 +1912,7 @@ BOOL compile_conditional(unsigned int node, sCompileInfo* info)
             {
                 return FALSE;
             }
+            lvalue2 = *get_value_from_stack(-1);
         }
 
         if(type_identify_with_class_name(info->type, "void")) {
@@ -1935,6 +1941,8 @@ BOOL compile_conditional(unsigned int node, sCompileInfo* info)
         {
             return FALSE;
         }
+        
+        lvalue1 = *get_value_from_stack(-1);
 
         sNodeType* value1_result_type = clone_node_type(info->type);
         
@@ -2000,6 +2008,8 @@ BOOL compile_conditional(unsigned int node, sCompileInfo* info)
             return FALSE;
         }
         free_right_value_objects(info);
+        
+        lvalue2 = *get_value_from_stack(-1);
 
         LVALUE value2;
         if(type_identify_with_class_name(info->type, "void") && info->type->mPointerNum == 0) {
@@ -2049,7 +2059,7 @@ BOOL compile_conditional(unsigned int node, sCompileInfo* info)
         LLVMTypeRef llvm_type = create_llvm_type_from_node_type(value1_result_type);
 
         llvm_value.value = LLVMBuildLoad2(gBuilder, llvm_type, result_value, "conditional_result_value");
-        llvm_value.c_value = NULL;
+        llvm_value.c_value = xsprintf("%s?%s:%s", conditional_value.c_value, lvalue1.c_value, lvalue2.c_value);
         llvm_value.type = clone_node_type(value1_result_type);
         llvm_value.address = NULL;
         llvm_value.var = NULL;

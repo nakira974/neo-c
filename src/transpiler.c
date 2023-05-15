@@ -67,7 +67,7 @@ void transpiler_final()
     free(gComeModule.mSourceHead.mBuf);
 }
 
-void add_come_function(char* fun_name, sNodeType* result_type, int num_params, sNodeType** param_types, char** param_names, BOOL external)
+void add_come_function(char* fun_name, sNodeType* result_type, int num_params, sNodeType** param_types, char** param_names, BOOL external, BOOL var_args)
 {
     unsigned int hash_key = get_hash_key(fun_name, COME_FUN_MAX);
     
@@ -78,6 +78,7 @@ void add_come_function(char* fun_name, sNodeType* result_type, int num_params, s
             it->mResultType = clone_node_type(result_type);
             it->mNumParams = num_params;
             it->mExternal = external;
+            it->mVarArgs = var_args;
             int i;
             for(i=0; i<num_params; i++) {
                 it->mParamTypes[i] = clone_node_type(param_types[i]);
@@ -149,7 +150,9 @@ void add_come_code(struct sCompileInfoStruct* info, const char* msg, ...)
     vsnprintf(msg2, COME_CODE_MAX, msg, args);
     va_end(args);
     
-    gComeModule.mLastCode = xsprintf("%s", msg2);
+//    gComeModule.mLastCode = xsprintf("%s", msg2);
+    
+    sBuf_append_str(&info->come_fun->mSource, xsprintf("%s;\n", msg2));
 }
 
 void transpiler_clear_last_code()
@@ -257,7 +260,12 @@ void header_function(sBuf* output, sComeFun* fun)
         sBuf_append_str(output, " ");
         sBuf_append_str(output, fun->mParamNames[i]);
         
-        if(i != fun->mNumParams-1) {
+        if(i == fun->mNumParams-1) {
+            if(fun->mVarArgs) {
+                sBuf_append_str(output, ", ...");
+            }
+        }
+        else {
             sBuf_append_str(output, ", ");
         }
     }

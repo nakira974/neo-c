@@ -3,34 +3,26 @@ using comelang;
 
 using unsafe;
 
+typedef long long int size_t;
+
 char* strncpy(char* str, char* str2, int n);
 int strlen(char* str);
-void puts(char* str);
+int puts(char* str);
+void* calloc(size_t count, size_t size);
+int printf(const char *format, ...);
 
-struct sA<T>
+int fun(int x, int y)
 {
-    T a;
-    T b;
-    char*% c;
-};
-
-impl sA<T>
-{
-sA<T>*% initialize(sA<T>*% self, T a, T b)
-{
-    self.a = a;
-    self.b = b;
-    self.c = new char[128];
-    
-    return self;
+    return x + y;
 }
 
+void funX(size_t count, size_t size)
+{
+    using unsafe;
 }
 
 int main(int argc, char** argv)
 {
-    sA<int>*% a = new sA<int>.initialize(111, 222);
-    sA<char>*% b = new sA<char>.initialize(111, 222);
     
     return 0;
 }

@@ -107,9 +107,6 @@ BOOL parse_word(char* buf, int buf_size, sParserInfo* info, BOOL print_out_err_m
         if(print_out_err_msg) {
             char buf[1024];
             snprintf(buf, 1024, "require word(alphabet or _ or number). this is (%c)", *info->p);
-int a = 0;
-int b = 1;
-int c = b/a;
             parser_err_msg(info, buf);
         }
 
@@ -155,9 +152,6 @@ void expect_next_character_with_one_forward(char* characters, sParserInfo* info)
         parser_err_msg(info, buf);
         info->p++;
         skip_spaces_and_lf(info);
-
-info->p = 0;
-*info->p = 'a';
     }
 
     while(*info->p == '#') {
@@ -794,6 +788,7 @@ BOOL parse_sharp(sParserInfo* info)
     skip_spaces_and_lf(info);
 
     if(!parse_annotation(info)) {
+        fprintf(stderr, "parse_annotaion is FALSE\n");
         return FALSE;
     }
 

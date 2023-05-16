@@ -61,7 +61,7 @@ void rehash_typedef()
                     else if(p == new_typedef_table + hash_value)
                     {
                         fprintf(stderr, "overflow typedef number\n");
-                        exit(2);
+                        exit(33);
                     }
                 }
             }
@@ -103,7 +103,7 @@ void add_typedef(char* name, sNodeType* node_type, BOOL user)
             else if(p == gTypeDefTable + hash_value)
             {
                 fprintf(stderr, "overflow typedef number\n");
-                exit(2);
+                exit(34);
             }
         }
     }

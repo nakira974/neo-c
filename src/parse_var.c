@@ -770,12 +770,12 @@ BOOL parse_sizeof(unsigned int* node, sParserInfo* info)
             
             if(num_nodes >= NODES_MAX) {
                 fprintf(stderr, "overflow sizeof expression\n");
-                exit(1);
+                exit(20);
             }
             
             if(*info->p == '\0') {
                 fprintf(stderr, "%s %d: unexpected source end close ) for sizeof expression\n", info->sname, sline);
-                exit(2);
+                exit(22);
             }
             else if(no_paren) {
                 break;
@@ -954,7 +954,7 @@ BOOL parse_var(unsigned int* node, sParserInfo* info, BOOL readonly)
         
         if(num_vars >= 64) {
             fprintf(stderr, "%s %d: overflow var number\n", info->sname, info->sline);
-            exit(1);
+            exit(21);
         }
     }
     
@@ -965,7 +965,7 @@ BOOL parse_var(unsigned int* node, sParserInfo* info, BOOL readonly)
         if(!add_variable_to_table(info->lv_table, buf[i], node_type, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE))
         {
             fprintf(stderr, "overflow variable table\n");
-            exit(2);
+            exit(22);
         }
     }
 

@@ -237,6 +237,7 @@ BOOL compile_source(char* fname, char** source, BOOL optimize, sVarTable* module
 
         if(*info.p == '#') {
             if(!parse_sharp(&info)) {
+                fprintf(stderr, "%s %d: parse sharp is false\n", info.sname, info.sline);
                 free(info.mConst.mBuf);
                 return FALSE;
             }
@@ -251,6 +252,7 @@ BOOL compile_source(char* fname, char** source, BOOL optimize, sVarTable* module
 
             if(!expression(&node, TRUE, &info)) {
                 free(info.mConst.mBuf);
+                fprintf(stderr, "%s %d: expression is false\n", info.sname, info.sline);
                 return FALSE;
             }
 
@@ -272,6 +274,7 @@ BOOL compile_source(char* fname, char** source, BOOL optimize, sVarTable* module
                 xstrncpy(cinfo.sname, gNodes[node].mSName, PATH_MAX);
 
                 if(!compile(node, &cinfo)) {
+                    fprintf(stderr, "compile sharp is false\n");
                     free(info.mConst.mBuf);
                     return FALSE;
                 }
@@ -334,6 +337,7 @@ BOOL compile_source(char* fname, char** source, BOOL optimize, sVarTable* module
         }
         else if(*info2.p == '#') {
             if(!parse_sharp(&info2)) {
+                fprintf(stderr, "%s %d: parse_sharp is false\n", info2.sname, info2.sline);
                 return FALSE;
             }
         }
@@ -345,7 +349,7 @@ BOOL compile_source(char* fname, char** source, BOOL optimize, sVarTable* module
             
             if(block_count > 128) {
                 fprintf(stderr, "overflow block count\n");
-                exit(2);
+                exit(51);
             }
         }
         else if(*info2.p == '}') {

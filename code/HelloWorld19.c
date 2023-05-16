@@ -15,6 +15,13 @@ void rt_error(const char *uc)
 static const char *outfile;
 
 static char tok_two_chars[] = "<=\236>=\235!=\225&&\240||\241++\244--\242==\224<<\1>>\2+=\253-=\255*=\252/=\257%=\245&=\246^=\336|=\374->\313..\250##\266";
+typedef union X union_X;
+
+union X
+{
+    int a;
+    char* b;
+};
 
 int main()
 {
@@ -38,6 +45,8 @@ int main()
     q = tok_two_chars;
     
     *q;
+    
+    union_X x;
     
     return 0;
 }

@@ -48,7 +48,7 @@ void append_open_struct(char* name, char* source, char* sname)
             }
             else if(it == hash) {
                 fprintf(stderr, "overflow open struct\n");
-                exit(2);
+                exit(33);
             }
         }
     }
@@ -337,7 +337,7 @@ BOOL parse_list(unsigned int* node, sParserInfo* info)
         
         if(num_elements >= LIST_ELEMENT_MAX) {
             fprintf(stderr, "list element overflow\n");
-            exit(1);
+            exit(34);
         }
         
         if(*info->p == ',') {
@@ -397,7 +397,7 @@ BOOL parse_map(unsigned int* node, sParserInfo* info)
         
         if(num_keys >= LIST_ELEMENT_MAX) {
             fprintf(stderr, "overflow key max\n");
-            exit(2);
+            exit(40);
         }
         
         if(*info->p == ',') {
@@ -451,7 +451,7 @@ BOOL parse_tuple(unsigned int* node, sParserInfo* info)
         
         if(num_nodes >= TUPLE_ELEMENT_MAX) {
             fprintf(stderr, "tuple element max overflow\n");
-            exit(2);
+            exit(42);
         }
         
         if(*info->p == ',') {
@@ -1257,7 +1257,7 @@ BOOL parse_enum(unsigned int* node, char* name, int name_size, BOOL* terminated,
                 if(!add_variable_to_table(info->lv_table, var_name, result_type, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE))
                 {
                     fprintf(stderr, "overflow variable table\n");
-                    exit(2);
+                    exit(32);
                 }
 
                 sCompileInfo cinfo;
@@ -1293,7 +1293,7 @@ BOOL parse_enum(unsigned int* node, char* name, int name_size, BOOL* terminated,
 
         if(num_element >= ENUM_ELEMENT_MAX) {
             fprintf(stderr, "overflow enum element number\n");
-            exit(2);
+            exit(12);
         }
 
         num_element++;
@@ -1356,6 +1356,7 @@ BOOL parse_typedef(unsigned int* node, BOOL static_, sParserInfo* info)
 
     sNodeType* node_type = NULL;
     if(!parse_type(&node_type, info, buf, TRUE, FALSE, NULL, FALSE, FALSE, FALSE, FALSE, FALSE)) {
+        fprintf(stderr, "%s %d: typedef parse type error\n", info->sname, info->sline);
         return FALSE;
     }
 
@@ -1690,7 +1691,7 @@ BOOL parse_struct_initializer(int* num_elements, struct sStructInitializer* elem
                 
                 if(*num_elements >= INIT_ARRAY_MAX) {
                     fprintf(stderr, "overflow struct initializer number\n");
-                    exit(2);
+                    exit(22);
                 }
             }
             else {
@@ -1705,7 +1706,7 @@ BOOL parse_struct_initializer(int* num_elements, struct sStructInitializer* elem
                 (*num_elements)++;
                 if(*num_elements >= INIT_ARRAY_MAX) {
                     fprintf(stderr, "overflow struct initializer number\n");
-                    exit(2);
+                    exit(22);
                 }
             }
         }
@@ -1719,7 +1720,7 @@ BOOL parse_struct_initializer(int* num_elements, struct sStructInitializer* elem
             
             if(num_no_name_elements >= INIT_ARRAY_MAX) {
                 fprintf(stderr, "overflow struct initializer number\n");
-                exit(2);
+                exit(52);
             }
         }
 
@@ -1762,7 +1763,7 @@ BOOL parse_struct_initializer(int* num_elements, struct sStructInitializer* elem
                 
                 if(*num_elements >= INIT_ARRAY_MAX) {
                     fprintf(stderr, "overflow struct initializer number\n");
-                    exit(2);
+                    exit(62);
                 }
                 break;
             }
@@ -1815,7 +1816,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
         
         if(info->mNumClassFields >= CLASS_FIELD_MAX) {
             fprintf(stderr, "overflow fields number\n");
-            exit(2);
+            exit(72);
         }
         
         return TRUE;
@@ -1998,7 +1999,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
             
                                 if(num_nodes >= INIT_ARRAY_MAX+128) {
                                     fprintf(stderr, "overflow array initializer number\n");
-                                    exit(2);
+                                    exit(82);
                                 }
                             }
                         }
@@ -2086,7 +2087,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
         
                             if(num_nodes >= INIT_ARRAY_MAX+128) {
                                 fprintf(stderr, "overflow array initializer number\n");
-                                exit(2);
+                                exit(92);
                             }
                         }
                     }
@@ -2141,7 +2142,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                     if(!add_variable_to_table(info->lv_table, name2, node_type2, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE))
                     {
                         fprintf(stderr, "overflow variable table\n");
-                        exit(2);
+                        exit(102);
                     }
                     
                     unsigned int node2 = sNodeTree_create_define_variable(name2, extern_, info->mBlockLevel == 0, info);
@@ -2229,7 +2230,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                 if(!add_variable_to_table(info->lv_table, name, result_type, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE))
                 {
                     fprintf(stderr, "overflow variable table\n");
-                    exit(2);
+                    exit(21);
                 }
             }
 
@@ -2267,7 +2268,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                         
                         if(num_struct_elements >= INIT_ARRAY_MAX) {
                             fprintf(stderr, "overflow array initializer\n");
-                            exit(1);
+                            exit(31);
                         }
                     }
                     else if(*info->p == '[') {
@@ -2325,7 +2326,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
             
                                 if(num_initialize_array_value >= INIT_ARRAY_MAX) {
                                     fprintf(stderr, "overflow array initializer number\n");
-                                    exit(2);
+                                    exit(32);
                                 }
                             }
                         }
@@ -2384,7 +2385,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
         
                             if(num_initialize_array_value >= INIT_ARRAY_MAX) {
                                 fprintf(stderr, "overflow array initializer number\n");
-                                exit(2);
+                                exit(45);
                             }
                         }
                     }
@@ -2404,7 +2405,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
         
                             if(num_initialize_array_value >= INIT_ARRAY_MAX) {
                                 fprintf(stderr, "overflow array initializer number\n");
-                                exit(2);
+                                exit(46);
                             }
                         }
                     }
@@ -2628,7 +2629,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                 if(!add_variable_to_table(info->lv_table, name, result_type, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE))
                 {
                     fprintf(stderr, "overflow variable table\n");
-                    exit(2);
+                    exit(47);
                 }
             }
             
@@ -2672,7 +2673,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
         
                             if(num_nodes >= INIT_ARRAY_MAX+128) {
                                 fprintf(stderr, "overflow array initializer number\n");
-                                exit(2);
+                                exit(48);
                             }
                         }
                     }
@@ -2708,7 +2709,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
     
                         if(num_nodes >= INIT_ARRAY_MAX+128) {
                             fprintf(stderr, "overflow array initializer number\n");
-                            exit(2);
+                            exit(49);
                         }
                     }
     
@@ -2775,7 +2776,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
 
                         if(num_nodes >= INIT_ARRAY_MAX+128) {
                             fprintf(stderr, "overflow array initializer number\n");
-                            exit(2);
+                            exit(33);
                         }
                     }
                     
@@ -2794,7 +2795,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
 
                             if(num_nodes >= INIT_ARRAY_MAX+128) {
                                 fprintf(stderr, "overflow array initializer number\n");
-                                exit(2);
+                                exit(40);
                             }
                         }
                     }
@@ -2840,7 +2841,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
 
                         if(num_nodes >= INIT_ARRAY_MAX+128) {
                             fprintf(stderr, "overflow array initializer number\n");
-                            exit(2);
+                            exit(32);
                         }
                     }
 
@@ -2875,7 +2876,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
 
                         if(num_nodes >= INIT_ARRAY_MAX+128) {
                             fprintf(stderr, "overflow array initializer number\n");
-                            exit(2);
+                            exit(72);
                         }
                     }
 
@@ -2924,7 +2925,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
     
                         if(num_nodes >= INIT_ARRAY_MAX+128) {
                             fprintf(stderr, "overflow array initializer number\n");
-                            exit(2);
+                            exit(82);
                         }
                     }
                 }
@@ -2972,7 +2973,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                     if(!add_variable_to_table(info->lv_table, name2, node_type2, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE))
                     {
                         fprintf(stderr, "overflow variable table\n");
-                        exit(2);
+                        exit(92);
                     }
                     
                     unsigned int node2 = sNodeTree_create_define_variable(name2, extern_, info->mBlockLevel == 0, info);
@@ -3088,7 +3089,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                         
                         if(num_struct_elements >= INIT_ARRAY_MAX) {
                             fprintf(stderr, "overflow array initializer\n");
-                            exit(1);
+                            exit(91);
                         }
                     }
                     else if(*info->p == '[') {
@@ -3154,7 +3155,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
     
                         if(num_initialize_array_value >= INIT_ARRAY_MAX) {
                             fprintf(stderr, "overflow array initializer number\n");
-                            exit(2);
+                            exit(92);
                         }
                     }
                     else { 
@@ -3173,7 +3174,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
         
                             if(num_initialize_array_value >= INIT_ARRAY_MAX) {
                                 fprintf(stderr, "overflow array initializer number\n");
-                                exit(2);
+                                exit(102);
                             }
                         }
                     }
@@ -3268,7 +3269,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                 if(!add_variable_to_table(info->lv_table, name, result_type, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE))
                 {
                     fprintf(stderr, "overflow variable table\n");
-                    exit(2);
+                    exit(72);
                 }
                 *node = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
 
@@ -3307,7 +3308,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
         
                             if(num_nodes >= INIT_ARRAY_MAX+128) {
                                 fprintf(stderr, "overflow array initializer number\n");
-                                exit(2);
+                                exit(82);
                             }
                         }
                     }
@@ -3343,7 +3344,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
     
                         if(num_nodes >= INIT_ARRAY_MAX+128) {
                             fprintf(stderr, "overflow array initializer number\n");
-                            exit(2);
+                            exit(111);
                         }
                     }
     
@@ -3399,7 +3400,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
 
                         if(num_nodes >= INIT_ARRAY_MAX+128) {
                             fprintf(stderr, "overflow array initializer number\n");
-                            exit(2);
+                            exit(102);
                         }
                     }
 
@@ -3429,7 +3430,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
 
                         if(num_nodes >= INIT_ARRAY_MAX+128) {
                             fprintf(stderr, "overflow array initializer number\n");
-                            exit(2);
+                            exit(92);
                         }
                     }
 
@@ -3464,7 +3465,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
 
                         if(num_nodes >= INIT_ARRAY_MAX+128) {
                             fprintf(stderr, "overflow array initializer number\n");
-                            exit(2);
+                            exit(32);
                         }
                     }
 
@@ -3484,7 +3485,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
             if(!add_variable_to_table(info->lv_table, name, result_type, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE))
             {
                 fprintf(stderr, "overflow variable table\n");
-                exit(2);
+                exit(12);
             }
             
             unsigned int right_node = 0;
@@ -3525,7 +3526,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
         if(!add_variable_to_table(info->lv_table, name, result_type, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE))
         {
             fprintf(stderr, "overflow variable table\n");
-            exit(2);
+            exit(52);
         }
     }
     

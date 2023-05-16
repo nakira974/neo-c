@@ -2844,7 +2844,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                     
                     if(num_bufs >= 64) {
                         fprintf(stderr, "%s %d: overflow multiple assignment\n", info->sname, info->sline);
-                        exit(1);
+                        exit(91);
                     }
                 }
                 else {

@@ -55,7 +55,7 @@ void rehash_generics_struct_types()
                     }
                     else if(p == new_generics_struct_types + hash_value) {
                         fprintf(stderr, "rehash_generics_struct_types ovewflow\n");
-                        exit(1);
+                        exit(31);
                     }
                 }
             }
@@ -1367,7 +1367,7 @@ BOOL compile_is_gc_heap(unsigned int node, sCompileInfo* info)
             
             if(llvm_fun == NULL) {
                 fprintf(stderr, "reuire GC_is_heap_ptr function. incldue <comelang.h>\n");
-                exit(2);
+                exit(42);
             }
             
             sNodeType* result_type = create_node_type_with_class_name("int");
@@ -2121,7 +2121,7 @@ BOOL compile_store_element(unsigned int node, sCompileInfo* info)
             char* llvm_fun_name = NULL;
             if(!create_generics_function(&llvm_fun, &llvm_fun_name, operator_fun, fun_name, left_type, 0, NULL, immutable_, info)) {
                 fprintf(stderr, "can't craete generics function %s\n", fun_name);
-                exit(1);
+                exit(51);
             }
 
             int num_params = 3;
@@ -5401,7 +5401,7 @@ BOOL compile_struct(unsigned int node, sCompileInfo* info)
     if(is_generics_struct_type(node_type)) {
         if(!add_generics_struct_type_to_table(CLASS_NAME(node_type->mClass), node_type)) {
             fprintf(stderr, "overflow generics struct type\n");
-            exit(1);
+            exit(81);
         }
     }
     else {
@@ -6657,7 +6657,7 @@ BOOL load_element_core(BOOL getting_refference, int num_dimention, sNodeType* le
             char* llvm_fun_name = NULL;
             if(!create_generics_function(&llvm_fun, &llvm_fun_name, operator_fun, fun_name, left_type, 0, NULL, immutable_, info)) {
                 fprintf(stderr, "can't craete generics function %s\n", fun_name);
-                exit(1);
+                exit(91);
             }
 
             int num_params = 2;

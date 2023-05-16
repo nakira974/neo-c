@@ -54,7 +54,7 @@ void rehash_labels()
                     }
                     else if(p == new_labels + hash_value) {
                         fprintf(stderr, "ovewflow rehash_labels\n");
-                        exit(1);
+                        exit(71);
                     }
                 }
             }

@@ -92,17 +92,19 @@ static BOOL compiler(char* fname, BOOL optimize, sVarTable* module_var_table, BO
 
         if(rc != 0) {
             fprintf(stderr, "failed to cpp(2) (%s)\n", cmd);
-            exit(2);
+            exit(5);
         }
     }
 
     if(!read_source(cpp_fname, &source)) {
+        fprintf(stderr, "read_source result is FALSE\n");
         free(source.mBuf);
         return FALSE;
     }
     
     if(!compile_source(fname, &source.mBuf, optimize, module_var_table)) 
     {
+        fprintf(stderr, "compile_source result is FALSE\n");
         free(source.mBuf);
         return FALSE;
     }
@@ -167,7 +169,7 @@ static BOOL compile_ll_file(char* fname, char* bname, char* clang_optiones, BOOL
     //puts(cmd);
     if(rc != 0) {
         fprintf(stderr, "return code is error on clang\n");
-        exit(2);
+        exit(6);
     }
     
     if(!output_assembler_source) {
@@ -222,7 +224,7 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
         int rc = system(cmd);
         if(rc != 0) {
             fprintf(stderr, "return code is error on clang\n");
-            exit(2);
+            exit(7);
         }
         
 #else
@@ -232,7 +234,7 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
         int rc = system(cmd);
         if(rc != 0) {
             fprintf(stderr, "return code is error on clang\n");
-            exit(2);
+            exit(8);
         }
         snprintf(cmd, 1024, "%s -c -o %s.o %s.bc -fPIC ", CLANG, fname, fname);
 #endif
@@ -241,7 +243,7 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
         rc = system(cmd);
         if(rc != 0) {
             fprintf(stderr, "return code is error on clang\n");
-            exit(2);
+            exit(9);
         }
         
         snprintf(cmd, 1024, "rm -f %s.bc", fname);
@@ -284,7 +286,7 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
         int rc = system(cmd);
         if(rc != 0) {
             fprintf(stderr, "return code is error on clang\n");
-            exit(2);
+            exit(10);
         }
     }
     else {
@@ -328,7 +330,7 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
         int rc = system(cmd);
         if(rc != 0) {
             fprintf(stderr, "return code is error on clang\n");
-            exit(2);
+            exit(11);
         }
         
         if(!output_assembler_source) {
@@ -391,7 +393,7 @@ int main(int argc, char** argv)
         if(strcmp(argv[i], "--version") == 0 || strcmp(argv[i], "-version") == 0 || strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "-V") == 0)
         {
             printf("comelang version %s\n", gVersion);
-            exit(0);
+            exit(12);
         }
         else if(strcmp(argv[i], "-g") == 0)
         {
@@ -585,7 +587,7 @@ int main(int argc, char** argv)
                 
                 if(num_obj_files >= 128) {
                     fprintf(stderr, "overflow obj files number\n");
-                    exit(2);
+                    exit(13);
                 }
             }
             else {
@@ -595,7 +597,7 @@ int main(int argc, char** argv)
                 
                 if(num_snames >= 128) {
                     fprintf(stderr, "overflow source file number\n");
-                    exit(2);
+                    exit(14);
                 }
             }
         }
@@ -670,6 +672,7 @@ int main(int argc, char** argv)
                 
                 if(!compiler(sname[n], optimize, gModuleVarTable, FALSE, macro_definition, include_paths2, output_cpp_souce, output_assembler_source))
                 {
+                    fprintf(stderr, "compiler result is FALSE\n");
                     return 1;
                 }
             }

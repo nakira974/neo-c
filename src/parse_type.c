@@ -358,7 +358,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                     sCLClass* klass = get_class(union_name);
 
                     if(klass == NULL) {
-                        return FALSE;
+                        klass = alloc_union(union_name, FALSE, FALSE);
                     }
                 }
 
@@ -1778,7 +1778,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
     if(num_result_type > 1) {
         if(num_result_type >= NUM_TUPLE_MAX) {
             fprintf(stderr, "%s %d: num tuple max overflow (%d)\n", info->sname, info->sline, num_result_type);
-            exit(1);
+            exit(99);
         }
         
         char class_name[VAR_NAME_MAX];
@@ -1788,7 +1788,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
         
         if(generics_type == NULL || generics_type->mClass == NULL) {
             fprintf(stderr, "%s %d: tuple not found. require include <comelang.h>\n", info->sname, info->sline);
-            exit(1);
+            exit(98);
         }
         
         generics_type->mNumGenericsTypes = num_result_type;

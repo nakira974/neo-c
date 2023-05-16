@@ -389,7 +389,7 @@ void output_struct(char* struct_name, sNodeType* struct_type, sNodeType* generic
     
             if(!solve_generics(&field, generics_type)) {
                 fprintf(stderr, "can't solve generics types(2)");
-                exit(1);
+                exit(70);
             }
             
             char* str = make_define_var(field, name);
@@ -432,7 +432,7 @@ void output_union(char* struct_name, sNodeType* union_type, sNodeType* generics_
     
             if(!solve_generics(&field, generics_type)) {
                 fprintf(stderr, "can't solve generics types(2)");
-                exit(1);
+                exit(71);
             }
             
             char* str = make_define_var(field, name);

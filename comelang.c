@@ -1,5 +1,8 @@
-#include <comelang.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 
+using comelang;
 using unsafe;
 
 void come_gc_init()
@@ -8,6 +11,13 @@ void come_gc_init()
 
 void come_gc_final()
 {
+}
+
+void ncfree(void* mem)
+{
+    if(mem) {
+        free(mem);
+    }
 }
 
 void* igc_calloc(size_t count, size_t size)
@@ -90,13 +100,6 @@ void call_finalizer(void* fun, void* mem, int call_finalizer_only)
                 free_object(mem);
             }
         }
-    }
-}
-
-void ncfree(void* mem)
-{
-    if(mem) {
-        free(mem);
     }
 }
 

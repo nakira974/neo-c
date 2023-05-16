@@ -1,14 +1,14 @@
-==592828== Memcheck, a memory error detector
-==592828== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==592828== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
-==592828== Command: zed2 "AAA".sub_block(/A/g)\ {\ it.lower_case()\ }
-==592828== 
-==592828== 
-==592828== HEAP SUMMARY:
-==592828==     in use at exit: 0 bytes in 0 blocks
-==592828==   total heap usage: 586 allocs, 586 frees, 41,804 bytes allocated
-==592828== 
-==592828== All heap blocks were freed -- no leaks are possible
-==592828== 
-==592828== For lists of detected and suppressed errors, rerun with: -s
-==592828== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==657696== Memcheck, a memory error detector
+==657696== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==657696== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==657696== Command: zed2 "AAA".sub_block(/A/g)\ {\ it.lower_case()\ }
+==657696== 
+==657696== 
+==657696== HEAP SUMMARY:
+==657696==     in use at exit: 0 bytes in 0 blocks
+==657696==   total heap usage: 586 allocs, 586 frees, 41,804 bytes allocated
+==657696== 
+==657696== All heap blocks were freed -- no leaks are possible
+==657696== 
+==657696== For lists of detected and suppressed errors, rerun with: -s
+==657696== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

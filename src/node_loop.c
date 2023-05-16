@@ -1124,7 +1124,7 @@ BOOL compile_return(unsigned int node, sCompileInfo* info)
                 
                 LLVMBuildRet(gBuilder, NULL);
                 
-                add_come_code(info, "return;\n");
+                add_come_code(info, "return");
             }
 /*
             compile_err_msg(info, "Return type is void");
@@ -1210,15 +1210,15 @@ BOOL compile_return(unsigned int node, sCompileInfo* info)
                 if(type_identify_with_class_name(result_type, "void") && result_type->mPointerNum == 0)
                 {
                     LLVMBuildRet(gBuilder, NULL);
-                    add_come_code(info, "return;");
+                    add_come_code(info, "return");
                 }
                 else {
                     LLVMBuildRet(gBuilder, llvm_value.value);
                     if(llvm_value.c_value) {
-                        add_come_code(info, "return %s;", llvm_value.c_value);
+                        add_come_code(info, "return %s", llvm_value.c_value);
                     }
                     else {
-                        add_come_code(info, "return;");
+                        add_come_code(info, "return");
                     }
                 }
             }

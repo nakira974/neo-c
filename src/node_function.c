@@ -493,7 +493,7 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
                 exit(2);
             }
             
-            add_come_code(info, "come_gc_init();");
+            add_come_code(info, "come_gc_init()");
         }
     }
 

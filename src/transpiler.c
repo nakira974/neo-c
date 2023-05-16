@@ -483,6 +483,9 @@ char* make_type_name_string(sNodeType* node_type)
         else if(strcmp(class_name, "long_double") == 0) {
             sBuf_append_str(&output, "long double");
         }
+        else if(strcmp(class_name, "bool") == 0) {
+            sBuf_append_str(&output, "int");
+        }
         else {
             sBuf_append_str(&output, class_name);
         }

@@ -558,6 +558,10 @@ BOOL auto_cast_posibility(sNodeType* left_type, sNodeType* right_type, BOOL op)
     {
         return TRUE;
     }
+    else if(type_identify_with_class_name(right_type, "void*") && left_type->mPointerNum > 0) 
+    {
+        return TRUE;
+    }
     else if(op && type_identify_with_class_name(left_type, "float") && (is_number_type(right_type) || is_float_type(right_type))) {
         return TRUE;
     }

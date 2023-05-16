@@ -606,6 +606,17 @@ struct sigstack
     void* ss_sp;
     int ss_onstack;
 };
+struct __locale_data;
+struct __locale_struct
+{
+    struct __locale_data* __locales;
+    short* __ctype_b;
+    int* __ctype_tolower;
+    int* __ctype_toupper;
+    char* __names;
+};
+typedef struct __locale_struct* __locale_t;
+typedef struct __locale_struct* locale_t;
 
 void come_gc_init();
 void come_boehm_gc_init();
@@ -837,11 +848,68 @@ int pthread_sigmask(int __how, struct come_anon6* __newmask, struct come_anon6* 
 int pthread_kill(long __threadid, int __signo);
 int __libc_current_sigrtmin();
 int __libc_current_sigrtmax();
+void* memcpy(void* __dest, void* __src, long __n);
+void* memmove(void* __dest, void* __src, long __n);
+void* memccpy(void* __dest, void* __src, int __c, long __n);
+void* memset(void* __s, int __c, long __n);
+int memcmp(void* __s1, void* __s2, long __n);
+int __memcmpeq(void* __s1, void* __s2, long __n);
+void* memchr(void* __s, int __c, long __n);
+char* strcpy(char* __dest, char* __src);
+char* strncpy(char* __dest, char* __src, long __n);
+char* strcat(char* __dest, char* __src);
+char* strncat(char* __dest, char* __src, long __n);
+int strcmp(char* __s1, char* __s2);
+int strncmp(char* __s1, char* __s2, long __n);
+int strcoll(char* __s1, char* __s2);
+long strxfrm(char* __dest, char* __src, long __n);
+int strcoll_l(char* __s1, char* __s2, struct __locale_struct* __l);
+long strxfrm_l(char* __dest, char* __src, long __n, struct __locale_struct* __l);
+char* strdup(char* __s);
+char* strndup(char* __string, long __n);
+char* strchr(char* __s, int __c);
+char* strrchr(char* __s, int __c);
+long strcspn(char* __s, char* __reject);
+long strspn(char* __s, char* __accept);
+char* strpbrk(char* __s, char* __accept);
+char* strstr(char* __haystack, char* __needle);
+char* strtok(char* __s, char* __delim);
+char* __strtok_r(char* __s, char* __delim, char** __save_ptr);
+char* strtok_r(char* __s, char* __delim, char** __save_ptr);
+long strlen(char* __s);
+long strnlen(char* __string, long __maxlen);
+char* strerror(int __errnum);
+int __xpg_strerror_r(int __errnum, char* __buf, long __buflen);
+char* strerror_l(int __errnum, struct __locale_struct* __l);
+int bcmp(void* __s1, void* __s2, long __n);
+void bcopy(void* __src, void* __dest, long __n);
+void bzero(void* __s, long __n);
+char* index(char* __s, int __c);
+char* rindex(char* __s, int __c);
+int ffs(int __i);
+int ffsl(long __l);
+int ffsll(long __ll);
+int strcasecmp(char* __s1, char* __s2);
+int strncasecmp(char* __s1, char* __s2, long __n);
+int strcasecmp_l(char* __s1, char* __s2, struct __locale_struct* __loc);
+int strncasecmp_l(char* __s1, char* __s2, long __n, struct __locale_struct* __loc);
+void explicit_bzero(void* __s, long __n);
+char* strsep(char** __stringp, char* __delim);
+char* strsignal(int __sig);
+char* __stpcpy(char* __dest, char* __src);
+char* stpcpy(char* __dest, char* __src);
+char* __stpncpy(char* __dest, char* __src, long __n);
+char* stpncpy(char* __dest, char* __src, long __n);
 int main(int argc, char** argv);
 
 int main(int argc, char** argv)
 {
-(puts("HELLO WORLD"));
+void* right_value0;
+come_gc_init();;
+char* a=(right_value0 = igc_calloc(128,1));
+(strncpy(a,"ABC",128));
+(printf("HELLO WORLD %s\n",a));
+igc_decrement_ref_count(a);
 return 0;;
 }
 

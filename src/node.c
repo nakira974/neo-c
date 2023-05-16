@@ -2198,17 +2198,21 @@ void init_nodes(char* sname)
 #ifdef __32BIT_CPU__
         xstrncpy(param_names[0], "count", VAR_NAME_MAX);
         param_types[0] = create_node_type_with_class_name("int");
+        param_types[0]->mUnsigned = TRUE;
 #else
         xstrncpy(param_names[0], "count", VAR_NAME_MAX);
         param_types[0] = create_node_type_with_class_name("long");
+        param_types[0]->mUnsigned = TRUE;
 #endif
 
 #ifdef __32BIT_CPU__
         xstrncpy(param_names[1], "size", VAR_NAME_MAX);
         param_types[1] = create_node_type_with_class_name("int");
+        param_types[1]->mUnsigned = TRUE;
 #else
         xstrncpy(param_names[1], "size", VAR_NAME_MAX);
         param_types[1] = create_node_type_with_class_name("long");
+        param_types[1]->mUnsigned = TRUE;
 #endif
         
         sNodeType* result_type = create_node_type_with_class_name("void*");
@@ -5556,6 +5560,7 @@ BOOL compile_block(sNodeBlock* block, BOOL force_hash_result, sCompileInfo* info
                    sBuf_append_str(&info->come_fun->mSource, gComeModule.mLastCode);
                    sBuf_append_str(&info->come_fun->mSource, ";\n");
                 }
+/*
                 else if(info->stack_num > 0) {
                     LVALUE llvm_value = *get_value_from_stack(-1);
                     if(llvm_value.c_value && gNodes[node].mNodeType != kNodeTypeReturn && gNodes[node].mNodeType != kNodeTypeGoto) 
@@ -5564,6 +5569,7 @@ BOOL compile_block(sNodeBlock* block, BOOL force_hash_result, sCompileInfo* info
                         sBuf_append_str(&info->come_fun->mSource, ";\n");
                     }
                 }
+*/
             }
 
             if(!last_expression_is_return) {

@@ -81,8 +81,6 @@ nregex nregex::clone(regex_struct* reg)
     return regex_struct_clone(reg);
 }
 
-
-
 string string(char* str)
 {
     int len = strlen(str) + 1;
@@ -93,7 +91,6 @@ string string(char* str)
 
     return result;
 }
-
 
 string xsprintf(char* msg, ...)
 {

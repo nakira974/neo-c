@@ -155,6 +155,18 @@ void add_come_code(struct sCompileInfoStruct* info, const char* msg, ...)
     sBuf_append_str(&info->come_fun->mSource, xsprintf("%s;\n", msg2));
 }
 
+void add_come_last_code(struct sCompileInfoStruct* info, const char* msg, ...)
+{
+    char msg2[COME_CODE_MAX];
+
+    va_list args;
+    va_start(args, msg);
+    vsnprintf(msg2, COME_CODE_MAX, msg, args);
+    va_end(args);
+    
+    gComeModule.mLastCode = xsprintf("%s", msg2);
+}
+
 void transpiler_clear_last_code()
 {
     gComeModule.mLastCode = NULL;
@@ -464,6 +476,14 @@ char* make_type_name_string(sNodeType* node_type)
     
     char* class_name = node_type->mClass->mName;
     
+    if(node_type->mConstant) {
+        sBuf_append_str(&output, "const ");
+    }
+    
+    if(node_type->mUnsigned) {
+        sBuf_append_str(&output, "unsigned ");
+    }
+    
     if(node_type->mNumGenericsTypes > 0) {
         char struct_name[512];
         create_generics_struct_name(struct_name, 512, node_type);
@@ -473,8 +493,16 @@ char* make_type_name_string(sNodeType* node_type)
     }
     else {
         if(node_type->mClass->mFlags & CLASS_FLAGS_STRUCT) {
-            sBuf_append_str(&output, "struct ");
-            sBuf_append_str(&output, class_name);
+            if(strcmp(class_name, "__builtin_va_list") == 0) {
+                sBuf_append_str(&output, class_name);
+            }
+            else if(strcmp(node_type->mOriginalTypeName, "") != 0){
+                sBuf_append_str(&output, node_type->mOriginalTypeName);
+            }
+            else {
+                sBuf_append_str(&output, "struct ");
+                sBuf_append_str(&output, class_name);
+            }
         }
         else if(node_type->mClass->mFlags & CLASS_FLAGS_UNION) {
             sBuf_append_str(&output, "union ");
@@ -483,8 +511,31 @@ char* make_type_name_string(sNodeType* node_type)
         else if(strcmp(class_name, "long_double") == 0) {
             sBuf_append_str(&output, "long double");
         }
+        else if(node_type->mLongLong) {
+            if(strcmp(class_name, "int") == 0) {
+                sBuf_append_str(&output, "long long int");
+            }
+            else if(strcmp(class_name, "long") == 0) {
+                sBuf_append_str(&output, "long long");
+            }
+        }
+        else if(strcmp(class_name, "long") == 0) {
+            sBuf_append_str(&output, "long");
+        }
         else if(strcmp(class_name, "bool") == 0) {
             sBuf_append_str(&output, "int");
+        }
+        else if(strcmp(class_name, "lambda") == 0) {
+            sBuf_append_str(&output, make_type_name_string(node_type->mResultType));
+            sBuf_append_str(&output, " (*)(");
+            int j;
+            for(j=0; j<node_type->mNumParams; j++) {
+                sBuf_append_str(&output, make_type_name_string(node_type->mParamTypes[j]));
+                if(j != node_type->mNumParams-1) {
+                    sBuf_append_str(&output, ",");
+                }
+            }
+            sBuf_append_str(&output, ")");
         }
         else {
             sBuf_append_str(&output, class_name);
@@ -494,6 +545,10 @@ char* make_type_name_string(sNodeType* node_type)
     int i;
     for(i=0; i<node_type->mPointerNum; i++) {
         sBuf_append_str(&output, "*");
+    }
+    
+    if(node_type->mRestrict) {
+        sBuf_append_str(&output, "restrict");
     }
     
     char* result = xsprintf("%s", output.mBuf);

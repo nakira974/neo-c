@@ -1178,6 +1178,8 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
             else {
                 llvm_value.c_value = xsprintf("%s", buf.mBuf);
             }
+            
+            add_come_last_code(info, "%s", llvm_value.c_value);
 
             dec_stack_ptr(num_params, info);
             push_value_to_stack_ptr(&llvm_value, info);
@@ -1523,6 +1525,8 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
             else {
                 llvm_value.c_value = xsprintf("%s", buf.mBuf);
             }
+            
+            add_come_last_code(info, "%s", llvm_value.c_value);
 
             dec_stack_ptr(num_params, info);
             push_value_to_stack_ptr(&llvm_value, info);

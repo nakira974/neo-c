@@ -48,7 +48,7 @@ void rehash_typedef()
             while(1) {
                 if(p->mName == NULL) {
                     p->mName = strdup(gTypeDefTable[i].mName);
-                    p->mItem = gTypeDefTable[i].mItem;
+                    p->mItem = clone_node_type(gTypeDefTable[i].mItem);
                     break;
                 }
                 else {
@@ -91,6 +91,10 @@ void add_typedef(char* name, sNodeType* node_type, BOOL user)
 
             gNumTypeDef++;
             
+            break;
+        }
+        else if(strcmp(p->mName, name) == 0) {
+            p->mItem = clone_node_type(node_type);
             break;
         }
         else {

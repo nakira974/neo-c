@@ -7134,7 +7134,7 @@ BOOL load_element_core(BOOL getting_refference, int num_dimention, sNodeType* le
                     llvm_value.type = clone_node_type(element_type);
                     llvm_value.address = load_element_addresss;
                     llvm_value.var = lvalue.var;
-                    llvm_value.c_value = NULL;
+                    llvm_value.c_value = xsprintf("%s[%s][%s][%s]", lvalue.c_value, rvalue[0].c_value, rvalue[1].c_value, rvalue[2].c_value);
         
                     dec_stack_ptr(1+num_dimention, info);
                     push_value_to_stack_ptr(&llvm_value, info);
@@ -7150,7 +7150,7 @@ BOOL load_element_core(BOOL getting_refference, int num_dimention, sNodeType* le
                     llvm_value.type = clone_node_type(element_type);
                     llvm_value.address = load_element_addresss;
                     llvm_value.var = lvalue.var;
-                    llvm_value.c_value = NULL;
+                    llvm_value.c_value = xsprintf("%s[%s][%s][%s]", lvalue.c_value, rvalue[0].c_value, rvalue[1].c_value, rvalue[2].c_value);
         
                     dec_stack_ptr(1+num_dimention, info);
                     push_value_to_stack_ptr(&llvm_value, info);
@@ -7210,7 +7210,7 @@ BOOL load_element_core(BOOL getting_refference, int num_dimention, sNodeType* le
                 llvm_value.type = clone_node_type(node_type);
                 llvm_value.address = load_element_addresss;
                 llvm_value.var = lvalue.var;
-                llvm_value.c_value = NULL;
+                llvm_value.c_value = xsprintf("%s[%s][%s][%s]", lvalue.c_value, rvalue[0].c_value, rvalue[1].c_value, rvalue[2].c_value);
     
                 dec_stack_ptr(1+num_dimention, info);
                 push_value_to_stack_ptr(&llvm_value, info);

@@ -188,6 +188,61 @@ static BOOL compile_ll_file(char* fname, char* bname, char* clang_optiones, BOOL
     return TRUE;
 }
 
+static BOOL compile_c_file(char* fname, char* bname, char* clang_optiones, BOOL output_assembler_source)
+{
+    char bname2[PATH_MAX];
+    
+    if(bname[0] == '\0') {
+        char* p = fname + strlen(fname);
+        
+        while(p >= fname) {
+            if(*p == '.') {
+                break;
+            }
+            else {
+                p--;
+            }
+        }
+        
+        if(p == fname) {
+            fprintf(stderr, "invalid file name. require extension name(%s)", fname);
+            return FALSE;
+        }
+        
+        memcpy(bname2, fname, p - fname);
+        bname2[p-fname] = '\0';
+        xstrncat(bname2, ".o", PATH_MAX);
+    }
+    else {
+        xstrncpy(bname2, bname, PATH_MAX);
+    }
+    
+    char cmd[1024];
+    
+#ifdef __DARWIN_ARM__
+    snprintf(cmd, 1024, "%s -o %s -c %s.c %s -fPIC -I/opt/homebrew/opt/llvm@16/include -L/opt/homebrew/opt/llvm@16/lib -L/opt/homebrew/lib -I/opt/homebrew/include -L/usr/local/opt/libgc/lib -L/opt/homebrew/opt/boehmgc/lib -I/opt/homebrew/opt/pcre/include -fPIC -L/opt/homebrew/opt/boehmgc/lib ", CLANG, bname2, fname, clang_optiones);
+#else
+    snprintf(cmd, 1024, "%s -o %s -c %s.c %s -fPIC -fPIC ", CLANG, bname2, fname, clang_optiones);
+#endif
+    
+    int rc = system(cmd);
+    //puts(cmd);
+    if(rc != 0) {
+        fprintf(stderr, "return code is error on clang\n");
+        exit(6);
+    }
+    
+    if(!output_assembler_source) {
+        char cmd[1024];
+        snprintf(cmd, 1024, "rm -f %s.c %s.ll", fname, fname);
+        
+        //puts(cmd);
+        (void)system(cmd);
+    }
+    
+    return TRUE;
+}
+
 static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang_optiones, char* exec_fname, BOOL output_assembler_source)
 {
     char bname[PATH_MAX];
@@ -218,37 +273,66 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
     
     if(strcmp(fname, "") != 0) {
         char cmd[1024];
+        
+        if(gNCTranspile) {
 #ifdef __DARWIN_ARM__
-        snprintf(cmd, 1024, "%s -c -o %s.o %s.ll -fPIC -I/opt/homebrew/opt/llvm@16/include -L/opt/homebrew/opt/llvm@16/lib -I/opt/homebrew/opt/pcre/include ", CLANG, fname, fname);
-    
-        int rc = system(cmd);
-        if(rc != 0) {
-            fprintf(stderr, "return code is error on clang\n");
-            exit(7);
-        }
+            snprintf(cmd, 1024, "%s -c -o %s.o %s.c -fPIC -I/opt/homebrew/opt/llvm@16/include -L/opt/homebrew/opt/llvm@16/lib -I/opt/homebrew/opt/pcre/include ", CLANG, fname, fname);
+        
+            int rc = system(cmd);
+            if(rc != 0) {
+                fprintf(stderr, "return code is error on clang\n");
+                exit(7);
+            }
         
 #else
-        snprintf(cmd, 1024, "opt -o %s.bc %s.ll  ", fname, fname);
-        //puts(cmd);
-    
-        int rc = system(cmd);
-        if(rc != 0) {
-            fprintf(stderr, "return code is error on clang\n");
-            exit(8);
-        }
-        snprintf(cmd, 1024, "%s -c -o %s.o %s.bc -fPIC ", CLANG, fname, fname);
+            int rc;
+            snprintf(cmd, 1024, "%s -c -o %s.o %s.c -fPIC ", CLANG, fname, fname);
 #endif
-        //puts(cmd);
-    
-        rc = system(cmd);
-        if(rc != 0) {
-            fprintf(stderr, "return code is error on clang\n");
-            exit(9);
+            //puts(cmd);
+        
+            rc = system(cmd);
+            if(rc != 0) {
+                fprintf(stderr, "return code is error on clang\n");
+                exit(9);
+            }
+            
+            snprintf(cmd, 1024, "rm -f %s.bc", fname);
+            
+            (void)system(cmd);
         }
+        else {
+#ifdef __DARWIN_ARM__
+            snprintf(cmd, 1024, "%s -c -o %s.o %s.ll -fPIC -I/opt/homebrew/opt/llvm@16/include -L/opt/homebrew/opt/llvm@16/lib -I/opt/homebrew/opt/pcre/include ", CLANG, fname, fname);
         
-        snprintf(cmd, 1024, "rm -f %s.bc", fname);
+            int rc = system(cmd);
+            if(rc != 0) {
+                fprintf(stderr, "return code is error on clang\n");
+                exit(7);
+            }
+            
+#else
+            snprintf(cmd, 1024, "opt -o %s.bc %s.ll  ", fname, fname);
+            //puts(cmd);
         
-        (void)system(cmd);
+            int rc = system(cmd);
+            if(rc != 0) {
+                fprintf(stderr, "return code is error on clang\n");
+                exit(8);
+            }
+            snprintf(cmd, 1024, "%s -c -o %s.o %s.bc -fPIC ", CLANG, fname, fname);
+#endif
+            //puts(cmd);
+        
+            rc = system(cmd);
+            if(rc != 0) {
+                fprintf(stderr, "return code is error on clang\n");
+                exit(9);
+            }
+            
+            snprintf(cmd, 1024, "rm -f %s.bc", fname);
+            
+            (void)system(cmd);
+        }
     }
     
     if(fname[0] == '\0') {
@@ -332,13 +416,13 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
             fprintf(stderr, "return code is error on clang\n");
             exit(11);
         }
+    }
+    
+    if(!output_assembler_source) {
+        char cmd[1024];
+        snprintf(cmd, 1024, "rm -f %s.ll %s.o %s.bc %s.c", fname, fname, fname, fname);
         
-        if(!output_assembler_source) {
-            char cmd[1024];
-            snprintf(cmd, 1024, "rm -f %s.ll %s.o %s.bc", fname, fname, fname);
-            
-            (void)system(cmd);
-        }
+        (void)system(cmd);
     }
     
     return TRUE;
@@ -682,14 +766,21 @@ int main(int argc, char** argv)
             }
             
             if(no_linker && !header) {
-                if(!compile_ll_file(sname[n], exec_fname, clang_optiones, output_assembler_source)) {
-                    return 1;
+                if(gNCTranspile) {
+                    if(!compile_c_file(sname[n], exec_fname, clang_optiones, output_assembler_source)) {
+                        return 1;
+                    }
+                }
+                else {
+                    if(!compile_ll_file(sname[n], exec_fname, clang_optiones, output_assembler_source)) {
+                        return 1;
+                    }
                 }
             }
             else {
                 if((no_linker || header) && !output_assembler_source) {
                     char cmd[1024];
-                    snprintf(cmd, 1024, "rm -f %s.ll", sname[n]);
+                    snprintf(cmd, 1024, "rm -f %s.ll %s.c", sname[n], sname[n]);
                     
                     (void)system(cmd);
                 }

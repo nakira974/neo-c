@@ -82,7 +82,9 @@ void class_init()
         add_typedef("size_t", create_node_type_with_class_name("int"), FALSE);
     }
     else {
-        add_typedef("size_t", create_node_type_with_class_name("long"), FALSE);
+        sNodeType* node_type = create_node_type_with_class_name("long");
+        node_type->mUnsigned = TRUE;
+        add_typedef("size_t", node_type, FALSE);
     }
     add_typedef("_Bool", create_node_type_with_class_name("bool"), FALSE);
 }

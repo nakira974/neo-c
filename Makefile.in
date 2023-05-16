@@ -35,7 +35,7 @@ SELF_HOST_OBJS=@SELF_HOST_OBJS@
 #########################################
 all: comelang no-self-host
 
-no-self-host: comelang lib lib-gc
+no-self-host: comelang lib lib-gc lib-ts
 
 comelang: config.h src/main.o $(OBJS) src/llvm.o
 	$(CC) -c src/main.c -o src/main.o $(CFLAGS)
@@ -43,6 +43,12 @@ comelang: config.h src/main.o $(OBJS) src/llvm.o
 
 src/llvm.o: src/llvm.cpp
 	$(CXX) -c -o src/llvm.o src/llvm.cpp $(CXXFLAGS) $(CFLAGS)
+
+lib-ts: comelang-ts.o
+	ar r libcomelang-ts.a comelang-ts.o
+
+comelang-ts.o:
+	./comelang -o comelang-ts.o -t -c comelang.c
 
 lib: comelang.o comelang2.o comelang3.o comelang4.o comelang5.o comelang6.o comelang7.o comelang8.o
 	ar r libcomelang.a comelang.o comelang2.o comelang3.o comelang4.o comelang5.o comelang6.o comelang7.o comelang8.o
@@ -203,6 +209,7 @@ install:
 	mkdir -p $(DESTDIR)/lib
 	if test -e ./libcomelang.a; then $(INSTALL) -m 644 ./libcomelang.a $(DESTDIR)/lib; fi
 	if test -e ./libcomelang-gc.a; then $(INSTALL) -m 644 ./libcomelang-gc.a $(DESTDIR)/lib; fi
+	if test -e ./libcomelang-ts.a; then $(INSTALL) -m 644 ./libcomelang-ts.a $(DESTDIR)/lib; fi
 
 	mkdir -p "$(DESTDIR)/bin"
 	$(INSTALL) -m 755 ./comelang "$(DESTDIR)/bin"
@@ -429,5 +436,6 @@ uninstall:
 	rm -f "$(DESTDIR)"/include/comelang.h
 	rm -f "$(DESTDIR)"/lib/libcomelang.a
 	rm -f "$(DESTDIR)"/lib/libcomelang-gc.a
+	rm -f "$(DESTDIR)"/lib/libcomelang-ts.a
 	rm -f "$(DESTDIR)/share/doc/comelang/README.md"
 

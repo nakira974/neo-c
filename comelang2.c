@@ -24,7 +24,7 @@ void* gc_ncmemdup(void* block)
     if (ret) {
         char* p = ret;
         char* p2 = block;
-        while(p - ret < size) {
+        while(p - (char*)ret < size) {
             *p = *p2;
             p++;
             p2++;

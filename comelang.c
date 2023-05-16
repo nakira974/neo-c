@@ -129,7 +129,7 @@ void*%? ncmemdup(void*% block)
     if (ret) {
         char* p = ret;
         char* p2 = mem;
-        while(p - ret < size) {
+        while(p - (char*)ret < size) {
             *p = *p2;
             p++;
             p2++;

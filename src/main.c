@@ -424,6 +424,7 @@ int main(int argc, char** argv)
         }
         else if(strcmp(argv[i], "-t") == 0) {
             gNCTranspile = TRUE;
+            gNCGC = FALSE;
         }
         else if(strcmp(argv[i], "libs") == 0)
         {

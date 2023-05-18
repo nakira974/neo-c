@@ -20,7 +20,7 @@ void transpiler_init()
     gComeFunctionHead = NULL;
     gHeadOutputStruct = NULL;
     
-    add_come_code_directory_top_level("%s", "typedef void* protocol_obj_t;\n");
+    add_come_code_top_level("%s", "typedef void* protocol_obj_t;\n");
 }
 
 void transpiler_final()
@@ -150,9 +150,33 @@ void add_come_code(struct sCompileInfoStruct* info, const char* msg, ...)
     vsnprintf(msg2, COME_CODE_MAX, msg, args);
     va_end(args);
     
-//    gComeModule.mLastCode = xsprintf("%s", msg2);
+    if(info->come_fun) {
+        sBuf_append_str(&info->come_fun->mSource, xsprintf("%s", msg2));
+    }
+    else {
+        sBuf_append_str(&gComeModule.mSourceHead, xsprintf("%s", msg2));
+    }
+}
+
+void add_come_code_top_level(const char* msg, ...)
+{
+    char msg2[COME_CODE_MAX];
+
+    va_list args;
+    va_start(args, msg);
+    vsnprintf(msg2, COME_CODE_MAX, msg, args);
+    va_end(args);
     
-    sBuf_append_str(&info->come_fun->mSource, xsprintf("%s;\n", msg2));
+    sBuf_append_str(&gComeModule.mSourceHead, xsprintf("%s", msg2));
+}
+
+void add_last_code_to_source(struct sCompileInfoStruct* info)
+{
+    if(gNCTranspile) {
+        if(gComeModule.mLastCode) {
+           add_come_code(info, "%s", gComeModule.mLastCode);
+        }
+    }
 }
 
 void add_come_last_code(struct sCompileInfoStruct* info, const char* msg, ...)
@@ -172,29 +196,6 @@ void transpiler_clear_last_code()
     gComeModule.mLastCode = NULL;
 }
 
-void add_come_code_directory(struct sCompileInfoStruct* info, const char* msg, ...)
-{
-    char msg2[COME_CODE_MAX];
-
-    va_list args;
-    va_start(args, msg);
-    vsnprintf(msg2, COME_CODE_MAX, msg, args);
-    va_end(args);
-    
-    sBuf_append_str(&info->come_fun->mSource, msg2);
-}
-
-void add_come_code_directory_top_level(const char* msg, ...)
-{
-    char msg2[COME_CODE_MAX];
-
-    va_list args;
-    va_start(args, msg);
-    vsnprintf(msg2, COME_CODE_MAX, msg, args);
-    va_end(args);
-    
-    sBuf_append_str(&gComeModule.mSourceHead, msg2);
-}
 
 void add_declare_right_value_var(struct sCompileInfoStruct* info, char* var_name)
 {

@@ -115,7 +115,8 @@ fi
 AC_MSG_CHECKING(Operating System)
 
 #CFLAGS='-DPREFIX="\"${DESTDIR}/\"" -fPIC'
-CFLAGS='-DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H'
+CFLAGS='-DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H'
+#CFLAGS='-DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H'
 #CFLAGS="-fPIC -rdynamic $CFLAGS"
 
 if uname -v | grep iSH > /dev/null; then

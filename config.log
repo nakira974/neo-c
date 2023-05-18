@@ -236,49 +236,47 @@ configure: failed program was:
 configure:3775: result: no
 configure:3826: checking CPU type
 configure:3939: checking Operating System
-configure:4056: checking for main in -lutil
-configure:4076: gcc -o conftest -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H   conftest.c -lutil   >&5
-configure:4076: $? = 0
-configure:4086: result: yes
-configure:4137: checking for main in -ldl
-configure:4157: clang -o conftest -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H -I/usr/local/include   conftest.c -ldl   -lutil >&5
-configure:4157: $? = 0
-configure:4167: result: yes
-configure:4177: checking for math.h
-configure:4177: clang -c -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H -I/usr/local/include  conftest.c >&5
-clang: warning: argument unused during compilation: '-L/usr/local/lib' [-Wunused-command-line-argument]
-configure:4177: $? = 0
-configure:4177: result: yes
-configure:4186: checking for main in -lm
-configure:4206: clang -o conftest -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H -I/usr/local/include   conftest.c -lm   -lutil -ldl >&5
-configure:4206: $? = 0
-configure:4216: result: yes
-configure:4226: checking for main in -lgc
-configure:4246: clang -o conftest -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H -I/usr/local/include   conftest.c -lgc   -lutil -ldl -lm >&5
-configure:4246: $? = 0
-configure:4256: result: yes
-configure:4266: checking for main in -lpcre
-configure:4286: clang -o conftest -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H -I/usr/local/include   conftest.c -lpcre   -lutil -ldl -lm -lgc >&5
-configure:4286: $? = 0
-configure:4296: result: yes
-configure:4306: checking for main in -lpthread
-configure:4326: clang -o conftest -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H -I/usr/local/include   conftest.c -lpthread   -lutil -ldl -lm -lgc >&5
-configure:4326: $? = 0
-configure:4336: result: yes
-configure:4346: checking for iconv.h
-configure:4346: clang -c -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H -I/usr/local/include  conftest.c >&5
-clang: warning: argument unused during compilation: '-L/usr/local/lib' [-Wunused-command-line-argument]
-configure:4346: $? = 0
-configure:4346: result: yes
-configure:4359: checking for main in -lrt
-configure:4379: clang -o conftest -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H -I/usr/local/include   conftest.c -lrt   -lutil -ldl -lm -lgc >&5
-configure:4379: $? = 0
-configure:4389: result: yes
-configure:4450: checking for lchmod
-configure:4450: clang -o conftest -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H -I/usr/local/include   conftest.c  -lutil -ldl -lm -lgc -lrt >&5
-configure:4450: $? = 0
-configure:4450: result: yes
-configure:4630: creating ./config.status
+configure:4057: checking for main in -lutil
+configure:4077: gcc -o conftest -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H   conftest.c -lutil   >&5
+configure:4077: $? = 0
+configure:4087: result: yes
+configure:4138: checking for main in -ldl
+configure:4158: clang -o conftest -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/include   conftest.c -ldl   -lutil >&5
+configure:4158: $? = 0
+configure:4168: result: yes
+configure:4178: checking for math.h
+configure:4178: clang -c -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/include  conftest.c >&5
+configure:4178: $? = 0
+configure:4178: result: yes
+configure:4187: checking for main in -lm
+configure:4207: clang -o conftest -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/include   conftest.c -lm   -lutil -ldl >&5
+configure:4207: $? = 0
+configure:4217: result: yes
+configure:4227: checking for main in -lgc
+configure:4247: clang -o conftest -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/include   conftest.c -lgc   -lutil -ldl -lm >&5
+configure:4247: $? = 0
+configure:4257: result: yes
+configure:4267: checking for main in -lpcre
+configure:4287: clang -o conftest -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/include   conftest.c -lpcre   -lutil -ldl -lm -lgc >&5
+configure:4287: $? = 0
+configure:4297: result: yes
+configure:4307: checking for main in -lpthread
+configure:4327: clang -o conftest -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/include   conftest.c -lpthread   -lutil -ldl -lm -lgc >&5
+configure:4327: $? = 0
+configure:4337: result: yes
+configure:4347: checking for iconv.h
+configure:4347: clang -c -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/include  conftest.c >&5
+configure:4347: $? = 0
+configure:4347: result: yes
+configure:4360: checking for main in -lrt
+configure:4380: clang -o conftest -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/include   conftest.c -lrt   -lutil -ldl -lm -lgc >&5
+configure:4380: $? = 0
+configure:4390: result: yes
+configure:4451: checking for lchmod
+configure:4451: clang -o conftest -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/include   conftest.c  -lutil -ldl -lm -lgc -lrt >&5
+configure:4451: $? = 0
+configure:4451: result: yes
+configure:4631: creating ./config.status
 
 ## ---------------------- ##
 ## Running config.status. ##
@@ -359,7 +357,7 @@ ac_cv_prog_cc_stdc=
 ## ----------------- ##
 
 CC='clang'
-CFLAGS='-I/usr/lib/llvm-14/include  -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H -I/usr/local/include -DLLVM_VERSION=14 -DCLANG="\"clang\"" -DGCC="\"clang\""'
+CFLAGS='-I/usr/lib/llvm-14/include  -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/include -DLLVM_VERSION=14 -DCLANG="\"clang\"" -DGCC="\"clang\""'
 CLANG=''
 CPPFLAGS=''
 CXX='clang++'

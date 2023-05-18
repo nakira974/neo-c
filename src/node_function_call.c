@@ -103,10 +103,10 @@ BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_meth
     
     if(!(type_identify_with_class_name(result_type, "void") && result_type->mPointerNum == 0))
     {
-        add_come_code_directory(info, "%s inline_result_variable%d;\n", make_type_name_string(result_type), info->num_inline);
+        add_come_code(info, "%s inline_result_variable%d;\n", make_type_name_string(result_type), info->num_inline);
     }
     
-    add_come_code_directory(info, "{\n");
+    add_come_code(info, "{\n");
 
     for(i=0; i<num_params; i++) {
         LLVMTypeRef llvm_type = create_llvm_type_from_node_type(param_types[i]);
@@ -116,7 +116,7 @@ BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_meth
         
         LLVMBuildStore(gBuilder, llvm_params[i], param);
         
-        add_come_code_directory(info, "%s %s = %s;\n", make_type_name_string(param_types[i]), param_names[i], lvalue_params[i].c_value);
+        add_come_code(info, "%s %s = %s;\n", make_type_name_string(param_types[i]), param_names[i], lvalue_params[i].c_value);
 
         if(fun->mParamTypes[i] != NULL) {
             sNodeType* node_type = clone_node_type(fun->mParamTypes[i]);
@@ -196,7 +196,7 @@ BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_meth
     if(!solve_type(&info->type, generics_type, num_method_generics_types, method_generics_types, info)) {
         return FALSE;
     }
-    add_come_code_directory(info, "\n%s:\n", info->inline_func_end_label);
+    add_come_code(info, "\n%s:\n", info->inline_func_end_label);
     
     if(result_value) {
         if(result_type->mHeap) {
@@ -204,7 +204,7 @@ BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_meth
         }
     }
 
-    add_come_code_directory(info, "0;\n}\n");
+    add_come_code(info, "0;\n}\n");
     info->inline_result_variable = inline_result_variable;
     info->inline_func_end = inline_func_end_before;
     
@@ -1137,7 +1137,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         sBuf_append_str(&buf, "))");
         
         if(type_identify_with_class_name(result_type, "void") && result_type->mPointerNum == 0) {
-            add_come_code(info, "%s", buf.mBuf);
+            add_come_code(info, "%s;\n", buf.mBuf);
         
             LLVMTypeRef llvm_result_type = create_llvm_type_from_node_type(result_type);
         
@@ -1179,7 +1179,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
                 llvm_value.c_value = xsprintf("%s", buf.mBuf);
             }
             
-            add_come_last_code(info, "%s", llvm_value.c_value);
+            add_come_last_code(info, "%s;\n", llvm_value.c_value);
 
             dec_stack_ptr(num_params, info);
             push_value_to_stack_ptr(&llvm_value, info);
@@ -1276,10 +1276,10 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         
         if(!(type_identify_with_class_name(result_type, "void") && result_type->mPointerNum == 0))
         {
-            add_come_code_directory(info, "%s inline_result_variable%d;\n", make_type_name_string(result_type), info->num_inline);
+            add_come_code(info, "%s inline_result_variable%d;\n", make_type_name_string(result_type), info->num_inline);
         }
         
-        add_come_code_directory(info, "{\n");
+        add_come_code(info, "{\n");
 
         for(i=0; i<num_params; i++) {
             LLVMTypeRef llvm_type = create_llvm_type_from_node_type(param_types[i]);
@@ -1289,7 +1289,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
             
             LLVMBuildStore(gBuilder, llvm_params[i], param);
             
-            add_come_code_directory(info, "%s %s = %s;\n", make_type_name_string(param_types[i]), param_names[i], lvalue_params[i].c_value);
+            add_come_code(info, "%s %s = %s;\n", make_type_name_string(param_types[i]), param_names[i], lvalue_params[i].c_value);
 
             if(fun->mParamTypes[i] != NULL) {
                 sNodeType* node_type = clone_node_type(fun->mParamTypes[i]);
@@ -1370,7 +1370,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         xstrncpy(info->in_inline_function_name, inline_function_before, VAR_NAME_MAX);
         
         xstrncpy(gFunctionName, function_name, VAR_NAME_MAX);
-        add_come_code_directory(info, "\n%s:\n", info->inline_func_end_label);
+        add_come_code(info, "\n%s:\n", info->inline_func_end_label);
         
         info->inline_func_end_label = inline_func_end_label;
         
@@ -1379,7 +1379,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
                 append_object_to_right_values(result_value, info->type, info);
             }
         }
-        add_come_code_directory(info, "0;\n}\n");
+        add_come_code(info, "0;\n}\n");
     }
     /// call normal function ///
     else {
@@ -1483,7 +1483,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         sBuf_append_str(&buf, "))");
 
         if(type_identify_with_class_name(result_type, "void") && result_type->mPointerNum == 0) {
-            add_come_code(info, "%s", buf.mBuf);
+            add_come_code(info, "%s;\n", buf.mBuf);
             LLVMTypeRef llvm_result_type = create_llvm_type_from_node_type(result_type);
                 
             BOOL var_arg = fun->mVarArgs;
@@ -1526,7 +1526,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
                 llvm_value.c_value = xsprintf("%s", buf.mBuf);
             }
             
-            add_come_last_code(info, "%s", llvm_value.c_value);
+            add_come_last_code(info, "%s;\n", llvm_value.c_value);
 
             dec_stack_ptr(num_params, info);
             push_value_to_stack_ptr(&llvm_value, info);
@@ -1684,7 +1684,7 @@ BOOL compile_lambda_call(unsigned int node, sCompileInfo* info)
 
     if(type_identify_with_class_name(lambda_type->mResultType, "void") && lambda_type->mResultType->mPointerNum == 0)
     {
-        add_come_code(info, "%s", buf.mBuf);
+        add_come_code(info, "%s;\n", buf.mBuf);
         LLVMTypeRef llvm_result_type = create_llvm_type_with_class_name("void");
             
         BOOL var_arg = FALSE;
@@ -1713,13 +1713,19 @@ BOOL compile_lambda_call(unsigned int node, sCompileInfo* info)
         llvm_value.var = NULL;
         llvm_value.c_value = xsprintf("%s", buf.mBuf);
 
+        if(result_type->mHeap) {
+            char* var_name = append_object_to_right_values(llvm_value.value, result_type, info);
+            llvm_value.c_value = xsprintf("(%s = %s)", var_name, buf.mBuf);
+        }
+        else {
+            llvm_value.c_value = xsprintf("%s", buf.mBuf);
+        }
+        
+        add_come_last_code(info, "%s;\n", llvm_value.c_value);
+
         push_value_to_stack_ptr(&llvm_value, info);
 
-        if(result_type->mHeap) {
-            append_object_to_right_values(llvm_value.value, result_type, info);
-        }
-
-        info->type = result_type;
+        info->type = clone_node_type(result_type);
     }
     
     free(buf.mBuf);

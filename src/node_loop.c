@@ -234,14 +234,14 @@ BOOL compile_if_expression(unsigned int node, sCompileInfo* info)
     BOOL last_expression_is_return_before = info->last_expression_is_return;
     info->last_expression_is_return = FALSE;
     
-    add_come_code_directory(info, "if(%s) {\n", conditional_value.c_value);
+    add_come_code(info, "if(%s) {\n", conditional_value.c_value);
 
     BOOL force_hash_result = FALSE;
     if(!compile_block(if_block, force_hash_result, info)) {
         return FALSE;
     }
     
-    add_come_code_directory(info, "}\n");
+    add_come_code(info, "}\n");
 
     if(!info->last_expression_is_return) {
         free_right_value_objects(info);
@@ -306,7 +306,7 @@ BOOL compile_if_expression(unsigned int node, sCompileInfo* info)
 
             BOOL last_expression_is_return_before = info->last_expression_is_return;
             
-            add_come_code_directory(info, "else if(%s) {\n", conditional_value.c_value);
+            add_come_code(info, "else if(%s) {\n", conditional_value.c_value);
             info->last_expression_is_return = FALSE;
 
             BOOL force_hash_result = FALSE;
@@ -315,7 +315,7 @@ BOOL compile_if_expression(unsigned int node, sCompileInfo* info)
                 return FALSE;
             }
 
-            add_come_code_directory(info, "}\n");
+            add_come_code(info, "}\n");
 
             if(!info->last_expression_is_return) {
                 free_right_value_objects(info);
@@ -332,7 +332,7 @@ BOOL compile_if_expression(unsigned int node, sCompileInfo* info)
         BOOL last_expression_is_return_before = info->last_expression_is_return;
         info->last_expression_is_return = FALSE;
         
-        add_come_code_directory(info, "else {\n");
+        add_come_code(info, "else {\n");
 
         BOOL force_hash_result = FALSE;
         if(!compile_block(else_node_block, force_hash_result, info))
@@ -340,7 +340,7 @@ BOOL compile_if_expression(unsigned int node, sCompileInfo* info)
             return FALSE;
         }
         
-        add_come_code_directory(info, "}\n");
+        add_come_code(info, "}\n");
 
         if(!info->last_expression_is_return) {
             free_right_value_objects(info);
@@ -454,14 +454,14 @@ BOOL compile_while_expression(unsigned int node, sCompileInfo* info)
     sNodeBlock* current_node_block = info->current_node_block;
     info->current_node_block = while_node_block;
     
-    add_come_code_directory(info, "while (%s) {\n", conditional_value.c_value);
+    add_come_code(info, "while (%s) {\n", conditional_value.c_value);
 
     BOOL force_hash_result = FALSE;
     if(!compile_block(while_node_block, force_hash_result, info)) {
         return FALSE;
     }
     
-    add_come_code_directory(info, "}\n");
+    add_come_code(info, "}\n");
     
     info->current_node_block = current_node_block;
 
@@ -545,7 +545,7 @@ BOOL compile_do_while_expression(unsigned int node, sCompileInfo* info)
     sNodeBlock* current_node_block = info->current_node_block;
     info->current_node_block = while_node_block;
     
-    add_come_code_directory(info, "do {\n");
+    add_come_code(info, "do {\n");
 
     if(while_node_block) {
         BOOL force_hash_result = FALSE;
@@ -575,7 +575,7 @@ BOOL compile_do_while_expression(unsigned int node, sCompileInfo* info)
     LVALUE conditional_value = *get_value_from_stack(-1);
     dec_stack_ptr(1, info);
     
-    add_come_code_directory(info, "} while(%s);\n", conditional_value.c_value);
+    add_come_code(info, "} while(%s);\n", conditional_value.c_value);
 
     sNodeType* bool_type = create_node_type_with_class_name("bool");
 
@@ -1001,7 +1001,7 @@ BOOL compile_for_expression(unsigned int node, sCompileInfo* info)
     sNodeBlock* current_node_block = info->current_node_block;
     info->current_node_block = for_block;
     
-    //add_come_code_directory(info, "{ %s;\n while(%s) {\n", init_value.c_value, conditional_value.c_value);
+    //add_come_code(info, "{ %s;\n while(%s) {\n", init_value.c_value, conditional_value.c_value);
 
     /// block of for expression ///
     if(for_block) {
@@ -1054,7 +1054,7 @@ BOOL compile_for_expression(unsigned int node, sCompileInfo* info)
             LLVMBuildBr(gBuilder, loop_top_block);
         }
     }
-    //add_come_code_directory(info, "%s;\n }\n}\n", third_exp.c_value);
+    //add_come_code(info, "%s;\n }\n}\n", third_exp.c_value);
 
     info->last_expression_is_return = last_expression_is_return_before;
 
@@ -1124,7 +1124,7 @@ BOOL compile_return(unsigned int node, sCompileInfo* info)
                 
                 LLVMBuildRet(gBuilder, NULL);
                 
-                add_come_code(info, "return");
+                add_come_code(info, "return;");
             }
 /*
             compile_err_msg(info, "Return type is void");
@@ -1190,8 +1190,8 @@ BOOL compile_return(unsigned int node, sCompileInfo* info)
                 LLVMBuildStore(gBuilder, llvm_value.value, info->inline_result_variable);
                 LLVMBuildBr(gBuilder, info->inline_func_end);
                 
-                add_come_code_directory(info, "inline_result_variable%d = %s;\n", info->num_inline, llvm_value.c_value);
-                add_come_code_directory(info, "goto %s;\n", info->inline_func_end_label);
+                add_come_code(info, "inline_result_variable%d = %s;\n", info->num_inline, llvm_value.c_value);
+                add_come_code(info, "goto %s;\n", info->inline_func_end_label);
             }
             else {
                 free_objects_on_return(info->function_node_block, info, llvm_value.address, TRUE);
@@ -1210,15 +1210,15 @@ BOOL compile_return(unsigned int node, sCompileInfo* info)
                 if(type_identify_with_class_name(result_type, "void") && result_type->mPointerNum == 0)
                 {
                     LLVMBuildRet(gBuilder, NULL);
-                    add_come_code(info, "return");
+                    add_come_code(info, "return;\n");
                 }
                 else {
                     LLVMBuildRet(gBuilder, llvm_value.value);
                     if(llvm_value.c_value) {
-                        add_come_code(info, "return %s", llvm_value.c_value);
+                        add_come_code(info, "return %s;\n", llvm_value.c_value);
                     }
                     else {
-                        add_come_code(info, "return");
+                        add_come_code(info, "return;");
                     }
                 }
             }
@@ -1338,14 +1338,14 @@ BOOL compile_normal_block(unsigned int node, sCompileInfo* info)
 {
     struct sNodeBlockStruct* node_block = gNodes[node].uValue.sNormalBlock.mNodeBlock;
     
-    add_come_code_directory(info, "{\n");
+    add_come_code(info, "{\n");
 
     BOOL force_hash_result = TRUE;
     if(!compile_block(node_block, force_hash_result, info)) {
         return FALSE;
     }
     
-    add_come_code_directory(info, "}\n");
+    add_come_code(info, "}\n");
     
 //    info->type = create_node_type_with_class_name("void");
 
@@ -1395,7 +1395,7 @@ BOOL compile_switch_expression(unsigned int node, sCompileInfo* info)
     
     LVALUE conditional_value = *get_value_from_stack(-1);
     
-    add_come_code_directory(info, "switch(%s)\n{\n", conditional_value.c_value);
+    add_come_code(info, "switch(%s)\n{\n", conditional_value.c_value);
 
     void* switch_expression_before = info->switch_expression;
     info->switch_expression = get_value_from_stack(-1)->value;
@@ -1423,7 +1423,7 @@ BOOL compile_switch_expression(unsigned int node, sCompileInfo* info)
             return FALSE;
         }
     }
-    add_come_code_directory(info, "\n}\n");
+    add_come_code(info, "\n}\n");
 
     LLVMBasicBlockRef case_else_block;
 /*
@@ -1542,7 +1542,7 @@ BOOL compile_case_expression(unsigned int node, sCompileInfo* info)
 
         LVALUE rvalue = *get_value_from_stack(-1);
         
-        add_come_code_directory(info, "case %s:\n", rvalue.c_value);
+        add_come_code(info, "case %s:\n", rvalue.c_value);
 
         dec_stack_ptr(1, info);
         LLVMValueRef lvalue = (LLVMValueRef)info->switch_expression;
@@ -1622,7 +1622,7 @@ BOOL compile_break_expression(unsigned int node, sCompileInfo* info)
 
     info->type = create_node_type_with_class_name("void");
     
-    add_come_code_directory(info, "break;\n");
+    add_come_code(info, "break;\n");
     
     transpiler_clear_last_code();
 

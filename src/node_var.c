@@ -290,6 +290,9 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
         if(var_type->mPointerNum > 0) {
             LLVMSetAlignment(alloca_value, 4);
         }
+        
+        char* define_str = make_define_var(var_type, var_name);
+        add_come_code(info, "extern %s;\n", define_str);
 
         var_->mLLVMValue.value = alloca_value;
     }
@@ -430,8 +433,8 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
             }
             
             char* define_str = make_define_var(var_type, var_name);
-            add_come_code_directory(info, "%s;\n", define_str);
-            add_come_code_directory(info, "memset(&%s, 0, sizeof(%s));\n", var_name, make_type_name_string(var_type));
+            add_come_code(info, "%s;\n", define_str);
+            add_come_code(info, "memset(&%s, 0, sizeof(%s));\n", var_name, make_type_name_string(var_type));
 
             LLVMValueRef alloca_value = LLVMBuildAlloca(gBuilder, llvm_type, var_name);
             
@@ -828,6 +831,8 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
         
         llvm_value.c_value = xsprintf("%s=%s", define_str, rvalue.c_value);
         
+        add_come_code(info, "%s;\n", llvm_value.c_value);
+        
         dec_stack_ptr(1, info);
         
         push_value_to_stack_ptr(&llvm_value, info);
@@ -837,7 +842,7 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
         
         llvm_value.c_value = xsprintf("%s", rvalue.c_value);
         
-        add_come_code(info, "%s=%s;", var_name, rvalue.c_value);
+        add_come_code(info, "%s=%s;\n", var_name, rvalue.c_value);
         
         dec_stack_ptr(1, info);
         
@@ -4592,7 +4597,7 @@ BOOL compile_store_address(unsigned int node, sCompileInfo* info)
             LVALUE llvm_value = rvalue;
             llvm_value.c_value = xsprintf("%s", rvalue.c_value);
             
-            add_come_code(info, "*%s=%s;", lvalue.c_value, rvalue.c_value);
+            add_come_code(info, "*%s=%s;\n", lvalue.c_value, rvalue.c_value);
             
             push_value_to_stack_ptr(&llvm_value, info);
             
@@ -4666,7 +4671,7 @@ BOOL compile_store_address(unsigned int node, sCompileInfo* info)
         LVALUE llvm_value = rvalue;
         llvm_value.c_value = xsprintf("%s", rvalue.c_value);
             
-        add_come_code(info, "*%s=%s;", lvalue.c_value, rvalue.c_value);
+        add_come_code(info, "*%s=%s;\n", lvalue.c_value, rvalue.c_value);
         
         push_value_to_stack_ptr(&llvm_value, info);
     }
@@ -4677,7 +4682,7 @@ BOOL compile_store_address(unsigned int node, sCompileInfo* info)
         
         LVALUE llvm_value = rvalue;
         llvm_value.c_value = xsprintf("%s", rvalue.c_value);
-        add_come_code(info, "*%s=%s;", lvalue.c_value, rvalue.c_value);
+        add_come_code(info, "*%s=%s;\n", lvalue.c_value, rvalue.c_value);
         
         push_value_to_stack_ptr(&llvm_value, info);
     }
@@ -5497,8 +5502,8 @@ BOOL store_obj_to_protocol(unsigned int interface_node, unsigned int obj_node, s
     static int protocol_interface_tmp = 0;
     char* var_name = xsprintf("protocol_interface_tmp%d", protocol_interface_tmp++);
     
-    add_come_code_directory(info, "%s %s = %s;\n", make_type_name_string(protocol_type), var_name, protocol_value.c_value);
-    add_come_code_directory(info, "%s->_protocol_obj = (void*)%s;\n", var_name, obj_value.c_value);
+    add_come_code(info, "%s %s = %s;\n", make_type_name_string(protocol_type), var_name, protocol_value.c_value);
+    add_come_code(info, "%s->_protocol_obj = (void*)%s;\n", var_name, obj_value.c_value);
     
     if(!gNCGC) {
         remove_object_from_right_values(obj_value.value, info);
@@ -5603,7 +5608,7 @@ BOOL store_obj_to_protocol(unsigned int interface_node, unsigned int obj_node, s
                     
                     LLVMBuildStore(gBuilder, llvm_fun2, field_address);
                     
-                    add_come_code_directory(info, "%s->%s = (void*)%s;\n", var_name, field_name, fun->mName);
+                    add_come_code(info, "%s->%s = (void*)%s;\n", var_name, field_name, fun->mName);
                 }
                 else if(i == 2) {
                     char* real_fun_name = NULL;
@@ -5647,7 +5652,7 @@ BOOL store_obj_to_protocol(unsigned int interface_node, unsigned int obj_node, s
                     
                     LLVMBuildStore(gBuilder, llvm_fun2, field_address);
                     
-                    add_come_code_directory(info, "%s->%s = (void*)%s;\n", var_name, field_name, fun->mName);
+                    add_come_code(info, "%s->%s = (void*)%s;\n", var_name, field_name, fun->mName);
                 }
                 else {
                     compile_err_msg(info, "function not found %s", fun_name);
@@ -5686,7 +5691,7 @@ BOOL store_obj_to_protocol(unsigned int interface_node, unsigned int obj_node, s
                     
                     LLVMBuildStore(gBuilder, llvm_fun2, field_address);
                     
-                    add_come_code_directory(info, "%s->%s = (void*)%s;\n", var_name, field_name, fun_name);
+                    add_come_code(info, "%s->%s = (void*)%s;\n", var_name, field_name, fun_name);
                 }
                 else if(i == 2) {
                     LLVMTypeRef llvm_result_type = create_llvm_type_with_class_name("void*");
@@ -5718,7 +5723,7 @@ BOOL store_obj_to_protocol(unsigned int interface_node, unsigned int obj_node, s
                     
                     LLVMBuildStore(gBuilder, llvm_fun2, field_address);
                     
-                    add_come_code_directory(info, "%s->%s = (void*)%s;\n", var_name, field_name, fun_name);
+                    add_come_code(info, "%s->%s = (void*)%s;\n", var_name, field_name, fun_name);
                 }
                 else {
                     sNodeType* protocol_type2 = clone_node_type(protocol_type);
@@ -5733,7 +5738,7 @@ BOOL store_obj_to_protocol(unsigned int interface_node, unsigned int obj_node, s
                     
                     LLVMBuildStore(gBuilder, llvm_fun2, field_address);
                     
-                    add_come_code_directory(info, "%s->%s = (void*)%s;\n", var_name, field_name, fun_name);
+                    add_come_code(info, "%s->%s = (void*)%s;\n", var_name, field_name, fun_name);
                 }
             }
         }

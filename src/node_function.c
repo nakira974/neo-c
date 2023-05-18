@@ -465,7 +465,7 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
                 exit(2);
             }
             
-            add_come_code(info, "come_boehm_gc_init()");
+            add_come_code(info, "come_boehm_gc_init();\n");
         }
         else {
             if(gNCDebug) {
@@ -493,7 +493,7 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
                 exit(2);
             }
             
-            add_come_code(info, "come_gc_init()");
+            add_come_code(info, "come_gc_init();\n");
         }
     }
 

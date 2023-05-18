@@ -206,7 +206,7 @@ void free_protocol_object(sNodeType* protocol_type, LLVMValueRef protocol_value,
             
             LLVMBuildCall2(gBuilder, function_type, llvm_fun3, llvm_params2, num_params2, "");
             
-            add_come_code_directory(info, "igc_decrement_ref_count(%s._porotocol_obj);\n", protocol_value_c_source);
+            add_come_code(info, "igc_decrement_ref_count(%s._porotocol_obj);\n", protocol_value_c_source);
         }
         else {
             int num_params = 3;
@@ -239,7 +239,7 @@ void free_protocol_object(sNodeType* protocol_type, LLVMValueRef protocol_value,
             
             LLVMBuildCall2(gBuilder, function_type, llvm_fun2, llvm_params, num_params, "");
             
-            add_come_code_directory(info, "call_finalizer(%s->finalize, %s->_protocol_obj, 0);\n", protocol_value_c_source, protocol_value_c_source);
+            add_come_code(info, "call_finalizer(%s->finalize, %s->_protocol_obj, 0);\n", protocol_value_c_source, protocol_value_c_source);
         }
     }
 }
@@ -846,7 +846,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL for
                     
                     LLVMBuildCall2(gBuilder, function_type, llvm_fun3, llvm_params2, num_params2, "");
                     
-                    if(c_value) { add_come_code_directory(info, xsprintf("igc_decrement_ref_count(%s);\n", c_value)); }
+                    if(c_value) { add_come_code(info, xsprintf("igc_decrement_ref_count(%s);\n", c_value)); }
                 }
                 else {
                     sNodeType* result_type = create_node_type_with_class_name("void");
@@ -865,7 +865,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL for
                     
                     LLVMBuildCall2(gBuilder, function_type, llvm_fun2, llvm_params, num_params, "");
                     
-                    add_come_code_directory(info, xsprintf("call_finalizer(%s,%s,%d);\n", llvm_fun_name, c_value, node_type->mAllocaValue));
+                    add_come_code(info, xsprintf("call_finalizer(%s,%s,%d);\n", llvm_fun_name, c_value, node_type->mAllocaValue));
                 }
             }
             else {
@@ -933,7 +933,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL for
                     LLVMTypeRef function_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
                     
                     LLVMBuildCall2(gBuilder, function_type, llvm_fun3, llvm_params3, num_params3, "");
-                    if(c_value) add_come_code_directory(info, xsprintf("igc_decrement_ref_count(%s);\n", c_value));
+                    if(c_value) add_come_code(info, xsprintf("igc_decrement_ref_count(%s);\n", c_value));
                 }
                 else {
                     sNodeType* result_type = create_node_type_with_class_name("void");
@@ -950,7 +950,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL for
                     LLVMTypeRef function_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
                     LLVMBuildCall2(gBuilder, function_type, llvm_fun2, llvm_params2, num_params2, "");
                     
-                    add_come_code_directory(info, xsprintf("call_finalizer(%s,%s,%d);\n", fun_name, c_value, node_type->mAllocaValue));
+                    add_come_code(info, xsprintf("call_finalizer(%s,%s,%d);\n", fun_name, c_value, node_type->mAllocaValue));
                 }
             }
         }
@@ -1001,7 +1001,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL for
         
                 /// remove right value objects from list
                 //remove_object_from_right_values(obj, info);
-                if(c_value) add_come_code_directory(info, xsprintf("igc_decrement_ref_count(%s);\n", c_value));
+                if(c_value) add_come_code(info, xsprintf("igc_decrement_ref_count(%s);\n", c_value));
             }
             else if(node_type->mHeap) {
                 /// free ///
@@ -1043,7 +1043,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL for
         
                 /// remove right value objects from list
                 //remove_object_from_right_values(obj, info);
-                if(c_value) add_come_code_directory(info, xsprintf("igc_decrement_ref_count(%s);\n", c_value));
+                if(c_value) add_come_code(info, xsprintf("igc_decrement_ref_count(%s);\n", c_value));
             }
         }
 
@@ -1764,7 +1764,7 @@ void init_nodes(char* sname)
             exit(32);
         }
         
-        add_come_code_directory_top_level("%s", "void* call_cloner(void* fun, void* mem);\n");
+        add_come_code_top_level("%s", "void* call_cloner(void* fun, void* mem);\n");
     }
     
     {
@@ -1811,7 +1811,7 @@ void init_nodes(char* sname)
             exit(33);
         }
         
-        add_come_code_directory_top_level("%s", "void call_finalizer(void* fun, void* mem, int call_finalizer_only);\n");
+        add_come_code_top_level("%s", "void call_finalizer(void* fun, void* mem, int call_finalizer_only);\n");
     }
     
     {
@@ -1859,7 +1859,7 @@ void init_nodes(char* sname)
             exit(34);
         }
         
-        add_come_code_directory_top_level("%s", "void* ncmemdup(void* block);\n");
+        add_come_code_top_level("%s;\n", "void* ncmemdup(void* block);\n");
     }
     {
         char* name = "gc_ncmemdup";
@@ -1899,7 +1899,7 @@ void init_nodes(char* sname)
             exit(35);
         }
         
-        add_come_code_directory_top_level("%s", "void* gc_ncmemdup(void* block);\n");
+        add_come_code_top_level("%s;\n", "void* gc_ncmemdup(void* block);\n");
     }
     
     {
@@ -2241,7 +2241,7 @@ void init_nodes(char* sname)
             fprintf(stderr, "overflow function number\n");
             exit(44);
         }
-        add_come_function(name, result_type, num_params, param_types, param_names2, TRUE, FALSE);
+        //add_come_function(name, result_type, num_params, param_types, param_names2, TRUE, FALSE);
     }
     /// igc_increment_ref_count ///
     {
@@ -2281,7 +2281,7 @@ void init_nodes(char* sname)
             fprintf(stderr, "overflow function number\n");
             exit(45);
         }
-        add_come_function(name, result_type, num_params, param_types, param_names2, TRUE, FALSE);
+        //add_come_function(name, result_type, num_params, param_types, param_names2, TRUE, FALSE);
     }
     /// igc_decrement_ref_count ///
     {
@@ -2321,7 +2321,7 @@ void init_nodes(char* sname)
             fprintf(stderr, "overflow function number\n");
             exit(46);
         }
-        add_come_function(name, result_type, num_params, param_types, param_names2, TRUE, FALSE);
+        //add_come_function(name, result_type, num_params, param_types, param_names2, TRUE, FALSE);
     }
     
     /// unwrap_exception ///
@@ -2368,7 +2368,7 @@ void init_nodes(char* sname)
             fprintf(stderr, "overflow function number\n");
             exit(47);
         }
-        add_come_function(name, result_type, num_params, param_types, param_names2, TRUE, FALSE);
+        //add_come_function(name, result_type, num_params, param_types, param_names2, TRUE, FALSE);
     }
 
     {
@@ -4905,8 +4905,8 @@ BOOL get_const_value_from_node(int* array_size, unsigned int array_size_node, sP
 {
     info->no_output_err_msg = TRUE;
     sCompileInfo cinfo;
-
     memset(&cinfo, 0, sizeof(sCompileInfo));
+    
     cinfo.pinfo = info;
 
     LLVMBasicBlockRef prev_block = NULL;
@@ -5555,22 +5555,7 @@ BOOL compile_block(sNodeBlock* block, BOOL force_hash_result, sCompileInfo* info
                 }
             }
             
-            if(gNCTranspile) {
-                if(gComeModule.mLastCode) {
-                   sBuf_append_str(&info->come_fun->mSource, gComeModule.mLastCode);
-                   sBuf_append_str(&info->come_fun->mSource, ";\n");
-                }
-/*
-                else if(info->stack_num > 0) {
-                    LVALUE llvm_value = *get_value_from_stack(-1);
-                    if(llvm_value.c_value && gNodes[node].mNodeType != kNodeTypeReturn && gNodes[node].mNodeType != kNodeTypeGoto) 
-                    {
-                        sBuf_append_str(&info->come_fun->mSource, llvm_value.c_value);
-                        sBuf_append_str(&info->come_fun->mSource, ";\n");
-                    }
-                }
-*/
-            }
+            add_last_code_to_source(info);
 
             if(!last_expression_is_return) {
                 free_right_value_objects(info);

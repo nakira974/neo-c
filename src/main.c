@@ -217,19 +217,21 @@ static BOOL compile_c_file(char* fname, char* bname, char* clang_optiones, BOOL 
         xstrncpy(bname2, bname, PATH_MAX);
     }
     
-    char cmd[1024];
+    if(!output_assembler_source) {
+        char cmd[1024];
     
 #ifdef __DARWIN_ARM__
-    snprintf(cmd, 1024, "%s -o %s -c %s.c %s -fPIC -I/opt/homebrew/opt/llvm@16/include -L/opt/homebrew/opt/llvm@16/lib -L/opt/homebrew/lib -I/opt/homebrew/include -L/usr/local/opt/libgc/lib -L/opt/homebrew/opt/boehmgc/lib -I/opt/homebrew/opt/pcre/include -fPIC -L/opt/homebrew/opt/boehmgc/lib ", CLANG, bname2, fname, clang_optiones);
+        snprintf(cmd, 1024, "%s -o %s -c %s.c %s -fPIC -I/opt/homebrew/opt/llvm@16/include -L/opt/homebrew/opt/llvm@16/lib -L/opt/homebrew/lib -I/opt/homebrew/include -L/usr/local/opt/libgc/lib -L/opt/homebrew/opt/boehmgc/lib -I/opt/homebrew/opt/pcre/include -fPIC -L/opt/homebrew/opt/boehmgc/lib ", CLANG, bname2, fname, clang_optiones);
 #else
-    snprintf(cmd, 1024, "%s -o %s -c %s.c %s -fPIC -fPIC ", CLANG, bname2, fname, clang_optiones);
+        snprintf(cmd, 1024, "%s -o %s -c %s.c %s -fPIC -fPIC ", CLANG, bname2, fname, clang_optiones);
 #endif
-    
-    int rc = system(cmd);
-    //puts(cmd);
-    if(rc != 0) {
-        fprintf(stderr, "return code is error on clang\n");
-        exit(6);
+        
+        int rc = system(cmd);
+        //puts(cmd);
+        if(rc != 0) {
+            fprintf(stderr, "return code is error on clang\n");
+            exit(6);
+        }
     }
     
     if(!output_assembler_source) {

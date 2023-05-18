@@ -191,7 +191,7 @@ BOOL call_operator_function(char* fun_base_name, sNodeType* left_type, int num_p
             }
     
             sBuf_append_str(&buf, ")");
-            add_come_code(info, "%s", buf.mBuf);
+            add_come_code(info, "%s;\n", buf.mBuf);
             
             if(obj && result_type->mHeap) {
                 char* var_name = append_object_to_right_values(obj, result_type, info);
@@ -350,7 +350,7 @@ BOOL call_operator_function(char* fun_base_name, sNodeType* left_type, int num_p
             }
     
             sBuf_append_str(&buf, ")");
-            add_come_code(info, "%s", buf.mBuf);
+            add_come_code(info, "%s;\n", buf.mBuf);
             
             LVALUE llvm_value;
             llvm_value.value = obj;

@@ -3940,8 +3940,7 @@ fi
 printf %s "checking Operating System... " >&6; }
 
 #CFLAGS='-DPREFIX="\"${DESTDIR}/\"" -fPIC'
-CFLAGS='-DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H'
-#CFLAGS='-DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H'
+CFLAGS='-DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H'
 #CFLAGS="-fPIC -rdynamic $CFLAGS"
 
 if uname -v | grep iSH > /dev/null; then

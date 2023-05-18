@@ -297,7 +297,9 @@ void output_typedef(char* name, sNodeType* node_type);
 char* make_define_var(sNodeType* node_type, char* name);
 sComeFun* get_come_function(char* fun_name);
 void add_come_code(struct sCompileInfoStruct* info, const char* msg, ...);
+void add_come_code_top_level(const char* msg, ...);
 void add_come_last_code(struct sCompileInfoStruct* info, const char* msg, ...);
+void add_last_code_to_source(struct sCompileInfoStruct* info);
 void output_function(sBuf* output, sComeFun* fun);
 void header_function(sBuf* output, sComeFun* fun);
 char* make_lambda_type_name_string(sNodeType* node_type, char* var_name);
@@ -1590,8 +1592,6 @@ char* xsprintf(const char* msg, ...);
 
 extern int gRightValueNum;
 
-void add_come_code_directory_top_level(const char* msg, ...);
-void add_come_code_directory(struct sCompileInfoStruct* info, const char* msg, ...);
 void transpiler_clear_last_code();
 unsigned int sNodeTree_create_paren(unsigned int left_node, sParserInfo* info);
 BOOL compile_paren(unsigned int node, sCompileInfo* info);

@@ -620,7 +620,7 @@ S["ac_ct_CC"]="gcc"
 S["CPPFLAGS"]=""
 S["LDFLAGS"]=""
 S["CFLAGS"]="-I/usr/lib/llvm-14/include  -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -Isrc/ -I. -DPREFIX=\"\\\"${DESTDIR}/\\"\
-"\"\" -fPIC -L/usr/local/lib -DCONFIG_H -I/usr/local/include -DLLVM_VERSION=14 -DCLANG=\"\\\"clang\\\"\" -DGCC=\"\\\"clang\\\"\""
+"\"\" -fPIC -DCONFIG_H -I/usr/local/include -DLLVM_VERSION=14 -DCLANG=\"\\\"clang\\\"\" -DGCC=\"\\\"clang\\\"\""
 S["CC"]="clang"
 S["target_alias"]=""
 S["host_alias"]=""

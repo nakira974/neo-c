@@ -713,6 +713,7 @@ struct sCompileInfoStruct
     BOOL creating_generics_function;
     
     sComeFun* come_fun;
+    int come_nest;
 };
 
 typedef struct sCompileInfoStruct sCompileInfo;

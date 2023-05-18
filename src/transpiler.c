@@ -151,6 +151,10 @@ void add_come_code(struct sCompileInfoStruct* info, const char* msg, ...)
     va_end(args);
     
     if(info->come_fun) {
+        int i;
+        for(i=0; i<info->come_nest; i++) {
+            sBuf_append_str(&info->come_fun->mSource, "    ");
+        }
         sBuf_append_str(&info->come_fun->mSource, xsprintf("%s", msg2));
     }
     else {

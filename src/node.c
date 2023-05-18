@@ -5458,6 +5458,9 @@ BOOL compile_block(sNodeBlock* block, BOOL force_hash_result, sCompileInfo* info
 
     sVarTable* old_table = info->pinfo->lv_table;
     info->pinfo->lv_table = block->mLVTable;
+    
+    int nest = info->come_nest;
+    info->come_nest++;
 
     BOOL has_result = block->mHasResult;
     BOOL function_body = block->mFunctionBody;
@@ -5586,6 +5589,7 @@ BOOL compile_block(sNodeBlock* block, BOOL force_hash_result, sCompileInfo* info
     }
     
     info->pinfo->lv_table = old_table;
+    info->come_nest = nest;
     
     return TRUE;
 }

@@ -56,7 +56,7 @@ sVarTable* clone_var_table(sVarTable* lv_table)
 
     while(1) {
         if(p->mName[0] != 0) {
-            if(!add_variable_to_table(result, p->mName, p->mType, p->mLLVMValue, p->mIndex, p->mGlobal, p->mAllocaValue))
+            if(!add_variable_to_table(result, p->mName, p->mInlineRealName, p->mType, p->mLLVMValue, p->mIndex, p->mGlobal, p->mAllocaValue))
             {
                 fprintf(stderr, "overflow variable table\n");
                 exit(2);
@@ -84,7 +84,7 @@ sVarTable* clone_var_table(sVarTable* lv_table)
 // local variable table
 //////////////////////////////////////////////////
 // result: (true) success (false) overflow the table or a variable which has the same name exists
-BOOL add_variable_to_table(sVarTable* table, char* name, sNodeType* type_, LVALUE llvm_value, int index, BOOL global, BOOL alloca_value)
+BOOL add_variable_to_table(sVarTable* table, char* name, char* inline_real_name, sNodeType* type_, LVALUE llvm_value, int index, BOOL global, BOOL alloca_value)
 {
     int hash_value;
     sVar* p;
@@ -95,6 +95,7 @@ BOOL add_variable_to_table(sVarTable* table, char* name, sNodeType* type_, LVALU
     while(1) {
         if(p->mName[0] == 0) {
             xstrncpy(p->mName, name, VAR_NAME_MAX);
+            xstrncpy(p->mInlineRealName, inline_real_name, VAR_NAME_MAX);
             if(index == -1) {
                 p->mIndex = table->mVarNum++;
             }
@@ -123,6 +124,7 @@ BOOL add_variable_to_table(sVarTable* table, char* name, sNodeType* type_, LVALU
         else {
             if(strcmp(p->mName, name) == 0) {
                 xstrncpy(p->mName, name, VAR_NAME_MAX);
+                xstrncpy(p->mInlineRealName, inline_real_name, VAR_NAME_MAX);
                 if(index == -1) {
                     p->mIndex = table->mVarNum++;
                 }

@@ -291,8 +291,14 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
             LLVMSetAlignment(alloca_value, 4);
         }
         
-        char* define_str = make_define_var(var_type, var_name);
-        add_come_code(info, "extern %s;\n", define_str);
+        if(strcmp(var_->mInlineRealName, "") != 0) {
+            char* define_str = make_define_var(var_type, var_->mInlineRealName);
+            add_come_code(info, "extern %s;\n", define_str);
+        }
+        else {
+            char* define_str = make_define_var(var_type, var_name);
+            add_come_code(info, "extern %s;\n", define_str);
+        }
 
         var_->mLLVMValue.value = alloca_value;
     }
@@ -432,9 +438,16 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
                 setNullCurrentDebugLocation(info->sline, info);
             }
             
-            char* define_str = make_define_var(var_type, var_name);
-            add_come_code(info, "%s;\n", define_str);
-            add_come_code(info, "memset(&%s, 0, sizeof(%s));\n", var_name, make_type_name_string(var_type));
+            if(strcmp(var_->mInlineRealName, "") != 0) {
+                char* define_str = make_define_var(var_type, var_->mInlineRealName);
+                add_come_code(info, "%s;\n", define_str);
+                add_come_code(info, "memset(&%s, 0, sizeof(%s));\n", var_name, make_type_name_string(var_type));
+            }
+            else {
+                char* define_str = make_define_var(var_type, var_name);
+                add_come_code(info, "%s;\n", define_str);
+                add_come_code(info, "memset(&%s, 0, sizeof(%s));\n", var_name, make_type_name_string(var_type));
+            }
 
             LLVMValueRef alloca_value = LLVMBuildAlloca(gBuilder, llvm_type, var_name);
             
@@ -827,11 +840,20 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
     if(alloc) {
         LVALUE llvm_value = rvalue;
         
-        char* define_str = make_define_var(left_type, var_name);
-        
-        llvm_value.c_value = xsprintf("%s=%s", define_str, rvalue.c_value);
-        
-        add_come_code(info, "%s;\n", llvm_value.c_value);
+        if(strcmp(var_->mInlineRealName, "") != 0) {
+            char* define_str = make_define_var(left_type, var_->mInlineRealName);
+            
+            llvm_value.c_value = xsprintf("%s=%s", define_str, rvalue.c_value);
+            
+            add_come_code(info, "%s;\n", llvm_value.c_value);
+        }
+        else {
+            char* define_str = make_define_var(left_type, var_name);
+            
+            llvm_value.c_value = xsprintf("%s=%s", define_str, rvalue.c_value);
+            
+            add_come_code(info, "%s;\n", llvm_value.c_value);
+        }
         
         dec_stack_ptr(1, info);
         
@@ -842,7 +864,12 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
         
         llvm_value.c_value = xsprintf("%s", rvalue.c_value);
         
-        add_come_code(info, "%s=%s;\n", var_name, rvalue.c_value);
+        if(strcmp(var_->mInlineRealName, "") != 0) {
+            add_come_code(info, "%s=%s;\n", var_->mInlineRealName, rvalue.c_value);
+        }
+        else {
+            add_come_code(info, "%s=%s;\n", var_name, rvalue.c_value);
+        }
         
         dec_stack_ptr(1, info);
         
@@ -5101,7 +5128,12 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
             llvm_value.type = var_type2;
             llvm_value.address = var_address;
             llvm_value.var = var_;
-            llvm_value.c_value = xsprintf("%s", var_name);
+            if(strcmp(var_->mInlineRealName, "") != 0) {
+                llvm_value.c_value = xsprintf("%s", var_->mInlineRealName);
+            }
+            else {
+                llvm_value.c_value = xsprintf("%s", var_name);
+            }
     
             push_value_to_stack_ptr(&llvm_value, info);
             
@@ -5114,7 +5146,12 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
     
             llvm_value.type = clone_node_type(var_type);
             llvm_value.var = var_;
-            llvm_value.c_value = xsprintf("%s", var_name);
+            if(strcmp(var_->mInlineRealName, "") != 0) {
+                llvm_value.c_value = xsprintf("%s", var_->mInlineRealName);
+            }
+            else {
+                llvm_value.c_value = xsprintf("%s", var_name);
+            }
     
             push_value_to_stack_ptr(&llvm_value, info);
             
@@ -5129,7 +5166,12 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
             llvm_value.type = var_type2;
             llvm_value.address = var_address;
             llvm_value.var = var_;
-            llvm_value.c_value = xsprintf("%s", var_name);
+            if(strcmp(var_->mInlineRealName, "") != 0) {
+                llvm_value.c_value = xsprintf("%s", var_->mInlineRealName);
+            }
+            else {
+                llvm_value.c_value = xsprintf("%s", var_name);
+            }
     
             push_value_to_stack_ptr(&llvm_value, info);
             
@@ -5142,7 +5184,12 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
             llvm_value.type = var_type2;
             llvm_value.address = var_address;
             llvm_value.var = var_;
-            llvm_value.c_value = xsprintf("%s", var_name);
+            if(strcmp(var_->mInlineRealName, "") != 0) {
+                llvm_value.c_value = xsprintf("%s", var_->mInlineRealName);
+            }
+            else {
+                llvm_value.c_value = xsprintf("%s", var_name);
+            }
     
             push_value_to_stack_ptr(&llvm_value, info);
             
@@ -5155,7 +5202,12 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
 
         llvm_value.type = clone_node_type(var_type);
         llvm_value.var = var_;
-        llvm_value.c_value = xsprintf("%s", var_name);
+        if(strcmp(var_->mInlineRealName, "") != 0) {
+            llvm_value.c_value = xsprintf("%s", var_->mInlineRealName);
+        }
+        else {
+            llvm_value.c_value = xsprintf("%s", var_name);
+        }
 
         push_value_to_stack_ptr(&llvm_value, info);
         
@@ -5167,7 +5219,12 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
         llvm_value.type = var_type;
         llvm_value.address = var_address;
         llvm_value.var = var_;
-        llvm_value.c_value = xsprintf("%s", var_name);
+        if(strcmp(var_->mInlineRealName, "") != 0) {
+            llvm_value.c_value = xsprintf("%s", var_->mInlineRealName);
+        }
+        else {
+            llvm_value.c_value = xsprintf("%s", var_name);
+        }
 
         push_value_to_stack_ptr(&llvm_value, info);
 
@@ -5182,7 +5239,12 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
             llvm_value.type = clone_node_type(var_type);
             llvm_value.address = var_address;
             llvm_value.var = var_;
-            llvm_value.c_value = xsprintf("%s", var_name);
+            if(strcmp(var_->mInlineRealName, "") != 0) {
+                llvm_value.c_value = xsprintf("%s", var_->mInlineRealName);
+            }
+            else {
+                llvm_value.c_value = xsprintf("%s", var_name);
+            }
 
             push_value_to_stack_ptr(&llvm_value, info);
 
@@ -5278,7 +5340,12 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
             llvm_value.type = var_type;
             llvm_value.address = var_address;
             llvm_value.var = var_;
-            llvm_value.c_value = xsprintf("%s", var_name);
+            if(strcmp(var_->mInlineRealName, "") != 0) {
+                llvm_value.c_value = xsprintf("%s", var_->mInlineRealName);
+            }
+            else {
+                llvm_value.c_value = xsprintf("%s", var_name);
+            }
 
             push_value_to_stack_ptr(&llvm_value, info);
 
@@ -5292,7 +5359,12 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
             llvm_value.type = var_type;
             llvm_value.address = var_address;
             llvm_value.var = var_;
-            llvm_value.c_value = xsprintf("%s", var_name);
+            if(strcmp(var_->mInlineRealName, "") != 0) {
+                llvm_value.c_value = xsprintf("%s", var_->mInlineRealName);
+            }
+            else {
+                llvm_value.c_value = xsprintf("%s", var_name);
+            }
 
             push_value_to_stack_ptr(&llvm_value, info);
 
@@ -5315,7 +5387,12 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
             llvm_value.type = var_type;
             llvm_value.address = var_address;
             llvm_value.var = var_;
-            llvm_value.c_value = xsprintf("%s", var_name);
+            if(strcmp(var_->mInlineRealName, "") != 0) {
+                llvm_value.c_value = xsprintf("%s", var_->mInlineRealName);
+            }
+            else {
+                llvm_value.c_value = xsprintf("%s", var_name);
+            }
 
             push_value_to_stack_ptr(&llvm_value, info);
 

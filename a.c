@@ -1,38 +1,24 @@
-
-int gB = 1;
-int gA = 0;
 int printf(const char *format, ...);
 int puts(const char *s);
+void *memset(void *s, int c, size_t n);
 
-int fun(int x, int y)
+void times(int n, void* parent, void (*fun)(void* parent))
 {
-    return x + y;
-}
-
-inline int fun2(int x, int y)
-{
-    return x + y;
+    int i;
+    while(i<n) {
+        fun(parent);
+        i++;
+    }
 }
 
 int main(int argc, char** argv)
 {
-    gA = gB + 1;
-    printf("gA %d\n", gA);
-    
-    int x = 1;
-    int y = 2 + x;
-    x +=2;
-    y++;
-    
-    if(x==3) {
-        puts("OK");
-    }
-    
-    printf("x %d y %d\n", x, y);
-    printf("x + y %d\n", fun(x, y));
-    printf("x + y %d\n", fun2(x, y));
-    
-    return 0;
-}
+    int a = 1;
 
+    times(3) {
+        puts("HELLO METHOD BLOCK");
+        printf("a %d\n", a);
+        a++;
+    }
+}
 

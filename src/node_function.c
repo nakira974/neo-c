@@ -598,7 +598,7 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
         llvm_value.value = llvm_fun;
         llvm_value.type = clone_node_type(lambda_type);
         llvm_value.address = NULL;
-        llvm_value.c_value = xsprintf("%s", fun_name);
+        llvm_value.c_value = xsprintf("(void*)(%s)", fun_name);
         llvm_value.var = NULL;
 
         push_value_to_stack_ptr(&llvm_value, info);

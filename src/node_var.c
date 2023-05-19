@@ -7776,6 +7776,10 @@ BOOL compile_stack(unsigned int node, sCompileInfo* info)
     LLVMTypeRef llvm_type = create_llvm_type_from_node_type(node_type);
 
     LLVMValueRef stack = LLVMBuildAlloca(gBuilder, llvm_type, "current_stack");
+    
+    static int n = 0;
+    char* stack_name = xsprintf("current_stack%d", n++);
+    add_come_code(info, "struct %s %s;\n", type_name, stack_name);
 
     sVarTable* it = lv_table;
     int field_index = 0;
@@ -7788,6 +7792,7 @@ BOOL compile_stack(unsigned int node, sCompileInfo* info)
                 sVar* var_ = get_variable_from_table(info->pinfo->lv_table, p->mName);
 
                 sNodeType* field_type = node_type->mClass->mFields[field_index];
+                char* field_name = node_type->mClass->mFieldName[field_index];
                 
                 sNodeType* node_type2 = clone_node_type(node_type);
                 node_type2->mPointerNum = 0;
@@ -7807,6 +7812,8 @@ BOOL compile_stack(unsigned int node, sCompileInfo* info)
                 LLVMValueRef llvm_value = LLVMBuildCast(gBuilder, LLVMBitCast, value, llvm_var_type, "current_stack_cast");
 
                 LLVMBuildStore(gBuilder, llvm_value, field_address);
+                
+                add_come_code(info, "%s.%s = &%s;\n", stack_name, field_name, field_name);
                 
                 field_index++;
             }
@@ -7832,7 +7839,7 @@ BOOL compile_stack(unsigned int node, sCompileInfo* info)
     llvm_value.type = clone_node_type(node_type);
     llvm_value.address = NULL;
     llvm_value.var = NULL;
-    llvm_value.c_value = NULL;
+    llvm_value.c_value = xsprintf("&%s", stack_name);
 
     push_value_to_stack_ptr(&llvm_value, info);
 

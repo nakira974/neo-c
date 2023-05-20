@@ -276,7 +276,7 @@ configure:4451: checking for lchmod
 configure:4451: clang -o conftest -Isrc/ -I. -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/include   conftest.c  -lutil -ldl -lm -lgc -lrt >&5
 configure:4451: $? = 0
 configure:4451: result: yes
-configure:4631: creating ./config.status
+configure:4635: creating ./config.status
 
 ## ---------------------- ##
 ## Running config.status. ##
@@ -361,8 +361,8 @@ CFLAGS='-I/usr/lib/llvm-14/include  -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__S
 CLANG=''
 CPPFLAGS=''
 CXX='clang++'
-CXXFLAGS2='-I/usr/lib/llvm-14/include -std=c++14   -fno-exceptions -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -L/usr/lib/llvm-14/lib  -lLLVM-14   -O2 -I . -I src -DPREFIX="\"${DESTDIR}/\" -L/usr/local/lib"'
-CXXFLAGS='-I/usr/lib/llvm-14/include -std=c++14   -fno-exceptions -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -L/usr/lib/llvm-14/lib  -lLLVM-14   -O2 -I . -I src -DPREFIX="\"${DESTDIR}/\" -L/usr/local/lib"'
+CXXFLAGS2=''
+CXXFLAGS='-I/usr/lib/llvm-14/include -std=c++14   -fno-exceptions -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -lLLVM-14   -I/usr/lib/llvm-14/include -std=c++14   -fno-exceptions -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -L/usr/lib/llvm-14/lib  -lLLVM-14   -O2 -I . -I src -DPREFIX="\"${DESTDIR}/\""'
 DEFS='-DHAVE_CONFIG_H'
 DESTDIR='/usr/local'
 ECHO_C=''

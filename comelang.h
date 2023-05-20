@@ -34,6 +34,7 @@
 #define __attribute__(x)
 
 //#define _XOPEN_SOURCE
+#undef offsetof
 #include <wchar.h>
 
 using comelang;

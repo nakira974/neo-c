@@ -649,7 +649,6 @@ ac_subst_vars='LTLIBOBJS
 LIBOBJS
 SELF_HOST_OBJS
 OBJS
-CXXFLAGS2
 CXXFLAGS
 CXX
 DESTDIR
@@ -3940,7 +3939,8 @@ fi
 printf %s "checking Operating System... " >&6; }
 
 #CFLAGS='-DPREFIX="\"${DESTDIR}/\"" -fPIC'
-CFLAGS='-DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H'
+CFLAGS='-DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H'
+#CFLAGS='-DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H'
 #CFLAGS="-fPIC -rdynamic $CFLAGS"
 
 if uname -v | grep iSH > /dev/null; then
@@ -4421,7 +4421,7 @@ DESTDIR=$myprefix
 
 
 
-CXXFLAGS='-DPREFIX="\"${DESTDIR}/\" -L/usr/local/lib"'
+CXXFLAGS='-DPREFIX="\"${DESTDIR}/\""'
 CXXFLAGS="-I . -I src $CXXFLAGS"
 #CXXFLAGS="-fPIC -rdynamic $CXXFLAGS"
 
@@ -4501,17 +4501,17 @@ fi
 
 CFLAGS=$CFLAGS' -DGCC="\"clang\""'
 
-if test $DEBUGGING = 1
-then
-    CXXFLAGS2="${CXXFLAGS}"
-else
-    CXXFLAGS2="${CXXFLAGS#-g}"
-fi
+#if test $DEBUGGING = 1
+#then
+    #CXXFLAGS2="${CXXFLAGS}"
+#else
+    #CXXFLAGS2="${CXXFLAGS#-g}"
+#fi
 
 #CXXFLAGS='`llvm-config --cxxflags --ldflags --system-libs --libs all` '" $CXXFLAGS"
 
 
-
+#AC_SUBST(CXXFLAGS2)
 
 
 

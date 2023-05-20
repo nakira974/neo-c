@@ -39,10 +39,10 @@ no-self-host: comelang lib lib-gc lib-ts
 
 comelang: config.h src/main.o $(OBJS) src/llvm.o
 	$(CC) -c src/main.c -o src/main.o $(CFLAGS)
-	$(CXX) -o comelang src/main.o $(OBJS) src/llvm.o $(CXXFLAGS) $(LIBS) -L/usr/local/lib -L/opt/homebrew/lib
+	$(CXX) -o comelang src/main.o $(OBJS) $(CXXFLAGS) src/llvm.o $(LIBS) -L/usr/local/lib -L/opt/homebrew/lib
 
 src/llvm.o: src/llvm.cpp
-	$(CXX) -c -o src/llvm.o src/llvm.cpp $(CXXFLAGS) $(CFLAGS)
+	$(CXX) -c -o src/llvm.o src/llvm.cpp $(CXXFLAGS2) $(CFLAGS)
 
 lib-ts: comelang-ts.o
 	ar r libcomelang-ts.a comelang-ts.o

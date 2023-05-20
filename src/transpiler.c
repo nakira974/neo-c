@@ -233,6 +233,39 @@ char* make_define_var(sNodeType* node_type, char* name)
         sBuf_append_str(&buf, "int ");
         sBuf_append_str(&buf, xsprintf("%s:%d;\n", name, node_type->mSizeNum));
     }
+    else if(node_type->mDynamicArrayNum != 0) {
+        sCompileInfo cinfo;
+
+        memset(&cinfo, 0, sizeof(sCompileInfo));
+
+        if(!compile(node_type->mDynamicArrayNum, &cinfo)) {
+            return FALSE;
+        }
+
+        LVALUE llvm_value = *get_value_from_stack(-1);
+        
+        char* node_type_str = make_type_name_string(node_type);
+        
+        sBuf_append_str(&buf, node_type_str);
+        
+        sBuf_append_str(&buf, " ");
+        sBuf_append_str(&buf, name);
+        
+        sBuf_append_str(&buf, xsprintf("[%s]", llvm_value.c_value));
+    }
+    else if(node_type->mArrayDimentionNum > 0) {
+        char* node_type_str = make_type_name_string(node_type);
+        
+        sBuf_append_str(&buf, node_type_str);
+        
+        sBuf_append_str(&buf, " ");
+        sBuf_append_str(&buf, name);
+        
+        int i=0;
+        for(i=0; i<node_type->mArrayDimentionNum; i++) {
+            sBuf_append_str(&buf, xsprintf("[%d]", node_type->mArrayNum[i]));
+        }
+    }
     else {
         char* node_type_str = make_type_name_string(node_type);
         
@@ -480,6 +513,10 @@ char* make_type_name_string(sNodeType* node_type)
     sBuf_init(&output);
     
     char* class_name = node_type->mClass->mName;
+    
+    if(node_type->mStatic) {
+        sBuf_append_str(&output, "static ");
+    }
     
     if(node_type->mConstant) {
         sBuf_append_str(&output, "const ");

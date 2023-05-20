@@ -898,6 +898,8 @@ BOOL compile_for_expression(unsigned int node, sCompileInfo* info)
     info->sline = gNodes[expression_node].mLine;
     
     LVALUE init_value;
+    add_come_code(info, "{\n");
+    int nest = info->come_nest++;
     
     if(expression_node != 0) {
         if(!compile_conditional_expression(expression_node, info)) {
@@ -949,6 +951,7 @@ BOOL compile_for_expression(unsigned int node, sCompileInfo* info)
         conditional_value.value = zero_value;
         conditional_value.type = create_node_type_with_class_name("int");
         conditional_value.address = NULL;
+        conditional_value.c_value = NULL;
         conditional_value.var = NULL;
         
         conditional_type = create_node_type_with_class_name("int");
@@ -1001,7 +1004,12 @@ BOOL compile_for_expression(unsigned int node, sCompileInfo* info)
     sNodeBlock* current_node_block = info->current_node_block;
     info->current_node_block = for_block;
     
-    //add_come_code(info, "{ %s;\n while(%s) {\n", init_value.c_value, conditional_value.c_value);
+    if(conditional_value.c_value) {
+        add_come_code(info, "while(%s) {\n", conditional_value.c_value);
+    }
+    else {
+        add_come_code(info, "while(1) {\n");
+    }
 
     /// block of for expression ///
     if(for_block) {
@@ -1032,6 +1040,8 @@ BOOL compile_for_expression(unsigned int node, sCompileInfo* info)
     llvm_change_block(loop_continue_top_block, info);
     
     LVALUE third_exp;
+    
+    info->come_nest++;
 
     if(expression_node3) {
         if(!compile_conditional_expression(expression_node3, info)) {
@@ -1054,7 +1064,10 @@ BOOL compile_for_expression(unsigned int node, sCompileInfo* info)
             LLVMBuildBr(gBuilder, loop_top_block);
         }
     }
-    //add_come_code(info, "%s;\n }\n}\n", third_exp.c_value);
+    info->come_nest--;
+    add_come_code(info, "}\n");
+    info->come_nest = nest;
+    add_come_code(info, "}\n");
 
     info->last_expression_is_return = last_expression_is_return_before;
 

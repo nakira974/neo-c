@@ -327,6 +327,9 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
         if(static_) {
             LLVMSetLinkage(alloca_value, LLVMInternalLinkage);
         }
+        
+        char* define_str = make_define_var(var_type, var_name);
+        add_come_code(info, "%s;\n", define_str);
 
         if(var_type->mArrayDimentionNum == 1) {
             /// zero initializer ///
@@ -402,30 +405,44 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
     }
     else {
         if(var_type->mDynamicArrayNum != 0) {
-            if(!compile(var_type->mDynamicArrayNum, info)) {
-                return FALSE;
+            if(gNCTranspile) {
+                if(strcmp(var_->mInlineRealName, "") != 0) {
+                    char* define_str = make_define_var(var_type, var_->mInlineRealName);
+                    add_come_code(info, "%s;\n", define_str);
+                    add_come_code(info, "memset(&%s, 0, sizeof(%s));\n", var_name, make_type_name_string(var_type));
+                }
+                else {
+                    char* define_str = make_define_var(var_type, var_name);
+                    add_come_code(info, "%s;\n", define_str);
+                    add_come_code(info, "memset(&%s, 0, sizeof(%s));\n", var_name, make_type_name_string(var_type));
+                }
             }
-
-            LVALUE llvm_value = *get_value_from_stack(-1);
-
+            else {
+                if(!compile(var_type->mDynamicArrayNum, info)) {
+                    return FALSE;
+                }
+    
+                LVALUE llvm_value = *get_value_from_stack(-1);
+    
 #ifdef __32BIT_CPU__
-            sNodeType* left_type = create_node_type_with_class_name("int");
+                sNodeType* left_type = create_node_type_with_class_name("int");
 #else
-            sNodeType* left_type = create_node_type_with_class_name("long");
+                sNodeType* left_type = create_node_type_with_class_name("long");
 #endif
-
-            if(!cast_right_type_to_left_type(left_type, &llvm_value.type, &llvm_value, info))
-            {
-                compile_err_msg(info, "Cast failed");
-                return TRUE;
+    
+                if(!cast_right_type_to_left_type(left_type, &llvm_value.type, &llvm_value, info))
+                {
+                    compile_err_msg(info, "Cast failed");
+                    return TRUE;
+                }
+                dec_stack_ptr(1, info);
+    
+                LLVMValueRef len_value = llvm_value.value;
+    
+                LLVMValueRef alloca_value = LLVMBuildArrayAlloca(gBuilder, llvm_type, len_value, var_name);
+                var_->mLLVMValue.value = alloca_value;
+                var_->mLLVMValue.address = alloca_value;
             }
-            dec_stack_ptr(1, info);
-
-            LLVMValueRef len_value = llvm_value.value;
-
-            LLVMValueRef alloca_value = LLVMBuildArrayAlloca(gBuilder, llvm_type, len_value, var_name);
-            var_->mLLVMValue.value = alloca_value;
-            var_->mLLVMValue.address = alloca_value;
         }
         else {
             LLVMBasicBlockRef this_block = LLVMGetInsertBlock(gBuilder);
@@ -862,13 +879,13 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
     else {
         LVALUE llvm_value = rvalue;
         
-        llvm_value.c_value = xsprintf("%s", rvalue.c_value);
-        
         if(strcmp(var_->mInlineRealName, "") != 0) {
             add_come_code(info, "%s=%s;\n", var_->mInlineRealName, rvalue.c_value);
+            llvm_value.c_value = xsprintf("%s", var_->mInlineRealName);
         }
         else {
             add_come_code(info, "%s=%s;\n", var_name, rvalue.c_value);
+            llvm_value.c_value = xsprintf("%s", var_name);
         }
         
         dec_stack_ptr(1, info);

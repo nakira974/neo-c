@@ -232,6 +232,12 @@ unsigned int sNodeTree_create_function_call(char* fun_name, unsigned int* params
         xstrncpy(fun_name, "strcpy", VAR_NAME_MAX);
         num_params--;
     }
+    else if(strcmp(fun_name, "string") == 0) {
+        xstrncpy(fun_name, "__builtin_string", VAR_NAME_MAX);
+    }
+    else if(strcmp(fun_name, "wstring") == 0) {
+        xstrncpy(fun_name, "__builtin_wstring", VAR_NAME_MAX);
+    }
 
     xstrncpy(gNodes[node].uValue.sFunctionCall.mName, fun_name, VAR_NAME_MAX);
     gNodes[node].uValue.sFunctionCall.mNumParams = num_params;
@@ -1449,12 +1455,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         
         sBuf_init(&buf);
         
-        if(result_type->mHeap) {
-            sBuf_append_str(&buf, xsprintf("(right_value%d=", gRightValueNum));
-        }
-        else {
-            sBuf_append_str(&buf, "(");
-        }
+        sBuf_append_str(&buf, "(");
         if(fun->mAsmFunName) {
 #ifdef __DARWIN__
             if(fun->mFlagAsmFunName) {

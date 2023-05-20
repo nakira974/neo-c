@@ -1335,7 +1335,7 @@ unsigned int sNodeTree_create_caller_sline(sParserInfo* info);
 
 unsigned int sNodeTree_create_load_channel_element(unsigned int array, unsigned int num_chanel, sParserInfo* info);
 unsigned int sNodeTree_create_stack_object(sNodeType* node_type, unsigned int object_num, char* sname, int sline, sParserInfo* info);
-unsigned int sNodeTree_create_derefference(unsigned int left_node, BOOL parent, sNodeType* cast_pointer_type, sParserInfo* info);
+unsigned int sNodeTree_create_derefference(unsigned int left_node, BOOL parent, sNodeType* cast_pointer_type, BOOL no_check_safe_mode, sParserInfo* info);
 unsigned int sNodeTree_create_refference(unsigned int left_node, sParserInfo* info);
 unsigned int sNodeTree_create_clone(unsigned int left, BOOL gc, sParserInfo* info);
 unsigned int sNodeTree_create_is_gc_heap(unsigned int left, sParserInfo* info);

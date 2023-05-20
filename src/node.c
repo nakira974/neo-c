@@ -2241,7 +2241,7 @@ void init_nodes(char* sname)
             fprintf(stderr, "overflow function number\n");
             exit(44);
         }
-        //add_come_function(name, result_type, num_params, param_types, param_names2, TRUE, FALSE);
+        add_come_function(name, result_type, num_params, param_types, param_names2, TRUE, FALSE);
     }
     /// igc_increment_ref_count ///
     {
@@ -2281,7 +2281,7 @@ void init_nodes(char* sname)
             fprintf(stderr, "overflow function number\n");
             exit(45);
         }
-        //add_come_function(name, result_type, num_params, param_types, param_names2, TRUE, FALSE);
+        add_come_function(name, result_type, num_params, param_types, param_names2, TRUE, FALSE);
     }
     /// igc_decrement_ref_count ///
     {
@@ -2321,7 +2321,7 @@ void init_nodes(char* sname)
             fprintf(stderr, "overflow function number\n");
             exit(46);
         }
-        //add_come_function(name, result_type, num_params, param_types, param_names2, TRUE, FALSE);
+        add_come_function(name, result_type, num_params, param_types, param_names2, TRUE, FALSE);
     }
     
     /// unwrap_exception ///
@@ -2368,7 +2368,7 @@ void init_nodes(char* sname)
             fprintf(stderr, "overflow function number\n");
             exit(47);
         }
-        //add_come_function(name, result_type, num_params, param_types, param_names2, TRUE, FALSE);
+        add_come_function(name, result_type, num_params, param_types, param_names2, TRUE, FALSE);
     }
 
     {

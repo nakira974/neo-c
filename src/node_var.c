@@ -1846,7 +1846,7 @@ BOOL compile_refference_load_field(unsigned int node, sCompileInfo* info)
     return TRUE;
 }
 
-unsigned int sNodeTree_create_derefference(unsigned int left_node, BOOL parent, sNodeType* cast_pointer_type, sParserInfo* info)
+unsigned int sNodeTree_create_derefference(unsigned int left_node, BOOL parent, sNodeType* cast_pointer_type, BOOL no_check_safe_mode, sParserInfo* info)
 {
     unsigned int node = alloc_node();
 
@@ -1863,7 +1863,12 @@ unsigned int sNodeTree_create_derefference(unsigned int left_node, BOOL parent, 
     else {
         gNodes[node].uValue.sStoreValueToAddress.mCastPointerType = NULL;
     }
-    gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
+    if(no_check_safe_mode) {
+        gNodes[node].uValue.sStoreValueToAddress.mSafeMode = FALSE;
+    }
+    else {
+        gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
+    }
 
     gNodes[node].mLeft = left_node;
     gNodes[node].mRight = 0;

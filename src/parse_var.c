@@ -13,7 +13,7 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
         {
             info->p+=3;
             skip_spaces_and_lf(info);
-            *node = sNodeTree_create_derefference(*node, TRUE, NULL, info);
+            *node = sNodeTree_create_derefference(*node, TRUE, NULL, FALSE, info);
         }
         /// call method or access field ///
         else if(((*info->p == '.' && *(info->p+1) != '.')|| (*info->p == '-' && *(info->p+1) == '>')) && !info->no_method_call)

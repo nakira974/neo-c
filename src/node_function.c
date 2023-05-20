@@ -123,6 +123,13 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
     char fun_name[VAR_NAME_MAX];
     xstrncpy(fun_name, gNodes[node].uValue.sFunction.mName, VAR_NAME_MAX);
     
+    if(strcmp(fun_name, "string") == 0) {
+        xstrncpy(fun_name, "__builtin_string", VAR_NAME_MAX);
+    }
+    else if(strcmp(fun_name, "wstring") == 0) {
+        xstrncpy(fun_name, "__builtin_wstring", VAR_NAME_MAX);
+    }
+    
     xstrncpy(info->fun_name, fun_name, VAR_NAME_MAX);
     
     char asm_fun_name[VAR_NAME_MAX];
@@ -1159,6 +1166,13 @@ BOOL compile_external_function(unsigned int node, sCompileInfo* info)
     }
     else {
         snprintf(fun_name, VAR_NAME_MAX, "%s_%s", struct_name, gNodes[node].uValue.sFunction.mName);
+    }
+    
+    if(strcmp(fun_name, "string") == 0) {
+        xstrncpy(fun_name, "__builtin_string", VAR_NAME_MAX);
+    }
+    else if(strcmp(fun_name, "wstring") == 0) {
+        xstrncpy(fun_name, "__builtin_wstring", VAR_NAME_MAX);
     }
 
     char asm_fun_name[VAR_NAME_MAX];

@@ -368,7 +368,7 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
         
         *node = sNodeTree_create_load_variable("parent", info);
         *node = sNodeTree_create_load_field(buf, *node, info);
-        unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, info);
+        unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, FALSE, info);
 
         unsigned int right_node = sNodeTree_create_int_value(1, info);
 
@@ -393,7 +393,7 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
         
         *node = sNodeTree_create_load_variable("parent", info);
         *node = sNodeTree_create_load_field(buf, *node, info);
-        unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, info);
+        unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, FALSE, info);
 
         unsigned int right_node = sNodeTree_create_int_value(1, info);
 
@@ -423,7 +423,7 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
 
         *node = sNodeTree_create_load_variable("parent", info);
         *node = sNodeTree_create_load_field(buf, *node, info);
-        unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, info);
+        unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, FALSE, info);
 
         *node = sNodeTree_create_add(left_node, right_node, 0, TRUE, info);
 
@@ -451,7 +451,7 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
 
         *node = sNodeTree_create_load_variable("parent", info);
         *node = sNodeTree_create_load_field(buf, *node, info);
-        unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, info);
+        unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, FALSE, info);
 
         *node = sNodeTree_create_sub(left_node, right_node, 0, TRUE, info);
 
@@ -479,7 +479,7 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
 
         *node = sNodeTree_create_load_variable("parent", info);
         *node = sNodeTree_create_load_field(buf, *node, info);
-        unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, info);
+        unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, FALSE, info);
 
         *node = sNodeTree_create_mult(left_node, right_node, 0, info);
 
@@ -503,7 +503,7 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
 
         *node = sNodeTree_create_load_variable("parent", info);
         *node = sNodeTree_create_load_field(buf, *node, info);
-        unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, info);
+        unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, FALSE, info);
 
         *node = sNodeTree_create_div(left_node, right_node, 0, info);
 
@@ -527,7 +527,7 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
 
         *node = sNodeTree_create_load_variable("parent", info);
         *node = sNodeTree_create_load_field(buf, *node, info);
-        unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, info);
+        unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, FALSE, info);
 
         *node = sNodeTree_create_mod(left_node, right_node, 0, info);
 
@@ -551,7 +551,7 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
 
         *node = sNodeTree_create_load_variable("parent", info);
         *node = sNodeTree_create_load_field(buf, *node, info);
-        unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, info);
+        unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, FALSE, info);
 
         *node = sNodeTree_create_left_shift(left_node, right_node, 0, info);
 
@@ -575,7 +575,7 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
 
         *node = sNodeTree_create_load_variable("parent", info);
         *node = sNodeTree_create_load_field(buf, *node, info);
-        unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, info);
+        unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, FALSE, info);
 
         *node = sNodeTree_create_right_shift(left_node, right_node, 0, info);
 
@@ -597,7 +597,7 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
 
         *node = sNodeTree_create_load_variable("parent", info);
         *node = sNodeTree_create_load_field(buf, *node, info);
-        unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, info);
+        unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, FALSE, info);
 
         *node = sNodeTree_create_and(left_node, right_node, 0, info);
 
@@ -621,7 +621,7 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
         
         *node = sNodeTree_create_load_variable("parent", info);
         *node = sNodeTree_create_load_field(buf, *node, info);
-        unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, info);
+        unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, FALSE, info);
 
         *node = sNodeTree_create_xor(left_node, right_node, 0, info);
 
@@ -645,7 +645,7 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
 
         *node = sNodeTree_create_load_variable("parent", info);
         *node = sNodeTree_create_load_field(buf, *node, info);
-        unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, info);
+        unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, FALSE, info);
 
         *node = sNodeTree_create_or(left_node, right_node, 0, info);
 
@@ -656,7 +656,7 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
     else {
         *node = sNodeTree_create_load_variable("parent", info);
         *node = sNodeTree_create_load_field(buf, *node, info);
-        *node = sNodeTree_create_derefference(*node, TRUE, NULL, info);
+        *node = sNodeTree_create_derefference(*node, TRUE, NULL, TRUE, info);
     }
     
     return TRUE;
@@ -865,7 +865,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
         
 /*
         if(plus_plus) {
-            unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, info);
+            unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, FALSE, info);
     
             unsigned int right_node = sNodeTree_create_int_value(1, info);
     
@@ -896,7 +896,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
             info->p+=2;
             skip_spaces_and_lf(info);
     
-            unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, info);
+            unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, FALSE, info);
     
             unsigned int right_node = sNodeTree_create_int_value(1, info);
     
@@ -909,7 +909,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
             info->p+=2;
             skip_spaces_and_lf(info);
     
-            unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, info);
+            unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, FALSE, info);
     
             unsigned int right_node = sNodeTree_create_int_value(1, info);
     
@@ -927,7 +927,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 return FALSE;
             }
     
-            unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, info);
+            unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, FALSE, info);
     
             unsigned int node2 = sNodeTree_create_add(left_node, right_node, 0, TRUE, info);
     
@@ -943,7 +943,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 return FALSE;
             }
     
-            unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, info);
+            unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, FALSE, info);
     
             unsigned int node2 = sNodeTree_create_sub(left_node, right_node, 0, TRUE, info);
     
@@ -959,7 +959,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 return FALSE;
             }
     
-            unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, info);
+            unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, FALSE, info);
     
             unsigned int node2 = sNodeTree_create_mult(left_node, right_node, 0, info);
     
@@ -975,7 +975,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 return FALSE;
             }
     
-            unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, info);
+            unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, FALSE, info);
     
             unsigned int node2 = sNodeTree_create_div(left_node, right_node, 0, info);
     
@@ -991,7 +991,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 return FALSE;
             }
     
-            unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, info);
+            unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, FALSE, info);
     
             unsigned int node2 = sNodeTree_create_mod(left_node, right_node, 0, info);
     
@@ -1007,7 +1007,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 return FALSE;
             }
     
-            unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, info);
+            unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, FALSE, info);
     
             unsigned int node2 = sNodeTree_create_left_shift(left_node, right_node, 0, info);
     
@@ -1023,7 +1023,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 return FALSE;
             }
     
-            unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, info);
+            unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, FALSE, info);
     
             unsigned int node2 = sNodeTree_create_right_shift(left_node, right_node, 0, info);
     
@@ -1039,7 +1039,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 return FALSE;
             }
     
-            unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, info);
+            unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, FALSE, info);
     
             unsigned int node2 = sNodeTree_create_and(left_node, right_node, 0, info);
     
@@ -1055,7 +1055,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 return FALSE;
             }
     
-            unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, info);
+            unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, FALSE, info);
     
             unsigned int node2 = sNodeTree_create_xor(left_node, right_node, 0, info);
     
@@ -1071,14 +1071,14 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 return FALSE;
             }
     
-            unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, info);
+            unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, FALSE, info);
     
             unsigned int node2 = sNodeTree_create_or(left_node, right_node, 0, info);
     
             *node = sNodeTree_create_store_value_to_address(*node, node2, FALSE, cast_pointer_type, FALSE, info);
         }
         else {
-            *node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, info);
+            *node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, FALSE, info);
         }
     }
     else if(*info->p == '&') {
@@ -1231,7 +1231,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
         }
         else if(gNodes[exp].mNodeType == kNodeTypeDerefference) 
         {
-            unsigned int left_node = sNodeTree_create_derefference(gNodes[exp].mLeft, FALSE, cast_pointer_type, info);
+            unsigned int left_node = sNodeTree_create_derefference(gNodes[exp].mLeft, FALSE, cast_pointer_type, FALSE, info);
     
             unsigned int right_node = sNodeTree_create_int_value(1, info);
     
@@ -1347,7 +1347,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
         }
         else if(gNodes[exp].mNodeType == kNodeTypeDerefference) 
         {
-            unsigned int left_node = sNodeTree_create_derefference(gNodes[exp].mLeft, FALSE, cast_pointer_type, info);
+            unsigned int left_node = sNodeTree_create_derefference(gNodes[exp].mLeft, FALSE, cast_pointer_type, FALSE, info);
     
             unsigned int right_node = sNodeTree_create_int_value(1, info);
     
@@ -3573,7 +3573,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 info->p+=2;
                 skip_spaces_and_lf(info);
         
-                unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, info);
+                unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, FALSE, info);
         
                 unsigned int right_node = sNodeTree_create_int_value(1, info);
         
@@ -3586,7 +3586,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 info->p+=2;
                 skip_spaces_and_lf(info);
         
-                unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, info);
+                unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, FALSE, info);
         
                 unsigned int right_node = sNodeTree_create_int_value(1, info);
         
@@ -3604,7 +3604,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                     return FALSE;
                 }
         
-                unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, info);
+                unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, FALSE, info);
         
                 unsigned int node2 = sNodeTree_create_add(left_node, right_node, 0, TRUE, info);
         
@@ -3620,7 +3620,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                     return FALSE;
                 }
         
-                unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, info);
+                unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, FALSE, info);
         
                 unsigned int node2 = sNodeTree_create_sub(left_node, right_node, 0, TRUE, info);
         
@@ -3636,7 +3636,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                     return FALSE;
                 }
         
-                unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, info);
+                unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, FALSE, info);
         
                 unsigned int node2 = sNodeTree_create_mult(left_node, right_node, 0, info);
         
@@ -3652,7 +3652,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                     return FALSE;
                 }
         
-                unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, info);
+                unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, FALSE, info);
         
                 unsigned int node2 = sNodeTree_create_div(left_node, right_node, 0, info);
         
@@ -3668,7 +3668,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                     return FALSE;
                 }
         
-                unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, info);
+                unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, FALSE, info);
         
                 unsigned int node2 = sNodeTree_create_mod(left_node, right_node, 0, info);
         
@@ -3684,7 +3684,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                     return FALSE;
                 }
         
-                unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, info);
+                unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, FALSE, info);
         
                 unsigned int node2 = sNodeTree_create_left_shift(left_node, right_node, 0, info);
         
@@ -3700,7 +3700,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                     return FALSE;
                 }
         
-                unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, info);
+                unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, FALSE, info);
         
                 unsigned int node2 = sNodeTree_create_right_shift(left_node, right_node, 0, info);
         
@@ -3716,7 +3716,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                     return FALSE;
                 }
         
-                unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, info);
+                unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, FALSE, info);
         
                 unsigned int node2 = sNodeTree_create_and(left_node, right_node, 0, info);
         
@@ -3732,7 +3732,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                     return FALSE;
                 }
         
-                unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, info);
+                unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, FALSE, info);
         
                 unsigned int node2 = sNodeTree_create_xor(left_node, right_node, 0, info);
         
@@ -3748,7 +3748,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                     return FALSE;
                 }
         
-                unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, info);
+                unsigned int left_node = sNodeTree_create_derefference(*node, FALSE, cast_pointer_type, FALSE, info);
         
                 unsigned int node2 = sNodeTree_create_or(left_node, right_node, 0, info);
         

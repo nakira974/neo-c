@@ -1240,6 +1240,7 @@ LLVMValueRef clone_object(sNodeType* node_type, LLVMValueRef obj, char* obj_c_va
         
         if(cloner != NULL) {
             if(cloner->mGenericsFunction) {
+puts("AAA");
                 LLVMValueRef llvm_fun = NULL;
                 
                 BOOL immutable_ = cloner->mImmutable;
@@ -1275,7 +1276,8 @@ LLVMValueRef clone_object(sNodeType* node_type, LLVMValueRef obj, char* obj_c_va
 
                 obj = LLVMBuildCall2(gBuilder, function_type, llvm_fun, llvm_params, num_params, "funAAA");
                 
-                *c_value = xsprintf("%s(%s);\n", llvm_fun_name, obj_c_value);
+                *c_value = xsprintf("%s(%s)", llvm_fun_name, obj_c_value);
+puts(*c_value);
             }
             else {
                 int num_params = 1;
@@ -1304,7 +1306,7 @@ LLVMValueRef clone_object(sNodeType* node_type, LLVMValueRef obj, char* obj_c_va
                 LLVMValueRef llvm_fun = LLVMGetNamedFunction(gModule, fun_name);
                 obj = LLVMBuildCall2(gBuilder, function_type, llvm_fun, llvm_params, num_params, "funBBB");
                 
-                *c_value = xsprintf("%s(%s);\n", fun_name, obj_c_value);
+                *c_value = xsprintf("%s(%s)", fun_name, obj_c_value);
             }
         }
         else {
@@ -1353,10 +1355,10 @@ LLVMValueRef clone_object(sNodeType* node_type, LLVMValueRef obj, char* obj_c_va
     
                 obj = LLVMBuildCast(gBuilder, LLVMBitCast, obj, llvm_type2, "castAM");
                 if(new_obj_name) {
-                    *c_value = xsprintf("(%s = gc_ncmemdup(%s));\n", new_obj_name, obj_c_value);
+                    *c_value = xsprintf("(%s = gc_ncmemdup(%s))", new_obj_name, obj_c_value);
                 }
                 else {
-                    *c_value = xsprintf("gc_ncmemdup(%s);\n", obj_c_value);
+                    *c_value = xsprintf("gc_ncmemdup(%s)", obj_c_value);
                 }
             }
             else {
@@ -1400,10 +1402,10 @@ LLVMValueRef clone_object(sNodeType* node_type, LLVMValueRef obj, char* obj_c_va
     
                 obj = LLVMBuildCast(gBuilder, LLVMBitCast, obj, llvm_type2, "castAM");
                 if(new_obj_name) {
-                    *c_value = xsprintf("(%s = ncmemdup(%s));\n", new_obj_name, obj_c_value);
+                    *c_value = xsprintf("(%s = ncmemdup(%s))", new_obj_name, obj_c_value);
                 }
                 else {
-                    *c_value = xsprintf("ncmemdup(%s);\n", obj_c_value);
+                    *c_value = xsprintf("ncmemdup(%s)", obj_c_value);
                 }
             }
         }
@@ -1411,7 +1413,7 @@ LLVMValueRef clone_object(sNodeType* node_type, LLVMValueRef obj, char* obj_c_va
         if((node_type->mClass->mFlags & CLASS_FLAGS_PROTOCOL) && node_type->mPointerNum == 1) {
             char* c_value2 = NULL;
             clone_protocol_object(node_type, obj, obj_c_value, &c_value2, new_obj_name, info);
-            *c_value = xsprintf("%s %s", *c_value, c_value2);
+            *c_value = xsprintf("%s;\n%s;\n", *c_value, c_value2);
         }
     }
 

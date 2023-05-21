@@ -1332,16 +1332,21 @@ BOOL compile_clone(unsigned int node, sCompileInfo* info)
 
     LVALUE llvm_value;
     llvm_value.value = obj;
-    llvm_value.c_value = c_value;
     llvm_value.type = clone_node_type(left_type2);
     llvm_value.address = NULL;
     llvm_value.var = NULL;
+    
+    if(left_type->mHeap) {
+        char* var_name = append_object_to_right_values(obj, left_type2, info);
+        llvm_value.c_value = xsprintf("(%s = %s)", var_name, c_value);
+    }
+    else {
+        llvm_value.c_value = xsprintf("%s", lvalue.c_value);
+    }
 
     push_value_to_stack_ptr(&llvm_value, info);
 
     info->type = clone_node_type(left_type2);
-    
-    append_object_to_right_values(obj, left_type2, info);
 
     return TRUE;
 }
@@ -2386,16 +2391,18 @@ BOOL compile_store_element(unsigned int node, sCompileInfo* info)
             
             sBuf_append_str(&buf, xsprintf(" = %s", rvalue.c_value));
             
-            llvm_value.c_value = xsprintf("%s", buf.mBuf);
-            
-            free(buf.mBuf);
+            if(result_type->mHeap) {
+                char* var_name = append_object_to_right_values(obj, left_type, info);
+                llvm_value.c_value = xsprintf("(%s = %s)", var_name, buf.mBuf);
+            }
+            else {
+                llvm_value.c_value = xsprintf("%s", buf.mBuf);
+            }
     
             dec_stack_ptr(2+num_dimention, info);
             push_value_to_stack_ptr(&llvm_value, info);
             
-            if(result_type->mHeap) {
-                append_object_to_right_values(obj, left_type, info);
-            }
+            free(buf.mBuf);
         }
         
         info->type = result_type;
@@ -6426,15 +6433,26 @@ BOOL compile_store_field(unsigned int node, sCompileInfo* info)
     }
     
     LLVMBuildStore(gBuilder, rvalue.value, field_address);
+    
+/*
+    if(left_type->mPointerNum > 0) {
+        add_come_code(info, "%s->%s = %s;\n", lvalue.c_value, left_type->mClass->mFieldName[field_index], rvalue.c_value);
+    }
+    else {
+        add_come_code(info, "%s.%s = %s;\n", lvalue.c_value, left_type->mClass->mFieldName[field_index], rvalue.c_value);
+    }
+*/
 
     dec_stack_ptr(2, info);
     
     LVALUE llvm_value = rvalue;
     if(left_type->mPointerNum > 0) {
-        llvm_value.c_value = xsprintf("%s->%s=%s",lvalue.c_value, var_name, rvalue.c_value);
+        add_come_code(info, "%s->%s=%s;\n",lvalue.c_value, var_name, rvalue.c_value);
+        llvm_value.c_value = xsprintf("%s->%s", lvalue.c_value, var_name);
     }
     else {
-        llvm_value.c_value = xsprintf("%s.%s=%s",lvalue.c_value, var_name, rvalue.c_value);
+        add_come_code(info, "%s.%s=%s",lvalue.c_value, var_name, rvalue.c_value);
+        llvm_value.c_value = xsprintf("%s.%s", lvalue.c_value, var_name);
     }
     push_value_to_stack_ptr(&llvm_value, info);
 
@@ -6954,14 +6972,17 @@ BOOL load_element_core(BOOL getting_refference, int num_dimention, sNodeType* le
         llvm_value.type = result_type;
         llvm_value.address = NULL;
         llvm_value.var = lvalue.var;
-        llvm_value.c_value = NULL;
+        
+        if(result_type->mHeap) {
+            char* var_name = append_object_to_right_values(obj, result_type, info);
+            llvm_value.c_value = xsprintf("(%s = %s)", var_name, NULL);
+        }
+        else {
+            llvm_value.c_value = xsprintf("(%s)", NULL);
+        }
         
         dec_stack_ptr(dec_stack_value, info);
         push_value_to_stack_ptr(&llvm_value, info);
-        
-        if(result_type->mHeap) {
-            append_object_to_right_values(obj, result_type, info);
-        }
         
         info->type = result_type;
         

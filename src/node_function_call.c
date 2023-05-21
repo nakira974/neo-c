@@ -202,7 +202,8 @@ BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_meth
     
     if(result_value) {
         if(result_type->mHeap) {
-            append_object_to_right_values(result_value, result_type, info);
+            char* var_name = append_object_to_right_values(result_value, result_type, info);
+            add_come_code(info, "%s = inline_result_variable%d;\n", var_name, info->num_inline);
         }
     }
 
@@ -1115,12 +1116,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         
         sBuf_init(&buf);
         
-        if(result_type->mHeap) {
-            sBuf_append_str(&buf, xsprintf("(right_value%d=", gRightValueNum));
-        }
-        else {
-            sBuf_append_str(&buf, "(");
-        }
+        sBuf_append_str(&buf, "(");
         
         if(llvm_fun_name) {
             sBuf_append_str(&buf, llvm_fun_name);
@@ -1386,7 +1382,8 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         
         if(result_value) {
             if(info->type->mHeap) {
-                append_object_to_right_values(result_value, info->type, info);
+                char* var_name = append_object_to_right_values(result_value, info->type, info);
+                add_come_code(info, "%s = inline_result_variable%d;\n", var_name, info->num_inline);
             }
         }
         add_come_code(info, "(void)0;\n}\n");

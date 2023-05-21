@@ -354,18 +354,21 @@ BOOL call_operator_function(char* fun_base_name, sNodeType* left_type, int num_p
             
             LVALUE llvm_value;
             llvm_value.value = obj;
-            llvm_value.c_value = xsprintf("%s", buf.mBuf);
             llvm_value.type = result_type;
             llvm_value.address = NULL;
             llvm_value.var = NULL;
+            
+            if(obj && result_type->mHeap) {
+                char* var_name = append_object_to_right_values(obj, result_type, info);
+                llvm_value.c_value = xsprintf("(%s = %s)", var_name, buf.mBuf);
+            }
+            else {
+                llvm_value.c_value = xsprintf("%s", buf.mBuf);
+            }
     
             dec_stack_ptr(num_params, info);
             if(obj) {
                 push_value_to_stack_ptr(&llvm_value, info);
-            }
-            
-            if(obj && result_type->mHeap) {
-                append_object_to_right_values(obj, result_type, info);
             }
             
             free(buf.mBuf);

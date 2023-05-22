@@ -4,6 +4,8 @@ struct sComeModule gComeModule;
 sComeFun gComeFunctions[COME_FUN_MAX];
 struct sComeFunStruct* gComeFunctionHead;
 
+BOOL gInHeader = FALSE;
+
 struct sOutputStruct 
 {
     char* mName;
@@ -67,9 +69,67 @@ void transpiler_final()
     free(gComeModule.mSourceHead.mBuf);
 }
 
+void remove_come_function(char* fun_name)
+{
+    unsigned int hash_key = get_hash_key(fun_name, COME_FUN_MAX);
+    
+    sComeFun* fun = get_come_function(fun_name);
+    
+    if(fun) {
+        sComeFun* it = gComeFunctions + hash_key;
+        while(TRUE) {
+            if(strcmp(it->mName, fun_name) == 0) {
+                if(strcmp(gComeFunctionHead->mName, fun_name) == 0) {
+                    gComeFunctionHead = NULL;
+                }
+                else {
+                    sComeFun* it2 = gComeFunctionHead;
+                    sComeFun* before_it = gComeFunctionHead;
+                    
+                    while(it2) {
+                        if(strcmp(it2->mName, fun_name) == 0) {
+                            before_it->mNext = it2->mNext;
+                        }
+                        
+                        before_it = it2;
+                        it2 = it2->mNext;
+                    }
+                }
+                
+                free(it->mSource.mBuf);
+                free(it->mSourceHead.mBuf);
+                memset(it, 0, sizeof(sComeFun));
+                break;
+            }
+            else {
+                it++;
+                
+                if(it == gComeFunctions + COME_FUN_MAX) {
+                    it = gComeFunctions;
+                }
+                else if(it == gComeFunctions + hash_key) {
+                    fprintf(stderr, "overflow come functions\n");
+                    exit(2);
+                }
+            }
+        }
+    }
+}
+
 void add_come_function(char* fun_name, sNodeType* result_type, int num_params, sNodeType** param_types, char** param_names, BOOL external, BOOL var_args)
 {
     unsigned int hash_key = get_hash_key(fun_name, COME_FUN_MAX);
+    
+    sComeFun* fun = get_come_function(fun_name);
+    
+    if(fun) {
+        if(fun->mExternal) {
+            remove_come_function(fun_name);
+        }
+        else {
+            return;
+        }
+    }
     
     sComeFun* it = gComeFunctions + hash_key;
     while(TRUE) {
@@ -162,6 +222,23 @@ void add_come_code(struct sCompileInfoStruct* info, const char* msg, ...)
     }
 }
 
+void add_come_code_at_head(struct sCompileInfoStruct* info, const char* msg, ...)
+{
+    char msg2[COME_CODE_MAX];
+
+    va_list args;
+    va_start(args, msg);
+    vsnprintf(msg2, COME_CODE_MAX, msg, args);
+    va_end(args);
+    
+    if(info->come_fun) {
+        sBuf_append_str(&info->come_fun->mSourceHead, xsprintf("%s", msg2));
+    }
+    else {
+        sBuf_append_str(&gComeModule.mSourceHead, xsprintf("%s", msg2));
+    }
+}
+
 void add_come_code_top_level(const char* msg, ...)
 {
     char msg2[COME_CODE_MAX];
@@ -219,7 +296,7 @@ char* xsprintf(const char* msg, ...)
     return GC_strdup(msg2);
 }
 
-char* make_define_var(sNodeType* node_type, char* name)
+char* make_define_var(sNodeType* node_type, char* name, struct sCompileInfoStruct* info)
 {
     sBuf buf;
     sBuf_init(&buf);
@@ -233,12 +310,8 @@ char* make_define_var(sNodeType* node_type, char* name)
         sBuf_append_str(&buf, "int ");
         sBuf_append_str(&buf, xsprintf("%s:%d;\n", name, node_type->mSizeNum));
     }
-    else if(node_type->mDynamicArrayNum != 0) {
-        sCompileInfo cinfo;
-
-        memset(&cinfo, 0, sizeof(sCompileInfo));
-
-        if(!compile(node_type->mDynamicArrayNum, &cinfo)) {
+    else if(info != NULL && node_type->mDynamicArrayNum != 0) {
+        if(!compile(node_type->mDynamicArrayNum, info)) {
             return FALSE;
         }
 
@@ -296,11 +369,16 @@ void output_function(sBuf* output, sComeFun* fun)
             sNodeType* param_type = fun->mParamTypes[i];
             char* name = fun->mParamNames[i];
             
-            char* str = make_define_var(param_type, name);
+            char* str = make_define_var(param_type, name, NULL);
             sBuf_append_str(&output2, str);
             
-            if(i != fun->mNumParams-1) {
-                sBuf_append_str(&output2, ", ");
+            if(i == fun->mNumParams-1) {
+                if(fun->mVarArgs) {
+                    sBuf_append_str(output, ", ...");
+                }
+            }
+            else {
+                sBuf_append_str(output, ", ");
             }
         }
         sBuf_append_str(&output2, ")");
@@ -328,10 +406,15 @@ void output_function(sBuf* output, sComeFun* fun)
             sNodeType* param_type = fun->mParamTypes[i];
             char* name = fun->mParamNames[i];
             
-            char* str = make_define_var(param_type, name);
+            char* str = make_define_var(param_type, name, NULL);
             sBuf_append_str(output, str);
             
-            if(i != fun->mNumParams-1) {
+            if(i == fun->mNumParams-1) {
+                if(fun->mVarArgs) {
+                    sBuf_append_str(output, ", ...");
+                }
+            }
+            else {
                 sBuf_append_str(output, ", ");
             }
         }
@@ -350,6 +433,9 @@ void output_function(sBuf* output, sComeFun* fun)
 
 void header_function(sBuf* output, sComeFun* fun)
 {
+    BOOL in_header = gInHeader;
+    gInHeader = TRUE;
+    
     if(fun->mResultType->mResultType) {
         sBuf output2;
         sBuf_init(&output2);
@@ -362,7 +448,7 @@ void header_function(sBuf* output, sComeFun* fun)
             sNodeType* param_type = fun->mParamTypes[i];
             char* name = fun->mParamNames[i];
             
-            char* str = make_define_var(param_type, name);
+            char* str = make_define_var(param_type, name, NULL);
             sBuf_append_str(&output2, str);
             
             if(i != fun->mNumParams-1) {
@@ -392,7 +478,7 @@ void header_function(sBuf* output, sComeFun* fun)
             sNodeType* param_type = fun->mParamTypes[i];
             char* name = fun->mParamNames[i];
             
-            char* str = make_define_var(param_type, name);
+            char* str = make_define_var(param_type, name, NULL);
             sBuf_append_str(output, str);
             
             if(i == fun->mNumParams-1) {
@@ -407,6 +493,8 @@ void header_function(sBuf* output, sComeFun* fun)
         
         sBuf_append_str(output, ");\n");
     }
+    
+    gInHeader = in_header;
 }
 
 void output_struct(char* struct_name, sNodeType* struct_type, sNodeType* generics_type, BOOL undefined_body)
@@ -442,7 +530,7 @@ void output_struct(char* struct_name, sNodeType* struct_type, sNodeType* generic
                 exit(70);
             }
             
-            char* str = make_define_var(field, name);
+            char* str = make_define_var(field, name, NULL);
             
             sBuf_append_str(&gComeModule.mSourceHead, "    ");
             sBuf_append_str(&gComeModule.mSourceHead, str);
@@ -485,7 +573,7 @@ void output_union(char* struct_name, sNodeType* union_type, sNodeType* generics_
                 exit(71);
             }
             
-            char* str = make_define_var(field, name);
+            char* str = make_define_var(field, name, NULL);
             
             sBuf_append_str(&gComeModule.mSourceHead, "    ");
             sBuf_append_str(&gComeModule.mSourceHead, str);
@@ -497,14 +585,19 @@ void output_union(char* struct_name, sNodeType* union_type, sNodeType* generics_
 
 void output_typedef(char* name, sNodeType* node_type)
 {
+    BOOL in_header = gInHeader;
+    gInHeader = TRUE;
+    
     sCLClass* klass = node_type->mClass;
     
     sBuf_append_str(&gComeModule.mSourceHead, "typedef ");
     
-    char* str = make_define_var(node_type, name);
+    char* str = make_define_var(node_type, name, NULL);
     sBuf_append_str(&gComeModule.mSourceHead, str);
     
     sBuf_append_str(&gComeModule.mSourceHead, ";\n");
+    
+    gInHeader = in_header;
 }
 
 char* make_type_name_string(sNodeType* node_type)
@@ -536,7 +629,12 @@ char* make_type_name_string(sNodeType* node_type)
     else {
         if(node_type->mClass->mFlags & CLASS_FLAGS_STRUCT) {
             if(strcmp(class_name, "__builtin_va_list") == 0) {
-                sBuf_append_str(&output, class_name);
+                if(gInHeader) {
+                    sBuf_append_str(&output, class_name);
+                }
+                else {
+                    sBuf_append_str(&output, "va_list");
+                }
             }
             else if(strcmp(node_type->mOriginalTypeName, "") != 0){
                 sBuf_append_str(&output, node_type->mOriginalTypeName);

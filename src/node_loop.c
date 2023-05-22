@@ -1203,7 +1203,7 @@ BOOL compile_return(unsigned int node, sCompileInfo* info)
                 LLVMBuildStore(gBuilder, llvm_value.value, info->inline_result_variable);
                 LLVMBuildBr(gBuilder, info->inline_func_end);
                 
-                add_come_code(info, "inline_result_variable%d = %s;\n", info->num_inline, llvm_value.c_value);
+                add_come_code(info, "%s = %s;\n", info->inline_result_variable_name, llvm_value.c_value);
                 add_come_code(info, "goto %s;\n", info->inline_func_end_label);
             }
             else {

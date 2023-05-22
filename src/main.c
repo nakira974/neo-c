@@ -362,6 +362,12 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
             xstrncat(cmd, buf, 1024);
             xstrncat(cmd, " ", 1024);
         }
+        else if(gNCTranspile) {
+            char buf[128];
+            snprintf(buf, 128, "%slib/libcomelang-ts.a", PREFIX);
+            xstrncat(cmd, buf, 1024);
+            xstrncat(cmd, " ", 1024);
+        }
         else {
             char buf[128];
             snprintf(buf, 128, "%slib/libcomelang.a", PREFIX);

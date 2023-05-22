@@ -506,10 +506,46 @@ BOOL compile_char_value(unsigned int node, sCompileInfo* info)
 
     LVALUE llvm_value;
     llvm_value.value = LLVMConstInt(llvm_type, c, FALSE);
-    llvm_value.c_value = xsprintf("%c", c);
     llvm_value.type = create_node_type_with_class_name("char");
     llvm_value.address = NULL;
     llvm_value.var = NULL;
+    switch(c) {
+        case '\0':
+            llvm_value.c_value = xsprintf("'\\0'");
+            break;
+
+        case '\n':
+            llvm_value.c_value = xsprintf("'\\n'");
+            break;
+
+        case '\t':
+            llvm_value.c_value = xsprintf("'\\t'");
+            break;
+
+        case '\r':
+            llvm_value.c_value = xsprintf("'\\r'");
+            break;
+
+        case '\v':
+            llvm_value.c_value = xsprintf("'\\v'");
+            break;
+
+        case '\f':
+            llvm_value.c_value = xsprintf("'\\f'");
+            break;
+
+        case '\a':
+            llvm_value.c_value = xsprintf("'\\a'");
+            break;
+
+        case '\b':
+            llvm_value.c_value = xsprintf("'\\b'");
+            break;
+
+        default:
+            llvm_value.c_value = xsprintf("'%c'", c);
+            break;
+    }
 
     push_value_to_stack_ptr(&llvm_value, info);
 

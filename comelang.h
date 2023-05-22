@@ -45,7 +45,7 @@ typedef char*% string;
 
 inline void xassert(const char* msg, bool exp)
 {
-    printf(msg);
+    printf("%s", msg);
     printf("...");
 
     if(exp) {

@@ -1240,7 +1240,6 @@ LLVMValueRef clone_object(sNodeType* node_type, LLVMValueRef obj, char* obj_c_va
         
         if(cloner != NULL) {
             if(cloner->mGenericsFunction) {
-puts("AAA");
                 LLVMValueRef llvm_fun = NULL;
                 
                 BOOL immutable_ = cloner->mImmutable;
@@ -1277,7 +1276,6 @@ puts("AAA");
                 obj = LLVMBuildCall2(gBuilder, function_type, llvm_fun, llvm_params, num_params, "funAAA");
                 
                 *c_value = xsprintf("%s(%s)", llvm_fun_name, obj_c_value);
-puts(*c_value);
             }
             else {
                 int num_params = 1;
@@ -1625,13 +1623,26 @@ void init_nodes(char* sname)
     int num_fields = 4;
     
     char* class_name = "__builtin_va_list";
+    char* field_names[4] = { "v1", "v2", "v3", "v4" };
+    
+    sNodeType* fields[4];
+    fields[0] = create_node_type_with_class_name("int");
+    fields[1] = create_node_type_with_class_name("int");
+    fields[2] = create_node_type_with_class_name("char*");
+    fields[3] = create_node_type_with_class_name("char*");
 
     LLVMTypeRef struct_type = LLVMStructCreateNamed(gContext, class_name);
 
     LLVMStructSetBody(struct_type, field_types, num_fields, FALSE);
 
     sCLClass* va_list_struct = alloc_struct("__builtin_va_list", FALSE, FALSE, NULL, FALSE);
+    add_fields_to_struct(va_list_struct, num_fields, field_names, fields);
     sNodeType* node_type2 = create_node_type_with_class_pointer(va_list_struct);
+    
+    if(gNCTranspile) {
+        output_struct("__builtin_va_list", node_type2, NULL, FALSE);
+        output_typedef("__buitin_va_list", node_type2);
+    }
     
     add_typedef("va_list", node_type2, FALSE);
 
@@ -3198,7 +3209,7 @@ void free_nodes(char* sname)
     snprintf(sname2, PATH_MAX, "%s.ll", sname);
 
     //LLVMDumpModule(gModule); // dump module to STDOUT
-    if(strcmp(sname, "") != 0) {
+    if(strcmp(sname, "") != 0 && !gNCTranspile) {
         LLVMPrintModuleToFile(gModule, sname2, NULL);
     }
 

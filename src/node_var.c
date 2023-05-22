@@ -292,11 +292,11 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
         }
         
         if(strcmp(var_->mInlineRealName, "") != 0) {
-            char* define_str = make_define_var(var_type, var_->mInlineRealName);
+            char* define_str = make_define_var(var_type, var_->mInlineRealName, info);
             add_come_code(info, "extern %s;\n", define_str);
         }
         else {
-            char* define_str = make_define_var(var_type, var_name);
+            char* define_str = make_define_var(var_type, var_name, info);
             add_come_code(info, "extern %s;\n", define_str);
         }
 
@@ -328,7 +328,7 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
             LLVMSetLinkage(alloca_value, LLVMInternalLinkage);
         }
         
-        char* define_str = make_define_var(var_type, var_name);
+        char* define_str = make_define_var(var_type, var_name, info);
         add_come_code(info, "%s;\n", define_str);
 
         if(var_type->mArrayDimentionNum == 1) {
@@ -405,43 +405,42 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
     }
     else {
         if(var_type->mDynamicArrayNum != 0) {
+            if(!compile(var_type->mDynamicArrayNum, info)) {
+                return FALSE;
+            }
+
+            LVALUE llvm_value = *get_value_from_stack(-1);
+
+#ifdef __32BIT_CPU__
+            sNodeType* left_type = create_node_type_with_class_name("int");
+#else
+            sNodeType* left_type = create_node_type_with_class_name("long");
+#endif
+
+            if(!cast_right_type_to_left_type(left_type, &llvm_value.type, &llvm_value, info))
+            {
+                compile_err_msg(info, "Cast failed");
+                return TRUE;
+            }
+            dec_stack_ptr(1, info);
+
+            LLVMValueRef len_value = llvm_value.value;
+
+            LLVMValueRef alloca_value = LLVMBuildArrayAlloca(gBuilder, llvm_type, len_value, var_name);
+            var_->mLLVMValue.value = alloca_value;
+            var_->mLLVMValue.address = alloca_value;
+            
             if(gNCTranspile) {
                 if(strcmp(var_->mInlineRealName, "") != 0) {
-                    char* define_str = make_define_var(var_type, var_->mInlineRealName);
+                    char* define_str = make_define_var(var_type, var_->mInlineRealName, info);
                     add_come_code(info, "%s;\n", define_str);
                     add_come_code(info, "memset(&%s, 0, sizeof(%s));\n", var_name, make_type_name_string(var_type));
                 }
                 else {
-                    char* define_str = make_define_var(var_type, var_name);
+                    char* define_str = make_define_var(var_type, var_name, info);
                     add_come_code(info, "%s;\n", define_str);
                     add_come_code(info, "memset(&%s, 0, sizeof(%s));\n", var_name, make_type_name_string(var_type));
                 }
-            }
-            else {
-                if(!compile(var_type->mDynamicArrayNum, info)) {
-                    return FALSE;
-                }
-    
-                LVALUE llvm_value = *get_value_from_stack(-1);
-    
-#ifdef __32BIT_CPU__
-                sNodeType* left_type = create_node_type_with_class_name("int");
-#else
-                sNodeType* left_type = create_node_type_with_class_name("long");
-#endif
-    
-                if(!cast_right_type_to_left_type(left_type, &llvm_value.type, &llvm_value, info))
-                {
-                    compile_err_msg(info, "Cast failed");
-                    return TRUE;
-                }
-                dec_stack_ptr(1, info);
-    
-                LLVMValueRef len_value = llvm_value.value;
-    
-                LLVMValueRef alloca_value = LLVMBuildArrayAlloca(gBuilder, llvm_type, len_value, var_name);
-                var_->mLLVMValue.value = alloca_value;
-                var_->mLLVMValue.address = alloca_value;
             }
         }
         else {
@@ -456,12 +455,12 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
             }
             
             if(strcmp(var_->mInlineRealName, "") != 0) {
-                char* define_str = make_define_var(var_type, var_->mInlineRealName);
+                char* define_str = make_define_var(var_type, var_->mInlineRealName, info);
                 add_come_code(info, "%s;\n", define_str);
                 add_come_code(info, "memset(&%s, 0, sizeof(%s));\n", var_name, make_type_name_string(var_type));
             }
             else {
-                char* define_str = make_define_var(var_type, var_name);
+                char* define_str = make_define_var(var_type, var_name, info);
                 add_come_code(info, "%s;\n", define_str);
                 add_come_code(info, "memset(&%s, 0, sizeof(%s));\n", var_name, make_type_name_string(var_type));
             }
@@ -858,14 +857,14 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
         LVALUE llvm_value = rvalue;
         
         if(strcmp(var_->mInlineRealName, "") != 0) {
-            char* define_str = make_define_var(left_type, var_->mInlineRealName);
+            char* define_str = make_define_var(left_type, var_->mInlineRealName, info);
             
             llvm_value.c_value = xsprintf("%s=%s", define_str, rvalue.c_value);
             
             add_come_code(info, "%s;\n", llvm_value.c_value);
         }
         else {
-            char* define_str = make_define_var(left_type, var_name);
+            char* define_str = make_define_var(left_type, var_name, info);
             
             llvm_value.c_value = xsprintf("%s=%s", define_str, rvalue.c_value);
             
@@ -2765,7 +2764,7 @@ BOOL compile_typedef(unsigned int node, sCompileInfo* info)
     char name[VAR_NAME_MAX];
     xstrncpy(name, gNodes[node].uValue.sTypedef.mName, VAR_NAME_MAX);
     sNodeType* node_type = gNodes[node].uValue.sTypedef.mNodeType;
-    
+
     output_typedef(name, node_type);
     
     info->type = create_node_type_with_class_name("void");
@@ -6451,7 +6450,7 @@ BOOL compile_store_field(unsigned int node, sCompileInfo* info)
         llvm_value.c_value = xsprintf("%s->%s", lvalue.c_value, var_name);
     }
     else {
-        add_come_code(info, "%s.%s=%s",lvalue.c_value, var_name, rvalue.c_value);
+        add_come_code(info, "%s.%s=%s;\n",lvalue.c_value, var_name, rvalue.c_value);
         llvm_value.c_value = xsprintf("%s.%s", lvalue.c_value, var_name);
     }
     push_value_to_stack_ptr(&llvm_value, info);
@@ -7079,7 +7078,19 @@ BOOL load_element_core(BOOL getting_refference, int num_dimention, sNodeType* le
                 llvm_value.type = clone_node_type(element_type);
                 llvm_value.address = load_element_addresss;
                 llvm_value.var = lvalue.var;
-                llvm_value.c_value = NULL;
+                
+                sBuf buf;
+                sBuf_init(&buf);
+                
+                sBuf_append_str(&buf, lvalue.c_value);
+                int k;
+                for(k=0; k<num_dimention; k++) {
+                    sBuf_append_str(&buf, "[");
+                    sBuf_append_str(&buf, rvalue[k].c_value);
+                    sBuf_append_str(&buf, "]");
+                }
+                llvm_value.c_value = xsprintf("%s", buf.mBuf);
+                free(buf.mBuf);
         
                 dec_stack_ptr(1+num_dimention, info);
                 push_value_to_stack_ptr(&llvm_value, info);
@@ -7136,6 +7147,19 @@ BOOL load_element_core(BOOL getting_refference, int num_dimention, sNodeType* le
                 llvm_value.address = load_element_addresss;
                 llvm_value.var = lvalue.var;
                 llvm_value.c_value = NULL;
+                
+                sBuf buf;
+                sBuf_init(&buf);
+                
+                sBuf_append_str(&buf, lvalue.c_value);
+                int k;
+                for(k=0; k<num_dimention; k++) {
+                    sBuf_append_str(&buf, "[");
+                    sBuf_append_str(&buf, rvalue[k].c_value);
+                    sBuf_append_str(&buf, "]");
+                }
+                llvm_value.c_value = xsprintf("%s", buf.mBuf);
+                free(buf.mBuf);
         
                 dec_stack_ptr(1+num_dimention, info);
                 push_value_to_stack_ptr(&llvm_value, info);
@@ -7173,7 +7197,19 @@ BOOL load_element_core(BOOL getting_refference, int num_dimention, sNodeType* le
                 llvm_value.type = clone_node_type(node_type);
                 llvm_value.address = load_element_addresss;
                 llvm_value.var = lvalue.var;
-                llvm_value.c_value = NULL;
+                
+                sBuf buf;
+                sBuf_init(&buf);
+                
+                sBuf_append_str(&buf, lvalue.c_value);
+                int k;
+                for(k=0; k<num_dimention; k++) {
+                    sBuf_append_str(&buf, "[");
+                    sBuf_append_str(&buf, rvalue[k].c_value);
+                    sBuf_append_str(&buf, "]");
+                }
+                llvm_value.c_value = xsprintf("%s", buf.mBuf);
+                free(buf.mBuf);
     
                 dec_stack_ptr(1+num_dimention, info);
                 push_value_to_stack_ptr(&llvm_value, info);
@@ -7218,7 +7254,19 @@ BOOL load_element_core(BOOL getting_refference, int num_dimention, sNodeType* le
                 llvm_value.type = clone_node_type(node_type);
                 llvm_value.address = load_element_addresss;
                 llvm_value.var = lvalue.var;
-                llvm_value.c_value = NULL;
+                
+                sBuf buf;
+                sBuf_init(&buf);
+                
+                sBuf_append_str(&buf, lvalue.c_value);
+                int k;
+                for(k=0; k<num_dimention; k++) {
+                    sBuf_append_str(&buf, "[");
+                    sBuf_append_str(&buf, rvalue[k].c_value);
+                    sBuf_append_str(&buf, "]");
+                }
+                llvm_value.c_value = xsprintf("%s", buf.mBuf);
+                free(buf.mBuf);
     
                 dec_stack_ptr(1+num_dimention, info);
                 push_value_to_stack_ptr(&llvm_value, info);
@@ -7376,7 +7424,19 @@ BOOL load_element_core(BOOL getting_refference, int num_dimention, sNodeType* le
                     llvm_value.type = clone_node_type(node_type);
                     llvm_value.address = load_element_addresss;
                     llvm_value.var = lvalue.var;
-                    llvm_value.c_value = NULL;
+                    
+                    sBuf buf;
+                    sBuf_init(&buf);
+                    
+                    sBuf_append_str(&buf, lvalue.c_value);
+                    int k;
+                    for(k=0; k<num_dimention; k++) {
+                        sBuf_append_str(&buf, "[");
+                        sBuf_append_str(&buf, rvalue[k].c_value);
+                        sBuf_append_str(&buf, "]");
+                    }
+                    llvm_value.c_value = xsprintf("%s", buf.mBuf);
+                    free(buf.mBuf);
         
                     dec_stack_ptr(1+num_dimention, info);
                     push_value_to_stack_ptr(&llvm_value, info);
@@ -7393,7 +7453,19 @@ BOOL load_element_core(BOOL getting_refference, int num_dimention, sNodeType* le
                     llvm_value.type = clone_node_type(node_type);
                     llvm_value.address = load_element_addresss;
                     llvm_value.var = lvalue.var;
-                    llvm_value.c_value = NULL;
+                    
+                    sBuf buf;
+                    sBuf_init(&buf);
+                    
+                    sBuf_append_str(&buf, lvalue.c_value);
+                    int k;
+                    for(k=0; k<num_dimention; k++) {
+                        sBuf_append_str(&buf, "[");
+                        sBuf_append_str(&buf, rvalue[k].c_value);
+                        sBuf_append_str(&buf, "]");
+                    }
+                    llvm_value.c_value = xsprintf("%s", buf.mBuf);
+                    free(buf.mBuf);
         
                     dec_stack_ptr(1+num_dimention, info);
                     push_value_to_stack_ptr(&llvm_value, info);
@@ -7445,7 +7517,19 @@ BOOL load_element_core(BOOL getting_refference, int num_dimention, sNodeType* le
                     llvm_value.type = clone_node_type(node_type);
                     llvm_value.address = load_element_addresss;
                     llvm_value.var = lvalue.var;
-                    llvm_value.c_value = NULL;
+                    
+                    sBuf buf;
+                    sBuf_init(&buf);
+                    
+                    sBuf_append_str(&buf, lvalue.c_value);
+                    int k;
+                    for(k=0; k<num_dimention; k++) {
+                        sBuf_append_str(&buf, "[");
+                        sBuf_append_str(&buf, rvalue[k].c_value);
+                        sBuf_append_str(&buf, "]");
+                    }
+                    llvm_value.c_value = xsprintf("%s", buf.mBuf);
+                    free(buf.mBuf);
         
                     dec_stack_ptr(1+num_dimention, info);
                     push_value_to_stack_ptr(&llvm_value, info);
@@ -7462,7 +7546,19 @@ BOOL load_element_core(BOOL getting_refference, int num_dimention, sNodeType* le
                     llvm_value.type = clone_node_type(node_type);
                     llvm_value.address = load_element_addresss;
                     llvm_value.var = lvalue.var;
-                    llvm_value.c_value = NULL;
+                    
+                    sBuf buf;
+                    sBuf_init(&buf);
+                    
+                    sBuf_append_str(&buf, lvalue.c_value);
+                    int k;
+                    for(k=0; k<num_dimention; k++) {
+                        sBuf_append_str(&buf, "[");
+                        sBuf_append_str(&buf, rvalue[k].c_value);
+                        sBuf_append_str(&buf, "]");
+                    }
+                    llvm_value.c_value = xsprintf("%s", buf.mBuf);
+                    free(buf.mBuf);
         
                     dec_stack_ptr(1+num_dimention, info);
                     push_value_to_stack_ptr(&llvm_value, info);
@@ -7561,7 +7657,19 @@ BOOL load_element_core(BOOL getting_refference, int num_dimention, sNodeType* le
             llvm_value.type = clone_node_type(element_type);
             llvm_value.address = element_address;
             llvm_value.var = lvalue.var;
-            llvm_value.c_value = NULL;
+            
+            sBuf buf;
+            sBuf_init(&buf);
+            
+            sBuf_append_str(&buf, lvalue.c_value);
+            int k;
+            for(k=0; k<num_dimention; k++) {
+                sBuf_append_str(&buf, "[");
+                sBuf_append_str(&buf, rvalue[k].c_value);
+                sBuf_append_str(&buf, "]");
+            }
+            llvm_value.c_value = xsprintf("%s", buf.mBuf);
+            free(buf.mBuf);
     
             dec_stack_ptr(1+num_dimention, info);
             push_value_to_stack_ptr(&llvm_value, info);
@@ -7626,7 +7734,19 @@ BOOL load_element_core(BOOL getting_refference, int num_dimention, sNodeType* le
             llvm_value.type = clone_node_type(element_type);
             llvm_value.address = element_address;
             llvm_value.var = lvalue.var;
-            llvm_value.c_value = NULL;
+            
+            sBuf buf;
+            sBuf_init(&buf);
+            
+            sBuf_append_str(&buf, lvalue.c_value);
+            int k;
+            for(k=0; k<num_dimention; k++) {
+                sBuf_append_str(&buf, "[");
+                sBuf_append_str(&buf, rvalue[k].c_value);
+                sBuf_append_str(&buf, "]");
+            }
+            llvm_value.c_value = xsprintf("%s", buf.mBuf);
+            free(buf.mBuf);
     
             dec_stack_ptr(num_dimention, info);
             //dec_stack_ptr(1+num_dimention, info);
@@ -7707,7 +7827,19 @@ BOOL load_element_core(BOOL getting_refference, int num_dimention, sNodeType* le
             llvm_value.type = clone_node_type(element_type);
             llvm_value.address = element_address;
             llvm_value.var = lvalue.var;
-            llvm_value.c_value = NULL;
+            
+            sBuf buf;
+            sBuf_init(&buf);
+            
+            sBuf_append_str(&buf, lvalue.c_value);
+            int k;
+            for(k=0; k<num_dimention; k++) {
+                sBuf_append_str(&buf, "[");
+                sBuf_append_str(&buf, rvalue[k].c_value);
+                sBuf_append_str(&buf, "]");
+            }
+            llvm_value.c_value = xsprintf("%s", buf.mBuf);
+            free(buf.mBuf);
     
             dec_stack_ptr(1+num_dimention, info);
             push_value_to_stack_ptr(&llvm_value, info);

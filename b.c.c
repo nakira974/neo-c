@@ -6,7 +6,7 @@ void* ncmemdup(void* block);
 void* gc_ncmemdup(void* block);
 ;
 typedef unsigned long size_t;
-typedef __builtin_va_list __gnuc_va_list;
+typedef va_list __gnuc_va_list;
 typedef unsigned char __u_char;
 typedef unsigned short __u_short;
 typedef unsigned int __u_int;
@@ -116,7 +116,7 @@ struct _IO_cookie_io_functions_t
     int (*close)(void*);
 };
 typedef struct _IO_cookie_io_functions_t cookie_io_functions_t;
-typedef __builtin_va_list va_list;
+typedef va_list va_list;
 typedef long off_t;
 typedef long off64_t;
 typedef long ssize_t;
@@ -1357,26 +1357,6 @@ typedef unsigned int u32;
 typedef unsigned short u16;
 typedef unsigned char u8;
 typedef unsigned long u64;
-struct list_item_int
-{
-    int item;
-    struct list_item_int* prev;
-    struct list_item_int* next;
-};
-struct list_int
-{
-    struct list_item_int* head;
-    struct list_item_int* tail;
-    int len;
-    struct list_item_int* it;
-};
-struct __method_block_stack_frame0
-{
-    struct list_int** l;
-    struct list_int** l2;
-    int* argc;
-    char*** argv;
-};
 
 void come_gc_init();
 void come_boehm_gc_init();
@@ -1413,15 +1393,15 @@ void setlinebuf(FILE* __stream);
 int fprintf(FILE* __stream, const char* __format, ...);
 int printf(const char* __format, ...);
 int sprintf(char* __s, const char* __format, ...);
-int vfprintf(FILE* __s, const char* __format, __builtin_va_list __arg);
-int vprintf(const char* __format, __builtin_va_list __arg);
-int vsprintf(char* __s, const char* __format, __builtin_va_list __arg);
+int vfprintf(FILE* __s, const char* __format, va_list __arg);
+int vprintf(const char* __format, va_list __arg);
+int vsprintf(char* __s, const char* __format, va_list __arg);
 int snprintf(char* __s, unsigned long __maxlen, const char* __format, ...);
-int vsnprintf(char* __s, unsigned long __maxlen, const char* __format, __builtin_va_list __arg);
-int vasprintf(char** __ptr, const char* __f, __builtin_va_list __arg);
+int vsnprintf(char* __s, unsigned long __maxlen, const char* __format, va_list __arg);
+int vasprintf(char** __ptr, const char* __f, va_list __arg);
 int __asprintf(char** __ptr, const char* __fmt, ...);
 int asprintf(char** __ptr, const char* __fmt, ...);
-int vdprintf(int __fd, const char* __fmt, __builtin_va_list __arg);
+int vdprintf(int __fd, const char* __fmt, va_list __arg);
 int dprintf(int __fd, const char* __fmt, ...);
 int fscanf(FILE* __stream, const char* __format, ...);
 int scanf(const char* __format, ...);
@@ -1429,12 +1409,12 @@ int sscanf(const char* __s, const char* __format, ...);
 int __isoc99_fscanf(FILE* __stream, const char* __format, ...);
 int __isoc99_scanf(const char* __format, ...);
 int __isoc99_sscanf(const char* __s, const char* __format, ...);
-int vfscanf(FILE* __s, const char* __format, __builtin_va_list __arg);
-int vscanf(const char* __format, __builtin_va_list __arg);
-int vsscanf(const char* __s, const char* __format, __builtin_va_list __arg);
-int __isoc99_vfscanf(FILE* __s, const char* __format, __builtin_va_list __arg);
-int __isoc99_vscanf(const char* __format, __builtin_va_list __arg);
-int __isoc99_vsscanf(const char* __s, const char* __format, __builtin_va_list __arg);
+int vfscanf(FILE* __s, const char* __format, va_list __arg);
+int vscanf(const char* __format, va_list __arg);
+int vsscanf(const char* __s, const char* __format, va_list __arg);
+int __isoc99_vfscanf(FILE* __s, const char* __format, va_list __arg);
+int __isoc99_vscanf(const char* __format, va_list __arg);
+int __isoc99_vsscanf(const char* __s, const char* __format, va_list __arg);
 int fgetc(FILE* __stream);
 int getc(FILE* __stream);
 int getchar();
@@ -1487,7 +1467,7 @@ FILE* popen(const char* __command, const char* __modes);
 char* ctermid(char* __s);
 char* cuserid(char* __s);
 int obstack_printf(struct obstack* __obstack, const char* __format, ...);
-int obstack_vprintf(struct obstack* __obstack, const char* __format, __builtin_va_list __args);
+int obstack_vprintf(struct obstack* __obstack, const char* __format, va_list __args);
 void flockfile(FILE* __stream);
 int ftrylockfile(FILE* __stream);
 void funlockfile(FILE* __stream);
@@ -2404,21 +2384,21 @@ int fwide(__FILE* __fp, int __mode);
 int fwprintf(__FILE* __stream, const int* __format, ...);
 int wprintf(const int* __format, ...);
 int swprintf(int* __s, unsigned long __n, const int* __format, ...);
-int vfwprintf(__FILE* __s, const int* __format, __builtin_va_list __arg);
-int vwprintf(const int* __format, __builtin_va_list __arg);
-int vswprintf(int* __s, unsigned long __n, const int* __format, __builtin_va_list __arg);
+int vfwprintf(__FILE* __s, const int* __format, va_list __arg);
+int vwprintf(const int* __format, va_list __arg);
+int vswprintf(int* __s, unsigned long __n, const int* __format, va_list __arg);
 int fwscanf(__FILE* __stream, const int* __format, ...);
 int wscanf(const int* __format, ...);
 int swscanf(const int* __s, const int* __format, ...);
 int __isoc99_fwscanf(__FILE* __stream, const int* __format, ...);
 int __isoc99_wscanf(const int* __format, ...);
 int __isoc99_swscanf(const int* __s, const int* __format, ...);
-int vfwscanf(__FILE* __s, const int* __format, __builtin_va_list __arg);
-int vwscanf(const int* __format, __builtin_va_list __arg);
-int vswscanf(const int* __s, const int* __format, __builtin_va_list __arg);
-int __isoc99_vfwscanf(__FILE* __s, const int* __format, __builtin_va_list __arg);
-int __isoc99_vwscanf(const int* __format, __builtin_va_list __arg);
-int __isoc99_vswscanf(const int* __s, const int* __format, __builtin_va_list __arg);
+int vfwscanf(__FILE* __s, const int* __format, va_list __arg);
+int vwscanf(const int* __format, va_list __arg);
+int vswscanf(const int* __s, const int* __format, va_list __arg);
+int __isoc99_vfwscanf(__FILE* __s, const int* __format, va_list __arg);
+int __isoc99_vwscanf(const int* __format, va_list __arg);
+int __isoc99_vswscanf(const int* __s, const int* __format, va_list __arg);
 unsigned int fgetwc(__FILE* __stream);
 unsigned int getwc(__FILE* __stream);
 unsigned int getwchar();
@@ -2645,10 +2625,10 @@ void use_tioctl(int );
 int vidattr(unsigned int );
 int vidputs(unsigned int , int (*)(int));
 int vline(unsigned int , int );
-int vwprintw(WINDOW* , const char* , __builtin_va_list );
-int vw_printw(WINDOW* , const char* , __builtin_va_list );
-int vwscanw(WINDOW* , const char* , __builtin_va_list );
-int vw_scanw(WINDOW* , const char* , __builtin_va_list );
+int vwprintw(WINDOW* , const char* , va_list );
+int vw_printw(WINDOW* , const char* , va_list );
+int vwscanw(WINDOW* , const char* , va_list );
+int vw_scanw(WINDOW* , const char* , va_list );
 int waddch(WINDOW* , const unsigned int );
 int waddchnstr(WINDOW* , const unsigned int* , int );
 int waddchstr(WINDOW* , const unsigned int* );
@@ -3128,164 +3108,27 @@ int* wstring_operator_add(int* left, int* right);
 char* regex_structp_to_string(struct regex_struct* regex);
 void check_null_pointer(int sline, char* sname);
 void bool_expect(int self, void* parent, void (*block_)(void*));
+char* xsprintf2(char* msg, ...);
 int main(int argc, char** argv);
-static struct list_int* list_initialize_int(struct list_int* self);
-static void list_push_back_int(struct list_int* self, int item);
-static struct list_int* list_clone_int(struct list_int* self);
-static void list_push_back2_int(struct list_int* self, int item);
-static void lambda0(struct __method_block_stack_frame0* parent, int it, int it2, int* it3);
-static void list_each_int(struct list_int* self, void* parent, void (*block_)(void*,int,int,int*));
-static void list_finalize_int(struct list_int* self);
-static void list_item_finalize_list_item_int(struct list_item_int* self);
+
+char* xsprintf2(char* msg, ...)
+{
+    va_list args;
+    memset(&args, 0, sizeof(va_list));
+    (va_start(args,msg));
+    char* result;
+    memset(&result, 0, sizeof(char*));
+    int len=((vasprintf(((&result)),msg,args)));
+    (va_end(args));
+    return (((void*)0));
+}
 
 int main(int argc, char** argv)
 {
-void* right_value0;
-void* right_value1;
-void* right_value10;
 come_gc_init();
-    struct list_int* l=(right_value1 = (list_initialize_int((right_value0 = igc_calloc(1,32)))));
-    (list_push_back_int(l,1));
-    (list_push_back_int(l,2));
-    (list_push_back_int(l,3));
-    struct list_int* l2=(right_value10 = list_clone_int(l));
-    struct __method_block_stack_frame0 current_stack0;
-    current_stack0.l = &l;
-    current_stack0.l2 = &l2;
-    current_stack0.argc = &argc;
-    current_stack0.argv = &argv;
-    (list_each_int(l2,&current_stack0,(void*)(lambda0)));
-    call_finalizer(list_finalize_int,l,0);
-    call_finalizer(list_finalize_int,l2,0);
+    int n=128;
+    int a[n];
+    memset(&a, 0, sizeof(int));
     return 0;
-}
-
-static struct list_int* list_initialize_int(struct list_int* self)
-{
-    self->head=((void*)0);
-    self->tail=((void*)0);
-    self->len=0;
-    return self;
-}
-
-static void list_push_back_int(struct list_int* self, int item)
-{
-void* right_value2;
-void* right_value3;
-void* right_value4;
-    if(self->len==0) {
-        struct list_item_int* litem=(right_value2 = igc_calloc(1,24));
-        litem->prev=((void*)0);
-        litem->next=((void*)0);
-        litem->item=item;
-        self->tail=litem;
-        self->head=litem;
-    }
-    else if(self->len==1) {
-        struct list_item_int* litem=(right_value3 = igc_calloc(1,24));
-        litem->prev=self->head;
-        litem->next=((void*)0);
-        litem->item=item;
-        self->tail=litem;
-        self->head->next=litem;
-    }
-    else {
-        struct list_item_int* litem=(right_value4 = igc_calloc(1,24));
-        litem->prev=self->tail;
-        litem->next=((void*)0);
-        litem->item=item;
-        self->tail->next=litem;
-        self->tail=litem;
-    }
-    self->len=self->len+1;
-}
-
-static struct list_int* list_clone_int(struct list_int* self)
-{
-void* right_value5;
-void* right_value6;
-    struct list_int* result=(right_value6 = (list_initialize_int((right_value5 = igc_calloc(1,32)))));
-    struct list_item_int* it=self->head;
-    while (it!=((void*)0)) {
-        if(0) {
-            (list_push_back2_int(result,it->item));
-        }
-        else if(0) {
-            (list_push_back2_int(result,it->item));
-        }
-        else {
-            (list_push_back2_int(result,it->item));
-        }
-        it=it->next;
-    }
-    return result;
-}
-
-static void list_push_back2_int(struct list_int* self, int item)
-{
-void* right_value7;
-void* right_value8;
-void* right_value9;
-    if(self->len==0) {
-        struct list_item_int* litem=(right_value7 = igc_calloc(1,24));
-        litem->prev=((void*)0);
-        litem->next=((void*)0);
-        litem->item=item;
-        self->tail=litem;
-        self->head=litem;
-    }
-    else if(self->len==1) {
-        struct list_item_int* litem=(right_value8 = igc_calloc(1,24));
-        litem->prev=self->head;
-        litem->next=((void*)0);
-        litem->item=item;
-        self->tail=litem;
-        self->head->next=litem;
-    }
-    else {
-        struct list_item_int* litem=(right_value9 = igc_calloc(1,24));
-        litem->prev=self->tail;
-        litem->next=((void*)0);
-        litem->item=item;
-        self->tail->next=litem;
-        self->tail=litem;
-    }
-    self->len=self->len+1;
-}
-
-static void lambda0(struct __method_block_stack_frame0* parent, int it, int it2, int* it3)
-{
-        (printf("%d\n",it));
-}
-
-static void list_each_int(struct list_int* self, void* parent, void (*block_)(void*,int,int,int*))
-{
-    struct list_item_int* it=self->head;
-    int i=0;
-    while (it!=((void*)0)) {
-        int end_flag=0;
-        block_(parent,it->item,i,(&end_flag));
-        if(end_flag==1) {
-            break;
-        }
-        it=it->next;
-        i=i+1;
-    }
-}
-
-static void list_finalize_int(struct list_int* self)
-{
-    struct list_item_int* it=self->head;
-    while (it!=((void*)0)) {
-        if(0) {
-        }
-        struct list_item_int* prev_it=it;
-        it=it->next;
-        call_finalizer(list_item_finalize_list_item_int,prev_it,0);
-    }
-}
-
-static void list_item_finalize_list_item_int(struct list_item_int* self)
-{
 }
 

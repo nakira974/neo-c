@@ -2,6 +2,9 @@
 
 BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_method_generics_types, sNodeType** method_generics_types, LLVMValueRef* llvm_params, LVALUE* lvalue_params, sCompileInfo* info)
 {
+    int nest = info->inline_nest;
+    info->inline_nest++;
+    
     LLVMValueRef result_value = NULL;
     
     char* fun_name = fun->mName;
@@ -56,7 +59,7 @@ BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_meth
     sVarTable* block_var_table = info2.lv_table;
 
     for(i=0; i<num_params; i++) {
-        char* inline_real_var_name = xsprintf("_inline_%s", param_names[i]);
+        char* inline_real_var_name = xsprintf("_inline_%s%d", param_names[i], info->inline_nest);
         if(!add_variable_to_table(info2.lv_table, param_names[i], inline_real_var_name, fun->mParamTypes[i], gNullLVALUE, -1, FALSE, FALSE))
         {
             compile_err_msg(info, "overflow variable table");
@@ -102,9 +105,11 @@ BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_meth
         info->inline_result_variable = LLVMBuildAlloca(gBuilder, llvm_type, "inline_result_variable");
     }
     
+    char* inline_result_variable_name = info->inline_result_variable_name;
     if(!(type_identify_with_class_name(result_type, "void") && result_type->mPointerNum == 0))
     {
-        add_come_code(info, "%s inline_result_variable%d;\n", make_type_name_string(result_type), info->num_inline);
+        info->inline_result_variable_name = xsprintf("inline_result_variable%d", info->num_inline);
+        add_come_code_at_head(info, "%s %s;\n", make_type_name_string(result_type), info->inline_result_variable_name);
     }
     
     add_come_code(info, "{\n");
@@ -117,7 +122,7 @@ BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_meth
         
         LLVMBuildStore(gBuilder, llvm_params[i], param);
         
-        char* inline_real_var_name = xsprintf("_inline_%s", param_names[i]);
+        char* inline_real_var_name = xsprintf("_inline_%s%d", param_names[i], info->inline_nest);
         add_come_code(info, "%s %s = %s;\n", make_type_name_string(param_types[i]), inline_real_var_name, lvalue_params[i].c_value);
 
         if(fun->mParamTypes[i] != NULL) {
@@ -185,7 +190,7 @@ BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_meth
         llvm_value.type = result_type;
         llvm_value.address = info->inline_result_variable;
         llvm_value.var = NULL;
-        llvm_value.c_value = xsprintf("inline_result_variable%d", info->num_inline);
+        llvm_value.c_value = info->inline_result_variable_name;
 
         dec_stack_ptr(num_params, info);
         push_value_to_stack_ptr(&llvm_value, info);
@@ -203,7 +208,7 @@ BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_meth
     if(result_value) {
         if(result_type->mHeap) {
             char* var_name = append_object_to_right_values(result_value, result_type, info);
-            add_come_code(info, "%s = inline_result_variable%d;\n", var_name, info->num_inline);
+            add_come_code(info, "%s = %s;\n", var_name, info->inline_result_variable_name);
         }
     }
 
@@ -212,8 +217,11 @@ BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_meth
     info->inline_func_end = inline_func_end_before;
     
     info->inline_func_end_label = inline_func_end_label;
+    info->inline_result_variable_name = inline_result_variable_name;
     
     xstrncpy(gFunctionName, function_name, VAR_NAME_MAX);
+    
+    info->inline_nest = nest;
     
     return TRUE;
 }
@@ -952,7 +960,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         }
     }
 
-    if(strcmp(fun_name, "llvm.va_start") == 0 || strcmp(fun_name, "llvm.va_end") == 0)
+    if((strcmp(fun_name, "llvm.va_start") == 0 || strcmp(fun_name, "llvm.va_end") == 0) && !gNCTranspile)
     {
 #ifdef __DARWIN__
         LLVMValueRef param = llvm_params[0];
@@ -1068,6 +1076,15 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         }
     }
 #endif
+
+    if(strcmp(fun_name, "llvm.va_start") == 0 && gNCTranspile)
+    {
+        xstrncpy(fun_name, "va_start", VAR_NAME_MAX);
+    }
+    else if(strcmp(fun_name, "llvm.va_end") == 0 && gNCTranspile) 
+    {
+        xstrncpy(fun_name, "va_end", VAR_NAME_MAX);
+    }
 
     LLVMValueRef result_value = NULL;
 
@@ -1193,6 +1210,9 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
     }
     /// call inline function ///
     else if(fun->mBlockText) {
+        int nest = info->inline_nest;
+        info->inline_nest++;
+    
         set_caller_sline(info->sline);
         set_caller_sname(info->sname);
         
@@ -1233,7 +1253,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         sVarTable* block_var_table = info2.lv_table;
 
         for(i=0; i<num_params; i++) {
-            char* inline_real_var_name = xsprintf("_inline_%s", param_names[i]);
+            char* inline_real_var_name = xsprintf("_inline_%s%d", param_names[i], info->inline_nest);
             if(!add_variable_to_table(info2.lv_table, param_names[i], inline_real_var_name, fun->mParamTypes[i], gNullLVALUE, -1, FALSE, FALSE))
             {
                 compile_err_msg(info, "overflow variable table");
@@ -1279,9 +1299,11 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
             info->inline_result_variable = LLVMBuildAlloca(gBuilder, llvm_type, "inline_result_variable");
         }
         
+        char* inline_result_variable_name = info->inline_result_variable_name;
         if(!(type_identify_with_class_name(result_type, "void") && result_type->mPointerNum == 0))
         {
-            add_come_code(info, "%s inline_result_variable%d;\n", make_type_name_string(result_type), info->num_inline);
+            info->inline_result_variable_name = xsprintf("inline_result_variable%d", info->num_inline);
+            add_come_code_at_head(info, "%s %s;\n", make_type_name_string(result_type), info->inline_result_variable_name);
         }
         
         add_come_code(info, "{\n");
@@ -1294,7 +1316,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
             
             LLVMBuildStore(gBuilder, llvm_params[i], param);
             
-            char* inline_real_var_name = xsprintf("_inline_%s", param_names[i]);
+            char* inline_real_var_name = xsprintf("_inline_%s%d", param_names[i], info->inline_nest);
             add_come_code(info, "%s %s = %s;\n", make_type_name_string(param_types[i]), inline_real_var_name, lvalue_params[i].c_value);
 
             if(fun->mParamTypes[i] != NULL) {
@@ -1360,7 +1382,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
             llvm_value.type = result_type;
             llvm_value.address = info->inline_result_variable;
             llvm_value.var = NULL;
-            llvm_value.c_value = xsprintf("inline_result_variable%d", info->num_inline);
+            llvm_value.c_value = info->inline_result_variable_name;
 
             dec_stack_ptr(num_params, info);
             push_value_to_stack_ptr(&llvm_value, info);
@@ -1383,10 +1405,13 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         if(result_value) {
             if(info->type->mHeap) {
                 char* var_name = append_object_to_right_values(result_value, info->type, info);
-                add_come_code(info, "%s = inline_result_variable%d;\n", var_name, info->num_inline);
+                add_come_code(info, "%s = %s;\n", var_name, info->inline_result_variable_name);
             }
         }
         add_come_code(info, "(void)0;\n}\n");
+        
+        info->inline_result_variable_name = inline_result_variable_name;
+        info->inline_nest = nest;
     }
     /// call normal function ///
     else {

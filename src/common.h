@@ -294,9 +294,10 @@ void add_come_function(char* fun_name, sNodeType* result_type, int num_params, s
 void output_struct(char* struct_name, sNodeType* struct_type, sNodeType* generics_type, BOOL undefined_body);
 void output_union(char* struct_name, sNodeType* union_type, sNodeType* generics_type, BOOL undefined_body);
 void output_typedef(char* name, sNodeType* node_type);
-char* make_define_var(sNodeType* node_type, char* name);
+char* make_define_var(sNodeType* node_type, char* name, struct sCompileInfoStruct* info);
 sComeFun* get_come_function(char* fun_name);
 void add_come_code(struct sCompileInfoStruct* info, const char* msg, ...);
+void add_come_code_at_head(struct sCompileInfoStruct* info, const char* msg, ...);
 void add_come_code_top_level(const char* msg, ...);
 void add_come_last_code(struct sCompileInfoStruct* info, const char* msg, ...);
 void add_last_code_to_source(struct sCompileInfoStruct* info);
@@ -715,6 +716,9 @@ struct sCompileInfoStruct
     
     sComeFun* come_fun;
     int come_nest;
+    int inline_nest;
+    
+    char* inline_result_variable_name;
 };
 
 typedef struct sCompileInfoStruct sCompileInfo;

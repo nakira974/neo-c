@@ -1079,11 +1079,11 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
 
     if(strcmp(fun_name, "llvm.va_start") == 0 && gNCTranspile)
     {
-        xstrncpy(fun_name, "va_start", VAR_NAME_MAX);
+        xstrncpy(fun_name, "__builtin_va_start", VAR_NAME_MAX);
     }
     else if(strcmp(fun_name, "llvm.va_end") == 0 && gNCTranspile) 
     {
-        xstrncpy(fun_name, "va_end", VAR_NAME_MAX);
+        xstrncpy(fun_name, "__builtin_va_end", VAR_NAME_MAX);
     }
 
     LLVMValueRef result_value = NULL;

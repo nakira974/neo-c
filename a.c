@@ -1,5 +1,6 @@
 #include <comelang.h>
 
+
 int main()
 {
     using unsafe;
@@ -22,7 +23,6 @@ int main()
     v.push_back(2);
     v.push_back(3);
 
-/*
     xassert("vector test1", v.item(0, -1) == 1 && v.item(1, -1) == 2 && v.item(2, -1) == 3 && v.item(100, -1) == -1 && v.length() == 3);
     
     v.replace(0, 7);
@@ -75,6 +75,7 @@ int main()
         printf("%d\n", it);
     }
 
+/*
     map<string, int>*% m = new map<string, int>.initialize();
 
     m.insert(string("AAA"), 1);

@@ -1325,7 +1325,7 @@ BOOL compile_clone(unsigned int node, sCompileInfo* info)
     }
 
     char* c_value = NULL;
-    LLVMValueRef obj = clone_object(left_type, lvalue.value, lvalue.c_value, &c_value, info);
+    LLVMValueRef obj = clone_object(left_type2, lvalue.value, lvalue.c_value, &c_value, info);
 
     dec_stack_ptr(1, info);
 
@@ -1335,9 +1335,14 @@ BOOL compile_clone(unsigned int node, sCompileInfo* info)
     llvm_value.address = NULL;
     llvm_value.var = NULL;
     
-    if(left_type->mHeap) {
+    if(left_type2->mHeap) {
         char* var_name = append_object_to_right_values(obj, left_type2, info);
-        llvm_value.c_value = xsprintf("(%s = %s)", var_name, c_value);
+        if(c_value) {
+            llvm_value.c_value = xsprintf("(%s = %s)", var_name, c_value);
+        }
+        else {
+            llvm_value.c_value = xsprintf("%s", lvalue.c_value);
+        }
     }
     else {
         llvm_value.c_value = xsprintf("%s", lvalue.c_value);
@@ -2497,6 +2502,21 @@ BOOL compile_store_element(unsigned int node, sCompileInfo* info)
             LLVMValueRef load_element_addresss = LLVMBuildGEP2(gBuilder, llvm_var_type2, lvalue2, &mvalue[0].value, 1, "gepBX");
     
             LLVMBuildStore(gBuilder, rvalue.value, load_element_addresss);
+            
+            sBuf buf;
+            sBuf_init(&buf);
+            
+            sBuf_append_str(&buf, lvalue.c_value);
+            int k;
+            for(k=0; k<num_dimention; k++) {
+                sBuf_append_str(&buf, "[");
+                sBuf_append_str(&buf, mvalue[k].c_value);
+                sBuf_append_str(&buf, "]");
+            }
+            
+            add_come_code(info, "%s=%s;\n", buf.mBuf, rvalue.c_value);
+            rvalue.c_value = xsprintf("%s", buf.mBuf);
+            free(buf.mBuf);
     
             dec_stack_ptr(2+num_dimention, info);
             push_value_to_stack_ptr(&rvalue, info);
@@ -2533,6 +2553,21 @@ BOOL compile_store_element(unsigned int node, sCompileInfo* info)
             node_type->mArrayDimentionNum = 0;
     
             LLVMBuildStore(gBuilder, rvalue.value, load_element_addresss);
+            
+            sBuf buf;
+            sBuf_init(&buf);
+            
+            sBuf_append_str(&buf, lvalue.c_value);
+            int k;
+            for(k=0; k<num_dimention; k++) {
+                sBuf_append_str(&buf, "[");
+                sBuf_append_str(&buf, mvalue[k].c_value);
+                sBuf_append_str(&buf, "]");
+            }
+            
+            add_come_code(info, "%s=%s;\n", buf.mBuf, rvalue.c_value);
+            rvalue.c_value = xsprintf("%s", buf.mBuf);
+            free(buf.mBuf);
     
             dec_stack_ptr(2+num_dimention, info);
             push_value_to_stack_ptr(&rvalue, info);
@@ -2593,6 +2628,21 @@ BOOL compile_store_element(unsigned int node, sCompileInfo* info)
             }
             else {
                 LLVMBuildStore(gBuilder, rvalue.value, load_element_addresss);
+                
+                sBuf buf;
+                sBuf_init(&buf);
+                
+                sBuf_append_str(&buf, lvalue.c_value);
+                int k;
+                for(k=0; k<num_dimention; k++) {
+                    sBuf_append_str(&buf, "[");
+                    sBuf_append_str(&buf, mvalue[k].c_value);
+                    sBuf_append_str(&buf, "]");
+                }
+                
+                add_come_code(info, "%s=%s;\n", buf.mBuf, rvalue.c_value);
+                rvalue.c_value = xsprintf("%s", buf.mBuf);
+                free(buf.mBuf);
         
                 dec_stack_ptr(2+num_dimention, info);
                 push_value_to_stack_ptr(&rvalue, info);
@@ -2641,6 +2691,21 @@ BOOL compile_store_element(unsigned int node, sCompileInfo* info)
             }
     
             LLVMBuildStore(gBuilder, rvalue.value, element_address);
+            
+            sBuf buf;
+            sBuf_init(&buf);
+            
+            sBuf_append_str(&buf, lvalue.c_value);
+            int k;
+            for(k=0; k<num_dimention; k++) {
+                sBuf_append_str(&buf, "[");
+                sBuf_append_str(&buf, mvalue[k].c_value);
+                sBuf_append_str(&buf, "]");
+            }
+            
+            add_come_code(info, "%s=%s;\n", buf.mBuf, rvalue.c_value);
+            rvalue.c_value = xsprintf("%s", buf.mBuf);
+            free(buf.mBuf);
     
             dec_stack_ptr(2+num_dimention, info);
             push_value_to_stack_ptr(&rvalue, info);

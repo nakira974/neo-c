@@ -3264,35 +3264,35 @@ void* right_value8;
 void* right_value10;
 void* right_value11;
 void* right_value12;
-void* right_value21;
-void* right_value24;
-void* right_value25;
 void* right_value26;
-void* right_value42;
-void* right_value43;
-void* right_value49;
-void* right_value50;
-void* right_value57;
-void* right_value58;
-void* right_value59;
-void* right_value60;
-void* right_value61;
-void* right_value62;
-void* right_value63;
-void* right_value64;
-void* right_value65;
-void* right_value66;
+void* right_value31;
+void* right_value32;
+void* right_value33;
 void* right_value67;
-void* right_value69;
-void* right_value70;
-void* right_value71;
-void* right_value72;
-void* right_value73;
-void* right_value79;
+void* right_value68;
+void* right_value74;
+void* right_value75;
+void* right_value83;
+void* right_value84;
+void* right_value85;
 void* right_value86;
 void* right_value87;
 void* right_value88;
 void* right_value89;
+void* right_value90;
+void* right_value91;
+void* right_value92;
+void* right_value93;
+void* right_value95;
+void* right_value96;
+void* right_value97;
+void* right_value98;
+void* right_value99;
+void* right_value105;
+void* right_value113;
+void* right_value114;
+void* right_value115;
+void* right_value116;
 come_gc_init();
     {
     const char* _inline_msg1 = "xaasert test";
@@ -3548,7 +3548,7 @@ inline_func_end_label14:
 inline_func_end_label15:
     (void)0;
 }
-    struct list_int* l2=(right_value21 = (list_sublist_int(l,1,-1)));
+    struct list_int* l2=(right_value26 = (list_sublist_int(l,1,-1)));
     {
     const char* _inline_msg1 = "list test6";
     int _inline_exp1 = (list_length_int(l2))==2&&(list_item_int(l2,0,-1))==2&&(list_item_int(l2,1,-1))==3;
@@ -3565,7 +3565,7 @@ inline_func_end_label15:
 inline_func_end_label16:
     (void)0;
 }
-    struct list_int* l3=(right_value24 = (list_reverse_int(l2)));
+    struct list_int* l3=(right_value31 = (list_reverse_int(l2)));
     {
     const char* _inline_msg1 = "list test7";
     int _inline_exp1 = (list_length_int(l3))==2&&(list_item_int(l3,0,-1))==3&&(list_item_int(l3,1,-1))==2;
@@ -3582,11 +3582,11 @@ inline_func_end_label16:
 inline_func_end_label17:
     (void)0;
 }
-    struct list_int* l4=(right_value26 = (list_initialize_int((right_value25 = igc_calloc(1,32)))));
+    struct list_int* l4=(right_value33 = (list_initialize_int((right_value32 = igc_calloc(1,32)))));
     (list_push_back_int(l4,3));
     (list_push_back_int(l4,1));
     (list_push_back_int(l4,2));
-    struct list_int* l5=(right_value42 = (list_sort_with_lambda_int(l4,int_compare)));
+    struct list_int* l5=(right_value67 = (list_sort_with_lambda_int(l4,int_compare)));
     {
         struct list_int* _obj=(l5);
         int it=(list_begin_int(_obj));
@@ -3595,10 +3595,10 @@ inline_func_end_label17:
             it=(list_next_int(_obj));
         }
     }
-    struct map_charphp_int* m=(right_value49 = (map_initialize_charph_int((right_value43 = igc_calloc(1,48)))));
-    (map_insert_charph_int(m,(right_value50 = (__builtin_string("AAA"))),1));
-    (map_insert_charph_int(m,(right_value57 = (__builtin_string("BBB"))),2));
-    (map_insert_charph_int(m,(right_value58 = (__builtin_string("CCC"))),3));
+    struct map_charphp_int* m=(right_value74 = (map_initialize_charph_int((right_value68 = igc_calloc(1,48)))));
+    (map_insert_charph_int(m,(right_value75 = (__builtin_string("AAA"))),1));
+    (map_insert_charph_int(m,(right_value83 = (__builtin_string("BBB"))),2));
+    (map_insert_charph_int(m,(right_value84 = (__builtin_string("CCC"))),3));
     {
     const char* _inline_msg1 = "map test1";
     int _inline_exp1 = (map_length_charph_int(m))==3;
@@ -3615,12 +3615,12 @@ inline_func_end_label17:
 inline_func_end_label18:
     (void)0;
 }
-    igc_decrement_ref_count(right_value59);
-    igc_decrement_ref_count(right_value60);
-    igc_decrement_ref_count(right_value61);
+    igc_decrement_ref_count(right_value85);
+    igc_decrement_ref_count(right_value86);
+    igc_decrement_ref_count(right_value87);
     {
     const char* _inline_msg1 = "map test2";
-    int _inline_exp1 = (map_at_charph_int(m,(right_value59 = (__builtin_string("AAA"))),-1))==1&&(map_at_charph_int(m,(right_value60 = (__builtin_string("BBB"))),-1))==2&&(map_at_charph_int(m,(right_value61 = (__builtin_string("CCC"))),-1))==3;
+    int _inline_exp1 = (map_at_charph_int(m,(right_value85 = (__builtin_string("AAA"))),-1))==1&&(map_at_charph_int(m,(right_value86 = (__builtin_string("BBB"))),-1))==2&&(map_at_charph_int(m,(right_value87 = (__builtin_string("CCC"))),-1))==3;
         (printf("%s",_inline_msg1));
         (printf("..."));
         if(_inline_exp1) {
@@ -3658,7 +3658,7 @@ inline_func_end_label20:
             it=(map_next_charph_int(_obj));
         }
     }
-    struct tuple2_int_charpp* t=(right_value62 = igc_calloc(1,16));
+    struct tuple2_int_charpp* t=(right_value88 = igc_calloc(1,16));
     t->v1=123;
     t->v2="ABC";
     {
@@ -3677,32 +3677,32 @@ inline_func_end_label20:
 inline_func_end_label21:
     (void)0;
 }
-    struct list_int* lx=(right_value64 = (list_initialize_int((right_value63 = igc_calloc(1,32)))));
+    struct list_int* lx=(right_value90 = (list_initialize_int((right_value89 = igc_calloc(1,32)))));
     (list_push_back_int(lx,1));
     (list_push_back_int(lx,2));
     (list_push_back_int(lx,3));
     {
-        struct list_int* _obj=((right_value65 = (list_sublist_int(lx,1,3))));
+        struct list_int* _obj=((right_value91 = (list_sublist_int(lx,1,3))));
         int it=(list_begin_int(_obj));
         while(!(list_end_int(_obj))) {
             int a=1;
-            char* str=(right_value66 = (__builtin_string("AAA")));
+            char* str=(right_value92 = (__builtin_string("AAA")));
             (printf("%d\n",it));
             igc_decrement_ref_count(str);
             it=(list_next_int(_obj));
         }
     }
     call_finalizer(list_finalize_int,_obj,0);
-    struct vector_intpp* v3=(right_value69 = (vector_initialize_intp((right_value67 = igc_calloc(1,24)))));
+    struct vector_intpp* v3=(right_value95 = (vector_initialize_intp((right_value93 = igc_calloc(1,24)))));
     int x=0;
     (vector_push_back_intp(v3,(&x)));
     (printf("%d\n",*(vector_item_intp(v3,0,((void*)0)))));
-    struct buffer* b1=(right_value71 = (bufferp_initialize((right_value70 = igc_calloc(1,16)))));
+    struct buffer* b1=(right_value97 = (bufferp_initialize((right_value96 = igc_calloc(1,16)))));
     (bufferp_append_str(b1,"ABC"));
     (bufferp_append_str(b1,"DEF"));
     {
     const char* _inline_msg1 = "buffer test";
-    int _inline_exp1 = (strcmp((right_value72 = (bufferp_to_string(b1))),"ABCDEF"))==0;
+    int _inline_exp1 = (strcmp((right_value98 = (bufferp_to_string(b1))),"ABCDEF"))==0;
         (printf("%s",_inline_msg1));
         (printf("..."));
         if(_inline_exp1) {
@@ -3716,10 +3716,10 @@ inline_func_end_label21:
 inline_func_end_label22:
     (void)0;
 }
-    igc_decrement_ref_count(right_value72);
-    struct map_charpp_int* m1=(right_value79 = (map_initialize_charp_int((right_value73 = igc_calloc(1,48)))));
+    igc_decrement_ref_count(right_value98);
+    struct map_charpp_int* m1=(right_value105 = (map_initialize_charp_int((right_value99 = igc_calloc(1,48)))));
     (map_insert_charp_int(m1,"AAA",1));
-    struct map_charpp_int* m2=(right_value87 = (map_initialize_charp_int((right_value86 = igc_calloc(1,48)))));
+    struct map_charpp_int* m2=(right_value114 = (map_initialize_charp_int((right_value113 = igc_calloc(1,48)))));
     (map_insert_charp_int(m2,"AAA",1));
     {
     const char* _inline_msg1 = "map test";
@@ -3771,7 +3771,8 @@ inline_func_end_label25:
 }
     struct list_charpp* li=const unsigned char* _list_element0[1];
 _list_element1[0] = "1";
-list_initialize_with_values_charp((right_value88 = igc_calloc(1,32)), 1, _list_element1);
+list_initialize_with_values_charp((right_value115 = igc_calloc(1,32)), 1, _list_element1);
+    int __result_value = 0;
     igc_decrement_ref_count(a);
     call_finalizer(list_finalize_int,l,0);
     call_finalizer(map_finalize_charph_int,m,0);
@@ -3787,7 +3788,7 @@ list_initialize_with_values_charp((right_value88 = igc_calloc(1,32)), 1, _list_e
     call_finalizer(vector_finalize_intp,v3,0);
     call_finalizer(list_finalize_charp,li,0);
     call_finalizer(list_finalize_int,lx,0);
-    return 0;
+    return __result_value;
 }
 
 static struct vector_int* vector_initialize_int(struct vector_int* self)
@@ -3796,7 +3797,8 @@ void* right_value9;
     self->size=16;
     self->len=0;
     self->items=(right_value9 = igc_calloc(self->size,4));
-    return self;
+    struct vector_int* __result_value = self;
+    return __result_value;
 }
 
 static void vector_push_back_int(struct vector_int* self, int item)
@@ -3810,12 +3812,14 @@ static void vector_push_back_int(struct vector_int* self, int item)
         {
             i=0;
             while(i<self->size) {
+                self->items[i]=items[i];
                 i=i+1;
             }
         }
         self->size=new_size;
         igc_decrement_ref_count(items);
     }
+    self->items[self->len]=item;
     self->len=self->len+1;
 }
 
@@ -3825,14 +3829,17 @@ static int vector_item_int(struct vector_int* self, int index, int default_value
         index=index+self->len;
     }
     if(index>=0&&index<self->len) {
-        return self->items[index];
+        int __result_value = self->items[index];
+        return __result_value;
     }
-    return default_value;
+    int __result_value = default_value;
+    return __result_value;
 }
 
 static int vector_length_int(struct vector_int* self)
 {
-    return self->len;
+    int __result_value = self->len;
+    return __result_value;
 }
 
 static void vector_replace_int(struct vector_int* self, int index, int value)
@@ -3843,6 +3850,7 @@ static void vector_replace_int(struct vector_int* self, int index, int value)
     if(index>=0&&index<self->len) {
         if(0) {
         }
+        self->items[index]=value;
     }
 }
 
@@ -3851,12 +3859,14 @@ static int vector_begin_int(struct vector_int* self)
     self->it=0;
     int default_value;
     memset(&default_value, 0, sizeof(int));
-    return (vector_item_int(self,0,default_value));
+    int __result_value = (vector_item_int(self,0,default_value));
+    return __result_value;
 }
 
 static int vector_end_int(struct vector_int* self)
 {
-    return self->it>=self->len;
+    int __result_value = self->it>=self->len;
+    return __result_value;
 }
 
 static int vector_next_int(struct vector_int* self)
@@ -3864,7 +3874,8 @@ static int vector_next_int(struct vector_int* self)
     self->it=self->it+1;
     int default_value;
     memset(&default_value, 0, sizeof(int));
-    return (vector_item_int(self,self->it,default_value));
+    int __result_value = (vector_item_int(self,self->it,default_value));
+    return __result_value;
 }
 
 static struct list_int* list_initialize_int(struct list_int* self)
@@ -3872,12 +3883,14 @@ static struct list_int* list_initialize_int(struct list_int* self)
     self->head=((void*)0);
     self->tail=((void*)0);
     self->len=0;
-    return self;
+    struct list_int* __result_value = self;
+    return __result_value;
 }
 
 static int list_length_int(struct list_int* self)
 {
-    return self->len;
+    int __result_value = self->len;
+    return __result_value;
 }
 
 static void list_push_back_int(struct list_int* self, int item)
@@ -3921,12 +3934,14 @@ static int list_item_int(struct list_int* self, int position, int default_value)
     int i=0;
     while (it!=((void*)0)) {
         if(position==i) {
-            return it->item;
+            int __result_value = it->item;
+            return __result_value;
         }
         it=it->next;
         i=i+1;
     }
-    return default_value;
+    int __result_value = default_value;
+    return __result_value;
 }
 
 static void list_insert_int(struct list_int* self, int position, int item)
@@ -3934,6 +3949,8 @@ static void list_insert_int(struct list_int* self, int position, int item)
 void* right_value16;
 void* right_value17;
 void* right_value18;
+void* right_value19;
+void* right_value20;
     if(position<0) {
         position=position+self->len+1;
     }
@@ -3952,7 +3969,7 @@ void* right_value18;
         }
     }
     if(position==0) {
-        struct list_item_int* litem=(right_value16 = igc_calloc(1,24));
+        struct list_item_int* litem=(right_value18 = igc_calloc(1,24));
         litem->prev=((void*)0);
         litem->next=self->head;
         litem->item=item;
@@ -3961,7 +3978,7 @@ void* right_value18;
         self->len=self->len+1;
     }
     else if(self->len==1) {
-        struct list_item_int* litem=(right_value17 = igc_calloc(1,24));
+        struct list_item_int* litem=(right_value19 = igc_calloc(1,24));
         litem->prev=self->head;
         litem->next=self->tail;
         litem->item=item;
@@ -3974,7 +3991,7 @@ void* right_value18;
         int i=0;
         while (it!=((void*)0)) {
             if(position==i) {
-                struct list_item_int* litem=(right_value18 = igc_calloc(1,24));
+                struct list_item_int* litem=(right_value20 = igc_calloc(1,24));
                 litem->prev=it->prev;
                 litem->next=it;
                 litem->item=item;
@@ -4134,9 +4151,12 @@ static void list_replace_int(struct list_int* self, int position, int item)
 
 static struct list_int* list_sublist_int(struct list_int* self, int begin, int tail)
 {
-void* right_value19;
-void* right_value20;
-    struct list_int* result=(right_value20 = (list_initialize_int((right_value19 = igc_calloc(1,32)))));
+void* right_value21;
+void* right_value22;
+void* right_value23;
+void* right_value24;
+void* right_value25;
+    struct list_int* result=(right_value22 = (list_initialize_int((right_value21 = igc_calloc(1,32)))));
     if(begin<0) {
         begin=begin+self->len;
     }
@@ -4171,14 +4191,17 @@ void* right_value20;
         it=it->next;
         i=i+1;
     }
-    return result;
+    struct list_int* __result_value = result;
+    return __result_value;
 }
 
 static struct list_int* list_reverse_int(struct list_int* self)
 {
-void* right_value22;
-void* right_value23;
-    struct list_int* result=(right_value23 = (list_initialize_int((right_value22 = igc_calloc(1,32)))));
+void* right_value27;
+void* right_value28;
+void* right_value29;
+void* right_value30;
+    struct list_int* result=(right_value28 = (list_initialize_int((right_value27 = igc_calloc(1,32)))));
     struct list_item_int* it=self->tail;
     while (it!=((void*)0)) {
         if(0) {
@@ -4194,32 +4217,44 @@ void* right_value23;
         }
         it=it->prev;
     }
-    return result;
+    struct list_int* __result_value = result;
+    return __result_value;
 }
 
 static struct list_int* list_sort_with_lambda_int(struct list_int* self, int (*compare)(int,int))
 {
-void* right_value41;
-    return (right_value41 = (list_merge_sort_with_lambda_int(self,compare)));
+void* right_value66;
+    struct list_int* __result_value = (right_value66 = (list_merge_sort_with_lambda_int(self,compare)));
+    return __result_value;
 }
 
 static struct list_int* list_merge_sort_with_lambda_int(struct list_int* self, int (*compare)(int,int))
 {
-void* right_value32;
-void* right_value33;
-void* right_value34;
-void* right_value35;
-void* right_value36;
-void* right_value37;
-void* right_value40;
+void* right_value41;
+void* right_value42;
+void* right_value43;
+void* right_value44;
+void* right_value45;
+void* right_value46;
+void* right_value47;
+void* right_value48;
+void* right_value49;
+void* right_value50;
+void* right_value51;
+void* right_value52;
+void* right_value53;
+void* right_value54;
+void* right_value65;
     if(self->head==((void*)0)) {
-        return self;
+        struct list_int* __result_value = (right_value41 = list_clone_int(self));
+        return __result_value;
     }
     if(self->head->next==((void*)0)) {
-        return self;
+        struct list_int* __result_value = (right_value42 = list_clone_int(self));
+        return __result_value;
     }
-    struct list_int* list1=(right_value33 = (list_initialize_int((right_value32 = igc_calloc(1,32)))));
-    struct list_int* list2=(right_value35 = (list_initialize_int((right_value34 = igc_calloc(1,32)))));
+    struct list_int* list1=(right_value44 = (list_initialize_int((right_value43 = igc_calloc(1,32)))));
+    struct list_int* list2=(right_value46 = (list_initialize_int((right_value45 = igc_calloc(1,32)))));
     struct list_item_int* it=self->head;
     while (1) {
         if(0) {
@@ -4263,18 +4298,23 @@ void* right_value40;
             break;
         }
     }
-    call_finalizer(list_finalize_int,right_value37,0);
-    call_finalizer(list_finalize_int,right_value36,0);
+    struct list_int* left_list=(right_value53 = (list_merge_sort_with_lambda_int(list1,compare)));
+    struct list_int* right_list=(right_value54 = (list_merge_sort_with_lambda_int(list2,compare)));
+    struct list_int* __result_value = (right_value65 = (list_merge_list_with_lambda_int(left_list,right_list,compare)));
     call_finalizer(list_finalize_int,list1,0);
     call_finalizer(list_finalize_int,list2,0);
-    return (right_value40 = (list_merge_list_with_lambda_int((right_value36 = (list_merge_sort_with_lambda_int(list1,compare))),(right_value37 = (list_merge_sort_with_lambda_int(list2,compare))),compare)));
+    call_finalizer(list_finalize_int,left_list,0);
+    call_finalizer(list_finalize_int,right_list,0);
+    return __result_value;
 }
 
 static struct list_int* list_clone_int(struct list_int* self)
 {
-void* right_value27;
-void* right_value28;
-    struct list_int* result=(right_value28 = (list_initialize_int((right_value27 = igc_calloc(1,32)))));
+void* right_value34;
+void* right_value35;
+void* right_value36;
+void* right_value40;
+    struct list_int* result=(right_value35 = (list_initialize_int((right_value34 = igc_calloc(1,32)))));
     struct list_item_int* it=self->head;
     while (it!=((void*)0)) {
         if(0) {
@@ -4288,16 +4328,17 @@ void* right_value28;
         }
         it=it->next;
     }
-    return result;
+    struct list_int* __result_value = result;
+    return __result_value;
 }
 
 static void list_push_back2_int(struct list_int* self, int item)
 {
-void* right_value29;
-void* right_value30;
-void* right_value31;
+void* right_value37;
+void* right_value38;
+void* right_value39;
     if(self->len==0) {
-        struct list_item_int* litem=(right_value29 = igc_calloc(1,24));
+        struct list_item_int* litem=(right_value37 = igc_calloc(1,24));
         litem->prev=((void*)0);
         litem->next=((void*)0);
         litem->item=item;
@@ -4305,7 +4346,7 @@ void* right_value31;
         self->head=litem;
     }
     else if(self->len==1) {
-        struct list_item_int* litem=(right_value30 = igc_calloc(1,24));
+        struct list_item_int* litem=(right_value38 = igc_calloc(1,24));
         litem->prev=self->head;
         litem->next=((void*)0);
         litem->item=item;
@@ -4313,7 +4354,7 @@ void* right_value31;
         self->head->next=litem;
     }
     else {
-        struct list_item_int* litem=(right_value31 = igc_calloc(1,24));
+        struct list_item_int* litem=(right_value39 = igc_calloc(1,24));
         litem->prev=self->tail;
         litem->next=((void*)0);
         litem->item=item;
@@ -4325,9 +4366,17 @@ void* right_value31;
 
 static struct list_int* list_merge_list_with_lambda_int(struct list_int* left, struct list_int* right, int (*compare)(int,int))
 {
-void* right_value38;
-void* right_value39;
-    struct list_int* result=(right_value39 = (list_initialize_int((right_value38 = igc_calloc(1,32)))));
+void* right_value55;
+void* right_value56;
+void* right_value57;
+void* right_value58;
+void* right_value59;
+void* right_value60;
+void* right_value61;
+void* right_value62;
+void* right_value63;
+void* right_value64;
+    struct list_int* result=(right_value56 = (list_initialize_int((right_value55 = igc_calloc(1,32)))));
     struct list_item_int* it=left->head;
     struct list_item_int* it2=right->head;
     while (1) {
@@ -4406,7 +4455,8 @@ void* right_value39;
             break;
         }
     }
-    return result;
+    struct list_int* __result_value = result;
+    return __result_value;
 }
 
 static void list_finalize_int(struct list_int* self)
@@ -4425,52 +4475,59 @@ static int list_begin_int(struct list_int* self)
 {
     self->it=self->head;
     if(self->it) {
-        return self->it->item;
+        int __result_value = self->it->item;
+        return __result_value;
     }
     int result;
     memset(&result, 0, sizeof(int));
     (memset((&result),0,sizeof(int)));
-    return result;
+    int __result_value = result;
+    return __result_value;
 }
 
 static int list_end_int(struct list_int* self)
 {
-    return self->it==((void*)0);
+    int __result_value = self->it==((void*)0);
+    return __result_value;
 }
 
 static int list_next_int(struct list_int* self)
 {
     self->it=self->it->next;
     if(self->it) {
-        return self->it->item;
+        int __result_value = self->it->item;
+        return __result_value;
     }
     int result;
     memset(&result, 0, sizeof(int));
     (memset((&result),0,sizeof(int)));
-    return result;
+    int __result_value = result;
+    return __result_value;
 }
 
 static struct map_charphp_int* map_initialize_charph_int(struct map_charphp_int* self)
 {
-void* right_value44;
-void* right_value45;
-void* right_value46;
-void* right_value47;
-void* right_value48;
-    self->keys=(right_value44 = igc_calloc(128,8));
-    self->items=(right_value45 = igc_calloc(128,4));
-    self->item_existance=(right_value46 = igc_calloc(128,1));
+void* right_value69;
+void* right_value70;
+void* right_value71;
+void* right_value72;
+void* right_value73;
+    self->keys=(right_value69 = igc_calloc(128,8));
+    self->items=(right_value70 = igc_calloc(128,4));
+    self->item_existance=(right_value71 = igc_calloc(128,1));
     {
         int i=0;
         while(i<128) {
+            self->item_existance[i]=0;
             i=i+1;
         }
     }
     self->size=128;
     self->len=0;
-    self->key_list=(right_value48 = (list_initialize_charph((right_value47 = igc_calloc(1,32)))));
+    self->key_list=(right_value73 = (list_initialize_charph((right_value72 = igc_calloc(1,32)))));
     self->it=0;
-    return self;
+    struct map_charphp_int* __result_value = self;
+    return __result_value;
 }
 
 static struct list_charphp* list_initialize_charph(struct list_charphp* self)
@@ -4478,11 +4535,13 @@ static struct list_charphp* list_initialize_charph(struct list_charphp* self)
     self->head=((void*)0);
     self->tail=((void*)0);
     self->len=0;
-    return self;
+    struct list_charphp* __result_value = self;
+    return __result_value;
 }
 
 static void map_insert_charph_int(struct map_charphp_int* self, char* key, int item)
 {
+void* right_value79;
     if(self->len*2>=self->size) {
         (map_rehash_charph_int(self));
     }
@@ -4496,6 +4555,8 @@ static void map_insert_charph_int(struct map_charphp_int* self, char* key, int i
                 }
                 if(0) {
                 }
+                self->keys[it]=key;
+                self->items[it]=item;
                 break;
             }
             it=it+1;
@@ -4508,12 +4569,15 @@ static void map_insert_charph_int(struct map_charphp_int* self, char* key, int i
             }
         }
         else {
+            self->item_existance[it]=1;
+            self->keys[it]=key;
+            self->items[it]=item;
             self->len=self->len+1;
             break;
         }
     }
     if(1) {
-        (list_push_back_charph(self->key_list,key));
+        (list_push_back_charph(self->key_list,(right_value79 = ncmemdup(key))));
     }
     else {
         (list_push_back_charph(self->key_list,key));
@@ -4522,13 +4586,13 @@ static void map_insert_charph_int(struct map_charphp_int* self, char* key, int i
 
 static void map_rehash_charph_int(struct map_charphp_int* self)
 {
-void* right_value51;
-void* right_value52;
-void* right_value53;
+void* right_value76;
+void* right_value77;
+void* right_value78;
     int size=self->size*3;
-    char** keys=(right_value51 = igc_calloc(size,8));
-    int* items=(right_value52 = igc_calloc(size,4));
-    int* item_existance=(right_value53 = igc_calloc(size,1));
+    char** keys=(right_value76 = igc_calloc(size,8));
+    int* items=(right_value77 = igc_calloc(size,4));
+    int* item_existance=(right_value78 = igc_calloc(size,1));
     int len=0;
     {
         char* it=(map_begin_charph_int(self));
@@ -4550,8 +4614,11 @@ void* right_value53;
                     }
                 }
                 else {
+                    item_existance[n]=1;
+                    keys[n]=it;
                     int default_value;
                     memset(&default_value, 0, sizeof(int));
+                    items[n]=(map_at_charph_int(self,it,default_value));
                     len=len+1;
                     break;
                 }
@@ -4573,17 +4640,20 @@ static char* map_begin_charph_int(struct map_charphp_int* self)
 {
     self->key_list->it=self->key_list->head;
     if(self->key_list->it) {
-        return self->key_list->it->item;
+        char* __result_value = self->key_list->it->item;
+        return __result_value;
     }
     char* result;
     memset(&result, 0, sizeof(char*));
     (memset((&result),0,sizeof(char*)));
-    return result;
+    char* __result_value = result;
+    return __result_value;
 }
 
 static int map_end_charph_int(struct map_charphp_int* self)
 {
-    return self->key_list->it==((void*)0);
+    int __result_value = self->key_list->it==((void*)0);
+    return __result_value;
 }
 
 static int map_at_charph_int(struct map_charphp_int* self, char* key, int default_value)
@@ -4593,42 +4663,48 @@ static int map_at_charph_int(struct map_charphp_int* self, char* key, int defaul
     while (1) {
         if(self->item_existance[it]) {
             if((string_equals(self->keys[it],key))) {
-                return self->items[it];
+                int __result_value = self->items[it];
+                return __result_value;
             }
             it=it+1;
             if(it>=self->size) {
                 it=0;
             }
             else if(it==hash) {
-                return default_value;
+                int __result_value = default_value;
+                return __result_value;
             }
         }
         else {
-            return default_value;
+            int __result_value = default_value;
+            return __result_value;
         }
     }
-    return default_value;
+    int __result_value = default_value;
+    return __result_value;
 }
 
 static char* map_next_charph_int(struct map_charphp_int* self)
 {
     self->key_list->it=self->key_list->it->next;
     if(self->key_list->it) {
-        return self->key_list->it->item;
+        char* __result_value = self->key_list->it->item;
+        return __result_value;
     }
     char* result;
     memset(&result, 0, sizeof(char*));
     (memset((&result),0,sizeof(char*)));
-    return result;
+    char* __result_value = result;
+    return __result_value;
 }
 
 static void list_push_back_charph(struct list_charphp* self, char* item)
 {
-void* right_value54;
-void* right_value55;
-void* right_value56;
+void* right_value80;
+void* right_value81;
+void* right_value82;
     if(self->len==0) {
-        struct list_item_charphp* litem=(right_value54 = igc_calloc(1,24));
+        struct list_item_charphp* litem=(right_value80 = igc_calloc(1,24));
         litem->prev=((void*)0);
         litem->next=((void*)0);
         litem->item=item;
@@ -4636,7 +4712,7 @@ void* right_value56;
         self->head=litem;
     }
     else if(self->len==1) {
-        struct list_item_charphp* litem=(right_value55 = igc_calloc(1,24));
+        struct list_item_charphp* litem=(right_value81 = igc_calloc(1,24));
         litem->prev=self->head;
         litem->next=((void*)0);
         litem->item=item;
@@ -4644,7 +4720,7 @@ void* right_value56;
         self->head->next=litem;
     }
     else {
-        struct list_item_charphp* litem=(right_value56 = igc_calloc(1,24));
+        struct list_item_charphp* litem=(right_value82 = igc_calloc(1,24));
         litem->prev=self->tail;
         litem->next=((void*)0);
         litem->item=item;
@@ -4656,16 +4732,18 @@ void* right_value56;
 
 static int map_length_charph_int(struct map_charphp_int* self)
 {
-    return self->len;
+    int __result_value = self->len;
+    return __result_value;
 }
 
 static struct vector_intpp* vector_initialize_intp(struct vector_intpp* self)
 {
-void* right_value68;
+void* right_value94;
     self->size=16;
     self->len=0;
-    self->items=(right_value68 = igc_calloc(self->size,8));
-    return self;
+    self->items=(right_value94 = igc_calloc(self->size,8));
+    struct vector_intpp* __result_value = self;
+    return __result_value;
 }
 
 static void vector_push_back_intp(struct vector_intpp* self, int* item)
@@ -4679,12 +4757,14 @@ static void vector_push_back_intp(struct vector_intpp* self, int* item)
         {
             i=0;
             while(i<self->size) {
+                self->items[i]=items[i];
                 i=i+1;
             }
         }
         self->size=new_size;
         igc_decrement_ref_count(items);
     }
+    self->items[self->len]=item;
     self->len=self->len+1;
 }
 
@@ -4694,32 +4774,36 @@ static int* vector_item_intp(struct vector_intpp* self, int index, int* default_
         index=index+self->len;
     }
     if(index>=0&&index<self->len) {
-        return self->items[index];
+        int* __result_value = self->items[index];
+        return __result_value;
     }
-    return default_value;
+    int* __result_value = default_value;
+    return __result_value;
 }
 
 static struct map_charpp_int* map_initialize_charp_int(struct map_charpp_int* self)
 {
-void* right_value74;
-void* right_value75;
-void* right_value76;
-void* right_value77;
-void* right_value78;
-    self->keys=(right_value74 = igc_calloc(128,8));
-    self->items=(right_value75 = igc_calloc(128,4));
-    self->item_existance=(right_value76 = igc_calloc(128,1));
+void* right_value100;
+void* right_value101;
+void* right_value102;
+void* right_value103;
+void* right_value104;
+    self->keys=(right_value100 = igc_calloc(128,8));
+    self->items=(right_value101 = igc_calloc(128,4));
+    self->item_existance=(right_value102 = igc_calloc(128,1));
     {
         int i=0;
         while(i<128) {
+            self->item_existance[i]=0;
             i=i+1;
         }
     }
     self->size=128;
     self->len=0;
-    self->key_list=(right_value78 = (list_initialize_charp((right_value77 = igc_calloc(1,32)))));
+    self->key_list=(right_value104 = (list_initialize_charp((right_value103 = igc_calloc(1,32)))));
     self->it=0;
-    return self;
+    struct map_charpp_int* __result_value = self;
+    return __result_value;
 }
 
 static struct list_charpp* list_initialize_charp(struct list_charpp* self)
@@ -4727,13 +4811,15 @@ static struct list_charpp* list_initialize_charp(struct list_charpp* self)
     self->head=((void*)0);
     self->tail=((void*)0);
     self->len=0;
-    return self;
+    struct list_charpp* __result_value = self;
+    return __result_value;
 }
 
 static void map_insert_charp_int(struct map_charpp_int* self, char* key, int item)
 {
 unsigned int inline_result_variable1;
 int inline_result_variable2;
+void* right_value109;
     if(self->len*2>=self->size) {
         (map_rehash_charp_int(self));
     }
@@ -4764,6 +4850,8 @@ inline_func_end_label2:
                 }
                 if(0) {
                 }
+                self->keys[it]=key;
+                self->items[it]=item;
                 break;
             }
             it=it+1;
@@ -4776,12 +4864,16 @@ inline_func_end_label2:
             }
         }
         else {
+            self->item_existance[it]=1;
+            self->keys[it]=key;
+            self->items[it]=item;
             self->len=self->len+1;
             break;
         }
     }
     if(0) {
-        (list_push_back_charp(self->key_list,key));
+        (list_push_back_charp(self->key_list,(right_value109 = ncmemdup(key))));
+        igc_decrement_ref_count(right_value109);
     }
     else {
         (list_push_back_charp(self->key_list,key));
@@ -4790,14 +4882,14 @@ inline_func_end_label2:
 
 static void map_rehash_charp_int(struct map_charpp_int* self)
 {
-void* right_value80;
-void* right_value81;
-void* right_value82;
+void* right_value106;
+void* right_value107;
+void* right_value108;
 unsigned int inline_result_variable1;
     int size=self->size*3;
-    char** keys=(right_value80 = igc_calloc(size,8));
-    int* items=(right_value81 = igc_calloc(size,4));
-    int* item_existance=(right_value82 = igc_calloc(size,1));
+    char** keys=(right_value106 = igc_calloc(size,8));
+    int* items=(right_value107 = igc_calloc(size,4));
+    int* item_existance=(right_value108 = igc_calloc(size,1));
     int len=0;
     {
         char* it=(map_begin_charp_int(self));
@@ -4827,8 +4919,11 @@ inline_func_end_label1:
                     }
                 }
                 else {
+                    item_existance[n]=1;
+                    keys[n]=it;
                     int default_value;
                     memset(&default_value, 0, sizeof(int));
+                    items[n]=(map_at_charp_int(self,it,default_value));
                     len=len+1;
                     break;
                 }
@@ -4850,17 +4945,20 @@ static char* map_begin_charp_int(struct map_charpp_int* self)
 {
     self->key_list->it=self->key_list->head;
     if(self->key_list->it) {
-        return self->key_list->it->item;
+        char* __result_value = self->key_list->it->item;
+        return __result_value;
     }
     char* result;
     memset(&result, 0, sizeof(char*));
     (memset((&result),0,sizeof(char*)));
-    return result;
+    char* __result_value = result;
+    return __result_value;
 }
 
 static int map_end_charp_int(struct map_charpp_int* self)
 {
-    return self->key_list->it==((void*)0);
+    int __result_value = self->key_list->it==((void*)0);
+    return __result_value;
 }
 
 static int map_at_charp_int(struct map_charpp_int* self, char* key, int default_value)
@@ -4889,42 +4987,48 @@ inline_func_end_label2:
             (void)0;
 }
             if(inline_result_variable2) {
-                return self->items[it];
+                int __result_value = self->items[it];
+                return __result_value;
             }
             it=it+1;
             if(it>=self->size) {
                 it=0;
             }
             else if(it==hash) {
-                return default_value;
+                int __result_value = default_value;
+                return __result_value;
             }
         }
         else {
-            return default_value;
+            int __result_value = default_value;
+            return __result_value;
         }
     }
-    return default_value;
+    int __result_value = default_value;
+    return __result_value;
 }
 
 static char* map_next_charp_int(struct map_charpp_int* self)
 {
     self->key_list->it=self->key_list->it->next;
     if(self->key_list->it) {
-        return self->key_list->it->item;
+        char* __result_value = self->key_list->it->item;
+        return __result_value;
     }
     char* result;
     memset(&result, 0, sizeof(char*));
     (memset((&result),0,sizeof(char*)));
-    return result;
+    char* __result_value = result;
+    return __result_value;
 }
 
 static void list_push_back_charp(struct list_charpp* self, char* item)
 {
-void* right_value83;
-void* right_value84;
-void* right_value85;
+void* right_value110;
+void* right_value111;
+void* right_value112;
     if(self->len==0) {
-        struct list_item_charpp* litem=(right_value83 = igc_calloc(1,24));
+        struct list_item_charpp* litem=(right_value110 = igc_calloc(1,24));
         litem->prev=((void*)0);
         litem->next=((void*)0);
         litem->item=item;
@@ -4932,7 +5036,7 @@ void* right_value85;
         self->head=litem;
     }
     else if(self->len==1) {
-        struct list_item_charpp* litem=(right_value84 = igc_calloc(1,24));
+        struct list_item_charpp* litem=(right_value111 = igc_calloc(1,24));
         litem->prev=self->head;
         litem->next=((void*)0);
         litem->item=item;
@@ -4940,7 +5044,7 @@ void* right_value85;
         self->head->next=litem;
     }
     else {
-        struct list_item_charpp* litem=(right_value85 = igc_calloc(1,24));
+        struct list_item_charpp* litem=(right_value112 = igc_calloc(1,24));
         litem->prev=self->tail;
         litem->next=((void*)0);
         litem->item=item;
@@ -4955,7 +5059,8 @@ static int map_equals_charp_int(struct map_charpp_int* left, struct map_charpp_i
 int inline_result_variable1;
 int inline_result_variable2;
     if(left->len!=right->len) {
-        return 0;
+        int __result_value = 0;
+        return __result_value;
     }
     int n=0;
     int result=1;
@@ -5000,24 +5105,28 @@ inline_func_end_label2:
             it=(list_next_charp(_obj));
         }
     }
-    return result;
+    int __result_value = result;
+    return __result_value;
 }
 
 static char* list_begin_charp(struct list_charpp* self)
 {
     self->it=self->head;
     if(self->it) {
-        return self->it->item;
+        char* __result_value = self->it->item;
+        return __result_value;
     }
     char* result;
     memset(&result, 0, sizeof(char*));
     (memset((&result),0,sizeof(char*)));
-    return result;
+    char* __result_value = result;
+    return __result_value;
 }
 
 static int list_end_charp(struct list_charpp* self)
 {
-    return self->it==((void*)0);
+    int __result_value = self->it==((void*)0);
+    return __result_value;
 }
 
 static char* list_item_charp(struct list_charpp* self, int position, char* default_value)
@@ -5029,24 +5138,28 @@ static char* list_item_charp(struct list_charpp* self, int position, char* defau
     int i=0;
     while (it!=((void*)0)) {
         if(position==i) {
-            return it->item;
+            char* __result_value = it->item;
+            return __result_value;
         }
         it=it->next;
         i=i+1;
     }
-    return default_value;
+    char* __result_value = default_value;
+    return __result_value;
 }
 
 static char* list_next_charp(struct list_charpp* self)
 {
     self->it=self->it->next;
     if(self->it) {
-        return self->it->item;
+        char* __result_value = self->it->item;
+        return __result_value;
     }
     char* result;
     memset(&result, 0, sizeof(char*));
     (memset((&result),0,sizeof(char*)));
-    return result;
+    char* __result_value = result;
+    return __result_value;
 }
 
 static struct list_charpp* list_initialize_with_values_charp(struct list_charpp* self, int num_value, const unsigned char** values)
@@ -5061,7 +5174,8 @@ static struct list_charpp* list_initialize_with_values_charp(struct list_charpp*
             i=i+1;
         }
     }
-    return self;
+    struct list_charpp* __result_value = self;
+    return __result_value;
 }
 
 static void map_finalize_charph_int(struct map_charphp_int* self)

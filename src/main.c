@@ -278,7 +278,7 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
         
         if(gNCTranspile) {
 #ifdef __DARWIN_ARM__
-            snprintf(cmd, 1024, "%s -c -o %s.o %s.c -fPIC -I/opt/homebrew/opt/llvm@16/include -L/opt/homebrew/opt/llvm@16/lib -I/opt/homebrew/opt/pcre/include ", CLANG, fname, fname);
+            snprintf(cmd, 1024, "%s -c -o %s.o %s.c -fPIC -I/opt/homebrew/opt/llvm@16/include -L/opt/homebrew/opt/llvm@16/lib -I/opt/homebrew/opt/pcre/include %s", CLANG, fname, fname, clang_optiones);
         
             int rc = system(cmd);
             if(rc != 0) {
@@ -288,7 +288,7 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
         
 #else
             int rc;
-            snprintf(cmd, 1024, "%s -c -o %s.o %s.c -fPIC ", CLANG, fname, fname);
+            snprintf(cmd, 1024, "%s -c -o %s.o %s.c -fPIC %s", CLANG, fname, fname, clang_optiones);
 #endif
             //puts(cmd);
         
@@ -395,6 +395,12 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
             if(!gNCGC) {
                 snprintf(cmd, 1024, "%s -o %s %s -lgc -lpcre -lpthread -fPIC -L/opt/homebrew/lib -I/opt/homebrew/include -fPIC -L/usr/local/opt/libgc/lib -L/opt/homebrew/opt/boehmgc/lib %s.o ", GCC, bname, clang_optiones, fname);
             }
+            else if(gNCTranspile) {
+                char buf[128];
+                snprintf(buf, 128, "%slib/libcomelang-ts.a", PREFIX);
+                xstrncat(cmd, buf, 1024);
+                xstrncat(cmd, " ", 1024);
+            }
             else {
                 snprintf(cmd, 1024, "%s -o %s %s -lgc -lpcre -lpthread -fPIC -L/opt/homebrew/lib -I/opt/homebrew/include -L/usr/local/opt/libgc/lib -L/opt/homebrew/opt/boehmgc/lib %s.o ", GCC, bname, clang_optiones, fname);
             }
@@ -409,6 +415,12 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
         if(gNCGC) {
             char buf[128];
             snprintf(buf, 128, "%slib/libcomelang-gc.a", PREFIX);
+            xstrncat(cmd, buf, 1024);
+            xstrncat(cmd, " ", 1024);
+        }
+        else if(gNCTranspile) {
+            char buf[128];
+            snprintf(buf, 128, "%slib/libcomelang-ts.a", PREFIX);
             xstrncat(cmd, buf, 1024);
             xstrncat(cmd, " ", 1024);
         }

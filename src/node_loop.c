@@ -1191,10 +1191,10 @@ BOOL compile_return(unsigned int node, sCompileInfo* info)
             if(result_type->mHeap) {
                 remove_object_from_right_values(llvm_value.value, info);
             }
-            
-            free_right_value_objects(info);
     
             if(info->in_inline_function) {
+                free_right_value_objects(info);
+                
                 if(llvm_value.value == NULL) {
                     compile_err_msg(info, "invalid result value");
                     return FALSE;
@@ -1207,6 +1207,15 @@ BOOL compile_return(unsigned int node, sCompileInfo* info)
                 add_come_code(info, "goto %s;\n", info->inline_func_end_label);
             }
             else {
+                if(type_identify_with_class_name(result_type, "void") && result_type->mPointerNum == 0)
+                {
+                }
+                else {
+                    sNodeType* result_type2 = clone_node_type(result_type);
+                    result_type2->mStatic = FALSE;
+                    add_come_code(info, "%s __result_value = %s;\n", make_type_name_string(result_type2), llvm_value.c_value);
+                }
+                free_right_value_objects(info);
                 free_objects_on_return(info->function_node_block, info, llvm_value.address, TRUE);
                 call_come_gc_final(info);
                 
@@ -1228,7 +1237,7 @@ BOOL compile_return(unsigned int node, sCompileInfo* info)
                 else {
                     LLVMBuildRet(gBuilder, llvm_value.value);
                     if(llvm_value.c_value) {
-                        add_come_code(info, "return %s;\n", llvm_value.c_value);
+                        add_come_code(info, "return __result_value;\n");
                     }
                     else {
                         add_come_code(info, "return;");

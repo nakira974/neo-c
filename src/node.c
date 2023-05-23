@@ -1230,7 +1230,8 @@ LLVMValueRef clone_object(sNodeType* node_type, LLVMValueRef obj, char* obj_c_va
         
         cloner = get_function_from_table(fun_name);
         
-        if(cloner == NULL && !(node_type->mClass->mFlags & CLASS_FLAGS_PROTOCOL) && !is_number_class(node_type) && node_type->mNumGenericsTypes == 0) {
+        if(cloner == NULL && !(node_type->mClass->mFlags & CLASS_FLAGS_PROTOCOL) && !is_number_class(node_type) && node_type->mNumGenericsTypes == 0) 
+        {
             char* real_fun_name = NULL;
             cloner = create_cloner_automatically(node_type, fun_name, &real_fun_name, info);
             xstrncpy(fun_name, real_fun_name, VAR_NAME_MAX);

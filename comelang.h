@@ -1220,8 +1220,11 @@ impl list <T>
                 break;
             }
         }
-
-        return list1.merge_sort_with_lambda(compare).merge_list_with_lambda( list2.merge_sort_with_lambda(compare), compare);
+        
+        auto left_list = list1.merge_sort_with_lambda(compare);
+        auto right_list = list2.merge_sort_with_lambda(compare);
+        
+        return left_list.merge_list_with_lambda(right_list, compare);
     }
     list<T>*% sort_with_lambda(list<T>* self, int (*compare)(T&,T&)) {
         return self.merge_sort_with_lambda(compare);
@@ -1377,8 +1380,11 @@ impl list <T>
                 break;
             }
         }
-
-        return list1.merge_sort().merge_list( list2.merge_sort());
+        
+        auto left_list = list1.merge_sort();
+        auto right_list = list2.merge_sort();
+        
+        return left_list.merge_list(right_list);
     }
     list<T>*% sort(list<T>* self) {
         return self.merge_sort();

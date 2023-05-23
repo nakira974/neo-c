@@ -1252,6 +1252,7 @@ BOOL parse_enum(unsigned int* node, char* name, int name_size, BOOL* terminated,
 
                 sNodeType* result_type = create_node_type_with_class_name("int");
                 result_type->mConstant = TRUE;
+                result_type->mStatic = TRUE;
 
                 check_already_added_variable(info->lv_table, var_name, info);
                 if(!add_variable_to_table(info->lv_table, var_name, "", result_type, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE))

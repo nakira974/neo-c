@@ -663,7 +663,7 @@ char* make_type_name_string(sNodeType* node_type)
             sBuf_append_str(&output, "long");
         }
         else if(strcmp(class_name, "bool") == 0) {
-            sBuf_append_str(&output, "int");
+            sBuf_append_str(&output, "_Bool");
         }
         else if(strcmp(class_name, "lambda") == 0) {
             sBuf_append_str(&output, make_type_name_string(node_type->mResultType));

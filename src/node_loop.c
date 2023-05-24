@@ -675,7 +675,7 @@ BOOL compile_and_and(unsigned int node, sCompileInfo* info)
 
     LLVMBasicBlockRef cond_end_block = LLVMAppendBasicBlockInContext(gContext, gFunction, "cond_jump_end");
 
-    free_right_value_objects(info);
+    if(!gNCTranspile) free_right_value_objects(info);
 
     LLVMBuildCondBr(gBuilder, conditional_value.value, cond_then_block, cond_end_block);
 
@@ -712,7 +712,7 @@ BOOL compile_and_and(unsigned int node, sCompileInfo* info)
 
     LLVMBuildStore(gBuilder, andand_value, result_var);
 
-    free_right_value_objects(info);
+    if(!gNCTranspile) free_right_value_objects(info);
 
     LLVMBuildBr(gBuilder, cond_end_block);
 
@@ -796,7 +796,7 @@ BOOL compile_or_or(unsigned int node, sCompileInfo* info)
     LLVMBasicBlockRef cond_then_block = LLVMAppendBasicBlockInContext(gContext, gFunction, "cond_jump_then");
     LLVMBasicBlockRef cond_end_block = LLVMAppendBasicBlockInContext(gContext, gFunction, "cond_jump_end");
 
-    free_right_value_objects(info);
+    if(!gNCTranspile) free_right_value_objects(info);
 
     LLVMBuildCondBr(gBuilder, conditional_value.value, cond_end_block, cond_then_block);
 
@@ -832,7 +832,7 @@ BOOL compile_or_or(unsigned int node, sCompileInfo* info)
 
     LLVMBuildStore(gBuilder, oror_value, result_var);
 
-    free_right_value_objects(info);
+    if(!gNCTranspile) free_right_value_objects(info);
 
     LLVMBuildBr(gBuilder, cond_end_block);
 
@@ -1066,8 +1066,6 @@ BOOL compile_for_expression(unsigned int node, sCompileInfo* info)
     }
     info->come_nest--;
     add_come_code(info, "}\n");
-    info->come_nest = nest;
-    add_come_code(info, "}\n");
 
     info->last_expression_is_return = last_expression_is_return_before;
 
@@ -1078,6 +1076,8 @@ BOOL compile_for_expression(unsigned int node, sCompileInfo* info)
 
     free_objects(info->pinfo->lv_table, info);
     info->pinfo->lv_table = lv_table_before;
+    info->come_nest = nest;
+    add_come_code(info, "}\n");
 
     info->type = create_node_type_with_class_name("void");
 

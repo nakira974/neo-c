@@ -808,7 +808,7 @@ BOOL compile_list_value(unsigned int node, sCompileInfo* info)
     sNodeType* node_type = clone_node_type(info->type);
     
     static int list_num = 0;
-    sBuf_append_str(&buf, xsprintf("%s _list_element%d[%d];\n", make_type_name_string(node_type), list_num++, num_nodes));
+    sBuf_append_str(&buf, xsprintf("%s _list_element%d[%d];\n", make_type_name_string(node_type), ++list_num, num_nodes));
     
     for(i=0; i<num_nodes; i++) {
         unsigned int node = nodes[i];
@@ -829,6 +829,8 @@ BOOL compile_list_value(unsigned int node, sCompileInfo* info)
         
         remove_object_from_right_values(elements_value[i].value, info);
     }
+    
+    add_come_code(info, "%s", buf.mBuf);
     
     sNodeType* list_type = create_node_type_with_class_name("list");
     
@@ -918,11 +920,12 @@ BOOL compile_list_value(unsigned int node, sCompileInfo* info)
     BOOL var_arg = FALSE;
     LLVMTypeRef function_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
     
-    sBuf_append_str(&buf, xsprintf("%s(%s, %d, _list_element%d)", llvm_fun_name, list_value.c_value, num_elements, list_num));
+    free(buf.mBuf);
     
     LVALUE llvm_value;
     llvm_value.value = LLVMBuildCall2(gBuilder, function_type, llvm_fun, llvm_params, num_params, "fun_result2");
-    llvm_value.c_value = xsprintf("%s", buf.mBuf);
+    llvm_value.c_value = xsprintf("%s(%s, %d, _list_element%d)", llvm_fun_name, list_value.c_value, num_elements, list_num);
+    
     llvm_value.type = clone_node_type(list_type);
     llvm_value.address = NULL;
     llvm_value.var = NULL;
@@ -932,8 +935,6 @@ BOOL compile_list_value(unsigned int node, sCompileInfo* info)
     append_object_to_right_values(llvm_value.value, list_type, info);
 
     info->type = clone_node_type(list_type);
-    
-    free(buf.mBuf);
     
     return TRUE;
 }

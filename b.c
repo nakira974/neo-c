@@ -6,6 +6,7 @@
 
 int main(int argc, char** argv)
 {
+    printf("%lu\n", sizeof(bool));
     
     return 0;
 }

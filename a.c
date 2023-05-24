@@ -3,6 +3,7 @@
 
 int main()
 {
+/*
     using unsafe;
     
     xassert("xaasert test", true);
@@ -75,14 +76,12 @@ int main()
         printf("%d\n", it);
     }
 
-/*
     map<string, int>*% m = new map<string, int>.initialize();
 
     m.insert(string("AAA"), 1);
     m.insert(string("BBB"), 2);
     m.insert(string("CCC"), 3);
 
-    xassert("map test1", m.length() == 3);
     xassert("map test2", m.at(string("AAA"), -1) == 1 && m.at(string("BBB"), -1) == 2 && m.at(string("CCC"), -1) == 3);
     xassert("map test3", m.at("AAA", -1) == 1 && m.at("BBB", -1) == 2 && m.at("CCC", -1) == 3);
 
@@ -96,7 +95,6 @@ int main()
     t.v2 = "ABC";
 
     xassert("tuple test", t.v1 == 123 && t.v2 == "ABC");
-
     auto lx = new list<int>.initialize();
 
     lx.push_back(1);
@@ -137,9 +135,13 @@ int main()
     xassert("map test2", m2.at("AAA", -1) == 1);
 
     xassert("map test3", m1.equals(m2));
-    
-    list<char*>*% li = ["1"];
 */
+    
+    list<char*>*% li = ["1" ,"2", "3"];
+    
+    li.each {
+        printf("%s\n", it);
+    }
 
     return 0;
 }

@@ -123,12 +123,7 @@ void add_come_function(char* fun_name, sNodeType* result_type, int num_params, s
     sComeFun* fun = get_come_function(fun_name);
     
     if(fun) {
-        if(fun->mExternal) {
-            remove_come_function(fun_name);
-        }
-        else {
-            return;
-        }
+        remove_come_function(fun_name);
     }
     
     sComeFun* it = gComeFunctions + hash_key;

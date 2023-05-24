@@ -635,7 +635,12 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
         LLVMDeleteFunction(llvm_fun);
         gNodes[node].uValue.sFunction.mResultType = clone_node_type(return_result_type2);
         
-        return compile(node, info);
+        BOOL result = compile(node, info);
+        
+        info->come_fun = come_fun;
+        info->inline_result_variable = inline_result_variable;
+        info->function_node_block = function_node_block;
+        return result;
     }
     
     info->function_node_block = function_node_block;

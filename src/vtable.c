@@ -349,7 +349,19 @@ void create_current_stack_frame_struct(char* type_name, sVarTable* lv_table)
 
         while(1) {
             if(p->mName[0] != 0 && p->mType) {
-                xstrncpy(field_names[num_fields], p->mName, VAR_NAME_MAX);
+                int j;
+                BOOL found = FALSE;
+                for(j=0; j<num_fields; j++) {
+                    if(strcmp(p->mName, field_names[j]) == 0) {
+                        found = TRUE;
+                    }
+                }
+                if(found) {
+                    snprintf(field_names[num_fields], VAR_NAME_MAX, "%s_%d", p->mName, num_fields);
+                }
+                else {
+                    xstrncpy(field_names[num_fields], p->mName, VAR_NAME_MAX);
+                }
 
                 sNodeType* node_type = clone_node_type(p->mType);
 

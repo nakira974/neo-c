@@ -1365,7 +1365,7 @@ typedef unsigned int u32;
 typedef unsigned short u16;
 typedef unsigned char u8;
 typedef unsigned long u64;
-struct IA
+struct sBase
 {
     protocol_obj_t _protocol_obj;
     void (*finalize)(void*);
@@ -1379,9 +1379,67 @@ struct sChildA
     int z;
     char* str;
 };
-struct sChildB
+struct IA
 {
-    char* hello;
+    protocol_obj_t _protocol_obj;
+    void (*finalize)(void*);
+    void* (*clone)(void*);
+    void (*show)(protocol_obj_t);
+};
+struct DataA
+{
+    struct list_charphp* a;
+    char* b;
+};
+struct __method_block_stack_frame0
+{
+    struct DataA** self;
+    struct DataA** self_1;
+};
+struct DataB
+{
+    int a;
+    int b;
+};
+struct vector_sBasephp
+{
+    struct sBase** items;
+    int len;
+    int size;
+    int it;
+};
+struct vector_vectorph_sBasephp
+{
+    struct vector_sBasephp** items;
+    int len;
+    int size;
+    int it;
+};
+struct list_item_sBasephp
+{
+    struct sBase* item;
+    struct list_item_sBasephp* prev;
+    struct list_item_sBasephp* next;
+};
+struct list_sBasephp
+{
+    struct list_item_sBasephp* head;
+    struct list_item_sBasephp* tail;
+    int len;
+    struct list_item_sBasephp* it;
+};
+struct list_item_listph_sBasephp
+{
+    struct list_sBasephp* item;
+    struct list_item_listph_sBasephp* prev;
+    struct list_item_listph_sBasephp* next;
+};
+struct list_listph_sBasephp
+{
+    struct list_item_listph_sBasephp* head;
+    struct list_item_listph_sBasephp* tail;
+    int len;
+    struct list_item_listph_sBasephp* it;
 };
 struct list_item_IAphp
 {
@@ -3149,18 +3207,42 @@ void check_null_pointer(int sline, char* sname);
 void bool_expect(_Bool self, void* parent, void (*block_)(void*));
 struct sChildA* sChildAp_initialize(struct sChildA* self);
 void sChildAp_show(struct sChildA* self);
-struct sChildB* sChildBp_initialize(struct sChildB* self);
-void sChildBp_show(struct sChildB* self);
+static struct DataA* DataAp_initialize(struct DataA* self);
+static struct list_charphp* list_initialize_with_values_charph(struct list_charphp* self, int num_value, char** values);
+static void list_push_back_charph(struct list_charphp* self, char* item);
+static void list_finalize_charph(struct list_charphp* self);
+static void list_item_finalize_list_item_charphp(struct list_item_charphp* self);
+static void DataAp_show(struct DataA* self);
+static void lambda0(struct __method_block_stack_frame0* parent, char* it, int it2, _Bool* it3);
+static void list_each_charph(struct list_charphp* self, void* parent, void (*block_)(void*,char*,int,_Bool*));
+static struct DataB* DataBp_initialize(struct DataB* self);
+static void DataBp_show(struct DataB* self);
+void DataB_finalize(struct DataB* self);
 int main(int argc, char** argv);
-static struct list_IAphp* list_initialize_IAph(struct list_IAphp* self);
+static struct vector_vectorph_sBasephp* vector_initialize_vectorph_sBaseph(struct vector_vectorph_sBasephp* self);
+static struct vector_sBasephp* vector_initialize_sBaseph(struct vector_sBasephp* self);
 static void sChildA_finalize(struct sChildA* self);
 static struct sChildA* sChildA_clone(struct sChildA* self);
+static void vector_push_back_sBaseph(struct vector_sBasephp* self, struct sBase* item);
+static void vector_push_back_vectorph_sBaseph(struct vector_vectorph_sBasephp* self, struct vector_sBasephp* item);
+static void vector_finalize_sBaseph(struct vector_sBasephp* self);
+static struct list_listph_sBasephp* list_initialize_listph_sBaseph(struct list_listph_sBasephp* self);
+static struct list_sBasephp* list_initialize_sBaseph(struct list_sBasephp* self);
+static void list_push_back_sBaseph(struct list_sBasephp* self, struct sBase* item);
+static void list_push_back_listph_sBaseph(struct list_listph_sBasephp* self, struct list_sBasephp* item);
+static struct list_IAphp* list_initialize_IAph(struct list_IAphp* self);
+static void DataA_finalize(struct DataA* self);
+static struct DataA* DataA_clone(struct DataA* self);
+static struct list_charphp* list_clone_charph(struct list_charphp* self);
+static struct list_charphp* list_initialize_charph(struct list_charphp* self);
+static void list_push_back2_charph(struct list_charphp* self, char* item);
 static void list_push_back_IAph(struct list_IAphp* self, struct IA* item);
-static void sChildB_finalize(struct sChildB* self);
-static struct sChildB* sChildB_clone(struct sChildB* self);
-static struct IA* list_begin_IAph(struct list_IAphp* self);
-static _Bool list_end_IAph(struct list_IAphp* self);
-static struct IA* list_next_IAph(struct list_IAphp* self);
+static struct DataB* DataB_clone(struct DataB* self);
+static void vector_finalize_vectorph_sBaseph(struct vector_vectorph_sBasephp* self);
+static void list_finalize_sBaseph(struct list_sBasephp* self);
+static void list_item_finalize_list_item_sBasephp(struct list_item_sBasephp* self);
+static void list_finalize_listph_sBaseph(struct list_listph_sBasephp* self);
+static void list_item_finalize_list_item_listph_sBasephp(struct list_item_listph_sBasephp* self);
 static void list_finalize_IAph(struct list_IAphp* self);
 static void list_item_finalize_list_item_IAphp(struct list_item_IAphp* self);
 
@@ -3185,77 +3267,309 @@ void sChildAp_show(struct sChildA* self)
     (printf("x %d y %d z %d str %s\n",self->x,self->y,self->z,self->str));
 }
 
-struct sChildB* sChildBp_initialize(struct sChildB* self)
+static struct DataA* DataAp_initialize(struct DataA* self)
 {
 void* right_value1;
-    char* __tmp_store_field5 = (right_value1 = (__builtin_string("HELLO")));
-    igc_decrement_ref_count(((self && self->hello) ? self->hello : (void*)0));
-    self->hello=__tmp_store_field5;
-        struct sChildB* __result_value = self;
+void* right_value2;
+void* right_value3;
+void* right_value4;
+void* right_value8;
+void* right_value9;
+    char* _list_element1[2];
+_list_element1[0] = (right_value2 = (__builtin_string("AAA")));
+_list_element1[1] = (right_value3 = (__builtin_string("BBB")));
+    struct list_charphp* __tmp_store_field24 = (right_value8 = list_initialize_with_values_charph((right_value4 = igc_calloc(1,32)), 2, _list_element1));
+    call_finalizer(list_finalize_charph,((self && self->a) ? self->a : (void*)0),0);
+    self->a=__tmp_store_field24;
+    char* __tmp_store_field25 = (right_value9 = (__builtin_string("CCC")));
+    igc_decrement_ref_count(((self && self->b) ? self->b : (void*)0));
+    self->b=__tmp_store_field25;
+        struct DataA* __result_value = self;
     return __result_value;
 }
 
-void sChildBp_show(struct sChildB* self)
+static struct list_charphp* list_initialize_with_values_charph(struct list_charphp* self, int num_value, char** values)
 {
-    (puts(self->hello));
+    struct list_item_charphp* __tmp_store_field5 = ((void*)0);
+    self->head=__tmp_store_field5;
+    struct list_item_charphp* __tmp_store_field6 = ((void*)0);
+    self->tail=__tmp_store_field6;
+    int __tmp_store_field7 = 0;
+    self->len=__tmp_store_field7;
+    {
+        int __tmp_variable1 = 0;
+        int i__3=__tmp_variable1;
+        while(i__3<num_value) {
+            (list_push_back_charph(self,values[i__3]));
+            int __tmp_variable5 = i__3+1;
+            i__3=__tmp_variable5;
+        }
+    }
+        struct list_charphp* __result_value = self;
+    return __result_value;
+}
+
+static void list_push_back_charph(struct list_charphp* self, char* item)
+{
+void* right_value5;
+void* right_value6;
+void* right_value7;
+    if(self->len==0) {
+        struct list_item_charphp* __tmp_variable2 = (right_value5 = igc_calloc(1,24));
+        struct list_item_charphp* litem__3=__tmp_variable2;
+        struct list_item_charphp* __tmp_store_field8 = ((void*)0);
+        litem__3->prev=__tmp_store_field8;
+        struct list_item_charphp* __tmp_store_field9 = ((void*)0);
+        litem__3->next=__tmp_store_field9;
+        char* __tmp_store_field10 = item;
+        litem__3->item=__tmp_store_field10;
+        struct list_item_charphp* __tmp_store_field11 = litem__3;
+        self->tail=__tmp_store_field11;
+        struct list_item_charphp* __tmp_store_field12 = litem__3;
+        self->head=__tmp_store_field12;
+    }
+    else if(self->len==1) {
+        struct list_item_charphp* __tmp_variable3 = (right_value6 = igc_calloc(1,24));
+        struct list_item_charphp* litem__3=__tmp_variable3;
+        struct list_item_charphp* __tmp_store_field13 = self->head;
+        litem__3->prev=__tmp_store_field13;
+        struct list_item_charphp* __tmp_store_field14 = ((void*)0);
+        litem__3->next=__tmp_store_field14;
+        char* __tmp_store_field15 = item;
+        litem__3->item=__tmp_store_field15;
+        struct list_item_charphp* __tmp_store_field16 = litem__3;
+        self->tail=__tmp_store_field16;
+        struct list_item_charphp* __tmp_store_field17 = litem__3;
+        self->head->next=__tmp_store_field17;
+    }
+    else {
+        struct list_item_charphp* __tmp_variable4 = (right_value7 = igc_calloc(1,24));
+        struct list_item_charphp* litem__3=__tmp_variable4;
+        struct list_item_charphp* __tmp_store_field18 = self->tail;
+        litem__3->prev=__tmp_store_field18;
+        struct list_item_charphp* __tmp_store_field19 = ((void*)0);
+        litem__3->next=__tmp_store_field19;
+        char* __tmp_store_field20 = item;
+        litem__3->item=__tmp_store_field20;
+        struct list_item_charphp* __tmp_store_field21 = litem__3;
+        self->tail->next=__tmp_store_field21;
+        struct list_item_charphp* __tmp_store_field22 = litem__3;
+        self->tail=__tmp_store_field22;
+    }
+    int __tmp_store_field23 = self->len+1;
+    self->len=__tmp_store_field23;
+}
+
+static void list_finalize_charph(struct list_charphp* self)
+{
+    struct list_item_charphp* __tmp_variable6 = self->head;
+    struct list_item_charphp* it__2=__tmp_variable6;
+    while (it__2!=((void*)0)) {
+        if(1) {
+            igc_decrement_ref_count(it__2->item);
+        }
+        struct list_item_charphp* __tmp_variable7 = it__2;
+        struct list_item_charphp* prev_it__3=__tmp_variable7;
+        struct list_item_charphp* __tmp_variable8 = it__2->next;
+        it__2=__tmp_variable8;
+        call_finalizer(list_item_finalize_list_item_charphp,prev_it__3,0);
+    }
+}
+
+static void list_item_finalize_list_item_charphp(struct list_item_charphp* self)
+{
+        }
+
+static void DataAp_show(struct DataA* self)
+{
+        struct __method_block_stack_frame0 current_stack0;
+        current_stack0.self = &self;
+        current_stack0.self_1 = &self;
+        (list_each_charph(self->a,&current_stack0,(void*)(lambda0)));
+        (puts(self->b));
+    }
+
+static void lambda0(struct __method_block_stack_frame0* parent, char* it, int it2, _Bool* it3)
+{
+            (puts(it));
+        }
+
+static void list_each_charph(struct list_charphp* self, void* parent, void (*block_)(void*,char*,int,_Bool*))
+{
+    struct list_item_charphp* __tmp_variable9 = self->head;
+    struct list_item_charphp* it__2=__tmp_variable9;
+    int __tmp_variable10 = 0;
+    int i__2=__tmp_variable10;
+    while (it__2!=((void*)0)) {
+        _Bool __tmp_variable11 = 0;
+        _Bool end_flag__3=__tmp_variable11;
+        block_(parent,it__2->item,i__2,(&end_flag__3));
+        if(end_flag__3==1) {
+            break;
+        }
+        struct list_item_charphp* __tmp_variable12 = it__2->next;
+        it__2=__tmp_variable12;
+        int __tmp_variable13 = i__2+1;
+        i__2=__tmp_variable13;
+    }
+}
+
+static struct DataB* DataBp_initialize(struct DataB* self)
+{
+    int __tmp_store_field26 = 777;
+    self->a=__tmp_store_field26;
+    int __tmp_store_field27 = 333;
+    self->b=__tmp_store_field27;
+        struct DataB* __result_value = self;
+    return __result_value;
+}
+
+static void DataBp_show(struct DataB* self)
+{
+        (printf("%d %d\n",self->a,self->b));
+    }
+
+void DataB_finalize(struct DataB* self)
+{
+    (puts("DataB::finalize"));
 }
 
 int main(int argc, char** argv)
 {
-void* right_value2;
-void* right_value3;
-void* right_value4;
-void* right_value5;
-void* right_value6;
+void* right_value10;
 void* right_value12;
 void* right_value13;
-void* right_value14;
+void* right_value15;
+void* right_value16;
+void* right_value17;
+void* right_value18;
+void* right_value21;
+void* right_value22;
+void* right_value23;
+void* right_value24;
+void* right_value25;
+void* right_value26;
+void* right_value27;
+void* right_value28;
+void* right_value29;
+void* right_value30;
+void* right_value31;
+void* right_value32;
+void* right_value33;
+void* right_value34;
+void* right_value35;
+void* right_value42;
+void* right_value43;
+void* right_value44;
+void* right_value45;
+void* right_value46;
+void* right_value47;
+void* right_value48;
+void* right_value49;
+void* right_value50;
+void* right_value51;
+void* right_value65;
+void* right_value66;
+void* right_value67;
 come_gc_init();
-    struct list_IAphp* __tmp_variable1 = (right_value3 = (list_initialize_IAph((right_value2 = igc_calloc(1,32)))));
-    struct list_IAphp* li__1=__tmp_variable1;
-    struct IA* protocol_interface_tmp0 = (right_value4 = igc_calloc(1,32));
-    protocol_interface_tmp0->_protocol_obj = (void*)(right_value6 = (sChildAp_initialize((right_value5 = igc_calloc(1,24)))));
+    struct vector_vectorph_sBasephp* __tmp_variable14 = (right_value12 = (vector_initialize_vectorph_sBaseph((right_value10 = igc_calloc(1,24)))));
+    struct vector_vectorph_sBasephp* v__1=__tmp_variable14;
+    struct vector_sBasephp* __tmp_variable15 = (right_value15 = (vector_initialize_sBaseph((right_value13 = igc_calloc(1,24)))));
+    struct vector_sBasephp* v2__1=__tmp_variable15;
+    struct sBase* protocol_interface_tmp0 = (right_value16 = igc_calloc(1,32));
+    protocol_interface_tmp0->_protocol_obj = (void*)(right_value18 = (sChildAp_initialize((right_value17 = igc_calloc(1,24)))));
     protocol_interface_tmp0->finalize = (void*)sChildA_finalize;
     protocol_interface_tmp0->clone = (void*)sChildA_clone;
     protocol_interface_tmp0->show = (void*)sChildAp_show;
-    struct IA* __tmp_variable3 = protocol_interface_tmp0;
-    struct IA* ia__1=__tmp_variable3;
-    igc_increment_ref_count(ia__1->_protocol_obj);
-    igc_increment_ref_count(ia__1);
-    (list_push_back_IAph(li__1,ia__1));
-    struct IA* protocol_interface_tmp1 = (right_value12 = igc_calloc(1,32));
-    protocol_interface_tmp1->_protocol_obj = (void*)(right_value14 = (sChildBp_initialize((right_value13 = igc_calloc(1,8)))));
-    protocol_interface_tmp1->finalize = (void*)sChildB_finalize;
-    protocol_interface_tmp1->clone = (void*)sChildB_clone;
-    protocol_interface_tmp1->show = (void*)sChildBp_show;
-    (list_push_back_IAph(li__1,protocol_interface_tmp1));
-    {
-        struct list_IAphp* __tmp_variable8 = (li__1);
-        struct list_IAphp* _obj__2=__tmp_variable8;
-        struct IA* __tmp_variable9 = (list_begin_IAph(_obj__2));
-        struct IA* it__2=__tmp_variable9;
-        while(!(list_end_IAph(_obj__2))) {
-            it__2->show(it__2->_protocol_obj);
-            struct IA* __tmp_variable10 = (list_next_IAph(_obj__2));
-            it__2=__tmp_variable10;
-        }
-    }
+    (vector_push_back_sBaseph(v2__1,protocol_interface_tmp0));
+    struct sBase* protocol_interface_tmp1 = (right_value21 = igc_calloc(1,32));
+    protocol_interface_tmp1->_protocol_obj = (void*)(right_value23 = (sChildAp_initialize((right_value22 = igc_calloc(1,24)))));
+    protocol_interface_tmp1->finalize = (void*)sChildA_finalize;
+    protocol_interface_tmp1->clone = (void*)sChildA_clone;
+    protocol_interface_tmp1->show = (void*)sChildAp_show;
+    (vector_push_back_sBaseph(v2__1,protocol_interface_tmp1));
+    igc_increment_ref_count(v2__1);
+    (vector_push_back_vectorph_sBaseph(v__1,v2__1));
+    struct vector_sBasephp* __tmp_variable27 = (right_value25 = (vector_initialize_sBaseph((right_value24 = igc_calloc(1,24)))));
+    struct vector_sBasephp* v3__1=__tmp_variable27;
+    struct sBase* protocol_interface_tmp2 = (right_value26 = igc_calloc(1,32));
+    protocol_interface_tmp2->_protocol_obj = (void*)(right_value28 = (sChildAp_initialize((right_value27 = igc_calloc(1,24)))));
+    protocol_interface_tmp2->finalize = (void*)sChildA_finalize;
+    protocol_interface_tmp2->clone = (void*)sChildA_clone;
+    protocol_interface_tmp2->show = (void*)sChildAp_show;
+    (vector_push_back_sBaseph(v3__1,protocol_interface_tmp2));
+    igc_increment_ref_count(v3__1);
+    (vector_push_back_vectorph_sBaseph(v__1,v3__1));
+    struct list_listph_sBasephp* __tmp_variable28 = (right_value30 = (list_initialize_listph_sBaseph((right_value29 = igc_calloc(1,32)))));
+    struct list_listph_sBasephp* li__1=__tmp_variable28;
+    struct list_sBasephp* __tmp_variable29 = (right_value32 = (list_initialize_sBaseph((right_value31 = igc_calloc(1,32)))));
+    struct list_sBasephp* l2__1=__tmp_variable29;
+    struct sBase* protocol_interface_tmp3 = (right_value33 = igc_calloc(1,32));
+    protocol_interface_tmp3->_protocol_obj = (void*)(right_value35 = (sChildAp_initialize((right_value34 = igc_calloc(1,24)))));
+    protocol_interface_tmp3->finalize = (void*)sChildA_finalize;
+    protocol_interface_tmp3->clone = (void*)sChildA_clone;
+    protocol_interface_tmp3->show = (void*)sChildAp_show;
+    (list_push_back_sBaseph(l2__1,protocol_interface_tmp3));
+    igc_increment_ref_count(l2__1);
+    (list_push_back_listph_sBaseph(li__1,l2__1));
+    struct list_sBasephp* __tmp_variable36 = (right_value43 = (list_initialize_sBaseph((right_value42 = igc_calloc(1,32)))));
+    struct list_sBasephp* l3__1=__tmp_variable36;
+    struct sBase* protocol_interface_tmp4 = (right_value44 = igc_calloc(1,32));
+    protocol_interface_tmp4->_protocol_obj = (void*)(right_value46 = (sChildAp_initialize((right_value45 = igc_calloc(1,24)))));
+    protocol_interface_tmp4->finalize = (void*)sChildA_finalize;
+    protocol_interface_tmp4->clone = (void*)sChildA_clone;
+    protocol_interface_tmp4->show = (void*)sChildAp_show;
+    (list_push_back_sBaseph(l3__1,protocol_interface_tmp4));
+    igc_increment_ref_count(l3__1);
+    (list_push_back_listph_sBaseph(li__1,l3__1));
+    struct list_IAphp* __tmp_variable37 = (right_value48 = (list_initialize_IAph((right_value47 = igc_calloc(1,32)))));
+    struct list_IAphp* data__1=__tmp_variable37;
+    struct IA* protocol_interface_tmp5 = (right_value49 = igc_calloc(1,32));
+    protocol_interface_tmp5->_protocol_obj = (void*)(right_value51 = (DataAp_initialize((right_value50 = igc_calloc(1,16)))));
+    protocol_interface_tmp5->finalize = (void*)DataA_finalize;
+    protocol_interface_tmp5->clone = (void*)DataA_clone;
+    protocol_interface_tmp5->show = (void*)DataAp_show;
+    (list_push_back_IAph(data__1,protocol_interface_tmp5));
+    struct IA* protocol_interface_tmp6 = (right_value65 = igc_calloc(1,32));
+    protocol_interface_tmp6->_protocol_obj = (void*)(right_value67 = (DataBp_initialize((right_value66 = igc_calloc(1,8)))));
+    protocol_interface_tmp6->finalize = (void*)DataB_finalize;
+    protocol_interface_tmp6->clone = (void*)DataB_clone;
+    protocol_interface_tmp6->show = (void*)DataBp_show;
+    (list_push_back_IAph(data__1,protocol_interface_tmp6));
         int __result_value = 0;
-    call_finalizer(ia__1->finalize, ia__1->_protocol_obj, 0);
-    igc_decrement_ref_count(ia__1);
-    call_finalizer(list_finalize_IAph,li__1,0);
+    call_finalizer(vector_finalize_vectorph_sBaseph,v__1,0);
+    call_finalizer(list_finalize_sBaseph,l2__1,0);
+    call_finalizer(list_finalize_sBaseph,l3__1,0);
+    call_finalizer(vector_finalize_sBaseph,v2__1,0);
+    call_finalizer(vector_finalize_sBaseph,v3__1,0);
+    call_finalizer(list_finalize_listph_sBaseph,li__1,0);
+    call_finalizer(list_finalize_IAph,data__1,0);
     return __result_value;
 }
 
-static struct list_IAphp* list_initialize_IAph(struct list_IAphp* self)
+static struct vector_vectorph_sBasephp* vector_initialize_vectorph_sBaseph(struct vector_vectorph_sBasephp* self)
 {
-    struct list_item_IAphp* __tmp_store_field6 = ((void*)0);
-    self->head=__tmp_store_field6;
-    struct list_item_IAphp* __tmp_store_field7 = ((void*)0);
-    self->tail=__tmp_store_field7;
-    int __tmp_store_field8 = 0;
-    self->len=__tmp_store_field8;
-        struct list_IAphp* __result_value = self;
+void* right_value11;
+    int __tmp_store_field28 = 16;
+    self->size=__tmp_store_field28;
+    int __tmp_store_field29 = 0;
+    self->len=__tmp_store_field29;
+    struct vector_sBasephp** __tmp_store_field30 = (right_value11 = igc_calloc(self->size,8));
+    self->items=__tmp_store_field30;
+        struct vector_vectorph_sBasephp* __result_value = self;
+    return __result_value;
+}
+
+static struct vector_sBasephp* vector_initialize_sBaseph(struct vector_sBasephp* self)
+{
+void* right_value14;
+    int __tmp_store_field31 = 16;
+    self->size=__tmp_store_field31;
+    int __tmp_store_field32 = 0;
+    self->len=__tmp_store_field32;
+    struct sBase** __tmp_store_field33 = (right_value14 = igc_calloc(self->size,8));
+    self->items=__tmp_store_field33;
+        struct vector_sBasephp* __result_value = self;
     return __result_value;
 }
 
@@ -3268,147 +3582,497 @@ static void sChildA_finalize(struct sChildA* self)
 
 static struct sChildA* sChildA_clone(struct sChildA* self)
 {
-void* right_value7;
-void* right_value8;
-        struct sChildA* __tmp_variable2 = (right_value7 = igc_calloc(1,24));
-        struct sChildA* result__2=__tmp_variable2;
-        int __tmp_store_field9 = self->x;
-        result__2->x=__tmp_store_field9;
-        int __tmp_store_field10 = self->y;
-        result__2->y=__tmp_store_field10;
-        int __tmp_store_field11 = self->z;
-        result__2->z=__tmp_store_field11;
+void* right_value19;
+void* right_value20;
+        struct sChildA* __tmp_variable16 = (right_value19 = igc_calloc(1,24));
+        struct sChildA* result__2=__tmp_variable16;
+        int __tmp_store_field34 = self->x;
+        result__2->x=__tmp_store_field34;
+        int __tmp_store_field35 = self->y;
+        result__2->y=__tmp_store_field35;
+        int __tmp_store_field36 = self->z;
+        result__2->z=__tmp_store_field36;
         if(self!=(((void*)0))&&self->str!=(((void*)0))) {
-            char* __tmp_store_field12 = (right_value8 = ncmemdup(self->str));
+            char* __tmp_store_field37 = (right_value20 = ncmemdup(self->str));
             igc_decrement_ref_count(((result__2 && result__2->str) ? result__2->str : (void*)0));
-            result__2->str=__tmp_store_field12;
+            result__2->str=__tmp_store_field37;
         }
                 struct sChildA* __result_value = result__2;
         return __result_value;
     }
 
-static void list_push_back_IAph(struct list_IAphp* self, struct IA* item)
+static void vector_push_back_sBaseph(struct vector_sBasephp* self, struct sBase* item)
 {
-void* right_value9;
-void* right_value10;
-void* right_value11;
+    if(self->len==self->size) {
+        int __tmp_variable17 = self->size*2;
+        int new_size__3=__tmp_variable17;
+        struct sBase** __tmp_variable18 = self->items;
+        struct sBase** items__3=__tmp_variable18;
+        struct sBase** __tmp_store_field38 = (igc_calloc(1,sizeof(struct sBase*)*new_size__3));
+        self->items=__tmp_store_field38;
+        int i__3;
+        memset(&i__3, 0, sizeof(int));
+        {
+            int __tmp_variable19 = 0;
+            i__3=__tmp_variable19;
+            while(i__3<self->size) {
+                self->items[i__3]=items__3[i__3];
+                int __tmp_variable20 = i__3+1;
+                i__3=__tmp_variable20;
+            }
+        }
+        int __tmp_store_field39 = new_size__3;
+        self->size=__tmp_store_field39;
+        igc_decrement_ref_count(items__3);
+    }
+    self->items[self->len]=item;
+    int __tmp_store_field40 = self->len+1;
+    self->len=__tmp_store_field40;
+}
+
+static void vector_push_back_vectorph_sBaseph(struct vector_vectorph_sBasephp* self, struct vector_sBasephp* item)
+{
+    if(self->len==self->size) {
+        int __tmp_variable21 = self->size*2;
+        int new_size__3=__tmp_variable21;
+        struct vector_sBasephp** __tmp_variable22 = self->items;
+        struct vector_sBasephp** items__3=__tmp_variable22;
+        struct vector_sBasephp** __tmp_store_field41 = (igc_calloc(1,sizeof(struct vector_sBasephp*)*new_size__3));
+        self->items=__tmp_store_field41;
+        int i__3;
+        memset(&i__3, 0, sizeof(int));
+        {
+            int __tmp_variable23 = 0;
+            i__3=__tmp_variable23;
+            while(i__3<self->size) {
+                self->items[i__3]=items__3[i__3];
+                int __tmp_variable24 = i__3+1;
+                i__3=__tmp_variable24;
+            }
+        }
+        int __tmp_store_field42 = new_size__3;
+        self->size=__tmp_store_field42;
+        call_finalizer(vector_finalize_sBaseph,items__3,0);
+    }
+    self->items[self->len]=item;
+    int __tmp_store_field43 = self->len+1;
+    self->len=__tmp_store_field43;
+}
+
+static void vector_finalize_sBaseph(struct vector_sBasephp* self)
+{
+    if(1) {
+        {
+            int __tmp_variable25 = 0;
+            int i__4=__tmp_variable25;
+            while(i__4<self->len) {
+                call_finalizer(self->items[i__4]->finalize, self->items[i__4]->_protocol_obj, 0);
+                igc_decrement_ref_count(self->items[i__4]);
+                int __tmp_variable26 = i__4+1;
+                i__4=__tmp_variable26;
+            }
+        }
+    }
+    if(self&&self->items) {
+        (free_object(((char*)self->items)));
+    }
+}
+
+static struct list_listph_sBasephp* list_initialize_listph_sBaseph(struct list_listph_sBasephp* self)
+{
+    struct list_item_listph_sBasephp* __tmp_store_field44 = ((void*)0);
+    self->head=__tmp_store_field44;
+    struct list_item_listph_sBasephp* __tmp_store_field45 = ((void*)0);
+    self->tail=__tmp_store_field45;
+    int __tmp_store_field46 = 0;
+    self->len=__tmp_store_field46;
+        struct list_listph_sBasephp* __result_value = self;
+    return __result_value;
+}
+
+static struct list_sBasephp* list_initialize_sBaseph(struct list_sBasephp* self)
+{
+    struct list_item_sBasephp* __tmp_store_field47 = ((void*)0);
+    self->head=__tmp_store_field47;
+    struct list_item_sBasephp* __tmp_store_field48 = ((void*)0);
+    self->tail=__tmp_store_field48;
+    int __tmp_store_field49 = 0;
+    self->len=__tmp_store_field49;
+        struct list_sBasephp* __result_value = self;
+    return __result_value;
+}
+
+static void list_push_back_sBaseph(struct list_sBasephp* self, struct sBase* item)
+{
+void* right_value36;
+void* right_value37;
+void* right_value38;
     if(self->len==0) {
-        struct list_item_IAphp* __tmp_variable4 = (right_value9 = igc_calloc(1,24));
-        struct list_item_IAphp* litem__3=__tmp_variable4;
-        struct list_item_IAphp* __tmp_store_field13 = ((void*)0);
-        litem__3->prev=__tmp_store_field13;
-        struct list_item_IAphp* __tmp_store_field14 = ((void*)0);
-        litem__3->next=__tmp_store_field14;
-        struct IA* __tmp_store_field15 = item;
-        litem__3->item=__tmp_store_field15;
-        struct list_item_IAphp* __tmp_store_field16 = litem__3;
-        self->tail=__tmp_store_field16;
-        struct list_item_IAphp* __tmp_store_field17 = litem__3;
-        self->head=__tmp_store_field17;
+        struct list_item_sBasephp* __tmp_variable30 = (right_value36 = igc_calloc(1,24));
+        struct list_item_sBasephp* litem__3=__tmp_variable30;
+        struct list_item_sBasephp* __tmp_store_field50 = ((void*)0);
+        litem__3->prev=__tmp_store_field50;
+        struct list_item_sBasephp* __tmp_store_field51 = ((void*)0);
+        litem__3->next=__tmp_store_field51;
+        struct sBase* __tmp_store_field52 = item;
+        litem__3->item=__tmp_store_field52;
+        struct list_item_sBasephp* __tmp_store_field53 = litem__3;
+        self->tail=__tmp_store_field53;
+        struct list_item_sBasephp* __tmp_store_field54 = litem__3;
+        self->head=__tmp_store_field54;
     }
     else if(self->len==1) {
-        struct list_item_IAphp* __tmp_variable5 = (right_value10 = igc_calloc(1,24));
-        struct list_item_IAphp* litem__3=__tmp_variable5;
-        struct list_item_IAphp* __tmp_store_field18 = self->head;
-        litem__3->prev=__tmp_store_field18;
-        struct list_item_IAphp* __tmp_store_field19 = ((void*)0);
-        litem__3->next=__tmp_store_field19;
-        struct IA* __tmp_store_field20 = item;
-        litem__3->item=__tmp_store_field20;
-        struct list_item_IAphp* __tmp_store_field21 = litem__3;
-        self->tail=__tmp_store_field21;
-        struct list_item_IAphp* __tmp_store_field22 = litem__3;
-        self->head->next=__tmp_store_field22;
+        struct list_item_sBasephp* __tmp_variable31 = (right_value37 = igc_calloc(1,24));
+        struct list_item_sBasephp* litem__3=__tmp_variable31;
+        struct list_item_sBasephp* __tmp_store_field55 = self->head;
+        litem__3->prev=__tmp_store_field55;
+        struct list_item_sBasephp* __tmp_store_field56 = ((void*)0);
+        litem__3->next=__tmp_store_field56;
+        struct sBase* __tmp_store_field57 = item;
+        litem__3->item=__tmp_store_field57;
+        struct list_item_sBasephp* __tmp_store_field58 = litem__3;
+        self->tail=__tmp_store_field58;
+        struct list_item_sBasephp* __tmp_store_field59 = litem__3;
+        self->head->next=__tmp_store_field59;
     }
     else {
-        struct list_item_IAphp* __tmp_variable6 = (right_value11 = igc_calloc(1,24));
-        struct list_item_IAphp* litem__3=__tmp_variable6;
-        struct list_item_IAphp* __tmp_store_field23 = self->tail;
-        litem__3->prev=__tmp_store_field23;
-        struct list_item_IAphp* __tmp_store_field24 = ((void*)0);
-        litem__3->next=__tmp_store_field24;
-        struct IA* __tmp_store_field25 = item;
-        litem__3->item=__tmp_store_field25;
-        struct list_item_IAphp* __tmp_store_field26 = litem__3;
-        self->tail->next=__tmp_store_field26;
-        struct list_item_IAphp* __tmp_store_field27 = litem__3;
-        self->tail=__tmp_store_field27;
+        struct list_item_sBasephp* __tmp_variable32 = (right_value38 = igc_calloc(1,24));
+        struct list_item_sBasephp* litem__3=__tmp_variable32;
+        struct list_item_sBasephp* __tmp_store_field60 = self->tail;
+        litem__3->prev=__tmp_store_field60;
+        struct list_item_sBasephp* __tmp_store_field61 = ((void*)0);
+        litem__3->next=__tmp_store_field61;
+        struct sBase* __tmp_store_field62 = item;
+        litem__3->item=__tmp_store_field62;
+        struct list_item_sBasephp* __tmp_store_field63 = litem__3;
+        self->tail->next=__tmp_store_field63;
+        struct list_item_sBasephp* __tmp_store_field64 = litem__3;
+        self->tail=__tmp_store_field64;
     }
-    int __tmp_store_field28 = self->len+1;
-    self->len=__tmp_store_field28;
+    int __tmp_store_field65 = self->len+1;
+    self->len=__tmp_store_field65;
 }
 
-static void sChildB_finalize(struct sChildB* self)
+static void list_push_back_listph_sBaseph(struct list_listph_sBasephp* self, struct list_sBasephp* item)
 {
-        if(self!=(((void*)0))&&self->hello!=(((void*)0))) {
-            igc_decrement_ref_count((self->hello));
+void* right_value39;
+void* right_value40;
+void* right_value41;
+    if(self->len==0) {
+        struct list_item_listph_sBasephp* __tmp_variable33 = (right_value39 = igc_calloc(1,24));
+        struct list_item_listph_sBasephp* litem__3=__tmp_variable33;
+        struct list_item_listph_sBasephp* __tmp_store_field66 = ((void*)0);
+        litem__3->prev=__tmp_store_field66;
+        struct list_item_listph_sBasephp* __tmp_store_field67 = ((void*)0);
+        litem__3->next=__tmp_store_field67;
+        struct list_sBasephp* __tmp_store_field68 = item;
+        litem__3->item=__tmp_store_field68;
+        struct list_item_listph_sBasephp* __tmp_store_field69 = litem__3;
+        self->tail=__tmp_store_field69;
+        struct list_item_listph_sBasephp* __tmp_store_field70 = litem__3;
+        self->head=__tmp_store_field70;
+    }
+    else if(self->len==1) {
+        struct list_item_listph_sBasephp* __tmp_variable34 = (right_value40 = igc_calloc(1,24));
+        struct list_item_listph_sBasephp* litem__3=__tmp_variable34;
+        struct list_item_listph_sBasephp* __tmp_store_field71 = self->head;
+        litem__3->prev=__tmp_store_field71;
+        struct list_item_listph_sBasephp* __tmp_store_field72 = ((void*)0);
+        litem__3->next=__tmp_store_field72;
+        struct list_sBasephp* __tmp_store_field73 = item;
+        litem__3->item=__tmp_store_field73;
+        struct list_item_listph_sBasephp* __tmp_store_field74 = litem__3;
+        self->tail=__tmp_store_field74;
+        struct list_item_listph_sBasephp* __tmp_store_field75 = litem__3;
+        self->head->next=__tmp_store_field75;
+    }
+    else {
+        struct list_item_listph_sBasephp* __tmp_variable35 = (right_value41 = igc_calloc(1,24));
+        struct list_item_listph_sBasephp* litem__3=__tmp_variable35;
+        struct list_item_listph_sBasephp* __tmp_store_field76 = self->tail;
+        litem__3->prev=__tmp_store_field76;
+        struct list_item_listph_sBasephp* __tmp_store_field77 = ((void*)0);
+        litem__3->next=__tmp_store_field77;
+        struct list_sBasephp* __tmp_store_field78 = item;
+        litem__3->item=__tmp_store_field78;
+        struct list_item_listph_sBasephp* __tmp_store_field79 = litem__3;
+        self->tail->next=__tmp_store_field79;
+        struct list_item_listph_sBasephp* __tmp_store_field80 = litem__3;
+        self->tail=__tmp_store_field80;
+    }
+    int __tmp_store_field81 = self->len+1;
+    self->len=__tmp_store_field81;
+}
+
+static struct list_IAphp* list_initialize_IAph(struct list_IAphp* self)
+{
+    struct list_item_IAphp* __tmp_store_field82 = ((void*)0);
+    self->head=__tmp_store_field82;
+    struct list_item_IAphp* __tmp_store_field83 = ((void*)0);
+    self->tail=__tmp_store_field83;
+    int __tmp_store_field84 = 0;
+    self->len=__tmp_store_field84;
+        struct list_IAphp* __result_value = self;
+    return __result_value;
+}
+
+static void DataA_finalize(struct DataA* self)
+{
+        if(self!=(((void*)0))&&self->a!=(((void*)0))) {
+            call_finalizer(list_finalize_charph,(self->a),0);
+        }
+        if(self!=(((void*)0))&&self->b!=(((void*)0))) {
+            igc_decrement_ref_count((self->b));
         }
     }
 
-static struct sChildB* sChildB_clone(struct sChildB* self)
+static struct DataA* DataA_clone(struct DataA* self)
 {
-void* right_value15;
-void* right_value16;
-        struct sChildB* __tmp_variable7 = (right_value15 = igc_calloc(1,8));
-        struct sChildB* result__2=__tmp_variable7;
-        if(self!=(((void*)0))&&self->hello!=(((void*)0))) {
-            char* __tmp_store_field29 = (right_value16 = ncmemdup(self->hello));
-            igc_decrement_ref_count(((result__2 && result__2->hello) ? result__2->hello : (void*)0));
-            result__2->hello=__tmp_store_field29;
+void* right_value52;
+void* right_value60;
+void* right_value61;
+        struct DataA* __tmp_variable38 = (right_value52 = igc_calloc(1,16));
+        struct DataA* result__2=__tmp_variable38;
+        if(self!=(((void*)0))&&self->a!=(((void*)0))) {
+            struct list_charphp* __tmp_store_field104 = (right_value60 = list_clone_charph(self->a));
+            call_finalizer(list_finalize_charph,((result__2 && result__2->a) ? result__2->a : (void*)0),0);
+            result__2->a=__tmp_store_field104;
         }
-                struct sChildB* __result_value = result__2;
+        if(self!=(((void*)0))&&self->b!=(((void*)0))) {
+            char* __tmp_store_field105 = (right_value61 = ncmemdup(self->b));
+            igc_decrement_ref_count(((result__2 && result__2->b) ? result__2->b : (void*)0));
+            result__2->b=__tmp_store_field105;
+        }
+                struct DataA* __result_value = result__2;
         return __result_value;
     }
 
-static struct IA* list_begin_IAph(struct list_IAphp* self)
+static struct list_charphp* list_clone_charph(struct list_charphp* self)
 {
-    struct list_item_IAphp* __tmp_store_field30 = self->head;
-    self->it=__tmp_store_field30;
-    if(self->it) {
-                struct IA* __result_value = self->it->item;
+void* right_value53;
+void* right_value54;
+void* right_value55;
+void* right_value59;
+    struct list_charphp* __tmp_variable39 = (right_value54 = (list_initialize_charph((right_value53 = igc_calloc(1,32)))));
+    struct list_charphp* result__2=__tmp_variable39;
+    struct list_item_charphp* __tmp_variable40 = self->head;
+    struct list_item_charphp* it__2=__tmp_variable40;
+    while (it__2!=((void*)0)) {
+        if(1) {
+            (list_push_back2_charph(result__2,(right_value55 = ncmemdup(it__2->item))));
+        }
+        else if(0) {
+            (list_push_back2_charph(result__2,(right_value59 = ncmemdup(it__2->item))));
+        }
+        else {
+            (list_push_back2_charph(result__2,it__2->item));
+        }
+        struct list_item_charphp* __tmp_variable44 = it__2->next;
+        it__2=__tmp_variable44;
+    }
+        struct list_charphp* __result_value = result__2;
+    return __result_value;
+}
+
+static struct list_charphp* list_initialize_charph(struct list_charphp* self)
+{
+    struct list_item_charphp* __tmp_store_field85 = ((void*)0);
+    self->head=__tmp_store_field85;
+    struct list_item_charphp* __tmp_store_field86 = ((void*)0);
+    self->tail=__tmp_store_field86;
+    int __tmp_store_field87 = 0;
+    self->len=__tmp_store_field87;
+        struct list_charphp* __result_value = self;
+    return __result_value;
+}
+
+static void list_push_back2_charph(struct list_charphp* self, char* item)
+{
+void* right_value56;
+void* right_value57;
+void* right_value58;
+    if(self->len==0) {
+        struct list_item_charphp* __tmp_variable41 = (right_value56 = igc_calloc(1,24));
+        struct list_item_charphp* litem__3=__tmp_variable41;
+        struct list_item_charphp* __tmp_store_field88 = ((void*)0);
+        litem__3->prev=__tmp_store_field88;
+        struct list_item_charphp* __tmp_store_field89 = ((void*)0);
+        litem__3->next=__tmp_store_field89;
+        char* __tmp_store_field90 = item;
+        litem__3->item=__tmp_store_field90;
+        struct list_item_charphp* __tmp_store_field91 = litem__3;
+        self->tail=__tmp_store_field91;
+        struct list_item_charphp* __tmp_store_field92 = litem__3;
+        self->head=__tmp_store_field92;
+    }
+    else if(self->len==1) {
+        struct list_item_charphp* __tmp_variable42 = (right_value57 = igc_calloc(1,24));
+        struct list_item_charphp* litem__3=__tmp_variable42;
+        struct list_item_charphp* __tmp_store_field93 = self->head;
+        litem__3->prev=__tmp_store_field93;
+        struct list_item_charphp* __tmp_store_field94 = ((void*)0);
+        litem__3->next=__tmp_store_field94;
+        char* __tmp_store_field95 = item;
+        litem__3->item=__tmp_store_field95;
+        struct list_item_charphp* __tmp_store_field96 = litem__3;
+        self->tail=__tmp_store_field96;
+        struct list_item_charphp* __tmp_store_field97 = litem__3;
+        self->head->next=__tmp_store_field97;
+    }
+    else {
+        struct list_item_charphp* __tmp_variable43 = (right_value58 = igc_calloc(1,24));
+        struct list_item_charphp* litem__3=__tmp_variable43;
+        struct list_item_charphp* __tmp_store_field98 = self->tail;
+        litem__3->prev=__tmp_store_field98;
+        struct list_item_charphp* __tmp_store_field99 = ((void*)0);
+        litem__3->next=__tmp_store_field99;
+        char* __tmp_store_field100 = item;
+        litem__3->item=__tmp_store_field100;
+        struct list_item_charphp* __tmp_store_field101 = litem__3;
+        self->tail->next=__tmp_store_field101;
+        struct list_item_charphp* __tmp_store_field102 = litem__3;
+        self->tail=__tmp_store_field102;
+    }
+    int __tmp_store_field103 = self->len+1;
+    self->len=__tmp_store_field103;
+}
+
+static void list_push_back_IAph(struct list_IAphp* self, struct IA* item)
+{
+void* right_value62;
+void* right_value63;
+void* right_value64;
+    if(self->len==0) {
+        struct list_item_IAphp* __tmp_variable45 = (right_value62 = igc_calloc(1,24));
+        struct list_item_IAphp* litem__3=__tmp_variable45;
+        struct list_item_IAphp* __tmp_store_field106 = ((void*)0);
+        litem__3->prev=__tmp_store_field106;
+        struct list_item_IAphp* __tmp_store_field107 = ((void*)0);
+        litem__3->next=__tmp_store_field107;
+        struct IA* __tmp_store_field108 = item;
+        litem__3->item=__tmp_store_field108;
+        struct list_item_IAphp* __tmp_store_field109 = litem__3;
+        self->tail=__tmp_store_field109;
+        struct list_item_IAphp* __tmp_store_field110 = litem__3;
+        self->head=__tmp_store_field110;
+    }
+    else if(self->len==1) {
+        struct list_item_IAphp* __tmp_variable46 = (right_value63 = igc_calloc(1,24));
+        struct list_item_IAphp* litem__3=__tmp_variable46;
+        struct list_item_IAphp* __tmp_store_field111 = self->head;
+        litem__3->prev=__tmp_store_field111;
+        struct list_item_IAphp* __tmp_store_field112 = ((void*)0);
+        litem__3->next=__tmp_store_field112;
+        struct IA* __tmp_store_field113 = item;
+        litem__3->item=__tmp_store_field113;
+        struct list_item_IAphp* __tmp_store_field114 = litem__3;
+        self->tail=__tmp_store_field114;
+        struct list_item_IAphp* __tmp_store_field115 = litem__3;
+        self->head->next=__tmp_store_field115;
+    }
+    else {
+        struct list_item_IAphp* __tmp_variable47 = (right_value64 = igc_calloc(1,24));
+        struct list_item_IAphp* litem__3=__tmp_variable47;
+        struct list_item_IAphp* __tmp_store_field116 = self->tail;
+        litem__3->prev=__tmp_store_field116;
+        struct list_item_IAphp* __tmp_store_field117 = ((void*)0);
+        litem__3->next=__tmp_store_field117;
+        struct IA* __tmp_store_field118 = item;
+        litem__3->item=__tmp_store_field118;
+        struct list_item_IAphp* __tmp_store_field119 = litem__3;
+        self->tail->next=__tmp_store_field119;
+        struct list_item_IAphp* __tmp_store_field120 = litem__3;
+        self->tail=__tmp_store_field120;
+    }
+    int __tmp_store_field121 = self->len+1;
+    self->len=__tmp_store_field121;
+}
+
+static struct DataB* DataB_clone(struct DataB* self)
+{
+void* right_value68;
+        struct DataB* __tmp_variable48 = (right_value68 = igc_calloc(1,8));
+        struct DataB* result__2=__tmp_variable48;
+        int __tmp_store_field122 = self->a;
+        result__2->a=__tmp_store_field122;
+        int __tmp_store_field123 = self->b;
+        result__2->b=__tmp_store_field123;
+                struct DataB* __result_value = result__2;
         return __result_value;
     }
-    struct IA* result__2;
-    memset(&result__2, 0, sizeof(struct IA*));
-    (memset((&result__2),0,sizeof(struct IA*)));
-        struct IA* __result_value = result__2;
-    return __result_value;
-}
 
-static _Bool list_end_IAph(struct list_IAphp* self)
+static void vector_finalize_vectorph_sBaseph(struct vector_vectorph_sBasephp* self)
 {
-        _Bool __result_value = self->it==((void*)0);
-    return __result_value;
-}
-
-static struct IA* list_next_IAph(struct list_IAphp* self)
-{
-    struct list_item_IAphp* __tmp_store_field31 = self->it->next;
-    self->it=__tmp_store_field31;
-    if(self->it) {
-                struct IA* __result_value = self->it->item;
-        return __result_value;
+    if(1) {
+        {
+            int __tmp_variable49 = 0;
+            int i__4=__tmp_variable49;
+            while(i__4<self->len) {
+                call_finalizer(vector_finalize_sBaseph,self->items[i__4],0);
+                int __tmp_variable50 = i__4+1;
+                i__4=__tmp_variable50;
+            }
+        }
     }
-    struct IA* result__2;
-    memset(&result__2, 0, sizeof(struct IA*));
-    (memset((&result__2),0,sizeof(struct IA*)));
-        struct IA* __result_value = result__2;
-    return __result_value;
+    if(self&&self->items) {
+        (free_object(((char*)self->items)));
+    }
 }
 
-static void list_finalize_IAph(struct list_IAphp* self)
+static void list_finalize_sBaseph(struct list_sBasephp* self)
 {
-    struct list_item_IAphp* __tmp_variable11 = self->head;
-    struct list_item_IAphp* it__2=__tmp_variable11;
+    struct list_item_sBasephp* __tmp_variable51 = self->head;
+    struct list_item_sBasephp* it__2=__tmp_variable51;
     while (it__2!=((void*)0)) {
         if(1) {
             call_finalizer(it__2->item->finalize, it__2->item->_protocol_obj, 0);
             igc_decrement_ref_count(it__2->item);
         }
-        struct list_item_IAphp* __tmp_variable12 = it__2;
-        struct list_item_IAphp* prev_it__3=__tmp_variable12;
-        struct list_item_IAphp* __tmp_variable13 = it__2->next;
-        it__2=__tmp_variable13;
+        struct list_item_sBasephp* __tmp_variable52 = it__2;
+        struct list_item_sBasephp* prev_it__3=__tmp_variable52;
+        struct list_item_sBasephp* __tmp_variable53 = it__2->next;
+        it__2=__tmp_variable53;
+        call_finalizer(list_item_finalize_list_item_sBasephp,prev_it__3,0);
+    }
+}
+
+static void list_item_finalize_list_item_sBasephp(struct list_item_sBasephp* self)
+{
+        }
+
+static void list_finalize_listph_sBaseph(struct list_listph_sBasephp* self)
+{
+    struct list_item_listph_sBasephp* __tmp_variable54 = self->head;
+    struct list_item_listph_sBasephp* it__2=__tmp_variable54;
+    while (it__2!=((void*)0)) {
+        if(1) {
+            call_finalizer(list_finalize_sBaseph,it__2->item,0);
+        }
+        struct list_item_listph_sBasephp* __tmp_variable55 = it__2;
+        struct list_item_listph_sBasephp* prev_it__3=__tmp_variable55;
+        struct list_item_listph_sBasephp* __tmp_variable56 = it__2->next;
+        it__2=__tmp_variable56;
+        call_finalizer(list_item_finalize_list_item_listph_sBasephp,prev_it__3,0);
+    }
+}
+
+static void list_item_finalize_list_item_listph_sBasephp(struct list_item_listph_sBasephp* self)
+{
+        }
+
+static void list_finalize_IAph(struct list_IAphp* self)
+{
+    struct list_item_IAphp* __tmp_variable57 = self->head;
+    struct list_item_IAphp* it__2=__tmp_variable57;
+    while (it__2!=((void*)0)) {
+        if(1) {
+            call_finalizer(it__2->item->finalize, it__2->item->_protocol_obj, 0);
+            igc_decrement_ref_count(it__2->item);
+        }
+        struct list_item_IAphp* __tmp_variable58 = it__2;
+        struct list_item_IAphp* prev_it__3=__tmp_variable58;
+        struct list_item_IAphp* __tmp_variable59 = it__2->next;
+        it__2=__tmp_variable59;
         call_finalizer(list_item_finalize_list_item_IAphp,prev_it__3,0);
     }
 }

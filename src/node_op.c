@@ -350,7 +350,6 @@ BOOL call_operator_function(char* fun_base_name, sNodeType* left_type, int num_p
             }
     
             sBuf_append_str(&buf, ")");
-            add_come_code(info, "%s;\n", buf.mBuf);
             
             LVALUE llvm_value;
             llvm_value.value = obj;
@@ -361,9 +360,11 @@ BOOL call_operator_function(char* fun_base_name, sNodeType* left_type, int num_p
             if(obj && result_type->mHeap) {
                 char* var_name = append_object_to_right_values(obj, result_type, info);
                 llvm_value.c_value = xsprintf("(%s = %s)", var_name, buf.mBuf);
+                add_come_last_code(info, "%s;\n", llvm_value.c_value);
             }
             else {
                 llvm_value.c_value = xsprintf("%s", buf.mBuf);
+                add_come_last_code(info, "%s;\n", llvm_value.c_value);
             }
     
             dec_stack_ptr(num_params, info);

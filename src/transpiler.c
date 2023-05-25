@@ -5,6 +5,7 @@ sComeFun gComeFunctions[COME_FUN_MAX];
 struct sComeFunStruct* gComeFunctionHead;
 
 BOOL gInHeader = FALSE;
+BOOL gInFunctionParam = FALSE;
 
 struct sOutputStruct 
 {
@@ -384,6 +385,7 @@ void output_function(sBuf* output, sComeFun* fun)
         sBuf_append_str(&output2, "(");
         
         int i;
+        gInFunctionParam = TRUE;
         for(i=0; i<fun->mNumParams; i++) {
             sNodeType* param_type = fun->mParamTypes[i];
             char* name = fun->mParamNames[i];
@@ -400,6 +402,7 @@ void output_function(sBuf* output, sComeFun* fun)
                 sBuf_append_str(output, ", ");
             }
         }
+        gInFunctionParam = FALSE;
         sBuf_append_str(&output2, ")");
         
         char* str = make_lambda_type_name_string(fun->mResultType, output2.mBuf);
@@ -421,6 +424,7 @@ void output_function(sBuf* output, sComeFun* fun)
         sBuf_append_str(output, "(");
         
         int i;
+        gInFunctionParam = TRUE;
         for(i=0; i<fun->mNumParams; i++) {
             sNodeType* param_type = fun->mParamTypes[i];
             char* name = fun->mParamNames[i];
@@ -437,6 +441,7 @@ void output_function(sBuf* output, sComeFun* fun)
                 sBuf_append_str(output, ", ");
             }
         }
+        gInFunctionParam = FALSE;
         
         sBuf_append_str(&gComeModule.mSourceHead, output->mBuf);
         sBuf_append_str(&gComeModule.mSourceHead, ");\n");
@@ -463,6 +468,7 @@ void header_function(sBuf* output, sComeFun* fun)
         sBuf_append_str(&output2, "(");
         
         int i;
+        gInFunctionParam = TRUE;
         for(i=0; i<fun->mNumParams; i++) {
             sNodeType* param_type = fun->mParamTypes[i];
             char* name = fun->mParamNames[i];
@@ -474,6 +480,7 @@ void header_function(sBuf* output, sComeFun* fun)
                 sBuf_append_str(&output2, ", ");
             }
         }
+        gInFunctionParam = FALSE;
         sBuf_append_str(&output2, ")");
         
         char* str = make_lambda_type_name_string(fun->mResultType, output2.mBuf);
@@ -493,6 +500,7 @@ void header_function(sBuf* output, sComeFun* fun)
         sBuf_append_str(output, "(");
         
         int i;
+        gInFunctionParam = TRUE;
         for(i=0; i<fun->mNumParams; i++) {
             sNodeType* param_type = fun->mParamTypes[i];
             char* name = fun->mParamNames[i];
@@ -509,6 +517,7 @@ void header_function(sBuf* output, sComeFun* fun)
                 sBuf_append_str(output, ", ");
             }
         }
+        gInFunctionParam = FALSE;
         
         sBuf_append_str(output, ");\n");
     }
@@ -626,7 +635,7 @@ char* make_type_name_string(sNodeType* node_type)
     
     char* class_name = node_type->mClass->mName;
     
-    if(node_type->mStatic) {
+    if(node_type->mStatic && !gInFunctionParam) {
         sBuf_append_str(&output, "static ");
     }
     

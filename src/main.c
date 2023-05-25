@@ -236,7 +236,7 @@ static BOOL compile_c_file(char* fname, char* bname, char* clang_optiones, BOOL 
     
     if(!output_assembler_source) {
         char cmd[1024];
-        snprintf(cmd, 1024, "rm -f %s.c %s.ll", fname, fname);
+        snprintf(cmd, 1024, "rm -f %s.ll", fname);
         
         //puts(cmd);
         (void)system(cmd);
@@ -440,7 +440,7 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
     
     if(!output_assembler_source) {
         char cmd[1024];
-        snprintf(cmd, 1024, "rm -f %s.ll %s.o %s.bc %s.c", fname, fname, fname, fname);
+        snprintf(cmd, 1024, "rm -f %s.ll %s.o %s.bc ", fname, fname, fname);
         
         (void)system(cmd);
     }

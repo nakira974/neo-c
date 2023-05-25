@@ -1365,36 +1365,70 @@ typedef unsigned int u32;
 typedef unsigned short u16;
 typedef unsigned char u8;
 typedef unsigned long u64;
-struct IA
+struct vector_int
 {
-    protocol_obj_t _protocol_obj;
-    void (*finalize)(void*);
-    void* (*clone)(void*);
-    void (*show)(protocol_obj_t);
-};
-struct sChildA
-{
-    int x;
-    int y;
-    int z;
-    char* str;
-};
-struct sChildB
-{
-    char* hello;
-};
-struct list_item_IAphp
-{
-    struct IA* item;
-    struct list_item_IAphp* prev;
-    struct list_item_IAphp* next;
-};
-struct list_IAphp
-{
-    struct list_item_IAphp* head;
-    struct list_item_IAphp* tail;
+    int* items;
     int len;
-    struct list_item_IAphp* it;
+    int size;
+    int it;
+};
+struct list_item_int
+{
+    int item;
+    struct list_item_int* prev;
+    struct list_item_int* next;
+};
+struct list_int
+{
+    struct list_item_int* head;
+    struct list_item_int* tail;
+    int len;
+    struct list_item_int* it;
+};
+struct map_charphp_int
+{
+    char** keys;
+    _Bool* item_existance;
+    int* items;
+    int size;
+    int len;
+    struct list_charphp* key_list;
+    int it;
+};
+struct tuple2_int_charpp
+{
+    int v1;
+    char* v2;
+};
+struct vector_intpp
+{
+    int** items;
+    int len;
+    int size;
+    int it;
+};
+struct list_item_charpp
+{
+    char* item;
+    struct list_item_charpp* prev;
+    struct list_item_charpp* next;
+};
+struct list_charpp
+{
+    struct list_item_charpp* head;
+    struct list_item_charpp* tail;
+    int len;
+    struct list_item_charpp* it;
+};
+struct map_charpp_int
+{
+    char** keys;
+    _Bool* item_existance;
+    int* items;
+    int size;
+    int len;
+    struct list_charpp* key_list;
+    int it;
 };
 
 void come_gc_init();
@@ -3147,273 +3181,2511 @@ int* wstring_operator_add(int* left, int* right);
 char* regex_structp_to_string(struct regex_struct* regex);
 void check_null_pointer(int sline, char* sname);
 void bool_expect(_Bool self, void* parent, void (*block_)(void*));
-struct sChildA* sChildAp_initialize(struct sChildA* self);
-void sChildAp_show(struct sChildA* self);
-struct sChildB* sChildBp_initialize(struct sChildB* self);
-void sChildBp_show(struct sChildB* self);
-int main(int argc, char** argv);
-static struct list_IAphp* list_initialize_IAph(struct list_IAphp* self);
-static void sChildA_finalize(struct sChildA* self);
-static struct sChildA* sChildA_clone(struct sChildA* self);
-static void list_push_back_IAph(struct list_IAphp* self, struct IA* item);
-static void sChildB_finalize(struct sChildB* self);
-static struct sChildB* sChildB_clone(struct sChildB* self);
-static struct IA* list_begin_IAph(struct list_IAphp* self);
-static _Bool list_end_IAph(struct list_IAphp* self);
-static struct IA* list_next_IAph(struct list_IAphp* self);
-static void list_finalize_IAph(struct list_IAphp* self);
-static void list_item_finalize_list_item_IAphp(struct list_item_IAphp* self);
+int main();
+static struct vector_int* vector_initialize_int(struct vector_int* self);
+static void vector_push_back_int(struct vector_int* self, int item);
+static int vector_item_int(struct vector_int* self, int index, int default_value);
+static int vector_length_int(struct vector_int* self);
+static void vector_replace_int(struct vector_int* self, int index, int value);
+static int vector_begin_int(struct vector_int* self);
+static _Bool vector_end_int(struct vector_int* self);
+static int vector_next_int(struct vector_int* self);
+static struct list_int* list_initialize_int(struct list_int* self);
+static int list_length_int(struct list_int* self);
+static void list_push_back_int(struct list_int* self, int item);
+static int list_item_int(struct list_int* self, int position, int default_value);
+static void list_insert_int(struct list_int* self, int position, int item);
+static void list_delete_int(struct list_int* self, int head, int tail);
+static void list_reset_int(struct list_int* self);
+static void list_replace_int(struct list_int* self, int position, int item);
+static struct list_int* list_sublist_int(struct list_int* self, int begin, int tail);
+static struct list_int* list_reverse_int(struct list_int* self);
+static struct list_int* list_sort_with_lambda_int(struct list_int* self, int (*compare)(int,int));
+static struct list_int* list_merge_sort_with_lambda_int(struct list_int* self, int (*compare)(int,int));
+static struct list_int* list_clone_int(struct list_int* self);
+static void list_push_back2_int(struct list_int* self, int item);
+static struct list_int* list_merge_list_with_lambda_int(struct list_int* left, struct list_int* right, int (*compare)(int,int));
+static void list_finalize_int(struct list_int* self);
+static void list_item_finalize_list_item_int(struct list_item_int* self);
+static int list_begin_int(struct list_int* self);
+static _Bool list_end_int(struct list_int* self);
+static int list_next_int(struct list_int* self);
+static struct map_charphp_int* map_initialize_charph_int(struct map_charphp_int* self);
+static struct list_charphp* list_initialize_charph(struct list_charphp* self);
+static void map_insert_charph_int(struct map_charphp_int* self, char* key, int item);
+static void map_rehash_charph_int(struct map_charphp_int* self);
+static char* map_begin_charph_int(struct map_charphp_int* self);
+static _Bool map_end_charph_int(struct map_charphp_int* self);
+static int map_at_charph_int(struct map_charphp_int* self, char* key, int default_value);
+static char* map_next_charph_int(struct map_charphp_int* self);
+static void list_push_back_charph(struct list_charphp* self, char* item);
+static int map_length_charph_int(struct map_charphp_int* self);
+static struct vector_intpp* vector_initialize_intp(struct vector_intpp* self);
+static void vector_push_back_intp(struct vector_intpp* self, int* item);
+static int* vector_item_intp(struct vector_intpp* self, int index, int* default_value);
+static struct map_charpp_int* map_initialize_charp_int(struct map_charpp_int* self);
+static struct list_charpp* list_initialize_charp(struct list_charpp* self);
+static void map_insert_charp_int(struct map_charpp_int* self, char* key, int item);
+static void map_rehash_charp_int(struct map_charpp_int* self);
+static char* map_begin_charp_int(struct map_charpp_int* self);
+static _Bool map_end_charp_int(struct map_charpp_int* self);
+static int map_at_charp_int(struct map_charpp_int* self, char* key, int default_value);
+static char* map_next_charp_int(struct map_charpp_int* self);
+static void list_push_back_charp(struct list_charpp* self, char* item);
+static _Bool map_equals_charp_int(struct map_charpp_int* left, struct map_charpp_int* right);
+static char* list_begin_charp(struct list_charpp* self);
+static _Bool list_end_charp(struct list_charpp* self);
+static char* list_item_charp(struct list_charpp* self, int position, char* default_value);
+static char* list_next_charp(struct list_charpp* self);
+static struct list_charpp* list_initialize_with_values_charp(struct list_charpp* self, int num_value, const unsigned char** values);
+static void map_finalize_charph_int(struct map_charphp_int* self);
+static void list_finalize_charph(struct list_charphp* self);
+static void list_item_finalize_list_item_charphp(struct list_item_charphp* self);
+static void tuple2_finalize_int_charp(struct tuple2_int_charpp* self);
+static void vector_finalize_int(struct vector_int* self);
+static void map_finalize_charp_int(struct map_charpp_int* self);
+static void list_finalize_charp(struct list_charpp* self);
+static void list_item_finalize_list_item_charpp(struct list_item_charpp* self);
+static void vector_finalize_intp(struct vector_intpp* self);
 
-struct sChildA* sChildAp_initialize(struct sChildA* self)
+int main()
 {
 void* right_value0;
-    int __tmp_store_field1 = 1;
-    self->x=__tmp_store_field1;
-    int __tmp_store_field2 = 2;
-    self->y=__tmp_store_field2;
-    int __tmp_store_field3 = 3;
-    self->z=__tmp_store_field3;
-    char* __tmp_store_field4 = (right_value0 = (__builtin_string("ABC")));
-    igc_decrement_ref_count(((self && self->str) ? self->str : (void*)0));
-    self->str=__tmp_store_field4;
-        struct sChildA* __result_value = self;
-    return __result_value;
-}
-
-void sChildAp_show(struct sChildA* self)
-{
-    (printf("x %d y %d z %d str %s\n",self->x,self->y,self->z,self->str));
-}
-
-struct sChildB* sChildBp_initialize(struct sChildB* self)
-{
 void* right_value1;
-    char* __tmp_store_field5 = (right_value1 = (__builtin_string("HELLO")));
-    igc_decrement_ref_count(((self && self->hello) ? self->hello : (void*)0));
-    self->hello=__tmp_store_field5;
-        struct sChildB* __result_value = self;
-    return __result_value;
-}
-
-void sChildBp_show(struct sChildB* self)
-{
-    (puts(self->hello));
-}
-
-int main(int argc, char** argv)
-{
 void* right_value2;
 void* right_value3;
+char* inline_result_variable5;
 void* right_value4;
 void* right_value5;
+char* inline_result_variable7;
 void* right_value6;
-void* right_value12;
-void* right_value13;
-void* right_value14;
-come_gc_init();
-    struct list_IAphp* __tmp_variable1 = (right_value3 = (list_initialize_IAph((right_value2 = igc_calloc(1,32)))));
-    struct list_IAphp* li__1=__tmp_variable1;
-    struct IA* protocol_interface_tmp0 = (right_value4 = igc_calloc(1,32));
-    protocol_interface_tmp0->_protocol_obj = (void*)(right_value6 = (sChildAp_initialize((right_value5 = igc_calloc(1,24)))));
-    protocol_interface_tmp0->finalize = (void*)sChildA_finalize;
-    protocol_interface_tmp0->clone = (void*)sChildA_clone;
-    protocol_interface_tmp0->show = (void*)sChildAp_show;
-    struct IA* __tmp_variable3 = protocol_interface_tmp0;
-    struct IA* ia__1=__tmp_variable3;
-    igc_increment_ref_count(ia__1->_protocol_obj);
-    igc_increment_ref_count(ia__1);
-    (list_push_back_IAph(li__1,ia__1));
-    struct IA* protocol_interface_tmp1 = (right_value12 = igc_calloc(1,32));
-    protocol_interface_tmp1->_protocol_obj = (void*)(right_value14 = (sChildBp_initialize((right_value13 = igc_calloc(1,8)))));
-    protocol_interface_tmp1->finalize = (void*)sChildB_finalize;
-    protocol_interface_tmp1->clone = (void*)sChildB_clone;
-    protocol_interface_tmp1->show = (void*)sChildBp_show;
-    (list_push_back_IAph(li__1,protocol_interface_tmp1));
-    {
-        struct list_IAphp* __tmp_variable8 = (li__1);
-        struct list_IAphp* _obj__2=__tmp_variable8;
-        struct IA* __tmp_variable9 = (list_begin_IAph(_obj__2));
-        struct IA* it__2=__tmp_variable9;
-        while(!(list_end_IAph(_obj__2))) {
-            it__2->show(it__2->_protocol_obj);
-            struct IA* __tmp_variable10 = (list_next_IAph(_obj__2));
-            it__2=__tmp_variable10;
-        }
-    }
-        int __result_value = 0;
-    call_finalizer(ia__1->finalize, ia__1->_protocol_obj, 0);
-    igc_decrement_ref_count(ia__1);
-    call_finalizer(list_finalize_IAph,li__1,0);
-    return __result_value;
-}
-
-static struct list_IAphp* list_initialize_IAph(struct list_IAphp* self)
-{
-    struct list_item_IAphp* __tmp_store_field6 = ((void*)0);
-    self->head=__tmp_store_field6;
-    struct list_item_IAphp* __tmp_store_field7 = ((void*)0);
-    self->tail=__tmp_store_field7;
-    int __tmp_store_field8 = 0;
-    self->len=__tmp_store_field8;
-        struct list_IAphp* __result_value = self;
-    return __result_value;
-}
-
-static void sChildA_finalize(struct sChildA* self)
-{
-        if(self!=(((void*)0))&&self->str!=(((void*)0))) {
-            igc_decrement_ref_count((self->str));
-        }
-    }
-
-static struct sChildA* sChildA_clone(struct sChildA* self)
-{
 void* right_value7;
 void* right_value8;
-        struct sChildA* __tmp_variable2 = (right_value7 = igc_calloc(1,24));
-        struct sChildA* result__2=__tmp_variable2;
-        int __tmp_store_field9 = self->x;
-        result__2->x=__tmp_store_field9;
-        int __tmp_store_field10 = self->y;
-        result__2->y=__tmp_store_field10;
-        int __tmp_store_field11 = self->z;
-        result__2->z=__tmp_store_field11;
-        if(self!=(((void*)0))&&self->str!=(((void*)0))) {
-            char* __tmp_store_field12 = (right_value8 = ncmemdup(self->str));
-            igc_decrement_ref_count(((result__2 && result__2->str) ? result__2->str : (void*)0));
-            result__2->str=__tmp_store_field12;
-        }
-                struct sChildA* __result_value = result__2;
-        return __result_value;
-    }
-
-static void list_push_back_IAph(struct list_IAphp* self, struct IA* item)
-{
-void* right_value9;
 void* right_value10;
 void* right_value11;
-    if(self->len==0) {
-        struct list_item_IAphp* __tmp_variable4 = (right_value9 = igc_calloc(1,24));
-        struct list_item_IAphp* litem__3=__tmp_variable4;
-        struct list_item_IAphp* __tmp_store_field13 = ((void*)0);
-        litem__3->prev=__tmp_store_field13;
-        struct list_item_IAphp* __tmp_store_field14 = ((void*)0);
-        litem__3->next=__tmp_store_field14;
-        struct IA* __tmp_store_field15 = item;
-        litem__3->item=__tmp_store_field15;
-        struct list_item_IAphp* __tmp_store_field16 = litem__3;
-        self->tail=__tmp_store_field16;
-        struct list_item_IAphp* __tmp_store_field17 = litem__3;
-        self->head=__tmp_store_field17;
-    }
-    else if(self->len==1) {
-        struct list_item_IAphp* __tmp_variable5 = (right_value10 = igc_calloc(1,24));
-        struct list_item_IAphp* litem__3=__tmp_variable5;
-        struct list_item_IAphp* __tmp_store_field18 = self->head;
-        litem__3->prev=__tmp_store_field18;
-        struct list_item_IAphp* __tmp_store_field19 = ((void*)0);
-        litem__3->next=__tmp_store_field19;
-        struct IA* __tmp_store_field20 = item;
-        litem__3->item=__tmp_store_field20;
-        struct list_item_IAphp* __tmp_store_field21 = litem__3;
-        self->tail=__tmp_store_field21;
-        struct list_item_IAphp* __tmp_store_field22 = litem__3;
-        self->head->next=__tmp_store_field22;
-    }
-    else {
-        struct list_item_IAphp* __tmp_variable6 = (right_value11 = igc_calloc(1,24));
-        struct list_item_IAphp* litem__3=__tmp_variable6;
-        struct list_item_IAphp* __tmp_store_field23 = self->tail;
-        litem__3->prev=__tmp_store_field23;
-        struct list_item_IAphp* __tmp_store_field24 = ((void*)0);
-        litem__3->next=__tmp_store_field24;
-        struct IA* __tmp_store_field25 = item;
-        litem__3->item=__tmp_store_field25;
-        struct list_item_IAphp* __tmp_store_field26 = litem__3;
-        self->tail->next=__tmp_store_field26;
-        struct list_item_IAphp* __tmp_store_field27 = litem__3;
-        self->tail=__tmp_store_field27;
-    }
-    int __tmp_store_field28 = self->len+1;
-    self->len=__tmp_store_field28;
+void* right_value12;
+void* right_value26;
+void* right_value31;
+void* right_value32;
+void* right_value33;
+void* right_value67;
+void* right_value68;
+void* right_value74;
+void* right_value75;
+void* right_value83;
+void* right_value84;
+void* right_value85;
+void* right_value86;
+void* right_value87;
+void* right_value88;
+void* right_value89;
+void* right_value90;
+void* right_value91;
+void* right_value92;
+void* right_value93;
+void* right_value95;
+void* right_value96;
+void* right_value97;
+void* right_value98;
+void* right_value99;
+void* right_value105;
+void* right_value113;
+void* right_value114;
+void* right_value115;
+void* right_value116;
+come_gc_init();
+    {
+    const char* _inline_msg1 = "xaasert test";
+    _Bool _inline_exp1 = 1;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label1:
+    (void)0;
 }
-
-static void sChildB_finalize(struct sChildB* self)
-{
-        if(self!=(((void*)0))&&self->hello!=(((void*)0))) {
-            igc_decrement_ref_count((self->hello));
+    char* __tmp_variable1 = (right_value0 = (xsprintf("AAA")));
+    char* a__1=__tmp_variable1;
+    {
+    const char* _inline_msg1 = "xsprintf test";
+    _Bool _inline_exp1 = (strcmp((right_value1 = (xsprintf("AAA"))),"AAA"))==0;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label2:
+    (void)0;
+}
+    igc_decrement_ref_count(right_value1);
+    {
+    const char* _inline_msg1 = "xsprintf test";
+    _Bool _inline_exp1 = (strcmp((right_value2 = (xsprintf("%d%d",1,1))),"11"))==0;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label3:
+    (void)0;
+}
+    igc_decrement_ref_count(right_value2);
+    {
+    const char* _inline_msg1 = "string test";
+    _Bool _inline_exp1 = (strcmp((right_value3 = (__builtin_string("AAA"))),"AAA"))==0;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label4:
+    (void)0;
+}
+    igc_decrement_ref_count(right_value3);
+    {
+    char* _inline_str1 = "ABC";
+                inline_result_variable5 = (right_value4 = (string_reverse(_inline_str1)));
+        goto inline_func_end_label5;
+    
+inline_func_end_label5:
+    right_value5 = inline_result_variable5;
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "string test2";
+    _Bool _inline_exp1 = (strcmp(inline_result_variable5,"CBA"))==0;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label6:
+    (void)0;
+}
+    igc_decrement_ref_count(right_value5);
+    {
+    char* _inline_str1 = "ABC";
+    int _inline_head1 = 0;
+    int _inline_tail1 = 1;
+                inline_result_variable7 = (right_value6 = (string_substring(_inline_str1,_inline_head1,_inline_tail1)));
+        goto inline_func_end_label7;
+    
+inline_func_end_label7:
+    right_value7 = inline_result_variable7;
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "string test3";
+    _Bool _inline_exp1 = (strcmp(inline_result_variable7,"A"))==0;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label8:
+    (void)0;
+}
+    igc_decrement_ref_count(right_value7);
+    struct vector_int* __tmp_variable2 = (right_value10 = (vector_initialize_int((right_value8 = igc_calloc(1,24)))));
+    struct vector_int* v__1=__tmp_variable2;
+    (vector_push_back_int(v__1,1));
+    (vector_push_back_int(v__1,2));
+    (vector_push_back_int(v__1,3));
+    {
+    const char* _inline_msg1 = "vector test1";
+    _Bool _inline_exp1 = (vector_item_int(v__1,0,-1))==1&&(vector_item_int(v__1,1,-1))==2&&(vector_item_int(v__1,2,-1))==3&&(vector_item_int(v__1,100,-1))==-1&&(vector_length_int(v__1))==3;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label9:
+    (void)0;
+}
+    (vector_replace_int(v__1,0,7));
+    {
+    const char* _inline_msg1 = "vector test2";
+    _Bool _inline_exp1 = (vector_item_int(v__1,0,-1))==7;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label10:
+    (void)0;
+}
+    {
+        struct vector_int* __tmp_variable9 = (v__1);
+        struct vector_int* _obj__2=__tmp_variable9;
+        int __tmp_variable10 = (vector_begin_int(_obj__2));
+        int it__2=__tmp_variable10;
+        while(!(vector_end_int(_obj__2))) {
+            (printf("%d\n",it__2));
+            int __tmp_variable11 = (vector_next_int(_obj__2));
+            it__2=__tmp_variable11;
         }
     }
-
-static struct sChildB* sChildB_clone(struct sChildB* self)
-{
-void* right_value15;
-void* right_value16;
-        struct sChildB* __tmp_variable7 = (right_value15 = igc_calloc(1,8));
-        struct sChildB* result__2=__tmp_variable7;
-        if(self!=(((void*)0))&&self->hello!=(((void*)0))) {
-            char* __tmp_store_field29 = (right_value16 = ncmemdup(self->hello));
-            igc_decrement_ref_count(((result__2 && result__2->hello) ? result__2->hello : (void*)0));
-            result__2->hello=__tmp_store_field29;
+    struct list_int* __tmp_variable12 = (right_value12 = (list_initialize_int((right_value11 = igc_calloc(1,32)))));
+    struct list_int* l__1=__tmp_variable12;
+    {
+    const char* _inline_msg1 = "list test1";
+    _Bool _inline_exp1 = (list_length_int(l__1))==0;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
         }
-                struct sChildB* __result_value = result__2;
-        return __result_value;
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label11:
+    (void)0;
+}
+    (list_push_back_int(l__1,1));
+    (list_push_back_int(l__1,2));
+    (list_push_back_int(l__1,3));
+    {
+    const char* _inline_msg1 = "list test2";
+    _Bool _inline_exp1 = (list_length_int(l__1))==3&&(list_item_int(l__1,0,-1))==1&&(list_item_int(l__1,1,-1))==2&&(list_item_int(l__1,2,-1))==3;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label12:
+    (void)0;
+}
+    (list_insert_int(l__1,0,0));
+    {
+    const char* _inline_msg1 = "list test3";
+    _Bool _inline_exp1 = (list_length_int(l__1))==4&&(list_item_int(l__1,0,-1))==0&&(list_item_int(l__1,1,-1))==1&&(list_item_int(l__1,2,-1))==2&&(list_item_int(l__1,3,-1))==3;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label13:
+    (void)0;
+}
+    (list_delete_int(l__1,0,1));
+    {
+    const char* _inline_msg1 = "list test4";
+    _Bool _inline_exp1 = (list_length_int(l__1))==3&&(list_item_int(l__1,0,-1))==1&&(list_item_int(l__1,1,-1))==2&&(list_item_int(l__1,2,-1))==3;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label14:
+    (void)0;
+}
+    (list_replace_int(l__1,0,7));
+    {
+    const char* _inline_msg1 = "list test5";
+    _Bool _inline_exp1 = (list_length_int(l__1))==3&&(list_item_int(l__1,0,-1))==7&&(list_item_int(l__1,1,-1))==2&&(list_item_int(l__1,2,-1))==3;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label15:
+    (void)0;
+}
+    struct list_int* __tmp_variable79 = (right_value26 = (list_sublist_int(l__1,1,-1)));
+    struct list_int* l2__1=__tmp_variable79;
+    {
+    const char* _inline_msg1 = "list test6";
+    _Bool _inline_exp1 = (list_length_int(l2__1))==2&&(list_item_int(l2__1,0,-1))==2&&(list_item_int(l2__1,1,-1))==3;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label16:
+    (void)0;
+}
+    struct list_int* __tmp_variable83 = (right_value31 = (list_reverse_int(l2__1)));
+    struct list_int* l3__1=__tmp_variable83;
+    {
+    const char* _inline_msg1 = "list test7";
+    _Bool _inline_exp1 = (list_length_int(l3__1))==2&&(list_item_int(l3__1,0,-1))==3&&(list_item_int(l3__1,1,-1))==2;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label17:
+    (void)0;
+}
+    struct list_int* __tmp_variable84 = (right_value33 = (list_initialize_int((right_value32 = igc_calloc(1,32)))));
+    struct list_int* l4__1=__tmp_variable84;
+    (list_push_back_int(l4__1,3));
+    (list_push_back_int(l4__1,1));
+    (list_push_back_int(l4__1,2));
+    struct list_int* __tmp_variable109 = (right_value67 = (list_sort_with_lambda_int(l4__1,int_compare)));
+    struct list_int* l5__1=__tmp_variable109;
+    {
+        struct list_int* __tmp_variable110 = (l5__1);
+        struct list_int* _obj__2=__tmp_variable110;
+        int __tmp_variable111 = (list_begin_int(_obj__2));
+        int it__2=__tmp_variable111;
+        while(!(list_end_int(_obj__2))) {
+            (printf("%d\n",it__2));
+            int __tmp_variable112 = (list_next_int(_obj__2));
+            it__2=__tmp_variable112;
+        }
     }
-
-static struct IA* list_begin_IAph(struct list_IAphp* self)
-{
-    struct list_item_IAphp* __tmp_store_field30 = self->head;
-    self->it=__tmp_store_field30;
-    if(self->it) {
-                struct IA* __result_value = self->it->item;
-        return __result_value;
+    struct map_charphp_int* __tmp_variable115 = (right_value74 = (map_initialize_charph_int((right_value68 = igc_calloc(1,48)))));
+    struct map_charphp_int* m__1=__tmp_variable115;
+    (map_insert_charph_int(m__1,(right_value75 = (__builtin_string("AAA"))),1));
+    (map_insert_charph_int(m__1,(right_value83 = (__builtin_string("BBB"))),2));
+    (map_insert_charph_int(m__1,(right_value84 = (__builtin_string("CCC"))),3));
+    {
+    const char* _inline_msg1 = "map test1";
+    _Bool _inline_exp1 = (map_length_charph_int(m__1))==3;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label18:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "map test2";
+    _Bool _inline_exp1 = (map_at_charph_int(m__1,(right_value85 = (__builtin_string("AAA"))),-1))==1&&(map_at_charph_int(m__1,(right_value86 = (__builtin_string("BBB"))),-1))==2&&(map_at_charph_int(m__1,(right_value87 = (__builtin_string("CCC"))),-1))==3;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label19:
+    (void)0;
+}
+    igc_decrement_ref_count(right_value87);
+    igc_decrement_ref_count(right_value86);
+    igc_decrement_ref_count(right_value85);
+    {
+    const char* _inline_msg1 = "map test3";
+    _Bool _inline_exp1 = (map_at_charph_int(m__1,"AAA",-1))==1&&(map_at_charph_int(m__1,"BBB",-1))==2&&(map_at_charph_int(m__1,"CCC",-1))==3;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label20:
+    (void)0;
+}
+    {
+        struct map_charphp_int* __tmp_variable140 = (m__1);
+        struct map_charphp_int* _obj__2=__tmp_variable140;
+        char* __tmp_variable141 = (map_begin_charph_int(_obj__2));
+        char* it__2=__tmp_variable141;
+        while(!(map_end_charph_int(_obj__2))) {
+            (puts(it__2));
+            char* __tmp_variable142 = (map_next_charph_int(_obj__2));
+            it__2=__tmp_variable142;
+        }
     }
-    struct IA* result__2;
-    memset(&result__2, 0, sizeof(struct IA*));
-    (memset((&result__2),0,sizeof(struct IA*)));
-        struct IA* __result_value = result__2;
+    struct tuple2_int_charpp* __tmp_variable143 = (right_value88 = igc_calloc(1,16));
+    struct tuple2_int_charpp* t__1=__tmp_variable143;
+    int __tmp_store_field111 = 123;
+    t__1->v1=__tmp_store_field111;
+    char* __tmp_store_field112 = "ABC";
+    t__1->v2=__tmp_store_field112;
+    {
+    const char* _inline_msg1 = "tuple test";
+    _Bool _inline_exp1 = t__1->v1==123&&t__1->v2=="ABC";
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label21:
+    (void)0;
+}
+    struct list_int* __tmp_variable144 = (right_value90 = (list_initialize_int((right_value89 = igc_calloc(1,32)))));
+    struct list_int* lx__1=__tmp_variable144;
+    (list_push_back_int(lx__1,1));
+    (list_push_back_int(lx__1,2));
+    (list_push_back_int(lx__1,3));
+    {
+        struct list_int* __tmp_variable145 = ((right_value91 = (list_sublist_int(lx__1,1,3))));
+        struct list_int* _obj__2=__tmp_variable145;
+        int __tmp_variable146 = (list_begin_int(_obj__2));
+        int it__2=__tmp_variable146;
+        while(!(list_end_int(_obj__2))) {
+            int __tmp_variable147 = 1;
+            int a__3=__tmp_variable147;
+            char* __tmp_variable148 = (right_value92 = (__builtin_string("AAA")));
+            char* str__3=__tmp_variable148;
+            (printf("%d\n",it__2));
+            igc_decrement_ref_count(str__3);
+            int __tmp_variable149 = (list_next_int(_obj__2));
+            it__2=__tmp_variable149;
+        }
+        call_finalizer(list_finalize_int,_obj__2,0);
+    }
+    struct vector_intpp* __tmp_variable150 = (right_value95 = (vector_initialize_intp((right_value93 = igc_calloc(1,24)))));
+    struct vector_intpp* v3__1=__tmp_variable150;
+    int __tmp_variable151 = 0;
+    int x__1=__tmp_variable151;
+    (vector_push_back_intp(v3__1,(&x__1)));
+    (printf("%d\n",*(vector_item_intp(v3__1,0,((void*)0)))));
+    struct buffer* __tmp_variable157 = (right_value97 = (bufferp_initialize((right_value96 = igc_calloc(1,16)))));
+    struct buffer* b1__1=__tmp_variable157;
+    (bufferp_append_str(b1__1,"ABC"));
+    (bufferp_append_str(b1__1,"DEF"));
+    {
+    const char* _inline_msg1 = "buffer test";
+    _Bool _inline_exp1 = (strcmp((right_value98 = (bufferp_to_string(b1__1))),"ABCDEF"))==0;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label22:
+    (void)0;
+}
+    igc_decrement_ref_count(right_value98);
+    struct map_charpp_int* __tmp_variable160 = (right_value105 = (map_initialize_charp_int((right_value99 = igc_calloc(1,48)))));
+    struct map_charpp_int* m1__1=__tmp_variable160;
+    (map_insert_charp_int(m1__1,"AAA",1));
+    struct map_charpp_int* __tmp_variable185 = (right_value114 = (map_initialize_charp_int((right_value113 = igc_calloc(1,48)))));
+    struct map_charpp_int* m2__1=__tmp_variable185;
+    (map_insert_charp_int(m2__1,"AAA",1));
+    {
+    const char* _inline_msg1 = "map test";
+    _Bool _inline_exp1 = (map_at_charp_int(m1__1,"AAA",-1))==1;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label23:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "map test2";
+    _Bool _inline_exp1 = (map_at_charp_int(m2__1,"AAA",-1))==1;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label24:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "map test3";
+    _Bool _inline_exp1 = (map_equals_charp_int(m1__1,m2__1));
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label25:
+    (void)0;
+}
+    const unsigned char* _list_element1[1];
+_list_element1[0] = "1";
+    struct list_charpp* __tmp_variable204 = (right_value116 = list_initialize_with_values_charp((right_value115 = igc_calloc(1,32)), 1, _list_element1));
+    struct list_charpp* li__1=__tmp_variable204;
+        int __result_value = 0;
+    igc_decrement_ref_count(a__1);
+    call_finalizer(list_finalize_int,l__1,0);
+    call_finalizer(map_finalize_charph_int,m__1,0);
+    call_finalizer(tuple2_finalize_int_charp,t__1,0);
+    call_finalizer(vector_finalize_int,v__1,0);
+    call_finalizer(buffer_finalize,b1__1,0);
+    call_finalizer(list_finalize_int,l2__1,0);
+    call_finalizer(list_finalize_int,l3__1,0);
+    call_finalizer(list_finalize_int,l4__1,0);
+    call_finalizer(list_finalize_int,l5__1,0);
+    call_finalizer(map_finalize_charp_int,m1__1,0);
+    call_finalizer(map_finalize_charp_int,m2__1,0);
+    call_finalizer(vector_finalize_intp,v3__1,0);
+    call_finalizer(list_finalize_charp,li__1,0);
+    call_finalizer(list_finalize_int,lx__1,0);
     return __result_value;
 }
 
-static _Bool list_end_IAph(struct list_IAphp* self)
+static struct vector_int* vector_initialize_int(struct vector_int* self)
+{
+void* right_value9;
+    int __tmp_store_field1 = 16;
+    self->size=__tmp_store_field1;
+    int __tmp_store_field2 = 0;
+    self->len=__tmp_store_field2;
+    int* __tmp_store_field3 = (right_value9 = igc_calloc(self->size,4));
+    self->items=__tmp_store_field3;
+        struct vector_int* __result_value = self;
+    return __result_value;
+}
+
+static void vector_push_back_int(struct vector_int* self, int item)
+{
+    if(self->len==self->size) {
+        int __tmp_variable3 = self->size*2;
+        int new_size__3=__tmp_variable3;
+        int* __tmp_variable4 = self->items;
+        int* items__3=__tmp_variable4;
+        int* __tmp_store_field4 = (igc_calloc(1,sizeof(int)*new_size__3));
+        self->items=__tmp_store_field4;
+        int i__3;
+        memset(&i__3, 0, sizeof(int));
+        {
+            int __tmp_variable5 = 0;
+            i__3=__tmp_variable5;
+            while(i__3<self->size) {
+                self->items[i__3]=items__3[i__3];
+                int __tmp_variable6 = i__3+1;
+                i__3=__tmp_variable6;
+            }
+        }
+        int __tmp_store_field5 = new_size__3;
+        self->size=__tmp_store_field5;
+        igc_decrement_ref_count(items__3);
+    }
+    self->items[self->len]=item;
+    int __tmp_store_field6 = self->len+1;
+    self->len=__tmp_store_field6;
+}
+
+static int vector_item_int(struct vector_int* self, int index, int default_value)
+{
+    if(index<0) {
+        int __tmp_variable7 = index+self->len;
+        index=__tmp_variable7;
+    }
+    if(index>=0&&index<self->len) {
+                int __result_value = self->items[index];
+        return __result_value;
+    }
+        int __result_value = default_value;
+    return __result_value;
+}
+
+static int vector_length_int(struct vector_int* self)
+{
+        int __result_value = self->len;
+    return __result_value;
+}
+
+static void vector_replace_int(struct vector_int* self, int index, int value)
+{
+    if(index<0) {
+        int __tmp_variable8 = index+self->len;
+        index=__tmp_variable8;
+    }
+    if(index>=0&&index<self->len) {
+        if(0) {
+        }
+        self->items[index]=value;
+    }
+}
+
+static int vector_begin_int(struct vector_int* self)
+{
+    int __tmp_store_field7 = 0;
+    self->it=__tmp_store_field7;
+    int default_value__2;
+    memset(&default_value__2, 0, sizeof(int));
+        int __result_value = (vector_item_int(self,0,default_value__2));
+    return __result_value;
+}
+
+static _Bool vector_end_int(struct vector_int* self)
+{
+        _Bool __result_value = self->it>=self->len;
+    return __result_value;
+}
+
+static int vector_next_int(struct vector_int* self)
+{
+    int __tmp_store_field8 = self->it+1;
+    self->it=__tmp_store_field8;
+    int default_value__2;
+    memset(&default_value__2, 0, sizeof(int));
+        int __result_value = (vector_item_int(self,self->it,default_value__2));
+    return __result_value;
+}
+
+static struct list_int* list_initialize_int(struct list_int* self)
+{
+    struct list_item_int* __tmp_store_field9 = ((void*)0);
+    self->head=__tmp_store_field9;
+    struct list_item_int* __tmp_store_field10 = ((void*)0);
+    self->tail=__tmp_store_field10;
+    int __tmp_store_field11 = 0;
+    self->len=__tmp_store_field11;
+        struct list_int* __result_value = self;
+    return __result_value;
+}
+
+static int list_length_int(struct list_int* self)
+{
+        int __result_value = self->len;
+    return __result_value;
+}
+
+static void list_push_back_int(struct list_int* self, int item)
+{
+void* right_value13;
+void* right_value14;
+void* right_value15;
+    if(self->len==0) {
+        struct list_item_int* __tmp_variable13 = (right_value13 = igc_calloc(1,24));
+        struct list_item_int* litem__3=__tmp_variable13;
+        struct list_item_int* __tmp_store_field12 = ((void*)0);
+        litem__3->prev=__tmp_store_field12;
+        struct list_item_int* __tmp_store_field13 = ((void*)0);
+        litem__3->next=__tmp_store_field13;
+        int __tmp_store_field14 = item;
+        litem__3->item=__tmp_store_field14;
+        struct list_item_int* __tmp_store_field15 = litem__3;
+        self->tail=__tmp_store_field15;
+        struct list_item_int* __tmp_store_field16 = litem__3;
+        self->head=__tmp_store_field16;
+    }
+    else if(self->len==1) {
+        struct list_item_int* __tmp_variable14 = (right_value14 = igc_calloc(1,24));
+        struct list_item_int* litem__3=__tmp_variable14;
+        struct list_item_int* __tmp_store_field17 = self->head;
+        litem__3->prev=__tmp_store_field17;
+        struct list_item_int* __tmp_store_field18 = ((void*)0);
+        litem__3->next=__tmp_store_field18;
+        int __tmp_store_field19 = item;
+        litem__3->item=__tmp_store_field19;
+        struct list_item_int* __tmp_store_field20 = litem__3;
+        self->tail=__tmp_store_field20;
+        struct list_item_int* __tmp_store_field21 = litem__3;
+        self->head->next=__tmp_store_field21;
+    }
+    else {
+        struct list_item_int* __tmp_variable15 = (right_value15 = igc_calloc(1,24));
+        struct list_item_int* litem__3=__tmp_variable15;
+        struct list_item_int* __tmp_store_field22 = self->tail;
+        litem__3->prev=__tmp_store_field22;
+        struct list_item_int* __tmp_store_field23 = ((void*)0);
+        litem__3->next=__tmp_store_field23;
+        int __tmp_store_field24 = item;
+        litem__3->item=__tmp_store_field24;
+        struct list_item_int* __tmp_store_field25 = litem__3;
+        self->tail->next=__tmp_store_field25;
+        struct list_item_int* __tmp_store_field26 = litem__3;
+        self->tail=__tmp_store_field26;
+    }
+    int __tmp_store_field27 = self->len+1;
+    self->len=__tmp_store_field27;
+}
+
+static int list_item_int(struct list_int* self, int position, int default_value)
+{
+    if(position<0) {
+        int __tmp_variable16 = position+self->len;
+        position=__tmp_variable16;
+    }
+    struct list_item_int* __tmp_variable17 = self->head;
+    struct list_item_int* it__2=__tmp_variable17;
+    int __tmp_variable18 = 0;
+    int i__2=__tmp_variable18;
+    while (it__2!=((void*)0)) {
+        if(position==i__2) {
+                        int __result_value = it__2->item;
+            return __result_value;
+        }
+        struct list_item_int* __tmp_variable19 = it__2->next;
+        it__2=__tmp_variable19;
+        int __tmp_variable20 = i__2+1;
+        i__2=__tmp_variable20;
+    }
+        int __result_value = default_value;
+    return __result_value;
+}
+
+static void list_insert_int(struct list_int* self, int position, int item)
+{
+void* right_value16;
+void* right_value17;
+void* right_value18;
+void* right_value19;
+void* right_value20;
+    if(position<0) {
+        int __tmp_variable21 = position+self->len+1;
+        position=__tmp_variable21;
+    }
+    if(position<0) {
+        int __tmp_variable22 = 0;
+        position=__tmp_variable22;
+    }
+    if(self->len==0||position>=self->len) {
+        if(0) {
+            (list_push_back_int(self,item));
+        }
+        else if(0) {
+            (list_push_back_int(self,item));
+        }
+        else {
+            (list_push_back_int(self,item));
+        }
+                return;    }
+    if(position==0) {
+        struct list_item_int* __tmp_variable23 = (right_value18 = igc_calloc(1,24));
+        struct list_item_int* litem__3=__tmp_variable23;
+        struct list_item_int* __tmp_store_field28 = ((void*)0);
+        litem__3->prev=__tmp_store_field28;
+        struct list_item_int* __tmp_store_field29 = self->head;
+        litem__3->next=__tmp_store_field29;
+        int __tmp_store_field30 = item;
+        litem__3->item=__tmp_store_field30;
+        struct list_item_int* __tmp_store_field31 = litem__3;
+        self->head->prev=__tmp_store_field31;
+        struct list_item_int* __tmp_store_field32 = litem__3;
+        self->head=__tmp_store_field32;
+        int __tmp_store_field33 = self->len+1;
+        self->len=__tmp_store_field33;
+    }
+    else if(self->len==1) {
+        struct list_item_int* __tmp_variable24 = (right_value19 = igc_calloc(1,24));
+        struct list_item_int* litem__3=__tmp_variable24;
+        struct list_item_int* __tmp_store_field34 = self->head;
+        litem__3->prev=__tmp_store_field34;
+        struct list_item_int* __tmp_store_field35 = self->tail;
+        litem__3->next=__tmp_store_field35;
+        int __tmp_store_field36 = item;
+        litem__3->item=__tmp_store_field36;
+        struct list_item_int* __tmp_store_field37 = litem__3;
+        self->tail->prev=__tmp_store_field37;
+        struct list_item_int* __tmp_store_field38 = litem__3;
+        self->head->next=__tmp_store_field38;
+        int __tmp_store_field39 = self->len+1;
+        self->len=__tmp_store_field39;
+    }
+    else {
+        struct list_item_int* __tmp_variable25 = self->head;
+        struct list_item_int* it__3=__tmp_variable25;
+        int __tmp_variable26 = 0;
+        int i__3=__tmp_variable26;
+        while (it__3!=((void*)0)) {
+            if(position==i__3) {
+                struct list_item_int* __tmp_variable27 = (right_value20 = igc_calloc(1,24));
+                struct list_item_int* litem__5=__tmp_variable27;
+                struct list_item_int* __tmp_store_field40 = it__3->prev;
+                litem__5->prev=__tmp_store_field40;
+                struct list_item_int* __tmp_store_field41 = it__3;
+                litem__5->next=__tmp_store_field41;
+                int __tmp_store_field42 = item;
+                litem__5->item=__tmp_store_field42;
+                struct list_item_int* __tmp_store_field43 = litem__5;
+                it__3->prev->next=__tmp_store_field43;
+                struct list_item_int* __tmp_store_field44 = litem__5;
+                it__3->prev=__tmp_store_field44;
+                int __tmp_store_field45 = self->len+1;
+                self->len=__tmp_store_field45;
+            }
+            struct list_item_int* __tmp_variable28 = it__3->next;
+            it__3=__tmp_variable28;
+            int __tmp_variable29 = i__3+1;
+            i__3=__tmp_variable29;
+        }
+    }
+}
+
+static void list_delete_int(struct list_int* self, int head, int tail)
+{
+    if(head<0) {
+        int __tmp_variable30 = head+self->len;
+        head=__tmp_variable30;
+    }
+    if(tail<0) {
+        int __tmp_variable31 = tail+self->len+1;
+        tail=__tmp_variable31;
+    }
+    if(head>tail) {
+        int __tmp_variable32 = tail;
+        int tmp__3=__tmp_variable32;
+        int __tmp_variable33 = head;
+        tail=__tmp_variable33;
+        int __tmp_variable34 = tmp__3;
+        head=__tmp_variable34;
+    }
+    if(head<0) {
+        int __tmp_variable35 = 0;
+        head=__tmp_variable35;
+    }
+    if(tail>self->len) {
+        int __tmp_variable36 = self->len;
+        tail=__tmp_variable36;
+    }
+    if(head==tail) {
+                return;    }
+    if(head==0&&tail==self->len) {
+        (list_reset_int(self));
+    }
+    else if(head==0) {
+        struct list_item_int* __tmp_variable40 = self->head;
+        struct list_item_int* it__3=__tmp_variable40;
+        int __tmp_variable41 = 0;
+        int i__3=__tmp_variable41;
+        while (it__3!=((void*)0)) {
+            if(i__3<tail) {
+                if(0) {
+                }
+                struct list_item_int* __tmp_variable42 = it__3;
+                struct list_item_int* prev_it__5=__tmp_variable42;
+                struct list_item_int* __tmp_variable43 = it__3->next;
+                it__3=__tmp_variable43;
+                int __tmp_variable44 = i__3+1;
+                i__3=__tmp_variable44;
+                call_finalizer(list_item_finalize_list_item_int,prev_it__5,0);
+                int __tmp_store_field49 = self->len-1;
+                self->len=__tmp_store_field49;
+            }
+            else if(i__3==tail) {
+                struct list_item_int* __tmp_store_field50 = it__3;
+                self->head=__tmp_store_field50;
+                struct list_item_int* __tmp_store_field51 = ((void*)0);
+                self->head->prev=__tmp_store_field51;
+                break;
+            }
+            else {
+                struct list_item_int* __tmp_variable45 = it__3->next;
+                it__3=__tmp_variable45;
+                int __tmp_variable46 = i__3+1;
+                i__3=__tmp_variable46;
+            }
+        }
+    }
+    else if(tail==self->len) {
+        struct list_item_int* __tmp_variable47 = self->head;
+        struct list_item_int* it__3=__tmp_variable47;
+        int __tmp_variable48 = 0;
+        int i__3=__tmp_variable48;
+        while (it__3!=((void*)0)) {
+            if(i__3==head) {
+                struct list_item_int* __tmp_store_field52 = it__3->prev;
+                self->tail=__tmp_store_field52;
+                struct list_item_int* __tmp_store_field53 = ((void*)0);
+                self->tail->next=__tmp_store_field53;
+            }
+            if(i__3>=head) {
+                if(0) {
+                }
+                struct list_item_int* __tmp_variable49 = it__3;
+                struct list_item_int* prev_it__5=__tmp_variable49;
+                struct list_item_int* __tmp_variable50 = it__3->next;
+                it__3=__tmp_variable50;
+                int __tmp_variable51 = i__3+1;
+                i__3=__tmp_variable51;
+                call_finalizer(list_item_finalize_list_item_int,prev_it__5,0);
+                int __tmp_store_field54 = self->len-1;
+                self->len=__tmp_store_field54;
+            }
+            else {
+                struct list_item_int* __tmp_variable52 = it__3->next;
+                it__3=__tmp_variable52;
+                int __tmp_variable53 = i__3+1;
+                i__3=__tmp_variable53;
+            }
+        }
+    }
+    else {
+        struct list_item_int* __tmp_variable54 = self->head;
+        struct list_item_int* it__3=__tmp_variable54;
+        struct list_item_int* __tmp_variable55 = ((void*)0);
+        struct list_item_int* head_prev_it__3=__tmp_variable55;
+        struct list_item_int* __tmp_variable56 = ((void*)0);
+        struct list_item_int* tail_it__3=__tmp_variable56;
+        int __tmp_variable57 = 0;
+        int i__3=__tmp_variable57;
+        while (it__3!=((void*)0)) {
+            if(i__3==head) {
+                struct list_item_int* __tmp_variable58 = it__3->prev;
+                head_prev_it__3=__tmp_variable58;
+            }
+            if(i__3==tail) {
+                struct list_item_int* __tmp_variable59 = it__3;
+                tail_it__3=__tmp_variable59;
+            }
+            if(i__3>=head&&i__3<tail) {
+                if(0) {
+                }
+                struct list_item_int* __tmp_variable60 = it__3;
+                struct list_item_int* prev_it__5=__tmp_variable60;
+                struct list_item_int* __tmp_variable61 = it__3->next;
+                it__3=__tmp_variable61;
+                int __tmp_variable62 = i__3+1;
+                i__3=__tmp_variable62;
+                call_finalizer(list_item_finalize_list_item_int,prev_it__5,0);
+                int __tmp_store_field55 = self->len-1;
+                self->len=__tmp_store_field55;
+            }
+            else {
+                struct list_item_int* __tmp_variable63 = it__3->next;
+                it__3=__tmp_variable63;
+                int __tmp_variable64 = i__3+1;
+                i__3=__tmp_variable64;
+            }
+        }
+        if(head_prev_it__3!=((void*)0)) {
+            struct list_item_int* __tmp_store_field56 = tail_it__3;
+            head_prev_it__3->next=__tmp_store_field56;
+        }
+        if(tail_it__3!=((void*)0)) {
+            struct list_item_int* __tmp_store_field57 = head_prev_it__3;
+            tail_it__3->prev=__tmp_store_field57;
+        }
+    }
+}
+
+static void list_reset_int(struct list_int* self)
+{
+    struct list_item_int* __tmp_variable37 = self->head;
+    struct list_item_int* it__2=__tmp_variable37;
+    while (it__2!=((void*)0)) {
+        if(0) {
+        }
+        struct list_item_int* __tmp_variable38 = it__2;
+        struct list_item_int* prev_it__3=__tmp_variable38;
+        struct list_item_int* __tmp_variable39 = it__2->next;
+        it__2=__tmp_variable39;
+        call_finalizer(list_item_finalize_list_item_int,prev_it__3,0);
+    }
+    struct list_item_int* __tmp_store_field46 = ((void*)0);
+    self->head=__tmp_store_field46;
+    struct list_item_int* __tmp_store_field47 = ((void*)0);
+    self->tail=__tmp_store_field47;
+    int __tmp_store_field48 = 0;
+    self->len=__tmp_store_field48;
+}
+
+static void list_replace_int(struct list_int* self, int position, int item)
+{
+    if(position<0) {
+        int __tmp_variable65 = position+self->len;
+        position=__tmp_variable65;
+    }
+    struct list_item_int* __tmp_variable66 = self->head;
+    struct list_item_int* it__2=__tmp_variable66;
+    int __tmp_variable67 = 0;
+    int i__2=__tmp_variable67;
+    while (it__2!=((void*)0)) {
+        if(position==i__2) {
+            if(0) {
+            }
+            int __tmp_store_field58 = item;
+            it__2->item=__tmp_store_field58;
+            break;
+        }
+        struct list_item_int* __tmp_variable68 = it__2->next;
+        it__2=__tmp_variable68;
+        int __tmp_variable69 = i__2+1;
+        i__2=__tmp_variable69;
+    }
+}
+
+static struct list_int* list_sublist_int(struct list_int* self, int begin, int tail)
+{
+void* right_value21;
+void* right_value22;
+void* right_value23;
+void* right_value24;
+void* right_value25;
+    struct list_int* __tmp_variable70 = (right_value22 = (list_initialize_int((right_value21 = igc_calloc(1,32)))));
+    struct list_int* result__2=__tmp_variable70;
+    if(begin<0) {
+        int __tmp_variable71 = begin+self->len;
+        begin=__tmp_variable71;
+    }
+    if(tail<0) {
+        int __tmp_variable72 = tail+self->len+1;
+        tail=__tmp_variable72;
+    }
+    if(begin<0) {
+        int __tmp_variable73 = 0;
+        begin=__tmp_variable73;
+    }
+    if(tail>=self->len) {
+        int __tmp_variable74 = self->len;
+        tail=__tmp_variable74;
+    }
+    struct list_item_int* __tmp_variable75 = self->head;
+    struct list_item_int* it__2=__tmp_variable75;
+    int __tmp_variable76 = 0;
+    int i__2=__tmp_variable76;
+    while (it__2!=((void*)0)) {
+        if(i__2>=begin&&i__2<tail) {
+            if(0) {
+                (list_push_back_int(result__2,it__2->item));
+            }
+            else {
+                if(0) {
+                    (list_push_back_int(result__2,it__2->item));
+                }
+                else if(0) {
+                    (list_push_back_int(result__2,it__2->item));
+                }
+                else {
+                    (list_push_back_int(result__2,it__2->item));
+                }
+            }
+        }
+        struct list_item_int* __tmp_variable77 = it__2->next;
+        it__2=__tmp_variable77;
+        int __tmp_variable78 = i__2+1;
+        i__2=__tmp_variable78;
+    }
+        struct list_int* __result_value = result__2;
+    return __result_value;
+}
+
+static struct list_int* list_reverse_int(struct list_int* self)
+{
+void* right_value27;
+void* right_value28;
+void* right_value29;
+void* right_value30;
+    struct list_int* __tmp_variable80 = (right_value28 = (list_initialize_int((right_value27 = igc_calloc(1,32)))));
+    struct list_int* result__2=__tmp_variable80;
+    struct list_item_int* __tmp_variable81 = self->tail;
+    struct list_item_int* it__2=__tmp_variable81;
+    while (it__2!=((void*)0)) {
+        if(0) {
+            (list_push_back_int(result__2,it__2->item));
+        }
+        else {
+            if(0) {
+                (list_push_back_int(result__2,it__2->item));
+            }
+            else {
+                (list_push_back_int(result__2,it__2->item));
+            }
+        }
+        struct list_item_int* __tmp_variable82 = it__2->prev;
+        it__2=__tmp_variable82;
+    }
+        struct list_int* __result_value = result__2;
+    return __result_value;
+}
+
+static struct list_int* list_sort_with_lambda_int(struct list_int* self, int (*compare)(int,int))
+{
+void* right_value66;
+        struct list_int* __result_value = (right_value66 = (list_merge_sort_with_lambda_int(self,compare)));
+    return __result_value;
+}
+
+static struct list_int* list_merge_sort_with_lambda_int(struct list_int* self, int (*compare)(int,int))
+{
+void* right_value41;
+void* right_value42;
+void* right_value43;
+void* right_value44;
+void* right_value45;
+void* right_value46;
+void* right_value47;
+void* right_value48;
+void* right_value49;
+void* right_value50;
+void* right_value51;
+void* right_value52;
+void* right_value53;
+void* right_value54;
+void* right_value65;
+    if(self->head==((void*)0)) {
+                struct list_int* __result_value = (right_value41 = list_clone_int(self));
+        return __result_value;
+    }
+    if(self->head->next==((void*)0)) {
+                struct list_int* __result_value = (right_value42 = list_clone_int(self));
+        return __result_value;
+    }
+    struct list_int* __tmp_variable91 = (right_value44 = (list_initialize_int((right_value43 = igc_calloc(1,32)))));
+    struct list_int* list1__2=__tmp_variable91;
+    struct list_int* __tmp_variable92 = (right_value46 = (list_initialize_int((right_value45 = igc_calloc(1,32)))));
+    struct list_int* list2__2=__tmp_variable92;
+    struct list_item_int* __tmp_variable93 = self->head;
+    struct list_item_int* it__2=__tmp_variable93;
+    while (1) {
+        if(0) {
+            (list_push_back_int(list1__2,it__2->item));
+        }
+        else {
+            if(0) {
+                (list_push_back_int(list1__2,it__2->item));
+            }
+            else {
+                (list_push_back_int(list1__2,it__2->item));
+            }
+        }
+        if(0) {
+            (list_push_back_int(list2__2,it__2->next->item));
+        }
+        else {
+            if(0) {
+                (list_push_back_int(list2__2,it__2->next->item));
+            }
+            else {
+                (list_push_back_int(list2__2,it__2->next->item));
+            }
+        }
+        if(it__2->next->next==((void*)0)) {
+            break;
+        }
+        struct list_item_int* __tmp_variable94 = it__2->next->next;
+        it__2=__tmp_variable94;
+        if(it__2->next==((void*)0)) {
+            if(0) {
+                (list_push_back_int(list1__2,it__2->item));
+            }
+            else {
+                if(0) {
+                    (list_push_back_int(list1__2,it__2->item));
+                }
+                else {
+                    (list_push_back_int(list1__2,it__2->item));
+                }
+            }
+            break;
+        }
+    }
+    struct list_int* __tmp_variable95 = (right_value53 = (list_merge_sort_with_lambda_int(list1__2,compare)));
+    struct list_int* left_list__2=__tmp_variable95;
+    struct list_int* __tmp_variable96 = (right_value54 = (list_merge_sort_with_lambda_int(list2__2,compare)));
+    struct list_int* right_list__2=__tmp_variable96;
+        struct list_int* __result_value = (right_value65 = (list_merge_list_with_lambda_int(left_list__2,right_list__2,compare)));
+    call_finalizer(list_finalize_int,list1__2,0);
+    call_finalizer(list_finalize_int,list2__2,0);
+    call_finalizer(list_finalize_int,left_list__2,0);
+    call_finalizer(list_finalize_int,right_list__2,0);
+    return __result_value;
+}
+
+static struct list_int* list_clone_int(struct list_int* self)
+{
+void* right_value34;
+void* right_value35;
+void* right_value36;
+void* right_value40;
+    struct list_int* __tmp_variable85 = (right_value35 = (list_initialize_int((right_value34 = igc_calloc(1,32)))));
+    struct list_int* result__2=__tmp_variable85;
+    struct list_item_int* __tmp_variable86 = self->head;
+    struct list_item_int* it__2=__tmp_variable86;
+    while (it__2!=((void*)0)) {
+        if(0) {
+            (list_push_back2_int(result__2,it__2->item));
+        }
+        else if(0) {
+            (list_push_back2_int(result__2,it__2->item));
+        }
+        else {
+            (list_push_back2_int(result__2,it__2->item));
+        }
+        struct list_item_int* __tmp_variable90 = it__2->next;
+        it__2=__tmp_variable90;
+    }
+        struct list_int* __result_value = result__2;
+    return __result_value;
+}
+
+static void list_push_back2_int(struct list_int* self, int item)
+{
+void* right_value37;
+void* right_value38;
+void* right_value39;
+    if(self->len==0) {
+        struct list_item_int* __tmp_variable87 = (right_value37 = igc_calloc(1,24));
+        struct list_item_int* litem__3=__tmp_variable87;
+        struct list_item_int* __tmp_store_field59 = ((void*)0);
+        litem__3->prev=__tmp_store_field59;
+        struct list_item_int* __tmp_store_field60 = ((void*)0);
+        litem__3->next=__tmp_store_field60;
+        int __tmp_store_field61 = item;
+        litem__3->item=__tmp_store_field61;
+        struct list_item_int* __tmp_store_field62 = litem__3;
+        self->tail=__tmp_store_field62;
+        struct list_item_int* __tmp_store_field63 = litem__3;
+        self->head=__tmp_store_field63;
+    }
+    else if(self->len==1) {
+        struct list_item_int* __tmp_variable88 = (right_value38 = igc_calloc(1,24));
+        struct list_item_int* litem__3=__tmp_variable88;
+        struct list_item_int* __tmp_store_field64 = self->head;
+        litem__3->prev=__tmp_store_field64;
+        struct list_item_int* __tmp_store_field65 = ((void*)0);
+        litem__3->next=__tmp_store_field65;
+        int __tmp_store_field66 = item;
+        litem__3->item=__tmp_store_field66;
+        struct list_item_int* __tmp_store_field67 = litem__3;
+        self->tail=__tmp_store_field67;
+        struct list_item_int* __tmp_store_field68 = litem__3;
+        self->head->next=__tmp_store_field68;
+    }
+    else {
+        struct list_item_int* __tmp_variable89 = (right_value39 = igc_calloc(1,24));
+        struct list_item_int* litem__3=__tmp_variable89;
+        struct list_item_int* __tmp_store_field69 = self->tail;
+        litem__3->prev=__tmp_store_field69;
+        struct list_item_int* __tmp_store_field70 = ((void*)0);
+        litem__3->next=__tmp_store_field70;
+        int __tmp_store_field71 = item;
+        litem__3->item=__tmp_store_field71;
+        struct list_item_int* __tmp_store_field72 = litem__3;
+        self->tail->next=__tmp_store_field72;
+        struct list_item_int* __tmp_store_field73 = litem__3;
+        self->tail=__tmp_store_field73;
+    }
+    int __tmp_store_field74 = self->len+1;
+    self->len=__tmp_store_field74;
+}
+
+static struct list_int* list_merge_list_with_lambda_int(struct list_int* left, struct list_int* right, int (*compare)(int,int))
+{
+void* right_value55;
+void* right_value56;
+void* right_value57;
+void* right_value58;
+void* right_value59;
+void* right_value60;
+void* right_value61;
+void* right_value62;
+void* right_value63;
+void* right_value64;
+    struct list_int* __tmp_variable97 = (right_value56 = (list_initialize_int((right_value55 = igc_calloc(1,32)))));
+    struct list_int* result__2=__tmp_variable97;
+    struct list_item_int* __tmp_variable98 = left->head;
+    struct list_item_int* it__2=__tmp_variable98;
+    struct list_item_int* __tmp_variable99 = right->head;
+    struct list_item_int* it2__2=__tmp_variable99;
+    while (1) {
+        if(it__2&&it2__2) {
+            if(it__2->item==((void*)0)) {
+                struct list_item_int* __tmp_variable100 = it__2->next;
+                it__2=__tmp_variable100;
+            }
+            else if(it2__2->item==((void*)0)) {
+                struct list_item_int* __tmp_variable101 = it2__2->next;
+                it2__2=__tmp_variable101;
+            }
+            else if(compare(it__2->item,it2__2->item)<=0) {
+                if(0) {
+                    (list_push_back_int(result__2,it__2->item));
+                }
+                else {
+                    if(0) {
+                        (list_push_back_int(result__2,it__2->item));
+                    }
+                    else {
+                        (list_push_back_int(result__2,it__2->item));
+                    }
+                }
+                struct list_item_int* __tmp_variable102 = it__2->next;
+                it__2=__tmp_variable102;
+            }
+            else {
+                if(0) {
+                    (list_push_back_int(result__2,it2__2->item));
+                }
+                else {
+                    if(0) {
+                        (list_push_back_int(result__2,it2__2->item));
+                    }
+                    else {
+                        (list_push_back_int(result__2,it2__2->item));
+                    }
+                }
+                struct list_item_int* __tmp_variable103 = it2__2->next;
+                it2__2=__tmp_variable103;
+            }
+        }
+        if(it__2==((void*)0)) {
+            if(it2__2!=((void*)0)) {
+                while (it2__2!=((void*)0)) {
+                    if(0) {
+                        (list_push_back_int(result__2,it2__2->item));
+                    }
+                    else {
+                        if(0) {
+                            (list_push_back_int(result__2,it2__2->item));
+                        }
+                        else {
+                            (list_push_back_int(result__2,it2__2->item));
+                        }
+                    }
+                    struct list_item_int* __tmp_variable104 = it2__2->next;
+                    it2__2=__tmp_variable104;
+                }
+            }
+            break;
+        }
+        else if(it2__2==((void*)0)) {
+            if(it__2!=((void*)0)) {
+                while (it__2!=((void*)0)) {
+                    if(0) {
+                        (list_push_back_int(result__2,it__2->item));
+                    }
+                    else {
+                        if(0) {
+                            (list_push_back_int(result__2,it__2->item));
+                        }
+                        else {
+                            (list_push_back_int(result__2,it__2->item));
+                        }
+                    }
+                    struct list_item_int* __tmp_variable105 = it__2->next;
+                    it__2=__tmp_variable105;
+                }
+            }
+            break;
+        }
+    }
+        struct list_int* __result_value = result__2;
+    return __result_value;
+}
+
+static void list_finalize_int(struct list_int* self)
+{
+    struct list_item_int* __tmp_variable106 = self->head;
+    struct list_item_int* it__2=__tmp_variable106;
+    while (it__2!=((void*)0)) {
+        if(0) {
+        }
+        struct list_item_int* __tmp_variable107 = it__2;
+        struct list_item_int* prev_it__3=__tmp_variable107;
+        struct list_item_int* __tmp_variable108 = it__2->next;
+        it__2=__tmp_variable108;
+        call_finalizer(list_item_finalize_list_item_int,prev_it__3,0);
+    }
+}
+
+static void list_item_finalize_list_item_int(struct list_item_int* self)
+{
+        }
+
+static int list_begin_int(struct list_int* self)
+{
+    struct list_item_int* __tmp_store_field75 = self->head;
+    self->it=__tmp_store_field75;
+    if(self->it) {
+                int __result_value = self->it->item;
+        return __result_value;
+    }
+    int result__2;
+    memset(&result__2, 0, sizeof(int));
+    (memset((&result__2),0,sizeof(int)));
+        int __result_value = result__2;
+    return __result_value;
+}
+
+static _Bool list_end_int(struct list_int* self)
 {
         _Bool __result_value = self->it==((void*)0);
     return __result_value;
 }
 
-static struct IA* list_next_IAph(struct list_IAphp* self)
+static int list_next_int(struct list_int* self)
 {
-    struct list_item_IAphp* __tmp_store_field31 = self->it->next;
-    self->it=__tmp_store_field31;
+    struct list_item_int* __tmp_store_field76 = self->it->next;
+    self->it=__tmp_store_field76;
     if(self->it) {
-                struct IA* __result_value = self->it->item;
+                int __result_value = self->it->item;
         return __result_value;
     }
-    struct IA* result__2;
-    memset(&result__2, 0, sizeof(struct IA*));
-    (memset((&result__2),0,sizeof(struct IA*)));
-        struct IA* __result_value = result__2;
+    int result__2;
+    memset(&result__2, 0, sizeof(int));
+    (memset((&result__2),0,sizeof(int)));
+        int __result_value = result__2;
     return __result_value;
 }
 
-static void list_finalize_IAph(struct list_IAphp* self)
+static struct map_charphp_int* map_initialize_charph_int(struct map_charphp_int* self)
 {
-    struct list_item_IAphp* __tmp_variable11 = self->head;
-    struct list_item_IAphp* it__2=__tmp_variable11;
-    while (it__2!=((void*)0)) {
-        if(1) {
-            call_finalizer(it__2->item->finalize, it__2->item->_protocol_obj, 0);
-            igc_decrement_ref_count(it__2->item);
+void* right_value69;
+void* right_value70;
+void* right_value71;
+void* right_value72;
+void* right_value73;
+    char** __tmp_store_field77 = (right_value69 = igc_calloc(128,8));
+    self->keys=__tmp_store_field77;
+    int* __tmp_store_field78 = (right_value70 = igc_calloc(128,4));
+    self->items=__tmp_store_field78;
+    _Bool* __tmp_store_field79 = (right_value71 = igc_calloc(128,1));
+    self->item_existance=__tmp_store_field79;
+    {
+        int __tmp_variable113 = 0;
+        int i__3=__tmp_variable113;
+        while(i__3<128) {
+            self->item_existance[i__3]=0;
+            int __tmp_variable114 = i__3+1;
+            i__3=__tmp_variable114;
         }
-        struct list_item_IAphp* __tmp_variable12 = it__2;
-        struct list_item_IAphp* prev_it__3=__tmp_variable12;
-        struct list_item_IAphp* __tmp_variable13 = it__2->next;
-        it__2=__tmp_variable13;
-        call_finalizer(list_item_finalize_list_item_IAphp,prev_it__3,0);
+    }
+    int __tmp_store_field80 = 128;
+    self->size=__tmp_store_field80;
+    int __tmp_store_field81 = 0;
+    self->len=__tmp_store_field81;
+    struct list_charphp* __tmp_store_field85 = (right_value73 = (list_initialize_charph((right_value72 = igc_calloc(1,32)))));
+    self->key_list=__tmp_store_field85;
+    int __tmp_store_field86 = 0;
+    self->it=__tmp_store_field86;
+        struct map_charphp_int* __result_value = self;
+    return __result_value;
+}
+
+static struct list_charphp* list_initialize_charph(struct list_charphp* self)
+{
+    struct list_item_charphp* __tmp_store_field82 = ((void*)0);
+    self->head=__tmp_store_field82;
+    struct list_item_charphp* __tmp_store_field83 = ((void*)0);
+    self->tail=__tmp_store_field83;
+    int __tmp_store_field84 = 0;
+    self->len=__tmp_store_field84;
+        struct list_charphp* __result_value = self;
+    return __result_value;
+}
+
+static void map_insert_charph_int(struct map_charphp_int* self, char* key, int item)
+{
+void* right_value79;
+    if(self->len*2>=self->size) {
+        (map_rehash_charph_int(self));
+    }
+    int __tmp_variable133 = (string_get_hash_key(key))%self->size;
+    int hash__2=__tmp_variable133;
+    int __tmp_variable134 = hash__2;
+    int it__2=__tmp_variable134;
+    while (1) {
+        if(self->item_existance[it__2]) {
+            if((string_equals(self->keys[it__2],key))) {
+                if(1) {
+                    igc_decrement_ref_count(self->keys[it__2]);
+                }
+                if(0) {
+                }
+                self->keys[it__2]=key;
+                self->items[it__2]=item;
+                break;
+            }
+            int __tmp_variable135 = it__2+1;
+            it__2=__tmp_variable135;
+            if(it__2>=self->size) {
+                int __tmp_variable136 = 0;
+                it__2=__tmp_variable136;
+            }
+            else if(it__2==hash__2) {
+                (fprintf(stderr,"unexpected error in map.insert\n"));
+                (exit(2));
+            }
+        }
+        else {
+            self->item_existance[it__2]=1;
+            self->keys[it__2]=key;
+            self->items[it__2]=item;
+            int __tmp_store_field94 = self->len+1;
+            self->len=__tmp_store_field94;
+            break;
+        }
+    }
+    if(1) {
+        (list_push_back_charph(self->key_list,(right_value79 = ncmemdup(key))));
+    }
+    else {
+        (list_push_back_charph(self->key_list,key));
     }
 }
 
-static void list_item_finalize_list_item_IAphp(struct list_item_IAphp* self)
+static void map_rehash_charph_int(struct map_charphp_int* self)
+{
+void* right_value76;
+void* right_value77;
+void* right_value78;
+    int __tmp_variable116 = self->size*3;
+    int size__2=__tmp_variable116;
+    char** __tmp_variable117 = (right_value76 = igc_calloc(size__2,8));
+    char** keys__2=__tmp_variable117;
+    int* __tmp_variable118 = (right_value77 = igc_calloc(size__2,4));
+    int* items__2=__tmp_variable118;
+    _Bool* __tmp_variable119 = (right_value78 = igc_calloc(size__2,1));
+    _Bool* item_existance__2=__tmp_variable119;
+    int __tmp_variable120 = 0;
+    int len__2=__tmp_variable120;
+    {
+        char* __tmp_variable121 = (map_begin_charph_int(self));
+        char* it__3=__tmp_variable121;
+        while(!(map_end_charph_int(self))) {
+            int default_value__4;
+            memset(&default_value__4, 0, sizeof(int));
+            int __tmp_variable126 = (map_at_charph_int(self,it__3,default_value__4));
+            int it2__4=__tmp_variable126;
+            int __tmp_variable127 = (string_get_hash_key(it__3))%size__2;
+            int hash__4=__tmp_variable127;
+            int __tmp_variable128 = hash__4;
+            int n__4=__tmp_variable128;
+            while (1) {
+                if(item_existance__2[n__4]) {
+                    int __tmp_variable129 = n__4+1;
+                    n__4=__tmp_variable129;
+                    if(n__4>=size__2) {
+                        int __tmp_variable130 = 0;
+                        n__4=__tmp_variable130;
+                    }
+                    else if(n__4==hash__4) {
+                        (fprintf(stderr,"unexpected error in map.rehash(1)\n"));
+                        (exit(2));
+                    }
+                }
+                else {
+                    item_existance__2[n__4]=1;
+                    keys__2[n__4]=it__3;
+                    int default_value__6;
+                    memset(&default_value__6, 0, sizeof(int));
+                    items__2[n__4]=(map_at_charph_int(self,it__3,default_value__6));
+                    int __tmp_variable131 = len__2+1;
+                    len__2=__tmp_variable131;
+                    break;
+                }
+            }
+            char* __tmp_variable132 = (map_next_charph_int(self));
+            it__3=__tmp_variable132;
+        }
+    }
+    igc_decrement_ref_count(self->items);
+    igc_decrement_ref_count(self->item_existance);
+    igc_decrement_ref_count(self->keys);
+    char** __tmp_store_field89 = keys__2;
+    self->keys=__tmp_store_field89;
+    int* __tmp_store_field90 = items__2;
+    self->items=__tmp_store_field90;
+    _Bool* __tmp_store_field91 = item_existance__2;
+    self->item_existance=__tmp_store_field91;
+    int __tmp_store_field92 = size__2;
+    self->size=__tmp_store_field92;
+    int __tmp_store_field93 = len__2;
+    self->len=__tmp_store_field93;
+}
+
+static char* map_begin_charph_int(struct map_charphp_int* self)
+{
+    struct list_item_charphp* __tmp_store_field87 = self->key_list->head;
+    self->key_list->it=__tmp_store_field87;
+    if(self->key_list->it) {
+                char* __result_value = self->key_list->it->item;
+        return __result_value;
+    }
+    char* result__2;
+    memset(&result__2, 0, sizeof(char*));
+    (memset((&result__2),0,sizeof(char*)));
+        char* __result_value = result__2;
+    return __result_value;
+}
+
+static _Bool map_end_charph_int(struct map_charphp_int* self)
+{
+        _Bool __result_value = self->key_list->it==((void*)0);
+    return __result_value;
+}
+
+static int map_at_charph_int(struct map_charphp_int* self, char* key, int default_value)
+{
+    int __tmp_variable122 = (string_get_hash_key((((char*)key))))%self->size;
+    int hash__2=__tmp_variable122;
+    int __tmp_variable123 = hash__2;
+    int it__2=__tmp_variable123;
+    while (1) {
+        if(self->item_existance[it__2]) {
+            if((string_equals(self->keys[it__2],key))) {
+                                int __result_value = self->items[it__2];
+                return __result_value;
+            }
+            int __tmp_variable124 = it__2+1;
+            it__2=__tmp_variable124;
+            if(it__2>=self->size) {
+                int __tmp_variable125 = 0;
+                it__2=__tmp_variable125;
+            }
+            else if(it__2==hash__2) {
+                                int __result_value = default_value;
+                return __result_value;
+            }
+        }
+        else {
+                        int __result_value = default_value;
+            return __result_value;
+        }
+    }
+        int __result_value = default_value;
+    return __result_value;
+}
+
+static char* map_next_charph_int(struct map_charphp_int* self)
+{
+    struct list_item_charphp* __tmp_store_field88 = self->key_list->it->next;
+    self->key_list->it=__tmp_store_field88;
+    if(self->key_list->it) {
+                char* __result_value = self->key_list->it->item;
+        return __result_value;
+    }
+    char* result__2;
+    memset(&result__2, 0, sizeof(char*));
+    (memset((&result__2),0,sizeof(char*)));
+        char* __result_value = result__2;
+    return __result_value;
+}
+
+static void list_push_back_charph(struct list_charphp* self, char* item)
+{
+void* right_value80;
+void* right_value81;
+void* right_value82;
+    if(self->len==0) {
+        struct list_item_charphp* __tmp_variable137 = (right_value80 = igc_calloc(1,24));
+        struct list_item_charphp* litem__3=__tmp_variable137;
+        struct list_item_charphp* __tmp_store_field95 = ((void*)0);
+        litem__3->prev=__tmp_store_field95;
+        struct list_item_charphp* __tmp_store_field96 = ((void*)0);
+        litem__3->next=__tmp_store_field96;
+        char* __tmp_store_field97 = item;
+        litem__3->item=__tmp_store_field97;
+        struct list_item_charphp* __tmp_store_field98 = litem__3;
+        self->tail=__tmp_store_field98;
+        struct list_item_charphp* __tmp_store_field99 = litem__3;
+        self->head=__tmp_store_field99;
+    }
+    else if(self->len==1) {
+        struct list_item_charphp* __tmp_variable138 = (right_value81 = igc_calloc(1,24));
+        struct list_item_charphp* litem__3=__tmp_variable138;
+        struct list_item_charphp* __tmp_store_field100 = self->head;
+        litem__3->prev=__tmp_store_field100;
+        struct list_item_charphp* __tmp_store_field101 = ((void*)0);
+        litem__3->next=__tmp_store_field101;
+        char* __tmp_store_field102 = item;
+        litem__3->item=__tmp_store_field102;
+        struct list_item_charphp* __tmp_store_field103 = litem__3;
+        self->tail=__tmp_store_field103;
+        struct list_item_charphp* __tmp_store_field104 = litem__3;
+        self->head->next=__tmp_store_field104;
+    }
+    else {
+        struct list_item_charphp* __tmp_variable139 = (right_value82 = igc_calloc(1,24));
+        struct list_item_charphp* litem__3=__tmp_variable139;
+        struct list_item_charphp* __tmp_store_field105 = self->tail;
+        litem__3->prev=__tmp_store_field105;
+        struct list_item_charphp* __tmp_store_field106 = ((void*)0);
+        litem__3->next=__tmp_store_field106;
+        char* __tmp_store_field107 = item;
+        litem__3->item=__tmp_store_field107;
+        struct list_item_charphp* __tmp_store_field108 = litem__3;
+        self->tail->next=__tmp_store_field108;
+        struct list_item_charphp* __tmp_store_field109 = litem__3;
+        self->tail=__tmp_store_field109;
+    }
+    int __tmp_store_field110 = self->len+1;
+    self->len=__tmp_store_field110;
+}
+
+static int map_length_charph_int(struct map_charphp_int* self)
+{
+        int __result_value = self->len;
+    return __result_value;
+}
+
+static struct vector_intpp* vector_initialize_intp(struct vector_intpp* self)
+{
+void* right_value94;
+    int __tmp_store_field113 = 16;
+    self->size=__tmp_store_field113;
+    int __tmp_store_field114 = 0;
+    self->len=__tmp_store_field114;
+    int** __tmp_store_field115 = (right_value94 = igc_calloc(self->size,8));
+    self->items=__tmp_store_field115;
+        struct vector_intpp* __result_value = self;
+    return __result_value;
+}
+
+static void vector_push_back_intp(struct vector_intpp* self, int* item)
+{
+    if(self->len==self->size) {
+        int __tmp_variable152 = self->size*2;
+        int new_size__3=__tmp_variable152;
+        int** __tmp_variable153 = self->items;
+        int** items__3=__tmp_variable153;
+        int** __tmp_store_field116 = (igc_calloc(1,sizeof(int*)*new_size__3));
+        self->items=__tmp_store_field116;
+        int i__3;
+        memset(&i__3, 0, sizeof(int));
+        {
+            int __tmp_variable154 = 0;
+            i__3=__tmp_variable154;
+            while(i__3<self->size) {
+                self->items[i__3]=items__3[i__3];
+                int __tmp_variable155 = i__3+1;
+                i__3=__tmp_variable155;
+            }
+        }
+        int __tmp_store_field117 = new_size__3;
+        self->size=__tmp_store_field117;
+        igc_decrement_ref_count(items__3);
+    }
+    self->items[self->len]=item;
+    int __tmp_store_field118 = self->len+1;
+    self->len=__tmp_store_field118;
+}
+
+static int* vector_item_intp(struct vector_intpp* self, int index, int* default_value)
+{
+    if(index<0) {
+        int __tmp_variable156 = index+self->len;
+        index=__tmp_variable156;
+    }
+    if(index>=0&&index<self->len) {
+                int* __result_value = self->items[index];
+        return __result_value;
+    }
+        int* __result_value = default_value;
+    return __result_value;
+}
+
+static struct map_charpp_int* map_initialize_charp_int(struct map_charpp_int* self)
+{
+void* right_value100;
+void* right_value101;
+void* right_value102;
+void* right_value103;
+void* right_value104;
+    char** __tmp_store_field119 = (right_value100 = igc_calloc(128,8));
+    self->keys=__tmp_store_field119;
+    int* __tmp_store_field120 = (right_value101 = igc_calloc(128,4));
+    self->items=__tmp_store_field120;
+    _Bool* __tmp_store_field121 = (right_value102 = igc_calloc(128,1));
+    self->item_existance=__tmp_store_field121;
+    {
+        int __tmp_variable158 = 0;
+        int i__3=__tmp_variable158;
+        while(i__3<128) {
+            self->item_existance[i__3]=0;
+            int __tmp_variable159 = i__3+1;
+            i__3=__tmp_variable159;
+        }
+    }
+    int __tmp_store_field122 = 128;
+    self->size=__tmp_store_field122;
+    int __tmp_store_field123 = 0;
+    self->len=__tmp_store_field123;
+    struct list_charpp* __tmp_store_field127 = (right_value104 = (list_initialize_charp((right_value103 = igc_calloc(1,32)))));
+    self->key_list=__tmp_store_field127;
+    int __tmp_store_field128 = 0;
+    self->it=__tmp_store_field128;
+        struct map_charpp_int* __result_value = self;
+    return __result_value;
+}
+
+static struct list_charpp* list_initialize_charp(struct list_charpp* self)
+{
+    struct list_item_charpp* __tmp_store_field124 = ((void*)0);
+    self->head=__tmp_store_field124;
+    struct list_item_charpp* __tmp_store_field125 = ((void*)0);
+    self->tail=__tmp_store_field125;
+    int __tmp_store_field126 = 0;
+    self->len=__tmp_store_field126;
+        struct list_charpp* __result_value = self;
+    return __result_value;
+}
+
+static void map_insert_charp_int(struct map_charpp_int* self, char* key, int item)
+{
+unsigned int inline_result_variable1;
+_Bool inline_result_variable2;
+void* right_value109;
+    if(self->len*2>=self->size) {
+        (map_rehash_charp_int(self));
+    }
+    {
+    char* _inline_value1 = key;
+                inline_result_variable1 = (string_get_hash_key(_inline_value1));
+        goto inline_func_end_label1;
+    
+inline_func_end_label1:
+    (void)0;
+}
+    int __tmp_variable178 = inline_result_variable1%self->size;
+    int hash__2=__tmp_variable178;
+    int __tmp_variable179 = hash__2;
+    int it__2=__tmp_variable179;
+    while (1) {
+        if(self->item_existance[it__2]) {
+            {
+            char* _inline_left1 = self->keys[it__2];
+            char* _inline_right1 = key;
+                                inline_result_variable2 = (string_equals(_inline_left1,_inline_right1));
+                goto inline_func_end_label2;
+            
+inline_func_end_label2:
+            (void)0;
+}
+            if(inline_result_variable2) {
+                if(0) {
+                    igc_decrement_ref_count(self->keys[it__2]);
+                }
+                if(0) {
+                }
+                self->keys[it__2]=key;
+                self->items[it__2]=item;
+                break;
+            }
+            int __tmp_variable180 = it__2+1;
+            it__2=__tmp_variable180;
+            if(it__2>=self->size) {
+                int __tmp_variable181 = 0;
+                it__2=__tmp_variable181;
+            }
+            else if(it__2==hash__2) {
+                (fprintf(stderr,"unexpected error in map.insert\n"));
+                (exit(2));
+            }
+        }
+        else {
+            self->item_existance[it__2]=1;
+            self->keys[it__2]=key;
+            self->items[it__2]=item;
+            int __tmp_store_field136 = self->len+1;
+            self->len=__tmp_store_field136;
+            break;
+        }
+    }
+    if(0) {
+        (list_push_back_charp(self->key_list,(right_value109 = ncmemdup(key))));
+        igc_decrement_ref_count(right_value109);
+    }
+    else {
+        (list_push_back_charp(self->key_list,key));
+    }
+}
+
+static void map_rehash_charp_int(struct map_charpp_int* self)
+{
+void* right_value106;
+void* right_value107;
+void* right_value108;
+unsigned int inline_result_variable1;
+    int __tmp_variable161 = self->size*3;
+    int size__2=__tmp_variable161;
+    char** __tmp_variable162 = (right_value106 = igc_calloc(size__2,8));
+    char** keys__2=__tmp_variable162;
+    int* __tmp_variable163 = (right_value107 = igc_calloc(size__2,4));
+    int* items__2=__tmp_variable163;
+    _Bool* __tmp_variable164 = (right_value108 = igc_calloc(size__2,1));
+    _Bool* item_existance__2=__tmp_variable164;
+    int __tmp_variable165 = 0;
+    int len__2=__tmp_variable165;
+    {
+        char* __tmp_variable166 = (map_begin_charp_int(self));
+        char* it__3=__tmp_variable166;
+        while(!(map_end_charp_int(self))) {
+            int default_value__4;
+            memset(&default_value__4, 0, sizeof(int));
+            int __tmp_variable171 = (map_at_charp_int(self,it__3,default_value__4));
+            int it2__4=__tmp_variable171;
+            {
+            char* _inline_value1 = it__3;
+                                inline_result_variable1 = (string_get_hash_key(_inline_value1));
+                goto inline_func_end_label1;
+            
+inline_func_end_label1:
+            (void)0;
+}
+            int __tmp_variable172 = inline_result_variable1%size__2;
+            int hash__4=__tmp_variable172;
+            int __tmp_variable173 = hash__4;
+            int n__4=__tmp_variable173;
+            while (1) {
+                if(item_existance__2[n__4]) {
+                    int __tmp_variable174 = n__4+1;
+                    n__4=__tmp_variable174;
+                    if(n__4>=size__2) {
+                        int __tmp_variable175 = 0;
+                        n__4=__tmp_variable175;
+                    }
+                    else if(n__4==hash__4) {
+                        (fprintf(stderr,"unexpected error in map.rehash(1)\n"));
+                        (exit(2));
+                    }
+                }
+                else {
+                    item_existance__2[n__4]=1;
+                    keys__2[n__4]=it__3;
+                    int default_value__6;
+                    memset(&default_value__6, 0, sizeof(int));
+                    items__2[n__4]=(map_at_charp_int(self,it__3,default_value__6));
+                    int __tmp_variable176 = len__2+1;
+                    len__2=__tmp_variable176;
+                    break;
+                }
+            }
+            char* __tmp_variable177 = (map_next_charp_int(self));
+            it__3=__tmp_variable177;
+        }
+    }
+    igc_decrement_ref_count(self->items);
+    igc_decrement_ref_count(self->item_existance);
+    igc_decrement_ref_count(self->keys);
+    char** __tmp_store_field131 = keys__2;
+    self->keys=__tmp_store_field131;
+    int* __tmp_store_field132 = items__2;
+    self->items=__tmp_store_field132;
+    _Bool* __tmp_store_field133 = item_existance__2;
+    self->item_existance=__tmp_store_field133;
+    int __tmp_store_field134 = size__2;
+    self->size=__tmp_store_field134;
+    int __tmp_store_field135 = len__2;
+    self->len=__tmp_store_field135;
+}
+
+static char* map_begin_charp_int(struct map_charpp_int* self)
+{
+    struct list_item_charpp* __tmp_store_field129 = self->key_list->head;
+    self->key_list->it=__tmp_store_field129;
+    if(self->key_list->it) {
+                char* __result_value = self->key_list->it->item;
+        return __result_value;
+    }
+    char* result__2;
+    memset(&result__2, 0, sizeof(char*));
+    (memset((&result__2),0,sizeof(char*)));
+        char* __result_value = result__2;
+    return __result_value;
+}
+
+static _Bool map_end_charp_int(struct map_charpp_int* self)
+{
+        _Bool __result_value = self->key_list->it==((void*)0);
+    return __result_value;
+}
+
+static int map_at_charp_int(struct map_charpp_int* self, char* key, int default_value)
+{
+unsigned int inline_result_variable1;
+_Bool inline_result_variable2;
+    {
+    char* _inline_value1 = (((char*)key));
+                inline_result_variable1 = (string_get_hash_key(_inline_value1));
+        goto inline_func_end_label1;
+    
+inline_func_end_label1:
+    (void)0;
+}
+    int __tmp_variable167 = inline_result_variable1%self->size;
+    int hash__2=__tmp_variable167;
+    int __tmp_variable168 = hash__2;
+    int it__2=__tmp_variable168;
+    while (1) {
+        if(self->item_existance[it__2]) {
+            {
+            char* _inline_left1 = self->keys[it__2];
+            char* _inline_right1 = key;
+                                inline_result_variable2 = (string_equals(_inline_left1,_inline_right1));
+                goto inline_func_end_label2;
+            
+inline_func_end_label2:
+            (void)0;
+}
+            if(inline_result_variable2) {
+                                int __result_value = self->items[it__2];
+                return __result_value;
+            }
+            int __tmp_variable169 = it__2+1;
+            it__2=__tmp_variable169;
+            if(it__2>=self->size) {
+                int __tmp_variable170 = 0;
+                it__2=__tmp_variable170;
+            }
+            else if(it__2==hash__2) {
+                                int __result_value = default_value;
+                return __result_value;
+            }
+        }
+        else {
+                        int __result_value = default_value;
+            return __result_value;
+        }
+    }
+        int __result_value = default_value;
+    return __result_value;
+}
+
+static char* map_next_charp_int(struct map_charpp_int* self)
+{
+    struct list_item_charpp* __tmp_store_field130 = self->key_list->it->next;
+    self->key_list->it=__tmp_store_field130;
+    if(self->key_list->it) {
+                char* __result_value = self->key_list->it->item;
+        return __result_value;
+    }
+    char* result__2;
+    memset(&result__2, 0, sizeof(char*));
+    (memset((&result__2),0,sizeof(char*)));
+        char* __result_value = result__2;
+    return __result_value;
+}
+
+static void list_push_back_charp(struct list_charpp* self, char* item)
+{
+void* right_value110;
+void* right_value111;
+void* right_value112;
+    if(self->len==0) {
+        struct list_item_charpp* __tmp_variable182 = (right_value110 = igc_calloc(1,24));
+        struct list_item_charpp* litem__3=__tmp_variable182;
+        struct list_item_charpp* __tmp_store_field137 = ((void*)0);
+        litem__3->prev=__tmp_store_field137;
+        struct list_item_charpp* __tmp_store_field138 = ((void*)0);
+        litem__3->next=__tmp_store_field138;
+        char* __tmp_store_field139 = item;
+        litem__3->item=__tmp_store_field139;
+        struct list_item_charpp* __tmp_store_field140 = litem__3;
+        self->tail=__tmp_store_field140;
+        struct list_item_charpp* __tmp_store_field141 = litem__3;
+        self->head=__tmp_store_field141;
+    }
+    else if(self->len==1) {
+        struct list_item_charpp* __tmp_variable183 = (right_value111 = igc_calloc(1,24));
+        struct list_item_charpp* litem__3=__tmp_variable183;
+        struct list_item_charpp* __tmp_store_field142 = self->head;
+        litem__3->prev=__tmp_store_field142;
+        struct list_item_charpp* __tmp_store_field143 = ((void*)0);
+        litem__3->next=__tmp_store_field143;
+        char* __tmp_store_field144 = item;
+        litem__3->item=__tmp_store_field144;
+        struct list_item_charpp* __tmp_store_field145 = litem__3;
+        self->tail=__tmp_store_field145;
+        struct list_item_charpp* __tmp_store_field146 = litem__3;
+        self->head->next=__tmp_store_field146;
+    }
+    else {
+        struct list_item_charpp* __tmp_variable184 = (right_value112 = igc_calloc(1,24));
+        struct list_item_charpp* litem__3=__tmp_variable184;
+        struct list_item_charpp* __tmp_store_field147 = self->tail;
+        litem__3->prev=__tmp_store_field147;
+        struct list_item_charpp* __tmp_store_field148 = ((void*)0);
+        litem__3->next=__tmp_store_field148;
+        char* __tmp_store_field149 = item;
+        litem__3->item=__tmp_store_field149;
+        struct list_item_charpp* __tmp_store_field150 = litem__3;
+        self->tail->next=__tmp_store_field150;
+        struct list_item_charpp* __tmp_store_field151 = litem__3;
+        self->tail=__tmp_store_field151;
+    }
+    int __tmp_store_field152 = self->len+1;
+    self->len=__tmp_store_field152;
+}
+
+static _Bool map_equals_charp_int(struct map_charpp_int* left, struct map_charpp_int* right)
+{
+_Bool inline_result_variable1;
+_Bool inline_result_variable2;
+    if(left->len!=right->len) {
+                _Bool __result_value = 0;
+        return __result_value;
+    }
+    int __tmp_variable186 = 0;
+    int n__2=__tmp_variable186;
+    _Bool __tmp_variable187 = 1;
+    _Bool result__2=__tmp_variable187;
+    {
+        struct list_charpp* __tmp_variable188 = (left->key_list);
+        struct list_charpp* _obj__3=__tmp_variable188;
+        char* __tmp_variable189 = (list_begin_charp(_obj__3));
+        char* it__3=__tmp_variable189;
+        while(!(list_end_charp(_obj__3))) {
+            char* default_value__4;
+            memset(&default_value__4, 0, sizeof(char*));
+            char* __tmp_variable195 = (list_item_charp(right->key_list,n__2,default_value__4));
+            char* it2__4=__tmp_variable195;
+            {
+            char* _inline_left1 = it__3;
+            char* _inline_right1 = it2__4;
+                                inline_result_variable1 = (string_equals(_inline_left1,_inline_right1));
+                goto inline_func_end_label1;
+            
+inline_func_end_label1:
+            (void)0;
+}
+            if(inline_result_variable1) {
+                int default_value2__5;
+                memset(&default_value2__5, 0, sizeof(int));
+                int __tmp_variable196 = (map_at_charp_int(left,it__3,default_value2__5));
+                int item__5=__tmp_variable196;
+                int __tmp_variable197 = (map_at_charp_int(left,it2__4,default_value2__5));
+                int item2__5=__tmp_variable197;
+                {
+                int _inline_left1 = item__5;
+                int _inline_right1 = item2__5;
+                                        inline_result_variable2 = _inline_left1==_inline_right1;
+                    goto inline_func_end_label2;
+                
+inline_func_end_label2:
+                (void)0;
+}
+                if(!inline_result_variable2) {
+                    _Bool __tmp_variable198 = 0;
+                    result__2=__tmp_variable198;
+                }
+            }
+            else {
+                _Bool __tmp_variable199 = 0;
+                result__2=__tmp_variable199;
+            }
+            int __tmp_variable200 = n__2+1;
+            n__2=__tmp_variable200;
+            char* __tmp_variable201 = (list_next_charp(_obj__3));
+            it__3=__tmp_variable201;
+        }
+    }
+        _Bool __result_value = result__2;
+    return __result_value;
+}
+
+static char* list_begin_charp(struct list_charpp* self)
+{
+    struct list_item_charpp* __tmp_store_field153 = self->head;
+    self->it=__tmp_store_field153;
+    if(self->it) {
+                char* __result_value = self->it->item;
+        return __result_value;
+    }
+    char* result__2;
+    memset(&result__2, 0, sizeof(char*));
+    (memset((&result__2),0,sizeof(char*)));
+        char* __result_value = result__2;
+    return __result_value;
+}
+
+static _Bool list_end_charp(struct list_charpp* self)
+{
+        _Bool __result_value = self->it==((void*)0);
+    return __result_value;
+}
+
+static char* list_item_charp(struct list_charpp* self, int position, char* default_value)
+{
+    if(position<0) {
+        int __tmp_variable190 = position+self->len;
+        position=__tmp_variable190;
+    }
+    struct list_item_charpp* __tmp_variable191 = self->head;
+    struct list_item_charpp* it__2=__tmp_variable191;
+    int __tmp_variable192 = 0;
+    int i__2=__tmp_variable192;
+    while (it__2!=((void*)0)) {
+        if(position==i__2) {
+                        char* __result_value = it__2->item;
+            return __result_value;
+        }
+        struct list_item_charpp* __tmp_variable193 = it__2->next;
+        it__2=__tmp_variable193;
+        int __tmp_variable194 = i__2+1;
+        i__2=__tmp_variable194;
+    }
+        char* __result_value = default_value;
+    return __result_value;
+}
+
+static char* list_next_charp(struct list_charpp* self)
+{
+    struct list_item_charpp* __tmp_store_field154 = self->it->next;
+    self->it=__tmp_store_field154;
+    if(self->it) {
+                char* __result_value = self->it->item;
+        return __result_value;
+    }
+    char* result__2;
+    memset(&result__2, 0, sizeof(char*));
+    (memset((&result__2),0,sizeof(char*)));
+        char* __result_value = result__2;
+    return __result_value;
+}
+
+static struct list_charpp* list_initialize_with_values_charp(struct list_charpp* self, int num_value, const unsigned char** values)
+{
+    struct list_item_charpp* __tmp_store_field155 = ((void*)0);
+    self->head=__tmp_store_field155;
+    struct list_item_charpp* __tmp_store_field156 = ((void*)0);
+    self->tail=__tmp_store_field156;
+    int __tmp_store_field157 = 0;
+    self->len=__tmp_store_field157;
+    {
+        int __tmp_variable202 = 0;
+        int i__3=__tmp_variable202;
+        while(i__3<num_value) {
+            (list_push_back_charp(self,values[i__3]));
+            int __tmp_variable203 = i__3+1;
+            i__3=__tmp_variable203;
+        }
+    }
+        struct list_charpp* __result_value = self;
+    return __result_value;
+}
+
+static void map_finalize_charph_int(struct map_charphp_int* self)
+{
+    {
+        int __tmp_variable205 = 0;
+        int i__3=__tmp_variable205;
+        while(i__3<self->size) {
+            if(self->item_existance[i__3]) {
+                if(0) {
+                }
+            }
+            int __tmp_variable206 = i__3+1;
+            i__3=__tmp_variable206;
+        }
+    }
+    igc_decrement_ref_count(self->items);
+    {
+        int __tmp_variable207 = 0;
+        int i__3=__tmp_variable207;
+        while(i__3<self->size) {
+            if(self->item_existance[i__3]) {
+                if(1) {
+                    igc_decrement_ref_count(self->keys[i__3]);
+                }
+            }
+            int __tmp_variable208 = i__3+1;
+            i__3=__tmp_variable208;
+        }
+    }
+    igc_decrement_ref_count(self->keys);
+    call_finalizer(list_finalize_charph,self->key_list,0);
+    igc_decrement_ref_count(self->item_existance);
+}
+
+static void list_finalize_charph(struct list_charphp* self)
+{
+    struct list_item_charphp* __tmp_variable209 = self->head;
+    struct list_item_charphp* it__2=__tmp_variable209;
+    while (it__2!=((void*)0)) {
+        if(1) {
+            igc_decrement_ref_count(it__2->item);
+        }
+        struct list_item_charphp* __tmp_variable210 = it__2;
+        struct list_item_charphp* prev_it__3=__tmp_variable210;
+        struct list_item_charphp* __tmp_variable211 = it__2->next;
+        it__2=__tmp_variable211;
+        call_finalizer(list_item_finalize_list_item_charphp,prev_it__3,0);
+    }
+}
+
+static void list_item_finalize_list_item_charphp(struct list_item_charphp* self)
 {
         }
+
+static void tuple2_finalize_int_charp(struct tuple2_int_charpp* self)
+{
+    if(0) {
+    }
+    if(0) {
+        igc_decrement_ref_count(self->v2);
+    }
+}
+
+static void vector_finalize_int(struct vector_int* self)
+{
+    if(0) {
+        {
+            int __tmp_variable212 = 0;
+            int i__4=__tmp_variable212;
+            while(i__4<self->len) {
+                int __tmp_variable213 = i__4+1;
+                i__4=__tmp_variable213;
+            }
+        }
+    }
+    if(self&&self->items) {
+        (free_object(((char*)self->items)));
+    }
+}
+
+static void map_finalize_charp_int(struct map_charpp_int* self)
+{
+    {
+        int __tmp_variable214 = 0;
+        int i__3=__tmp_variable214;
+        while(i__3<self->size) {
+            if(self->item_existance[i__3]) {
+                if(0) {
+                }
+            }
+            int __tmp_variable215 = i__3+1;
+            i__3=__tmp_variable215;
+        }
+    }
+    igc_decrement_ref_count(self->items);
+    {
+        int __tmp_variable216 = 0;
+        int i__3=__tmp_variable216;
+        while(i__3<self->size) {
+            if(self->item_existance[i__3]) {
+                if(0) {
+                    igc_decrement_ref_count(self->keys[i__3]);
+                }
+            }
+            int __tmp_variable217 = i__3+1;
+            i__3=__tmp_variable217;
+        }
+    }
+    igc_decrement_ref_count(self->keys);
+    call_finalizer(list_finalize_charp,self->key_list,0);
+    igc_decrement_ref_count(self->item_existance);
+}
+
+static void list_finalize_charp(struct list_charpp* self)
+{
+    struct list_item_charpp* __tmp_variable218 = self->head;
+    struct list_item_charpp* it__2=__tmp_variable218;
+    while (it__2!=((void*)0)) {
+        if(0) {
+            igc_decrement_ref_count(it__2->item);
+        }
+        struct list_item_charpp* __tmp_variable219 = it__2;
+        struct list_item_charpp* prev_it__3=__tmp_variable219;
+        struct list_item_charpp* __tmp_variable220 = it__2->next;
+        it__2=__tmp_variable220;
+        call_finalizer(list_item_finalize_list_item_charpp,prev_it__3,0);
+    }
+}
+
+static void list_item_finalize_list_item_charpp(struct list_item_charpp* self)
+{
+        }
+
+static void vector_finalize_intp(struct vector_intpp* self)
+{
+    if(0) {
+        {
+            int __tmp_variable221 = 0;
+            int i__4=__tmp_variable221;
+            while(i__4<self->len) {
+                igc_decrement_ref_count(self->items[i__4]);
+                int __tmp_variable222 = i__4+1;
+                i__4=__tmp_variable222;
+            }
+        }
+    }
+    if(self&&self->items) {
+        (free_object(((char*)self->items)));
+    }
+}
 

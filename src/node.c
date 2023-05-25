@@ -505,7 +505,7 @@ sFunction* create_finalizer_automatically(sNodeType* node_type, char* fun_name, 
     return finalizer;
 }
 
-void increment_protocol_obj_ref_count(LLVMValueRef obj, sNodeType* protocol_type, sCompileInfo* info) 
+void increment_protocol_obj_ref_count(LLVMValueRef obj, sNodeType* protocol_type, char* c_value, sCompileInfo* info) 
 {
     sCLClass* protocol_class = protocol_type->mClass;
     sNodeType* protocol_type2 = clone_node_type(protocol_type);
@@ -546,12 +546,14 @@ void increment_protocol_obj_ref_count(LLVMValueRef obj, sNodeType* protocol_type
     
     LLVMValueRef llvm_fun = LLVMGetNamedFunction(gModule, "igc_increment_ref_count");
     LLVMBuildCall2(gBuilder, function_type, llvm_fun, llvm_params, num_params, "");
+    
+    if(c_value) add_come_code(info, "igc_increment_ref_count(%s->_protocol_obj);\n", c_value);
 }
 
 void increment_ref_count(LLVMValueRef obj, sNodeType* node_type, char* c_value, sCompileInfo* info)
 {
     if(node_type->mClass->mFlags & CLASS_FLAGS_PROTOCOL) {
-        increment_protocol_obj_ref_count(obj, node_type, info);
+        increment_protocol_obj_ref_count(obj, node_type, c_value, info);
     }
     int num_params = 1;
 

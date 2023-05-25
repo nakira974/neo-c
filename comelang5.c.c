@@ -1365,37 +1365,6 @@ typedef unsigned int u32;
 typedef unsigned short u16;
 typedef unsigned char u8;
 typedef unsigned long u64;
-struct IA
-{
-    protocol_obj_t _protocol_obj;
-    void (*finalize)(void*);
-    void* (*clone)(void*);
-    void (*show)(protocol_obj_t);
-};
-struct sChildA
-{
-    int x;
-    int y;
-    int z;
-    char* str;
-};
-struct sChildB
-{
-    char* hello;
-};
-struct list_item_IAphp
-{
-    struct IA* item;
-    struct list_item_IAphp* prev;
-    struct list_item_IAphp* next;
-};
-struct list_IAphp
-{
-    struct list_item_IAphp* head;
-    struct list_item_IAphp* tail;
-    int len;
-    struct list_item_IAphp* it;
-};
 
 void come_gc_init();
 void come_boehm_gc_init();
@@ -3026,7 +2995,6 @@ _Bool bool_equals(_Bool left, _Bool right);
 unsigned int string_get_hash_key(char* value);
 _Bool string_equals(char* left, char* right);
 int char_compare(char left, char right);
-int int_compare(int left, int right);
 int short_compare(short left, short right);
 int long_compare(long left, long right);
 struct buffer* bufferp_initialize(struct buffer* self);
@@ -3082,19 +3050,9 @@ struct list_charphp* charp_scan(char* self, struct regex_struct* reg);
 struct list_charphp* charp_split(char* self, struct regex_struct* reg);
 struct list_charphp* charp_split_char(char* self, char c);
 struct regex_struct* charp_to_regex(char* self);
-char* charp_printable(char* str);
 char* charp_delete(char* str, int head, int tail);
-char* wchar_tp_to_string(int* wstr);
 int* __builtin_wstring(char* str);
-int* charp_to_wstring(char* str);
 int* wchar_tp_substring(int* str, int head, int tail);
-int wchar_tp_length(int* str);
-int* wchar_tp_delete(int* str, int head, int tail);
-int wchar_tp_index(int* str, int* search_str, int default_value);
-int wchar_tp_rindex(int* str, int* search_str, int default_value);
-int* wchar_tp_reverse(int* str);
-int* wchar_tp_multiply(int* str, int n);
-int* wchar_tp_printable(int* str);
 struct regex_struct* charp_to_regex_flags(char* self, _Bool global, _Bool ignore_case);
 struct list_charphp* charp_split_str(char* self, char* str);
 struct list_charphp* charp_split_maxsplit(char* self, struct regex_struct* reg, int maxsplit);
@@ -3119,19 +3077,37 @@ char* FILE_read(FILE* f);
 FILE* FILE_fprintf(FILE* f, const char* msg, ...);
 FILE* FILEp_fprintf(FILE* f, const char* msg, ...);
 void FILE_fclose(FILE* f);
-void fopen_block(const char* path, const char* mode, void* parent, void (*block)(void*,FILE*));
 void charp_puts(char* self);
 void charp_print(char* self);
 char* charp_strip(char* self);
+char* regex_structp_to_string(struct regex_struct* regex);
+void check_null_pointer(int sline, char* sname);
+void bool_expect(_Bool self, void* parent, void (*block_)(void*));
 void charp_printf(char* self, const char* msg);
 int int_printf(int self, const char* msg);
+void fopen_block(const char* path, const char* mode, void* parent, void (*block)(void*,FILE*));
 char char_putc(char self);
-unsigned int wchar_t_get_hash_key(int value);
-_Bool wchar_t_equals(int left, int right);
 unsigned int wchar_tp_get_hash_key(int* value);
 _Bool wchar_tp_equals(int* left, int* right);
 unsigned int regex_structp_get_hash_key(struct regex_struct* self);
+int int_compare(int left, int right);
+char* charp_printable(char* str);
+char* wchar_tp_to_string(int* wstr);
+int* charp_to_wstring(char* str);
+int wchar_tp_length(int* str);
+int* wchar_tp_delete(int* str, int head, int tail);
+int wchar_tp_index(int* str, int* search_str, int default_value);
+int wchar_tp_rindex(int* str, int* search_str, int default_value);
+int* wchar_tp_reverse(int* str);
+int* wchar_tp_multiply(int* str, int n);
+int* wchar_tp_printable(int* str);
 _Bool charp_match_group_strings(char* self, struct regex_struct* reg, int count, struct list_charphp* group_strings);
+static void list_reset_charph(struct list_charphp* self);
+static void list_item_finalize_list_item_charphp(struct list_item_charphp* self);
+static void list_push_back_charph(struct list_charphp* self, char* item);
+_Bool wchar_tp_comapre(int* left, int* right);
+unsigned int wchar_t_get_hash_key(int value);
+_Bool wchar_t_equals(int left, int right);
 char* charp_operator_mult(char* str, int n);
 char* string_operator_mult(char* str, int n);
 int* wchar_tp_operator_mult(int* str, int n);
@@ -3144,276 +3120,685 @@ char* charp_operator_add(char* left, char* right);
 char* string_operator_add(char* left, char* right);
 int* wchar_tp_operator_add(int* left, int* right);
 int* wstring_operator_add(int* left, int* right);
-char* regex_structp_to_string(struct regex_struct* regex);
-void check_null_pointer(int sline, char* sname);
-void bool_expect(_Bool self, void* parent, void (*block_)(void*));
-struct sChildA* sChildAp_initialize(struct sChildA* self);
-void sChildAp_show(struct sChildA* self);
-struct sChildB* sChildBp_initialize(struct sChildB* self);
-void sChildBp_show(struct sChildB* self);
-int main(int argc, char** argv);
-static struct list_IAphp* list_initialize_IAph(struct list_IAphp* self);
-static void sChildA_finalize(struct sChildA* self);
-static struct sChildA* sChildA_clone(struct sChildA* self);
-static void list_push_back_IAph(struct list_IAphp* self, struct IA* item);
-static void sChildB_finalize(struct sChildB* self);
-static struct sChildB* sChildB_clone(struct sChildB* self);
-static struct IA* list_begin_IAph(struct list_IAphp* self);
-static _Bool list_end_IAph(struct list_IAphp* self);
-static struct IA* list_next_IAph(struct list_IAphp* self);
-static void list_finalize_IAph(struct list_IAphp* self);
-static void list_item_finalize_list_item_IAphp(struct list_item_IAphp* self);
 
-struct sChildA* sChildAp_initialize(struct sChildA* self)
+void charp_printf(char* self, const char* msg)
 {
 void* right_value0;
-    int __tmp_store_field1 = 1;
-    self->x=__tmp_store_field1;
-    int __tmp_store_field2 = 2;
-    self->y=__tmp_store_field2;
-    int __tmp_store_field3 = 3;
-    self->z=__tmp_store_field3;
-    char* __tmp_store_field4 = (right_value0 = (__builtin_string("ABC")));
-    igc_decrement_ref_count(((self && self->str) ? self->str : (void*)0));
-    self->str=__tmp_store_field4;
-        struct sChildA* __result_value = self;
+    (printf(msg,self));
+        igc_decrement_ref_count(right_value0);
+    return;    (right_value0 = (__builtin_string(self)));
+}
+
+int int_printf(int self, const char* msg)
+{
+    (printf(msg,self));
+        int __result_value = self;
     return __result_value;
 }
 
-void sChildAp_show(struct sChildA* self)
+void fopen_block(const char* path, const char* mode, void* parent, void (*block)(void*,FILE*))
 {
-    (printf("x %d y %d z %d str %s\n",self->x,self->y,self->z,self->str));
-}
-
-struct sChildB* sChildBp_initialize(struct sChildB* self)
-{
-void* right_value1;
-    char* __tmp_store_field5 = (right_value1 = (__builtin_string("HELLO")));
-    igc_decrement_ref_count(((self && self->hello) ? self->hello : (void*)0));
-    self->hello=__tmp_store_field5;
-        struct sChildB* __result_value = self;
-    return __result_value;
-}
-
-void sChildBp_show(struct sChildB* self)
-{
-    (puts(self->hello));
-}
-
-int main(int argc, char** argv)
-{
-void* right_value2;
-void* right_value3;
-void* right_value4;
-void* right_value5;
-void* right_value6;
-void* right_value12;
-void* right_value13;
-void* right_value14;
-come_gc_init();
-    struct list_IAphp* __tmp_variable1 = (right_value3 = (list_initialize_IAph((right_value2 = igc_calloc(1,32)))));
-    struct list_IAphp* li__1=__tmp_variable1;
-    struct IA* protocol_interface_tmp0 = (right_value4 = igc_calloc(1,32));
-    protocol_interface_tmp0->_protocol_obj = (void*)(right_value6 = (sChildAp_initialize((right_value5 = igc_calloc(1,24)))));
-    protocol_interface_tmp0->finalize = (void*)sChildA_finalize;
-    protocol_interface_tmp0->clone = (void*)sChildA_clone;
-    protocol_interface_tmp0->show = (void*)sChildAp_show;
-    struct IA* __tmp_variable3 = protocol_interface_tmp0;
-    struct IA* ia__1=__tmp_variable3;
-    igc_increment_ref_count(ia__1->_protocol_obj);
-    igc_increment_ref_count(ia__1);
-    (list_push_back_IAph(li__1,ia__1));
-    struct IA* protocol_interface_tmp1 = (right_value12 = igc_calloc(1,32));
-    protocol_interface_tmp1->_protocol_obj = (void*)(right_value14 = (sChildBp_initialize((right_value13 = igc_calloc(1,8)))));
-    protocol_interface_tmp1->finalize = (void*)sChildB_finalize;
-    protocol_interface_tmp1->clone = (void*)sChildB_clone;
-    protocol_interface_tmp1->show = (void*)sChildBp_show;
-    (list_push_back_IAph(li__1,protocol_interface_tmp1));
-    {
-        struct list_IAphp* __tmp_variable8 = (li__1);
-        struct list_IAphp* _obj__2=__tmp_variable8;
-        struct IA* __tmp_variable9 = (list_begin_IAph(_obj__2));
-        struct IA* it__2=__tmp_variable9;
-        while(!(list_end_IAph(_obj__2))) {
-            it__2->show(it__2->_protocol_obj);
-            struct IA* __tmp_variable10 = (list_next_IAph(_obj__2));
-            it__2=__tmp_variable10;
-        }
+    FILE* __tmp_variable1 = (fopen(path,mode));
+    FILE* f__1=__tmp_variable1;
+    if(f__1) {
+        block(parent,f__1);
+        (fclose(f__1));
     }
-        int __result_value = 0;
-    call_finalizer(ia__1->finalize, ia__1->_protocol_obj, 0);
-    igc_decrement_ref_count(ia__1);
-    call_finalizer(list_finalize_IAph,li__1,0);
+}
+
+char char_putc(char self)
+{
+    (putc(self,stdout));
+        char __result_value = self;
     return __result_value;
 }
 
-static struct list_IAphp* list_initialize_IAph(struct list_IAphp* self)
+unsigned int wchar_tp_get_hash_key(int* value)
 {
-    struct list_item_IAphp* __tmp_store_field6 = ((void*)0);
-    self->head=__tmp_store_field6;
-    struct list_item_IAphp* __tmp_store_field7 = ((void*)0);
-    self->tail=__tmp_store_field7;
-    int __tmp_store_field8 = 0;
-    self->len=__tmp_store_field8;
-        struct list_IAphp* __result_value = self;
-    return __result_value;
-}
-
-static void sChildA_finalize(struct sChildA* self)
-{
-        if(self!=(((void*)0))&&self->str!=(((void*)0))) {
-            igc_decrement_ref_count((self->str));
-        }
+    int __tmp_variable2 = 0;
+    int result__1=__tmp_variable2;
+    int* __tmp_variable3 = value;
+    int* p__1=__tmp_variable3;
+    while (*p__1) {
+        int __tmp_variable4 = result__1+(*p__1);
+        result__1=__tmp_variable4;
+        int* __tmp_variable5 = p__1+1;
+        p__1=__tmp_variable5;
     }
+        unsigned int __result_value = result__1;
+    return __result_value;
+}
 
-static struct sChildA* sChildA_clone(struct sChildA* self)
+_Bool wchar_tp_equals(int* left, int* right)
 {
-void* right_value7;
-void* right_value8;
-        struct sChildA* __tmp_variable2 = (right_value7 = igc_calloc(1,24));
-        struct sChildA* result__2=__tmp_variable2;
-        int __tmp_store_field9 = self->x;
-        result__2->x=__tmp_store_field9;
-        int __tmp_store_field10 = self->y;
-        result__2->y=__tmp_store_field10;
-        int __tmp_store_field11 = self->z;
-        result__2->z=__tmp_store_field11;
-        if(self!=(((void*)0))&&self->str!=(((void*)0))) {
-            char* __tmp_store_field12 = (right_value8 = ncmemdup(self->str));
-            igc_decrement_ref_count(((result__2 && result__2->str) ? result__2->str : (void*)0));
-            result__2->str=__tmp_store_field12;
-        }
-                struct sChildA* __result_value = result__2;
+        _Bool __result_value = (wcscmp(left,right))==0;
+    return __result_value;
+}
+
+unsigned int regex_structp_get_hash_key(struct regex_struct* self)
+{
+        unsigned int __result_value = (string_get_hash_key(self->str));
+    return __result_value;
+}
+
+int int_compare(int left, int right)
+{
+    if(left<right) {
+                int __result_value = -1;
         return __result_value;
     }
-
-static void list_push_back_IAph(struct list_IAphp* self, struct IA* item)
-{
-void* right_value9;
-void* right_value10;
-void* right_value11;
-    if(self->len==0) {
-        struct list_item_IAphp* __tmp_variable4 = (right_value9 = igc_calloc(1,24));
-        struct list_item_IAphp* litem__3=__tmp_variable4;
-        struct list_item_IAphp* __tmp_store_field13 = ((void*)0);
-        litem__3->prev=__tmp_store_field13;
-        struct list_item_IAphp* __tmp_store_field14 = ((void*)0);
-        litem__3->next=__tmp_store_field14;
-        struct IA* __tmp_store_field15 = item;
-        litem__3->item=__tmp_store_field15;
-        struct list_item_IAphp* __tmp_store_field16 = litem__3;
-        self->tail=__tmp_store_field16;
-        struct list_item_IAphp* __tmp_store_field17 = litem__3;
-        self->head=__tmp_store_field17;
-    }
-    else if(self->len==1) {
-        struct list_item_IAphp* __tmp_variable5 = (right_value10 = igc_calloc(1,24));
-        struct list_item_IAphp* litem__3=__tmp_variable5;
-        struct list_item_IAphp* __tmp_store_field18 = self->head;
-        litem__3->prev=__tmp_store_field18;
-        struct list_item_IAphp* __tmp_store_field19 = ((void*)0);
-        litem__3->next=__tmp_store_field19;
-        struct IA* __tmp_store_field20 = item;
-        litem__3->item=__tmp_store_field20;
-        struct list_item_IAphp* __tmp_store_field21 = litem__3;
-        self->tail=__tmp_store_field21;
-        struct list_item_IAphp* __tmp_store_field22 = litem__3;
-        self->head->next=__tmp_store_field22;
+    else if(left>right) {
+                int __result_value = 1;
+        return __result_value;
     }
     else {
-        struct list_item_IAphp* __tmp_variable6 = (right_value11 = igc_calloc(1,24));
-        struct list_item_IAphp* litem__3=__tmp_variable6;
-        struct list_item_IAphp* __tmp_store_field23 = self->tail;
-        litem__3->prev=__tmp_store_field23;
-        struct list_item_IAphp* __tmp_store_field24 = ((void*)0);
-        litem__3->next=__tmp_store_field24;
-        struct IA* __tmp_store_field25 = item;
-        litem__3->item=__tmp_store_field25;
-        struct list_item_IAphp* __tmp_store_field26 = litem__3;
-        self->tail->next=__tmp_store_field26;
-        struct list_item_IAphp* __tmp_store_field27 = litem__3;
-        self->tail=__tmp_store_field27;
+                int __result_value = 0;
+        return __result_value;
     }
-    int __tmp_store_field28 = self->len+1;
-    self->len=__tmp_store_field28;
+        int __result_value = 0;
+    return __result_value;
 }
 
-static void sChildB_finalize(struct sChildB* self)
+char* charp_printable(char* str)
 {
-        if(self!=(((void*)0))&&self->hello!=(((void*)0))) {
-            igc_decrement_ref_count((self->hello));
+int inline_result_variable1;
+void* right_value1;
+    {
+    char* _inline_str1 = str;
+                inline_result_variable1 = (string_length(_inline_str1));
+        goto inline_func_end_label1;
+    
+inline_func_end_label1:
+    (void)0;
+}
+    int __tmp_variable6 = inline_result_variable1;
+    int len__1=__tmp_variable6;
+    char* __tmp_variable7 = (right_value1 = igc_calloc(len__1*2+1,1));
+    char* result__1=__tmp_variable7;
+    int __tmp_variable8 = 0;
+    int n__1=__tmp_variable8;
+    {
+        int __tmp_variable9 = 0;
+        int i__2=__tmp_variable9;
+        while(i__2<len__1) {
+            char __tmp_variable10 = str[i__2];
+            char c__3=__tmp_variable10;
+            if((c__3>=0&&c__3<' ')||c__3==127) {
+                int __tmp_variable11 = n__1+1;
+                n__1=__tmp_variable11;
+                result__1[n__1-1]='^';
+                int __tmp_variable12 = n__1+1;
+                n__1=__tmp_variable12;
+                result__1[n__1-1]=c__3+'A'-1;
+            }
+            else {
+                int __tmp_variable13 = n__1+1;
+                n__1=__tmp_variable13;
+                result__1[n__1-1]=c__3;
+            }
+            int __tmp_variable14 = i__2+1;
+            i__2=__tmp_variable14;
         }
     }
+    result__1[n__1]='\0';
+        char* __result_value = result__1;
+    return __result_value;
+}
 
-static struct sChildB* sChildB_clone(struct sChildB* self)
+char* wchar_tp_to_string(int* wstr)
+{
+void* right_value2;
+    int __tmp_variable15 = 16*((wcslen(wstr))+1);
+    int len__1=__tmp_variable15;
+    char* __tmp_variable16 = (right_value2 = igc_calloc(len__1,1));
+    char* result__1=__tmp_variable16;
+    if((wcstombs(result__1,wstr,len__1))<0) {
+        (strncpy(result__1,"",len__1));
+    }
+        char* __result_value = result__1;
+    return __result_value;
+}
+
+int* charp_to_wstring(char* str)
+{
+void* right_value3;
+        int* __result_value = (right_value3 = (__builtin_wstring(str)));
+    return __result_value;
+}
+
+int wchar_tp_length(int* str)
+{
+        int __result_value = (wcslen(str));
+    return __result_value;
+}
+
+int* wchar_tp_delete(int* str, int head, int tail)
+{
+void* right_value4;
+int* inline_result_variable2;
+void* right_value5;
+void* right_value6;
+void* right_value7;
+int* inline_result_variable3;
+void* right_value8;
+void* right_value9;
+void* right_value10;
+int inline_result_variable4;
+void* right_value11;
+int* inline_result_variable5;
+void* right_value12;
+void* right_value13;
+    int __tmp_variable17 = (wcslen(str));
+    int len__1=__tmp_variable17;
+    if(len__1==0) {
+                {
+        char* _inline_str1 = (right_value4 = (wchar_tp_to_string(str)));
+                        inline_result_variable2 = (right_value5 = (charp_to_wstring(_inline_str1)));
+            goto inline_func_end_label2;
+        
+inline_func_end_label2:
+        right_value6 = inline_result_variable2;
+        (void)0;
+}
+        int* __result_value = inline_result_variable2;
+        igc_decrement_ref_count(right_value4);
+        return __result_value;
+    }
+    if(head<0) {
+        int __tmp_variable18 = head+len__1;
+        head=__tmp_variable18;
+    }
+    if(tail<0) {
+        int __tmp_variable19 = tail+len__1+1;
+        tail=__tmp_variable19;
+    }
+    if(head<0) {
+        int __tmp_variable20 = 0;
+        head=__tmp_variable20;
+    }
+    if(tail<0) {
+                {
+        char* _inline_str1 = (right_value7 = (wchar_tp_to_string(str)));
+                        inline_result_variable3 = (right_value8 = (charp_to_wstring(_inline_str1)));
+            goto inline_func_end_label3;
+        
+inline_func_end_label3:
+        right_value9 = inline_result_variable3;
+        (void)0;
+}
+        int* __result_value = inline_result_variable3;
+        igc_decrement_ref_count(right_value7);
+        return __result_value;
+    }
+    if(tail>=len__1) {
+        int __tmp_variable21 = len__1;
+        tail=__tmp_variable21;
+    }
+    int* __tmp_variable22 = (right_value10 = (wchar_tp_substring(str,tail,-1)));
+    int* sub_str__1=__tmp_variable22;
+    {
+    int* _inline_str1 = sub_str__1;
+                inline_result_variable4 = (wchar_tp_length(_inline_str1));
+        goto inline_func_end_label4;
+    
+inline_func_end_label4:
+    (void)0;
+}
+    (memcpy(str+head,sub_str__1,sizeof(int)*(inline_result_variable4+1)));
+        {
+    char* _inline_str1 = (right_value11 = (wchar_tp_to_string(str)));
+                inline_result_variable5 = (right_value12 = (charp_to_wstring(_inline_str1)));
+        goto inline_func_end_label5;
+    
+inline_func_end_label5:
+    right_value13 = inline_result_variable5;
+    (void)0;
+}
+    int* __result_value = inline_result_variable5;
+    igc_decrement_ref_count(right_value11);
+    igc_decrement_ref_count(sub_str__1);
+    return __result_value;
+}
+
+int wchar_tp_index(int* str, int* search_str, int default_value)
+{
+    int* __tmp_variable23 = (wcsstr(str,search_str));
+    int* head__1=__tmp_variable23;
+    if(head__1==((void*)0)) {
+                int __result_value = default_value;
+        return __result_value;
+    }
+        int __result_value = head__1-str;
+    return __result_value;
+}
+
+int wchar_tp_rindex(int* str, int* search_str, int default_value)
+{
+    int __tmp_variable24 = (wcslen(search_str));
+    int len__1=__tmp_variable24;
+    int* __tmp_variable25 = str+(wcslen(str))-len__1;
+    int* p__1=__tmp_variable25;
+    while (p__1>=str) {
+        int __tmp_variable26 = (wcslen(p__1));
+        int len2__2=__tmp_variable26;
+        _Bool __tmp_variable27 = 1;
+        _Bool result__2=__tmp_variable27;
+        int i__2;
+        memset(&i__2, 0, sizeof(int));
+        {
+            int __tmp_variable28 = 0;
+            i__2=__tmp_variable28;
+            while(i__2<len__1&&i__2<len2__2) {
+                if(p__1[i__2]!=search_str[i__2]) {
+                    _Bool __tmp_variable29 = 0;
+                    result__2=__tmp_variable29;
+                }
+                int __tmp_variable30 = i__2+1;
+                i__2=__tmp_variable30;
+            }
+        }
+        if(result__2) {
+                        int __result_value = (p__1-str);
+            return __result_value;
+        }
+        int* __tmp_variable31 = p__1-1;
+        p__1=__tmp_variable31;
+    }
+        int __result_value = default_value;
+    return __result_value;
+}
+
+int* wchar_tp_reverse(int* str)
+{
+void* right_value14;
+    int __tmp_variable32 = (wcslen(str));
+    int len__1=__tmp_variable32;
+    int* __tmp_variable33 = (right_value14 = igc_calloc(len__1+1,4));
+    int* result__1=__tmp_variable33;
+    {
+        int __tmp_variable34 = 0;
+        int i__2=__tmp_variable34;
+        while(i__2<len__1) {
+            result__1[i__2]=str[len__1-i__2-1];
+            int __tmp_variable35 = i__2+1;
+            i__2=__tmp_variable35;
+        }
+    }
+    result__1[len__1]='\0';
+        int* __result_value = result__1;
+    return __result_value;
+}
+
+int* wchar_tp_multiply(int* str, int n)
 {
 void* right_value15;
-void* right_value16;
-        struct sChildB* __tmp_variable7 = (right_value15 = igc_calloc(1,8));
-        struct sChildB* result__2=__tmp_variable7;
-        if(self!=(((void*)0))&&self->hello!=(((void*)0))) {
-            char* __tmp_store_field29 = (right_value16 = ncmemdup(self->hello));
-            igc_decrement_ref_count(((result__2 && result__2->hello) ? result__2->hello : (void*)0));
-            result__2->hello=__tmp_store_field29;
+    int __tmp_variable36 = (wcslen(str))*n+1;
+    int len__1=__tmp_variable36;
+    int* __tmp_variable37 = (right_value15 = igc_calloc(len__1,4));
+    int* result__1=__tmp_variable37;
+    result__1[0]='\0';
+    {
+        int __tmp_variable38 = 0;
+        int i__2=__tmp_variable38;
+        while(i__2<n) {
+            (wcscat(result__1,str));
+            int __tmp_variable39 = i__2+1;
+            i__2=__tmp_variable39;
         }
-                struct sChildB* __result_value = result__2;
-        return __result_value;
     }
-
-static struct IA* list_begin_IAph(struct list_IAphp* self)
-{
-    struct list_item_IAphp* __tmp_store_field30 = self->head;
-    self->it=__tmp_store_field30;
-    if(self->it) {
-                struct IA* __result_value = self->it->item;
-        return __result_value;
-    }
-    struct IA* result__2;
-    memset(&result__2, 0, sizeof(struct IA*));
-    (memset((&result__2),0,sizeof(struct IA*)));
-        struct IA* __result_value = result__2;
+        int* __result_value = result__1;
     return __result_value;
 }
 
-static _Bool list_end_IAph(struct list_IAphp* self)
+int* wchar_tp_printable(int* str)
 {
-        _Bool __result_value = self->it==((void*)0);
-    return __result_value;
-}
-
-static struct IA* list_next_IAph(struct list_IAphp* self)
-{
-    struct list_item_IAphp* __tmp_store_field31 = self->it->next;
-    self->it=__tmp_store_field31;
-    if(self->it) {
-                struct IA* __result_value = self->it->item;
-        return __result_value;
+void* right_value16;
+    int __tmp_variable40 = (wchar_tp_length(str));
+    int len__1=__tmp_variable40;
+    int* __tmp_variable41 = (right_value16 = igc_calloc(len__1*2+1,4));
+    int* result__1=__tmp_variable41;
+    int __tmp_variable42 = 0;
+    int n__1=__tmp_variable42;
+    {
+        int __tmp_variable43 = 0;
+        int i__2=__tmp_variable43;
+        while(i__2<len__1) {
+            int __tmp_variable44 = str[i__2];
+            int c__3=__tmp_variable44;
+            if((c__3>=0&&c__3<' ')||c__3==127) {
+                int __tmp_variable45 = n__1+1;
+                n__1=__tmp_variable45;
+                result__1[n__1-1]='^';
+                int __tmp_variable46 = n__1+1;
+                n__1=__tmp_variable46;
+                result__1[n__1-1]=c__3+'A'-1;
+            }
+            else {
+                int __tmp_variable47 = n__1+1;
+                n__1=__tmp_variable47;
+                result__1[n__1-1]=c__3;
+            }
+            int __tmp_variable48 = i__2+1;
+            i__2=__tmp_variable48;
+        }
     }
-    struct IA* result__2;
-    memset(&result__2, 0, sizeof(struct IA*));
-    (memset((&result__2),0,sizeof(struct IA*)));
-        struct IA* __result_value = result__2;
+    result__1[n__1]='\0';
+        int* __result_value = result__1;
     return __result_value;
 }
 
-static void list_finalize_IAph(struct list_IAphp* self)
+_Bool charp_match_group_strings(char* self, struct regex_struct* reg, int count, struct list_charphp* group_strings)
 {
-    struct list_item_IAphp* __tmp_variable11 = self->head;
-    struct list_item_IAphp* it__2=__tmp_variable11;
+char* inline_result_variable6;
+void* right_value17;
+void* right_value18;
+    int __tmp_variable49 = 0;
+    int offset__1=__tmp_variable49;
+    int __tmp_variable50 = 16;
+    int ovec_max__1=__tmp_variable50;
+    int start__1[ovec_max__1];
+    memset(&start__1, 0, sizeof(int));
+    int end__1[ovec_max__1];
+    memset(&end__1, 0, sizeof(int));
+    int ovec_value__1[ovec_max__1*3];
+    memset(&ovec_value__1, 0, sizeof(int));
+    const char* err__1;
+    memset(&err__1, 0, sizeof(const char*));
+    int erro_ofs__1;
+    memset(&erro_ofs__1, 0, sizeof(int));
+    int __tmp_variable51 = reg->options;
+    int options__1=__tmp_variable51;
+    char* __tmp_variable52 = reg->str;
+    char* str__1=__tmp_variable52;
+    pcre* __tmp_variable53 = reg->re;
+    pcre* re__1=__tmp_variable53;
+    int __tmp_variable54 = 0;
+    int n__1=__tmp_variable54;
+    while (1) {
+        int __tmp_variable55 = 2097152;
+        int options__2=__tmp_variable55;
+        int __tmp_variable56 = (strlen(self));
+        int len__2=__tmp_variable56;
+        int __tmp_variable57 = (pcre_exec(re__1,((pcre_extra*)0),self,len__2,offset__1,options__2,ovec_value__1,ovec_max__1*3));
+        int regex_result__2=__tmp_variable57;
+        {
+            int __tmp_variable58 = 0;
+            int i__3=__tmp_variable58;
+            while(i__3<ovec_max__1) {
+                start__1[i__3]=ovec_value__1[i__3*2];
+                int __tmp_variable59 = i__3+1;
+                i__3=__tmp_variable59;
+            }
+        }
+        {
+            int __tmp_variable60 = 0;
+            int i__3=__tmp_variable60;
+            while(i__3<ovec_max__1) {
+                end__1[i__3]=ovec_value__1[i__3*2+1];
+                int __tmp_variable61 = i__3+1;
+                i__3=__tmp_variable61;
+            }
+        }
+        if(regex_result__2==1||(group_strings==((void*)0)&&regex_result__2>0)) {
+            int __tmp_variable62 = n__1+1;
+            n__1=__tmp_variable62;
+            if(n__1==count) {
+                                _Bool __result_value = 1;
+                return __result_value;
+            }
+            if(offset__1==end__1[0]) {
+                int __tmp_variable63 = offset__1+1;
+                offset__1=__tmp_variable63;
+            }
+            else {
+                int __tmp_variable64 = end__1[0];
+                offset__1=__tmp_variable64;
+            }
+        }
+        else if(regex_result__2>1) {
+            int __tmp_variable65 = n__1+1;
+            n__1=__tmp_variable65;
+            (list_reset_charph(group_strings));
+            {
+                int __tmp_variable69 = 1;
+                int i__4=__tmp_variable69;
+                while(i__4<regex_result__2) {
+                    {
+                    char* _inline_str1 = self;
+                    int _inline_head1 = start__1[i__4];
+                    int _inline_tail1 = end__1[i__4];
+                                                inline_result_variable6 = (right_value17 = (string_substring(_inline_str1,_inline_head1,_inline_tail1)));
+                        goto inline_func_end_label6;
+                    
+inline_func_end_label6:
+                    right_value18 = inline_result_variable6;
+                    (void)0;
+}
+                    char* __tmp_variable70 = inline_result_variable6;
+                    char* match_string__5=__tmp_variable70;
+                    igc_increment_ref_count(match_string__5);
+                    (list_push_back_charph(group_strings,match_string__5));
+                    igc_decrement_ref_count(match_string__5);
+                    int __tmp_variable74 = i__4+1;
+                    i__4=__tmp_variable74;
+                }
+            }
+            if(n__1==count) {
+                                _Bool __result_value = 1;
+                return __result_value;
+            }
+            if(offset__1==end__1[0]) {
+                int __tmp_variable75 = offset__1+1;
+                offset__1=__tmp_variable75;
+            }
+            else {
+                int __tmp_variable76 = end__1[0];
+                offset__1=__tmp_variable76;
+            }
+        }
+        else {
+                        _Bool __result_value = 0;
+            return __result_value;
+        }
+    }
+        _Bool __result_value = 0;
+    return __result_value;
+}
+
+static void list_reset_charph(struct list_charphp* self)
+{
+    struct list_item_charphp* __tmp_variable66 = self->head;
+    struct list_item_charphp* it__2=__tmp_variable66;
     while (it__2!=((void*)0)) {
         if(1) {
-            call_finalizer(it__2->item->finalize, it__2->item->_protocol_obj, 0);
             igc_decrement_ref_count(it__2->item);
         }
-        struct list_item_IAphp* __tmp_variable12 = it__2;
-        struct list_item_IAphp* prev_it__3=__tmp_variable12;
-        struct list_item_IAphp* __tmp_variable13 = it__2->next;
-        it__2=__tmp_variable13;
-        call_finalizer(list_item_finalize_list_item_IAphp,prev_it__3,0);
+        struct list_item_charphp* __tmp_variable67 = it__2;
+        struct list_item_charphp* prev_it__3=__tmp_variable67;
+        struct list_item_charphp* __tmp_variable68 = it__2->next;
+        it__2=__tmp_variable68;
+        call_finalizer(list_item_finalize_list_item_charphp,prev_it__3,0);
     }
+    struct list_item_charphp* __tmp_store_field1 = ((void*)0);
+    self->head=__tmp_store_field1;
+    struct list_item_charphp* __tmp_store_field2 = ((void*)0);
+    self->tail=__tmp_store_field2;
+    int __tmp_store_field3 = 0;
+    self->len=__tmp_store_field3;
 }
 
-static void list_item_finalize_list_item_IAphp(struct list_item_IAphp* self)
+static void list_item_finalize_list_item_charphp(struct list_item_charphp* self)
 {
         }
+
+static void list_push_back_charph(struct list_charphp* self, char* item)
+{
+void* right_value19;
+void* right_value20;
+void* right_value21;
+    if(self->len==0) {
+        struct list_item_charphp* __tmp_variable71 = (right_value19 = igc_calloc(1,24));
+        struct list_item_charphp* litem__3=__tmp_variable71;
+        struct list_item_charphp* __tmp_store_field4 = ((void*)0);
+        litem__3->prev=__tmp_store_field4;
+        struct list_item_charphp* __tmp_store_field5 = ((void*)0);
+        litem__3->next=__tmp_store_field5;
+        char* __tmp_store_field6 = item;
+        litem__3->item=__tmp_store_field6;
+        struct list_item_charphp* __tmp_store_field7 = litem__3;
+        self->tail=__tmp_store_field7;
+        struct list_item_charphp* __tmp_store_field8 = litem__3;
+        self->head=__tmp_store_field8;
+    }
+    else if(self->len==1) {
+        struct list_item_charphp* __tmp_variable72 = (right_value20 = igc_calloc(1,24));
+        struct list_item_charphp* litem__3=__tmp_variable72;
+        struct list_item_charphp* __tmp_store_field9 = self->head;
+        litem__3->prev=__tmp_store_field9;
+        struct list_item_charphp* __tmp_store_field10 = ((void*)0);
+        litem__3->next=__tmp_store_field10;
+        char* __tmp_store_field11 = item;
+        litem__3->item=__tmp_store_field11;
+        struct list_item_charphp* __tmp_store_field12 = litem__3;
+        self->tail=__tmp_store_field12;
+        struct list_item_charphp* __tmp_store_field13 = litem__3;
+        self->head->next=__tmp_store_field13;
+    }
+    else {
+        struct list_item_charphp* __tmp_variable73 = (right_value21 = igc_calloc(1,24));
+        struct list_item_charphp* litem__3=__tmp_variable73;
+        struct list_item_charphp* __tmp_store_field14 = self->tail;
+        litem__3->prev=__tmp_store_field14;
+        struct list_item_charphp* __tmp_store_field15 = ((void*)0);
+        litem__3->next=__tmp_store_field15;
+        char* __tmp_store_field16 = item;
+        litem__3->item=__tmp_store_field16;
+        struct list_item_charphp* __tmp_store_field17 = litem__3;
+        self->tail->next=__tmp_store_field17;
+        struct list_item_charphp* __tmp_store_field18 = litem__3;
+        self->tail=__tmp_store_field18;
+    }
+    int __tmp_store_field19 = self->len+1;
+    self->len=__tmp_store_field19;
+}
+
+_Bool wchar_tp_comapre(int* left, int* right)
+{
+        _Bool __result_value = (wcscmp(left,right))==0;
+    return __result_value;
+}
+
+unsigned int wchar_t_get_hash_key(int value)
+{
+        unsigned int __result_value = value;
+    return __result_value;
+}
+
+_Bool wchar_t_equals(int left, int right)
+{
+        _Bool __result_value = left==right;
+    return __result_value;
+}
+
+char* charp_operator_mult(char* str, int n)
+{
+void* right_value22;
+        char* __result_value = (right_value22 = (charp_multiply(str,n)));
+    return __result_value;
+}
+
+char* string_operator_mult(char* str, int n)
+{
+void* right_value23;
+        char* __result_value = (right_value23 = (charp_multiply(str,n)));
+    return __result_value;
+}
+
+int* wchar_tp_operator_mult(int* str, int n)
+{
+void* right_value24;
+        int* __result_value = (right_value24 = (wchar_tp_multiply(str,n)));
+    return __result_value;
+}
+
+int* wstring_operator_mult(int* str, int n)
+{
+void* right_value25;
+        int* __result_value = (right_value25 = (wchar_tp_multiply(str,n)));
+    return __result_value;
+}
+
+_Bool charp_operator_equals(char* left, char* right)
+{
+        _Bool __result_value = (strcmp(left,right))==0;
+    return __result_value;
+}
+
+_Bool string_operator_equals(char* left, char* right)
+{
+        _Bool __result_value = (strcmp(left,right))==0;
+    return __result_value;
+}
+
+_Bool wchar_tp_operator_equals(int* left, int* right)
+{
+        _Bool __result_value = (wcscmp(left,right))==0;
+    return __result_value;
+}
+
+_Bool wstring_operator_equals(int* left, int* right)
+{
+        _Bool __result_value = (wcscmp(left,right))==0;
+    return __result_value;
+}
+
+char* charp_operator_add(char* left, char* right)
+{
+void* right_value26;
+void* right_value27;
+void* right_value28;
+    struct buffer* __tmp_variable77 = (right_value27 = (bufferp_initialize((right_value26 = igc_calloc(1,16)))));
+    struct buffer* buf__1=__tmp_variable77;
+    (bufferp_append_str(buf__1,left));
+    (bufferp_append_str(buf__1,right));
+        char* __result_value = (right_value28 = (bufferp_to_string(buf__1)));
+    call_finalizer(buffer_finalize,buf__1,0);
+    return __result_value;
+}
+
+char* string_operator_add(char* left, char* right)
+{
+void* right_value29;
+void* right_value30;
+void* right_value31;
+    struct buffer* __tmp_variable78 = (right_value30 = (bufferp_initialize((right_value29 = igc_calloc(1,16)))));
+    struct buffer* buf__1=__tmp_variable78;
+    (bufferp_append_str(buf__1,left));
+    (bufferp_append_str(buf__1,right));
+        char* __result_value = (right_value31 = (bufferp_to_string(buf__1)));
+    call_finalizer(buffer_finalize,buf__1,0);
+    return __result_value;
+}
+
+int* wchar_tp_operator_add(int* left, int* right)
+{
+void* right_value32;
+    int* __tmp_variable79 = (right_value32 = igc_calloc((wcslen(left))+(wcslen(right))+1,4));
+    int* result__1=__tmp_variable79;
+    (wcscpy(result__1,left));
+    (wcscat(result__1,right));
+        int* __result_value = result__1;
+    return __result_value;
+}
+
+int* wstring_operator_add(int* left, int* right)
+{
+void* right_value33;
+    int* __tmp_variable80 = (right_value33 = igc_calloc((wcslen(left))+(wcslen(right))+1,4));
+    int* result__1=__tmp_variable80;
+    (wcscpy(result__1,left));
+    (wcscat(result__1,right));
+        int* __result_value = result__1;
+    return __result_value;
+}
 

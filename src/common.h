@@ -264,7 +264,7 @@ BOOL is_left_type_bigger_size(sNodeType* left_type, sNodeType* right_type);
 /// transpiler.c
 ////////////////////
 #define COME_FUN_MAX 4096
-#define COME_CODE_MAX 256
+#define COME_CODE_MAX 1024
 
 struct sComeFunStruct
 {
@@ -325,6 +325,7 @@ extern LVALUE gNullLVALUE;
 struct sVarStruct {
     char mName[VAR_NAME_MAX];
     char mInlineRealName[VAR_NAME_MAX];
+    char mCValueName[VAR_NAME_MAX];
     int mIndex;
     sNodeType* mType;
 
@@ -339,6 +340,7 @@ struct sVarStruct {
     struct sVarStruct* mRefferenceVar;
     
     BOOL mReturnValue;
+    BOOL mFunctionParam;
 };
 
 typedef struct sVarStruct sVar;
@@ -371,7 +373,7 @@ void create_current_stack_frame_struct(char* type_name, sVarTable* lv_table);
 void check_already_added_variable(sVarTable* table, char* name, struct sParserInfoStruct* info);
 
 // result: (true) success (false) overflow the table or a variable which has the same name exists
-BOOL add_variable_to_table(sVarTable* table, char* name, char* inline_real_name, sNodeType* type_, LVALUE llvm_value, int index, BOOL global, BOOL alloca_value);
+BOOL add_variable_to_table(sVarTable* table, char* name, char* inline_real_name, sNodeType* type_, LVALUE llvm_value, int index, BOOL global, BOOL alloca_value, BOOL function_param);
 
 // result: (null) not found (sVar*) found
 sVar* get_variable_from_table(sVarTable* table, char* name);
@@ -1077,7 +1079,7 @@ struct sNodeTreeStruct
     } uValue;
 };
 
-void increment_ref_count(LLVMValueRef obj, sNodeType* node_type, sCompileInfo* info);
+void increment_ref_count(LLVMValueRef obj, sNodeType* node_type, char* c_value, sCompileInfo* info);
 char* append_object_to_right_values(LLVMValueRef obj, sNodeType* node_type, sCompileInfo* info);
 void remove_object_from_right_values(LLVMValueRef obj, sCompileInfo* info);
 void free_right_value_objects(sCompileInfo* info);

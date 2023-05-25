@@ -251,6 +251,7 @@ void add_last_code_to_source(struct sCompileInfoStruct* info)
     if(gNCTranspile) {
         if(gComeModule.mLastCode) {
            add_come_code(info, "%s", gComeModule.mLastCode);
+           gComeModule.mLastCode = NULL;
         }
     }
 }

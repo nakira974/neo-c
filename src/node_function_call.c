@@ -60,7 +60,7 @@ BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_meth
 
     for(i=0; i<num_params; i++) {
         char* inline_real_var_name = xsprintf("_inline_%s%d", param_names[i], info->inline_nest);
-        if(!add_variable_to_table(info2.lv_table, param_names[i], inline_real_var_name, fun->mParamTypes[i], gNullLVALUE, -1, FALSE, FALSE))
+        if(!add_variable_to_table(info2.lv_table, param_names[i], inline_real_var_name, fun->mParamTypes[i], gNullLVALUE, -1, FALSE, FALSE, TRUE))
         {
             compile_err_msg(info, "overflow variable table");
             return FALSE;
@@ -123,7 +123,7 @@ BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_meth
         LLVMBuildStore(gBuilder, llvm_params[i], param);
         
         char* inline_real_var_name = xsprintf("_inline_%s%d", param_names[i], info->inline_nest);
-        add_come_code(info, "%s %s = %s;\n", make_type_name_string(param_types[i]), inline_real_var_name, lvalue_params[i].c_value);
+        add_come_code(info, "%s = %s;\n", make_define_var(param_types[i], inline_real_var_name, info), lvalue_params[i].c_value);
 
         if(fun->mParamTypes[i] != NULL) {
             sNodeType* node_type = clone_node_type(fun->mParamTypes[i]);
@@ -932,18 +932,6 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         if(fun_param_type->mHeap && param.type->mHeap) 
         {
             if(param.type->mDummyHeap) {
-/*
-                sVar* var_ = param.var;
-                if(var_) {
-                    sNodeType* node_type2 = clone_node_type(var_->mType);
-            
-                    if(!solve_type(&node_type2, generics_type, num_method_generics_types, method_generics_types, info)) {
-                        return FALSE;
-                    }
-                    
-                    increment_ref_count(llvm_params[i], node_type2, info);
-                }
-*/
             }
             else {
                 sVar* var_ = param.var;
@@ -954,7 +942,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
                         return FALSE;
                     }
                     
-                    increment_ref_count(llvm_params[i], node_type2, info);
+                    increment_ref_count(llvm_params[i], node_type2, lvalue_params[i].c_value, info);
                 }
             }
         }
@@ -1254,7 +1242,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
 
         for(i=0; i<num_params; i++) {
             char* inline_real_var_name = xsprintf("_inline_%s%d", param_names[i], info->inline_nest);
-            if(!add_variable_to_table(info2.lv_table, param_names[i], inline_real_var_name, fun->mParamTypes[i], gNullLVALUE, -1, FALSE, FALSE))
+            if(!add_variable_to_table(info2.lv_table, param_names[i], inline_real_var_name, fun->mParamTypes[i], gNullLVALUE, -1, FALSE, FALSE, TRUE))
             {
                 compile_err_msg(info, "overflow variable table");
                 return FALSE;
@@ -1317,7 +1305,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
             LLVMBuildStore(gBuilder, llvm_params[i], param);
             
             char* inline_real_var_name = xsprintf("_inline_%s%d", param_names[i], info->inline_nest);
-            add_come_code(info, "%s %s = %s;\n", make_type_name_string(param_types[i]), inline_real_var_name, lvalue_params[i].c_value);
+            add_come_code(info, "%s = %s;\n", make_define_var(param_types[i], inline_real_var_name, info), lvalue_params[i].c_value);
 
             if(fun->mParamTypes[i] != NULL) {
                 sNodeType* node_type = clone_node_type(fun->mParamTypes[i]);

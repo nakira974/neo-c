@@ -313,6 +313,8 @@ ts-test:
 	./code/HelloWorld3-ts
 	PWD=`pwd` ./comelang -o code/HelloWorld8-ts -t code/HelloWorld8.c
 	./code/HelloWorld8-ts
+	PWD=`pwd` ./comelang -o code/HelloWorld9-ts -t code/HelloWorld9.c
+	./code/HelloWorld9-ts
 
 tcc-test:
 	PWD=`pwd` ./comelang -no-gc code/tcctest.c

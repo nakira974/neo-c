@@ -296,7 +296,7 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
             add_come_code(info, "extern %s;\n", define_str);
         }
         else {
-            char* define_str = make_define_var(var_type, var_name, info);
+            char* define_str = make_define_var(var_type, var_->mName, info);
             add_come_code(info, "extern %s;\n", define_str);
         }
 
@@ -328,7 +328,7 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
             LLVMSetLinkage(alloca_value, LLVMInternalLinkage);
         }
         
-        char* define_str = make_define_var(var_type, var_name, info);
+        char* define_str = make_define_var(var_type, var_->mName, info);
         add_come_code(info, "%s;\n", define_str);
 
         if(var_type->mArrayDimentionNum == 1) {
@@ -434,12 +434,12 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
                 if(strcmp(var_->mInlineRealName, "") != 0) {
                     char* define_str = make_define_var(var_type, var_->mInlineRealName, info);
                     add_come_code(info, "%s;\n", define_str);
-                    add_come_code(info, "memset(&%s, 0, sizeof(%s));\n", var_name, make_type_name_string(var_type));
+                    add_come_code(info, "memset(&%s, 0, sizeof(%s));\n", var_->mInlineRealName, make_type_name_string(var_type));
                 }
                 else {
-                    char* define_str = make_define_var(var_type, var_name, info);
+                    char* define_str = make_define_var(var_type, var_->mCValueName, info);
                     add_come_code(info, "%s;\n", define_str);
-                    add_come_code(info, "memset(&%s, 0, sizeof(%s));\n", var_name, make_type_name_string(var_type));
+                    add_come_code(info, "memset(&%s, 0, sizeof(%s));\n", var_->mCValueName, make_type_name_string(var_type));
                 }
             }
         }
@@ -457,12 +457,12 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
             if(strcmp(var_->mInlineRealName, "") != 0) {
                 char* define_str = make_define_var(var_type, var_->mInlineRealName, info);
                 add_come_code(info, "%s;\n", define_str);
-                add_come_code(info, "memset(&%s, 0, sizeof(%s));\n", var_name, make_type_name_string(var_type));
+                add_come_code(info, "memset(&%s, 0, sizeof(%s));\n", var_->mInlineRealName, make_type_name_string(var_type));
             }
             else {
-                char* define_str = make_define_var(var_type, var_name, info);
+                char* define_str = make_define_var(var_type, var_->mCValueName, info);
                 add_come_code(info, "%s;\n", define_str);
-                add_come_code(info, "memset(&%s, 0, sizeof(%s));\n", var_name, make_type_name_string(var_type));
+                add_come_code(info, "memset(&%s, 0, sizeof(%s));\n", var_->mCValueName, make_type_name_string(var_type));
             }
 
             LLVMValueRef alloca_value = LLVMBuildAlloca(gBuilder, llvm_type, var_name);
@@ -624,7 +624,7 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
     if(left_type->mHeap && right_type->mHeap && !right_type->mDummyHeap) {
         if(gNodes[right_node].mNodeType == kNodeTypeLoadField || gNodes[right_node].mNodeType == kNodeTypeLoadVariable || gNodes[right_node].mNodeType == kNodeTypeNormalBlock) 
         {
-            increment_ref_count(rvalue.value, right_type, info);
+            increment_ref_count(rvalue.value, right_type, rvalue.c_value, info);
         }
     }
     
@@ -863,8 +863,15 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
             
             add_come_code(info, "%s;\n", llvm_value.c_value);
         }
+        else if(global) {
+            char* define_str = make_define_var(left_type, var_->mName, info);
+            
+            llvm_value.c_value = xsprintf("%s=%s", define_str, rvalue.c_value);
+            
+            add_come_code(info, "%s;\n", llvm_value.c_value);
+        }
         else {
-            char* define_str = make_define_var(left_type, var_name, info);
+            char* define_str = make_define_var(left_type, var_->mCValueName, info);
             
             llvm_value.c_value = xsprintf("%s=%s", define_str, rvalue.c_value);
             
@@ -882,9 +889,13 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
             add_come_code(info, "%s=%s;\n", var_->mInlineRealName, rvalue.c_value);
             llvm_value.c_value = xsprintf("%s", var_->mInlineRealName);
         }
+        else if(global) {
+            add_come_code(info, "%s=%s;\n", var_->mName, rvalue.c_value);
+            llvm_value.c_value = xsprintf("%s", var_->mName);
+        }
         else {
-            add_come_code(info, "%s=%s;\n", var_name, rvalue.c_value);
-            llvm_value.c_value = xsprintf("%s", var_name);
+            add_come_code(info, "%s=%s;\n", var_->mCValueName, rvalue.c_value);
+            llvm_value.c_value = xsprintf("%s", var_->mCValueName);
         }
         
         dec_stack_ptr(1, info);
@@ -1106,7 +1117,7 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
         if(left_type->mHeap && right_type2->mHeap && !right_type->mDummyHeap) {
             if(gNodes[right_node].mNodeType == kNodeTypeLoadField || gNodes[right_node].mNodeType == kNodeTypeLoadVariable || gNodes[right_node].mNodeType == kNodeTypeNormalBlock) 
             {
-                increment_ref_count(rvalue.value, right_type2, info);
+                increment_ref_count(rvalue.value, right_type2, rvalue.c_value, info);
             }
         }
     
@@ -2461,7 +2472,7 @@ BOOL compile_store_element(unsigned int node, sCompileInfo* info)
         if(var_type->mHeap && right_type->mHeap && !right_type->mDummyHeap) {
             if(gNodes[rnode].mNodeType == kNodeTypeLoadField || gNodes[rnode].mNodeType == kNodeTypeLoadVariable || gNodes[rnode].mNodeType == kNodeTypeNormalBlock) 
             {
-                increment_ref_count(rvalue.value, right_type, info);
+                increment_ref_count(rvalue.value, right_type, rvalue.c_value, info);
             }
         }
         
@@ -5224,8 +5235,11 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
             if(strcmp(var_->mInlineRealName, "") != 0) {
                 llvm_value.c_value = xsprintf("%s", var_->mInlineRealName);
             }
+            else if(global) {
+                llvm_value.c_value = xsprintf("%s", var_->mName);
+            }
             else {
-                llvm_value.c_value = xsprintf("%s", var_name);
+                llvm_value.c_value = xsprintf("%s", var_->mCValueName);
             }
     
             push_value_to_stack_ptr(&llvm_value, info);
@@ -5242,8 +5256,11 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
             if(strcmp(var_->mInlineRealName, "") != 0) {
                 llvm_value.c_value = xsprintf("%s", var_->mInlineRealName);
             }
+            else if(global) {
+                llvm_value.c_value = xsprintf("%s", var_->mName);
+            }
             else {
-                llvm_value.c_value = xsprintf("%s", var_name);
+                llvm_value.c_value = xsprintf("%s", var_->mCValueName);
             }
     
             push_value_to_stack_ptr(&llvm_value, info);
@@ -5262,8 +5279,11 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
             if(strcmp(var_->mInlineRealName, "") != 0) {
                 llvm_value.c_value = xsprintf("%s", var_->mInlineRealName);
             }
+            else if(global) {
+                llvm_value.c_value = xsprintf("%s", var_->mName);
+            }
             else {
-                llvm_value.c_value = xsprintf("%s", var_name);
+                llvm_value.c_value = xsprintf("%s", var_->mCValueName);
             }
     
             push_value_to_stack_ptr(&llvm_value, info);
@@ -5280,8 +5300,11 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
             if(strcmp(var_->mInlineRealName, "") != 0) {
                 llvm_value.c_value = xsprintf("%s", var_->mInlineRealName);
             }
+            else if(global) {
+                llvm_value.c_value = xsprintf("%s", var_->mName);
+            }
             else {
-                llvm_value.c_value = xsprintf("%s", var_name);
+                llvm_value.c_value = xsprintf("%s", var_->mCValueName);
             }
     
             push_value_to_stack_ptr(&llvm_value, info);
@@ -5298,8 +5321,11 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
         if(strcmp(var_->mInlineRealName, "") != 0) {
             llvm_value.c_value = xsprintf("%s", var_->mInlineRealName);
         }
+        else if(global) {
+            llvm_value.c_value = xsprintf("%s", var_->mName);
+        }
         else {
-            llvm_value.c_value = xsprintf("%s", var_name);
+            llvm_value.c_value = xsprintf("%s", var_->mCValueName);
         }
 
         push_value_to_stack_ptr(&llvm_value, info);
@@ -5315,8 +5341,11 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
         if(strcmp(var_->mInlineRealName, "") != 0) {
             llvm_value.c_value = xsprintf("%s", var_->mInlineRealName);
         }
+        else if(global) {
+            llvm_value.c_value = xsprintf("%s", var_->mName);
+        }
         else {
-            llvm_value.c_value = xsprintf("%s", var_name);
+            llvm_value.c_value = xsprintf("%s", var_->mCValueName);
         }
 
         push_value_to_stack_ptr(&llvm_value, info);
@@ -5335,8 +5364,11 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
             if(strcmp(var_->mInlineRealName, "") != 0) {
                 llvm_value.c_value = xsprintf("%s", var_->mInlineRealName);
             }
+            else if(global) {
+                llvm_value.c_value = xsprintf("%s", var_->mName);
+            }
             else {
-                llvm_value.c_value = xsprintf("%s", var_name);
+                llvm_value.c_value = xsprintf("%s", var_->mCValueName);
             }
 
             push_value_to_stack_ptr(&llvm_value, info);
@@ -5436,8 +5468,11 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
             if(strcmp(var_->mInlineRealName, "") != 0) {
                 llvm_value.c_value = xsprintf("%s", var_->mInlineRealName);
             }
+            else if(global) {
+                llvm_value.c_value = xsprintf("%s", var_->mName);
+            }
             else {
-                llvm_value.c_value = xsprintf("%s", var_name);
+                llvm_value.c_value = xsprintf("%s", var_->mCValueName);
             }
 
             push_value_to_stack_ptr(&llvm_value, info);
@@ -5455,8 +5490,11 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
             if(strcmp(var_->mInlineRealName, "") != 0) {
                 llvm_value.c_value = xsprintf("%s", var_->mInlineRealName);
             }
+            else if(global) {
+                llvm_value.c_value = xsprintf("%s", var_->mName);
+            }
             else {
-                llvm_value.c_value = xsprintf("%s", var_name);
+                llvm_value.c_value = xsprintf("%s", var_->mCValueName);
             }
 
             push_value_to_stack_ptr(&llvm_value, info);
@@ -5483,8 +5521,11 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
             if(strcmp(var_->mInlineRealName, "") != 0) {
                 llvm_value.c_value = xsprintf("%s", var_->mInlineRealName);
             }
+            else if(global) {
+                llvm_value.c_value = xsprintf("%s", var_->mName);
+            }
             else {
-                llvm_value.c_value = xsprintf("%s", var_name);
+                llvm_value.c_value = xsprintf("%s", var_->mCValueName);
             }
 
             push_value_to_stack_ptr(&llvm_value, info);
@@ -6436,7 +6477,7 @@ BOOL compile_store_field(unsigned int node, sCompileInfo* info)
     if(field_type->mHeap && right_type->mHeap && !right_type->mDummyHeap) {
         if(gNodes[rnode].mNodeType == kNodeTypeLoadField || gNodes[rnode].mNodeType == kNodeTypeLoadVariable || gNodes[rnode].mNodeType == kNodeTypeNormalBlock) 
         {
-            increment_ref_count(rvalue.value, right_type, info);
+            increment_ref_count(rvalue.value, right_type, rvalue.c_value, info);
         }
         
         remove_object_from_right_values(rvalue.value, info);
@@ -8053,7 +8094,7 @@ BOOL compile_stack(unsigned int node, sCompileInfo* info)
 
                 LLVMBuildStore(gBuilder, llvm_value, field_address);
                 
-                add_come_code(info, "%s.%s = &%s;\n", stack_name, field_name, field_name);
+                add_come_code(info, "%s.%s = &%s;\n", stack_name, field_name, var_->mCValueName);
                 
                 field_index++;
             }

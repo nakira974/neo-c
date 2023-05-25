@@ -464,7 +464,7 @@ sFunction* create_finalizer_automatically(sNodeType* node_type, char* fun_name, 
         for(i=0; i<num_params; i++) {
             sParserParam* param = params + i;
     
-            (void)add_variable_to_table(pinfo.lv_table, param->mName, "", param->mType, gNullLVALUE, -1, FALSE, FALSE);
+            (void)add_variable_to_table(pinfo.lv_table, param->mName, "", param->mType, gNullLVALUE, -1, FALSE, FALSE, TRUE);
         }
         
         if(parse_block_easy(&node_block, extern_c_lang, result_type_is_void, TRUE, &pinfo)) {
@@ -548,7 +548,7 @@ void increment_protocol_obj_ref_count(LLVMValueRef obj, sNodeType* protocol_type
     LLVMBuildCall2(gBuilder, function_type, llvm_fun, llvm_params, num_params, "");
 }
 
-void increment_ref_count(LLVMValueRef obj, sNodeType* node_type, sCompileInfo* info)
+void increment_ref_count(LLVMValueRef obj, sNodeType* node_type, char* c_value, sCompileInfo* info)
 {
     if(node_type->mClass->mFlags & CLASS_FLAGS_PROTOCOL) {
         increment_protocol_obj_ref_count(obj, node_type, info);
@@ -588,6 +588,8 @@ void increment_ref_count(LLVMValueRef obj, sNodeType* node_type, sCompileInfo* i
     
     LLVMValueRef llvm_fun = LLVMGetNamedFunction(gModule, "igc_increment_ref_count");
     LLVMBuildCall2(gBuilder, function_type, llvm_fun, llvm_params, num_params, "");
+    
+    if(c_value) { add_come_code(info, xsprintf("igc_increment_ref_count(%s);\n", c_value)); }
 }
 
 sFunction* create_equals_automatically(sNodeType* node_type, char* fun_name, char** real_fun_name, sCompileInfo* info)
@@ -676,7 +678,7 @@ sFunction* create_equals_automatically(sNodeType* node_type, char* fun_name, cha
         for(i=0; i<num_params; i++) {
             sParserParam* param = params + i;
     
-            (void)add_variable_to_table(pinfo.lv_table, param->mName, "", param->mType, gNullLVALUE, -1, FALSE, FALSE);
+            (void)add_variable_to_table(pinfo.lv_table, param->mName, "", param->mType, gNullLVALUE, -1, FALSE, FALSE, TRUE);
         }
         
         if(parse_block_easy(&node_block, extern_c_lang, result_type_is_void, TRUE, &pinfo)) {
@@ -1153,7 +1155,7 @@ sFunction* create_cloner_automatically(sNodeType* node_type, char* fun_name, cha
         for(i=0; i<num_params; i++) {
             sParserParam* param = params + i;
     
-            (void)add_variable_to_table(pinfo.lv_table, param->mName, "", param->mType, gNullLVALUE, -1, FALSE, FALSE);
+            (void)add_variable_to_table(pinfo.lv_table, param->mName, "", param->mType, gNullLVALUE, -1, FALSE, FALSE, TRUE);
         }
         
         if(parse_block_easy(&node_block, extern_c_lang, result_type_is_void, TRUE, &pinfo)) {
@@ -5520,6 +5522,8 @@ BOOL compile_block(sNodeBlock* block, BOOL force_hash_result, sCompileInfo* info
                 return FALSE;
             }
             
+            char* last_code = gComeModule.mLastCode;
+            
             /// return ///
             if(force_hash_result && i == block->mNumNodes -1) {
                 llvm_value = *get_value_from_stack(-1);
@@ -5571,6 +5575,8 @@ BOOL compile_block(sNodeBlock* block, BOOL force_hash_result, sCompileInfo* info
                     last_expression_is_return = FALSE;
                 }
             }
+            
+            gComeModule.mLastCode = last_code;
             
             add_last_code_to_source(info);
 

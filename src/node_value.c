@@ -697,6 +697,22 @@ BOOL compile_regex_value(unsigned int node, sCompileInfo* info)
     BOOL global = gNodes[node].uValue.sRegex.mGlobal;
     BOOL ignore_case = gNodes[node].uValue.sRegex.mIgnoreCase;
     
+    char* buf2 = calloc(1, sizeof(char)*(strlen(buf)+1));
+    
+    char* p = buf;
+    char* p2 = buf2;
+    while(*p) {
+        if(*p == '\\') {
+            *p2++ = *p;
+            *p2++ = *p;
+            p++;
+        }
+        else {
+            *p2++ = *p++;
+        }
+    }
+    *p2 = '\0';
+    
     int num_params = 3;
     
     LLVMValueRef llvm_params[PARAMS_MAX];
@@ -746,16 +762,18 @@ BOOL compile_regex_value(unsigned int node, sCompileInfo* info)
     /// result ///
     LVALUE llvm_value;
     llvm_value.value = result;
-    llvm_value.c_value = xsprintf("charp_to_regex_flags(%s, %s, %s);\n", buf, global ? "true":"false", ignore_case ? "true":"false");
     llvm_value.type = regex_type;
     llvm_value.address = NULL;
     llvm_value.var = NULL;
+    
+    char* var_name = append_object_to_right_values(llvm_value.value, regex_type, info);
+    llvm_value.c_value = xsprintf("(%s = charp_to_regex_flags(\"%s\", %s, %s))", var_name, buf2, global ? "1":"0", ignore_case ? "1":"0");
 
     push_value_to_stack_ptr(&llvm_value, info);
-    
-    append_object_to_right_values(llvm_value.value, regex_type, info);
 
     info->type = regex_type;
+    
+    free(buf2);
 
     return TRUE;
 }
@@ -924,15 +942,16 @@ BOOL compile_list_value(unsigned int node, sCompileInfo* info)
     
     LVALUE llvm_value;
     llvm_value.value = LLVMBuildCall2(gBuilder, function_type, llvm_fun, llvm_params, num_params, "fun_result2");
-    llvm_value.c_value = xsprintf("%s(%s, %d, _list_element%d)", llvm_fun_name, list_value.c_value, num_elements, list_num);
     
     llvm_value.type = clone_node_type(list_type);
     llvm_value.address = NULL;
     llvm_value.var = NULL;
+    
+    char* var_name = append_object_to_right_values(llvm_value.value, list_type, info);
+    
+    llvm_value.c_value = xsprintf("(%s = %s(%s, %d, _list_element%d))", var_name, llvm_fun_name, list_value.c_value, num_elements, list_num);
 
     push_value_to_stack_ptr(&llvm_value, info);
-    
-    append_object_to_right_values(llvm_value.value, list_type, info);
 
     info->type = clone_node_type(list_type);
     

@@ -46,7 +46,7 @@ int main(int argc, char** argv)
     3.times() {
         using unsafe;
         puts("HELLO METHOD BLOCK");
-        printf("a %d\n", *parent.a);
+        printf("a %d\n", a);
     }
 
     sStruct<int>*% data = new sStruct<int>;

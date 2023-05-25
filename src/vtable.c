@@ -56,7 +56,7 @@ sVarTable* clone_var_table(sVarTable* lv_table)
 
     while(1) {
         if(p->mName[0] != 0) {
-            if(!add_variable_to_table(result, p->mName, p->mInlineRealName, p->mType, p->mLLVMValue, p->mIndex, p->mGlobal, p->mAllocaValue))
+            if(!add_variable_to_table(result, p->mName, p->mInlineRealName, p->mType, p->mLLVMValue, p->mIndex, p->mGlobal, p->mAllocaValue, p->mFunctionParam))
             {
                 fprintf(stderr, "overflow variable table\n");
                 exit(2);
@@ -84,7 +84,7 @@ sVarTable* clone_var_table(sVarTable* lv_table)
 // local variable table
 //////////////////////////////////////////////////
 // result: (true) success (false) overflow the table or a variable which has the same name exists
-BOOL add_variable_to_table(sVarTable* table, char* name, char* inline_real_name, sNodeType* type_, LVALUE llvm_value, int index, BOOL global, BOOL alloca_value)
+BOOL add_variable_to_table(sVarTable* table, char* name, char* inline_real_name, sNodeType* type_, LVALUE llvm_value, int index, BOOL global, BOOL alloca_value, BOOL function_param)
 {
     int hash_value;
     sVar* p;
@@ -96,6 +96,12 @@ BOOL add_variable_to_table(sVarTable* table, char* name, char* inline_real_name,
         if(p->mName[0] == 0) {
             xstrncpy(p->mName, name, VAR_NAME_MAX);
             xstrncpy(p->mInlineRealName, inline_real_name, VAR_NAME_MAX);
+            if(function_param || global) {
+                xstrncpy(p->mCValueName, name, VAR_NAME_MAX);
+            }
+            else {
+                xstrncpy(p->mCValueName, xsprintf("%s__%d", name, table->mBlockLevel), VAR_NAME_MAX);
+            }
             if(index == -1) {
                 p->mIndex = table->mVarNum++;
             }
@@ -114,6 +120,7 @@ BOOL add_variable_to_table(sVarTable* table, char* name, char* inline_real_name,
             p->mLLVMValue.var = p;
             p->mGlobal = global;
             p->mAllocaValue = alloca_value;
+            p->mFunctionParam = function_param;
 
             if(table->mVarNum >= LOCAL_VARIABLE_MAX) {
                 return FALSE;
@@ -125,6 +132,12 @@ BOOL add_variable_to_table(sVarTable* table, char* name, char* inline_real_name,
             if(strcmp(p->mName, name) == 0) {
                 xstrncpy(p->mName, name, VAR_NAME_MAX);
                 xstrncpy(p->mInlineRealName, inline_real_name, VAR_NAME_MAX);
+                if(function_param || global) {
+                    xstrncpy(p->mCValueName, name, VAR_NAME_MAX);
+                }
+                else {
+                    xstrncpy(p->mCValueName, xsprintf("%s%d", name, table->mBlockLevel), VAR_NAME_MAX);
+                }
                 if(index == -1) {
                     p->mIndex = table->mVarNum++;
                 }
@@ -143,6 +156,7 @@ BOOL add_variable_to_table(sVarTable* table, char* name, char* inline_real_name,
                 p->mLLVMValue.var = p;
                 p->mGlobal = global;
                 p->mAllocaValue = alloca_value;
+                p->mFunctionParam = function_param;
 
                 return TRUE;
             }
@@ -402,13 +416,13 @@ void free_objects(sVarTable* table, sCompileInfo* info)
                     {
                         if(p->mType->mConstant) {
                             LLVMValueRef obj = p->mLLVMValue.value;
-                            free_object(p->mType, obj, p->mName, FALSE, info);
+                            free_object(p->mType, obj, p->mCValueName, FALSE, info);
                             remove_object_from_right_values(obj, info);
                         }
                         else {
                             LLVMTypeRef llvm_type = create_llvm_type_from_node_type(p->mType);
                             LLVMValueRef obj = LLVMBuildLoad2(gBuilder, llvm_type, p->mLLVMValue.value, "vtable_obj");
-                            free_object(p->mType, obj, p->mName, FALSE, info);
+                            free_object(p->mType, obj, p->mCValueName, FALSE, info);
                             remove_object_from_right_values(obj, info);
                         }
 
@@ -433,7 +447,7 @@ void free_objects(sVarTable* table, sCompileInfo* info)
                     }
                     
                     if(exist_heap_fields) {
-                        free_object(node_type, obj, p->mName, FALSE, info);
+                        free_object(node_type, obj, p->mCValueName, FALSE, info);
                     }
                 }
             }
@@ -465,13 +479,13 @@ static void free_block_variables(sVarTable* table, LLVMValueRef ret_value, sComp
                         if(p->mLLVMValue.value != ret_value) {
                             if(p->mType->mConstant) {
                                 LLVMValueRef obj = p->mLLVMValue.value;
-                                free_object(p->mType, obj, p->mName, FALSE, info);
+                                free_object(p->mType, obj, p->mCValueName, FALSE, info);
                                 remove_object_from_right_values(obj, info);
                             }
                             else {
                                 LLVMTypeRef llvm_type = create_llvm_type_from_node_type(p->mType);
                                 LLVMValueRef obj = LLVMBuildLoad2(gBuilder, llvm_type, p->mLLVMValue.value, "vtable_obj");
-                                free_object(p->mType, obj, p->mName, FALSE, info);
+                                free_object(p->mType, obj, p->mCValueName, FALSE, info);
                                 remove_object_from_right_values(obj, info);
                             }
                         }
@@ -497,7 +511,7 @@ static void free_block_variables(sVarTable* table, LLVMValueRef ret_value, sComp
                     }
                     
                     if(exist_heap_fields) {
-                        free_object(node_type, obj, p->mName, FALSE, info);
+                        free_object(node_type, obj, p->mCValueName, FALSE, info);
                     }
                 }
             }

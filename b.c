@@ -1,23 +1,19 @@
-#include <stdio.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
+#include <comelang.h>
 
-int fun(int a, int b)
+struct sInfo
 {
-    int c = 1;
-    return a + b + c;
-}
-
+    string a;
+    vector<int>*% b;
+};
 
 int main(int argc, char** argv)
 {
-    int a = 0;
-    printf("%d\n", a);
-    {
-        int a = 1;
-        printf("%d\n", a);
-    }
+    sInfo*% info = new sInfo;
+    
+    info.a = string("ABC");
+    info.a = string("DEF");
+    info.b = new vector<int>();
+    info.b = new vector<int>();
     
     return 0;
 }

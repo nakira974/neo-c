@@ -271,6 +271,7 @@ struct sComeFunStruct
     char mName[VAR_NAME_MAX];
     sBuf mSource;
     sBuf mSourceHead;
+    sBuf mSourceDefer;
     
     sNodeType* mResultType;
     int mNumParams;
@@ -298,6 +299,7 @@ char* make_define_var(sNodeType* node_type, char* name, struct sCompileInfoStruc
 sComeFun* get_come_function(char* fun_name);
 void add_come_code(struct sCompileInfoStruct* info, const char* msg, ...);
 void add_come_code_at_head(struct sCompileInfoStruct* info, const char* msg, ...);
+void add_come_code_at_defer(struct sCompileInfoStruct* info, const char* msg, ...);
 void add_come_code_top_level(const char* msg, ...);
 void add_come_last_code(struct sCompileInfoStruct* info, const char* msg, ...);
 void add_last_code_to_source(struct sCompileInfoStruct* info);
@@ -1076,6 +1078,10 @@ struct sNodeTreeStruct
             char mName[VAR_NAME_MAX];
             sNodeType* mNodeType;
         } sTypedef;
+        
+        struct {
+            BOOL mNoCompileValue;
+        } sReturn;
     } uValue;
 };
 
@@ -1523,7 +1529,7 @@ LLVMBasicBlockRef get_label_from_table(char* name);
 
 unsigned int sNodeTree_create_conditional(unsigned int conditional, unsigned int value1, unsigned int value2, sParserInfo* info);
 unsigned int sNodeTree_create_comma(unsigned int left_node, unsigned int right_node, sParserInfo* info);
-unsigned int sNodeTree_create_return(unsigned int left, sParserInfo* info);
+unsigned int sNodeTree_create_return(unsigned int left, BOOL no_compile_value, sParserInfo* info);
 void create_exception_result_value(unsigned int* node, BOOL throw_, sParserInfo* info);
 unsigned int sNodeTree_create_nodes(unsigned int* nodes, int num_nodes, BOOL in_macro, sParserInfo* info);
 unsigned int sNodeTree_create_macro(unsigned int* nodes, int num_nodes, BOOL in_macro, sParserInfo* info);
@@ -1601,6 +1607,7 @@ char* xsprintf(const char* msg, ...);
 extern int gRightValueNum;
 
 void transpiler_clear_last_code();
+void transpiler_append_defer_source(struct sCompileInfoStruct* info);
 unsigned int sNodeTree_create_paren(unsigned int left_node, sParserInfo* info);
 BOOL compile_paren(unsigned int node, sCompileInfo* info);
 void add_declare_right_value_var(struct sCompileInfoStruct* info, char* var_name);

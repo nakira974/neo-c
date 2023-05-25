@@ -671,10 +671,22 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
     
     LLVMValueRef obj_before = var_->mLLVMValue.value;
     
-    if(obj_before && left_type->mHeap) {
+    static int tmp_var_num = 0;
+    char* tmp_rvalue = NULL;
+    
+    if(global || left_type->mStatic || left_type->mConstant) {
+        tmp_rvalue = rvalue.c_value;
+    }
+    else {
+        tmp_rvalue = xsprintf("__tmp_variable%d", ++tmp_var_num);
+        add_come_code(info, "%s = %s;\n", make_define_var(right_type, tmp_rvalue, info), rvalue.c_value);
+    }
+    
+    if(!alloc && obj_before && left_type->mHeap) {
         LLVMTypeRef llvm_type = create_llvm_type_from_node_type(left_type);
         LLVMValueRef obj2 = LLVMBuildLoad2(gBuilder, llvm_type, obj_before, "objXX");
-        free_object(left_type, obj2, NULL, FALSE, info);
+        char* c_value = xsprintf("%s", var_->mCValueName);
+        free_object(left_type, obj2, c_value, FALSE, info);
     }
     
     BOOL global_var = LLVMGetNamedGlobal(gModule, var_name) != NULL;
@@ -859,21 +871,21 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
         if(strcmp(var_->mInlineRealName, "") != 0) {
             char* define_str = make_define_var(left_type, var_->mInlineRealName, info);
             
-            llvm_value.c_value = xsprintf("%s=%s", define_str, rvalue.c_value);
+            llvm_value.c_value = xsprintf("%s=%s", define_str, tmp_rvalue);
             
             add_come_code(info, "%s;\n", llvm_value.c_value);
         }
         else if(global) {
             char* define_str = make_define_var(left_type, var_->mName, info);
             
-            llvm_value.c_value = xsprintf("%s=%s", define_str, rvalue.c_value);
+            llvm_value.c_value = xsprintf("%s=%s", define_str, tmp_rvalue);
             
             add_come_code(info, "%s;\n", llvm_value.c_value);
         }
         else {
             char* define_str = make_define_var(left_type, var_->mCValueName, info);
             
-            llvm_value.c_value = xsprintf("%s=%s", define_str, rvalue.c_value);
+            llvm_value.c_value = xsprintf("%s=%s", define_str, tmp_rvalue);
             
             add_come_code(info, "%s;\n", llvm_value.c_value);
         }
@@ -886,15 +898,15 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
         LVALUE llvm_value = rvalue;
         
         if(strcmp(var_->mInlineRealName, "") != 0) {
-            add_come_code(info, "%s=%s;\n", var_->mInlineRealName, rvalue.c_value);
+            add_come_code(info, "%s=%s;\n", var_->mInlineRealName, tmp_rvalue);
             llvm_value.c_value = xsprintf("%s", var_->mInlineRealName);
         }
         else if(global) {
-            add_come_code(info, "%s=%s;\n", var_->mName, rvalue.c_value);
+            add_come_code(info, "%s=%s;\n", var_->mName, tmp_rvalue);
             llvm_value.c_value = xsprintf("%s", var_->mName);
         }
         else {
-            add_come_code(info, "%s=%s;\n", var_->mCValueName, rvalue.c_value);
+            add_come_code(info, "%s=%s;\n", var_->mCValueName, tmp_rvalue);
             llvm_value.c_value = xsprintf("%s", var_->mCValueName);
         }
         
@@ -1129,7 +1141,7 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
                 if(obj && left_type->mHeap) {
                     LLVMTypeRef llvm_type = create_llvm_type_from_node_type(left_type);
                     LLVMValueRef obj2 = LLVMBuildLoad2(gBuilder, llvm_type, obj, "objY");
-                    free_object(left_type, obj2, var_->mLLVMValue.c_value, FALSE, info);
+                    free_object(left_type, obj2, NULL, FALSE, info);
                 }
                 
                 var_->mLLVMValue.value = rvalue2.value;
@@ -1161,7 +1173,7 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
                     if(obj && left_type->mHeap) {
                         LLVMTypeRef llvm_type = create_llvm_type_from_node_type(left_type);
                         LLVMValueRef obj2 = LLVMBuildLoad2(gBuilder, llvm_type, obj, "objZ");
-                        free_object(left_type, obj2, var_->mLLVMValue.c_value, FALSE, info);
+                        free_object(left_type, obj2, NULL, FALSE, info);
                     }
     
                     var_->mLLVMValue.value = alloca_value;
@@ -1205,7 +1217,7 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
                 if(obj && left_type->mHeap) {
                     LLVMTypeRef llvm_type = create_llvm_type_from_node_type(left_type);
                     LLVMValueRef obj2 = LLVMBuildLoad2(gBuilder, llvm_type, obj, "objA");
-                    free_object(left_type, obj2, var_->mLLVMValue.c_value, FALSE, info);
+                    free_object(left_type, obj2, NULL, FALSE, info);
                 }
     
                 var_->mLLVMValue.value = alloca_value;
@@ -1225,7 +1237,7 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
             if(obj && left_type->mHeap) {
                 LLVMTypeRef llvm_type = create_llvm_type_from_node_type(left_type);
                 LLVMValueRef obj2 = LLVMBuildLoad2(gBuilder, llvm_type, obj, "objB");
-                free_object(left_type, obj2, var_->mLLVMValue.c_value, FALSE, info);
+                free_object(left_type, obj2, NULL, FALSE, info);
             }
             
             var_->mLLVMValue.value = rvalue2.value;
@@ -1256,7 +1268,7 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
             if(obj && left_type->mHeap) {
                 LLVMTypeRef llvm_type = create_llvm_type_from_node_type(left_type);
                 LLVMValueRef obj2 = LLVMBuildLoad2(gBuilder, llvm_type, obj, "objC");
-                free_object(left_type, obj2, var_->mLLVMValue.c_value, FALSE, info);
+                free_object(left_type, obj2, NULL, FALSE, info);
             }
     
             LLVMValueRef alloca_value = var_->mLLVMValue.value;
@@ -2187,12 +2199,13 @@ BOOL compile_store_element(unsigned int node, sCompileInfo* info)
     if(operator_fun != NULL) {
         LLVMValueRef obj;
         
+        char* llvm_fun_name = NULL;
         if(operator_fun->mGenericsFunction) {
             LLVMValueRef llvm_fun = NULL;
             
             BOOL immutable_ = operator_fun->mImmutable;
 
-            char* llvm_fun_name = NULL;
+            llvm_fun_name = NULL;
             if(!create_generics_function(&llvm_fun, &llvm_fun_name, operator_fun, fun_name, left_type, 0, NULL, immutable_, info)) {
                 fprintf(stderr, "can't craete generics function %s\n", fun_name);
                 exit(51);
@@ -2343,6 +2356,7 @@ BOOL compile_store_element(unsigned int node, sCompileInfo* info)
                 return FALSE;
             }
 
+            llvm_fun_name = xsprintf("%s", fun_name);
             LLVMValueRef llvm_fun = LLVMGetNamedFunction(gModule, fun_name);
             if(llvm_fun == NULL) {
                 compile_err_msg(info, "require not inilne function for operator functions");
@@ -2389,6 +2403,7 @@ BOOL compile_store_element(unsigned int node, sCompileInfo* info)
         
         if(type_identify_with_class_name(result_type, "void") && result_type->mPointerNum == 0) {
             dec_stack_ptr(2+num_dimention, info);
+            add_come_code(info, xsprintf("%s(%s,%s,%s);\n", llvm_fun_name, lvalue.c_value, mvalue[0].c_value, rvalue.c_value));
         }
         else {
             LVALUE llvm_value;
@@ -2397,27 +2412,18 @@ BOOL compile_store_element(unsigned int node, sCompileInfo* info)
             llvm_value.address = NULL;
             llvm_value.var = NULL;
             
-            sBuf buf;
-            sBuf_init(&buf);
-            sBuf_append_str(&buf, lvalue.c_value);
-            for(i=0; i<num_dimention; i++) {
-                sBuf_append_str(&buf, xsprintf("[%s]", mvalue[i].c_value));
-            }
-            
-            sBuf_append_str(&buf, xsprintf(" = %s", rvalue.c_value));
-            
             if(result_type->mHeap) {
                 char* var_name = append_object_to_right_values(obj, left_type, info);
-                llvm_value.c_value = xsprintf("(%s = %s)", var_name, buf.mBuf);
+                llvm_value.c_value = xsprintf("(%s = %s(%s,%s,%s)", var_name, llvm_fun_name, lvalue.c_value, mvalue[0].c_value, rvalue.c_value);
             }
             else {
-                llvm_value.c_value = xsprintf("%s", buf.mBuf);
+                llvm_value.c_value = xsprintf("%s(%s,%s, %s)", llvm_fun_name, lvalue.c_value, mvalue[0].c_value, rvalue.c_value);
             }
+            
+            add_come_code(info, "%s;\n", llvm_value.c_value);
     
             dec_stack_ptr(2+num_dimention, info);
             push_value_to_stack_ptr(&llvm_value, info);
-            
-            free(buf.mBuf);
         }
         
         info->type = result_type;
@@ -6500,7 +6506,7 @@ BOOL compile_store_field(unsigned int node, sCompileInfo* info)
         return TRUE;
     }
     
-    LLVMValueRef field_address;
+    LLVMValueRef field_address = NULL;
 
     if(left_type->mClass->mFlags & CLASS_FLAGS_UNION) {
         field_index = 0;
@@ -6531,32 +6537,44 @@ BOOL compile_store_field(unsigned int node, sCompileInfo* info)
         }
     }
     
+    static int tmp_var_num = 0;
+    char* tmp_right_var_name = xsprintf("__tmp_store_field%d", ++tmp_var_num);
+    add_come_code(info, "%s = %s;\n", make_define_var(field_type, tmp_right_var_name, info), rvalue.c_value);
+    
     if(field_address && field_type->mHeap) {
         LLVMTypeRef llvm_type = create_llvm_type_from_node_type(field_type);
         LLVMValueRef obj2 = LLVMBuildLoad2(gBuilder, llvm_type, field_address, "objXY");
-        free_object(field_type, obj2, NULL, FALSE, info);
+        char* c_value = NULL;
+        if(left_type->mPointerNum > 0) {
+            if(field_type->mPointerNum > 0) {
+                c_value = xsprintf("((%s && %s->%s) ? %s->%s : (void*)0)", lvalue.c_value, lvalue.c_value, var_name, lvalue.c_value, var_name);
+            }
+            else {
+                c_value = NULL;
+            }
+        }
+        else {
+            if(field_type->mPointerNum > 0) {
+                c_value = xsprintf("%s.%s", lvalue.c_value, var_name);
+            }
+            else {
+                c_value = NULL;
+            }
+        }
+        free_object(field_type, obj2, c_value, FALSE, info);
     }
     
     LLVMBuildStore(gBuilder, rvalue.value, field_address);
     
-/*
-    if(left_type->mPointerNum > 0) {
-        add_come_code(info, "%s->%s = %s;\n", lvalue.c_value, left_type->mClass->mFieldName[field_index], rvalue.c_value);
-    }
-    else {
-        add_come_code(info, "%s.%s = %s;\n", lvalue.c_value, left_type->mClass->mFieldName[field_index], rvalue.c_value);
-    }
-*/
-
     dec_stack_ptr(2, info);
     
     LVALUE llvm_value = rvalue;
     if(left_type->mPointerNum > 0) {
-        add_come_code(info, "%s->%s=%s;\n",lvalue.c_value, var_name, rvalue.c_value);
+        add_come_code(info, "%s->%s=%s;\n",lvalue.c_value, var_name, tmp_right_var_name);
         llvm_value.c_value = xsprintf("%s->%s", lvalue.c_value, var_name);
     }
     else {
-        add_come_code(info, "%s.%s=%s;\n",lvalue.c_value, var_name, rvalue.c_value);
+        add_come_code(info, "%s.%s=%s;\n",lvalue.c_value, var_name, tmp_right_var_name);
         llvm_value.c_value = xsprintf("%s.%s", lvalue.c_value, var_name);
     }
     push_value_to_stack_ptr(&llvm_value, info);
@@ -6876,12 +6894,12 @@ BOOL load_element_core(BOOL getting_refference, int num_dimention, sNodeType* le
     if(operator_fun != NULL) {
         LLVMValueRef obj;
         
+        char* llvm_fun_name = NULL;
         if(operator_fun->mGenericsFunction) {
             LLVMValueRef llvm_fun = NULL;
             
             BOOL immutable_ = operator_fun->mImmutable;
 
-            char* llvm_fun_name = NULL;
             if(!create_generics_function(&llvm_fun, &llvm_fun_name, operator_fun, fun_name, left_type, 0, NULL, immutable_, info)) {
                 fprintf(stderr, "can't craete generics function %s\n", fun_name);
                 exit(91);
@@ -7020,6 +7038,8 @@ BOOL load_element_core(BOOL getting_refference, int num_dimention, sNodeType* le
                 fun_param_types[i] = fun_param_type;
                 llvm_param_types[i] = create_llvm_type_from_node_type(fun_param_type);
             }
+            
+            llvm_fun_name = xsprintf("%s", fun_name);
 
             LLVMValueRef llvm_fun = LLVMGetNamedFunction(gModule, fun_name);
             if(llvm_fun == NULL) {
@@ -7080,10 +7100,10 @@ BOOL load_element_core(BOOL getting_refference, int num_dimention, sNodeType* le
         
         if(result_type->mHeap) {
             char* var_name = append_object_to_right_values(obj, result_type, info);
-            llvm_value.c_value = xsprintf("(%s = %s)", var_name, NULL);
+            llvm_value.c_value = xsprintf("(%s = %s(%s, %s))", var_name, llvm_fun_name, lvalue.c_value, rvalue[0].c_value);
         }
         else {
-            llvm_value.c_value = xsprintf("(%s)", NULL);
+            llvm_value.c_value = xsprintf("(%s(%s, %s))", llvm_fun_name, lvalue.c_value, rvalue[0].c_value);
         }
         
         dec_stack_ptr(dec_stack_value, info);

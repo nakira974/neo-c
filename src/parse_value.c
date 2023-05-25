@@ -1641,7 +1641,7 @@ BOOL parse_return(unsigned int* node, sParserInfo* info)
         }
     }
 
-    *node = sNodeTree_create_return(*node, info);
+    *node = sNodeTree_create_return(*node, FALSE, info);
 
     return TRUE;
 }

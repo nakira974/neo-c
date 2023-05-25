@@ -867,7 +867,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL for
                     
                     LLVMBuildCall2(gBuilder, function_type, llvm_fun2, llvm_params, num_params, "");
                     
-                    add_come_code(info, xsprintf("call_finalizer(%s,%s,%d);\n", llvm_fun_name, c_value, node_type->mAllocaValue));
+                    if(c_value) add_come_code(info, xsprintf("call_finalizer(%s,%s,%d);\n", llvm_fun_name, c_value, node_type->mAllocaValue));
                 }
             }
             else {
@@ -952,7 +952,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL for
                     LLVMTypeRef function_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
                     LLVMBuildCall2(gBuilder, function_type, llvm_fun2, llvm_params2, num_params2, "");
                     
-                    add_come_code(info, xsprintf("call_finalizer(%s,%s,%d);\n", fun_name, c_value, node_type->mAllocaValue));
+                    if(c_value) add_come_code(info, xsprintf("call_finalizer(%s,%s,%d);\n", fun_name, c_value, node_type->mAllocaValue));
                 }
             }
         }
@@ -5540,9 +5540,10 @@ BOOL compile_block(sNodeBlock* block, BOOL force_hash_result, sCompileInfo* info
                     && gComeFunctionResultType->mPointerNum == 0 && !gComeFunctionResultType->mMethodGenericsResult)
                     && gNodes[node].mNodeType != kNodeTypeReturn && gNodes[node].mNodeType != kNodeTypeGoto) 
                 {
-                    dec_stack_ptr(1, info);
+                    //dec_stack_ptr(1, info);
                     
-                    node = sNodeTree_create_return(node, info->pinfo);
+                    BOOL no_compile_value = TRUE;
+                    node = sNodeTree_create_return(node, no_compile_value, info->pinfo);
                     
                     if(!compile(node, info)) {
                         info->pinfo->lv_table = old_table;

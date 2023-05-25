@@ -1086,7 +1086,7 @@ BOOL compile_for_expression(unsigned int node, sCompileInfo* info)
     return TRUE;
 }
 
-unsigned int sNodeTree_create_return(unsigned int left, sParserInfo* info)
+unsigned int sNodeTree_create_return(unsigned int left, BOOL no_compile_value, sParserInfo* info)
 {
     unsigned node = alloc_node();
 
@@ -1094,6 +1094,8 @@ unsigned int sNodeTree_create_return(unsigned int left, sParserInfo* info)
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
+    
+    gNodes[node].uValue.sReturn.mNoCompileValue = no_compile_value;
 
     gNodes[node].mLeft = left;
     gNodes[node].mRight = 0;
@@ -1104,11 +1106,16 @@ unsigned int sNodeTree_create_return(unsigned int left, sParserInfo* info)
 
 BOOL compile_return(unsigned int node, sCompileInfo* info)
 {
+    BOOL no_compile_value = gNodes[node].uValue.sReturn.mNoCompileValue;
     int left_node = gNodes[node].mLeft;
+    
+    transpiler_append_defer_source(info);
 
     if(left_node != 0) {
-        if(!compile(left_node, info)) {
-            return FALSE;
+        if(!no_compile_value) {
+            if(!compile(left_node, info)) {
+                return FALSE;
+            }
         }
         
         sNodeType* result_type = clone_node_type(gComeFunctionResultType);
@@ -1209,6 +1216,7 @@ BOOL compile_return(unsigned int node, sCompileInfo* info)
             else {
                 if(type_identify_with_class_name(result_type, "void") && result_type->mPointerNum == 0)
                 {
+                    add_come_code(info, "return;");
                 }
                 else {
                     sNodeType* result_type2 = clone_node_type(result_type);
@@ -1267,6 +1275,7 @@ BOOL compile_return(unsigned int node, sCompileInfo* info)
 
             LLVMBuildRet(gBuilder, NULL);
         }
+        add_come_code(info, "return;");
 
         info->return_result_type = create_node_type_with_class_name("void");
 
@@ -2170,6 +2179,10 @@ BOOL compile_defer(unsigned int node, sCompileInfo* info)
     if(!compile(expression_node, info)) {
         return FALSE;
     }
+    
+    LVALUE llvm_value = *get_value_from_stack(-1);
+    
+    add_come_code_at_defer(info, "%s;\n", llvm_value.c_value);
 
     llvm_change_block(current_block, info);
 

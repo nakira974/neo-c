@@ -98,6 +98,7 @@ void remove_come_function(char* fun_name)
                 
                 free(it->mSource.mBuf);
                 free(it->mSourceHead.mBuf);
+                free(it->mSourceDefer.mBuf);
                 memset(it, 0, sizeof(sComeFun));
                 break;
             }
@@ -141,6 +142,7 @@ void add_come_function(char* fun_name, sNodeType* result_type, int num_params, s
             }
             sBuf_init(&it->mSource);
             sBuf_init(&it->mSourceHead);
+            sBuf_init(&it->mSourceDefer);
             
             if(gComeFunctionHead == NULL) {
                 gComeFunctionHead = it;
@@ -231,6 +233,27 @@ void add_come_code_at_head(struct sCompileInfoStruct* info, const char* msg, ...
     }
     else {
         sBuf_append_str(&gComeModule.mSourceHead, xsprintf("%s", msg2));
+    }
+}
+
+void add_come_code_at_defer(struct sCompileInfoStruct* info, const char* msg, ...)
+{
+    char msg2[COME_CODE_MAX];
+
+    va_list args;
+    va_start(args, msg);
+    vsnprintf(msg2, COME_CODE_MAX, msg, args);
+    va_end(args);
+    
+    if(info->come_fun) {
+        sBuf_append_str(&info->come_fun->mSourceDefer, xsprintf("%s", msg2));
+    }
+}
+
+void transpiler_append_defer_source(struct sCompileInfoStruct* info)
+{
+    if(info->come_fun) {
+        add_come_code(info, "%s", info->come_fun->mSourceDefer.mBuf);
     }
 }
 

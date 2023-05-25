@@ -1,102 +1,149 @@
 #include <comelang.h>
+#include <stdio.h>
 
-int main()
+int fun(int x = 123, int y = 345, int z = 456) 
 {
-    xassert("char_match test", "ABC".match(/A/));
-    xassert("char_index test", "ABC".index("B", -1) == 1);
-    xassert("char_rindex test", "ABCABC".rindex("B", -1) == 4);
-    xassert("char_index_regex", "ABC".index_regex(/B/, -1) == 1);
-    xassert("char_rindex_regex", "ABCABC".rindex_regex(/B/, -1) == 4);
-
-    string str = string("ABC");
-
-    str.replace(1, 'C');
-
-    xassert("char_replace", strcmp(str, "ACC") == 0);
-    xassert("char_multiply", strcmp(string("ABC").multiply(2), "ABCABC") == 0);
-
-    xassert("char_sub", strcmp("ABC".sub(/B/, "C"), "ACC") == 0);
-
-    xassert("char_sub_count", strcmp("ABCABCABC".sub_count(/B/g, "C", 2), "ACCACCABC") == 0);
-
-    auto li = "ABC".scan(/./);
-
-puts("AAA");
-li.each {
-printf("%s\n", it);
+    printf("x %d y %d z %d\n", x, y, z);
 }
-    xassert("char_scan", strcmp(li.item(0, null!), "A") == 0 && strcmp(li.item(1, null!), "B") == 0 && strcmp(li.item(2, null!), "C") == 0);
 
-    auto li2 = "A,B,C".split(/,/);
+struct sData 
+{
+    int x;
+    int y;
+    int z;
+};
 
-    xassert("char_split", strcmp(li2.item(0, null!), "A") == 0 && strcmp(li2.item(1, null!), "B") == 0 && strcmp(li2.item(2, null!), "C") == 0);
+int sData*::fun(sData* self, int x = 123, int y = 345, int z = 456)
+{
+    self.x = x;
+    self.y = y;
+    self.z = z;
+}
 
-    auto li3 = "A,B,C".split_char(',');
+void sData*::show(sData* self)
+{
+    printf("x %d y %d z %d\n", self.x, self.y, self.z);
+}
 
-    xassert("char_split_char", strcmp(li3.item(0, null!), "A") == 0 && strcmp(li3.item(1, null!), "B") == 0 && strcmp(li3.item(2, null!), "C") == 0);
+int putc(int c, FILE* f) version 2
+{
+    int result = inherit(c, f);
+    puts("");
     
-    auto li4 = "A,,B,,C".split_str(",,");
+    return result;
+}
 
-    xassert("char_split_str", strcmp(li4.item(0, null!), "A") == 0 && strcmp(li4.item(1, null!), "B") == 0 && strcmp(li4.item(2, null!), "C") == 0);
-    
-    auto li5 = "A,,B,,C".split_maxsplit(/,,/, 1);
+struct sData2
+{
+    map<string,int>*% m1;
+};
 
-    xassert("char_split_maxsplit", strcmp(li5.item(0, null!), "A") == 0 && strcmp(li5.item(1, null!), "B,,C") == 0);
+void sData2::finalize(sData2* self)
+{
+    delete borrow self.m1;
+}
 
-    xassert("char_delete", string("ABC").delete(0,1).equals("BC"));
+struct sInfo
+{
+    smart_pointer<char>*% p;
+};
 
-    xassert("wchar_substring", wcscmp(wstring("ABC").substring(0,1), wstring("A")) == 0);
-    
-    auto li6 = "A,B,C".split_str(",");
-    
-    xassert("join", li6.join(" ").equals("A B C"));
-    
-    auto li7 = "A,B,C".split(/,/g);
-    
-    xassert("split test", li7.item(0, null!).equals("A") && li6.item(1,null!).equals("B") && li6.item(2, null!).equals("C"));
-    
-    xassert("index_count test", "ABCABC".index_count("ABC", 2, -1) == 3);
-    xassert("index_regex_count test", "ABCABC".index_regex_count(/ABC/g, 2, -1) == 3);
-    xassert("rindex_count test", "ABCABC".rindex_count("ABC", 2, -1) == 0);
-    xassert("rindex_regex_count test", "ABCABC".rindex_regex_count(/CBA/g, 2, -1) == 0);
-    xassert("rindex_regex test", "ABCABC".rindex_regex(/CBA/, -1) == 5);
-    xassert("match_count test", "ABCABCABC".match_count(/ABC/, 3));
-    xassert("match_count test", "ABCABCABC".match_count(/ABC/, 4) == false);
-    xassert("sub_count test", "ABCABCABC".sub_count(/ABC/g, "X", 2).equals("XXABC"));
-    xassert("sub_block test", "ABCABCABC".sub_block(/ABC/g) { return string("X"); }.equals("XXX"));
-    xassert("sub_block_count test", "ABCABCABC".sub_block_count(/ABC/g, 2) { return string("X"); }.equals("XXABC"));
-    xassert("sub_block_count test2", "ABCABCABC".sub_block_count(/ABC/g, 2) { return it.substring(0,1); }.equals("AAABC"));
-    xassert("scan_block test", "123 456 789".scan_block(/\d\d\d/g) { return it.substring(0, 1); }.join("").equals("147"));
-    xassert("scan_block_count test", "123 456 789".scan_block_count(/\d\d\d/g, 2) { return it.substring(0, 1); }.join("").equals("14"));
-    
-    auto li8 = "ABC".scan(/./);
-    
-    xassert("scan test", li8.item(0, null!).equals("A") && li8.item(1, null!).equals("B") && li8.item(2, null!).equals("C"));
-    
-    buffer*% bufX = "ABC".to_buffer();
-    bufX.append_str("DEF");
-    
-    xassert("to_buffer test", bufX.to_string().equals("ABCDEF"));
-    xassert("split block test", "ABC,DEF,GHI".split_block(/,/) { return it.substring(0,1); }.join("").equals("ADG"));
-    xassert("split block test", "ABC,DEF,GHI".split_block_count(/,/, 2) { return it.substring(0,1); }.join("").equals("AD"));
-    xassert("regex test", "ABC".scan(/./).join("").equals("ABC"));
-    
-    xassert("regex equals test", /aaa/g.equals(/aaa/g));
-    
-    list<string>*% group_strings = new list<string>.initialize();
-    
-    int num_group_strings_in_regx = 0;
-    "id: abc mail: abc@icloud.com".scan_group_strings(/(\w+):/, group_strings, &num_group_strings_in_regx);
-    
-    xassert("regex scan group strings test", group_strings.item(0, null!).equals("id") && group_strings.item(1, null!).equals("mail") && num_group_strings_in_regx == 1);
-    
-    list<string>*% group_strings2 = new list<string>.initialize();
-    
-    "id: abc mail: abc@icloud.com".scan_group_strings(/(\w+): ([\w@.]+)/, group_strings2, &num_group_strings_in_regx);
-    
-    xassert("regex scan group strings test2", group_strings2.item(0, null!).equals("id") && group_strings2.item(1, null!).equals("abc") && group_strings2.item(2, null!).equals("mail") && group_strings2.item(3, null!).equals("abc@icloud.com") && num_group_strings_in_regx == 2);
+void funX(sInfo* info)
+{
+    info->p++
+}
 
+void funX2(sInfo* info)
+{
+    info->p++;
+}
+
+int main(int argc, char** argv) 
+{
+    using unsafe; 
+    fun();
+    fun(y:2);
+    
+    fun(y:1, x:3);
+    
+    fun(1);
+    fun(1,2);
+    
+    sData data;
+    (&data).fun(1,2,3);
+    (&data).show();
+    
+    (&data).fun(y:2);
+    (&data).show();
+    
+    (&data).fun(1);
+    (&data).show();
+    
+    auto li2 = ["1", "2", "3"];
+    
+    auto li3 = li2.map { atoi(it); };
+    
+    xassert("return test", li3.item(0, -1) == 1 && li3.item(1, -1) == 2 && li3.item(2, -1) == 3);
+    
+    xassert("operator overload test", [1,2] + [3] === [1,2,3]);
+    xassert("operator overload test2", [1,2] + [4] !== [1,2,3]);
+    xassert("operator overload test3", [1,2] * 2 === [1,2,1,2]);
+    xassert("operator overload test4", "ABC" * 3 === "ABCABCABC");
+    
+    xassert("operator overload test4.5", "ABC" + "DEF" === "ABCDEF");
+    
+    auto li4 = [1,2,3];
+    xassert("operator overload test5", li4[0] == 1 && li4[1] == 2 && li4[2] == 3 && li4[5] == 0);
+    
+    li4[0] = 2;
+
+    xassert("operator overload test6", li4[0] == 2);
+    
+    auto ma1 = ["AAA":1, "BBB":2, "CCC":3]
+    xassert("operator overload test6", ma1["AAA"] == 1 && ma1["BBB"] == 2 && ma1["CCC"] == 3);
+    
+    ma1["DDD"] = 4;
+    ma1["AAA"] = 11;
+    xassert("operator overload test7", ma1["DDD"] == 4 && ma1["AAA"] == 11 && ma1["XXX"] == null);
+    
+    putc('X', stdout);
+    
+    int* a = null;
+    
+    int b = 123;
+    
+    a = nullable &b;
+    
+    printf("%d\n", *a);
+    
+    sData2*% c = new sData2;
+    
+    c.m1 = new map<string,int>.initialize();
+    
+    c.m1.insert(string("AAA"), 1);
+    c.m1.insert(string("BBB"), 2);
+    
+    printf("%d %d\n", c.m1[string("AAA")], c.m1[string("BBB")]);
+    
+    c.m1 = new map<string,int>.initialize();
+    
+    c.m1.insert(string("AAA"), 3);
+    c.m1.insert(string("BBB"), 4);
+    
+    printf("%d %d\n", c.m1[string("AAA")], c.m1[string("BBB")]);
+    
+    auto info = new sInfo;
+    
+    info->p = "ABC".to_buffer().to_pointer();
+    
+    funX(info);
+    funX2(info);
+    
+    auto p = "ABC".to_buffer().to_pointer();
+    
+    p++;
+    
+    xassert("auto pointer test", *info->p == 'C' && *p == 'B');
+    
     return 0;
 }
-
-

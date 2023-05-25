@@ -509,6 +509,8 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
         info->function_node_block = function_node_block;
         return FALSE;
     }
+    
+    transpiler_append_defer_source(info);
 
     if(type_identify_with_class_name(result_type, "void") && result_type->mPointerNum == 0) {
         call_come_gc_final(info);

@@ -79,15 +79,6 @@ int main(int argc, char** argv)
     (&data).fun(1);
     (&data).show();
     
-/*
-    auto li = list<int>();
-    
-    li.push_back(1);
-    li.push_back(2);
-    li.push_back(3);
-    
-    xassert("list initializer test", li.item(0, -1) == 1 && li.item(1, -1) == 2 && li.item(2, -1) == 3);
-*/
     auto li2 = ["1", "2", "3"];
     
     auto li3 = li2.map { atoi(it); };

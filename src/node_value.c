@@ -821,7 +821,15 @@ BOOL compile_list_value(unsigned int node, sCompileInfo* info)
     if(!compile(pre_node, info)) {
         return FALSE;
     }
+    
+    LVALUE pre_node_value = *get_value_from_stack(-1);
     dec_stack_ptr(1, info);
+    
+    sNodeType* pre_node_type = clone_node_type(info->type);
+    
+    if(gNCTranspile) {
+        remove_object_from_right_values(pre_node_value.value, info);
+    }
     
     sNodeType* node_type = clone_node_type(info->type);
     
@@ -833,6 +841,14 @@ BOOL compile_list_value(unsigned int node, sCompileInfo* info)
 
         if(!compile(node, info)) {
             return FALSE;
+        }
+        
+        if(!(type_identify(info->type, pre_node_type) && info->type->mPointerNum == pre_node_type->mPointerNum && info->type->mHeap == pre_node_type->mHeap))
+        {
+            compile_err_msg(info, "invalid list type");
+            show_node_type(pre_node_type);
+            show_node_type(info->type);
+            return TRUE;
         }
         
         if(element_type == NULL) {
@@ -992,6 +1008,46 @@ BOOL compile_map_value(unsigned int node, sCompileInfo* info)
         values[i] = gNodes[node].uValue.sMap.mValues[i];
     }
     
+    unsigned int pre_node = keys[0];
+
+    if(!compile(pre_node, info)) {
+        return FALSE;
+    }
+    
+    LVALUE pre_node_value = *get_value_from_stack(-1);
+    dec_stack_ptr(1, info);
+    
+    sNodeType* pre_node_type = clone_node_type(info->type);
+    
+    if(gNCTranspile) {
+        remove_object_from_right_values(pre_node_value.value, info);
+    }
+    
+    unsigned int pre_node2 = values[0];
+
+    if(!compile(pre_node2, info)) {
+        return FALSE;
+    }
+    
+    LVALUE pre_node_value2 = *get_value_from_stack(-1);
+    dec_stack_ptr(1, info);
+    
+    sNodeType* pre_node_type2 = clone_node_type(info->type);
+    
+    if(gNCTranspile) {
+        remove_object_from_right_values(pre_node_value2.value, info);
+    }
+    
+    static int map_num = 0;
+    
+    sBuf buf;
+    sBuf_init(&buf);
+    
+    sBuf_append_str(&buf, xsprintf("%s _map_keys_value%d[%d];\n", make_type_name_string(pre_node_type), ++map_num, num_keys));
+    sBuf_append_str(&buf, xsprintf("%s _map_values_value%d[%d];\n", make_type_name_string(pre_node_type2), map_num, num_keys));
+    
+    sNodeType* node_type = clone_node_type(info->type);
+    
     sNodeType* key_type = NULL;
     sNodeType* value_type = NULL;
     LVALUE key_values[LIST_ELEMENT_MAX];
@@ -1004,6 +1060,14 @@ BOOL compile_map_value(unsigned int node, sCompileInfo* info)
             return FALSE;
         }
         
+        if(!(type_identify(info->type, pre_node_type) && info->type->mPointerNum == pre_node_type->mPointerNum && info->type->mHeap == pre_node_type->mHeap))
+        {
+            compile_err_msg(info, "invalid map type");
+            show_node_type(pre_node_type);
+            show_node_type(info->type);
+            return TRUE;
+        }
+        
         if(key_type == NULL) {
             key_type = clone_node_type(info->type);
         }
@@ -1013,10 +1077,20 @@ BOOL compile_map_value(unsigned int node, sCompileInfo* info)
         
         remove_object_from_right_values(key_values[i].value, info);
         
+        sBuf_append_str(&buf, xsprintf("_map_keys_value%d[%d] = %s;\n", map_num, i, key_values[i].c_value));
+        
         unsigned int value = values[i];
 
         if(!compile(value, info)) {
             return FALSE;
+        }
+        
+        if(!(type_identify(info->type, pre_node_type2) && info->type->mPointerNum == pre_node_type2->mPointerNum && info->type->mHeap == pre_node_type2->mHeap))
+        {
+            compile_err_msg(info, "invalid map type");
+            show_node_type(pre_node_type2);
+            show_node_type(info->type);
+            return TRUE;
         }
         
         if(value_type == NULL) {
@@ -1026,8 +1100,14 @@ BOOL compile_map_value(unsigned int node, sCompileInfo* info)
         value_values[i] = *get_value_from_stack(-1);
         dec_stack_ptr(1, info);
         
+        sBuf_append_str(&buf, xsprintf("_map_values_value%d[%d] = %s;\n", map_num, i, value_values[i].c_value));
+        
         remove_object_from_right_values(value_values[i].value, info);
     }
+    
+    add_come_code(info, "%s", buf.mBuf);
+    
+    free(buf.mBuf);
     
     sNodeType* map_type = create_node_type_with_class_name("map");
     map_type->mPointerNum = 1;
@@ -1134,14 +1214,14 @@ BOOL compile_map_value(unsigned int node, sCompileInfo* info)
     
     LVALUE llvm_value;
     llvm_value.value = LLVMBuildCall2(gBuilder, function_type, llvm_fun, llvm_params, num_params, "fun_result2");
-    llvm_value.c_value = NULL;
     llvm_value.type = clone_node_type(map_type);
     llvm_value.address = NULL;
     llvm_value.var = NULL;
+    
+    char* var_name = append_object_to_right_values(llvm_value.value, map_type, info);
+    llvm_value.c_value = xsprintf("(%s = %s(%s, %d, _map_keys_value%d, _map_values_value%d))", var_name, llvm_fun_name, map_value.c_value, num_keys, map_num, map_num);
 
     push_value_to_stack_ptr(&llvm_value, info);
-    
-    append_object_to_right_values(llvm_value.value, map_type, info);
 
     info->type = clone_node_type(map_type);
     
@@ -1275,16 +1355,33 @@ BOOL compile_tuple_value(unsigned int node, sCompileInfo* info)
     
     LVALUE llvm_value;
     llvm_value.value = LLVMBuildCall2(gBuilder, function_type, llvm_fun, llvm_params, num_params, "fun_result2");
-    llvm_value.c_value = NULL;
     llvm_value.type = clone_node_type(tuple_type);
     llvm_value.address = NULL;
     llvm_value.var = NULL;
+    
+    char* var_name = append_object_to_right_values(llvm_value.value, tuple_type, info);
+    
+    sBuf buf2;
+    sBuf_init(&buf2);
+    
+    sBuf_append_str(&buf2, xsprintf("(%s = %s(%s, ", var_name, llvm_fun_name, tuple_value.c_value));
+    
+    for(i=0; i<num_nodes; i++) {
+        sBuf_append_str(&buf2, elements_value[i].c_value);
+        if(i != num_nodes-1) {
+            sBuf_append_str(&buf2, ",");
+        }
+        else {
+            sBuf_append_str(&buf2, "))");
+        }
+    }
+    llvm_value.c_value = xsprintf("%s", buf2.mBuf);
 
     push_value_to_stack_ptr(&llvm_value, info);
-    
-    append_object_to_right_values(llvm_value.value, tuple_type, info);
 
     info->type = clone_node_type(tuple_type);
+    
+    free(buf2.mBuf);
     
     return TRUE;
 }

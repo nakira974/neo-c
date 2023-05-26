@@ -1831,163 +1831,420 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
         char* p = info->p;
         int sline = info->sline;
         
-        BOOL struct_initializer = FALSE;
-        BOOL struct_initializer2 = FALSE;
-        
-        BOOL struct_initializer_pointer = FALSE;
-        if(*info->p == '&') {
+        if(gNCTranspile && !extern_ && type_identify_with_class_name(result_type, "char") && ((result_type->mPointerNum == 0 && result_type->mArrayDimentionNum == 1) || (result_type->mPointerNum == 1 && result_type->mOmitArrayNum)) && *info->p == '"')
+        {
+            sBuf buf;
+            sBuf_init(&buf);
+            
+            sBuf_append_char(&buf, '"');
             info->p++;
-            skip_spaces_and_lf(info);
-            struct_initializer_pointer = TRUE;
-        }
-        
-        if(((result_type->mClass->mFlags & CLASS_FLAGS_STRUCT) || (result_type->mClass->mFlags & CLASS_FLAGS_UNION)) && *info->p == '(') {
-            info->p++;
-            skip_spaces_and_lf(info);
             
-            char* p2 = info->p;
-            int sline2 = info->sline;
-            
-            char buf[VAR_NAME_MAX];
-            (void)parse_word(buf, VAR_NAME_MAX, info, FALSE, FALSE);
-            
-            if(is_type_name(buf, info)) {
-                info->p = p2;
-                info->sline = sline2;
-                
-                sNodeType* node_type = NULL;
-                char buf[VAR_NAME_MAX];
-                if(!parse_type(&node_type, info, NULL, FALSE, TRUE, NULL, FALSE, FALSE, FALSE, FALSE, FALSE)) {
+            while(TRUE) {
+                if(*info->p == '\\') {
+                    sBuf_append_char(&buf, *info->p);
+                    sBuf_append_char(&buf, *info->p);
+                    info->p += 2;
+                }
+                else if(*info->p == '"') {
+                    sBuf_append_char(&buf, *info->p);
+                    info->p++;
+                    break;
+                }
+                else if(*info->p == '\0') {
+                    parser_err_msg(info, xsprintf("Invalid source end. String top is at %d line", sline));
                     return FALSE;
                 }
-                
-                if(*info->p == ')') {
+                else {
+                    sBuf_append_char(&buf, *info->p);
                     info->p++;
-                    skip_spaces_and_lf(info);
+                }
+            }
+            
+            if(result_type->mOmitArrayNum) {
+                result_type->mPointerNum--;
+                result_type->mOmitArrayNum = FALSE;
+                result_type->mArrayDimentionNum++;
+                result_type->mArrayNum[result_type->mArrayDimentionNum-1] = strlen(buf.mBuf) - 2 + 1;
+            }
+            
+            char* tail = info->p;
+            
+            int len = tail - p;
+            char* initializer_source = GC_malloc(sizeof(char)*(len+1));
+            memcpy(initializer_source, p, len);
+            initializer_source[len] = '\0';
+           
+            *node = sNodeTree_create_define_array_with_initializer(result_type, name, initializer_source, info);
+            
+            free(buf.mBuf);
+        }
+        else if(gNCTranspile && !extern_ && (result_type->mArrayDimentionNum > 0 || result_type->mOmitArrayNum) && *info->p == '{') 
+        {
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            int num_element = 0;
+    
+            BOOL dquort = FALSE;
+            BOOL squort = FALSE;
+            int sline = 0;
+            int nest = 0;
+            while(1) {
+                if(dquort) {
+                    if(*info->p == '\\') {
+                        info->p++;
+                        if(*info->p == '\0') {
+                            fprintf(stderr, "%s %d: unexpected the source end. close single quote or double quote.", info->sname, sline);
+                            return FALSE;
+                        }
+                        info->p++;
+                    }
+                    else if(*info->p == '"') {
+                        info->p++;
+                        dquort = !dquort;
+                    }
+                    else {
+                        info->p++;
+    
+                        if(*info->p == '\0') {
+                            fprintf(stderr, "%s %d: unexpected the source end. close single quote or double quote.", info->sname, sline);
+                            return FALSE;
+                        }
+                    }
+                }
+                else if(squort) {
+                    if(*info->p == '\\') {
+                        info->p++;
+                        if(*info->p == '\0') {
+                            fprintf(stderr, "%s %d: unexpected the source end. close single quote or double quote.", info->sname, sline);
+                            return FALSE;
+                        }
+                        info->p++;
+                    }
+                    else if(*info->p == '\'') {
+                        info->p++;
+                        squort = !squort;
+                    }
+                    else {
+                        info->p++;
+    
+                        if(*info->p == '\0') {
+                            fprintf(stderr, "%s %d: unexpected the source end. close single quote or double quote.", info->sname, sline);
+                            return FALSE;
+                        }
+                    }
+                }
+                else if(*info->p == '\'') {
+                    sline = info->sline;
+                    info->p++;
+                    squort = !squort;
+                }
+                else if(*info->p == '"') {
+                    sline = info->sline;
+                    info->p++;
+                    dquort = !dquort;
+                }
+                else if(*info->p == '#') {
+                    if(!parse_sharp(info)) {
+                        return FALSE;
+                    }
+                }
+                else if(*info->p == '{') {
+                    info->p++;
+    
+                    nest++;
+                }
+                else if(*info->p == '}') {
+                    info->p++;
+    
+                    if(nest == 0) {
+                        skip_spaces_and_lf(info);
+                        break;
+                    }
+    
+                    nest--;
+                }
+                else if(*info->p == '\0') {
+                    parser_err_msg(info, "The block requires } character for closing block");
+                    return TRUE;
+                }
+                else if(*info->p == '\n') {
+                    info->p++;
+                    info->sline++;
+                }
+                else if(*info->p == ',') {
+                    info->p++;
+                    num_element++;
+                }
+                else {
+                    info->p++;
+                }
+            }
+            
+            num_element++;
+
+            if(result_type->mOmitArrayNum) {
+                result_type->mOmitArrayNum = FALSE;
+                result_type->mArrayDimentionNum++;
+                result_type->mArrayNum[result_type->mArrayDimentionNum-1] = num_element;
+                result_type->mPointerNum--;
+            }
+            
+            char* tail = info->p;
+            
+            int len = tail - p;
+            char* initializer_source = GC_malloc(sizeof(char)*(len+1));
+            memcpy(initializer_source, p, len);
+            initializer_source[len] = '\0';
+           
+            *node = sNodeTree_create_define_array_with_initializer(result_type, name, initializer_source, info);
+        }
+        else {
+            BOOL struct_initializer = FALSE;
+            BOOL struct_initializer2 = FALSE;
+            
+            BOOL struct_initializer_pointer = FALSE;
+            if(*info->p == '&') {
+                info->p++;
+                skip_spaces_and_lf(info);
+                struct_initializer_pointer = TRUE;
+            }
+            
+            if(((result_type->mClass->mFlags & CLASS_FLAGS_STRUCT) || (result_type->mClass->mFlags & CLASS_FLAGS_UNION)) && *info->p == '(') {
+                info->p++;
+                skip_spaces_and_lf(info);
+                
+                char* p2 = info->p;
+                int sline2 = info->sline;
+                
+                char buf[VAR_NAME_MAX];
+                (void)parse_word(buf, VAR_NAME_MAX, info, FALSE, FALSE);
+                
+                if(is_type_name(buf, info)) {
+                    info->p = p2;
+                    info->sline = sline2;
                     
-                    if(*info->p == '{') {
-                        struct_initializer = TRUE;
+                    sNodeType* node_type = NULL;
+                    char buf[VAR_NAME_MAX];
+                    if(!parse_type(&node_type, info, NULL, FALSE, TRUE, NULL, FALSE, FALSE, FALSE, FALSE, FALSE)) {
+                        return FALSE;
+                    }
+                    
+                    if(*info->p == ')') {
+                        info->p++;
+                        skip_spaces_and_lf(info);
+                        
+                        if(*info->p == '{') {
+                            struct_initializer = TRUE;
+                        }
                     }
                 }
             }
-        }
-        else if(((result_type->mClass->mFlags & CLASS_FLAGS_STRUCT) || (result_type->mClass->mFlags & CLASS_FLAGS_UNION)) && result_type->mPointerNum == 0 && *info->p == '{' && result_type->mOmitArrayNum) 
-        {
-            info->p++;
-            skip_spaces_and_lf(info);
-            
-            info->p++; // {
-            skip_spaces_and_lf(info);
-            
-            if(*info->p == '.') {
-                struct_initializer2 = TRUE;
-            }
-        }
-        else if(((result_type->mClass->mFlags & CLASS_FLAGS_STRUCT) && result_type->mPointerNum == 0 || (result_type->mClass->mFlags & CLASS_FLAGS_UNION)) && *info->p == '{') 
-        {
-            info->p++;
-            skip_spaces_and_lf(info);
-            
-            if(*info->p == '.') {
-                struct_initializer2 = TRUE;
-            }
-            else if(result_type->mArrayDimentionNum > 0 && info->mBlockLevel > 0) {
-                struct_initializer2 = TRUE;
-            }
-        }
-        else {
-            struct_initializer_pointer = FALSE;
-        }
-        
-        BOOL array_initializer_before = info->array_initializer2;
-        if(struct_initializer || struct_initializer2 || struct_initializer_pointer)
-        {
-            info->array_initializer2 = TRUE;
-        }
-        
-        info->p = p;
-        info->sline = sline;
-        
-        if(info->mBlockLevel > 0 && (struct_initializer || struct_initializer2)) {
-            if(result_type->mArrayDimentionNum > 1) {
-                parser_err_msg(info, "comelang don't support this format");
-                return FALSE;
-            }
-            else if(struct_initializer && result_type->mArrayDimentionNum > 0) {
-                parser_err_msg(info, "comelang don't support this format");
-                return FALSE;
-            }
-            else if(struct_initializer2 && (result_type->mArrayDimentionNum == 1 || result_type->mOmitArrayNum)) {
-                unsigned int nodes[INIT_ARRAY_MAX+128];
-                int num_nodes = 0;
+            else if(((result_type->mClass->mFlags & CLASS_FLAGS_STRUCT) || (result_type->mClass->mFlags & CLASS_FLAGS_UNION)) && result_type->mPointerNum == 0 && *info->p == '{' && result_type->mOmitArrayNum) 
+            {
+                info->p++;
+                skip_spaces_and_lf(info);
                 
-                nodes[num_nodes++] = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
+                info->p++; // {
+                skip_spaces_and_lf(info);
                 
-                sCLClass* klass = result_type->mClass;
-                unsigned int array_node = sNodeTree_create_load_variable(name, info);
+                if(*info->p == '.') {
+                    struct_initializer2 = TRUE;
+                }
+            }
+            else if(((result_type->mClass->mFlags & CLASS_FLAGS_STRUCT) && result_type->mPointerNum == 0 || (result_type->mClass->mFlags & CLASS_FLAGS_UNION)) && *info->p == '{') 
+            {
+                info->p++;
+                skip_spaces_and_lf(info);
                 
-                if(result_type->mOmitArrayNum) {
-                    char* p = info->p;
-                    int sline = info->sline;
+                if(*info->p == '.') {
+                    struct_initializer2 = TRUE;
+                }
+                else if(result_type->mArrayDimentionNum > 0 && info->mBlockLevel > 0) {
+                    struct_initializer2 = TRUE;
+                }
+            }
+            else {
+                struct_initializer_pointer = FALSE;
+            }
+            
+            BOOL array_initializer_before = info->array_initializer2;
+            if(struct_initializer || struct_initializer2 || struct_initializer_pointer)
+            {
+                info->array_initializer2 = TRUE;
+            }
+            
+            info->p = p;
+            info->sline = sline;
+            
+            if(info->mBlockLevel > 0 && (struct_initializer || struct_initializer2)) {
+                if(result_type->mArrayDimentionNum > 1) {
+                    parser_err_msg(info, "comelang don't support this format");
+                    return FALSE;
+                }
+                else if(struct_initializer && result_type->mArrayDimentionNum > 0) {
+                    parser_err_msg(info, "comelang don't support this format");
+                    return FALSE;
+                }
+                else if(struct_initializer2 && (result_type->mArrayDimentionNum == 1 || result_type->mOmitArrayNum)) {
+                    unsigned int nodes[INIT_ARRAY_MAX+128];
+                    int num_nodes = 0;
                     
-                    info->p++;
-                    skip_spaces_and_lf(info);
-                    int n = 0;
-                    while(TRUE) {
+                    nodes[num_nodes++] = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
+                    
+                    sCLClass* klass = result_type->mClass;
+                    unsigned int array_node = sNodeTree_create_load_variable(name, info);
+                    
+                    if(result_type->mOmitArrayNum) {
+                        char* p = info->p;
+                        int sline = info->sline;
+                        
+                        info->p++;
+                        skip_spaces_and_lf(info);
+                        int n = 0;
+                        while(TRUE) {
+                            int num_elements = 0;
+                            struct sStructInitializer elements[INIT_ARRAY_MAX];
+                            
+                            expect_next_character_with_one_forward("{", info);
+                            
+                            if(!parse_struct_initializer(&num_elements, elements, NULL, info))
+                            {
+                                return FALSE;
+                            }
+                            
+                            n++;
+                            
+                            if(*info->p == ',') {
+                                info->p++;
+                                skip_spaces_and_lf(info);
+                            }
+                            else if(*info->p == '}') {
+                                info->p++;
+                                skip_spaces_and_lf(info);
+                                break;
+                            }
+                        }
+                        
+                        result_type->mArrayDimentionNum = 1;
+                        result_type->mArrayNum[0] = n;
+                        result_type->mPointerNum--;
+                        
+                        info->p = p;
+                        info->sline = sline;
+                    }
+                    
+                    expect_next_character_with_one_forward("{", info);
+                    
+                    int i;
+                    for(i=0; i<result_type->mArrayNum[0]; i++) {
                         int num_elements = 0;
                         struct sStructInitializer elements[INIT_ARRAY_MAX];
                         
                         expect_next_character_with_one_forward("{", info);
                         
-                        if(!parse_struct_initializer(&num_elements, elements, NULL, info))
+                        if(!parse_struct_initializer(&num_elements, elements, result_type->mClass, info))
                         {
                             return FALSE;
                         }
                         
-                        n++;
+                        int num_dimention = 1;
+                        unsigned int index_node[1];
+                        index_node[0] = sNodeTree_create_int_value(i, info);
                         
-                        if(*info->p == ',') {
-                            info->p++;
-                            skip_spaces_and_lf(info);
+                        unsigned int element_node = sNodeTree_create_load_array_element(array_node, index_node, num_dimention, info);
+                        
+                        int l;
+                        for(l=0; l<klass->mNumFields; l++) {
+                            char* var_name = klass->mFieldName[l];
+                            
+                            int j;
+                            for(j=0; j<num_elements; j++) {
+                                struct sStructInitializer* struct_initializer = &elements[j];
+                                
+                                if(strcmp(struct_initializer->mName, var_name) == 0) {
+                                    unsigned int right_node = struct_initializer->mNode;
+                                
+                                    nodes[num_nodes++] = sNodeTree_create_store_field(var_name, element_node, right_node, info);
+                
+                                    if(num_nodes >= INIT_ARRAY_MAX+128) {
+                                        fprintf(stderr, "overflow array initializer number\n");
+                                        exit(82);
+                                    }
+                                }
+                            }
                         }
-                        else if(*info->p == '}') {
-                            info->p++;
-                            skip_spaces_and_lf(info);
-                            break;
+                        
+                        if(i == result_type->mArrayNum[0] -1) {
+                        }
+                        else {
+                            if(*info->p == '}') {
+                                i++;
+                                break;
+                            }
+                            else {
+                                expect_next_character_with_one_forward(",", info);
+                            }
                         }
                     }
+    /*
+                    for(; i<result_type->mArrayNum[0]; i++) {
+                        int num_dimention = 1;
+                        unsigned int index_node[1];
+                        index_node[0] = sNodeTree_create_int_value(i, info);
+                        
+                        sNodeType* result_type2 = clone_node_type(result_type);
+                        result_type2->mArrayDimentionNum = 0;
+                        
+                        unsigned int right_node = sNodeTree_create_null_value(result_type2, info);
+    
+                        nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
+                    }
+    */
+                    expect_next_character_with_one_forward("}", info);
                     
-                    result_type->mArrayDimentionNum = 1;
-                    result_type->mArrayNum[0] = n;
-                    result_type->mPointerNum--;
-                    
-                    info->p = p;
-                    info->sline = sline;
+                    BOOL in_macro = FALSE;
+                    *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
                 }
-                
-                expect_next_character_with_one_forward("{", info);
-                
-                int i;
-                for(i=0; i<result_type->mArrayNum[0]; i++) {
+                else if(struct_initializer || struct_initializer2) {
+                    if(struct_initializer) {
+                        info->p++;
+                        skip_spaces_and_lf(info);
+                        
+                        sNodeType* node_type = NULL;
+                        char buf[VAR_NAME_MAX];
+                        if(!parse_type(&node_type, info, NULL, FALSE, TRUE, NULL, FALSE, FALSE, FALSE, FALSE, FALSE)) {
+                            return FALSE;
+                        }
+                        
+                        expect_next_character_with_one_forward(")", info);
+                        expect_next_character_with_one_forward("{", info);
+                    }
+                    else {
+                        expect_next_character_with_one_forward("{", info);
+                    }
+                    
                     int num_elements = 0;
                     struct sStructInitializer elements[INIT_ARRAY_MAX];
+                
                     
-                    expect_next_character_with_one_forward("{", info);
-                    
-                    if(!parse_struct_initializer(&num_elements, elements, result_type->mClass, info))
+                    if(!parse_struct_initializer(&num_elements, elements, NULL, info))
                     {
                         return FALSE;
                     }
                     
-                    int num_dimention = 1;
-                    unsigned int index_node[1];
-                    index_node[0] = sNodeTree_create_int_value(i, info);
+                    unsigned int nodes[INIT_ARRAY_MAX+128];
+                    int num_nodes = 0;
                     
-                    unsigned int element_node = sNodeTree_create_load_array_element(array_node, index_node, num_dimention, info);
+                    nodes[num_nodes++] = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
                     
-                    int l;
-                    for(l=0; l<klass->mNumFields; l++) {
-                        char* var_name = klass->mFieldName[l];
+                    sCLClass* klass = result_type->mClass;
+                    
+                    unsigned int array_node = sNodeTree_create_load_variable(name, info);
+                    
+                    int i;
+                    for(i=0; i<klass->mNumFields; i++) {
+                        char* var_name = klass->mFieldName[i];
                         
                         int j;
                         for(j=0; j<num_elements; j++) {
@@ -1996,53 +2253,35 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                             if(strcmp(struct_initializer->mName, var_name) == 0) {
                                 unsigned int right_node = struct_initializer->mNode;
                             
-                                nodes[num_nodes++] = sNodeTree_create_store_field(var_name, element_node, right_node, info);
+                                nodes[num_nodes++] = sNodeTree_create_store_field(var_name, array_node, right_node, info);
             
                                 if(num_nodes >= INIT_ARRAY_MAX+128) {
                                     fprintf(stderr, "overflow array initializer number\n");
-                                    exit(82);
+                                    exit(92);
                                 }
                             }
                         }
                     }
                     
-                    if(i == result_type->mArrayNum[0] -1) {
-                    }
-                    else {
-                        if(*info->p == '}') {
-                            i++;
-                            break;
-                        }
-                        else {
-                            expect_next_character_with_one_forward(",", info);
-                        }
-                    }
+                    BOOL in_macro = FALSE;
+                    *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
                 }
-/*
-                for(; i<result_type->mArrayNum[0]; i++) {
-                    int num_dimention = 1;
-                    unsigned int index_node[1];
-                    index_node[0] = sNodeTree_create_int_value(i, info);
-                    
-                    sNodeType* result_type2 = clone_node_type(result_type);
-                    result_type2->mArrayDimentionNum = 0;
-                    
-                    unsigned int right_node = sNodeTree_create_null_value(result_type2, info);
-
-                    nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
-                }
-*/
-                expect_next_character_with_one_forward("}", info);
-                
-                BOOL in_macro = FALSE;
-                *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
             }
-            else if(struct_initializer || struct_initializer2) {
-                if(struct_initializer) {
+            else if(struct_initializer || struct_initializer_pointer || struct_initializer2) {
+                if(struct_initializer_pointer) {
+                    info->p++;
+                    skip_spaces_and_lf(info);
+                }
+                
+                sNodeType* node_type = NULL;
+                if(struct_initializer2) {
+                    expect_next_character_with_one_forward("{", info);
+                    node_type = clone_node_type(result_type);
+                }
+                else {
                     info->p++;
                     skip_spaces_and_lf(info);
                     
-                    sNodeType* node_type = NULL;
                     char buf[VAR_NAME_MAX];
                     if(!parse_type(&node_type, info, NULL, FALSE, TRUE, NULL, FALSE, FALSE, FALSE, FALSE, FALSE)) {
                         return FALSE;
@@ -2051,14 +2290,782 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                     expect_next_character_with_one_forward(")", info);
                     expect_next_character_with_one_forward("{", info);
                 }
+                
+                int num_elements = 0;
+                struct sStructInitializer elements[INIT_ARRAY_MAX];
+                if(!parse_struct_initializer(&num_elements, elements, result_type->mClass, info))
+                {
+                    return FALSE;
+                }
+                
+                if(info->mBlockLevel == 0) {
+                    if(struct_initializer_pointer) {
+                        unsigned int nodes[INIT_ARRAY_MAX+128];
+                        int num_nodes = 0;
+                        
+                        char name2[VAR_NAME_MAX];
+                        snprintf(name2, VAR_NAME_MAX, "_%s", name);
+                        
+                        check_already_added_variable(info->lv_table, name2, info);
+                        sNodeType* node_type2 = clone_node_type(node_type);
+                        node_type2->mConstant = TRUE;
+                        if(!add_variable_to_table(info->lv_table, name2, "", node_type2, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
+                        {
+                            fprintf(stderr, "overflow variable table\n");
+                            exit(102);
+                        }
+                        
+                        unsigned int node2 = sNodeTree_create_define_variable(name2, extern_, info->mBlockLevel == 0, info);
+                        
+                        struct sStructInitializer* elements2;
+                        elements2 = calloc(1, sizeof(struct sStructInitializer)*INIT_ARRAY_MAX);
+                        memcpy(elements2, elements, sizeof(struct sStructInitializer)*INIT_ARRAY_MAX);
+                        
+                        unsigned int left_node = node2;
+                        
+                        *node = sNodeTree_create_struct_initializer(name2, node_type, num_elements, elements2, left_node, info);
+        
+                        nodes[num_nodes++] = *node;
+                        
+                        unsigned int right_node = sNodeTree_create_load_variable(name2, info);
+                        right_node = sNodeTree_create_refference(right_node, info);
+                        
+                        BOOL alloc = TRUE;
+                        BOOL global = TRUE;
+                        unsigned int node3 = sNodeTree_create_store_variable(name, right_node, alloc, global, info);
+        
+                        nodes[num_nodes++] = node3;
+        
+                        BOOL in_macro = FALSE;
+                        *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
+                    }
+                    else {
+                        *node = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
+                        
+                        struct sStructInitializer* elements2;
+                        elements2 = calloc(1, sizeof(struct sStructInitializer)*INIT_ARRAY_MAX);
+                        memcpy(elements2, elements, sizeof(struct sStructInitializer)*INIT_ARRAY_MAX);
+                        
+                        unsigned int left_node = *node;
+                        *node = sNodeTree_create_struct_initializer(name, node_type, num_elements, elements2, left_node, info);
+                    }
+                }
+                else {
+                    parser_err_msg(info, "not support this format");
+                    return FALSE;
+                }
+            }
+            else if((result_type->mArrayDimentionNum > 0 || result_type->mOmitArrayNum || ((result_type->mClass->mFlags & CLASS_FLAGS_UNION) && result_type->mPointerNum == 0 && info->mBlockLevel == 0) || ((result_type->mClass->mFlags & CLASS_FLAGS_STRUCT) && result_type->mPointerNum == 0) && ((type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 1 && result_type->mOmitArrayNum) || (type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 0) || *info->p == '{') ) && result_type->mNoArrayPointerNum == 0) {
+                if(type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 0) {
+                    if(*info->p == '{') {
+                        info->p++;
+                        skip_spaces_and_lf(info);
+                    }
+                }
+                else if(type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 1 && result_type->mOmitArrayNum) {
+                    if(*info->p == '{') {
+                        info->p++;
+                        skip_spaces_and_lf(info);
+                    }
+                }
                 else {
                     expect_next_character_with_one_forward("{", info);
                 }
                 
+                BOOL store_each_element[INIT_ARRAY_MAX];
+                unsigned int store_each_element_index[INIT_ARRAY_MAX];
+                unsigned int store_each_element_index2[INIT_ARRAY_MAX];
+                unsigned int store_each_element_index3[INIT_ARRAY_MAX];
+                unsigned int initialize_array_values[INIT_ARRAY_MAX];
+                int num_initialize_array_value = 0;
+                
+                memset(store_each_element, 0, sizeof(BOOL)*INIT_ARRAY_MAX);
+                memset(initialize_array_values, 0, sizeof(unsigned int)*INIT_ARRAY_MAX);
+                memset(store_each_element_index, 0, sizeof(unsigned int)*INIT_ARRAY_MAX);
+                memset(store_each_element_index2, 0, sizeof(unsigned int)*INIT_ARRAY_MAX);
+                memset(store_each_element_index3, 0, sizeof(unsigned int)*INIT_ARRAY_MAX);
+                
+                info->array_initializer = TRUE;
+    
+                int num_dimention = result_type->mArrayDimentionNum;
+                
+                int nest = 1;
+    
+                struct sStructInitializer* struct_elements[INIT_ARRAY_MAX];
+                int num_struct_elements_array[INIT_ARRAY_MAX];
+                int num_struct_elements = 0;
+                
+                if(result_type->mOmitArrayNum == FALSE) {
+                    result_type->mConstant = TRUE;
+                    if(!add_variable_to_table(info->lv_table, name, "", result_type, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
+                    {
+                        fprintf(stderr, "overflow variable table\n");
+                        exit(21);
+                    }
+                }
+    
+                unsigned int right_node = 0;
+                if(*info->p == '}') {
+                    info->p++;
+                    skip_spaces_and_lf(info);
+                }
+                else {
+                    while(TRUE) {
+                        if(*info->p == '{') {
+                            while(*info->p == '{') {
+                                info->p++;
+                                skip_spaces_and_lf(info);
+                                nest++;
+                            }
+                        }
+                        
+                        if(*info->p == '.') {
+                            nest--;
+                            int num_elements = 0;
+                            struct sStructInitializer elements[INIT_ARRAY_MAX];
+                            if(!parse_struct_initializer(&num_elements, elements, NULL, info))
+                            {
+                                return FALSE;
+                            }
+                            
+                            struct sStructInitializer* elements2;
+                            elements2 = calloc(1, sizeof(struct sStructInitializer)*INIT_ARRAY_MAX);
+                            memcpy(elements2, elements, sizeof(struct sStructInitializer)*INIT_ARRAY_MAX);
+                            
+                            struct_elements[num_struct_elements] = elements2;
+                            num_struct_elements_array[num_struct_elements] = num_elements;
+                            num_struct_elements++;
+                            
+                            if(num_struct_elements >= INIT_ARRAY_MAX) {
+                                fprintf(stderr, "overflow array initializer\n");
+                                exit(31);
+                            }
+                        }
+                        else if(*info->p == '[') {
+                            info->p++;
+                            skip_spaces_and_lf(info);
+                            
+                            info->no_method_call = TRUE;
+                            
+                            unsigned int index_node = 0;
+                            if(!expression(&index_node, FALSE, info)) {
+                                return FALSE;
+                            }
+                            
+                            info->no_method_call = FALSE;
+                            
+                            if(*info->p == '.' && *(info->p+1) == '.' && *(info->p+2) == '.')
+                            {
+                                info->p += 3;
+                                skip_spaces_and_lf(info);
+                                
+                                unsigned int index_node2 = 0;
+                                if(!expression(&index_node2, FALSE, info)) {
+                                    return FALSE;
+                                }
+                                
+                                expect_next_character_with_one_forward("]", info);
+                                
+                                int head = 0;
+                                if(!get_const_value_from_node(&head, index_node, info))
+                                {
+                                    parser_err_msg(info, "Require Consta Value for array size");
+                                    return TRUE;
+                                }
+                                
+                                int tail = 0;
+                                if(!get_const_value_from_node(&tail, index_node2, info))
+                                {
+                                    parser_err_msg(info, "Require Consta Value for array size");
+                                    return TRUE;
+                                }
+                                
+                                right_node = 0;
+                                
+                                expect_next_character_with_one_forward("=", info);
+                
+                                if(!expression(&right_node, FALSE, info)) {
+                                    return FALSE;
+                                }
+                                
+                                int i;
+                                for(i=head; i<=tail; i++) {
+                                    store_each_element[num_initialize_array_value] = TRUE;
+                                    store_each_element_index[num_initialize_array_value] = sNodeTree_create_uint_value(i, info);
+                                    initialize_array_values[num_initialize_array_value++] = right_node;
+                
+                                    if(num_initialize_array_value >= INIT_ARRAY_MAX) {
+                                        fprintf(stderr, "overflow array initializer number\n");
+                                        exit(32);
+                                    }
+                                }
+                            }
+                            else {
+                                store_each_element[num_initialize_array_value] = TRUE;
+                                store_each_element_index[num_initialize_array_value] = index_node;
+                                
+                                expect_next_character_with_one_forward("]", info);
+                                
+                                if(*info->p == '[') {
+                                    info->p++;
+                                    skip_spaces_and_lf(info);
+                                    
+                                    unsigned int index_node = 0;
+                                    if(!expression(&index_node, FALSE, info)) {
+                                        return FALSE;
+                                    }
+                                    
+                                    store_each_element_index2[num_initialize_array_value] = index_node;
+                                    
+                                    expect_next_character_with_one_forward("]", info);
+                                    
+                                    if(num_dimention == 1) {
+                                        parser_err_msg(info, "Invalid array dimention");
+                                        return FALSE;
+                                    }
+                                    
+                                    if(*info->p == '[') {
+                                        info->p++;
+                                        skip_spaces_and_lf(info);
+                                        
+                                        unsigned int index_node = 0;
+                                        if(!expression(&index_node, FALSE, info)) {
+                                            return FALSE;
+                                        }
+                                        
+                                        store_each_element_index3[num_initialize_array_value] = index_node;
+                                        
+                                        expect_next_character_with_one_forward("]", info);
+                                        
+                                        if(num_dimention != 3) {
+                                            parser_err_msg(info, "Invalid array dimention");
+                                            return FALSE;
+                                        }
+                                    }
+                                }
+                                expect_next_character_with_one_forward("=", info);
+                                
+                                right_node = 0;
+                
+                                if(!expression(&right_node, FALSE, info)) {
+                                    return FALSE;
+                                }
+                                
+                                initialize_array_values[num_initialize_array_value++] = right_node;
+            
+                                if(num_initialize_array_value >= INIT_ARRAY_MAX) {
+                                    fprintf(stderr, "overflow array initializer number\n");
+                                    exit(45);
+                                }
+                            }
+                        }
+                        else { 
+                            right_node = 0;
+            
+                            if(!expression(&right_node, FALSE, info)) {
+                                return FALSE;
+                            }
+            
+                            if(right_node == 0) {
+                                parser_err_msg(info, "Require right value for {}");
+                                *node = 0;
+                            }
+                            else {
+                                initialize_array_values[num_initialize_array_value++] = right_node;
+            
+                                if(num_initialize_array_value >= INIT_ARRAY_MAX) {
+                                    fprintf(stderr, "overflow array initializer number\n");
+                                    exit(46);
+                                }
+                            }
+                        }
+        
+                        if(*info->p == ',') {
+                            info->p++;
+                            skip_spaces_and_lf(info);
+                            
+                            if(!parse_sharp(info)) {
+                                return FALSE;
+                            }
+                            
+                            while(*info->p == '}') {
+                                info->p++;
+                                skip_spaces_and_lf(info);
+                                nest--;
+                            }
+                            if(nest == 0) {
+                                break;
+                            }
+                            
+                            if(!parse_sharp(info)) {
+                                return FALSE;
+                            }
+                        }
+                        else if(*info->p == '\0') {
+                            info->sline = sline;
+                            parser_err_msg(info, "In the array initialization, the parser has arraived at the source end");
+                            return FALSE;
+                        }
+                        else if(*info->p == '}') {
+                            if(!parse_sharp(info)) {
+                                return FALSE;
+                            }
+                            while(*info->p == '}') {
+                                info->p++;
+                                skip_spaces_and_lf(info);
+                                nest--;
+                            }
+                            if(nest == 0) {
+                                break;
+                            }
+                        }
+                        else if(type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 0) {
+                            if(*info->p == '}') {
+                                info->p++;
+                                skip_spaces_and_lf(info);
+                            }
+                            break;
+                        }
+                        else if(type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 1 && result_type->mOmitArrayNum) {
+                            if(!parse_sharp(info)) {
+                                return FALSE;
+                            }
+                            if(*info->p == '}') {
+                                info->p++;
+                                skip_spaces_and_lf(info);
+                            }
+                            break;
+                        }
+                        
+                        if(!parse_sharp(info)) {
+                            return FALSE;
+                        }
+                        
+                        if(*info->p == ',') {
+                            info->p++;
+                            skip_spaces_and_lf(info);
+                            
+                            if(!parse_sharp(info)) {
+                                return FALSE;
+                            }
+                            
+                            while(*info->p == '}') {
+                                info->p++;
+                                skip_spaces_and_lf(info);
+                                nest--;
+                            }
+                            if(nest == 0) {
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+/*
+                if(result_type->mArrayDimentionNum == 1) {
+                    BOOL initialize_array_values2[INIT_ARRAY_MAX];
+                    BOOL store_each_element2[INIT_ARRAY_MAX];
+                    unsigned int store_each_element2_index[INIT_ARRAY_MAX];
+                    unsigned int store_each_element2_index2[INIT_ARRAY_MAX];
+                    unsigned int store_each_element2_index3[INIT_ARRAY_MAX];
+                    
+                    memset(store_each_element2, 0, sizeof(BOOL)*INIT_ARRAY_MAX);
+                    memset(initialize_array_values2, 0, sizeof(unsigned int)*INIT_ARRAY_MAX);
+                    memset(store_each_element2_index, 0, sizeof(unsigned int)*INIT_ARRAY_MAX);
+                    memset(store_each_element2_index2, 0, sizeof(unsigned int)*INIT_ARRAY_MAX);
+                    memset(store_each_element2_index3, 0, sizeof(unsigned int)*INIT_ARRAY_MAX);
+                    
+                    int l;
+                    int n = 0;
+                    for(l=0; l<num_initialize_array_value; l++) {
+                        if(!store_each_element[l]) {
+                            store_each_element2[n] = FALSE;
+                            initialize_array_values2[n] = initialize_array_values[l];
+                            store_each_element2_index[n] = 0;
+                            store_each_element2_index2[n] = 0;
+                            store_each_element2_index3[n] = 0;
+                            n++;
+                        }
+                    }
+                    for(l=0; l<num_initialize_array_value; l++) {
+                        if(store_each_element[l]) {
+                            store_each_element2[n] = TRUE;
+                            initialize_array_values2[n] = initialize_array_values[l];
+                            store_each_element2_index[n] = store_each_element_index[l];
+                            store_each_element2_index2[n] = store_each_element_index2[l];
+                            store_each_element2_index3[n] = store_each_element_index3[l];
+                            n++;
+                        }
+                    }
+                }
+    */
+                
+    /*
+                if(result_type->mArrayDimentionNum == 1 && num_initialize_array_value > 0 && !type_identify_with_class_name(result_type, "char"))
+                {
+                    unsigned int initialize_array_values2[INIT_ARRAY_MAX];
+                    int i;
+                    for(i=0;i<result_type->mArrayNum[0]; i++) {
+                        BOOL found = FALSE;
+                        int j;
+                        for(j=0; j<num_initialize_array_value; j++) {
+                            unsigned int index_node = store_each_element_index[j];
+                            unsigned int value = initialize_array_values[j];
+                            
+                            if(store_each_element[j]) {
+                                int index = -1;
+                                if(!get_const_value_from_node(&index, index_node, info))
+                                {
+                                    return FALSE;
+                                }
+                                
+                                if(i == index) {
+                                    found = TRUE;
+                                    initialize_array_values2[i] = value;
+                                }
+                            }
+                        }
+                        if(!found) {
+                            if(store_each_element[i]) {
+                                sNodeType* element_type = clone_node_type(result_type);
+                                element_type->mArrayDimentionNum = 0;
+                                initialize_array_values2[i] = sNodeTree_create_null_value(element_type, info);
+                            }
+                            else if(i < num_initialize_array_value) {
+                                initialize_array_values2[i] = initialize_array_values[i];
+                            }
+                            else {
+                                sNodeType* element_type = clone_node_type(result_type);
+                                element_type->mArrayDimentionNum = 0;
+                                initialize_array_values2[i] = sNodeTree_create_null_value(element_type, info);
+                            }
+                        }
+                    }
+                    for(i=0;i<result_type->mArrayNum[0]; i++) {
+                        initialize_array_values[i] = initialize_array_values2[i];
+                    }
+                    
+                    num_initialize_array_value = result_type->mArrayNum[0];
+                }
+    */
+                
+                if(result_type->mOmitArrayNum) {
+                    if(type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 1) {
+                        if(num_initialize_array_value == 1 && gNodes[initialize_array_values[0]].mNodeType == kNodeTypeCString) {
+                            result_type->mArrayNum[0] = gNodes[right_node].uValue.sString.mLen + 1;
+                        }
+                        else {
+                            result_type->mArrayNum[0] = num_initialize_array_value;
+                        }
+                    }
+                    else if(num_struct_elements > 0) {
+                        result_type->mArrayNum[0] = num_struct_elements;
+                    }
+                    else if((result_type->mClass->mFlags & CLASS_FLAGS_STRUCT)) {
+                        sCLClass* klass = result_type->mClass;
+                        
+                        int n = 0;
+                        int i;
+                        for(i=0; i<klass->mNumFields; i++) {
+                            sNodeType* field = klass->mFields[i];
+                            if(field->mArrayDimentionNum > 1) {
+                                parser_err_msg(info, "no suport array intializer format");
+                                return FALSE;
+                            }
+                            else if(field->mArrayDimentionNum == 1) {
+                                n += field->mArrayNum[0];
+                            }
+                            else {
+                                n ++;
+                            }
+                        }
+                        result_type->mArrayNum[0] = num_initialize_array_value / n;
+                        
+                        if(result_type->mArrayNum[0] == 0) {
+                            result_type->mArrayNum[0]++;
+                        }
+                    }
+                    else {
+                        result_type->mArrayNum[0] = num_initialize_array_value;
+                    }
+                    result_type->mPointerNum--;
+                    result_type->mArrayDimentionNum++;
+                    result_type->mOmitArrayNum = FALSE;
+                    
+                    num_dimention = result_type->mArrayDimentionNum;
+                    
+                    result_type->mConstant = TRUE;
+                    
+                    if(!add_variable_to_table(info->lv_table, name, "", result_type, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
+                    {
+                        fprintf(stderr, "overflow variable table\n");
+                        exit(47);
+                    }
+                }
+                
+                info->array_initializer = FALSE;
+    
+                if(info->mBlockLevel == 0) {
+                    *node = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
+    
+                    *node = sNodeTree_create_array_initializer(name, num_initialize_array_value, initialize_array_values, *node, num_struct_elements, num_struct_elements_array, store_each_element, store_each_element_index, struct_elements, info);
+                }
+                else if(result_type->mClass->mFlags & CLASS_FLAGS_STRUCT && result_type->mPointerNum == 0) {
+                    if(result_type->mArrayDimentionNum == 1) {
+                        unsigned int nodes[INIT_ARRAY_MAX+128];
+                        int num_nodes = 0;
+        
+                        nodes[num_nodes++] = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
+                        
+                        unsigned int array_node = sNodeTree_create_load_variable(name, info);
+                        
+                        int array_num = result_type->mArrayNum[0];
+        
+                        sCLClass* klass = result_type->mClass;
+                        int num_fields = klass->mNumFields;
+                        
+                        int n = 0;
+                        
+                        int i;
+                        for(i=0; i<array_num; i++) {
+                            unsigned int index_node[INIT_ARRAY_MAX];
+                            index_node[0] = sNodeTree_create_int_value(i, info);
+                            
+                            int num_dimention = 1;
+                            unsigned int struct_node = sNodeTree_create_load_array_element(array_node, index_node, num_dimention, info);
+                            
+                            int j;
+                            for(j=0; j<num_fields; j++) {
+                                char* var_name = klass->mFieldName[j];
+                                unsigned int right_node = initialize_array_values[n++];
+            
+                                nodes[num_nodes++] = sNodeTree_create_store_field(var_name, struct_node, right_node, info);
+            
+                                if(num_nodes >= INIT_ARRAY_MAX+128) {
+                                    fprintf(stderr, "overflow array initializer number\n");
+                                    exit(48);
+                                }
+                            }
+                        }
+        
+                        BOOL in_macro = FALSE;
+                        *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
+                    }
+                    else if(result_type->mArrayDimentionNum > 0) {
+                        parser_err_msg(info, "comelang don't support this format");
+                        return FALSE;
+                    }
+                    else {
+                        unsigned int nodes[INIT_ARRAY_MAX+128];
+                        int num_nodes = 0;
+        
+                        nodes[num_nodes++] = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
+        
+                        unsigned int array_node = sNodeTree_create_load_variable(name, info);
+                        
+                        sCLClass* klass = result_type->mClass;
+        
+                        int i;
+                        for(i=0; i<num_initialize_array_value; i++) {
+                            if(i >= klass->mNumFields) {
+                                parser_err_msg(info, "overflow struct initializer number");
+                                return FALSE;
+                            }
+                            
+                            char* var_name = klass->mFieldName[i];
+                            unsigned int right_node = initialize_array_values[i];
+        
+                            nodes[num_nodes++] = sNodeTree_create_store_field(var_name, array_node, right_node, info);
+        
+                            if(num_nodes >= INIT_ARRAY_MAX+128) {
+                                fprintf(stderr, "overflow array initializer number\n");
+                                exit(49);
+                            }
+                        }
+        
+                        BOOL in_macro = FALSE;
+                        *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
+                    }
+                }
+                else {
+                    unsigned int nodes[INIT_ARRAY_MAX+128];
+                    int num_nodes = 0;
+    
+                    nodes[num_nodes++] = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
+    
+                    unsigned int array_node = sNodeTree_create_load_variable(name, info);
+    
+                    if(num_dimention == 1) {
+                        if(type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 0 && num_initialize_array_value == 1 && gNodes[initialize_array_values[0]].mNodeType == kNodeTypeCString) 
+                        {
+                            unsigned int node = initialize_array_values[0];
+    
+                            char* str = gNodes[node].uValue.sString.mString;
+    
+                            if(strlen(str)+1 >= INIT_ARRAY_MAX) {
+                                parser_err_msg(info, "invalid array initializer(1)");
+                                return FALSE;
+                            }
+    
+                            int i;
+                            for(i=0; i<strlen(str); i++) {
+                                initialize_array_values[i] = sNodeTree_create_character_value(str[i], info);
+                            }
+                            initialize_array_values[i] = sNodeTree_create_character_value('\0', info);
+    
+                            num_initialize_array_value = strlen(str)+1;
+                        }
+                        
+                        BOOL initialize_indexes[INIT_ARRAY_MAX];
+                        
+                        memset(initialize_indexes, 0, sizeof(BOOL)*INIT_ARRAY_MAX);
+                        
+                        int i;
+                        for(i=0; i<num_initialize_array_value; i++) {
+                            unsigned int index_node[ARRAY_DIMENTION_MAX];
+                            
+                            if(store_each_element[i]) {
+                                int n = 0;
+                                if(!get_const_value_from_node(&n, store_each_element_index[i], info)) {
+                                    return FALSE;
+                                }
+                                
+                                index_node[0] = sNodeTree_create_int_value(n, info);
+                                unsigned int right_node = initialize_array_values[i];
+                                nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
+                                
+                                initialize_indexes[n] = TRUE;
+                            }
+                            else {
+                                index_node[0] = sNodeTree_create_int_value(i, info);
+                                unsigned int right_node = initialize_array_values[i];
+        
+                                nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
+                                initialize_indexes[i] = TRUE;
+                            }
+    
+                            if(num_nodes >= INIT_ARRAY_MAX+128) {
+                                fprintf(stderr, "overflow array initializer number\n");
+                                exit(33);
+                            }
+                        }
+                        
+                        for(i=0; i<result_type->mArrayNum[0]; i++) {
+                            unsigned int index_node[ARRAY_DIMENTION_MAX];
+                            
+                            if(initialize_indexes[i]) {
+                            }
+                            else {
+                                index_node[0] = sNodeTree_create_int_value(i, info);
+                                sNodeType* result_type2 = clone_node_type(result_type);
+                                result_type2->mArrayDimentionNum = 0;
+                                unsigned int right_node = sNodeTree_create_null_value(result_type2, info);
+        
+                                nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
+    
+                                if(num_nodes >= INIT_ARRAY_MAX+128) {
+                                    fprintf(stderr, "overflow array initializer number\n");
+                                    exit(40);
+                                }
+                            }
+                        }
+                        
+    /*
+                        if(i < result_type->mArrayNum[0]) {
+                            unsigned int index_node[ARRAY_DIMENTION_MAX];
+                            
+                            for(; i<result_type->mArrayNum[0]; i++) {
+                                index_node[0] = sNodeTree_create_int_value(i, info);
+                                sNodeType* result_type2 = clone_node_type(result_type);
+                                result_type2->mArrayDimentionNum = 0;
+                                unsigned int right_node = sNodeTree_create_null_value(result_type2, info);
+        
+                                nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
+                            }
+                        }
+    */
+    
+                        BOOL in_macro = FALSE;
+                        *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
+                    }
+                    else if(num_dimention == 2) {
+                        int i;
+                        for(i=0; i<num_initialize_array_value; i++) {
+                            unsigned int index_node[ARRAY_DIMENTION_MAX];
+    
+                            if(store_each_element[i]) {
+                                index_node[0] = store_each_element_index[i];
+                                index_node[1] = store_each_element_index2[i];
+                                unsigned int right_node = initialize_array_values[i];
+        
+                                nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
+                            }
+                            else {
+                                index_node[0] = sNodeTree_create_int_value(i/result_type->mArrayNum[1], info);
+                                index_node[1] = sNodeTree_create_int_value(i%result_type->mArrayNum[1], info);
+        
+                                unsigned int right_node = initialize_array_values[i];
+        
+                                nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
+                            }
+    
+                            if(num_nodes >= INIT_ARRAY_MAX+128) {
+                                fprintf(stderr, "overflow array initializer number\n");
+                                exit(32);
+                            }
+                        }
+    
+                        BOOL in_macro = FALSE;
+                        *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
+                    }
+                    else if(num_dimention == 3) {
+                        int i;
+                        for(i=0; i<num_initialize_array_value; i++) {
+                            unsigned int index_node[ARRAY_DIMENTION_MAX];
+    
+                            if(store_each_element[i]) {
+                                index_node[0] = store_each_element_index[i];
+                                index_node[1] = store_each_element_index2[i];
+                                index_node[2] = store_each_element_index3[i];
+                                
+                                unsigned int right_node = initialize_array_values[i];
+        
+                                nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
+                            }
+                            else {
+                                int n = result_type->mArrayNum[1]*result_type->mArrayNum[2];
+        
+                                index_node[0] = sNodeTree_create_int_value(i/n, info);
+                                index_node[1] = sNodeTree_create_int_value((i/result_type->mArrayNum[2])%result_type->mArrayNum[1], info);
+                                index_node[2] = sNodeTree_create_int_value(i%result_type->mArrayNum[2], info);
+        
+                                unsigned int right_node = initialize_array_values[i];
+        
+                                nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
+                            }
+    
+                            if(num_nodes >= INIT_ARRAY_MAX+128) {
+                                fprintf(stderr, "overflow array initializer number\n");
+                                exit(72);
+                            }
+                        }
+    
+                        BOOL in_macro = FALSE;
+                        *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
+                    }
+                    else {
+                        char buf[128];
+                        snprintf(buf, 128, "invalid array dimetion %d\n", num_dimention);
+                        
+                        parser_err_msg(info, buf);
+                    }
+                }
+            }
+            else if(info->mBlockLevel > 0 && struct_initializer) {
+                expect_next_character_with_one_forward("{", info);
+                
                 int num_elements = 0;
                 struct sStructInitializer elements[INIT_ARRAY_MAX];
-            
-                
                 if(!parse_struct_initializer(&num_elements, elements, NULL, info))
                 {
                     return FALSE;
@@ -2088,7 +3095,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
         
                             if(num_nodes >= INIT_ARRAY_MAX+128) {
                                 fprintf(stderr, "overflow array initializer number\n");
-                                exit(92);
+                                exit(82);
                             }
                         }
                     }
@@ -2097,22 +3104,16 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                 BOOL in_macro = FALSE;
                 *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
             }
-        }
-        else if(struct_initializer || struct_initializer_pointer || struct_initializer2) {
-            if(struct_initializer_pointer) {
-                info->p++;
-                skip_spaces_and_lf(info);
-            }
-            
-            sNodeType* node_type = NULL;
-            if(struct_initializer2) {
-                expect_next_character_with_one_forward("{", info);
-                node_type = clone_node_type(result_type);
-            }
-            else {
+            else if(struct_initializer || struct_initializer_pointer) {
+                if(struct_initializer_pointer) {
+                    info->p++;
+                    skip_spaces_and_lf(info);
+                }
+                
                 info->p++;
                 skip_spaces_and_lf(info);
                 
+                sNodeType* node_type = NULL;
                 char buf[VAR_NAME_MAX];
                 if(!parse_type(&node_type, info, NULL, FALSE, TRUE, NULL, FALSE, FALSE, FALSE, FALSE, FALSE)) {
                     return FALSE;
@@ -2120,218 +3121,156 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                 
                 expect_next_character_with_one_forward(")", info);
                 expect_next_character_with_one_forward("{", info);
-            }
-            
-            int num_elements = 0;
-            struct sStructInitializer elements[INIT_ARRAY_MAX];
-            if(!parse_struct_initializer(&num_elements, elements, result_type->mClass, info))
-            {
-                return FALSE;
-            }
-            
-            if(info->mBlockLevel == 0) {
-                if(struct_initializer_pointer) {
-                    unsigned int nodes[INIT_ARRAY_MAX+128];
-                    int num_nodes = 0;
-                    
-                    char name2[VAR_NAME_MAX];
-                    snprintf(name2, VAR_NAME_MAX, "_%s", name);
-                    
-                    check_already_added_variable(info->lv_table, name2, info);
-                    sNodeType* node_type2 = clone_node_type(node_type);
-                    node_type2->mConstant = TRUE;
-                    if(!add_variable_to_table(info->lv_table, name2, "", node_type2, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
-                    {
-                        fprintf(stderr, "overflow variable table\n");
-                        exit(102);
-                    }
-                    
-                    unsigned int node2 = sNodeTree_create_define_variable(name2, extern_, info->mBlockLevel == 0, info);
-                    
-                    struct sStructInitializer* elements2;
-                    elements2 = calloc(1, sizeof(struct sStructInitializer)*INIT_ARRAY_MAX);
-                    memcpy(elements2, elements, sizeof(struct sStructInitializer)*INIT_ARRAY_MAX);
-                    
-                    unsigned int left_node = node2;
-                    
-                    *node = sNodeTree_create_struct_initializer(name2, node_type, num_elements, elements2, left_node, info);
-    
-                    nodes[num_nodes++] = *node;
-                    
-                    unsigned int right_node = sNodeTree_create_load_variable(name2, info);
-                    right_node = sNodeTree_create_refference(right_node, info);
-                    
-                    BOOL alloc = TRUE;
-                    BOOL global = TRUE;
-                    unsigned int node3 = sNodeTree_create_store_variable(name, right_node, alloc, global, info);
-    
-                    nodes[num_nodes++] = node3;
-    
-                    BOOL in_macro = FALSE;
-                    *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
-                }
-                else {
-                    *node = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
-                    
-                    struct sStructInitializer* elements2;
-                    elements2 = calloc(1, sizeof(struct sStructInitializer)*INIT_ARRAY_MAX);
-                    memcpy(elements2, elements, sizeof(struct sStructInitializer)*INIT_ARRAY_MAX);
-                    
-                    unsigned int left_node = *node;
-                    *node = sNodeTree_create_struct_initializer(name, node_type, num_elements, elements2, left_node, info);
-                }
-            }
-            else {
-                parser_err_msg(info, "not support this format");
-                return FALSE;
-            }
-        }
-        else if((result_type->mArrayDimentionNum > 0 || result_type->mOmitArrayNum || ((result_type->mClass->mFlags & CLASS_FLAGS_UNION) && result_type->mPointerNum == 0 && info->mBlockLevel == 0) || ((result_type->mClass->mFlags & CLASS_FLAGS_STRUCT) && result_type->mPointerNum == 0) && ((type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 1 && result_type->mOmitArrayNum) || (type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 0) || *info->p == '{') ) && result_type->mNoArrayPointerNum == 0) {
-            if(type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 0) {
-                if(*info->p == '{') {
-                    info->p++;
-                    skip_spaces_and_lf(info);
-                }
-            }
-            else if(type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 1 && result_type->mOmitArrayNum) {
-                if(*info->p == '{') {
-                    info->p++;
-                    skip_spaces_and_lf(info);
-                }
-            }
-            else {
-                expect_next_character_with_one_forward("{", info);
-            }
-            
-            BOOL store_each_element[INIT_ARRAY_MAX];
-            unsigned int store_each_element_index[INIT_ARRAY_MAX];
-            unsigned int store_each_element_index2[INIT_ARRAY_MAX];
-            unsigned int store_each_element_index3[INIT_ARRAY_MAX];
-            unsigned int initialize_array_values[INIT_ARRAY_MAX];
-            int num_initialize_array_value = 0;
-            
-            memset(store_each_element, 0, sizeof(BOOL)*INIT_ARRAY_MAX);
-            memset(initialize_array_values, 0, sizeof(unsigned int)*INIT_ARRAY_MAX);
-            memset(store_each_element_index, 0, sizeof(unsigned int)*INIT_ARRAY_MAX);
-            memset(store_each_element_index2, 0, sizeof(unsigned int)*INIT_ARRAY_MAX);
-            memset(store_each_element_index3, 0, sizeof(unsigned int)*INIT_ARRAY_MAX);
-            
-            info->array_initializer = TRUE;
-
-            int num_dimention = result_type->mArrayDimentionNum;
-            
-            int nest = 1;
-
-            struct sStructInitializer* struct_elements[INIT_ARRAY_MAX];
-            int num_struct_elements_array[INIT_ARRAY_MAX];
-            int num_struct_elements = 0;
-            
-            if(result_type->mOmitArrayNum == FALSE) {
-                result_type->mConstant = TRUE;
-                if(!add_variable_to_table(info->lv_table, name, "", result_type, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
+                
+                int num_elements = 0;
+                struct sStructInitializer elements[INIT_ARRAY_MAX];
+                if(!parse_struct_initializer(&num_elements, elements, NULL, info))
                 {
-                    fprintf(stderr, "overflow variable table\n");
-                    exit(21);
+                    return FALSE;
                 }
-            }
-
-            unsigned int right_node = 0;
-            if(*info->p == '}') {
-                info->p++;
-                skip_spaces_and_lf(info);
-            }
-            else {
-                while(TRUE) {
-                    if(*info->p == '{') {
-                        while(*info->p == '{') {
-                            info->p++;
-                            skip_spaces_and_lf(info);
-                            nest++;
-                        }
-                    }
-                    
-                    if(*info->p == '.') {
-                        nest--;
-                        int num_elements = 0;
-                        struct sStructInitializer elements[INIT_ARRAY_MAX];
-                        if(!parse_struct_initializer(&num_elements, elements, NULL, info))
+                
+                if(info->mBlockLevel == 0) {
+                    if(struct_initializer_pointer) {
+                        unsigned int nodes[INIT_ARRAY_MAX+128];
+                        int num_nodes = 0;
+                        
+                        char name2[VAR_NAME_MAX];
+                        snprintf(name2, VAR_NAME_MAX, "_%s", name);
+                        
+                        check_already_added_variable(info->lv_table, name2, info);
+                        sNodeType* node_type2 = clone_node_type(node_type);
+                        node_type2->mConstant = TRUE;
+                        if(!add_variable_to_table(info->lv_table, name2, "", node_type2, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
                         {
-                            return FALSE;
+                            fprintf(stderr, "overflow variable table\n");
+                            exit(92);
                         }
+                        
+                        unsigned int node2 = sNodeTree_create_define_variable(name2, extern_, info->mBlockLevel == 0, info);
                         
                         struct sStructInitializer* elements2;
                         elements2 = calloc(1, sizeof(struct sStructInitializer)*INIT_ARRAY_MAX);
                         memcpy(elements2, elements, sizeof(struct sStructInitializer)*INIT_ARRAY_MAX);
                         
-                        struct_elements[num_struct_elements] = elements2;
-                        num_struct_elements_array[num_struct_elements] = num_elements;
-                        num_struct_elements++;
+                        unsigned int left_node = node2;
                         
-                        if(num_struct_elements >= INIT_ARRAY_MAX) {
-                            fprintf(stderr, "overflow array initializer\n");
-                            exit(31);
-                        }
+                        *node = sNodeTree_create_struct_initializer(name2, node_type, num_elements, elements2, left_node, info);
+        
+                        nodes[num_nodes++] = *node;
+                        
+                        unsigned int right_node = sNodeTree_create_load_variable(name2, info);
+                        right_node = sNodeTree_create_refference(right_node, info);
+                        
+                        BOOL alloc = TRUE;
+                        BOOL global = TRUE;
+                        unsigned int node3 = sNodeTree_create_store_variable(name, right_node, alloc, global, info);
+        
+                        nodes[num_nodes++] = node3;
+        
+                        BOOL in_macro = FALSE;
+                        *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
                     }
-                    else if(*info->p == '[') {
+                    else {
+                        *node = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
+                        
+                        struct sStructInitializer* elements2;
+                        elements2 = calloc(1, sizeof(struct sStructInitializer)*INIT_ARRAY_MAX);
+                        memcpy(elements2, elements, sizeof(struct sStructInitializer)*INIT_ARRAY_MAX);
+                        
+                        unsigned int left_node = *node;
+                        *node = sNodeTree_create_struct_initializer(name, node_type, num_elements, elements2, left_node, info);
+                    }
+                }
+                else {
+                    parser_err_msg(info, "not support this format");
+                    return FALSE;
+                }
+            }
+            else if(result_type->mNoArrayPointerNum == 0 && (result_type->mArrayDimentionNum > 0 || result_type->mOmitArrayNum || ((result_type->mClass->mFlags & CLASS_FLAGS_STRUCT) && result_type->mPointerNum == 0) && ((type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 1 && result_type->mOmitArrayNum) || (type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 0) || *info->p == '{')))
+            {
+                if(type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 0) {
+                    if(*info->p == '{') {
                         info->p++;
                         skip_spaces_and_lf(info);
-                        
-                        info->no_method_call = TRUE;
-                        
-                        unsigned int index_node = 0;
-                        if(!expression(&index_node, FALSE, info)) {
-                            return FALSE;
+                    }
+                }
+                else if(type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 1 && result_type->mOmitArrayNum) {
+                    if(*info->p == '{') {
+                        info->p++;
+                        skip_spaces_and_lf(info);
+                    }
+                }
+                else {
+                    expect_next_character_with_one_forward("{", info);
+                }
+                
+                BOOL store_each_element[INIT_ARRAY_MAX];
+                unsigned int store_each_element_index[INIT_ARRAY_MAX];
+                unsigned int store_each_element_index2[INIT_ARRAY_MAX];
+                unsigned int store_each_element_index3[INIT_ARRAY_MAX];
+                unsigned int initialize_array_values[INIT_ARRAY_MAX];
+                int num_initialize_array_value = 0;
+                
+                memset(store_each_element, 0, sizeof(BOOL)*INIT_ARRAY_MAX);
+                memset(initialize_array_values, 0, sizeof(unsigned int)*INIT_ARRAY_MAX);
+                memset(store_each_element_index, 0, sizeof(unsigned int)*INIT_ARRAY_MAX);
+                memset(store_each_element_index2, 0, sizeof(unsigned int)*INIT_ARRAY_MAX);
+                memset(store_each_element_index3, 0, sizeof(unsigned int)*INIT_ARRAY_MAX);
+                
+                info->array_initializer = TRUE;
+    
+                int num_dimention = result_type->mArrayDimentionNum;
+                
+                int nest = 1;
+    
+                struct sStructInitializer* struct_elements[INIT_ARRAY_MAX];
+                int num_struct_elements_array[INIT_ARRAY_MAX];
+                int num_struct_elements = 0;
+    
+                unsigned int right_node = 0;
+                if(*info->p == '}') {
+                    info->p++;
+                    skip_spaces_and_lf(info);
+                }
+                else {
+                    while(TRUE) {
+                        if(*info->p == '{') {
+                            info->p++;
+                            skip_spaces_and_lf(info);
+                            nest++;
                         }
                         
-                        info->no_method_call = FALSE;
-                        
-                        if(*info->p == '.' && *(info->p+1) == '.' && *(info->p+2) == '.')
-                        {
-                            info->p += 3;
+                        if(*info->p == '.') {
+                            nest--;
+                            int num_elements = 0;
+                            struct sStructInitializer elements[INIT_ARRAY_MAX];
+                            if(!parse_struct_initializer(&num_elements, elements, result_type->mClass, info))
+                            {
+                                return FALSE;
+                            }
+                            
+                            struct sStructInitializer* elements2;
+                            elements2 = calloc(1, sizeof(struct sStructInitializer)*INIT_ARRAY_MAX);
+                            memcpy(elements2, elements, sizeof(struct sStructInitializer)*INIT_ARRAY_MAX);
+                            
+                            struct_elements[num_struct_elements] = elements2;
+                            num_struct_elements_array[num_struct_elements] = num_elements;
+                            num_struct_elements++;
+                            
+                            if(num_struct_elements >= INIT_ARRAY_MAX) {
+                                fprintf(stderr, "overflow array initializer\n");
+                                exit(91);
+                            }
+                        }
+                        else if(*info->p == '[') {
+                            info->p++;
                             skip_spaces_and_lf(info);
                             
-                            unsigned int index_node2 = 0;
-                            if(!expression(&index_node2, FALSE, info)) {
+                            unsigned int index_node = 0;
+                            if(!expression(&index_node, FALSE, info)) {
                                 return FALSE;
                             }
                             
-                            expect_next_character_with_one_forward("]", info);
-                            
-                            int head = 0;
-                            if(!get_const_value_from_node(&head, index_node, info))
-                            {
-                                parser_err_msg(info, "Require Consta Value for array size");
-                                return TRUE;
-                            }
-                            
-                            int tail = 0;
-                            if(!get_const_value_from_node(&tail, index_node2, info))
-                            {
-                                parser_err_msg(info, "Require Consta Value for array size");
-                                return TRUE;
-                            }
-                            
-                            right_node = 0;
-                            
-                            expect_next_character_with_one_forward("=", info);
-            
-                            if(!expression(&right_node, FALSE, info)) {
-                                return FALSE;
-                            }
-                            
-                            int i;
-                            for(i=head; i<=tail; i++) {
-                                store_each_element[num_initialize_array_value] = TRUE;
-                                store_each_element_index[num_initialize_array_value] = sNodeTree_create_uint_value(i, info);
-                                initialize_array_values[num_initialize_array_value++] = right_node;
-            
-                                if(num_initialize_array_value >= INIT_ARRAY_MAX) {
-                                    fprintf(stderr, "overflow array initializer number\n");
-                                    exit(32);
-                                }
-                            }
-                        }
-                        else {
                             store_each_element[num_initialize_array_value] = TRUE;
                             store_each_element_index[num_initialize_array_value] = index_node;
                             
@@ -2386,1126 +3325,357 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
         
                             if(num_initialize_array_value >= INIT_ARRAY_MAX) {
                                 fprintf(stderr, "overflow array initializer number\n");
-                                exit(45);
+                                exit(92);
                             }
                         }
-                    }
-                    else { 
-                        right_node = 0;
-        
-                        if(!expression(&right_node, FALSE, info)) {
-                            return FALSE;
-                        }
-        
-                        if(right_node == 0) {
-                            parser_err_msg(info, "Require right value for {}");
-                            *node = 0;
-                        }
-                        else {
-                            initialize_array_values[num_initialize_array_value++] = right_node;
-        
-                            if(num_initialize_array_value >= INIT_ARRAY_MAX) {
-                                fprintf(stderr, "overflow array initializer number\n");
-                                exit(46);
-                            }
-                        }
-                    }
-    
-                    if(*info->p == ',') {
-                        info->p++;
-                        skip_spaces_and_lf(info);
-                        
-                        if(!parse_sharp(info)) {
-                            return FALSE;
-                        }
-                        
-                        while(*info->p == '}') {
-                            info->p++;
-                            skip_spaces_and_lf(info);
-                            nest--;
-                        }
-                        if(nest == 0) {
-                            break;
-                        }
-                        
-                        if(!parse_sharp(info)) {
-                            return FALSE;
-                        }
-                    }
-                    else if(*info->p == '\0') {
-                        info->sline = sline;
-                        parser_err_msg(info, "In the array initialization, the parser has arraived at the source end");
-                        return FALSE;
-                    }
-                    else if(*info->p == '}') {
-                        if(!parse_sharp(info)) {
-                            return FALSE;
-                        }
-                        while(*info->p == '}') {
-                            info->p++;
-                            skip_spaces_and_lf(info);
-                            nest--;
-                        }
-                        if(nest == 0) {
-                            break;
-                        }
-                    }
-                    else if(type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 0) {
-                        if(*info->p == '}') {
-                            info->p++;
-                            skip_spaces_and_lf(info);
-                        }
-                        break;
-                    }
-                    else if(type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 1 && result_type->mOmitArrayNum) {
-                        if(!parse_sharp(info)) {
-                            return FALSE;
-                        }
-                        if(*info->p == '}') {
-                            info->p++;
-                            skip_spaces_and_lf(info);
-                        }
-                        break;
-                    }
-                    
-                    if(!parse_sharp(info)) {
-                        return FALSE;
-                    }
-                    
-                    if(*info->p == ',') {
-                        info->p++;
-                        skip_spaces_and_lf(info);
-                        
-                        if(!parse_sharp(info)) {
-                            return FALSE;
-                        }
-                        
-                        while(*info->p == '}') {
-                            info->p++;
-                            skip_spaces_and_lf(info);
-                            nest--;
-                        }
-                        if(nest == 0) {
-                            break;
-                        }
-                    }
-                }
-            }
+                        else { 
+                            right_node = 0;
             
-/*
-            if(result_type->mArrayDimentionNum == 1) {
-                BOOL initialize_array_values2[INIT_ARRAY_MAX];
-                BOOL store_each_element2[INIT_ARRAY_MAX];
-                unsigned int store_each_element2_index[INIT_ARRAY_MAX];
-                unsigned int store_each_element2_index2[INIT_ARRAY_MAX];
-                unsigned int store_each_element2_index3[INIT_ARRAY_MAX];
-                
-                memset(store_each_element2, 0, sizeof(BOOL)*INIT_ARRAY_MAX);
-                memset(initialize_array_values2, 0, sizeof(unsigned int)*INIT_ARRAY_MAX);
-                memset(store_each_element2_index, 0, sizeof(unsigned int)*INIT_ARRAY_MAX);
-                memset(store_each_element2_index2, 0, sizeof(unsigned int)*INIT_ARRAY_MAX);
-                memset(store_each_element2_index3, 0, sizeof(unsigned int)*INIT_ARRAY_MAX);
-                
-                int l;
-                int n = 0;
-                for(l=0; l<num_initialize_array_value; l++) {
-                    if(!store_each_element[l]) {
-                        store_each_element2[n] = FALSE;
-                        initialize_array_values2[n] = initialize_array_values[l];
-                        store_each_element2_index[n] = 0;
-                        store_each_element2_index2[n] = 0;
-                        store_each_element2_index3[n] = 0;
-                        n++;
-                    }
-                }
-                for(l=0; l<num_initialize_array_value; l++) {
-                    if(store_each_element[l]) {
-                        store_each_element2[n] = TRUE;
-                        initialize_array_values2[n] = initialize_array_values[l];
-                        store_each_element2_index[n] = store_each_element_index[l];
-                        store_each_element2_index2[n] = store_each_element_index2[l];
-                        store_each_element2_index3[n] = store_each_element_index3[l];
-                        n++;
-                    }
-                }
-            }
-*/
-            
-/*
-            if(result_type->mArrayDimentionNum == 1 && num_initialize_array_value > 0 && !type_identify_with_class_name(result_type, "char"))
-            {
-                unsigned int initialize_array_values2[INIT_ARRAY_MAX];
-                int i;
-                for(i=0;i<result_type->mArrayNum[0]; i++) {
-                    BOOL found = FALSE;
-                    int j;
-                    for(j=0; j<num_initialize_array_value; j++) {
-                        unsigned int index_node = store_each_element_index[j];
-                        unsigned int value = initialize_array_values[j];
-                        
-                        if(store_each_element[j]) {
-                            int index = -1;
-                            if(!get_const_value_from_node(&index, index_node, info))
-                            {
+                            if(!expression(&right_node, FALSE, info)) {
                                 return FALSE;
                             }
+            
+                            if(right_node == 0) {
+                                parser_err_msg(info, "Require right value for {}");
+                                *node = 0;
+                            }
+                            else {
+                                initialize_array_values[num_initialize_array_value++] = right_node;
+            
+                                if(num_initialize_array_value >= INIT_ARRAY_MAX) {
+                                    fprintf(stderr, "overflow array initializer number\n");
+                                    exit(102);
+                                }
+                            }
+                        }
+        
+                        if(*info->p == ',') {
+                            info->p++;
+                            skip_spaces_and_lf(info);
                             
-                            if(i == index) {
-                                found = TRUE;
-                                initialize_array_values2[i] = value;
+                            while(*info->p == '}') {
+                                info->p++;
+                                skip_spaces_and_lf(info);
+                                nest--;
+                            }
+                            if(nest == 0) {
+                                break;
+                            }
+                        }
+                        else if(*info->p == '\0') {
+                            info->sline = sline;
+                            parser_err_msg(info, "In the array initialization, the parser has arraived at the source end");
+                            return FALSE;
+                        }
+                        else if(*info->p == '}') {
+                            while(*info->p == '}') {
+                                info->p++;
+                                skip_spaces_and_lf(info);
+                                nest--;
+                            }
+                            if(nest == 0) {
+                                break;
+                            }
+                        }
+                        else if(type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 0) {
+                            if(*info->p == '}') {
+                                info->p++;
+                                skip_spaces_and_lf(info);
+                            }
+                            break;
+                        }
+                        else if(type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 1 && result_type->mOmitArrayNum) {
+                            if(*info->p == '}') {
+                                info->p++;
+                                skip_spaces_and_lf(info);
+                            }
+                            break;
+                        }
+                        
+                        if(*info->p == ',') {
+                            info->p++;
+                            skip_spaces_and_lf(info);
+                            
+                            while(*info->p == '}') {
+                                info->p++;
+                                skip_spaces_and_lf(info);
+                                nest--;
+                            }
+                            if(nest == 0) {
+                                break;
                             }
                         }
                     }
-                    if(!found) {
-                        if(store_each_element[i]) {
-                            sNodeType* element_type = clone_node_type(result_type);
-                            element_type->mArrayDimentionNum = 0;
-                            initialize_array_values2[i] = sNodeTree_create_null_value(element_type, info);
-                        }
-                        else if(i < num_initialize_array_value) {
-                            initialize_array_values2[i] = initialize_array_values[i];
-                        }
-                        else {
-                            sNodeType* element_type = clone_node_type(result_type);
-                            element_type->mArrayDimentionNum = 0;
-                            initialize_array_values2[i] = sNodeTree_create_null_value(element_type, info);
-                        }
-                    }
-                }
-                for(i=0;i<result_type->mArrayNum[0]; i++) {
-                    initialize_array_values[i] = initialize_array_values2[i];
                 }
                 
-                num_initialize_array_value = result_type->mArrayNum[0];
-            }
-*/
-            
-            if(result_type->mOmitArrayNum) {
-                if(type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 1) {
-                    if(num_initialize_array_value == 1 && gNodes[initialize_array_values[0]].mNodeType == kNodeTypeCString) {
-                        result_type->mArrayNum[0] = gNodes[right_node].uValue.sString.mLen + 1;
+                if(result_type->mOmitArrayNum) {
+                    if(type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 1) {
+                        if(num_initialize_array_value == 1 && gNodes[initialize_array_values[0]].mNodeType == kNodeTypeCString) {
+                            result_type->mArrayNum[0] = gNodes[right_node].uValue.sString.mLen + 1;
+                        }
+                        else {
+                            result_type->mArrayNum[0] = num_initialize_array_value;
+                        }
+                    }
+                    else if(num_struct_elements > 0) {
+                        result_type->mArrayNum[0] = num_struct_elements;
+                    }
+                    else if(result_type->mClass->mFlags & CLASS_FLAGS_STRUCT) {
+                        result_type->mArrayNum[0] = num_initialize_array_value / result_type->mClass->mNumFields;
                     }
                     else {
                         result_type->mArrayNum[0] = num_initialize_array_value;
                     }
-                }
-                else if(num_struct_elements > 0) {
-                    result_type->mArrayNum[0] = num_struct_elements;
-                }
-                else if((result_type->mClass->mFlags & CLASS_FLAGS_STRUCT)) {
-                    sCLClass* klass = result_type->mClass;
+                    result_type->mPointerNum--;
+                    result_type->mArrayDimentionNum++;
                     
-                    int n = 0;
-                    int i;
-                    for(i=0; i<klass->mNumFields; i++) {
-                        sNodeType* field = klass->mFields[i];
-                        if(field->mArrayDimentionNum > 1) {
-                            parser_err_msg(info, "no suport array intializer format");
-                            return FALSE;
-                        }
-                        else if(field->mArrayDimentionNum == 1) {
-                            n += field->mArrayNum[0];
-                        }
-                        else {
-                            n ++;
-                        }
-                    }
-                    result_type->mArrayNum[0] = num_initialize_array_value / n;
-                    
-                    if(result_type->mArrayNum[0] == 0) {
-                        result_type->mArrayNum[0]++;
-                    }
+                    num_dimention = result_type->mArrayDimentionNum;
                 }
-                else {
-                    result_type->mArrayNum[0] = num_initialize_array_value;
-                }
-                result_type->mPointerNum--;
-                result_type->mArrayDimentionNum++;
-                result_type->mOmitArrayNum = FALSE;
                 
-                num_dimention = result_type->mArrayDimentionNum;
-                
-                result_type->mConstant = TRUE;
-                
-                if(!add_variable_to_table(info->lv_table, name, "", result_type, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
-                {
-                    fprintf(stderr, "overflow variable table\n");
-                    exit(47);
-                }
-            }
-            
-            info->array_initializer = FALSE;
-
-            if(info->mBlockLevel == 0) {
-                *node = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
-
-                *node = sNodeTree_create_array_initializer(name, num_initialize_array_value, initialize_array_values, *node, num_struct_elements, num_struct_elements_array, store_each_element, store_each_element_index, struct_elements, info);
-            }
-            else if(result_type->mClass->mFlags & CLASS_FLAGS_STRUCT && result_type->mPointerNum == 0) {
-                if(result_type->mArrayDimentionNum == 1) {
-                    unsigned int nodes[INIT_ARRAY_MAX+128];
-                    int num_nodes = 0;
+                info->array_initializer = FALSE;
     
-                    nodes[num_nodes++] = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
-                    
-                    unsigned int array_node = sNodeTree_create_load_variable(name, info);
-                    
-                    int array_num = result_type->mArrayNum[0];
-    
-                    sCLClass* klass = result_type->mClass;
-                    int num_fields = klass->mNumFields;
-                    
-                    int n = 0;
-                    
-                    int i;
-                    for(i=0; i<array_num; i++) {
-                        unsigned int index_node[INIT_ARRAY_MAX];
-                        index_node[0] = sNodeTree_create_int_value(i, info);
-                        
-                        int num_dimention = 1;
-                        unsigned int struct_node = sNodeTree_create_load_array_element(array_node, index_node, num_dimention, info);
-                        
-                        int j;
-                        for(j=0; j<num_fields; j++) {
-                            char* var_name = klass->mFieldName[j];
-                            unsigned int right_node = initialize_array_values[n++];
-        
-                            nodes[num_nodes++] = sNodeTree_create_store_field(var_name, struct_node, right_node, info);
-        
-                            if(num_nodes >= INIT_ARRAY_MAX+128) {
-                                fprintf(stderr, "overflow array initializer number\n");
-                                exit(48);
-                            }
-                        }
-                    }
-    
-                    BOOL in_macro = FALSE;
-                    *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
-                }
-                else if(result_type->mArrayDimentionNum > 0) {
-                    parser_err_msg(info, "comelang don't support this format");
-                    return FALSE;
-                }
-                else {
-                    unsigned int nodes[INIT_ARRAY_MAX+128];
-                    int num_nodes = 0;
-    
-                    nodes[num_nodes++] = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
-    
-                    unsigned int array_node = sNodeTree_create_load_variable(name, info);
-                    
-                    sCLClass* klass = result_type->mClass;
-    
-                    int i;
-                    for(i=0; i<num_initialize_array_value; i++) {
-                        if(i >= klass->mNumFields) {
-                            parser_err_msg(info, "overflow struct initializer number");
-                            return FALSE;
-                        }
-                        
-                        char* var_name = klass->mFieldName[i];
-                        unsigned int right_node = initialize_array_values[i];
-    
-                        nodes[num_nodes++] = sNodeTree_create_store_field(var_name, array_node, right_node, info);
-    
-                        if(num_nodes >= INIT_ARRAY_MAX+128) {
-                            fprintf(stderr, "overflow array initializer number\n");
-                            exit(49);
-                        }
-                    }
-    
-                    BOOL in_macro = FALSE;
-                    *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
-                }
-            }
-            else {
-                unsigned int nodes[INIT_ARRAY_MAX+128];
-                int num_nodes = 0;
-
-                nodes[num_nodes++] = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
-
-                unsigned int array_node = sNodeTree_create_load_variable(name, info);
-
-                if(num_dimention == 1) {
-                    if(type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 0 && num_initialize_array_value == 1 && gNodes[initialize_array_values[0]].mNodeType == kNodeTypeCString) 
-                    {
-                        unsigned int node = initialize_array_values[0];
-
-                        char* str = gNodes[node].uValue.sString.mString;
-
-                        if(strlen(str)+1 >= INIT_ARRAY_MAX) {
-                            parser_err_msg(info, "invalid array initializer(1)");
-                            return FALSE;
-                        }
-
-                        int i;
-                        for(i=0; i<strlen(str); i++) {
-                            initialize_array_values[i] = sNodeTree_create_character_value(str[i], info);
-                        }
-                        initialize_array_values[i] = sNodeTree_create_character_value('\0', info);
-
-                        num_initialize_array_value = strlen(str)+1;
-                    }
-                    
-                    BOOL initialize_indexes[INIT_ARRAY_MAX];
-                    
-                    memset(initialize_indexes, 0, sizeof(BOOL)*INIT_ARRAY_MAX);
-                    
-                    int i;
-                    for(i=0; i<num_initialize_array_value; i++) {
-                        unsigned int index_node[ARRAY_DIMENTION_MAX];
-                        
-                        if(store_each_element[i]) {
-                            int n = 0;
-                            if(!get_const_value_from_node(&n, store_each_element_index[i], info)) {
-                                return FALSE;
-                            }
-                            
-                            index_node[0] = sNodeTree_create_int_value(n, info);
-                            unsigned int right_node = initialize_array_values[i];
-                            nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
-                            
-                            initialize_indexes[n] = TRUE;
-                        }
-                        else {
-                            index_node[0] = sNodeTree_create_int_value(i, info);
-                            unsigned int right_node = initialize_array_values[i];
-    
-                            nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
-                            initialize_indexes[i] = TRUE;
-                        }
-
-                        if(num_nodes >= INIT_ARRAY_MAX+128) {
-                            fprintf(stderr, "overflow array initializer number\n");
-                            exit(33);
-                        }
-                    }
-                    
-                    for(i=0; i<result_type->mArrayNum[0]; i++) {
-                        unsigned int index_node[ARRAY_DIMENTION_MAX];
-                        
-                        if(initialize_indexes[i]) {
-                        }
-                        else {
-                            index_node[0] = sNodeTree_create_int_value(i, info);
-                            sNodeType* result_type2 = clone_node_type(result_type);
-                            result_type2->mArrayDimentionNum = 0;
-                            unsigned int right_node = sNodeTree_create_null_value(result_type2, info);
-    
-                            nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
-
-                            if(num_nodes >= INIT_ARRAY_MAX+128) {
-                                fprintf(stderr, "overflow array initializer number\n");
-                                exit(40);
-                            }
-                        }
-                    }
-                    
-/*
-                    if(i < result_type->mArrayNum[0]) {
-                        unsigned int index_node[ARRAY_DIMENTION_MAX];
-                        
-                        for(; i<result_type->mArrayNum[0]; i++) {
-                            index_node[0] = sNodeTree_create_int_value(i, info);
-                            sNodeType* result_type2 = clone_node_type(result_type);
-                            result_type2->mArrayDimentionNum = 0;
-                            unsigned int right_node = sNodeTree_create_null_value(result_type2, info);
-    
-                            nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
-                        }
-                    }
-*/
-
-                    BOOL in_macro = FALSE;
-                    *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
-                }
-                else if(num_dimention == 2) {
-                    int i;
-                    for(i=0; i<num_initialize_array_value; i++) {
-                        unsigned int index_node[ARRAY_DIMENTION_MAX];
-
-                        if(store_each_element[i]) {
-                            index_node[0] = store_each_element_index[i];
-                            index_node[1] = store_each_element_index2[i];
-                            unsigned int right_node = initialize_array_values[i];
-    
-                            nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
-                        }
-                        else {
-                            index_node[0] = sNodeTree_create_int_value(i/result_type->mArrayNum[1], info);
-                            index_node[1] = sNodeTree_create_int_value(i%result_type->mArrayNum[1], info);
-    
-                            unsigned int right_node = initialize_array_values[i];
-    
-                            nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
-                        }
-
-                        if(num_nodes >= INIT_ARRAY_MAX+128) {
-                            fprintf(stderr, "overflow array initializer number\n");
-                            exit(32);
-                        }
-                    }
-
-                    BOOL in_macro = FALSE;
-                    *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
-                }
-                else if(num_dimention == 3) {
-                    int i;
-                    for(i=0; i<num_initialize_array_value; i++) {
-                        unsigned int index_node[ARRAY_DIMENTION_MAX];
-
-                        if(store_each_element[i]) {
-                            index_node[0] = store_each_element_index[i];
-                            index_node[1] = store_each_element_index2[i];
-                            index_node[2] = store_each_element_index3[i];
-                            
-                            unsigned int right_node = initialize_array_values[i];
-    
-                            nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
-                        }
-                        else {
-                            int n = result_type->mArrayNum[1]*result_type->mArrayNum[2];
-    
-                            index_node[0] = sNodeTree_create_int_value(i/n, info);
-                            index_node[1] = sNodeTree_create_int_value((i/result_type->mArrayNum[2])%result_type->mArrayNum[1], info);
-                            index_node[2] = sNodeTree_create_int_value(i%result_type->mArrayNum[2], info);
-    
-                            unsigned int right_node = initialize_array_values[i];
-    
-                            nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
-                        }
-
-                        if(num_nodes >= INIT_ARRAY_MAX+128) {
-                            fprintf(stderr, "overflow array initializer number\n");
-                            exit(72);
-                        }
-                    }
-
-                    BOOL in_macro = FALSE;
-                    *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
-                }
-                else {
-                    char buf[128];
-                    snprintf(buf, 128, "invalid array dimetion %d\n", num_dimention);
-                    
-                    parser_err_msg(info, buf);
-                }
-            }
-        }
-        else if(info->mBlockLevel > 0 && struct_initializer) {
-            expect_next_character_with_one_forward("{", info);
-            
-            int num_elements = 0;
-            struct sStructInitializer elements[INIT_ARRAY_MAX];
-            if(!parse_struct_initializer(&num_elements, elements, NULL, info))
-            {
-                return FALSE;
-            }
-            
-            unsigned int nodes[INIT_ARRAY_MAX+128];
-            int num_nodes = 0;
-            
-            nodes[num_nodes++] = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
-            
-            sCLClass* klass = result_type->mClass;
-            
-            unsigned int array_node = sNodeTree_create_load_variable(name, info);
-            
-            int i;
-            for(i=0; i<klass->mNumFields; i++) {
-                char* var_name = klass->mFieldName[i];
-                
-                int j;
-                for(j=0; j<num_elements; j++) {
-                    struct sStructInitializer* struct_initializer = &elements[j];
-                    
-                    if(strcmp(struct_initializer->mName, var_name) == 0) {
-                        unsigned int right_node = struct_initializer->mNode;
-                    
-                        nodes[num_nodes++] = sNodeTree_create_store_field(var_name, array_node, right_node, info);
-    
-                        if(num_nodes >= INIT_ARRAY_MAX+128) {
-                            fprintf(stderr, "overflow array initializer number\n");
-                            exit(82);
-                        }
-                    }
-                }
-            }
-            
-            BOOL in_macro = FALSE;
-            *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
-        }
-        else if(struct_initializer || struct_initializer_pointer) {
-            if(struct_initializer_pointer) {
-                info->p++;
-                skip_spaces_and_lf(info);
-            }
-            
-            info->p++;
-            skip_spaces_and_lf(info);
-            
-            sNodeType* node_type = NULL;
-            char buf[VAR_NAME_MAX];
-            if(!parse_type(&node_type, info, NULL, FALSE, TRUE, NULL, FALSE, FALSE, FALSE, FALSE, FALSE)) {
-                return FALSE;
-            }
-            
-            expect_next_character_with_one_forward(")", info);
-            expect_next_character_with_one_forward("{", info);
-            
-            int num_elements = 0;
-            struct sStructInitializer elements[INIT_ARRAY_MAX];
-            if(!parse_struct_initializer(&num_elements, elements, NULL, info))
-            {
-                return FALSE;
-            }
-            
-            if(info->mBlockLevel == 0) {
-                if(struct_initializer_pointer) {
-                    unsigned int nodes[INIT_ARRAY_MAX+128];
-                    int num_nodes = 0;
-                    
-                    char name2[VAR_NAME_MAX];
-                    snprintf(name2, VAR_NAME_MAX, "_%s", name);
-                    
-                    check_already_added_variable(info->lv_table, name2, info);
-                    sNodeType* node_type2 = clone_node_type(node_type);
-                    node_type2->mConstant = TRUE;
-                    if(!add_variable_to_table(info->lv_table, name2, "", node_type2, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
+                if(info->mBlockLevel == 0) {
+                    result_type->mConstant = TRUE;
+                    if(!add_variable_to_table(info->lv_table, name, "", result_type, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
                     {
                         fprintf(stderr, "overflow variable table\n");
-                        exit(92);
+                        exit(72);
                     }
-                    
-                    unsigned int node2 = sNodeTree_create_define_variable(name2, extern_, info->mBlockLevel == 0, info);
-                    
-                    struct sStructInitializer* elements2;
-                    elements2 = calloc(1, sizeof(struct sStructInitializer)*INIT_ARRAY_MAX);
-                    memcpy(elements2, elements, sizeof(struct sStructInitializer)*INIT_ARRAY_MAX);
-                    
-                    unsigned int left_node = node2;
-                    
-                    *node = sNodeTree_create_struct_initializer(name2, node_type, num_elements, elements2, left_node, info);
+                    *node = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
     
-                    nodes[num_nodes++] = *node;
-                    
-                    unsigned int right_node = sNodeTree_create_load_variable(name2, info);
-                    right_node = sNodeTree_create_refference(right_node, info);
-                    
-                    BOOL alloc = TRUE;
-                    BOOL global = TRUE;
-                    unsigned int node3 = sNodeTree_create_store_variable(name, right_node, alloc, global, info);
-    
-                    nodes[num_nodes++] = node3;
-    
-                    BOOL in_macro = FALSE;
-                    *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
+                    *node = sNodeTree_create_array_initializer(name, num_initialize_array_value, initialize_array_values, *node, num_struct_elements, num_struct_elements_array, store_each_element, store_each_element_index, struct_elements, info);
+                }
+                else if(result_type->mClass->mFlags & CLASS_FLAGS_STRUCT && result_type->mPointerNum == 0) {
+                    if(result_type->mArrayDimentionNum == 1) {
+                        unsigned int nodes[INIT_ARRAY_MAX+128];
+                        int num_nodes = 0;
+        
+                        nodes[num_nodes++] = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
+                        
+                        unsigned int array_node = sNodeTree_create_load_variable(name, info);
+                        
+                        int array_num = result_type->mArrayNum[0];
+        
+                        sCLClass* klass = result_type->mClass;
+                        int num_fields = klass->mNumFields;
+                        
+                        int n = 0;
+                        
+                        int i;
+                        for(i=0; i<array_num; i++) {
+                            unsigned int index_node[INIT_ARRAY_MAX];
+                            index_node[0] = sNodeTree_create_int_value(i, info);
+                            
+                            int num_dimention = 1;
+                            unsigned int struct_node = sNodeTree_create_load_array_element(array_node, index_node, num_dimention, info);
+                            
+                            int j;
+                            for(j=0; j<num_fields; j++) {
+                                char* var_name = klass->mFieldName[j];
+                                unsigned int right_node = initialize_array_values[n++];
+            
+                                nodes[num_nodes++] = sNodeTree_create_store_field(var_name, struct_node, right_node, info);
+            
+                                if(num_nodes >= INIT_ARRAY_MAX+128) {
+                                    fprintf(stderr, "overflow array initializer number\n");
+                                    exit(82);
+                                }
+                            }
+                        }
+        
+                        BOOL in_macro = FALSE;
+                        *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
+                    }
+                    else if(result_type->mArrayDimentionNum > 0) {
+                        parser_err_msg(info, "comelang don't support this format");
+                        return FALSE;
+                    }
+                    else {
+                        unsigned int nodes[INIT_ARRAY_MAX+128];
+                        int num_nodes = 0;
+        
+                        nodes[num_nodes++] = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
+        
+                        unsigned int array_node = sNodeTree_create_load_variable(name, info);
+                        
+                        sCLClass* klass = result_type->mClass;
+        
+                        int i;
+                        for(i=0; i<num_initialize_array_value; i++) {
+                            if(i >= klass->mNumFields) {
+                                parser_err_msg(info, "overflow struct initializer number");
+                                return FALSE;
+                            }
+                            
+                            char* var_name = klass->mFieldName[i];
+                            unsigned int right_node = initialize_array_values[i];
+        
+                            nodes[num_nodes++] = sNodeTree_create_store_field(var_name, array_node, right_node, info);
+        
+                            if(num_nodes >= INIT_ARRAY_MAX+128) {
+                                fprintf(stderr, "overflow array initializer number\n");
+                                exit(111);
+                            }
+                        }
+        
+                        BOOL in_macro = FALSE;
+                        *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
+                    }
                 }
                 else {
-                    *node = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
-                    
-                    struct sStructInitializer* elements2;
-                    elements2 = calloc(1, sizeof(struct sStructInitializer)*INIT_ARRAY_MAX);
-                    memcpy(elements2, elements, sizeof(struct sStructInitializer)*INIT_ARRAY_MAX);
-                    
-                    unsigned int left_node = *node;
-                    *node = sNodeTree_create_struct_initializer(name, node_type, num_elements, elements2, left_node, info);
-                }
-            }
-            else {
-                parser_err_msg(info, "not support this format");
-                return FALSE;
-            }
-        }
-        else if(result_type->mNoArrayPointerNum == 0 && (result_type->mArrayDimentionNum > 0 || result_type->mOmitArrayNum || ((result_type->mClass->mFlags & CLASS_FLAGS_STRUCT) && result_type->mPointerNum == 0) && ((type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 1 && result_type->mOmitArrayNum) || (type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 0) || *info->p == '{')))
-        {
-            if(type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 0) {
-                if(*info->p == '{') {
-                    info->p++;
-                    skip_spaces_and_lf(info);
-                }
-            }
-            else if(type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 1 && result_type->mOmitArrayNum) {
-                if(*info->p == '{') {
-                    info->p++;
-                    skip_spaces_and_lf(info);
-                }
-            }
-            else {
-                expect_next_character_with_one_forward("{", info);
-            }
-            
-            BOOL store_each_element[INIT_ARRAY_MAX];
-            unsigned int store_each_element_index[INIT_ARRAY_MAX];
-            unsigned int store_each_element_index2[INIT_ARRAY_MAX];
-            unsigned int store_each_element_index3[INIT_ARRAY_MAX];
-            unsigned int initialize_array_values[INIT_ARRAY_MAX];
-            int num_initialize_array_value = 0;
-            
-            memset(store_each_element, 0, sizeof(BOOL)*INIT_ARRAY_MAX);
-            memset(initialize_array_values, 0, sizeof(unsigned int)*INIT_ARRAY_MAX);
-            memset(store_each_element_index, 0, sizeof(unsigned int)*INIT_ARRAY_MAX);
-            memset(store_each_element_index2, 0, sizeof(unsigned int)*INIT_ARRAY_MAX);
-            memset(store_each_element_index3, 0, sizeof(unsigned int)*INIT_ARRAY_MAX);
-            
-            info->array_initializer = TRUE;
-
-            int num_dimention = result_type->mArrayDimentionNum;
-            
-            int nest = 1;
-
-            struct sStructInitializer* struct_elements[INIT_ARRAY_MAX];
-            int num_struct_elements_array[INIT_ARRAY_MAX];
-            int num_struct_elements = 0;
-
-            unsigned int right_node = 0;
-            if(*info->p == '}') {
-                info->p++;
-                skip_spaces_and_lf(info);
-            }
-            else {
-                while(TRUE) {
-                    if(*info->p == '{') {
-                        info->p++;
-                        skip_spaces_and_lf(info);
-                        nest++;
-                    }
-                    
-                    if(*info->p == '.') {
-                        nest--;
-                        int num_elements = 0;
-                        struct sStructInitializer elements[INIT_ARRAY_MAX];
-                        if(!parse_struct_initializer(&num_elements, elements, result_type->mClass, info))
-                        {
-                            return FALSE;
-                        }
-                        
-                        struct sStructInitializer* elements2;
-                        elements2 = calloc(1, sizeof(struct sStructInitializer)*INIT_ARRAY_MAX);
-                        memcpy(elements2, elements, sizeof(struct sStructInitializer)*INIT_ARRAY_MAX);
-                        
-                        struct_elements[num_struct_elements] = elements2;
-                        num_struct_elements_array[num_struct_elements] = num_elements;
-                        num_struct_elements++;
-                        
-                        if(num_struct_elements >= INIT_ARRAY_MAX) {
-                            fprintf(stderr, "overflow array initializer\n");
-                            exit(91);
-                        }
-                    }
-                    else if(*info->p == '[') {
-                        info->p++;
-                        skip_spaces_and_lf(info);
-                        
-                        unsigned int index_node = 0;
-                        if(!expression(&index_node, FALSE, info)) {
-                            return FALSE;
-                        }
-                        
-                        store_each_element[num_initialize_array_value] = TRUE;
-                        store_each_element_index[num_initialize_array_value] = index_node;
-                        
-                        expect_next_character_with_one_forward("]", info);
-                        
-                        if(*info->p == '[') {
-                            info->p++;
-                            skip_spaces_and_lf(info);
-                            
-                            unsigned int index_node = 0;
-                            if(!expression(&index_node, FALSE, info)) {
-                                return FALSE;
-                            }
-                            
-                            store_each_element_index2[num_initialize_array_value] = index_node;
-                            
-                            expect_next_character_with_one_forward("]", info);
-                            
-                            if(num_dimention == 1) {
-                                parser_err_msg(info, "Invalid array dimention");
-                                return FALSE;
-                            }
-                            
-                            if(*info->p == '[') {
-                                info->p++;
-                                skip_spaces_and_lf(info);
-                                
-                                unsigned int index_node = 0;
-                                if(!expression(&index_node, FALSE, info)) {
-                                    return FALSE;
-                                }
-                                
-                                store_each_element_index3[num_initialize_array_value] = index_node;
-                                
-                                expect_next_character_with_one_forward("]", info);
-                                
-                                if(num_dimention != 3) {
-                                    parser_err_msg(info, "Invalid array dimention");
-                                    return FALSE;
-                                }
-                            }
-                        }
-                        expect_next_character_with_one_forward("=", info);
-                        
-                        right_node = 0;
-        
-                        if(!expression(&right_node, FALSE, info)) {
-                            return FALSE;
-                        }
-                        
-                        initialize_array_values[num_initialize_array_value++] = right_node;
+                    unsigned int nodes[INIT_ARRAY_MAX+128];
+                    int num_nodes = 0;
     
-                        if(num_initialize_array_value >= INIT_ARRAY_MAX) {
-                            fprintf(stderr, "overflow array initializer number\n");
-                            exit(92);
+                    nodes[num_nodes++] = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
+    
+                    unsigned int array_node = sNodeTree_create_load_variable(name, info);
+    
+                    if(num_dimention == 1) {
+                        if(type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 0 && num_initialize_array_value == 1 && gNodes[initialize_array_values[0]].mNodeType == kNodeTypeCString) 
+                        {
+                            unsigned int node = initialize_array_values[0];
+    
+                            char* str = gNodes[node].uValue.sString.mString;
+    
+                            if(strlen(str)+1 >= INIT_ARRAY_MAX) {
+                                parser_err_msg(info, "invalid array initializer(2)");
+                                return FALSE;
+                            }
+    
+                            int i;
+                            for(i=0; i<strlen(str); i++) {
+                                initialize_array_values[i] = sNodeTree_create_character_value(str[i], info);
+                            }
+                            initialize_array_values[i] = sNodeTree_create_character_value('\0', info);
+    
+                            num_initialize_array_value = strlen(str)+1;
                         }
-                    }
-                    else { 
-                        right_node = 0;
+    
+                        int i;
+                        for(i=0; i<num_initialize_array_value; i++) {
+                            unsigned int index_node[ARRAY_DIMENTION_MAX];
+                            
+                            if(store_each_element[i]) {
+                                index_node[0] = store_each_element_index[i];
+                                unsigned int right_node = initialize_array_values[i];
         
-                        if(!expression(&right_node, FALSE, info)) {
-                            return FALSE;
-                        }
+                                nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
+                            }
+                            else {
+                                index_node[0] = sNodeTree_create_int_value(i, info);
+                                unsigned int right_node = initialize_array_values[i];
         
-                        if(right_node == 0) {
-                            parser_err_msg(info, "Require right value for {}");
-                            *node = 0;
-                        }
-                        else {
-                            initialize_array_values[num_initialize_array_value++] = right_node;
-        
-                            if(num_initialize_array_value >= INIT_ARRAY_MAX) {
+                                nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
+                            }
+    
+                            if(num_nodes >= INIT_ARRAY_MAX+128) {
                                 fprintf(stderr, "overflow array initializer number\n");
                                 exit(102);
                             }
                         }
-                    }
     
-                    if(*info->p == ',') {
-                        info->p++;
-                        skip_spaces_and_lf(info);
-                        
-                        while(*info->p == '}') {
-                            info->p++;
-                            skip_spaces_and_lf(info);
-                            nest--;
-                        }
-                        if(nest == 0) {
-                            break;
-                        }
+                        BOOL in_macro = FALSE;
+                        *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
                     }
-                    else if(*info->p == '\0') {
-                        info->sline = sline;
-                        parser_err_msg(info, "In the array initialization, the parser has arraived at the source end");
-                        return FALSE;
+                    else if(num_dimention == 2) {
+                        int i;
+                        for(i=0; i<num_initialize_array_value; i++) {
+                            unsigned int index_node[ARRAY_DIMENTION_MAX];
+    
+                            if(store_each_element[i]) {
+                                index_node[0] = store_each_element_index[i];
+                                index_node[1] = store_each_element_index2[i];
+                                unsigned int right_node = initialize_array_values[i];
+        
+                                nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
+                            }
+                            else {
+                                index_node[0] = sNodeTree_create_int_value(i/result_type->mArrayNum[1], info);
+                                index_node[1] = sNodeTree_create_int_value(i%result_type->mArrayNum[1], info);
+        
+                                unsigned int right_node = initialize_array_values[i];
+        
+                                nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
+                            }
+    
+                            if(num_nodes >= INIT_ARRAY_MAX+128) {
+                                fprintf(stderr, "overflow array initializer number\n");
+                                exit(92);
+                            }
+                        }
+    
+                        BOOL in_macro = FALSE;
+                        *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
                     }
-                    else if(*info->p == '}') {
-                        while(*info->p == '}') {
-                            info->p++;
-                            skip_spaces_and_lf(info);
-                            nest--;
+                    else if(num_dimention == 3) {
+                        int i;
+                        for(i=0; i<num_initialize_array_value; i++) {
+                            unsigned int index_node[ARRAY_DIMENTION_MAX];
+    
+                            if(store_each_element[i]) {
+                                index_node[0] = store_each_element_index[i];
+                                index_node[1] = store_each_element_index2[i];
+                                index_node[2] = store_each_element_index3[i];
+                                
+                                unsigned int right_node = initialize_array_values[i];
+        
+                                nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
+                            }
+                            else {
+                                int n = result_type->mArrayNum[1]*result_type->mArrayNum[2];
+        
+                                index_node[0] = sNodeTree_create_int_value(i/n, info);
+                                index_node[1] = sNodeTree_create_int_value((i/result_type->mArrayNum[2])%result_type->mArrayNum[1], info);
+                                index_node[2] = sNodeTree_create_int_value(i%result_type->mArrayNum[2], info);
+        
+                                unsigned int right_node = initialize_array_values[i];
+        
+                                nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
+                            }
+    
+                            if(num_nodes >= INIT_ARRAY_MAX+128) {
+                                fprintf(stderr, "overflow array initializer number\n");
+                                exit(32);
+                            }
                         }
-                        if(nest == 0) {
-                            break;
-                        }
-                    }
-                    else if(type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 0) {
-                        if(*info->p == '}') {
-                            info->p++;
-                            skip_spaces_and_lf(info);
-                        }
-                        break;
-                    }
-                    else if(type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 1 && result_type->mOmitArrayNum) {
-                        if(*info->p == '}') {
-                            info->p++;
-                            skip_spaces_and_lf(info);
-                        }
-                        break;
-                    }
-                    
-                    if(*info->p == ',') {
-                        info->p++;
-                        skip_spaces_and_lf(info);
-                        
-                        while(*info->p == '}') {
-                            info->p++;
-                            skip_spaces_and_lf(info);
-                            nest--;
-                        }
-                        if(nest == 0) {
-                            break;
-                        }
-                    }
-                }
-            }
-            
-            if(result_type->mOmitArrayNum) {
-                if(type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 1) {
-                    if(num_initialize_array_value == 1 && gNodes[initialize_array_values[0]].mNodeType == kNodeTypeCString) {
-                        result_type->mArrayNum[0] = gNodes[right_node].uValue.sString.mLen + 1;
+    
+                        BOOL in_macro = FALSE;
+                        *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
                     }
                     else {
-                        result_type->mArrayNum[0] = num_initialize_array_value;
+                        char buf[128];
+                        snprintf(buf, 128, "invalid array dimetion %d\n", num_dimention);
+                        
+                        parser_err_msg(info, buf);
                     }
                 }
-                else if(num_struct_elements > 0) {
-                    result_type->mArrayNum[0] = num_struct_elements;
-                }
-                else if(result_type->mClass->mFlags & CLASS_FLAGS_STRUCT) {
-                    result_type->mArrayNum[0] = num_initialize_array_value / result_type->mClass->mNumFields;
-                }
-                else {
-                    result_type->mArrayNum[0] = num_initialize_array_value;
-                }
-                result_type->mPointerNum--;
-                result_type->mArrayDimentionNum++;
-                
-                num_dimention = result_type->mArrayDimentionNum;
             }
-            
-            info->array_initializer = FALSE;
-
-            if(info->mBlockLevel == 0) {
-                result_type->mConstant = TRUE;
+            else {
+                check_already_added_variable(info->lv_table, name, info);
                 if(!add_variable_to_table(info->lv_table, name, "", result_type, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
                 {
                     fprintf(stderr, "overflow variable table\n");
-                    exit(72);
+                    exit(12);
                 }
-                *node = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
-
-                *node = sNodeTree_create_array_initializer(name, num_initialize_array_value, initialize_array_values, *node, num_struct_elements, num_struct_elements_array, store_each_element, store_each_element_index, struct_elements, info);
-            }
-            else if(result_type->mClass->mFlags & CLASS_FLAGS_STRUCT && result_type->mPointerNum == 0) {
-                if(result_type->mArrayDimentionNum == 1) {
-                    unsigned int nodes[INIT_ARRAY_MAX+128];
-                    int num_nodes = 0;
+                
+                unsigned int right_node = 0;
     
-                    nodes[num_nodes++] = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
-                    
-                    unsigned int array_node = sNodeTree_create_load_variable(name, info);
-                    
-                    int array_num = result_type->mArrayNum[0];
-    
-                    sCLClass* klass = result_type->mClass;
-                    int num_fields = klass->mNumFields;
-                    
-                    int n = 0;
-                    
-                    int i;
-                    for(i=0; i<array_num; i++) {
-                        unsigned int index_node[INIT_ARRAY_MAX];
-                        index_node[0] = sNodeTree_create_int_value(i, info);
-                        
-                        int num_dimention = 1;
-                        unsigned int struct_node = sNodeTree_create_load_array_element(array_node, index_node, num_dimention, info);
-                        
-                        int j;
-                        for(j=0; j<num_fields; j++) {
-                            char* var_name = klass->mFieldName[j];
-                            unsigned int right_node = initialize_array_values[n++];
-        
-                            nodes[num_nodes++] = sNodeTree_create_store_field(var_name, struct_node, right_node, info);
-        
-                            if(num_nodes >= INIT_ARRAY_MAX+128) {
-                                fprintf(stderr, "overflow array initializer number\n");
-                                exit(82);
-                            }
-                        }
-                    }
-    
-                    BOOL in_macro = FALSE;
-                    *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
-                }
-                else if(result_type->mArrayDimentionNum > 0) {
-                    parser_err_msg(info, "comelang don't support this format");
+                if(!expression(&right_node, FALSE, info)) {
                     return FALSE;
                 }
-                else {
-                    unsigned int nodes[INIT_ARRAY_MAX+128];
-                    int num_nodes = 0;
     
-                    nodes[num_nodes++] = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
-    
-                    unsigned int array_node = sNodeTree_create_load_variable(name, info);
-                    
-                    sCLClass* klass = result_type->mClass;
-    
-                    int i;
-                    for(i=0; i<num_initialize_array_value; i++) {
-                        if(i >= klass->mNumFields) {
-                            parser_err_msg(info, "overflow struct initializer number");
-                            return FALSE;
-                        }
-                        
-                        char* var_name = klass->mFieldName[i];
-                        unsigned int right_node = initialize_array_values[i];
-    
-                        nodes[num_nodes++] = sNodeTree_create_store_field(var_name, array_node, right_node, info);
-    
-                        if(num_nodes >= INIT_ARRAY_MAX+128) {
-                            fprintf(stderr, "overflow array initializer number\n");
-                            exit(111);
-                        }
-                    }
-    
-                    BOOL in_macro = FALSE;
-                    *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
-                }
-            }
-            else {
-                unsigned int nodes[INIT_ARRAY_MAX+128];
-                int num_nodes = 0;
-
-                nodes[num_nodes++] = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
-
-                unsigned int array_node = sNodeTree_create_load_variable(name, info);
-
-                if(num_dimention == 1) {
-                    if(type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 0 && num_initialize_array_value == 1 && gNodes[initialize_array_values[0]].mNodeType == kNodeTypeCString) 
-                    {
-                        unsigned int node = initialize_array_values[0];
-
-                        char* str = gNodes[node].uValue.sString.mString;
-
-                        if(strlen(str)+1 >= INIT_ARRAY_MAX) {
-                            parser_err_msg(info, "invalid array initializer(2)");
-                            return FALSE;
-                        }
-
-                        int i;
-                        for(i=0; i<strlen(str); i++) {
-                            initialize_array_values[i] = sNodeTree_create_character_value(str[i], info);
-                        }
-                        initialize_array_values[i] = sNodeTree_create_character_value('\0', info);
-
-                        num_initialize_array_value = strlen(str)+1;
-                    }
-
-                    int i;
-                    for(i=0; i<num_initialize_array_value; i++) {
-                        unsigned int index_node[ARRAY_DIMENTION_MAX];
-                        
-                        if(store_each_element[i]) {
-                            index_node[0] = store_each_element_index[i];
-                            unsigned int right_node = initialize_array_values[i];
-    
-                            nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
-                        }
-                        else {
-                            index_node[0] = sNodeTree_create_int_value(i, info);
-                            unsigned int right_node = initialize_array_values[i];
-    
-                            nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
-                        }
-
-                        if(num_nodes >= INIT_ARRAY_MAX+128) {
-                            fprintf(stderr, "overflow array initializer number\n");
-                            exit(102);
-                        }
-                    }
-
-                    BOOL in_macro = FALSE;
-                    *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
-                }
-                else if(num_dimention == 2) {
-                    int i;
-                    for(i=0; i<num_initialize_array_value; i++) {
-                        unsigned int index_node[ARRAY_DIMENTION_MAX];
-
-                        if(store_each_element[i]) {
-                            index_node[0] = store_each_element_index[i];
-                            index_node[1] = store_each_element_index2[i];
-                            unsigned int right_node = initialize_array_values[i];
-    
-                            nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
-                        }
-                        else {
-                            index_node[0] = sNodeTree_create_int_value(i/result_type->mArrayNum[1], info);
-                            index_node[1] = sNodeTree_create_int_value(i%result_type->mArrayNum[1], info);
-    
-                            unsigned int right_node = initialize_array_values[i];
-    
-                            nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
-                        }
-
-                        if(num_nodes >= INIT_ARRAY_MAX+128) {
-                            fprintf(stderr, "overflow array initializer number\n");
-                            exit(92);
-                        }
-                    }
-
-                    BOOL in_macro = FALSE;
-                    *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
-                }
-                else if(num_dimention == 3) {
-                    int i;
-                    for(i=0; i<num_initialize_array_value; i++) {
-                        unsigned int index_node[ARRAY_DIMENTION_MAX];
-
-                        if(store_each_element[i]) {
-                            index_node[0] = store_each_element_index[i];
-                            index_node[1] = store_each_element_index2[i];
-                            index_node[2] = store_each_element_index3[i];
-                            
-                            unsigned int right_node = initialize_array_values[i];
-    
-                            nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
-                        }
-                        else {
-                            int n = result_type->mArrayNum[1]*result_type->mArrayNum[2];
-    
-                            index_node[0] = sNodeTree_create_int_value(i/n, info);
-                            index_node[1] = sNodeTree_create_int_value((i/result_type->mArrayNum[2])%result_type->mArrayNum[1], info);
-                            index_node[2] = sNodeTree_create_int_value(i%result_type->mArrayNum[2], info);
-    
-                            unsigned int right_node = initialize_array_values[i];
-    
-                            nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
-                        }
-
-                        if(num_nodes >= INIT_ARRAY_MAX+128) {
-                            fprintf(stderr, "overflow array initializer number\n");
-                            exit(32);
-                        }
-                    }
-
-                    BOOL in_macro = FALSE;
-                    *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
+                if(right_node == 0) {
+                    parser_err_msg(info, "Require right value for =");
+                    *node = 0;
                 }
                 else {
-                    char buf[128];
-                    snprintf(buf, 128, "invalid array dimetion %d\n", num_dimention);
-                    
-                    parser_err_msg(info, buf);
+                    BOOL global = info->mBlockLevel == 0;
+                    *node = sNodeTree_create_store_variable(name, right_node, TRUE, global, info);
                 }
-            }
-        }
-        else {
-            check_already_added_variable(info->lv_table, name, info);
-            if(!add_variable_to_table(info->lv_table, name, "", result_type, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
-            {
-                fprintf(stderr, "overflow variable table\n");
-                exit(12);
             }
             
-            unsigned int right_node = 0;
-
-            if(!expression(&right_node, FALSE, info)) {
-                return FALSE;
-            }
-
-            if(right_node == 0) {
-                parser_err_msg(info, "Require right value for =");
-                *node = 0;
-            }
-            else {
-                BOOL global = info->mBlockLevel == 0;
-                *node = sNodeTree_create_store_variable(name, right_node, TRUE, global, info);
-            }
+            info->array_initializer2 = array_initializer_before;
         }
-        
-        info->array_initializer2 = array_initializer_before;
     }
     else {
         *node = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);

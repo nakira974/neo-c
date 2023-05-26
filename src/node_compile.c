@@ -215,6 +215,12 @@ BOOL compile(unsigned int node, sCompileInfo* info)
                 return FALSE;
             }
             break;
+            
+        case kNodeTypeDefineArrayWithInitializer:
+            if(!compile_define_array_with_initializer(node, info)) {
+                return FALSE;
+            }
+            break;
 
         case kNodeTypeLoadVariable:
             if(!compile_load_variable(node, info)) {

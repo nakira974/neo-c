@@ -201,6 +201,9 @@ sComeFun* get_come_function(char* fun_name)
 
 void add_come_code(struct sCompileInfoStruct* info, const char* msg, ...)
 {
+    if(info->no_output_come_code) {
+        return;
+    }
     char msg2[COME_CODE_MAX];
 
     va_list args;
@@ -222,6 +225,9 @@ void add_come_code(struct sCompileInfoStruct* info, const char* msg, ...)
 
 void add_come_code_at_head(struct sCompileInfoStruct* info, const char* msg, ...)
 {
+    if(info->no_output_come_code) {
+        return;
+    }
     char msg2[COME_CODE_MAX];
 
     va_list args;
@@ -253,6 +259,9 @@ void add_come_code_at_defer(struct sCompileInfoStruct* info, const char* msg, ..
 
 void transpiler_append_defer_source(struct sCompileInfoStruct* info)
 {
+    if(info->no_output_come_code) {
+        return;
+    }
     if(info->come_fun) {
         add_come_code(info, "%s", info->come_fun->mSourceDefer.mBuf);
     }
@@ -272,6 +281,9 @@ void add_come_code_top_level(const char* msg, ...)
 
 void add_last_code_to_source(struct sCompileInfoStruct* info)
 {
+    if(info->no_output_come_code) {
+        return;
+    }
     if(gNCTranspile) {
         if(gComeModule.mLastCode) {
            add_come_code(info, "%s", gComeModule.mLastCode);
@@ -282,6 +294,9 @@ void add_last_code_to_source(struct sCompileInfoStruct* info)
 
 void add_come_last_code(struct sCompileInfoStruct* info, const char* msg, ...)
 {
+    if(info->no_output_come_code) {
+        return;
+    }
     char msg2[COME_CODE_MAX];
 
     va_list args;
@@ -329,6 +344,16 @@ char* make_define_var(sNodeType* node_type, char* name, struct sCompileInfoStruc
     else if(node_type->mSizeNum > 0) {
         sBuf_append_str(&buf, "int ");
         sBuf_append_str(&buf, xsprintf("%s:%d;\n", name, node_type->mSizeNum));
+    }
+    else if(node_type->mOmitArrayNum) {
+        char* node_type_str = make_type_name_string(node_type);
+        
+        sBuf_append_str(&buf, node_type_str);
+        
+        sBuf_append_str(&buf, " ");
+        sBuf_append_str(&buf, name);
+        
+        sBuf_append_str(&buf, "[]");
     }
     else if(info != NULL && node_type->mDynamicArrayNum != 0) {
         if(!compile(node_type->mDynamicArrayNum, info)) {
@@ -761,4 +786,45 @@ char* make_lambda_type_name_string(sNodeType* node_type, char* var_name)
         
         return xsprintf("%s", buf);
     }
+}
+
+unsigned int sNodeTree_create_define_array_with_initializer(sNodeType* result_type, char* name, char* initializer_source, sParserInfo* info)
+{
+    unsigned node = alloc_node();
+
+    gNodes[node].mNodeType = kNodeTypeDefineArrayWithInitializer;
+
+    xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
+    gNodes[node].mLine = info->sline;
+
+    xstrncpy(gNodes[node].uValue.sDefineArrayWithInitializer.mName, name, VAR_NAME_MAX);
+    gNodes[node].uValue.sDefineArrayWithInitializer.mResultType = clone_node_type(result_type);
+    gNodes[node].uValue.sDefineArrayWithInitializer.mInitializerSource = initializer_source;
+    
+    gNodes[node].mLeft = 0;
+    gNodes[node].mRight = 0;
+    gNodes[node].mMiddle = 0;
+
+    return node;
+}
+
+BOOL compile_define_array_with_initializer(unsigned int node, struct sCompileInfoStruct* info)
+{
+    char name[VAR_NAME_MAX];
+    xstrncpy(name, gNodes[node].uValue.sDefineArrayWithInitializer.mName, VAR_NAME_MAX);
+    sNodeType* result_type = gNodes[node].uValue.sDefineArrayWithInitializer.mResultType;
+    
+    char* initializer_source = gNodes[node].uValue.sDefineArrayWithInitializer.mInitializerSource;
+    BOOL extern_ = FALSE;
+    unsigned int node2 = sNodeTree_create_define_variable(name, extern_, info->pinfo->mBlockLevel == 0, info->pinfo);
+    
+    info->no_output_come_code = TRUE;
+    if(!compile(node2, info)) {
+        return FALSE;
+    }
+    info->no_output_come_code = FALSE;
+    
+    add_come_code(info, "%s = %s;\n", make_define_var(result_type, name, info), initializer_source);
+
+    return TRUE;
 }

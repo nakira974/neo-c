@@ -306,7 +306,7 @@ void add_last_code_to_source(struct sCompileInfoStruct* info);
 void output_function(sBuf* output, sComeFun* fun);
 void header_function(sBuf* output, sComeFun* fun);
 char* make_lambda_type_name_string(sNodeType* node_type, char* var_name);
-unsigned int sNodeTree_create_define_array_with_initializer(sNodeType* result_type, char* name, char* initializer_source, struct sParserInfoStruct* info);
+unsigned int sNodeTree_create_define_array_with_initializer(sNodeType* result_type, char* name, char* initializer_source, char* type_name_str, struct sParserInfoStruct* info);
 BOOL compile_define_array_with_initializer(unsigned int node, struct sCompileInfoStruct* info);
 
 //////////////////////////////
@@ -1090,6 +1090,7 @@ struct sNodeTreeStruct
             char mName[VAR_NAME_MAX];
             sNodeType* mResultType;
             char* mInitializerSource;
+            char* mTypeNameStr;
         } sDefineArrayWithInitializer;
     } uValue;
 };

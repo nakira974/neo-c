@@ -1365,6 +1365,9 @@ typedef unsigned int u32;
 typedef unsigned short u16;
 typedef unsigned char u8;
 typedef unsigned long u64;
+int bbb[3] = { 1, 2, 3};
+char ccc[4] = "ABC";
+char* arrays2[3] = { "AAA", "BBB", "CCC" };
 int gA[3] = { 1, 2, 3};
 int gB[3] = { 1, 2, 3};
 int gC[2][2] = { { 1,2 }, { 3,4 }};
@@ -1372,6 +1375,70 @@ char gD[4] = "ABC";
 char gE[4] = "ABC";
 char gF[3] = { [0] = 0, [1] = 1, [2] = 2 };
 int gG[3] = { 1, 2 ,3 };
+struct sData
+{
+    int a;
+    int b;
+    int c;
+};
+struct sData gH = { 1, 2 };
+struct sData gI = { .a=3, .c=7 };
+struct sData gJ[3] = { { 1,2,3}, {4,5,6}, {7,8,9}};
+struct come_anon57
+{
+    char* a;
+    int b;
+};
+struct come_anon57 xyz[4] = { { "AAA",2 }, { "BBB", 4 }};
+struct come_anon58
+{
+    int c;
+    int d;
+};
+struct come_anon59
+{
+    int c;
+    int d;
+};
+union come_anon60
+{
+    int a;
+    long b;
+    char c;
+};
+struct come_anon61
+{
+    int c;
+    int d;
+};
+struct come_anon62
+{
+    int c;
+    int d;
+};
+union come_anon63
+{
+    int a;
+    long b;
+    char c;
+};
+struct sData2
+{
+    int a;
+    int b;
+    struct come_anon61 c;
+    struct come_anon62 d;
+    union come_anon63 e;
+};
+struct sData2 gData = (struct sData2){ .a = 1, .b = 2, .c = { .c = 3, .d =4 }, .e = { .c='c' } };
+struct sData2* gData2 = &(struct sData2){ .a = 3, .b = 4, .c = { .c = 4, .d = 5} };
+union uNode2
+{
+    int a;
+    long b;
+    char c;
+};
+union uNode2 gNodeX = (union uNode2){ .c = 'd' };
 
 void come_gc_init();
 void come_boehm_gc_init();
@@ -3238,6 +3305,102 @@ inline_func_end_label6:
         }
     
 inline_func_end_label7:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "global struct initializer test";
+    _Bool _inline_exp1 = gH.a==1&&gH.b==2;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label8:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "global struct initializer test2";
+    _Bool _inline_exp1 = gI.a==3&&gI.c==7;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label9:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "global struct initializer test3";
+    _Bool _inline_exp1 = gJ[0].a==1&&gJ[1].c==6;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label10:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "struct initializer test4";
+    _Bool _inline_exp1 = gData.a==1&&gData.b==2;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label11:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "struct initializer test5";
+    _Bool _inline_exp1 = gData2->a==3&&gData2->b==4;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label12:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "union initializer test6";
+    _Bool _inline_exp1 = gNodeX.c=='d';
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label13:
     (void)0;
 }
         int __result_value = 0;

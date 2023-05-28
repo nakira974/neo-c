@@ -788,7 +788,7 @@ char* make_lambda_type_name_string(sNodeType* node_type, char* var_name)
     }
 }
 
-unsigned int sNodeTree_create_define_array_with_initializer(sNodeType* result_type, char* name, char* initializer_source, sParserInfo* info)
+unsigned int sNodeTree_create_define_array_with_initializer(sNodeType* result_type, char* name, char* initializer_source, char* type_name_str, sParserInfo* info)
 {
     unsigned node = alloc_node();
 
@@ -800,6 +800,7 @@ unsigned int sNodeTree_create_define_array_with_initializer(sNodeType* result_ty
     xstrncpy(gNodes[node].uValue.sDefineArrayWithInitializer.mName, name, VAR_NAME_MAX);
     gNodes[node].uValue.sDefineArrayWithInitializer.mResultType = clone_node_type(result_type);
     gNodes[node].uValue.sDefineArrayWithInitializer.mInitializerSource = initializer_source;
+    gNodes[node].uValue.sDefineArrayWithInitializer.mTypeNameStr = type_name_str;
     
     gNodes[node].mLeft = 0;
     gNodes[node].mRight = 0;
@@ -815,6 +816,9 @@ BOOL compile_define_array_with_initializer(unsigned int node, struct sCompileInf
     sNodeType* result_type = gNodes[node].uValue.sDefineArrayWithInitializer.mResultType;
     
     char* initializer_source = gNodes[node].uValue.sDefineArrayWithInitializer.mInitializerSource;
+    
+    char* type_name_str = gNodes[node].uValue.sDefineArrayWithInitializer.mTypeNameStr;
+    
     BOOL extern_ = FALSE;
     unsigned int node2 = sNodeTree_create_define_variable(name, extern_, info->pinfo->mBlockLevel == 0, info->pinfo);
     
@@ -824,7 +828,12 @@ BOOL compile_define_array_with_initializer(unsigned int node, struct sCompileInf
     }
     info->no_output_come_code = FALSE;
     
-    add_come_code(info, "%s = %s;\n", make_define_var(result_type, name, info), initializer_source);
+    if(type_name_str) {
+        add_come_code(info, "%s = %s%s;\n", make_define_var(result_type, name, info), type_name_str, initializer_source);
+    }
+    else {
+        add_come_code(info, "%s = %s;\n", make_define_var(result_type, name, info), initializer_source);
+    }
 
     return TRUE;
 }

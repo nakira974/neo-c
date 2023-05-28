@@ -73,13 +73,20 @@ union uData
 union uData gUnionData;
 int gGlobalArray[3];
 int gGlobalArray2[3][3];
-const int gGlobalArray3[3];
-const int gGlobalArray4[3][2];
-const int gGlobalArray5[2][3][4];
-const char gGlobalString[4];
-const char* gGlobalArray6[3];
-const char gGlobalArray7[4];
-const char gGlobalArray8[4];
+int gGlobalArray3[3] = {
+    1,2,3
+};
+int gGlobalArray4[3][2] = {
+    1,2, 3,4, 5,6
+};
+int gGlobalArray5[2][3][4] = {
+    1,2,3,4, 5,6,7,8, 9,10,11,12,
+    13,14,15,16, 17,18,19,20, 21,22,23,24
+};
+char gGlobalString[4] = "ABC";
+char* gGlobalArray6[3] = { "AAA", "BBB", "CCC" };
+char gGlobalArray7[4] = { "ABC" };
+char gGlobalArray8[4] = "ABC";
 typedef __builtin_va_list va_list;
 struct GenericsType_int_bool
 {

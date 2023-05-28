@@ -1831,6 +1831,33 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
         char* p = info->p;
         int sline = info->sline;
         
+        BOOL is_struct_type_name = FALSE;
+        
+        if(*info->p == '(') {
+            info->p ++;
+            skip_spaces_and_lf(info);
+            
+            char buf[VAR_NAME_MAX];
+            (void)parse_word(buf, VAR_NAME_MAX, info, FALSE, FALSE);
+            
+            is_struct_type_name = is_type_name(buf, info);
+            
+            info->p = p;
+            info->sline = sline;
+        }
+        else if(*info->p == '&' && *(info->p+1) == '(') {
+            info->p += 2;
+            skip_spaces_and_lf(info);
+            
+            char buf[VAR_NAME_MAX];
+            (void)parse_word(buf, VAR_NAME_MAX, info, FALSE, FALSE);
+            
+            is_struct_type_name = is_type_name(buf, info);
+            
+            info->p = p;
+            info->sline = sline;
+        }
+        
         if(gNCTranspile && !extern_ && type_identify_with_class_name(result_type, "char") && ((result_type->mPointerNum == 0 && result_type->mArrayDimentionNum == 1) || (result_type->mPointerNum == 1 && result_type->mOmitArrayNum)) && *info->p == '"')
         {
             sBuf buf;
@@ -1874,11 +1901,11 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
             memcpy(initializer_source, p, len);
             initializer_source[len] = '\0';
            
-            *node = sNodeTree_create_define_array_with_initializer(result_type, name, initializer_source, info);
+            *node = sNodeTree_create_define_array_with_initializer(result_type, name, initializer_source, NULL, info);
             
             free(buf.mBuf);
         }
-        else if(gNCTranspile && !extern_ && (result_type->mArrayDimentionNum > 0 || result_type->mOmitArrayNum) && *info->p == '{') 
+        else if(gNCTranspile && !extern_ && (result_type->mArrayDimentionNum > 0 || result_type->mOmitArrayNum) && *info->p == '{')
         {
             info->p++;
             skip_spaces_and_lf(info);
@@ -1997,7 +2024,208 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
             memcpy(initializer_source, p, len);
             initializer_source[len] = '\0';
            
-            *node = sNodeTree_create_define_array_with_initializer(result_type, name, initializer_source, info);
+            *node = sNodeTree_create_define_array_with_initializer(result_type, name, initializer_source, NULL, info);
+        }
+        else if(gNCTranspile && !extern_ && ((result_type->mClass->mFlags & CLASS_FLAGS_STRUCT) || (result_type->mClass->mFlags & CLASS_FLAGS_UNION)) && (*info->p == '{' || is_struct_type_name))
+        {
+            sBuf type_name;
+            sBuf_init(&type_name);
+            
+            if(*info->p == '(') {
+                info->p ++;
+                skip_spaces_and_lf(info);
+                
+                sBuf_append_str(&type_name, "(");
+                
+                char buf[VAR_NAME_MAX];
+                if(!parse_word(buf, VAR_NAME_MAX, info, FALSE, FALSE)) {
+                    return FALSE;
+                }
+                
+                if(strcmp(buf, "struct") == 0 || strcmp(buf, "union") == 0) {
+                    sBuf_append_str(&type_name, buf);
+                    sBuf_append_str(&type_name, " ");
+                    
+                    if(!parse_word(buf, VAR_NAME_MAX, info, FALSE, FALSE)) {
+                        return FALSE;
+                    }
+                    sBuf_append_str(&type_name, buf);
+                }
+                else if(result_type->mClass->mFlags & CLASS_FLAGS_STRUCT) {
+                    sBuf_append_str(&type_name, "struct");
+                    sBuf_append_str(&type_name, " ");
+                    sBuf_append_str(&type_name, buf);
+                }
+                else if(result_type->mClass->mFlags & CLASS_FLAGS_UNION) {
+                    sBuf_append_str(&type_name, "union");
+                    sBuf_append_str(&type_name, " ");
+                    sBuf_append_str(&type_name, buf);
+                }
+                
+                if(*info->p == ')') {
+                    info->p++;
+                    skip_spaces_and_lf(info);
+                    sBuf_append_str(&type_name, ")");
+                }
+                
+                p = info->p;
+            }
+            else if(*info->p == '&' && *(info->p+1) == '(') {
+                info->p += 2;
+                skip_spaces_and_lf(info);
+                
+                sBuf_append_str(&type_name, "&(");
+                
+                char buf[VAR_NAME_MAX];
+                if(!parse_word(buf, VAR_NAME_MAX, info, FALSE, FALSE)) {
+                    return FALSE;
+                }
+                
+                if(strcmp(buf, "struct") == 0 || strcmp(buf, "union") == 0) {
+                    sBuf_append_str(&type_name, buf);
+                    sBuf_append_str(&type_name, " ");
+                    
+                    if(!parse_word(buf, VAR_NAME_MAX, info, FALSE, FALSE)) {
+                        return FALSE;
+                    }
+                    sBuf_append_str(&type_name, buf);
+                }
+                else if(result_type->mClass->mFlags & CLASS_FLAGS_STRUCT) {
+                    sBuf_append_str(&type_name, "struct");
+                    sBuf_append_str(&type_name, " ");
+                    sBuf_append_str(&type_name, buf);
+                }
+                else if(result_type->mClass->mFlags & CLASS_FLAGS_UNION) {
+                    sBuf_append_str(&type_name, "union");
+                    sBuf_append_str(&type_name, " ");
+                    sBuf_append_str(&type_name, buf);
+                }
+                
+                if(*info->p == ')') {
+                    info->p++;
+                    skip_spaces_and_lf(info);
+                    sBuf_append_str(&type_name, ")");
+                }
+                
+                p = info->p;
+            }
+            
+            if(*info->p == '{') { // '{'
+                info->p++;
+                skip_spaces_and_lf(info);
+            }
+            
+            int num_element = 0;
+    
+            BOOL dquort = FALSE;
+            BOOL squort = FALSE;
+            int sline = 0;
+            int nest = 0;
+            while(1) {
+                if(dquort) {
+                    if(*info->p == '\\') {
+                        info->p++;
+                        if(*info->p == '\0') {
+                            fprintf(stderr, "%s %d: unexpected the source end. close single quote or double quote.", info->sname, sline);
+                            return FALSE;
+                        }
+                        info->p++;
+                    }
+                    else if(*info->p == '"') {
+                        info->p++;
+                        dquort = !dquort;
+                    }
+                    else {
+                        info->p++;
+    
+                        if(*info->p == '\0') {
+                            fprintf(stderr, "%s %d: unexpected the source end. close single quote or double quote.", info->sname, sline);
+                            return FALSE;
+                        }
+                    }
+                }
+                else if(squort) {
+                    if(*info->p == '\\') {
+                        info->p++;
+                        if(*info->p == '\0') {
+                            fprintf(stderr, "%s %d: unexpected the source end. close single quote or double quote.", info->sname, sline);
+                            return FALSE;
+                        }
+                        info->p++;
+                    }
+                    else if(*info->p == '\'') {
+                        info->p++;
+                        squort = !squort;
+                    }
+                    else {
+                        info->p++;
+    
+                        if(*info->p == '\0') {
+                            fprintf(stderr, "%s %d: unexpected the source end. close single quote or double quote.", info->sname, sline);
+                            return FALSE;
+                        }
+                    }
+                }
+                else if(*info->p == '\'') {
+                    sline = info->sline;
+                    info->p++;
+                    squort = !squort;
+                }
+                else if(*info->p == '"') {
+                    sline = info->sline;
+                    info->p++;
+                    dquort = !dquort;
+                }
+                else if(*info->p == '#') {
+                    if(!parse_sharp(info)) {
+                        return FALSE;
+                    }
+                }
+                else if(*info->p == '{') {
+                    info->p++;
+    
+                    nest++;
+                }
+                else if(*info->p == '}') {
+                    info->p++;
+    
+                    if(nest == 0) {
+                        skip_spaces_and_lf(info);
+                        break;
+                    }
+    
+                    nest--;
+                }
+                else if(*info->p == '\0') {
+                    parser_err_msg(info, "The block requires } character for closing block");
+                    return TRUE;
+                }
+                else if(*info->p == '\n') {
+                    info->p++;
+                    info->sline++;
+                }
+                else if(*info->p == ',') {
+                    info->p++;
+                    num_element++;
+                }
+                else {
+                    info->p++;
+                }
+            }
+            
+            num_element++;
+            
+            char* tail = info->p;
+            
+            int len = tail - p;
+            char* initializer_source = GC_malloc(sizeof(char)*(len+1));
+            memcpy(initializer_source, p, len);
+            initializer_source[len] = '\0';
+            char* type_name_str = xsprintf("%s", type_name.mBuf);
+           
+            *node = sNodeTree_create_define_array_with_initializer(result_type, name, initializer_source, type_name_str, info);
+            
+            free(type_name.mBuf);
         }
         else {
             BOOL struct_initializer = FALSE;
@@ -2187,7 +2415,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                             }
                         }
                     }
-    /*
+/*
                     for(; i<result_type->mArrayNum[0]; i++) {
                         int num_dimention = 1;
                         unsigned int index_node[1];
@@ -2200,7 +2428,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
     
                         nodes[num_nodes++] = sNodeTree_create_store_element(array_node, index_node, num_dimention, right_node, info);
                     }
-    */
+*/
                     expect_next_character_with_one_forward("}", info);
                     
                     BOOL in_macro = FALSE;

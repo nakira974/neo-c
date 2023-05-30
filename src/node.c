@@ -725,6 +725,10 @@ sFunction* create_equals_automatically(sNodeType* node_type, char* fun_name, cha
 void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL force_delete, sCompileInfo* info)
 {
     if(!gNCGC && (node_type->mAllocaValue || node_type->mPointerNum > 0)) {
+        if(node_type->mAllocaValue) {
+            c_value = xsprintf("(&%s)", c_value);
+        }
+        
         LLVMTypeRef llvm_type = create_llvm_type_with_class_name("char*");
 
         LLVMValueRef mem = LLVMBuildCast(gBuilder, LLVMBitCast, obj, llvm_type, "castAK2");
@@ -5523,7 +5527,7 @@ BOOL compile_block(sNodeBlock* block, BOOL force_hash_result, sCompileInfo* info
                 info->pinfo->lv_table = old_table;
                 return FALSE;
             }
-            
+    
             char* last_code = gComeModule.mLastCode;
             
             /// return ///
@@ -5760,6 +5764,10 @@ LLVMValueRef create_null_value(sNodeType* node_type)
     LLVMTypeRef llvm_element_type = create_llvm_type_from_node_type(node_type);
     
     if(node_type->mPointerNum > 0)
+    {
+        zero_value = LLVMConstNull(llvm_element_type);
+    }
+    else if(node_type->mNoArrayPointerNum > 0)
     {
         zero_value = LLVMConstNull(llvm_element_type);
     }

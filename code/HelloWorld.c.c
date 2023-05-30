@@ -24,6 +24,11 @@ struct sUndefinedStruct2
 {
     struct sUndefinedStruct* data;
 };
+struct sUndefinedStruct
+{
+    int data;
+    int data2;
+};
 struct come_anon0
 {
     int a;
@@ -130,8 +135,7 @@ int funXY_v3(int a, int b);
 int xxx(int a, int b);
 int main();
 
-void xassert(const char* msg, _Bool exp)
-{
+void xassert(const char* msg, _Bool exp){
     (printf(msg));
     (printf("..."));
     if(exp) {
@@ -143,83 +147,68 @@ void xassert(const char* msg, _Bool exp)
     }
 }
 
-static void funA()
-{
-    static int xxx__1=1;
-    (printf("%d\n",xxx__1));
-    xxx__1=xxx__1+1;
+static void funA(){
+    static int xxx=1;
+    (printf("%d\n",xxx));
+    xxx=xxx+1;
 }
 
-int funB(int x, int y)
-{
+int funB(int x, int y){
         int __result_value = x+y;
     return __result_value;
 }
 
-void int_show(int self)
-{
+void int_show(int self){
     (printf("int_show %d\n",self));
 }
 
-void fun(struct GenericsType_int_bool* data)
-{
-    int __tmp_variable1 = 1;
-    int a__1=__tmp_variable1;
+void fun(struct GenericsType_int_bool* data){
+    int a=1;
 }
 
-void funX()
-{
+void funX(){
 }
 
-void normal_fun(char* a)
-{
+void normal_fun(char* a){
     (puts(a));
 }
 
-void funY_v1(int a, int b)
-{
+void funY_v1(int a, int b){
     (puts("version 1"));
 }
 
-void funY_v2(int a, int b)
-{
+void funY_v2(int a, int b){
     (funY_v1(a,b));
     (puts("version 2"));
 }
 
-void funY_v3(int a, int b)
-{
+void funY_v3(int a, int b){
     (funY_v2(a,b));
     (puts("verion 3"));
     (printf("a %d b %d\n",a,b));
 }
 
-int funXY_v1(int a, int b)
-{
+int funXY_v1(int a, int b){
         int __result_value = 1;
     return __result_value;
 }
 
-int funXY_v2(int a, int b)
-{
+int funXY_v2(int a, int b){
         int __result_value = (funXY_v1(a,b))+1;
     return __result_value;
 }
 
-int funXY_v3(int a, int b)
-{
+int funXY_v3(int a, int b){
         int __result_value = (funXY_v2(a,b))+1;
     return __result_value;
 }
 
-int xxx(int a, int b)
-{
+int xxx(int a, int b){
         int __result_value = a+b;
     return __result_value;
 }
 
-int main()
-{
+int main(){
 int inline_result_variable4;
 int inline_result_variable5;
 int inline_result_variable6;
@@ -237,9 +226,8 @@ come_gc_init();
     (xassert("exp9 test",1*2==2));
     (xassert("exp10 test",2/2==1));
     (xassert("exp11 test",3%2==1));
-    int __tmp_variable2 = 1+1;
-    int a__1=__tmp_variable2;
-    (xassert("auto test",a__1==2));
+    int a=1+1;
+    (xassert("auto test",a==2));
     (xassert("long test",1+1==2));
     (xassert("auto cast test",1+1==2));
     {
@@ -292,10 +280,10 @@ inline_func_end_label5:
     (void)0;
 }
     (xassert("inline function test2",inline_result_variable5==3));
-    struct sData c__1;
-    memset(&c__1, 0, sizeof(struct sData));
+    struct sData c;
+    memset(&c, 0, sizeof(struct sData));
     int __tmp_store_field1 = 1;
-    c__1.a=__tmp_store_field1;
+    c.a=__tmp_store_field1;
         int __result_value = 0;
     return __result_value;
 }

@@ -85,6 +85,7 @@ BOOL compile_c_string_value(unsigned int node, sCompileInfo* info)
         char* p = buf;
         sBuf buf2;
         sBuf_init(&buf2);
+        sBuf_append_char(&buf2, '"');
         while(*p) {
             switch(*p) {
                 case '\n':
@@ -127,6 +128,11 @@ BOOL compile_c_string_value(unsigned int node, sCompileInfo* info)
                     sBuf_append_char(&buf2, '\\');
                     break;
 
+                case '"':
+                    sBuf_append_char(&buf2, '\\');
+                    sBuf_append_char(&buf2, '"');
+                    break;
+
                 default:
                     sBuf_append_char(&buf2, *p);
                     break;
@@ -134,7 +140,8 @@ BOOL compile_c_string_value(unsigned int node, sCompileInfo* info)
             }
             p++;
         }
-        llvm_value.c_value = xsprintf("\"%s\"", buf2.mBuf);
+        sBuf_append_char(&buf2, '"');
+        llvm_value.c_value = GC_strdup(buf2.mBuf);
         llvm_value.type = create_node_type_with_class_name("char*");
         llvm_value.type->mUnsigned = TRUE;
         llvm_value.address = value2;
@@ -823,9 +830,13 @@ BOOL compile_list_value(unsigned int node, sCompileInfo* info)
     }
     
     LVALUE pre_node_value = *get_value_from_stack(-1);
-    dec_stack_ptr(1, info);
-    
     sNodeType* pre_node_type = clone_node_type(info->type);
+
+    if(gNCTranspile && pre_node_type->mHeap) {
+        free_object(pre_node_type, pre_node_value.value, pre_node_value.c_value, TRUE, info);
+    }
+
+    dec_stack_ptr(1, info);
     
     if(gNCTranspile) {
         remove_object_from_right_values(pre_node_value.value, info);
@@ -835,6 +846,7 @@ BOOL compile_list_value(unsigned int node, sCompileInfo* info)
     
     static int list_num = 0;
     sBuf_append_str(&buf, xsprintf("%s _list_element%d[%d];\n", make_type_name_string(node_type), ++list_num, num_nodes));
+    int list_num2 = list_num;
     
     for(i=0; i<num_nodes; i++) {
         unsigned int node = nodes[i];
@@ -857,7 +869,7 @@ BOOL compile_list_value(unsigned int node, sCompileInfo* info)
         
         elements_value[i] = *get_value_from_stack(-1);
         
-        sBuf_append_str(&buf, xsprintf("_list_element%d[%d] = %s;\n", list_num, i, elements_value[i].c_value));
+        sBuf_append_str(&buf, xsprintf("_list_element%d[%d] = %s;\n", list_num2, i, elements_value[i].c_value));
         
         dec_stack_ptr(1, info);
         
@@ -965,7 +977,7 @@ BOOL compile_list_value(unsigned int node, sCompileInfo* info)
     
     char* var_name = append_object_to_right_values(llvm_value.value, list_type, info);
     
-    llvm_value.c_value = xsprintf("(%s = %s(%s, %d, _list_element%d))", var_name, llvm_fun_name, list_value.c_value, num_elements, list_num);
+    llvm_value.c_value = xsprintf("(%s = %s(%s, %d, _list_element%d))", var_name, llvm_fun_name, list_value.c_value, num_elements, list_num2);
 
     push_value_to_stack_ptr(&llvm_value, info);
 
@@ -1015,13 +1027,16 @@ BOOL compile_map_value(unsigned int node, sCompileInfo* info)
     }
     
     LVALUE pre_node_value = *get_value_from_stack(-1);
-    dec_stack_ptr(1, info);
-    
     sNodeType* pre_node_type = clone_node_type(info->type);
-    
+
+    if(gNCTranspile && pre_node_type->mHeap) {
+        free_object(pre_node_type, pre_node_value.value, pre_node_value.c_value, TRUE, info);
+    }
+
     if(gNCTranspile) {
         remove_object_from_right_values(pre_node_value.value, info);
     }
+    dec_stack_ptr(1, info);
     
     unsigned int pre_node2 = values[0];
 
@@ -1030,13 +1045,17 @@ BOOL compile_map_value(unsigned int node, sCompileInfo* info)
     }
     
     LVALUE pre_node_value2 = *get_value_from_stack(-1);
-    dec_stack_ptr(1, info);
     
     sNodeType* pre_node_type2 = clone_node_type(info->type);
+    if(gNCTranspile && pre_node_type2->mHeap) {
+        free_object(pre_node_type2, pre_node_value2.value, pre_node_value2.c_value, TRUE, info);
+    }
     
     if(gNCTranspile) {
         remove_object_from_right_values(pre_node_value2.value, info);
     }
+    
+    dec_stack_ptr(1, info);
     
     static int map_num = 0;
     
@@ -1044,7 +1063,8 @@ BOOL compile_map_value(unsigned int node, sCompileInfo* info)
     sBuf_init(&buf);
     
     sBuf_append_str(&buf, xsprintf("%s _map_keys_value%d[%d];\n", make_type_name_string(pre_node_type), ++map_num, num_keys));
-    sBuf_append_str(&buf, xsprintf("%s _map_values_value%d[%d];\n", make_type_name_string(pre_node_type2), map_num, num_keys));
+    int map_num2 = map_num;
+    sBuf_append_str(&buf, xsprintf("%s _map_values_value%d[%d];\n", make_type_name_string(pre_node_type2), map_num2, num_keys));
     
     sNodeType* node_type = clone_node_type(info->type);
     
@@ -1077,7 +1097,7 @@ BOOL compile_map_value(unsigned int node, sCompileInfo* info)
         
         remove_object_from_right_values(key_values[i].value, info);
         
-        sBuf_append_str(&buf, xsprintf("_map_keys_value%d[%d] = %s;\n", map_num, i, key_values[i].c_value));
+        sBuf_append_str(&buf, xsprintf("_map_keys_value%d[%d] = %s;\n", map_num2, i, key_values[i].c_value));
         
         unsigned int value = values[i];
 
@@ -1100,7 +1120,7 @@ BOOL compile_map_value(unsigned int node, sCompileInfo* info)
         value_values[i] = *get_value_from_stack(-1);
         dec_stack_ptr(1, info);
         
-        sBuf_append_str(&buf, xsprintf("_map_values_value%d[%d] = %s;\n", map_num, i, value_values[i].c_value));
+        sBuf_append_str(&buf, xsprintf("_map_values_value%d[%d] = %s;\n", map_num2, i, value_values[i].c_value));
         
         remove_object_from_right_values(value_values[i].value, info);
     }
@@ -1219,7 +1239,7 @@ BOOL compile_map_value(unsigned int node, sCompileInfo* info)
     llvm_value.var = NULL;
     
     char* var_name = append_object_to_right_values(llvm_value.value, map_type, info);
-    llvm_value.c_value = xsprintf("(%s = %s(%s, %d, _map_keys_value%d, _map_values_value%d))", var_name, llvm_fun_name, map_value.c_value, num_keys, map_num, map_num);
+    llvm_value.c_value = xsprintf("(%s = %s(%s, %d, _map_keys_value%d, _map_values_value%d))", var_name, llvm_fun_name, map_value.c_value, num_keys, map_num2, map_num2);
 
     push_value_to_stack_ptr(&llvm_value, info);
 

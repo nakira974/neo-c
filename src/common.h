@@ -345,6 +345,7 @@ struct sVarStruct {
     
     BOOL mReturnValue;
     BOOL mFunctionParam;
+    BOOL mNoFree;
 };
 
 typedef struct sVarStruct sVar;
@@ -727,6 +728,8 @@ struct sCompileInfoStruct
     char* inline_result_variable_name;
     
     BOOL no_output_come_code;
+    
+    char* continue_code;
 };
 
 typedef struct sCompileInfoStruct sCompileInfo;
@@ -1617,6 +1620,7 @@ char* xsprintf(const char* msg, ...);
 extern int gRightValueNum;
 
 void transpiler_clear_last_code();
+void transpiler_remove_last_semicolon(struct sCompileInfoStruct* info);
 void transpiler_append_defer_source(struct sCompileInfoStruct* info);
 unsigned int sNodeTree_create_paren(unsigned int left_node, sParserInfo* info);
 BOOL compile_paren(unsigned int node, sCompileInfo* info);

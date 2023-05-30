@@ -677,9 +677,12 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
     if(global || left_type->mStatic || left_type->mConstant) {
         tmp_rvalue = rvalue.c_value;
     }
-    else {
+    else if(left_type->mHeap) {
         tmp_rvalue = xsprintf("__tmp_variable%d", ++tmp_var_num);
         add_come_code(info, "%s = %s;\n", make_define_var(right_type, tmp_rvalue, info), rvalue.c_value);
+    }
+    else { 
+        tmp_rvalue = rvalue.c_value;
     }
     
     if(!alloc && obj_before && left_type->mHeap) {
@@ -823,6 +826,11 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
 
             info->type = right_type;
         }
+        
+        if(gNCTranspile) {
+//            dec_stack_ptr(-1, info);
+            info->type = create_node_type_with_class_name("void");
+        }
     }
     else if(var_->mType->mConstant) {
         if(var_->mType->mConstant && !var_->mGlobal && !left_is_derefference && var_->mType->mPointerNum == 0) {
@@ -947,7 +955,7 @@ unsigned int sNodeTree_create_store_variable_multiple(int num_vars, char** var_n
     return node;
 }
 
-LVALUE get_tuple_element(LVALUE rvalue, sNodeType* right_type, int i, sCompileInfo* info)
+LVALUE get_tuple_element(LVALUE rvalue, sNodeType* right_type, int i, char* c_value, sCompileInfo* info)
 {
     LVALUE llvm_value;
     
@@ -991,6 +999,7 @@ LVALUE get_tuple_element(LVALUE rvalue, sNodeType* right_type, int i, sCompileIn
     llvm_value.type = clone_node_type(right_type);
     llvm_value.address = field_address;
     llvm_value.var = NULL;
+    llvm_value.c_value = xsprintf("%s->v%d", c_value, i+1);
     
     return llvm_value;
 }
@@ -1017,6 +1026,8 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
     
     LVALUE rvalue = *get_value_from_stack(-1);
     sNodeType* right_type = clone_node_type(info->type);
+    
+    add_come_code(info, "%s;\n", rvalue.c_value);
     
     for(j=0; j<num_vars; j++) {
         sVar* var_ = get_variable_from_table(info->pinfo->lv_table, var_names[j]);
@@ -1101,8 +1112,10 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
             compile_err_msg(info, "invalid type %s(3)", var_names[j]);
             return TRUE;
         }
+        
+        char* c_value = xsprintf("((%s)right_value%d)", make_type_name_string(right_type), gRightValueNum-1);
     
-        LVALUE rvalue2 = get_tuple_element(rvalue, right_type2, j, info);
+        LVALUE rvalue2 = get_tuple_element(rvalue, right_type2, j, c_value, info);
         
         if(auto_cast_posibility(left_type, right_type2, FALSE)) {
             if(!cast_right_type_to_left_type(left_type, &right_type2, &rvalue2, info))
@@ -1132,7 +1145,21 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
                 increment_ref_count(rvalue.value, right_type2, rvalue.c_value, info);
             }
         }
-    
+        
+        static int tmp_var_num = 0;
+        char* tmp_rvalue = NULL;
+        
+        if(global || left_type->mStatic || left_type->mConstant) {
+            tmp_rvalue = rvalue2.c_value;
+        }
+        else if(left_type->mHeap) {
+            tmp_rvalue = xsprintf("__tmp_variable_multiple%d", ++tmp_var_num);
+            add_come_code(info, "%s = %s;\n", make_define_var(right_type, tmp_rvalue, info), rvalue2.c_value);
+        }
+        else { 
+            tmp_rvalue = rvalue2.c_value;
+        }
+        
         BOOL constant = var_->mType->mConstant;
         if(alloc) {
             if(constant) {
@@ -1281,6 +1308,22 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
         if(left_type->mHeap) {
             remove_object_from_right_values(rvalue2.value, info);
         }
+        
+        
+        if(alloc) {
+            char* define_str = make_define_var(left_type, var_names[j], info);
+            
+            char* code = xsprintf("%s=%s", define_str, tmp_rvalue);
+            
+            add_come_code(info, "%s;\n", code);
+        }
+        else {
+            add_come_code(info, "%s=%s;\n", var_names[j], tmp_rvalue);
+            char* code = xsprintf("%s", var_->mCValueName);
+            
+            add_come_code(info, "%s;\n", code);
+        }
+        
     }
 
     return TRUE;
@@ -2845,7 +2888,9 @@ BOOL compile_typedef(unsigned int node, sCompileInfo* info)
 {
     char name[VAR_NAME_MAX];
     xstrncpy(name, gNodes[node].uValue.sTypedef.mName, VAR_NAME_MAX);
-    sNodeType* node_type = gNodes[node].uValue.sTypedef.mNodeType;
+    //sNodeType* node_type = gNodes[node].uValue.sTypedef.mNodeType;
+    
+    sNodeType* node_type = get_typedef(name);
 
     output_typedef(name, node_type);
     
@@ -3111,7 +3156,7 @@ BOOL compile_alignof(unsigned int node, sCompileInfo* info)
     llvm_value.type = create_node_type_with_class_name("int");
     llvm_value.address = NULL;
     llvm_value.var = NULL;
-    llvm_value.c_value = xsprintf("alignof(%s)", make_type_name_string(node_type2));
+    llvm_value.c_value = xsprintf("_Alignof(%s)", make_type_name_string(node_type2));
 
     push_value_to_stack_ptr(&llvm_value, info);
 
@@ -3124,7 +3169,7 @@ BOOL compile_alignof(unsigned int node, sCompileInfo* info)
     llvm_value.type = create_node_type_with_class_name("long");
     llvm_value.address = NULL;
     llvm_value.var = NULL;
-    llvm_value.c_value = xsprintf("alignof(%s)", make_type_name_string(node_type2));
+    llvm_value.c_value = xsprintf("_Alignof(%s)", make_type_name_string(node_type2));
 
     push_value_to_stack_ptr(&llvm_value, info);
 
@@ -3189,7 +3234,7 @@ BOOL compile_alignof_expression(unsigned int node, sCompileInfo* info)
     llvm_value2.type = create_node_type_with_class_name("int");
     llvm_value2.address = NULL;
     llvm_value2.var = NULL;
-    llvm_value2.c_value = xsprintf("alignof(%s)", llvm_value.c_value);
+    llvm_value2.c_value = xsprintf("_Alignof(%s)", llvm_value.c_value);
 
     push_value_to_stack_ptr(&llvm_value2, info);
 
@@ -3200,7 +3245,7 @@ BOOL compile_alignof_expression(unsigned int node, sCompileInfo* info)
     llvm_value2.type = create_node_type_with_class_name("long");
     llvm_value2.address = NULL;
     llvm_value2.var = NULL;
-    llvm_value2.c_value = xsprintf("alignof(%s)", llvm_value.c_value);
+    llvm_value2.c_value = xsprintf("_Alignof(%s)", llvm_value.c_value);
 
     push_value_to_stack_ptr(&llvm_value2, info);
 
@@ -8322,8 +8367,6 @@ BOOL compile_delete(unsigned int node, sCompileInfo* info)
         compile_err_msg(info, "require delete target object");
         return TRUE;
     }
-    
-    
 
     if(!compile(left_node, info)) {
         return FALSE;
@@ -8345,6 +8388,10 @@ BOOL compile_delete(unsigned int node, sCompileInfo* info)
         free_object(node_type, llvm_value.value, llvm_value.c_value, TRUE, info);
     }
     remove_object_from_right_values(llvm_value.value, info);
+    
+    if(llvm_value.var) {
+        llvm_value.var->mNoFree = TRUE;
+    }
     
     if(llvm_value.address) {
         LLVMValueRef obj = llvm_value.address;
@@ -8735,6 +8782,32 @@ unsigned int sNodeTree_create_va_arg(unsigned int ap, sNodeType* node_type, sPar
 
 BOOL compile_va_arg(unsigned int node, sCompileInfo* info)
 {
+if(gNCTranspile) {
+    unsigned int ap = gNodes[node].uValue.sVaArg2.mAP;
+    sNodeType* node_type = gNodes[node].uValue.sVaArg2.mNodeType;
+    
+    if(!compile(ap, info)) {
+        return FALSE;
+    }
+    
+    LVALUE ap_value = *get_value_from_stack(-1);
+    
+    LVALUE llvm_value;
+    gNodes[node].uValue.sVaArg2.mAP = ap;
+    
+    llvm_value.value = create_null_value(node_type);
+    llvm_value.type = clone_node_type(node_type);
+    llvm_value.address = NULL;
+    llvm_value.var = NULL;
+    llvm_value.c_value = xsprintf("__builtin_va_arg(%s, %s)", ap_value.c_value, make_type_name_string(node_type));
+    
+    dec_stack_ptr(1, info);
+    
+    push_value_to_stack_ptr(&llvm_value, info);
+    
+    info->type = clone_node_type(node_type);
+}
+else {
 #ifdef __AARCH64_CPU__
     sNodeType* node_type = gNodes[node].uValue.sVaArg2.mNodeType;
     sNodeType* node_type3 = clone_node_type(node_type);
@@ -9164,6 +9237,7 @@ BOOL compile_va_arg(unsigned int node, sCompileInfo* info)
     
     info->type = clone_node_type(node_type);
 #endif
+}
 
     return TRUE;
 }

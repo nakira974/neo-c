@@ -2930,7 +2930,7 @@ impl smart_pointer<T>
             result_gc.memory = self.memory;
             result_gc.p = self.p + value;
             
-            if(result_gc.p > result_gc.memory.buf + result_gc.memory.len) {
+            if((char*)result_gc.p > result_gc.memory.buf + result_gc.memory.len) {
                 fprintf(stderr, "%s %d: out of range of smart pointer(1)\n", __caller_sname__, __caller_sline__);
                 exit(1);
             }
@@ -2941,10 +2941,10 @@ impl smart_pointer<T>
         var result = new smart_pointer<T>;
         
         result.memory = self.memory;
-        int n = self.p - self.memory.buf;
+        int n = (char*)self.p - self.memory.buf;
         result.p = ((T*)result.memory.buf) + n + value;
         
-        if(result.p > result.memory.buf + result.memory.len) {
+        if((char*)result.p > result.memory.buf + result.memory.len) {
             fprintf(stderr, "%s %d: out of range of smart pointer(2)\n", __caller_sname__, __caller_sline__);
             exit(1);
         }
@@ -2962,7 +2962,7 @@ impl smart_pointer<T>
             result_gc.memory = self.memory;
             result_gc.p = self.p - value;
             
-            if(result_gc.p < result_gc.memory.buf) {
+            if((char*)result_gc.p < result_gc.memory.buf) {
                 fprintf(stderr, "%s %d: out of range of smart pointer(1)\n", __caller_sname__, __caller_sline__);
                 exit(1);
             }
@@ -2973,10 +2973,10 @@ impl smart_pointer<T>
         smart_pointer<T>*% result = new smart_pointer<T>;
         
         result.memory = self.memory;
-        int n = self.p - self.memory.buf;
+        int n = (char*)self.p - self.memory.buf;
         result.p = ((T*)result.memory.buf) + n - value;
         
-        if(result.p < result.memory.buf) {
+        if((char*)result.p < result.memory.buf) {
             fprintf(stderr, "%s %d: out of range of smart pointer\n", __caller_sname__, __caller_sline__);
             exit(1);
         }

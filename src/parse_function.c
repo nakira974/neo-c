@@ -791,6 +791,7 @@ BOOL parse_function(unsigned int* node, sNodeType* result_type, char* fun_name, 
             result_type->mArrayDimentionNum = 1;
             result_type->mArrayNum[0] = n;
             result_type->mArrayPointer = TRUE;
+            result_type->mNoArrayPointerNum++;
         }
         else {
             int nest = 0;

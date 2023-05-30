@@ -1005,10 +1005,46 @@ BOOL compile_for_expression(unsigned int node, sCompileInfo* info)
     info->current_node_block = for_block;
     
     if(conditional_value.c_value) {
-        add_come_code(info, "while(%s) {\n", conditional_value.c_value);
+        unsigned int expression_node3 = gNodes[node].uValue.sFor.mExpressionNode3;
+        
+        if(gNCTranspile) {
+            add_come_code(info, "for(;%s;", conditional_value.c_value);
+            if(expression_node3) {
+                if(!compile(expression_node3, info)) {
+                    info->pinfo->lv_table = lv_table_before;
+                    return FALSE;
+                }
+                
+                transpiler_remove_last_semicolon(info);
+                
+                dec_stack_ptr(1, info);
+                add_come_code(info, ") {\n");
+            }
+            else {
+                add_come_code(info, "for(;%s;) {\n", conditional_value.c_value);
+            }
+        }
     }
     else {
-        add_come_code(info, "while(1) {\n");
+        unsigned int expression_node3 = gNodes[node].uValue.sFor.mExpressionNode3;
+        
+        if(gNCTranspile) {
+            add_come_code(info, "for(;;");
+            if(expression_node3) {
+                if(!compile(expression_node3, info)) {
+                    info->pinfo->lv_table = lv_table_before;
+                    return FALSE;
+                }
+                
+                transpiler_remove_last_semicolon(info);
+                
+                dec_stack_ptr(1, info);
+                add_come_code(info, ") {\n");
+            }
+            else {
+                add_come_code(info, ") {\n");
+            }
+        }
     }
 
     /// block of for expression ///
@@ -1043,7 +1079,7 @@ BOOL compile_for_expression(unsigned int node, sCompileInfo* info)
     
     info->come_nest++;
 
-    if(expression_node3) {
+    if(expression_node3 && !gNCTranspile) {
         if(!compile_conditional_expression(expression_node3, info)) {
             info->pinfo->lv_table = lv_table_before;
             return FALSE;
@@ -1221,7 +1257,7 @@ BOOL compile_return(unsigned int node, sCompileInfo* info)
                 else {
                     sNodeType* result_type2 = clone_node_type(result_type);
                     result_type2->mStatic = FALSE;
-                    add_come_code(info, "%s __result_value = %s;\n", make_type_name_string(result_type2), llvm_value.c_value);
+                    add_come_code(info, "%s = %s;\n", make_define_var(result_type2, "__result_value", info), llvm_value.c_value);
                 }
                 free_right_value_objects(info);
                 free_objects_on_return(info->function_node_block, info, llvm_value.address, TRUE);
@@ -1374,6 +1410,22 @@ BOOL compile_normal_block(unsigned int node, sCompileInfo* info)
     BOOL force_hash_result = TRUE;
     if(!compile_block(node_block, force_hash_result, info)) {
         return FALSE;
+    }
+    
+    
+    if(gNCTranspile && !(type_identify_with_class_name(info->type, "void") && info->type->mPointerNum == 0)) {
+        LVALUE llvm_value = *get_value_from_stack(-1);
+        
+        static int normal_block_num = 0;
+        add_come_code_at_head(info, "%s;\n", make_define_var(info->type, xsprintf("__normal_block_result%d", ++normal_block_num), info));
+        add_come_code(info, "__normal_block_result%d = %s;\n", normal_block_num, llvm_value.c_value);
+        
+        LVALUE llvm_value2 = *get_value_from_stack(-1);
+        llvm_value2 = llvm_value;
+        llvm_value2.c_value = xsprintf("(__normal_block_result%d)", normal_block_num);
+        
+        dec_stack_ptr(1, info);
+        push_value_to_stack_ptr(&llvm_value2, info);
     }
     
     add_come_code(info, "}\n");
@@ -1693,6 +1745,8 @@ BOOL compile_continue_expression(unsigned int node, sCompileInfo* info)
     LLVMBasicBlockRef after_continue = LLVMAppendBasicBlockInContext(gContext, gFunction, "after_continue");
 
     llvm_change_block(after_continue, info);
+    
+    add_come_code(info, "continue;\n");
 
     info->type = create_node_type_with_class_name("void");
 

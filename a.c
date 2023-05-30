@@ -2,88 +2,173 @@
 
 using unsafe;
 
-int bbb[] = { 1, 2, 3};
+struct sInfo;
 
-char ccc[] = "ABC";
+extern int gNodeID;
 
-char* arrays2[] = { "AAA", "BBB", "CCC" };
-
-int gA[] = { 1, 2, 3};
-int gB[3] = { 1, 2, 3};
-int gC[2][2] = { { 1,2 }, { 3,4 }};
-char gD[4] = "ABC";
-char gE[] = "ABC";
-char gF[3] = { [0] = 0, [1] = 1, [2] = 2 };
-int gG[] = { 1, 2 ,3 };
-
-struct sData
+protocol sNode
 {
-    int a;
-    int b;
-    int c;
+    unsigned int id();
+    bool compile(sInfo* info);
 };
 
-struct sData gH = { 1, 2 };
-struct sData gI = { .a=3, .c=7 };
+inline unsigned int sNode*::get_hash_key(sNode* self)
+{
+    return self.id->();
+}
 
-struct sData gJ[3] = { { 1,2,3}, {4,5,6}, {7,8,9}};
+inline bool sNode*::equals(sNode* self, sNode* right)
+{
+    return (self.compile == right.compile);
+}
 
-struct {
-    char* a;
-    int b;
-} xyz[] = { { "AAA",2 }, { "BBB", 4 }};
-
-struct sData2 {
-    int a;
-    int b;
+struct ZVALUE 
+{
+    enum { kIntValue, kStrValue, kBoolValue, kNullValue, kFileValue, kRegexValue, kListValue, kMapValue } kind;
     
-    struct {
-        int c;
-        int d;
-    } c;
-    
-    struct {
-        int c;
-        int d;
-    } d;
-    
-    union {
-        int a;
-        long b;
-        char c;
-    } e;
+    int intValue;
+    wstring strValue;
+    bool boolValue;
+    FILE* fileValue;
+    nregex regexValue;
+    list<ZVALUE*%>*% listValue;
+    map<ZVALUE*%, ZVALUE*%>*% mapValue;
 };
 
-struct sData2 gData = (struct sData2){ .a = 1, .b = 2, .c = { .c = 3, .d =4 }, .e = { .c='c' } };
+inline ZVALUE*% ZVALUE*::initialize(ZVALUE*% self, int kind, int int_value=0, wstring str_value=wstring(""), bool bool_value=false, FILE* file_value=null, nregex regex_value=null, list<ZVALUE*%>*% list_value=null, map<ZVALUE*%, ZVALUE*%>*% map_value=null)
+{
+    self.kind = kind;
+    self.intValue = int_value;
+    self.strValue = str_value;
+    self.boolValue = bool_value;
+    self.fileValue = file_value;
+    self.regexValue = regex_value;
+    self.listValue = list_value;
+    self.mapValue = map_value;
+    
+    return self;
+}
 
-struct sData2* gData2 = &(struct sData2) { .a = 3, .b = 4, .c = { .c = 4, .d = 5} };
+string ZVALUE*::to_string(ZVALUE* self);
+unsigned int ZVALUE*::get_hash_key(ZVALUE* self);
+bool ZVALUE*::equals(ZVALUE* self, ZVALUE* right);
+bool ZVALUE*::operator_equals(ZVALUE* self, ZVALUE* right);
+int ZVALUE*::compare(ZVALUE* self, ZVALUE* right);
 
-union uNode2 {
-    int a;
-    long b;
-    char c;
+struct sInfo
+{
+    char* p;
+    string command;
+    string command2;
+    buffer*% codes;
+    vector<sNode*%>*% nodes;
+    vector<sNode*%>*% nodes2;
+    int* head;
+    int* op;
+    vector<ZVALUE*%>*% stack;
+    
+    int loop_head;
+    
+    vector<int>*%? breaks;
+    
+    ZVALUE*% result_value;
+    
+    int stack_num;
 };
 
-union uNode2 gNodeX = (uNode2) { .c = 'd' };
+struct sInfo2
+{
+    int c[2][2];
+};
+
+int cZYZZZZZZZZZZZZZZZZZZZZZZZZZZZ(char*% a)
+{
+    a = string("AAA");
+    
+    delete borrow a;
+    
+    return 0;
+}
+
+int funXYZ(int a=123, string b = string("ABC"), list<int>*% c = [1,2,3])
+{
+    xassert("default parametor test", a == 123 && b === string("ABC") && c === [1,2,3]);
+    
+    return 0;
+}
 
 int main(int argc, char** argv)
 {
-    xassert("global array initializer test", gA[0] == 1 && gA[1] == 2 && gA[2] == 3);
-    xassert("global array initializer test2", gB[0] == 1 && gB[1] == 2 && gB[2] == 3);
-    xassert("global array initializer test3", gC[0][0] == 1 && gC[0][1] == 2 && gC[1][0] == 3 && gC[1][1] == 4);
-    xassert("global array initializer test4", strcmp(gD, "ABC") == 0);
-    xassert("global array initializer test5", strcmp(gE, "ABC") == 0);
-    xassert("global array initializer test6", gF[0] == 0 && gF[1] == 1 && gF[2] == 2);
-    xassert("global array initializer test7", gG[0] == 1 && gG[1] == 2 && gG[2] == 3);
-    xassert("global struct initializer test", gH.a == 1 && gH.b == 2);
-    xassert("global struct initializer test2", gI.a == 3 && gI.c == 7);
-    xassert("global struct initializer test3", gJ[0].a == 1 && gJ[1].c == 6);
-
-    xassert("struct initializer test4", gData.a == 1 && gData.b == 2);
-
-    xassert("struct initializer test5", gData2->a == 3 && gData2->b == 4);
-
-    xassert("union initializer test6",  gNodeX->c == 'd');
+    string a = string("AAAA");
+    string command = null;
+    for(int i=1; i<argc; i++) {
+        command = string(argv[i]);
+    }
+    
+    string command2 = clone command;
+    
+    sInfo info;
+    
+    info.command = command;
+    info.command = clone command;
+    
+    info.command2 = command;
+    info.command2 = clone command;
+    
+    info.nodes = new vector<sNode*%>();
+    
+    info.nodes2 = info.nodes;
+    
+    var aa = [[string("A"), string("B")], [string("C")]];
+    
+    xassert("element overload test1", aa[0][1] === "B");
+    
+    var bb = [string("AAA"):[1,2,3], string("BBB"):[3,5,7]];
+    
+    xassert("element overload test3", bb[string("BBB")][0] == 3);
+    
+    var c = (string("CCC"), (string("BBB"), 1), "AAA");
+    
+    xassert("tuple test", c.1.0 === string("BBB"));
+    
+    xassert("list test", [[string("111"), string("222"), string("333")], [string("444"), string("555"), string("666")]] === [[string("111"), string("222"), string("333")], [string("444"), string("555"), string("666")]]);
+    
+    sInfo2 infoXXX;
+    infoXXX.c[0][0] = 123;
+    infoXXX.c[0][1] = 234;
+    
+    xassert("array test", infoXXX.c[0][0] == 123 && infoXXX.c[0][1] == 234);
+    
+    var aXYZ = ("AAA", 1);
+    
+    xassert("tuple test", aXYZ.0[0] == 'A');
+    
+    var aXYZ2 = [["AAA", "BBB"], ["BBB", "CCC"]];
+    
+    xassert("list of list test", aXYZ2[0][1] === "BBB");
+    
+    var cXYZ = ["AAA", "BBB"];
+    
+    xassert("list", cXYZ[0][1] == 'A');
+    
+    var cZZZ = [["BBB":1], ["AAA":2]];
+    
+    xassert("list", cZZZ[0]["BBB"] == 1);
+    
+    char*% cZYZ = null;
+    
+    cZYZZZZZZZZZZZZZZZZZZZZZZZZZZZ(string("AAA"));
+    
+    funXYZ();
+    
+    var ma = ["AAA":1, "BBB":2];
+    ma["CCC"] = 3;
+    
+    xassert("map key", ma.keys() === ["AAA", "BBB", "CCC"]);
+    xassert("map key", ma.values() === [1, 2, 3]);
+    xassert("map test", ma === ["AAA":1, "BBB":2, "CCC":3]);
+    xassert("map", ["AAA":1, "BBB":2] === ["AAA":1, "BBB":2]);
+    xassert("map", ["AAA":1, "BBB":2] !== ["BBB":2, "AAA":1]);
     
     return 0;
 }

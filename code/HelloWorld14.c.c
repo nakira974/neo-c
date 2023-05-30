@@ -1429,6 +1429,322 @@ typedef unsigned int u32;
 typedef unsigned short u16;
 typedef unsigned char u8;
 typedef unsigned long u64;
+int (*gArray)[10];
+char* aaa="ABC";
+int bbb[3] = { 1, 2, 3};
+char ccc[4] = "ABC";
+char* arrays2[3] = { "AAA", "BBB", "CCC" };
+struct sData
+{
+    int a;
+    int b;
+};
+struct sData aa = { 1, 2 };
+struct come_anon57
+{
+    char* a;
+    int b;
+};
+struct come_anon57 xyz[4] = { { "AAA",2 }, { "BBB", 4 }};
+struct Node
+{
+    int a;
+    int b;
+};
+struct Node gNode = { 1 };
+struct come_anon58
+{
+    int c;
+    int d;
+};
+struct come_anon59
+{
+    int c;
+    int d;
+};
+union come_anon60
+{
+    int a;
+    long b;
+    char c;
+};
+struct come_anon61
+{
+    int c;
+    int d;
+};
+struct come_anon62
+{
+    int c;
+    int d;
+};
+union come_anon63
+{
+    int a;
+    long b;
+    char c;
+};
+struct sData2
+{
+    int a;
+    int b;
+    struct come_anon61 c;
+    struct come_anon62 d;
+    union come_anon63 e;
+};
+union eNode2
+{
+    int a;
+    long b;
+    char c;
+};
+union eNode2 gNodeX = (union eNode2){ .c = 'd' };
+struct sData2 gData = (struct sData2){ .a = 1, .b = 2, .c = { .c = 3, .d =4 }, .e = { .c='c' } };
+struct sData2* gData2 = &(struct sData2){ .a = 3, .b = 4, .c = { .c = 4, .d = 5} };
+struct come_anon64
+{
+    int a;
+    int b;
+};
+union come_anon65
+{
+    int a;
+    long b;
+    char c;
+};
+struct come_anon67
+{
+    int a;
+    int b;
+};
+struct come_anon66
+{
+    struct come_anon67 a;
+};
+struct come_anon68
+{
+    int a;
+    int b;
+};
+union come_anon69
+{
+    int a;
+    long b;
+    char c;
+};
+struct come_anon71
+{
+    int a;
+    int b;
+};
+struct come_anon70
+{
+    struct come_anon71 a;
+};
+struct sData3
+{
+    int a;
+    struct come_anon68 b;
+    union come_anon69 c;
+    struct come_anon70 d;
+};
+struct sData3 gData3 = (struct sData3){ .a = 1, .b = { .a = 3, .b =4 }, .c = {.c ='f' }, .d = { .a = { .a = 111, .b = 222}}};
+struct come_anon72
+{
+    int a;
+    int b;
+};
+struct come_anon73
+{
+    char a;
+    char b;
+};
+union come_anon74
+{
+    int a;
+    char b;
+};
+struct come_anon76
+{
+    int a;
+    int b;
+};
+struct come_anon75
+{
+    struct come_anon76 a;
+};
+struct come_anon77
+{
+    int a;
+    int b;
+};
+struct come_anon78
+{
+    char a;
+    char b;
+};
+union come_anon79
+{
+    int a;
+    char b;
+};
+struct come_anon81
+{
+    int a;
+    int b;
+};
+struct come_anon80
+{
+    struct come_anon81 a;
+};
+union uUnion
+{
+    struct come_anon77 a;
+    struct come_anon78 b;
+    int c;
+    union come_anon79 d;
+    struct come_anon80 e;
+};
+union uUnion gA = (union uUnion){ .b = { .a = 'c', .b = 'd' } };
+union uUnion gB = (union uUnion){ .a = { .a = 111, .b = 222 }};
+union uUnion gC = (union uUnion){ .c = 123 };
+union uUnion gD = (union uUnion){ .d = { .a = 777 } };
+union uUnion gE = (union uUnion){ .e = { .a = { .a = 111, .b = 222} } };
+struct sXXX
+{
+    int a;
+    int b;
+};
+struct sXXX xxx[3] = {
+    { .a = 111, .b = 222 }, { .a = 333, .b = 444 }, { .a = 555, .b = 666 }
+};
+struct sDataXXX
+{
+    int a;
+    int b;
+};
+struct sDataYYY
+{
+    int a;
+    int b;
+};
+struct sDataYYY ayyy = (struct sDataYYY){ .a = 111 };
+struct sDataYYY byyy = { .a = 111, .b = 222 };
+struct sDataYYY cyyy = { 333 };
+int dyyy[3] = { 1, 2, 3};
+struct sDataYYY eyyy[3] = { { .a = 111 }, { .a = 222 }, { .a = 333 }};
+static char ab_month_name[12][4] = {
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+};
+static char ab_month_name2[2][12][4] = {
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+};
+struct sDataXYZ
+{
+    long r;
+};
+struct TCCState
+{
+    int warn_write_strings;
+    int warn_unsupported;
+    int warn_error;
+    int warn_none;
+    int warn_implicit_function_declaration;
+};
+struct FlagDef
+{
+    unsigned short offset;
+    unsigned short flags;
+    const char* name;
+};
+typedef struct FlagDef FlagDef;
+static const FlagDef warning_defs[13] = {
+    { ((size_t) &((struct TCCState *)0)->warn_unsupported), 0, "unsupported" },
+    { ((size_t) &((struct TCCState *)0)->warn_write_strings), 0, "write-strings" },
+    { ((size_t) &((struct TCCState *)0)->warn_error), 0, "error" },
+    { ((size_t) &((struct TCCState *)0)->warn_implicit_function_declaration), 1,
+      "implicit-function-declaration" },
+};
+struct Sym;
+struct CType
+{
+    int t;
+    struct Sym* ref;
+};
+typedef struct CType CType;
+struct CString;
+union CValue
+{
+    long double ld;
+    double d;
+    float f;
+    int i;
+    unsigned int ui;
+    unsigned int ul;
+    long long ll;
+    unsigned long long ull;
+    struct CString* cstr;
+    void* ptr;
+    int tab[1];
+};
+typedef union CValue CValue;
+struct Sym
+{
+    int v;
+    long r;
+    long c;
+    CType type;
+    struct Sym* next;
+    struct Sym* prev;
+    struct Sym* prev_tok;
+};
+typedef struct Sym Sym;
+struct SValue
+{
+    CType type;
+    unsigned short r;
+    unsigned short r2;
+    Sym* sym;
+};
+typedef struct SValue SValue;
+static SValue vstack[256];
+static SValue* vtop;
+struct Section
+{
+    unsigned long data_offset;
+    unsigned char* data;
+};
+typedef struct Section Section;
+struct YYSTYPEStruct
+{
+    int x;
+    int y;
+};
+typedef struct YYSTYPEStruct YYSTYPE;
+struct sDataGG
+{
+    int a;
+    int b;
+};
+struct come_anon83
+{
+    char* a;
+    int b;
+};
+struct smart_pointer_int
+{
+    struct buffer* memory;
+    int* p;
+};
+struct sDataXYZXYZ_int
+{
+    int* a;
+};
 
 void come_gc_init();
 void come_boehm_gc_init();
@@ -3059,6 +3375,7 @@ _Bool bool_equals(_Bool left, _Bool right);
 unsigned int string_get_hash_key(char* value);
 _Bool string_equals(char* left, char* right);
 int char_compare(char left, char right);
+int int_compare(int left, int right);
 int short_compare(short left, short right);
 int long_compare(long left, long right);
 struct buffer* bufferp_initialize(struct buffer* self);
@@ -3114,9 +3431,19 @@ struct list_charphp* charp_scan(char* self, struct regex_struct* reg);
 struct list_charphp* charp_split(char* self, struct regex_struct* reg);
 struct list_charphp* charp_split_char(char* self, char c);
 struct regex_struct* charp_to_regex(char* self);
+char* charp_printable(char* str);
 char* charp_delete(char* str, int head, int tail);
+char* wchar_tp_to_string(int* wstr);
 int* __builtin_wstring(char* str);
+int* charp_to_wstring(char* str);
 int* wchar_tp_substring(int* str, int head, int tail);
+int wchar_tp_length(int* str);
+int* wchar_tp_delete(int* str, int head, int tail);
+int wchar_tp_index(int* str, int* search_str, int default_value);
+int wchar_tp_rindex(int* str, int* search_str, int default_value);
+int* wchar_tp_reverse(int* str);
+int* wchar_tp_multiply(int* str, int n);
+int* wchar_tp_printable(int* str);
 struct regex_struct* charp_to_regex_flags(char* self, _Bool global, _Bool ignore_case);
 struct list_charphp* charp_split_str(char* self, char* str);
 struct list_charphp* charp_split_maxsplit(char* self, struct regex_struct* reg, int maxsplit);
@@ -3141,37 +3468,19 @@ char* FILE_read(FILE* f);
 FILE* FILE_fprintf(FILE* f, const char* msg, ...);
 FILE* FILEp_fprintf(FILE* f, const char* msg, ...);
 void FILE_fclose(FILE* f);
+void fopen_block(const char* path, const char* mode, void* parent, void (*block)(void*,FILE*));
 void charp_puts(char* self);
 void charp_print(char* self);
 char* charp_strip(char* self);
-char* regex_structp_to_string(struct regex_struct* regex);
-void check_null_pointer(int sline, char* sname);
-void bool_expect(_Bool self, void* parent, void (*block_)(void*));
 void charp_printf(char* self, const char* msg);
 int int_printf(int self, const char* msg);
-void fopen_block(const char* path, const char* mode, void* parent, void (*block)(void*,FILE*));
 char char_putc(char self);
+unsigned int wchar_t_get_hash_key(int value);
+_Bool wchar_t_equals(int left, int right);
 unsigned int wchar_tp_get_hash_key(int* value);
 _Bool wchar_tp_equals(int* left, int* right);
 unsigned int regex_structp_get_hash_key(struct regex_struct* self);
-int int_compare(int left, int right);
-char* charp_printable(char* str);
-char* wchar_tp_to_string(int* wstr);
-int* charp_to_wstring(char* str);
-int wchar_tp_length(int* str);
-int* wchar_tp_delete(int* str, int head, int tail);
-int wchar_tp_index(int* str, int* search_str, int default_value);
-int wchar_tp_rindex(int* str, int* search_str, int default_value);
-int* wchar_tp_reverse(int* str);
-int* wchar_tp_multiply(int* str, int n);
-int* wchar_tp_printable(int* str);
 _Bool charp_match_group_strings(char* self, struct regex_struct* reg, int count, struct list_charphp* group_strings);
-static void list_reset_charph(struct list_charphp* self);
-static void list_item_finalize_list_item_charphp(struct list_item_charphp* self);
-static void list_push_back_charph(struct list_charphp* self, char* item);
-_Bool wchar_tp_comapre(int* left, int* right);
-unsigned int wchar_t_get_hash_key(int value);
-_Bool wchar_t_equals(int left, int right);
 char* charp_operator_mult(char* str, int n);
 char* string_operator_mult(char* str, int n);
 int* wchar_tp_operator_mult(int* str, int n);
@@ -3184,571 +3493,1138 @@ char* charp_operator_add(char* left, char* right);
 char* string_operator_add(char* left, char* right);
 int* wchar_tp_operator_add(int* left, int* right);
 int* wstring_operator_add(int* left, int* right);
+char* regex_structp_to_string(struct regex_struct* regex);
+void check_null_pointer(int sline, char* sname);
+void bool_expect(_Bool self, void* parent, void (*block_)(void*));
+long fun();
+int (*ArrayPointerRresultFun(int c, int d))[10];
+int add2(int (*a)[2]);
+int add3(int (*b)[2]);
+int add4(int (*c)[2]);
+int aaaX(int a, char** b);
+static unsigned int get32(unsigned char* p);
+void va_arg_test(char* fmt, ...);
+int funXYZXYZ(int a, int* b);
+int main(int argc, char** argv);
+static struct smart_pointer_int* smart_pointer_initialize_int(struct smart_pointer_int* self, void* memory, int size);
+static int smart_pointer_operator_derefference_int(struct smart_pointer_int* self);
+static struct smart_pointer_int* smart_pointer_operator_add_int(struct smart_pointer_int* self, int value);
+static struct smart_pointer_int* smart_pointer_operator_sub_int(struct smart_pointer_int* self, int value);
+static struct sDataXYZXYZ_int* sDataXYZXYZ_initialize_int(struct sDataXYZXYZ_int* self);
+static void sDataXYZXYZ_finalize_sDataXYZXYZ_int(struct sDataXYZXYZ_int* self);
+static void smart_pointer_finalize_smart_pointer_int(struct smart_pointer_int* self);
 
-void charp_printf(char* self, const char* msg){
-void* right_value0;
-    (printf(msg,self));
-        igc_decrement_ref_count(right_value0);
-    return;    (right_value0 = (__builtin_string(self)));
-}
-
-int int_printf(int self, const char* msg){
-    (printf(msg,self));
-        int __result_value = self;
+long fun(){
+        long __result_value = ((long)1);
     return __result_value;
 }
 
-void fopen_block(const char* path, const char* mode, void* parent, void (*block)(void*,FILE*)){
-    FILE* f=(fopen(path,mode));
-    if(f) {
-        block(parent,f);
-        (fclose(f));
-    }
-}
-
-char char_putc(char self){
-    (putc(self,stdout));
-        char __result_value = self;
+int (*ArrayPointerRresultFun(int c, int d))[10]{
+        int (*__result_value)[10] = gArray;
     return __result_value;
 }
 
-unsigned int wchar_tp_get_hash_key(int* value){
-    int result=0;
-    int* p=value;
-    while (*p) {
-        result=result+(*p);
-        p=p+1;
-    }
-        unsigned int __result_value = result;
+int add2(int (*a)[2]){
+        int __result_value = a[0][0]+a[0][0];
     return __result_value;
 }
 
-_Bool wchar_tp_equals(int* left, int* right){
-        _Bool __result_value = (wcscmp(left,right))==0;
+int add3(int (*b)[2]){
+        int __result_value = b[0][0]+b[1][0];
     return __result_value;
 }
 
-unsigned int regex_structp_get_hash_key(struct regex_struct* self){
-        unsigned int __result_value = (string_get_hash_key(self->str));
+int add4(int (*c)[2]){
+        int __result_value = c[0][0]+c[1][0];
     return __result_value;
 }
 
-int int_compare(int left, int right){
-    if(left<right) {
-                int __result_value = -1;
-        return __result_value;
-    }
-    else if(left>right) {
-                int __result_value = 1;
-        return __result_value;
-    }
-    else {
-                int __result_value = 0;
-        return __result_value;
-    }
-        int __result_value = 0;
+int aaaX(int a, char** b){
+        int __result_value = 1;
     return __result_value;
 }
 
-char* charp_printable(char* str){
-int inline_result_variable1;
-void* right_value1;
+static unsigned int get32(unsigned char* p){
+        unsigned int __result_value = 123;
+    return __result_value;
+}
+
+void va_arg_test(char* fmt, ...){
+    va_list ap;
+    memset(&ap, 0, sizeof(va_list));
+    (__builtin_va_start(ap,fmt));
+    int a=__builtin_va_arg(ap, int);
+    char* b=__builtin_va_arg(ap, char*);
     {
-    char* _inline_str1 = str;
-                inline_result_variable1 = (string_length(_inline_str1));
-        goto inline_func_end_label1;
+    const char* _inline_msg1 = "va_arg test";
+    _Bool _inline_exp1 = a==1&&charp_operator_equals(b,"ABC");
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
     
 inline_func_end_label1:
     (void)0;
 }
-    int len=inline_result_variable1;
-    char* __tmp_variable1 = (right_value1 = igc_calloc(len*2+1,1));
-    char* result=__tmp_variable1;
-    int n=0;
-    {
-        int i=0;
-        for(;i<len;        i=i+1          ) {
-            char c=str[i];
-            if((c>=0&&c<' ')||c==127) {
-                n=n+1;
-                result[n-1]='^';
-                n=n+1;
-                result[n-1]=c+'A'-1;
-            }
-            else {
-                n=n+1;
-                result[n-1]=c;
-            }
-        }
-    }
-    result[n]='\0';
-        char* __result_value = result;
+    (__builtin_va_end(ap));
+}
+
+int funXYZXYZ(int a, int* b){
+        int __result_value = a+b[0];
     return __result_value;
 }
 
-char* wchar_tp_to_string(int* wstr){
-void* right_value2;
-    int len=16*((wcslen(wstr))+1);
-    char* __tmp_variable2 = (right_value2 = igc_calloc(len,1));
-    char* result=__tmp_variable2;
-    if((wcstombs(result,wstr,len))<0) {
-        (strncpy(result,"",len));
-    }
-        char* __result_value = result;
-    return __result_value;
-}
-
-int* charp_to_wstring(char* str){
+int main(int argc, char** argv){
+void* right_value0;
 void* right_value3;
-        int* __result_value = (right_value3 = (__builtin_wstring(str)));
-    return __result_value;
-}
-
-int wchar_tp_length(int* str){
-        int __result_value = (wcslen(str));
-    return __result_value;
-}
-
-int* wchar_tp_delete(int* str, int head, int tail){
-void* right_value4;
-int* inline_result_variable2;
-void* right_value5;
 void* right_value6;
-void* right_value7;
-int* inline_result_variable3;
-void* right_value8;
 void* right_value9;
-void* right_value10;
-int inline_result_variable4;
 void* right_value11;
-int* inline_result_variable5;
-void* right_value12;
-void* right_value13;
-    int len=(wcslen(str));
-    if(len==0) {
-                {
-        char* _inline_str1 = (right_value4 = (wchar_tp_to_string(str)));
-                        inline_result_variable2 = (right_value5 = (charp_to_wstring(_inline_str1)));
-            goto inline_func_end_label2;
-        
-inline_func_end_label2:
-        right_value6 = inline_result_variable2;
-        (void)0;
-}
-        int* __result_value = inline_result_variable2;
-        igc_decrement_ref_count(right_value4);
-        return __result_value;
-    }
-    if(head<0) {
-        head=head+len;
-    }
-    if(tail<0) {
-        tail=tail+len+1;
-    }
-    if(head<0) {
-        head=0;
-    }
-    if(tail<0) {
-                {
-        char* _inline_str1 = (right_value7 = (wchar_tp_to_string(str)));
-                        inline_result_variable3 = (right_value8 = (charp_to_wstring(_inline_str1)));
-            goto inline_func_end_label3;
-        
-inline_func_end_label3:
-        right_value9 = inline_result_variable3;
-        (void)0;
-}
-        int* __result_value = inline_result_variable3;
-        igc_decrement_ref_count(right_value7);
-        return __result_value;
-    }
-    if(tail>=len) {
-        tail=len;
-    }
-    int* __tmp_variable3 = (right_value10 = (wchar_tp_substring(str,tail,-1)));
-    int* sub_str=__tmp_variable3;
+come_gc_init();
     {
-    int* _inline_str1 = sub_str;
-                inline_result_variable4 = (wchar_tp_length(_inline_str1));
-        goto inline_func_end_label4;
+    const char* _inline_msg1 = "global array initializer test";
+    _Bool _inline_exp1 = dyyy[0]==1&&dyyy[1]==2&&dyyy[2]==3;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label2:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "global struct initializer test";
+    _Bool _inline_exp1 = ayyy.a==111&&ayyy.b==0;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label3:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "global struct initializer test";
+    _Bool _inline_exp1 = byyy.a==111&&byyy.b==222;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
     
 inline_func_end_label4:
     (void)0;
 }
-    (memcpy(str+head,sub_str,sizeof(int)*(inline_result_variable4+1)));
-        {
-    char* _inline_str1 = (right_value11 = (wchar_tp_to_string(str)));
-                inline_result_variable5 = (right_value12 = (charp_to_wstring(_inline_str1)));
-        goto inline_func_end_label5;
-    
-inline_func_end_label5:
-    right_value13 = inline_result_variable5;
-    (void)0;
-}
-    int* __result_value = inline_result_variable5;
-    igc_decrement_ref_count(right_value11);
-    igc_decrement_ref_count(sub_str);
-    return __result_value;
-}
-
-int wchar_tp_index(int* str, int* search_str, int default_value){
-    int* head=(wcsstr(str,search_str));
-    if(head==((void*)0)) {
-                int __result_value = default_value;
-        return __result_value;
-    }
-        int __result_value = head-str;
-    return __result_value;
-}
-
-int wchar_tp_rindex(int* str, int* search_str, int default_value){
-    int len=(wcslen(search_str));
-    int* p=str+(wcslen(str))-len;
-    while (p>=str) {
-        int len2=(wcslen(p));
-        _Bool result=1;
-        int i;
-        memset(&i, 0, sizeof(int));
-        {
-            i=0;
-            for(;i<len&&i<len2;            i=i+1              ) {
-                if(p[i]!=search_str[i]) {
-                    result=0;
-                }
-            }
-        }
-        if(result) {
-                        int __result_value = (p-str);
-            return __result_value;
-        }
-        p=p-1;
-    }
-        int __result_value = default_value;
-    return __result_value;
-}
-
-int* wchar_tp_reverse(int* str){
-void* right_value14;
-    int len=(wcslen(str));
-    int* __tmp_variable4 = (right_value14 = igc_calloc(len+1,4));
-    int* result=__tmp_variable4;
     {
-        int i=0;
-        for(;i<len;        i=i+1          ) {
-            result[i]=str[len-i-1];
-        }
-    }
-    result[len]='\0';
-        int* __result_value = result;
-    return __result_value;
-}
-
-int* wchar_tp_multiply(int* str, int n){
-void* right_value15;
-    int len=(wcslen(str))*n+1;
-    int* __tmp_variable5 = (right_value15 = igc_calloc(len,4));
-    int* result=__tmp_variable5;
-    result[0]='\0';
-    {
-        int i=0;
-        for(;i<n;        i=i+1          ) {
-            (wcscat(result,str));
-        }
-    }
-        int* __result_value = result;
-    return __result_value;
-}
-
-int* wchar_tp_printable(int* str){
-void* right_value16;
-    int len=(wchar_tp_length(str));
-    int* __tmp_variable6 = (right_value16 = igc_calloc(len*2+1,4));
-    int* result=__tmp_variable6;
-    int n=0;
-    {
-        int i=0;
-        for(;i<len;        i=i+1          ) {
-            int c=str[i];
-            if((c>=0&&c<' ')||c==127) {
-                n=n+1;
-                result[n-1]='^';
-                n=n+1;
-                result[n-1]=c+'A'-1;
-            }
-            else {
-                n=n+1;
-                result[n-1]=c;
-            }
-        }
-    }
-    result[n]='\0';
-        int* __result_value = result;
-    return __result_value;
-}
-
-_Bool charp_match_group_strings(char* self, struct regex_struct* reg, int count, struct list_charphp* group_strings){
-char* inline_result_variable6;
-void* right_value17;
-void* right_value18;
-    int offset=0;
-    int ovec_max=16;
-    int start[ovec_max];
-    memset(&start, 0, sizeof(int));
-    int end[ovec_max];
-    memset(&end, 0, sizeof(int));
-    int ovec_value[ovec_max*3];
-    memset(&ovec_value, 0, sizeof(int));
-    const char* err;
-    memset(&err, 0, sizeof(const char*));
-    int erro_ofs;
-    memset(&erro_ofs, 0, sizeof(int));
-    int options=reg->options;
-    char* str=reg->str;
-    pcre* re=reg->re;
-    int n=0;
-    while (1) {
-        int options__2=2097152;
-        int len=(strlen(self));
-        int regex_result=(pcre_exec(re,((pcre_extra*)0),self,len,offset,options__2,ovec_value,ovec_max*3));
-        {
-            int i=0;
-            for(;i<ovec_max;            i=i+1              ) {
-                start[i]=ovec_value[i*2];
-            }
-        }
-        {
-            int i=0;
-            for(;i<ovec_max;            i=i+1              ) {
-                end[i]=ovec_value[i*2+1];
-            }
-        }
-        if(regex_result==1||(group_strings==((void*)0)&&regex_result>0)) {
-            n=n+1;
-            if(n==count) {
-                                _Bool __result_value = 1;
-                return __result_value;
-            }
-            if(offset==end[0]) {
-                offset=offset+1;
-            }
-            else {
-                offset=end[0];
-            }
-        }
-        else if(regex_result>1) {
-            n=n+1;
-            (list_reset_charph(group_strings));
-            {
-                int i=1;
-                for(;i<regex_result;                i=i+1                  ) {
-                    {
-                    char* _inline_str1 = self;
-                    int _inline_head1 = start[i];
-                    int _inline_tail1 = end[i];
-                                                inline_result_variable6 = (right_value17 = (string_substring(_inline_str1,_inline_head1,_inline_tail1)));
-                        goto inline_func_end_label6;
-                    
-inline_func_end_label6:
-                    right_value18 = inline_result_variable6;
-                    (void)0;
-}
-                    char* __tmp_variable7 = inline_result_variable6;
-                    char* match_string=__tmp_variable7;
-                    igc_increment_ref_count(match_string);
-                    (list_push_back_charph(group_strings,match_string));
-                    igc_decrement_ref_count(match_string);
-                }
-            }
-            if(n==count) {
-                                _Bool __result_value = 1;
-                return __result_value;
-            }
-            if(offset==end[0]) {
-                offset=offset+1;
-            }
-            else {
-                offset=end[0];
-            }
+    const char* _inline_msg1 = "global struct initializer test";
+    _Bool _inline_exp1 = cyyy.a==333&&cyyy.b==0;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
         }
         else {
-                        _Bool __result_value = 0;
-            return __result_value;
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label5:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "global struct initializer test";
+    _Bool _inline_exp1 = eyyy[0].a==111&&eyyy[1].a==222&&eyyy[2].a==333;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label6:
+    (void)0;
+}
+    int xg=111;
+    int yg=222-xg+111;
+    int zg=333;
+    struct sDataYYY aag = (struct sDataYYY){ .a = xg+1-1 };
+    struct sDataYYY bbg = { .a = xg+2-2, .b = yg };
+    struct sDataYYY ccg = { zg };
+    {
+    const char* _inline_msg1 = "local struct initializer test";
+    _Bool _inline_exp1 = aag.a==111;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label7:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "local struct initializer test";
+    _Bool _inline_exp1 = bbg.a==111&&bbg.b==222;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label8:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "local struct initializer test";
+    _Bool _inline_exp1 = ccg.a==333;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label9:
+    (void)0;
+}
+    int x1=1;
+    int x2=2;
+    int x3=3;
+    int dd[3] = { x1, x2, x3 };
+    {
+    const char* _inline_msg1 = "local array initializer test";
+    _Bool _inline_exp1 = dd[0]==1&&dd[1]==2&&dd[2]==3;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label10:
+    (void)0;
+}
+    struct sDataYYY ee[3] = { { .a = 111 }, { .a = 222 }, { .a = 333 }};
+    {
+    const char* _inline_msg1 = "local sturct array initializer test";
+    _Bool _inline_exp1 = ee[0].a==111&&ee[1].a==222&&ee[2].a==333;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label11:
+    (void)0;
+}
+    int a[10];
+    memset(&a, 0, sizeof(int));
+    int (*b)[10]=(&a);
+    {
+    const char* _inline_msg1 = "array pointer result fun";
+    _Bool _inline_exp1 = gArray==(ArrayPointerRresultFun(1,1));
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label12:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "global string test";
+    _Bool _inline_exp1 = charp_operator_equals(aaa,"ABC");
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label13:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "array initializer";
+    _Bool _inline_exp1 = bbb[0]==1&&bbb[1]==2&&bbb[2]==3;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label14:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "global string test2";
+    _Bool _inline_exp1 = charp_operator_equals(ccc,"ABC");
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label15:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "array initializer2X";
+    _Bool _inline_exp1 = charp_operator_equals(arrays2[0],"AAA")&&charp_operator_equals(arrays2[1],"BBB")&&charp_operator_equals(arrays2[2],"CCC");
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label16:
+    (void)0;
+}
+    int c[123] = { [0] = 1, [1] = 2, [2] = 3 };
+    {
+    const char* _inline_msg1 = "array initializer";
+    _Bool _inline_exp1 = c[0]==1&&c[1]==2&&c[2]==3;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label17:
+    (void)0;
+}
+    int d[3][3] = { [0][1] = 1, [1][1] = 2, [2][2] = 3 };
+    {
+    const char* _inline_msg1 = "array initializer2Y";
+    _Bool _inline_exp1 = d[0][1]==1&&d[1][1]==2&&d[2][2]==3;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label18:
+    (void)0;
+}
+    struct sData bb = { 3, 4};
+    {
+    const char* _inline_msg1 = "struct initializerA";
+    _Bool _inline_exp1 = aa.a==1&&aa.b==2;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label19:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "struct initializerB";
+    _Bool _inline_exp1 = bb.a==3&&bb.b==4;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label20:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "struct initializerC";
+    _Bool _inline_exp1 = charp_operator_equals(xyz[0].a,"AAA")&&xyz[0].b==2&&charp_operator_equals(xyz[1].a,"BBB")&&xyz[1].b==4;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label21:
+    (void)0;
+}
+    struct come_anon83 xyz2[4] = { { "AAA",2 }, { "BBB", 4 }};
+    {
+    const char* _inline_msg1 = "struct initializerD";
+    _Bool _inline_exp1 = charp_operator_equals(xyz2[0].a,"AAA")&&xyz2[0].b==2&&charp_operator_equals(xyz2[1].a,"BBB")&&xyz2[1].b==4;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label22:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "struct initializerE";
+    _Bool _inline_exp1 = gNode.a==1&&gNode.b==0;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label23:
+    (void)0;
+}
+    int ggg[2][2];
+    memset(&ggg, 0, sizeof(int));
+    ggg[0][0]=1;
+    ggg[1][0]=2;
+    {
+    const char* _inline_msg1 = "array pram test";
+    _Bool _inline_exp1 = (add2(ggg))==2&&(add3(ggg))==3&&(add4(ggg))==3;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label24:
+    (void)0;
+}
+    int xxxxxxx=0;
+    switch(3)
+{
+    case 1:
+    xxxxxxx=5;
+    
+}
+    {
+    const char* _inline_msg1 = "siwthc test";
+    _Bool _inline_exp1 = xxxxxxx==0;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label25:
+    (void)0;
+}
+    _Bool hhh=1;
+    {
+    const char* _inline_msg1 = "bool test";
+    _Bool _inline_exp1 = ((int)hhh)==1;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label26:
+    (void)0;
+}
+    char xxxxxxxxxxxyx='c';
+    char iii[2];
+    memset(&iii, 0, sizeof(char));
+    iii[0]='d';
+    iii[1]='e';
+    {
+    const char* _inline_msg1 = "typeof test";
+    _Bool _inline_exp1 = iii[0]=='d'&&iii[1]=='e';
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label27:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "initializer test";
+    _Bool _inline_exp1 = gNodeX.c=='d';
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label28:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "initializer test2";
+    _Bool _inline_exp1 = gData.a==1&&gData.b==2&&gData.c.c==3&&gData.c.d==4&&gData.e.c=='c'&&gData.d.c==0&&gData.d.d==0;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label29:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "initializer test4";
+    _Bool _inline_exp1 = gData3.a==1&&gData3.b.a==3&&gData3.b.b==4&&gData3.c.c=='f'&&gData3.d.a.a==111&&gData3.d.a.b==222;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label30:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "union initializer";
+    _Bool _inline_exp1 = gA.b.a=='c'&&gA.b.b=='d'&&gB.a.a==111&&gB.a.b==222&&gC.c==123&&gD.d.a==777&&gE.e.a.a==111&&gE.e.a.b==222;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label31:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "struct array initializer";
+    _Bool _inline_exp1 = xxx[0].a==111&&xxx[0].b==222&&xxx[1].a==333&&xxx[1].b==444&&xxx[2].a==555&&xxx[2].b==666;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label32:
+    (void)0;
+}
+    struct sDataXXX axy = (struct sDataXXX){ .a = 111 };
+    struct sDataXXX bxy = { .a = 111, .b = 222 };
+    int cxy[3] = { 1, 2, 3};
+    {
+    const char* _inline_msg1 = "struct local variable initializer";
+    _Bool _inline_exp1 = axy.a==111&&axy.b==0;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label33:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "struct local variable initializer";
+    _Bool _inline_exp1 = bxy.a==111&&bxy.b==222;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label34:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "array local variable initializer";
+    _Bool _inline_exp1 = cxy[0]==1&&cxy[1]==2&&cxy[2]==3;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label35:
+    (void)0;
+}
+    int nnn=1;
+    int* mmm=(&nnn);
+    *mmm=*mmm-1;
+    {
+    const char* _inline_msg1 = "plus plus minus minus test";
+    _Bool _inline_exp1 = nnn==0;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label36:
+    (void)0;
+}
+    const char* nx4;
+    memset(&nx4, 0, sizeof(const char*));
+    nx4="ABC";
+    nx4="DEF";
+    {
+    const char* _inline_msg1 = "const pointer assignment";
+    _Bool _inline_exp1 = (strcmp(nx4,"DEF"))==0;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label37:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "array initializer test";
+    _Bool _inline_exp1 = (strcmp(ab_month_name[0],"Jan"))==0;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label38:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "array initializer test2";
+    _Bool _inline_exp1 = (strcmp(ab_month_name2[0][0],"Jan"))==0;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label39:
+    (void)0;
+}
+    struct sDataXYZ sym;
+    memset(&sym, 0, sizeof(struct sDataXYZ));
+    *(&(*((int*)(&(sym.r)))))=111;
+    {
+    const char* _inline_msg1 = "assing test";
+    _Bool _inline_exp1 = (*((int*)(&(sym.r))))==111;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label40:
+    (void)0;
+}
+    int line_ref=0;
+    if(line_ref==0) {
+        (printf("%d\n",line_ref));
+    }
+    line_ref=line_ref+1;
+    {
+    const char* _inline_msg1 = "++ test";
+    _Bool _inline_exp1 = line_ref==1;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label41:
+    (void)0;
+}
+    int (*prog_main)(int,char**);
+    memset(&prog_main, 0, sizeof(int (*)(int,char**)));
+    prog_main=aaaX;
+    char* GGG[12];
+    memset(&GGG, 0, sizeof(char*));
+    {
+    const char* _inline_msg1 = "fun pointer test";
+    _Bool _inline_exp1 = prog_main(1,GGG)==1;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label42:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "fun pointer test2";
+    _Bool _inline_exp1 = (prog_main)(1,GGG)==1;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label43:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "offset test";
+    _Bool _inline_exp1 = warning_defs[0].offset==4&&warning_defs[1].offset==0&&warning_defs[2].offset==8&&warning_defs[3].offset==16;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label44:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "double cmp";
+    _Bool _inline_exp1 = 1.300000>1.200000;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label45:
+    (void)0;
+}
+    {
+    const char* _inline_msg1 = "double cmp";
+    _Bool _inline_exp1 = 1.200000==1.200000;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label46:
+    (void)0;
+}
+    unsigned char* p;
+    memset(&p, 0, sizeof(unsigned char*));
+    int x;
+    memset(&x, 0, sizeof(int));
+    (va_arg_test("aaa",1,"ABC"));
+    YYSTYPE xaa[3] = { { .x=1, .y=1 }, { .x = 2, .y = 2 }, { .x = 3, .y = 3} };
+    (printf("%lu\n",24));
+    YYSTYPE* yyvsp=xaa;
+    YYSTYPE yyval = { .x=999, .y = 999 };
+    yyvsp=yyvsp+1;
+    *yyvsp=yyval;
+    {
+    const char* _inline_msg1 = "yyval";
+    _Bool _inline_exp1 = xaa[1].x==999&&xaa[1].y==999;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label47:
+    (void)0;
+}
+    const char* azi[5] = { "AAA", "BBB" };
+    {
+    const char* _inline_msg1 = "arrray initializer test";
+    _Bool _inline_exp1 = charp_operator_equals(azi[0],"AAA")&&charp_operator_equals(azi[1],"BBB")&&azi[2]==((void*)0)&&azi[4]==((void*)0);
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label48:
+    (void)0;
+}
+    int xyz3[10];
+    memset(&xyz3, 0, sizeof(int));
+    {
+        int i=0;
+        for(;i<10;        i=i+1          ) {
+            xyz3[i]=i;
         }
     }
-        _Bool __result_value = 0;
-    return __result_value;
-}
-
-static void list_reset_charph(struct list_charphp* self){
-    struct list_item_charphp* it=self->head;
-    while (it!=((void*)0)) {
-        if(1) {
-            igc_decrement_ref_count(it->item);
+    struct smart_pointer_int* __tmp_variable1 = (right_value3 = (smart_pointer_initialize_int((right_value0 = igc_calloc(1,16)),xyz3,10)));
+    struct smart_pointer_int* ppp=__tmp_variable1;
+    {
+    const char* _inline_msg1 = "smart pointer test";
+    _Bool _inline_exp1 = smart_pointer_operator_derefference_int(ppp)==0;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
         }
-        struct list_item_charphp* prev_it=it;
-        it=it->next;
-        call_finalizer(list_item_finalize_list_item_charphp,prev_it,0);
-    }
-    struct list_item_charphp* __tmp_store_field1 = ((void*)0);
-    self->head=__tmp_store_field1;
-    struct list_item_charphp* __tmp_store_field2 = ((void*)0);
-    self->tail=__tmp_store_field2;
-    int __tmp_store_field3 = 0;
-    self->len=__tmp_store_field3;
-}
-
-static void list_item_finalize_list_item_charphp(struct list_item_charphp* self){
+        else {
+            (puts("false"));
+            (exit(2));
         }
+    
+inline_func_end_label49:
+    (void)0;
+}
+    struct smart_pointer_int* __tmp_variable3 = (right_value6 = smart_pointer_operator_add_int(ppp,1));
+    call_finalizer(smart_pointer_finalize_smart_pointer_int,ppp,0);
+    ppp=__tmp_variable3;
+    {
+    const char* _inline_msg1 = "smart pointer test";
+    _Bool _inline_exp1 = smart_pointer_operator_derefference_int(ppp)==1;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label50:
+    (void)0;
+}
+    struct sDataXYZXYZ_int* __tmp_variable5 = (right_value11 = (sDataXYZXYZ_initialize_int((right_value9 = igc_calloc(1,8)))));
+    struct sDataXYZXYZ_int* aBY=__tmp_variable5;
+    *aBY->a=123;
+    {
+    const char* _inline_msg1 = "new T test";
+    _Bool _inline_exp1 = *(aBY->a)==123;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label51:
+    (void)0;
+}
+    union uUnion* axyY=(&gA);
+    {
+    const char* _inline_msg1 = "union testX";
+    _Bool _inline_exp1 = axyY->b.a=='c'&&axyY->b.b=='d';
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label52:
+    (void)0;
+}
+    struct sDataGG data[1024];
+    memset(&data, 0, sizeof(struct sDataGG));
+    int azz[4] = { 123, 123, 123, 123 };
+    struct sDataGG* bzz;
+    memset(&bzz, 0, sizeof(struct sDataGG*));
+    bzz=(&(((struct sDataGG*)azz))[1]);
+    struct sDataGG czz=(((struct sDataGG*)azz))[1];
+    {
+    const char* _inline_msg1 = "cast test";
+    _Bool _inline_exp1 = czz.a==123&&czz.b==123;
+        (printf("%s",_inline_msg1));
+        (printf("..."));
+        if(_inline_exp1) {
+            (puts("ok"));
+        }
+        else {
+            (puts("false"));
+            (exit(2));
+        }
+    
+inline_func_end_label53:
+    (void)0;
+}
+        int __result_value = 0;
+    call_finalizer(sDataXYZXYZ_finalize_sDataXYZXYZ_int,aBY,0);
+    call_finalizer(smart_pointer_finalize_smart_pointer_int,ppp,0);
+    return __result_value;
+}
 
-static void list_push_back_charph(struct list_charphp* self, char* item){
-void* right_value19;
-void* right_value20;
-void* right_value21;
-    if(self->len==0) {
-        struct list_item_charphp* litem=(right_value19 = igc_calloc(1,24));
-        struct list_item_charphp* __tmp_store_field4 = ((void*)0);
-        litem->prev=__tmp_store_field4;
-        struct list_item_charphp* __tmp_store_field5 = ((void*)0);
-        litem->next=__tmp_store_field5;
-        char* __tmp_store_field6 = item;
-        litem->item=__tmp_store_field6;
-        struct list_item_charphp* __tmp_store_field7 = litem;
-        self->tail=__tmp_store_field7;
-        struct list_item_charphp* __tmp_store_field8 = litem;
-        self->head=__tmp_store_field8;
+static struct smart_pointer_int* smart_pointer_initialize_int(struct smart_pointer_int* self, void* memory, int size){
+void* right_value1;
+void* right_value2;
+    struct buffer* __tmp_store_field1 = (right_value2 = (bufferp_initialize((right_value1 = igc_calloc(1,16)))));
+    call_finalizer(buffer_finalize,((self && self->memory) ? self->memory : (void*)0),0);
+    self->memory=__tmp_store_field1;
+    (bufferp_append(self->memory,memory,sizeof(int)*size));
+    int* __tmp_store_field2 = ((int*)self->memory->buf);
+    self->p=__tmp_store_field2;
+        struct smart_pointer_int* __result_value = self;
+    return __result_value;
+}
+
+static int smart_pointer_operator_derefference_int(struct smart_pointer_int* self){
+    int* p=self->p;
+        int __result_value = *p;
+    return __result_value;
+}
+
+static struct smart_pointer_int* smart_pointer_operator_add_int(struct smart_pointer_int* self, int value){
+void* right_value4;
+void* right_value5;
+    if(0) {
+        struct smart_pointer_int* result_gc=(right_value4 = igc_calloc(1,16));
+        igc_increment_ref_count(self->memory);
+        struct buffer* __tmp_store_field3 = self->memory;
+        call_finalizer(buffer_finalize,((result_gc && result_gc->memory) ? result_gc->memory : (void*)0),0);
+        result_gc->memory=__tmp_store_field3;
+        int* __tmp_store_field4 = self->p+value;
+        result_gc->p=__tmp_store_field4;
+        if(((char*)result_gc->p)>result_gc->memory->buf+result_gc->memory->len) {
+            (fprintf(stderr,"%s %d: out of range of smart pointer(1)\n","code/HelloWorld14.c",544));
+            (exit(1));
+        }
+                struct smart_pointer_int* __result_value = result_gc;
+        return __result_value;
     }
-    else if(self->len==1) {
-        struct list_item_charphp* litem=(right_value20 = igc_calloc(1,24));
-        struct list_item_charphp* __tmp_store_field9 = self->head;
-        litem->prev=__tmp_store_field9;
-        struct list_item_charphp* __tmp_store_field10 = ((void*)0);
-        litem->next=__tmp_store_field10;
-        char* __tmp_store_field11 = item;
-        litem->item=__tmp_store_field11;
-        struct list_item_charphp* __tmp_store_field12 = litem;
-        self->tail=__tmp_store_field12;
-        struct list_item_charphp* __tmp_store_field13 = litem;
-        self->head->next=__tmp_store_field13;
+    struct smart_pointer_int* __tmp_variable2 = (right_value5 = igc_calloc(1,16));
+    struct smart_pointer_int* result=__tmp_variable2;
+    igc_increment_ref_count(self->memory);
+    struct buffer* __tmp_store_field5 = self->memory;
+    call_finalizer(buffer_finalize,((result && result->memory) ? result->memory : (void*)0),0);
+    result->memory=__tmp_store_field5;
+    int n=((char*)self->p)-self->memory->buf;
+    int* __tmp_store_field6 = (((int*)result->memory->buf))+n+value;
+    result->p=__tmp_store_field6;
+    if(((char*)result->p)>result->memory->buf+result->memory->len) {
+        (fprintf(stderr,"%s %d: out of range of smart pointer(2)\n","code/HelloWorld14.c",544));
+        (exit(1));
     }
-    else {
-        struct list_item_charphp* litem=(right_value21 = igc_calloc(1,24));
-        struct list_item_charphp* __tmp_store_field14 = self->tail;
-        litem->prev=__tmp_store_field14;
-        struct list_item_charphp* __tmp_store_field15 = ((void*)0);
-        litem->next=__tmp_store_field15;
-        char* __tmp_store_field16 = item;
-        litem->item=__tmp_store_field16;
-        struct list_item_charphp* __tmp_store_field17 = litem;
-        self->tail->next=__tmp_store_field17;
-        struct list_item_charphp* __tmp_store_field18 = litem;
-        self->tail=__tmp_store_field18;
+        struct smart_pointer_int* __result_value = result;
+    return __result_value;
+}
+
+static struct smart_pointer_int* smart_pointer_operator_sub_int(struct smart_pointer_int* self, int value){
+void* right_value7;
+void* right_value8;
+    if(0) {
+        struct smart_pointer_int* result_gc=(right_value7 = igc_calloc(1,16));
+        igc_increment_ref_count(self->memory);
+        struct buffer* __tmp_store_field7 = self->memory;
+        call_finalizer(buffer_finalize,((result_gc && result_gc->memory) ? result_gc->memory : (void*)0),0);
+        result_gc->memory=__tmp_store_field7;
+        int* __tmp_store_field8 = self->p-value;
+        result_gc->p=__tmp_store_field8;
+        if(((char*)result_gc->p)<result_gc->memory->buf) {
+            (fprintf(stderr,"%s %d: out of range of smart pointer(1)\n","code/HelloWorld14.c",546));
+            (exit(1));
+        }
+                struct smart_pointer_int* __result_value = result_gc;
+        return __result_value;
     }
-    int __tmp_store_field19 = self->len+1;
-    self->len=__tmp_store_field19;
-}
-
-_Bool wchar_tp_comapre(int* left, int* right){
-        _Bool __result_value = (wcscmp(left,right))==0;
+    struct smart_pointer_int* __tmp_variable4 = (right_value8 = igc_calloc(1,16));
+    struct smart_pointer_int* result=__tmp_variable4;
+    igc_increment_ref_count(self->memory);
+    struct buffer* __tmp_store_field9 = self->memory;
+    call_finalizer(buffer_finalize,((result && result->memory) ? result->memory : (void*)0),0);
+    result->memory=__tmp_store_field9;
+    int n=((char*)self->p)-self->memory->buf;
+    int* __tmp_store_field10 = (((int*)result->memory->buf))+n-value;
+    result->p=__tmp_store_field10;
+    if(((char*)result->p)<result->memory->buf) {
+        (fprintf(stderr,"%s %d: out of range of smart pointer\n","code/HelloWorld14.c",546));
+        (exit(1));
+    }
+        struct smart_pointer_int* __result_value = result;
     return __result_value;
 }
 
-unsigned int wchar_t_get_hash_key(int value){
-        unsigned int __result_value = value;
+static struct sDataXYZXYZ_int* sDataXYZXYZ_initialize_int(struct sDataXYZXYZ_int* self){
+void* right_value10;
+    int* __tmp_store_field11 = (right_value10 = igc_calloc(1,4));
+    igc_decrement_ref_count(((self && self->a) ? self->a : (void*)0));
+    self->a=__tmp_store_field11;
+        struct sDataXYZXYZ_int* __result_value = self;
     return __result_value;
 }
 
-_Bool wchar_t_equals(int left, int right){
-        _Bool __result_value = left==right;
-    return __result_value;
-}
+static void sDataXYZXYZ_finalize_sDataXYZXYZ_int(struct sDataXYZXYZ_int* self){
+        if(self!=(((void*)0))&&self->a!=(((void*)0))) {
+            igc_decrement_ref_count((self->a));
+        }
+    }
 
-char* charp_operator_mult(char* str, int n){
-void* right_value22;
-        char* __result_value = (right_value22 = (charp_multiply(str,n)));
-    return __result_value;
-}
-
-char* string_operator_mult(char* str, int n){
-void* right_value23;
-        char* __result_value = (right_value23 = (charp_multiply(str,n)));
-    return __result_value;
-}
-
-int* wchar_tp_operator_mult(int* str, int n){
-void* right_value24;
-        int* __result_value = (right_value24 = (wchar_tp_multiply(str,n)));
-    return __result_value;
-}
-
-int* wstring_operator_mult(int* str, int n){
-void* right_value25;
-        int* __result_value = (right_value25 = (wchar_tp_multiply(str,n)));
-    return __result_value;
-}
-
-_Bool charp_operator_equals(char* left, char* right){
-        _Bool __result_value = (strcmp(left,right))==0;
-    return __result_value;
-}
-
-_Bool string_operator_equals(char* left, char* right){
-        _Bool __result_value = (strcmp(left,right))==0;
-    return __result_value;
-}
-
-_Bool wchar_tp_operator_equals(int* left, int* right){
-        _Bool __result_value = (wcscmp(left,right))==0;
-    return __result_value;
-}
-
-_Bool wstring_operator_equals(int* left, int* right){
-        _Bool __result_value = (wcscmp(left,right))==0;
-    return __result_value;
-}
-
-char* charp_operator_add(char* left, char* right){
-void* right_value26;
-void* right_value27;
-void* right_value28;
-    struct buffer* __tmp_variable8 = (right_value27 = (bufferp_initialize((right_value26 = igc_calloc(1,16)))));
-    struct buffer* buf=__tmp_variable8;
-    (bufferp_append_str(buf,left));
-    (bufferp_append_str(buf,right));
-        char* __result_value = (right_value28 = (bufferp_to_string(buf)));
-    call_finalizer(buffer_finalize,buf,0);
-    return __result_value;
-}
-
-char* string_operator_add(char* left, char* right){
-void* right_value29;
-void* right_value30;
-void* right_value31;
-    struct buffer* __tmp_variable9 = (right_value30 = (bufferp_initialize((right_value29 = igc_calloc(1,16)))));
-    struct buffer* buf=__tmp_variable9;
-    (bufferp_append_str(buf,left));
-    (bufferp_append_str(buf,right));
-        char* __result_value = (right_value31 = (bufferp_to_string(buf)));
-    call_finalizer(buffer_finalize,buf,0);
-    return __result_value;
-}
-
-int* wchar_tp_operator_add(int* left, int* right){
-void* right_value32;
-    int* __tmp_variable10 = (right_value32 = igc_calloc((wcslen(left))+(wcslen(right))+1,4));
-    int* result=__tmp_variable10;
-    (wcscpy(result,left));
-    (wcscat(result,right));
-        int* __result_value = result;
-    return __result_value;
-}
-
-int* wstring_operator_add(int* left, int* right){
-void* right_value33;
-    int* __tmp_variable11 = (right_value33 = igc_calloc((wcslen(left))+(wcslen(right))+1,4));
-    int* result=__tmp_variable11;
-    (wcscpy(result,left));
-    (wcscat(result,right));
-        int* __result_value = result;
-    return __result_value;
-}
+static void smart_pointer_finalize_smart_pointer_int(struct smart_pointer_int* self){
+        if(self!=(((void*)0))&&self->memory!=(((void*)0))) {
+            call_finalizer(buffer_finalize,(self->memory),0);
+        }
+    }
 

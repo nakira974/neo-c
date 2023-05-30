@@ -112,6 +112,38 @@ struct _IO_marker;
 struct _IO_codecvt;
 struct _IO_wide_data;
 typedef void _IO_lock_t;
+struct _IO_FILE
+{
+    int _flags;
+    char* _IO_read_ptr;
+    char* _IO_read_end;
+    char* _IO_read_base;
+    char* _IO_write_base;
+    char* _IO_write_ptr;
+    char* _IO_write_end;
+    char* _IO_buf_base;
+    char* _IO_buf_end;
+    char* _IO_save_base;
+    char* _IO_backup_base;
+    char* _IO_save_end;
+    struct _IO_marker* _markers;
+    struct _IO_FILE* _chain;
+    int _fileno;
+    int _flags2;
+    long _old_offset;
+    unsigned short _cur_column;
+    char _vtable_offset;
+    char _shortbuf[1];
+    void* _lock;
+    long _offset;
+    struct _IO_codecvt* _codecvt;
+    struct _IO_wide_data* _wide_data;
+    struct _IO_FILE* _freeres_list;
+    void* _freeres_buf;
+    unsigned long __pad5;
+    int _mode;
+    char _unused2[20];
+};
 typedef long (*cookie_read_function_t)(void*,char*,unsigned long);
 typedef long (*cookie_write_function_t)(void*,const char*,unsigned long);
 typedef int (*cookie_seek_function_t)(void*,long*,int);
@@ -1290,6 +1322,38 @@ struct pdat
     short _pad_bottom;
     short _pad_right;
 };
+struct _win_st
+{
+    short _cury;
+    short _curx;
+    short _maxy;
+    short _maxx;
+    short _begy;
+    short _begx;
+    short _flags;
+    unsigned int _attrs;
+    unsigned int _bkgd;
+    _Bool _notimeout;
+    _Bool _clear;
+    _Bool _leaveok;
+    _Bool _scroll;
+    _Bool _idlok;
+    _Bool _idcok;
+    _Bool _immed;
+    _Bool _sync;
+    _Bool _use_keypad;
+    int _delay;
+    struct ldat* _line;
+    short _regtop;
+    short _regbottom;
+    int _parx;
+    int _pary;
+    WINDOW* _parent;
+    struct pdat _pad;
+    short _yoffset;
+    cchar_t _bkgrnd;
+    int _color;
+};
 typedef int (*NCURSES_OUTC)(int);
 typedef int (*NCURSES_WINDOW_CB)(WINDOW*,void*);
 typedef int (*NCURSES_SCREEN_CB)(SCREEN*,void*);
@@ -1423,7 +1487,7 @@ int fclose(FILE* __stream);
 FILE* tmpfile();
 FILE* tmpfile64();
 char* tmpnam(char* );
-char* tmpnam_r(char __s);
+char* tmpnam_r(char (*__s));
 char* tempnam(const char* __dir, const char* __pfx);
 int fflush(FILE* __stream);
 int fflush_unlocked(FILE* __stream);
@@ -1575,23 +1639,23 @@ int rand();
 void srand(unsigned int __seed);
 int rand_r(unsigned int* __seed);
 double drand48();
-double erand48(unsigned short __xsubi);
+double erand48(unsigned short (*__xsubi));
 long lrand48();
-long nrand48(unsigned short __xsubi);
+long nrand48(unsigned short (*__xsubi));
 long mrand48();
-long jrand48(unsigned short __xsubi);
+long jrand48(unsigned short (*__xsubi));
 void srand48(long __seedval);
-unsigned short* seed48(unsigned short __seed16v);
-void lcong48(unsigned short __param);
+unsigned short* seed48(unsigned short (*__seed16v));
+void lcong48(unsigned short (*__param));
 int drand48_r(struct drand48_data* __buffer, double* __result);
-int erand48_r(unsigned short __xsubi, struct drand48_data* __buffer, double* __result);
+int erand48_r(unsigned short (*__xsubi), struct drand48_data* __buffer, double* __result);
 int lrand48_r(struct drand48_data* __buffer, long* __result);
-int nrand48_r(unsigned short __xsubi, struct drand48_data* __buffer, long* __result);
+int nrand48_r(unsigned short (*__xsubi), struct drand48_data* __buffer, long* __result);
 int mrand48_r(struct drand48_data* __buffer, long* __result);
-int jrand48_r(unsigned short __xsubi, struct drand48_data* __buffer, long* __result);
+int jrand48_r(unsigned short (*__xsubi), struct drand48_data* __buffer, long* __result);
 int srand48_r(long __seedval, struct drand48_data* __buffer);
-int seed48_r(unsigned short __seed16v, struct drand48_data* __buffer);
-int lcong48_r(unsigned short __param, struct drand48_data* __buffer);
+int seed48_r(unsigned short (*__seed16v), struct drand48_data* __buffer);
+int lcong48_r(unsigned short (*__param), struct drand48_data* __buffer);
 void* malloc(unsigned long __size);
 void* calloc(unsigned long __nmemb, unsigned long __size);
 void* realloc(void* __ptr, unsigned long __size);
@@ -1659,7 +1723,7 @@ int unlockpt(int __fd);
 char* ptsname(int __fd);
 int ptsname_r(int __fd, char* __buf, unsigned long __buflen);
 int getpt();
-int getloadavg(double __loadavg, int __nelem);
+int getloadavg(double (*__loadavg), int __nelem);
 void* memcpy(void* __dest, const void* __src, unsigned long __n);
 void* memmove(void* __dest, const void* __src, unsigned long __n);
 void* memccpy(void* __dest, const void* __src, int __c, unsigned long __n);
@@ -2005,7 +2069,7 @@ void __pthread_unregister_cancel(__pthread_unwind_buf_t* __buf);
 void __pthread_register_cancel_defer(__pthread_unwind_buf_t* __buf);
 void __pthread_unregister_cancel_restore(__pthread_unwind_buf_t* __buf);
 void __pthread_unwind_next(__pthread_unwind_buf_t* __buf);
-int __sigsetjmp(struct __jmp_buf_tag __env, int __savemask);
+int __sigsetjmp(struct __jmp_buf_tag (*__env), int __savemask);
 int pthread_mutex_init(union come_anon13* __mutex, const union come_anon11* __mutexattr);
 int pthread_mutex_destroy(union come_anon13* __mutex);
 int pthread_mutex_trylock(union come_anon13* __mutex);
@@ -2079,7 +2143,7 @@ int pthread_atfork(void (*__prepare)(), void (*__parent)(), void (*__child)());
 int access(const char* __name, int __type);
 int euidaccess(const char* __name, int __type);
 int eaccess(const char* __name, int __type);
-int execveat(int __fd, const char* __path, char* __argv, char* __envp, int __flags);
+int execveat(int __fd, const char* __path, char (*__argv), char (*__envp), int __flags);
 int faccessat(int __fd, const char* __file, int __type, int __flag);
 long lseek(int __fd, long __offset, int __whence);
 long lseek64(int __fd, long __offset, int __whence);
@@ -2091,8 +2155,8 @@ long pread(int __fd, void* __buf, unsigned long __nbytes, long __offset);
 long pwrite(int __fd, const void* __buf, unsigned long __n, long __offset);
 long pread64(int __fd, void* __buf, unsigned long __nbytes, long __offset);
 long pwrite64(int __fd, const void* __buf, unsigned long __n, long __offset);
-int pipe(int __pipedes);
-int pipe2(int __pipedes, int __flags);
+int pipe(int (*__pipedes));
+int pipe2(int (*__pipedes), int __flags);
 unsigned int alarm(unsigned int __seconds);
 unsigned int sleep(unsigned int __seconds);
 unsigned int ualarm(unsigned int __value, unsigned int __interval);
@@ -2110,14 +2174,14 @@ char* getwd(char* __buf);
 int dup(int __fd);
 int dup2(int __fd, int __fd2);
 int dup3(int __fd, int __fd2, int __flags);
-int execve(const char* __path, char* __argv, char* __envp);
-int fexecve(int __fd, char* __argv, char* __envp);
-int execv(const char* __path, char* __argv);
+int execve(const char* __path, char (*__argv), char (*__envp));
+int fexecve(int __fd, char (*__argv), char (*__envp));
+int execv(const char* __path, char (*__argv));
 int execle(const char* __path, const char* __arg, ...);
 int execl(const char* __path, const char* __arg, ...);
-int execvp(const char* __file, char* __argv);
+int execvp(const char* __file, char (*__argv));
 int execlp(const char* __file, const char* __arg, ...);
-int execvpe(const char* __file, char* __argv, char* __envp);
+int execvpe(const char* __file, char (*__argv), char (*__envp));
 int nice(int __inc);
 void _exit(int __status);
 long pathconf(const char* __path, int __name);
@@ -2137,7 +2201,7 @@ unsigned int getuid();
 unsigned int geteuid();
 unsigned int getgid();
 unsigned int getegid();
-int getgroups(int __size, unsigned int __list);
+int getgroups(int __size, unsigned int (*__list));
 int group_member(unsigned int __gid);
 int setuid(unsigned int __uid);
 int setreuid(unsigned int __ruid, unsigned int __euid);
@@ -2228,8 +2292,8 @@ int mknod(const char* __path, unsigned int __mode, unsigned long __dev);
 int mknodat(int __fd, const char* __path, unsigned int __mode, unsigned long __dev);
 int mkfifo(const char* __path, unsigned int __mode);
 int mkfifoat(int __fd, const char* __path, unsigned int __mode);
-int utimensat(int __fd, const char* __path, const struct timespec __times, int __flags);
-int futimens(int __fd, const struct timespec __times);
+int utimensat(int __fd, const char* __path, const struct timespec (*__times), int __flags);
+int futimens(int __fd, const struct timespec (*__times));
 int statx(int __dirfd, const char* __path, int __flags, unsigned int __mask, struct statx* __buf);
 void __assert_fail(const char* __assertion, const char* __file, unsigned int __line, const char* __function);
 void __assert_perror_fail(int __errnum, const char* __file, unsigned int __line, const char* __function);
@@ -3165,8 +3229,8 @@ static char* list_item_charph(struct list_charphp* self, int position, char* def
 static char* list_join_charph(struct list_charphp* self, char* sep);
 static char* list_begin_charph(struct list_charphp* self);
 static _Bool list_end_charph(struct list_charphp* self);
-static int list_length_charph(struct list_charphp* self);
 static char* list_next_charph(struct list_charphp* self);
+static int list_length_charph(struct list_charphp* self);
 static char* lambda1(struct __method_block_stack_frame1* parent, char* it, struct list_charphp* it2);
 static char* lambda2(struct __method_block_stack_frame2* parent, char* it, struct list_charphp* it2);
 static char* lambda3(struct __method_block_stack_frame3* parent, char* it, struct list_charphp* it2);
@@ -3178,8 +3242,7 @@ static char* lambda6(struct __method_block_stack_frame6* parent, char* it, struc
 static char* lambda7(struct __method_block_stack_frame7* parent, char* it, struct list_charphp* it2);
 static struct list_charphp* list_initialize_charph(struct list_charphp* self);
 
-int main()
-{
+int main(){
 void* right_value0;
 void* right_value1;
 void* right_value2;
@@ -3347,9 +3410,9 @@ inline_func_end_label5:
 }
     call_finalizer(regex_struct_finalize,right_value2,0);
     char* __tmp_variable1 = (right_value3 = (__builtin_string("ABC")));
-    char* str__1=__tmp_variable1;
+    char* str=__tmp_variable1;
     {
-    char* _inline_self1 = str__1;
+    char* _inline_self1 = str;
     int _inline_index1 = 1;
     char _inline_c1 = 'C';
                 inline_result_variable6 = (right_value4 = (charp_replace(_inline_self1,_inline_index1,_inline_c1)));
@@ -3362,7 +3425,7 @@ inline_func_end_label6:
     igc_decrement_ref_count(right_value5);
     {
     const char* _inline_msg1 = "char_replace";
-    _Bool _inline_exp1 = (strcmp(str__1,"ACC"))==0;
+    _Bool _inline_exp1 = (strcmp(str,"ACC"))==0;
         (printf("%s",_inline_msg1));
         (printf("..."));
         if(_inline_exp1) {
@@ -3441,15 +3504,15 @@ inline_func_end_label11:
     igc_decrement_ref_count(right_value12);
     call_finalizer(regex_struct_finalize,right_value11,0);
     struct list_charphp* __tmp_variable2 = (right_value14 = (charp_scan("ABC",(right_value13 = charp_to_regex_flags(".", 0, 0)))));
-    struct list_charphp* li__1=__tmp_variable2;
+    struct list_charphp* li=__tmp_variable2;
     call_finalizer(regex_struct_finalize,right_value13,0);
     (puts("AAA"));
     struct __method_block_stack_frame0 current_stack0;
-    current_stack0.str = &str__1;
-    (list_each_charph(li__1,&current_stack0,(void*)(lambda0)));
+    current_stack0.str = &str;
+    (list_each_charph(li,&current_stack0,(void*)(lambda0)));
     {
     const char* _inline_msg1 = "char_scan";
-    _Bool _inline_exp1 = (strcmp((list_item_charph(li__1,0,((void*)0))),"A"))==0&&(strcmp((list_item_charph(li__1,1,((void*)0))),"B"))==0&&(strcmp((list_item_charph(li__1,2,((void*)0))),"C"))==0;
+    _Bool _inline_exp1 = (strcmp((list_item_charph(li,0,((void*)0))),"A"))==0&&(strcmp((list_item_charph(li,1,((void*)0))),"B"))==0&&(strcmp((list_item_charph(li,2,((void*)0))),"C"))==0;
         (printf("%s",_inline_msg1));
         (printf("..."));
         if(_inline_exp1) {
@@ -3463,12 +3526,12 @@ inline_func_end_label11:
 inline_func_end_label12:
     (void)0;
 }
-    struct list_charphp* __tmp_variable13 = (right_value16 = (charp_split("A,B,C",(right_value15 = charp_to_regex_flags(",", 0, 0)))));
-    struct list_charphp* li2__1=__tmp_variable13;
+    struct list_charphp* __tmp_variable3 = (right_value16 = (charp_split("A,B,C",(right_value15 = charp_to_regex_flags(",", 0, 0)))));
+    struct list_charphp* li2=__tmp_variable3;
     call_finalizer(regex_struct_finalize,right_value15,0);
     {
     const char* _inline_msg1 = "char_split";
-    _Bool _inline_exp1 = (strcmp((list_item_charph(li2__1,0,((void*)0))),"A"))==0&&(strcmp((list_item_charph(li2__1,1,((void*)0))),"B"))==0&&(strcmp((list_item_charph(li2__1,2,((void*)0))),"C"))==0;
+    _Bool _inline_exp1 = (strcmp((list_item_charph(li2,0,((void*)0))),"A"))==0&&(strcmp((list_item_charph(li2,1,((void*)0))),"B"))==0&&(strcmp((list_item_charph(li2,2,((void*)0))),"C"))==0;
         (printf("%s",_inline_msg1));
         (printf("..."));
         if(_inline_exp1) {
@@ -3482,11 +3545,11 @@ inline_func_end_label12:
 inline_func_end_label13:
     (void)0;
 }
-    struct list_charphp* __tmp_variable14 = (right_value17 = (charp_split_char("A,B,C",',')));
-    struct list_charphp* li3__1=__tmp_variable14;
+    struct list_charphp* __tmp_variable4 = (right_value17 = (charp_split_char("A,B,C",',')));
+    struct list_charphp* li3=__tmp_variable4;
     {
     const char* _inline_msg1 = "char_split_char";
-    _Bool _inline_exp1 = (strcmp((list_item_charph(li3__1,0,((void*)0))),"A"))==0&&(strcmp((list_item_charph(li3__1,1,((void*)0))),"B"))==0&&(strcmp((list_item_charph(li3__1,2,((void*)0))),"C"))==0;
+    _Bool _inline_exp1 = (strcmp((list_item_charph(li3,0,((void*)0))),"A"))==0&&(strcmp((list_item_charph(li3,1,((void*)0))),"B"))==0&&(strcmp((list_item_charph(li3,2,((void*)0))),"C"))==0;
         (printf("%s",_inline_msg1));
         (printf("..."));
         if(_inline_exp1) {
@@ -3500,11 +3563,11 @@ inline_func_end_label13:
 inline_func_end_label14:
     (void)0;
 }
-    struct list_charphp* __tmp_variable15 = (right_value18 = (charp_split_str("A,,B,,C",",,")));
-    struct list_charphp* li4__1=__tmp_variable15;
+    struct list_charphp* __tmp_variable5 = (right_value18 = (charp_split_str("A,,B,,C",",,")));
+    struct list_charphp* li4=__tmp_variable5;
     {
     const char* _inline_msg1 = "char_split_str";
-    _Bool _inline_exp1 = (strcmp((list_item_charph(li4__1,0,((void*)0))),"A"))==0&&(strcmp((list_item_charph(li4__1,1,((void*)0))),"B"))==0&&(strcmp((list_item_charph(li4__1,2,((void*)0))),"C"))==0;
+    _Bool _inline_exp1 = (strcmp((list_item_charph(li4,0,((void*)0))),"A"))==0&&(strcmp((list_item_charph(li4,1,((void*)0))),"B"))==0&&(strcmp((list_item_charph(li4,2,((void*)0))),"C"))==0;
         (printf("%s",_inline_msg1));
         (printf("..."));
         if(_inline_exp1) {
@@ -3518,12 +3581,12 @@ inline_func_end_label14:
 inline_func_end_label15:
     (void)0;
 }
-    struct list_charphp* __tmp_variable16 = (right_value20 = (charp_split_maxsplit("A,,B,,C",(right_value19 = charp_to_regex_flags(",,", 0, 0)),1)));
-    struct list_charphp* li5__1=__tmp_variable16;
+    struct list_charphp* __tmp_variable6 = (right_value20 = (charp_split_maxsplit("A,,B,,C",(right_value19 = charp_to_regex_flags(",,", 0, 0)),1)));
+    struct list_charphp* li5=__tmp_variable6;
     call_finalizer(regex_struct_finalize,right_value19,0);
     {
     const char* _inline_msg1 = "char_split_maxsplit";
-    _Bool _inline_exp1 = (strcmp((list_item_charph(li5__1,0,((void*)0))),"A"))==0&&(strcmp((list_item_charph(li5__1,1,((void*)0))),"B,,C"))==0;
+    _Bool _inline_exp1 = (strcmp((list_item_charph(li5,0,((void*)0))),"A"))==0&&(strcmp((list_item_charph(li5,1,((void*)0))),"B,,C"))==0;
         (printf("%s",_inline_msg1));
         (printf("..."));
         if(_inline_exp1) {
@@ -3596,11 +3659,11 @@ inline_func_end_label20:
     igc_decrement_ref_count(right_value27);
     igc_decrement_ref_count(right_value26);
     igc_decrement_ref_count(right_value24);
-    struct list_charphp* __tmp_variable17 = (right_value28 = (charp_split_str("A,B,C",",")));
-    struct list_charphp* li6__1=__tmp_variable17;
+    struct list_charphp* __tmp_variable7 = (right_value28 = (charp_split_str("A,B,C",",")));
+    struct list_charphp* li6=__tmp_variable7;
     {
     const char* _inline_msg1 = "join";
-    _Bool _inline_exp1 = (string_equals((right_value32 = (list_join_charph(li6__1," "))),"A B C"));
+    _Bool _inline_exp1 = (string_equals((right_value32 = (list_join_charph(li6," "))),"A B C"));
         (printf("%s",_inline_msg1));
         (printf("..."));
         if(_inline_exp1) {
@@ -3615,12 +3678,12 @@ inline_func_end_label21:
     (void)0;
 }
     igc_decrement_ref_count(right_value32);
-    struct list_charphp* __tmp_variable24 = (right_value34 = (charp_split("A,B,C",(right_value33 = charp_to_regex_flags(",", 1, 0)))));
-    struct list_charphp* li7__1=__tmp_variable24;
+    struct list_charphp* __tmp_variable9 = (right_value34 = (charp_split("A,B,C",(right_value33 = charp_to_regex_flags(",", 1, 0)))));
+    struct list_charphp* li7=__tmp_variable9;
     call_finalizer(regex_struct_finalize,right_value33,0);
     {
     const char* _inline_msg1 = "split test";
-    _Bool _inline_exp1 = (string_equals((list_item_charph(li7__1,0,((void*)0))),"A"))&&(string_equals((list_item_charph(li6__1,1,((void*)0))),"B"))&&(string_equals((list_item_charph(li6__1,2,((void*)0))),"C"));
+    _Bool _inline_exp1 = (string_equals((list_item_charph(li7,0,((void*)0))),"A"))&&(string_equals((list_item_charph(li6,1,((void*)0))),"B"))&&(string_equals((list_item_charph(li6,2,((void*)0))),"C"));
         (printf("%s",_inline_msg1));
         (printf("..."));
         if(_inline_exp1) {
@@ -3770,7 +3833,7 @@ inline_func_end_label30:
     igc_decrement_ref_count(right_value41);
     call_finalizer(regex_struct_finalize,right_value40,0);
     struct __method_block_stack_frame1 current_stack1;
-    current_stack1.str = &str__1;
+    current_stack1.str = &str;
     {
     const char* _inline_msg1 = "sub_block test";
     _Bool _inline_exp1 = (string_equals((right_value44 = (charp_sub_block("ABCABCABC",(right_value42 = charp_to_regex_flags("ABC", 1, 0)),&current_stack1,(void*)(lambda1)))),"XXX"));
@@ -3790,7 +3853,7 @@ inline_func_end_label31:
     igc_decrement_ref_count(right_value44);
     call_finalizer(regex_struct_finalize,right_value42,0);
     struct __method_block_stack_frame2 current_stack2;
-    current_stack2.str = &str__1;
+    current_stack2.str = &str;
     {
     const char* _inline_msg1 = "sub_block_count test";
     _Bool _inline_exp1 = (string_equals((right_value47 = (charp_sub_block_count("ABCABCABC",(right_value45 = charp_to_regex_flags("ABC", 1, 0)),2,&current_stack2,(void*)(lambda2)))),"XXABC"));
@@ -3810,7 +3873,7 @@ inline_func_end_label32:
     igc_decrement_ref_count(right_value47);
     call_finalizer(regex_struct_finalize,right_value45,0);
     struct __method_block_stack_frame3 current_stack3;
-    current_stack3.str = &str__1;
+    current_stack3.str = &str;
     {
     const char* _inline_msg1 = "sub_block_count test2";
     _Bool _inline_exp1 = (string_equals((right_value51 = (charp_sub_block_count("ABCABCABC",(right_value48 = charp_to_regex_flags("ABC", 1, 0)),2,&current_stack3,(void*)(lambda3)))),"AAABC"));
@@ -3830,7 +3893,7 @@ inline_func_end_label34:
     igc_decrement_ref_count(right_value51);
     call_finalizer(regex_struct_finalize,right_value48,0);
     struct __method_block_stack_frame4 current_stack4;
-    current_stack4.str = &str__1;
+    current_stack4.str = &str;
     {
     char* _inline_self1 = "123 456 789";
     struct regex_struct* _inline_reg1 = (right_value52 = charp_to_regex_flags("\\d\\d\\d", 1, 0));
@@ -3863,7 +3926,7 @@ inline_func_end_label37:
     call_finalizer(list_finalize_charph,right_value56,0);
     call_finalizer(regex_struct_finalize,right_value52,0);
     struct __method_block_stack_frame5 current_stack5;
-    current_stack5.str = &str__1;
+    current_stack5.str = &str;
     {
     const char* _inline_msg1 = "scan_block_count test";
     _Bool _inline_exp1 = (string_equals((right_value62 = (list_join_charph((right_value61 = (charp_scan_block_count("123 456 789",(right_value58 = charp_to_regex_flags("\\d\\d\\d", 1, 0)),2,&current_stack5,(void*)(lambda5)))),""))),"14"));
@@ -3883,12 +3946,12 @@ inline_func_end_label39:
     igc_decrement_ref_count(right_value62);
     call_finalizer(list_finalize_charph,right_value61,0);
     call_finalizer(regex_struct_finalize,right_value58,0);
-    struct list_charphp* __tmp_variable28 = (right_value64 = (charp_scan("ABC",(right_value63 = charp_to_regex_flags(".", 0, 0)))));
-    struct list_charphp* li8__1=__tmp_variable28;
+    struct list_charphp* __tmp_variable10 = (right_value64 = (charp_scan("ABC",(right_value63 = charp_to_regex_flags(".", 0, 0)))));
+    struct list_charphp* li8=__tmp_variable10;
     call_finalizer(regex_struct_finalize,right_value63,0);
     {
     const char* _inline_msg1 = "scan test";
-    _Bool _inline_exp1 = (string_equals((list_item_charph(li8__1,0,((void*)0))),"A"))&&(string_equals((list_item_charph(li8__1,1,((void*)0))),"B"))&&(string_equals((list_item_charph(li8__1,2,((void*)0))),"C"));
+    _Bool _inline_exp1 = (string_equals((list_item_charph(li8,0,((void*)0))),"A"))&&(string_equals((list_item_charph(li8,1,((void*)0))),"B"))&&(string_equals((list_item_charph(li8,2,((void*)0))),"C"));
         (printf("%s",_inline_msg1));
         (printf("..."));
         if(_inline_exp1) {
@@ -3911,12 +3974,12 @@ inline_func_end_label41:
     right_value66 = inline_result_variable41;
     (void)0;
 }
-    struct buffer* __tmp_variable29 = inline_result_variable41;
-    struct buffer* bufX__1=__tmp_variable29;
-    (bufferp_append_str(bufX__1,"DEF"));
+    struct buffer* __tmp_variable11 = inline_result_variable41;
+    struct buffer* bufX=__tmp_variable11;
+    (bufferp_append_str(bufX,"DEF"));
     {
     const char* _inline_msg1 = "to_buffer test";
-    _Bool _inline_exp1 = (string_equals((right_value67 = (bufferp_to_string(bufX__1))),"ABCDEF"));
+    _Bool _inline_exp1 = (string_equals((right_value67 = (bufferp_to_string(bufX))),"ABCDEF"));
         (printf("%s",_inline_msg1));
         (printf("..."));
         if(_inline_exp1) {
@@ -3932,8 +3995,8 @@ inline_func_end_label42:
 }
     igc_decrement_ref_count(right_value67);
     struct __method_block_stack_frame6 current_stack6;
-    current_stack6.str = &str__1;
-    current_stack6.bufX = &bufX__1;
+    current_stack6.str = &str;
+    current_stack6.bufX = &bufX;
     {
     const char* _inline_msg1 = "split block test";
     _Bool _inline_exp1 = (string_equals((right_value72 = (list_join_charph((right_value71 = (charp_split_block("ABC,DEF,GHI",(right_value68 = charp_to_regex_flags(",", 0, 0)),&current_stack6,(void*)(lambda6)))),""))),"ADG"));
@@ -3954,16 +4017,16 @@ inline_func_end_label44:
     call_finalizer(list_finalize_charph,right_value71,0);
     call_finalizer(regex_struct_finalize,right_value68,0);
     struct __method_block_stack_frame7 current_stack7;
-    current_stack7.li = &li__1;
-    current_stack7.li2 = &li2__1;
-    current_stack7.li3 = &li3__1;
-    current_stack7.li4 = &li4__1;
-    current_stack7.li5 = &li5__1;
-    current_stack7.li6 = &li6__1;
-    current_stack7.li7 = &li7__1;
-    current_stack7.li8 = &li8__1;
-    current_stack7.str = &str__1;
-    current_stack7.bufX = &bufX__1;
+    current_stack7.li = &li;
+    current_stack7.li2 = &li2;
+    current_stack7.li3 = &li3;
+    current_stack7.li4 = &li4;
+    current_stack7.li5 = &li5;
+    current_stack7.li6 = &li6;
+    current_stack7.li7 = &li7;
+    current_stack7.li8 = &li8;
+    current_stack7.str = &str;
+    current_stack7.bufX = &bufX;
     {
     const char* _inline_msg1 = "split block test";
     _Bool _inline_exp1 = (string_equals((right_value77 = (list_join_charph((right_value76 = (charp_split_block_count("ABC,DEF,GHI",(right_value73 = charp_to_regex_flags(",", 0, 0)),2,&current_stack7,(void*)(lambda7)))),""))),"AD"));
@@ -4020,16 +4083,15 @@ inline_func_end_label48:
 }
     call_finalizer(regex_struct_finalize,right_value82,0);
     call_finalizer(regex_struct_finalize,right_value81,0);
-    struct list_charphp* __tmp_variable30 = (right_value84 = (list_initialize_charph((right_value83 = igc_calloc(1,32)))));
-    struct list_charphp* group_strings__1=__tmp_variable30;
-    int __tmp_variable31 = 0;
-    int num_group_strings_in_regx__1=__tmp_variable31;
-    (right_value86 = (charp_scan_group_strings("id: abc mail: abc@icloud.com",(right_value85 = charp_to_regex_flags("(\\w+):", 0, 0)),group_strings__1,(&num_group_strings_in_regx__1))));
+    struct list_charphp* __tmp_variable12 = (right_value84 = (list_initialize_charph((right_value83 = igc_calloc(1,32)))));
+    struct list_charphp* group_strings=__tmp_variable12;
+    int num_group_strings_in_regx=0;
+    (right_value86 = (charp_scan_group_strings("id: abc mail: abc@icloud.com",(right_value85 = charp_to_regex_flags("(\\w+):", 0, 0)),group_strings,(&num_group_strings_in_regx))));
     call_finalizer(list_finalize_charph,right_value86,0);
     call_finalizer(regex_struct_finalize,right_value85,0);
     {
     const char* _inline_msg1 = "regex scan group strings test";
-    _Bool _inline_exp1 = (string_equals((list_item_charph(group_strings__1,0,((void*)0))),"id"))&&(string_equals((list_item_charph(group_strings__1,1,((void*)0))),"mail"))&&num_group_strings_in_regx__1==1;
+    _Bool _inline_exp1 = (string_equals((list_item_charph(group_strings,0,((void*)0))),"id"))&&(string_equals((list_item_charph(group_strings,1,((void*)0))),"mail"))&&num_group_strings_in_regx==1;
         (printf("%s",_inline_msg1));
         (printf("..."));
         if(_inline_exp1) {
@@ -4043,14 +4105,14 @@ inline_func_end_label48:
 inline_func_end_label49:
     (void)0;
 }
-    struct list_charphp* __tmp_variable32 = (right_value88 = (list_initialize_charph((right_value87 = igc_calloc(1,32)))));
-    struct list_charphp* group_strings2__1=__tmp_variable32;
-    (right_value90 = (charp_scan_group_strings("id: abc mail: abc@icloud.com",(right_value89 = charp_to_regex_flags("(\\w+): ([\\w@.]+)", 0, 0)),group_strings2__1,(&num_group_strings_in_regx__1))));
+    struct list_charphp* __tmp_variable13 = (right_value88 = (list_initialize_charph((right_value87 = igc_calloc(1,32)))));
+    struct list_charphp* group_strings2=__tmp_variable13;
+    (right_value90 = (charp_scan_group_strings("id: abc mail: abc@icloud.com",(right_value89 = charp_to_regex_flags("(\\w+): ([\\w@.]+)", 0, 0)),group_strings2,(&num_group_strings_in_regx))));
     call_finalizer(list_finalize_charph,right_value90,0);
     call_finalizer(regex_struct_finalize,right_value89,0);
     {
     const char* _inline_msg1 = "regex scan group strings test2";
-    _Bool _inline_exp1 = (string_equals((list_item_charph(group_strings2__1,0,((void*)0))),"id"))&&(string_equals((list_item_charph(group_strings2__1,1,((void*)0))),"abc"))&&(string_equals((list_item_charph(group_strings2__1,2,((void*)0))),"mail"))&&(string_equals((list_item_charph(group_strings2__1,3,((void*)0))),"abc@icloud.com"))&&num_group_strings_in_regx__1==2;
+    _Bool _inline_exp1 = (string_equals((list_item_charph(group_strings2,0,((void*)0))),"id"))&&(string_equals((list_item_charph(group_strings2,1,((void*)0))),"abc"))&&(string_equals((list_item_charph(group_strings2,2,((void*)0))),"mail"))&&(string_equals((list_item_charph(group_strings2,3,((void*)0))),"abc@icloud.com"))&&num_group_strings_in_regx==2;
         (printf("%s",_inline_msg1));
         (printf("..."));
         if(_inline_exp1) {
@@ -4065,158 +4127,131 @@ inline_func_end_label50:
     (void)0;
 }
         int __result_value = 0;
-    call_finalizer(list_finalize_charph,li__1,0);
-    call_finalizer(list_finalize_charph,li2__1,0);
-    call_finalizer(list_finalize_charph,li3__1,0);
-    call_finalizer(list_finalize_charph,li4__1,0);
-    call_finalizer(list_finalize_charph,li5__1,0);
-    call_finalizer(list_finalize_charph,li6__1,0);
-    call_finalizer(list_finalize_charph,li7__1,0);
-    call_finalizer(list_finalize_charph,li8__1,0);
-    igc_decrement_ref_count(str__1);
-    call_finalizer(buffer_finalize,bufX__1,0);
-    call_finalizer(list_finalize_charph,group_strings__1,0);
-    call_finalizer(list_finalize_charph,group_strings2__1,0);
+    call_finalizer(list_finalize_charph,li,0);
+    call_finalizer(list_finalize_charph,li2,0);
+    call_finalizer(list_finalize_charph,li3,0);
+    call_finalizer(list_finalize_charph,li4,0);
+    call_finalizer(list_finalize_charph,li5,0);
+    call_finalizer(list_finalize_charph,li6,0);
+    call_finalizer(list_finalize_charph,li7,0);
+    call_finalizer(list_finalize_charph,li8,0);
+    igc_decrement_ref_count(str);
+    call_finalizer(buffer_finalize,bufX,0);
+    call_finalizer(list_finalize_charph,group_strings,0);
+    call_finalizer(list_finalize_charph,group_strings2,0);
     return __result_value;
 }
 
-static void lambda0(struct __method_block_stack_frame0* parent, char* it, int it2, _Bool* it3)
-{
+static void lambda0(struct __method_block_stack_frame0* parent, char* it, int it2, _Bool* it3){
         (printf("%s",it));
     }
 
-static void list_each_charph(struct list_charphp* self, void* parent, void (*block_)(void*,char*,int,_Bool*))
-{
-    struct list_item_charphp* __tmp_variable3 = self->head;
-    struct list_item_charphp* it__2=__tmp_variable3;
-    int __tmp_variable4 = 0;
-    int i__2=__tmp_variable4;
-    while (it__2!=((void*)0)) {
-        _Bool __tmp_variable5 = 0;
-        _Bool end_flag__3=__tmp_variable5;
-        block_(parent,it__2->item,i__2,(&end_flag__3));
-        if(end_flag__3==1) {
+static void list_each_charph(struct list_charphp* self, void* parent, void (*block_)(void*,char*,int,_Bool*)){
+    struct list_item_charphp* it=self->head;
+    int i=0;
+    while (it!=((void*)0)) {
+        _Bool end_flag=0;
+        block_(parent,it->item,i,(&end_flag));
+        if(end_flag==1) {
             break;
         }
-        struct list_item_charphp* __tmp_variable6 = it__2->next;
-        it__2=__tmp_variable6;
-        int __tmp_variable7 = i__2+1;
-        i__2=__tmp_variable7;
+        it=it->next;
+        i=i+1;
     }
 }
 
-static char* list_item_charph(struct list_charphp* self, int position, char* default_value)
-{
+static char* list_item_charph(struct list_charphp* self, int position, char* default_value){
     if(position<0) {
-        int __tmp_variable8 = position+self->len;
-        position=__tmp_variable8;
+        position=position+self->len;
     }
-    struct list_item_charphp* __tmp_variable9 = self->head;
-    struct list_item_charphp* it__2=__tmp_variable9;
-    int __tmp_variable10 = 0;
-    int i__2=__tmp_variable10;
-    while (it__2!=((void*)0)) {
-        if(position==i__2) {
-                        char* __result_value = it__2->item;
+    struct list_item_charphp* it=self->head;
+    int i=0;
+    while (it!=((void*)0)) {
+        if(position==i) {
+                        char* __result_value = it->item;
             return __result_value;
         }
-        struct list_item_charphp* __tmp_variable11 = it__2->next;
-        it__2=__tmp_variable11;
-        int __tmp_variable12 = i__2+1;
-        i__2=__tmp_variable12;
+        it=it->next;
+        i=i+1;
     }
         char* __result_value = default_value;
     return __result_value;
 }
 
-static char* list_join_charph(struct list_charphp* self, char* sep)
-{
+static char* list_join_charph(struct list_charphp* self, char* sep){
 void* right_value29;
 void* right_value30;
 void* right_value31;
-    struct buffer* __tmp_variable18 = (right_value30 = (bufferp_initialize((right_value29 = igc_calloc(1,16)))));
-    struct buffer* buf__2=__tmp_variable18;
-    int __tmp_variable19 = 0;
-    int n__2=__tmp_variable19;
+    struct buffer* __tmp_variable8 = (right_value30 = (bufferp_initialize((right_value29 = igc_calloc(1,16)))));
+    struct buffer* buf=__tmp_variable8;
+    int n=0;
     {
-        struct list_charphp* __tmp_variable20 = (self);
-        struct list_charphp* _obj__3=__tmp_variable20;
-        char* __tmp_variable21 = (list_begin_charph(_obj__3));
-        char* it__3=__tmp_variable21;
-        while(!(list_end_charph(_obj__3))) {
-            (bufferp_append_str(buf__2,it__3));
-            if(n__2<(list_length_charph(self))-1) {
-                (bufferp_append_str(buf__2,sep));
+        struct list_charphp* _obj=(self);
+        char* it=(list_begin_charph(_obj));
+        for(;!(list_end_charph(_obj));        it=(list_next_charph(_obj))          ) {
+            (bufferp_append_str(buf,it));
+            if(n<(list_length_charph(self))-1) {
+                (bufferp_append_str(buf,sep));
             }
-            int __tmp_variable22 = n__2+1;
-            n__2=__tmp_variable22;
-            char* __tmp_variable23 = (list_next_charph(_obj__3));
-            it__3=__tmp_variable23;
+            n=n+1;
         }
     }
-        char* __result_value = (right_value31 = (bufferp_to_string(buf__2)));
-    call_finalizer(buffer_finalize,buf__2,0);
+        char* __result_value = (right_value31 = (bufferp_to_string(buf)));
+    call_finalizer(buffer_finalize,buf,0);
     return __result_value;
 }
 
-static char* list_begin_charph(struct list_charphp* self)
-{
+static char* list_begin_charph(struct list_charphp* self){
     struct list_item_charphp* __tmp_store_field1 = self->head;
     self->it=__tmp_store_field1;
     if(self->it) {
                 char* __result_value = self->it->item;
         return __result_value;
     }
-    char* result__2;
-    memset(&result__2, 0, sizeof(char*));
-    (memset((&result__2),0,sizeof(char*)));
-        char* __result_value = result__2;
+    char* result;
+    memset(&result, 0, sizeof(char*));
+    (memset((&result),0,sizeof(char*)));
+        char* __result_value = result;
     return __result_value;
 }
 
-static _Bool list_end_charph(struct list_charphp* self)
-{
+static _Bool list_end_charph(struct list_charphp* self){
         _Bool __result_value = self->it==((void*)0);
     return __result_value;
 }
 
-static int list_length_charph(struct list_charphp* self)
-{
-        int __result_value = self->len;
-    return __result_value;
-}
-
-static char* list_next_charph(struct list_charphp* self)
-{
+static char* list_next_charph(struct list_charphp* self){
     struct list_item_charphp* __tmp_store_field2 = self->it->next;
     self->it=__tmp_store_field2;
     if(self->it) {
                 char* __result_value = self->it->item;
         return __result_value;
     }
-    char* result__2;
-    memset(&result__2, 0, sizeof(char*));
-    (memset((&result__2),0,sizeof(char*)));
-        char* __result_value = result__2;
+    char* result;
+    memset(&result, 0, sizeof(char*));
+    (memset((&result),0,sizeof(char*)));
+        char* __result_value = result;
     return __result_value;
 }
 
-static char* lambda1(struct __method_block_stack_frame1* parent, char* it, struct list_charphp* it2)
-{
+static int list_length_charph(struct list_charphp* self){
+        int __result_value = self->len;
+    return __result_value;
+}
+
+static char* lambda1(struct __method_block_stack_frame1* parent, char* it, struct list_charphp* it2){
 void* right_value43;
                 char* __result_value = (right_value43 = (__builtin_string("X")));
         return __result_value;
     }
 
-static char* lambda2(struct __method_block_stack_frame2* parent, char* it, struct list_charphp* it2)
-{
+static char* lambda2(struct __method_block_stack_frame2* parent, char* it, struct list_charphp* it2){
 void* right_value46;
                 char* __result_value = (right_value46 = (__builtin_string("X")));
         return __result_value;
     }
 
-static char* lambda3(struct __method_block_stack_frame3* parent, char* it, struct list_charphp* it2)
-{
+static char* lambda3(struct __method_block_stack_frame3* parent, char* it, struct list_charphp* it2){
 char* inline_result_variable33;
 void* right_value49;
 void* right_value50;
@@ -4235,8 +4270,7 @@ inline_func_end_label33:
         return __result_value;
     }
 
-static char* lambda4(struct __method_block_stack_frame4* parent, char* it, struct list_charphp* it2)
-{
+static char* lambda4(struct __method_block_stack_frame4* parent, char* it, struct list_charphp* it2){
 char* inline_result_variable35;
 void* right_value53;
 void* right_value54;
@@ -4255,28 +4289,22 @@ inline_func_end_label35:
         return __result_value;
     }
 
-static void list_finalize_charph(struct list_charphp* self)
-{
-    struct list_item_charphp* __tmp_variable25 = self->head;
-    struct list_item_charphp* it__2=__tmp_variable25;
-    while (it__2!=((void*)0)) {
+static void list_finalize_charph(struct list_charphp* self){
+    struct list_item_charphp* it=self->head;
+    while (it!=((void*)0)) {
         if(1) {
-            igc_decrement_ref_count(it__2->item);
+            igc_decrement_ref_count(it->item);
         }
-        struct list_item_charphp* __tmp_variable26 = it__2;
-        struct list_item_charphp* prev_it__3=__tmp_variable26;
-        struct list_item_charphp* __tmp_variable27 = it__2->next;
-        it__2=__tmp_variable27;
-        call_finalizer(list_item_finalize_list_item_charphp,prev_it__3,0);
+        struct list_item_charphp* prev_it=it;
+        it=it->next;
+        call_finalizer(list_item_finalize_list_item_charphp,prev_it,0);
     }
 }
 
-static void list_item_finalize_list_item_charphp(struct list_item_charphp* self)
-{
+static void list_item_finalize_list_item_charphp(struct list_item_charphp* self){
         }
 
-static char* lambda5(struct __method_block_stack_frame5* parent, char* it, struct list_charphp* it2)
-{
+static char* lambda5(struct __method_block_stack_frame5* parent, char* it, struct list_charphp* it2){
 char* inline_result_variable38;
 void* right_value59;
 void* right_value60;
@@ -4295,8 +4323,7 @@ inline_func_end_label38:
         return __result_value;
     }
 
-static char* lambda6(struct __method_block_stack_frame6* parent, char* it, struct list_charphp* it2)
-{
+static char* lambda6(struct __method_block_stack_frame6* parent, char* it, struct list_charphp* it2){
 char* inline_result_variable43;
 void* right_value69;
 void* right_value70;
@@ -4315,8 +4342,7 @@ inline_func_end_label43:
         return __result_value;
     }
 
-static char* lambda7(struct __method_block_stack_frame7* parent, char* it, struct list_charphp* it2)
-{
+static char* lambda7(struct __method_block_stack_frame7* parent, char* it, struct list_charphp* it2){
 char* inline_result_variable45;
 void* right_value74;
 void* right_value75;
@@ -4335,8 +4361,7 @@ inline_func_end_label45:
         return __result_value;
     }
 
-static struct list_charphp* list_initialize_charph(struct list_charphp* self)
-{
+static struct list_charphp* list_initialize_charph(struct list_charphp* self){
     struct list_item_charphp* __tmp_store_field3 = ((void*)0);
     self->head=__tmp_store_field3;
     struct list_item_charphp* __tmp_store_field4 = ((void*)0);

@@ -8,7 +8,7 @@ Yet another modern compiler. It has a collection and string library using Boehm 
 もう一つのモダンコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 1.0.7
+version 1.1.0
 
 ``` C
 #include <comelang.h>
@@ -343,6 +343,10 @@ From version 1.0.6 パフォーマンス上問題となるselfを返すメソッ
 From version 1.0.6 A method that returns self does not return self, which is a performance problem~
 It's getting buffer*::append_str(char*), etc. It contains using no-null-check;
 . This is also for performance. Because vin was slow on iSH and Raspberry Pi.
+
+From version 1.1.0 -tオプションでトランパイルします。
+
+From version 1.1.0 With -t option, traspiled to C code.
 
 # Language specifications
 

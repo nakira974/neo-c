@@ -112,6 +112,38 @@ struct _IO_marker;
 struct _IO_codecvt;
 struct _IO_wide_data;
 typedef void _IO_lock_t;
+struct _IO_FILE
+{
+    int _flags;
+    char* _IO_read_ptr;
+    char* _IO_read_end;
+    char* _IO_read_base;
+    char* _IO_write_base;
+    char* _IO_write_ptr;
+    char* _IO_write_end;
+    char* _IO_buf_base;
+    char* _IO_buf_end;
+    char* _IO_save_base;
+    char* _IO_backup_base;
+    char* _IO_save_end;
+    struct _IO_marker* _markers;
+    struct _IO_FILE* _chain;
+    int _fileno;
+    int _flags2;
+    long _old_offset;
+    unsigned short _cur_column;
+    char _vtable_offset;
+    char _shortbuf[1];
+    void* _lock;
+    long _offset;
+    struct _IO_codecvt* _codecvt;
+    struct _IO_wide_data* _wide_data;
+    struct _IO_FILE* _freeres_list;
+    void* _freeres_buf;
+    unsigned long __pad5;
+    int _mode;
+    char _unused2[20];
+};
 typedef long (*cookie_read_function_t)(void*,char*,unsigned long);
 typedef long (*cookie_write_function_t)(void*,const char*,unsigned long);
 typedef int (*cookie_seek_function_t)(void*,long*,int);
@@ -1290,6 +1322,38 @@ struct pdat
     short _pad_bottom;
     short _pad_right;
 };
+struct _win_st
+{
+    short _cury;
+    short _curx;
+    short _maxy;
+    short _maxx;
+    short _begy;
+    short _begx;
+    short _flags;
+    unsigned int _attrs;
+    unsigned int _bkgd;
+    _Bool _notimeout;
+    _Bool _clear;
+    _Bool _leaveok;
+    _Bool _scroll;
+    _Bool _idlok;
+    _Bool _idcok;
+    _Bool _immed;
+    _Bool _sync;
+    _Bool _use_keypad;
+    int _delay;
+    struct ldat* _line;
+    short _regtop;
+    short _regbottom;
+    int _parx;
+    int _pary;
+    WINDOW* _parent;
+    struct pdat _pad;
+    short _yoffset;
+    cchar_t _bkgrnd;
+    int _color;
+};
 typedef int (*NCURSES_OUTC)(int);
 typedef int (*NCURSES_WINDOW_CB)(WINDOW*,void*);
 typedef int (*NCURSES_SCREEN_CB)(SCREEN*,void*);
@@ -1462,7 +1526,7 @@ int fclose(FILE* __stream);
 FILE* tmpfile();
 FILE* tmpfile64();
 char* tmpnam(char* );
-char* tmpnam_r(char __s);
+char* tmpnam_r(char (*__s));
 char* tempnam(const char* __dir, const char* __pfx);
 int fflush(FILE* __stream);
 int fflush_unlocked(FILE* __stream);
@@ -1614,23 +1678,23 @@ int rand();
 void srand(unsigned int __seed);
 int rand_r(unsigned int* __seed);
 double drand48();
-double erand48(unsigned short __xsubi);
+double erand48(unsigned short (*__xsubi));
 long lrand48();
-long nrand48(unsigned short __xsubi);
+long nrand48(unsigned short (*__xsubi));
 long mrand48();
-long jrand48(unsigned short __xsubi);
+long jrand48(unsigned short (*__xsubi));
 void srand48(long __seedval);
-unsigned short* seed48(unsigned short __seed16v);
-void lcong48(unsigned short __param);
+unsigned short* seed48(unsigned short (*__seed16v));
+void lcong48(unsigned short (*__param));
 int drand48_r(struct drand48_data* __buffer, double* __result);
-int erand48_r(unsigned short __xsubi, struct drand48_data* __buffer, double* __result);
+int erand48_r(unsigned short (*__xsubi), struct drand48_data* __buffer, double* __result);
 int lrand48_r(struct drand48_data* __buffer, long* __result);
-int nrand48_r(unsigned short __xsubi, struct drand48_data* __buffer, long* __result);
+int nrand48_r(unsigned short (*__xsubi), struct drand48_data* __buffer, long* __result);
 int mrand48_r(struct drand48_data* __buffer, long* __result);
-int jrand48_r(unsigned short __xsubi, struct drand48_data* __buffer, long* __result);
+int jrand48_r(unsigned short (*__xsubi), struct drand48_data* __buffer, long* __result);
 int srand48_r(long __seedval, struct drand48_data* __buffer);
-int seed48_r(unsigned short __seed16v, struct drand48_data* __buffer);
-int lcong48_r(unsigned short __param, struct drand48_data* __buffer);
+int seed48_r(unsigned short (*__seed16v), struct drand48_data* __buffer);
+int lcong48_r(unsigned short (*__param), struct drand48_data* __buffer);
 void* malloc(unsigned long __size);
 void* calloc(unsigned long __nmemb, unsigned long __size);
 void* realloc(void* __ptr, unsigned long __size);
@@ -1698,7 +1762,7 @@ int unlockpt(int __fd);
 char* ptsname(int __fd);
 int ptsname_r(int __fd, char* __buf, unsigned long __buflen);
 int getpt();
-int getloadavg(double __loadavg, int __nelem);
+int getloadavg(double (*__loadavg), int __nelem);
 void* memcpy(void* __dest, const void* __src, unsigned long __n);
 void* memmove(void* __dest, const void* __src, unsigned long __n);
 void* memccpy(void* __dest, const void* __src, int __c, unsigned long __n);
@@ -2044,7 +2108,7 @@ void __pthread_unregister_cancel(__pthread_unwind_buf_t* __buf);
 void __pthread_register_cancel_defer(__pthread_unwind_buf_t* __buf);
 void __pthread_unregister_cancel_restore(__pthread_unwind_buf_t* __buf);
 void __pthread_unwind_next(__pthread_unwind_buf_t* __buf);
-int __sigsetjmp(struct __jmp_buf_tag __env, int __savemask);
+int __sigsetjmp(struct __jmp_buf_tag (*__env), int __savemask);
 int pthread_mutex_init(union come_anon13* __mutex, const union come_anon11* __mutexattr);
 int pthread_mutex_destroy(union come_anon13* __mutex);
 int pthread_mutex_trylock(union come_anon13* __mutex);
@@ -2118,7 +2182,7 @@ int pthread_atfork(void (*__prepare)(), void (*__parent)(), void (*__child)());
 int access(const char* __name, int __type);
 int euidaccess(const char* __name, int __type);
 int eaccess(const char* __name, int __type);
-int execveat(int __fd, const char* __path, char* __argv, char* __envp, int __flags);
+int execveat(int __fd, const char* __path, char (*__argv), char (*__envp), int __flags);
 int faccessat(int __fd, const char* __file, int __type, int __flag);
 long lseek(int __fd, long __offset, int __whence);
 long lseek64(int __fd, long __offset, int __whence);
@@ -2130,8 +2194,8 @@ long pread(int __fd, void* __buf, unsigned long __nbytes, long __offset);
 long pwrite(int __fd, const void* __buf, unsigned long __n, long __offset);
 long pread64(int __fd, void* __buf, unsigned long __nbytes, long __offset);
 long pwrite64(int __fd, const void* __buf, unsigned long __n, long __offset);
-int pipe(int __pipedes);
-int pipe2(int __pipedes, int __flags);
+int pipe(int (*__pipedes));
+int pipe2(int (*__pipedes), int __flags);
 unsigned int alarm(unsigned int __seconds);
 unsigned int sleep(unsigned int __seconds);
 unsigned int ualarm(unsigned int __value, unsigned int __interval);
@@ -2149,14 +2213,14 @@ char* getwd(char* __buf);
 int dup(int __fd);
 int dup2(int __fd, int __fd2);
 int dup3(int __fd, int __fd2, int __flags);
-int execve(const char* __path, char* __argv, char* __envp);
-int fexecve(int __fd, char* __argv, char* __envp);
-int execv(const char* __path, char* __argv);
+int execve(const char* __path, char (*__argv), char (*__envp));
+int fexecve(int __fd, char (*__argv), char (*__envp));
+int execv(const char* __path, char (*__argv));
 int execle(const char* __path, const char* __arg, ...);
 int execl(const char* __path, const char* __arg, ...);
-int execvp(const char* __file, char* __argv);
+int execvp(const char* __file, char (*__argv));
 int execlp(const char* __file, const char* __arg, ...);
-int execvpe(const char* __file, char* __argv, char* __envp);
+int execvpe(const char* __file, char (*__argv), char (*__envp));
 int nice(int __inc);
 void _exit(int __status);
 long pathconf(const char* __path, int __name);
@@ -2176,7 +2240,7 @@ unsigned int getuid();
 unsigned int geteuid();
 unsigned int getgid();
 unsigned int getegid();
-int getgroups(int __size, unsigned int __list);
+int getgroups(int __size, unsigned int (*__list));
 int group_member(unsigned int __gid);
 int setuid(unsigned int __uid);
 int setreuid(unsigned int __ruid, unsigned int __euid);
@@ -2267,8 +2331,8 @@ int mknod(const char* __path, unsigned int __mode, unsigned long __dev);
 int mknodat(int __fd, const char* __path, unsigned int __mode, unsigned long __dev);
 int mkfifo(const char* __path, unsigned int __mode);
 int mkfifoat(int __fd, const char* __path, unsigned int __mode);
-int utimensat(int __fd, const char* __path, const struct timespec __times, int __flags);
-int futimens(int __fd, const struct timespec __times);
+int utimensat(int __fd, const char* __path, const struct timespec (*__times), int __flags);
+int futimens(int __fd, const struct timespec (*__times));
 int statx(int __dirfd, const char* __path, int __flags, unsigned int __mask, struct statx* __buf);
 void __assert_fail(const char* __assertion, const char* __file, unsigned int __line, const char* __function);
 void __assert_perror_fail(int __errnum, const char* __file, unsigned int __line, const char* __function);
@@ -3221,8 +3285,7 @@ static void sStruct_finalize_sStruct_int(struct sStruct_int* self);
 static void list_finalize_charp(struct list_charpp* self);
 static void list_item_finalize_list_item_charpp(struct list_item_charpp* self);
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv){
 void* right_value0;
 void* right_value1;
 void* right_value2;
@@ -3231,43 +3294,42 @@ void* right_value11;
 void* right_value12;
 void* right_value18;
 come_gc_init();
-    int __tmp_variable1 = 1;
-    int a__1=__tmp_variable1;
+    int a=1;
     struct __method_block_stack_frame0 current_stack0;
-    current_stack0.a = &a__1;
+    current_stack0.a = &a;
     current_stack0.argc = &argc;
     current_stack0.argv = &argv;
     (int_times(3,&current_stack0,(void*)(lambda1)));
-    struct sStruct_int* __tmp_variable2 = (right_value0 = igc_calloc(1,8));
-    struct sStruct_int* data__1=__tmp_variable2;
+    struct sStruct_int* __tmp_variable1 = (right_value0 = igc_calloc(1,8));
+    struct sStruct_int* data=__tmp_variable1;
     struct __stack0 current_stack1;
-    current_stack1.a = &a__1;
-    current_stack1.data = &data__1;
+    current_stack1.a = &a;
+    current_stack1.data = &data;
     current_stack1.argc = &argc;
     current_stack1.argv = &argv;
-    (sStruct_fun_int(data__1,123,&current_stack1,(void*)(lambda0)));
+    (sStruct_fun_int(data,123,&current_stack1,(void*)(lambda0)));
     struct __method_block_stack_frame1 current_stack2;
-    current_stack2.a = &a__1;
-    current_stack2.data = &data__1;
+    current_stack2.a = &a;
+    current_stack2.data = &data;
     current_stack2.argc = &argc;
     current_stack2.argv = &argv;
-    (sStruct_fun_int(data__1,123,&current_stack2,(void*)(lambda2)));
-    struct list_int* __tmp_variable3 = (right_value2 = (list_initialize_int((right_value1 = igc_calloc(1,32)))));
-    struct list_int* list2__1=__tmp_variable3;
-    (list_push_back_int(list2__1,1));
-    (list_push_back_int(list2__1,2));
-    (list_push_back_int(list2__1,3));
+    (sStruct_fun_int(data,123,&current_stack2,(void*)(lambda2)));
+    struct list_int* __tmp_variable2 = (right_value2 = (list_initialize_int((right_value1 = igc_calloc(1,32)))));
+    struct list_int* list2=__tmp_variable2;
+    (list_push_back_int(list2,1));
+    (list_push_back_int(list2,2));
+    (list_push_back_int(list2,3));
     struct __method_block_stack_frame2 current_stack3;
-    current_stack3.a = &a__1;
-    current_stack3.data = &data__1;
+    current_stack3.a = &a;
+    current_stack3.data = &data;
     current_stack3.argc = &argc;
     current_stack3.argv = &argv;
     struct __method_block_stack_frame3 current_stack4;
-    current_stack4.a = &a__1;
-    current_stack4.data = &data__1;
+    current_stack4.a = &a;
+    current_stack4.data = &data;
     current_stack4.argc = &argc;
     current_stack4.argv = &argv;
-    (list_each_int((right_value10 = (list_filter_int(list2__1,&current_stack3,(void*)(lambda3)))),&current_stack4,(void*)(lambda4)));
+    (list_each_int((right_value10 = (list_filter_int(list2,&current_stack3,(void*)(lambda3)))),&current_stack4,(void*)(lambda4)));
     call_finalizer(list_finalize_int,right_value10,0);
     {
     const char* _inline_msg1 = "method generics test";
@@ -3287,7 +3349,7 @@ inline_func_end_label1:
 }
     {
     const char* _inline_msg1 = "method generics test";
-    _Bool _inline_exp1 = (sStruct_fun2_int_int(data__1,1,2))==3;
+    _Bool _inline_exp1 = (sStruct_fun2_int_int(data,1,2))==3;
         (printf("%s",_inline_msg1));
         (printf("..."));
         if(_inline_exp1) {
@@ -3301,23 +3363,23 @@ inline_func_end_label1:
 inline_func_end_label2:
     (void)0;
 }
-    struct list_charpp* __tmp_variable18 = (right_value12 = (list_initialize_charp((right_value11 = igc_calloc(1,32)))));
-    struct list_charpp* list3__1=__tmp_variable18;
-    (list_push_back_charp(list3__1,"1"));
-    (list_push_back_charp(list3__1,"2"));
-    (list_push_back_charp(list3__1,"3"));
+    struct list_charpp* __tmp_variable4 = (right_value12 = (list_initialize_charp((right_value11 = igc_calloc(1,32)))));
+    struct list_charpp* list3=__tmp_variable4;
+    (list_push_back_charp(list3,"1"));
+    (list_push_back_charp(list3,"2"));
+    (list_push_back_charp(list3,"3"));
     struct __method_block_stack_frame4 current_stack5;
-    current_stack5.a = &a__1;
-    current_stack5.data = &data__1;
+    current_stack5.a = &a;
+    current_stack5.data = &data;
     current_stack5.argc = &argc;
     current_stack5.argv = &argv;
-    current_stack5.list2 = &list2__1;
-    current_stack5.list3 = &list3__1;
-    struct list_int* __tmp_variable25 = (right_value18 = (list_map_charp_int(list3__1,&current_stack5,(void*)(lambda5))));
-    struct list_int* list4__1=__tmp_variable25;
+    current_stack5.list2 = &list2;
+    current_stack5.list3 = &list3;
+    struct list_int* __tmp_variable6 = (right_value18 = (list_map_charp_int(list3,&current_stack5,(void*)(lambda5))));
+    struct list_int* list4=__tmp_variable6;
     {
     const char* _inline_msg1 = "map test";
-    _Bool _inline_exp1 = (list_item_int(list4__1,0,-1))==1&&(list_item_int(list4__1,1,-1))==2&&(list_item_int(list4__1,2,-1))==3;
+    _Bool _inline_exp1 = (list_item_int(list4,0,-1))==1&&(list_item_int(list4,1,-1))==2&&(list_item_int(list4,2,-1))==3;
         (printf("%s",_inline_msg1));
         (printf("..."));
         if(_inline_exp1) {
@@ -3332,37 +3394,32 @@ inline_func_end_label3:
     (void)0;
 }
         int __result_value = 0;
-    call_finalizer(sStruct_finalize_sStruct_int,data__1,0);
-    call_finalizer(list_finalize_int,list2__1,0);
-    call_finalizer(list_finalize_charp,list3__1,0);
-    call_finalizer(list_finalize_int,list4__1,0);
+    call_finalizer(sStruct_finalize_sStruct_int,data,0);
+    call_finalizer(list_finalize_int,list2,0);
+    call_finalizer(list_finalize_charp,list3,0);
+    call_finalizer(list_finalize_int,list4,0);
     return __result_value;
 }
 
-static void lambda1(struct __method_block_stack_frame0* parent)
-{
+static void lambda1(struct __method_block_stack_frame0* parent){
         (puts("HELLO METHOD BLOCK"));
         (printf("a %d\n",*parent->a));
     }
 
-static void lambda0(struct __current_stackframe0* parent, int a)
-{
+static void lambda0(struct __current_stackframe0* parent, int a){
         (printf("%d\n",a));
     }
 
-static void sStruct_fun_int(struct sStruct_int* self, int xxx, void* parent, void (*fun)(void*,int))
-{
+static void sStruct_fun_int(struct sStruct_int* self, int xxx, void* parent, void (*fun)(void*,int)){
     fun(parent,xxx);
 }
 
-static void lambda2(struct __method_block_stack_frame1* parent, int it)
-{
+static void lambda2(struct __method_block_stack_frame1* parent, int it){
         (puts("HELLO GENERICS METHOD BLOCK"));
         (printf("%d\n",it));
     }
 
-static struct list_int* list_initialize_int(struct list_int* self)
-{
+static struct list_int* list_initialize_int(struct list_int* self){
     struct list_item_int* __tmp_store_field1 = ((void*)0);
     self->head=__tmp_store_field1;
     struct list_item_int* __tmp_store_field2 = ((void*)0);
@@ -3373,150 +3430,127 @@ static struct list_int* list_initialize_int(struct list_int* self)
     return __result_value;
 }
 
-static void list_push_back_int(struct list_int* self, int item)
-{
+static void list_push_back_int(struct list_int* self, int item){
 void* right_value3;
 void* right_value4;
 void* right_value5;
     if(self->len==0) {
-        struct list_item_int* __tmp_variable4 = (right_value3 = igc_calloc(1,24));
-        struct list_item_int* litem__3=__tmp_variable4;
+        struct list_item_int* litem=(right_value3 = igc_calloc(1,24));
         struct list_item_int* __tmp_store_field4 = ((void*)0);
-        litem__3->prev=__tmp_store_field4;
+        litem->prev=__tmp_store_field4;
         struct list_item_int* __tmp_store_field5 = ((void*)0);
-        litem__3->next=__tmp_store_field5;
+        litem->next=__tmp_store_field5;
         int __tmp_store_field6 = item;
-        litem__3->item=__tmp_store_field6;
-        struct list_item_int* __tmp_store_field7 = litem__3;
+        litem->item=__tmp_store_field6;
+        struct list_item_int* __tmp_store_field7 = litem;
         self->tail=__tmp_store_field7;
-        struct list_item_int* __tmp_store_field8 = litem__3;
+        struct list_item_int* __tmp_store_field8 = litem;
         self->head=__tmp_store_field8;
     }
     else if(self->len==1) {
-        struct list_item_int* __tmp_variable5 = (right_value4 = igc_calloc(1,24));
-        struct list_item_int* litem__3=__tmp_variable5;
+        struct list_item_int* litem=(right_value4 = igc_calloc(1,24));
         struct list_item_int* __tmp_store_field9 = self->head;
-        litem__3->prev=__tmp_store_field9;
+        litem->prev=__tmp_store_field9;
         struct list_item_int* __tmp_store_field10 = ((void*)0);
-        litem__3->next=__tmp_store_field10;
+        litem->next=__tmp_store_field10;
         int __tmp_store_field11 = item;
-        litem__3->item=__tmp_store_field11;
-        struct list_item_int* __tmp_store_field12 = litem__3;
+        litem->item=__tmp_store_field11;
+        struct list_item_int* __tmp_store_field12 = litem;
         self->tail=__tmp_store_field12;
-        struct list_item_int* __tmp_store_field13 = litem__3;
+        struct list_item_int* __tmp_store_field13 = litem;
         self->head->next=__tmp_store_field13;
     }
     else {
-        struct list_item_int* __tmp_variable6 = (right_value5 = igc_calloc(1,24));
-        struct list_item_int* litem__3=__tmp_variable6;
+        struct list_item_int* litem=(right_value5 = igc_calloc(1,24));
         struct list_item_int* __tmp_store_field14 = self->tail;
-        litem__3->prev=__tmp_store_field14;
+        litem->prev=__tmp_store_field14;
         struct list_item_int* __tmp_store_field15 = ((void*)0);
-        litem__3->next=__tmp_store_field15;
+        litem->next=__tmp_store_field15;
         int __tmp_store_field16 = item;
-        litem__3->item=__tmp_store_field16;
-        struct list_item_int* __tmp_store_field17 = litem__3;
+        litem->item=__tmp_store_field16;
+        struct list_item_int* __tmp_store_field17 = litem;
         self->tail->next=__tmp_store_field17;
-        struct list_item_int* __tmp_store_field18 = litem__3;
+        struct list_item_int* __tmp_store_field18 = litem;
         self->tail=__tmp_store_field18;
     }
     int __tmp_store_field19 = self->len+1;
     self->len=__tmp_store_field19;
 }
 
-static _Bool lambda3(struct __method_block_stack_frame2* parent, int it)
-{
+static _Bool lambda3(struct __method_block_stack_frame2* parent, int it){
                 _Bool __result_value = it>1;
         return __result_value;
     }
 
-static struct list_int* list_filter_int(struct list_int* self, void* parent, _Bool (*block)(void*,int))
-{
+static struct list_int* list_filter_int(struct list_int* self, void* parent, _Bool (*block)(void*,int)){
 void* right_value6;
 void* right_value7;
 void* right_value8;
 void* right_value9;
-    struct list_int* __tmp_variable7 = (right_value7 = (list_initialize_int((right_value6 = igc_calloc(1,32)))));
-    struct list_int* result__2=__tmp_variable7;
-    struct list_item_int* __tmp_variable8 = self->head;
-    struct list_item_int* it__2=__tmp_variable8;
-    while (it__2!=((void*)0)) {
-        if(block(parent,it__2->item)) {
+    struct list_int* __tmp_variable3 = (right_value7 = (list_initialize_int((right_value6 = igc_calloc(1,32)))));
+    struct list_int* result=__tmp_variable3;
+    struct list_item_int* it=self->head;
+    while (it!=((void*)0)) {
+        if(block(parent,it->item)) {
             if(0) {
-                (list_push_back_int(result__2,it__2->item));
+                (list_push_back_int(result,it->item));
             }
             else if(0) {
-                (list_push_back_int(result__2,it__2->item));
+                (list_push_back_int(result,it->item));
             }
             else {
-                (list_push_back_int(result__2,it__2->item));
+                (list_push_back_int(result,it->item));
             }
         }
-        struct list_item_int* __tmp_variable9 = it__2->next;
-        it__2=__tmp_variable9;
+        it=it->next;
     }
-        struct list_int* __result_value = result__2;
+        struct list_int* __result_value = result;
     return __result_value;
 }
 
-static void lambda4(struct __method_block_stack_frame3* parent, int it, int it2, _Bool* it3)
-{
+static void lambda4(struct __method_block_stack_frame3* parent, int it, int it2, _Bool* it3){
         (printf("%d\n",it));
     }
 
-static void list_each_int(struct list_int* self, void* parent, void (*block_)(void*,int,int,_Bool*))
-{
-    struct list_item_int* __tmp_variable10 = self->head;
-    struct list_item_int* it__2=__tmp_variable10;
-    int __tmp_variable11 = 0;
-    int i__2=__tmp_variable11;
-    while (it__2!=((void*)0)) {
-        _Bool __tmp_variable12 = 0;
-        _Bool end_flag__3=__tmp_variable12;
-        block_(parent,it__2->item,i__2,(&end_flag__3));
-        if(end_flag__3==1) {
+static void list_each_int(struct list_int* self, void* parent, void (*block_)(void*,int,int,_Bool*)){
+    struct list_item_int* it=self->head;
+    int i=0;
+    while (it!=((void*)0)) {
+        _Bool end_flag=0;
+        block_(parent,it->item,i,(&end_flag));
+        if(end_flag==1) {
             break;
         }
-        struct list_item_int* __tmp_variable13 = it__2->next;
-        it__2=__tmp_variable13;
-        int __tmp_variable14 = i__2+1;
-        i__2=__tmp_variable14;
+        it=it->next;
+        i=i+1;
     }
 }
 
-static void list_finalize_int(struct list_int* self)
-{
-    struct list_item_int* __tmp_variable15 = self->head;
-    struct list_item_int* it__2=__tmp_variable15;
-    while (it__2!=((void*)0)) {
+static void list_finalize_int(struct list_int* self){
+    struct list_item_int* it=self->head;
+    while (it!=((void*)0)) {
         if(0) {
         }
-        struct list_item_int* __tmp_variable16 = it__2;
-        struct list_item_int* prev_it__3=__tmp_variable16;
-        struct list_item_int* __tmp_variable17 = it__2->next;
-        it__2=__tmp_variable17;
-        call_finalizer(list_item_finalize_list_item_int,prev_it__3,0);
+        struct list_item_int* prev_it=it;
+        it=it->next;
+        call_finalizer(list_item_finalize_list_item_int,prev_it,0);
     }
 }
 
-static void list_item_finalize_list_item_int(struct list_item_int* self)
-{
+static void list_item_finalize_list_item_int(struct list_item_int* self){
         }
 
-static int fun_int(int a, int b)
-{
+static int fun_int(int a, int b){
         int __result_value = a+b;
     return __result_value;
 }
 
-static int sStruct_fun2_int_int(struct sStruct_int* self, int a, int b)
-{
+static int sStruct_fun2_int_int(struct sStruct_int* self, int a, int b){
         int __result_value = a+b;
     return __result_value;
 }
 
-static struct list_charpp* list_initialize_charp(struct list_charpp* self)
-{
+static struct list_charpp* list_initialize_charp(struct list_charpp* self){
     struct list_item_charpp* __tmp_store_field20 = ((void*)0);
     self->head=__tmp_store_field20;
     struct list_item_charpp* __tmp_store_field21 = ((void*)0);
@@ -3527,125 +3561,105 @@ static struct list_charpp* list_initialize_charp(struct list_charpp* self)
     return __result_value;
 }
 
-static void list_push_back_charp(struct list_charpp* self, char* item)
-{
+static void list_push_back_charp(struct list_charpp* self, char* item){
 void* right_value13;
 void* right_value14;
 void* right_value15;
     if(self->len==0) {
-        struct list_item_charpp* __tmp_variable19 = (right_value13 = igc_calloc(1,24));
-        struct list_item_charpp* litem__3=__tmp_variable19;
+        struct list_item_charpp* litem=(right_value13 = igc_calloc(1,24));
         struct list_item_charpp* __tmp_store_field23 = ((void*)0);
-        litem__3->prev=__tmp_store_field23;
+        litem->prev=__tmp_store_field23;
         struct list_item_charpp* __tmp_store_field24 = ((void*)0);
-        litem__3->next=__tmp_store_field24;
+        litem->next=__tmp_store_field24;
         char* __tmp_store_field25 = item;
-        litem__3->item=__tmp_store_field25;
-        struct list_item_charpp* __tmp_store_field26 = litem__3;
+        litem->item=__tmp_store_field25;
+        struct list_item_charpp* __tmp_store_field26 = litem;
         self->tail=__tmp_store_field26;
-        struct list_item_charpp* __tmp_store_field27 = litem__3;
+        struct list_item_charpp* __tmp_store_field27 = litem;
         self->head=__tmp_store_field27;
     }
     else if(self->len==1) {
-        struct list_item_charpp* __tmp_variable20 = (right_value14 = igc_calloc(1,24));
-        struct list_item_charpp* litem__3=__tmp_variable20;
+        struct list_item_charpp* litem=(right_value14 = igc_calloc(1,24));
         struct list_item_charpp* __tmp_store_field28 = self->head;
-        litem__3->prev=__tmp_store_field28;
+        litem->prev=__tmp_store_field28;
         struct list_item_charpp* __tmp_store_field29 = ((void*)0);
-        litem__3->next=__tmp_store_field29;
+        litem->next=__tmp_store_field29;
         char* __tmp_store_field30 = item;
-        litem__3->item=__tmp_store_field30;
-        struct list_item_charpp* __tmp_store_field31 = litem__3;
+        litem->item=__tmp_store_field30;
+        struct list_item_charpp* __tmp_store_field31 = litem;
         self->tail=__tmp_store_field31;
-        struct list_item_charpp* __tmp_store_field32 = litem__3;
+        struct list_item_charpp* __tmp_store_field32 = litem;
         self->head->next=__tmp_store_field32;
     }
     else {
-        struct list_item_charpp* __tmp_variable21 = (right_value15 = igc_calloc(1,24));
-        struct list_item_charpp* litem__3=__tmp_variable21;
+        struct list_item_charpp* litem=(right_value15 = igc_calloc(1,24));
         struct list_item_charpp* __tmp_store_field33 = self->tail;
-        litem__3->prev=__tmp_store_field33;
+        litem->prev=__tmp_store_field33;
         struct list_item_charpp* __tmp_store_field34 = ((void*)0);
-        litem__3->next=__tmp_store_field34;
+        litem->next=__tmp_store_field34;
         char* __tmp_store_field35 = item;
-        litem__3->item=__tmp_store_field35;
-        struct list_item_charpp* __tmp_store_field36 = litem__3;
+        litem->item=__tmp_store_field35;
+        struct list_item_charpp* __tmp_store_field36 = litem;
         self->tail->next=__tmp_store_field36;
-        struct list_item_charpp* __tmp_store_field37 = litem__3;
+        struct list_item_charpp* __tmp_store_field37 = litem;
         self->tail=__tmp_store_field37;
     }
     int __tmp_store_field38 = self->len+1;
     self->len=__tmp_store_field38;
 }
 
-int lambda5(struct __method_block_stack_frame4* parent, char* it)
-{
+int lambda5(struct __method_block_stack_frame4* parent, char* it){
                 int __result_value = (atoi(it));
         return __result_value;
     }
 
-static struct list_int* list_map_charp_int(struct list_charpp* self, void* parent, int (*block)(void*,char*))
-{
+static struct list_int* list_map_charp_int(struct list_charpp* self, void* parent, int (*block)(void*,char*)){
 void* right_value16;
 void* right_value17;
-    struct list_int* __tmp_variable22 = (right_value17 = (list_initialize_int((right_value16 = igc_calloc(1,32)))));
-    struct list_int* result__2=__tmp_variable22;
-    struct list_item_charpp* __tmp_variable23 = self->head;
-    struct list_item_charpp* it__2=__tmp_variable23;
-    while (it__2!=((void*)0)) {
-        (list_push_back_int(result__2,block(parent,it__2->item)));
-        struct list_item_charpp* __tmp_variable24 = it__2->next;
-        it__2=__tmp_variable24;
+    struct list_int* __tmp_variable5 = (right_value17 = (list_initialize_int((right_value16 = igc_calloc(1,32)))));
+    struct list_int* result=__tmp_variable5;
+    struct list_item_charpp* it=self->head;
+    while (it!=((void*)0)) {
+        (list_push_back_int(result,block(parent,it->item)));
+        it=it->next;
     }
-        struct list_int* __result_value = result__2;
+        struct list_int* __result_value = result;
     return __result_value;
 }
 
-static int list_item_int(struct list_int* self, int position, int default_value)
-{
+static int list_item_int(struct list_int* self, int position, int default_value){
     if(position<0) {
-        int __tmp_variable26 = position+self->len;
-        position=__tmp_variable26;
+        position=position+self->len;
     }
-    struct list_item_int* __tmp_variable27 = self->head;
-    struct list_item_int* it__2=__tmp_variable27;
-    int __tmp_variable28 = 0;
-    int i__2=__tmp_variable28;
-    while (it__2!=((void*)0)) {
-        if(position==i__2) {
-                        int __result_value = it__2->item;
+    struct list_item_int* it=self->head;
+    int i=0;
+    while (it!=((void*)0)) {
+        if(position==i) {
+                        int __result_value = it->item;
             return __result_value;
         }
-        struct list_item_int* __tmp_variable29 = it__2->next;
-        it__2=__tmp_variable29;
-        int __tmp_variable30 = i__2+1;
-        i__2=__tmp_variable30;
+        it=it->next;
+        i=i+1;
     }
         int __result_value = default_value;
     return __result_value;
 }
 
-static void sStruct_finalize_sStruct_int(struct sStruct_int* self)
-{
+static void sStruct_finalize_sStruct_int(struct sStruct_int* self){
     }
 
-static void list_finalize_charp(struct list_charpp* self)
-{
-    struct list_item_charpp* __tmp_variable31 = self->head;
-    struct list_item_charpp* it__2=__tmp_variable31;
-    while (it__2!=((void*)0)) {
+static void list_finalize_charp(struct list_charpp* self){
+    struct list_item_charpp* it=self->head;
+    while (it!=((void*)0)) {
         if(0) {
-            igc_decrement_ref_count(it__2->item);
+            igc_decrement_ref_count(it->item);
         }
-        struct list_item_charpp* __tmp_variable32 = it__2;
-        struct list_item_charpp* prev_it__3=__tmp_variable32;
-        struct list_item_charpp* __tmp_variable33 = it__2->next;
-        it__2=__tmp_variable33;
-        call_finalizer(list_item_finalize_list_item_charpp,prev_it__3,0);
+        struct list_item_charpp* prev_it=it;
+        it=it->next;
+        call_finalizer(list_item_finalize_list_item_charpp,prev_it,0);
     }
 }
 
-static void list_item_finalize_list_item_charpp(struct list_item_charpp* self)
-{
+static void list_item_finalize_list_item_charpp(struct list_item_charpp* self){
         }
 

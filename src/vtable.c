@@ -96,11 +96,19 @@ BOOL add_variable_to_table(sVarTable* table, char* name, char* inline_real_name,
         if(p->mName[0] == 0) {
             xstrncpy(p->mName, name, VAR_NAME_MAX);
             xstrncpy(p->mInlineRealName, inline_real_name, VAR_NAME_MAX);
+            p->mBlockLevel = table->mBlockLevel;
             if(function_param || global) {
                 xstrncpy(p->mCValueName, name, VAR_NAME_MAX);
             }
             else {
-                xstrncpy(p->mCValueName, xsprintf("%s__%d", name, table->mBlockLevel), VAR_NAME_MAX);
+                sVar* var_ = get_variable_from_table(table->mParent, name);
+                
+                if(var_) {
+                    xstrncpy(p->mCValueName, xsprintf("%s__%d", name, table->mBlockLevel), VAR_NAME_MAX);
+                }
+                else {
+                    xstrncpy(p->mCValueName, name, VAR_NAME_MAX);
+                }
             }
             if(index == -1) {
                 p->mIndex = table->mVarNum++;
@@ -115,7 +123,6 @@ BOOL add_variable_to_table(sVarTable* table, char* name, char* inline_real_name,
             else {
                 p->mType = NULL;
             }
-            p->mBlockLevel = table->mBlockLevel;
             p->mLLVMValue = llvm_value;
             p->mLLVMValue.var = p;
             p->mGlobal = global;
@@ -132,11 +139,19 @@ BOOL add_variable_to_table(sVarTable* table, char* name, char* inline_real_name,
             if(strcmp(p->mName, name) == 0) {
                 xstrncpy(p->mName, name, VAR_NAME_MAX);
                 xstrncpy(p->mInlineRealName, inline_real_name, VAR_NAME_MAX);
+                p->mBlockLevel = table->mBlockLevel;
                 if(function_param || global) {
                     xstrncpy(p->mCValueName, name, VAR_NAME_MAX);
                 }
                 else {
-                    xstrncpy(p->mCValueName, xsprintf("%s%d", name, table->mBlockLevel), VAR_NAME_MAX);
+                    sVar* var_ = get_variable_from_table(table->mParent, name);
+                    
+                    if(var_) {
+                        xstrncpy(p->mCValueName, xsprintf("%s__%d", name, table->mBlockLevel), VAR_NAME_MAX);
+                    }
+                    else {
+                        xstrncpy(p->mCValueName, name, VAR_NAME_MAX);
+                    }
                 }
                 if(index == -1) {
                     p->mIndex = table->mVarNum++;
@@ -151,7 +166,6 @@ BOOL add_variable_to_table(sVarTable* table, char* name, char* inline_real_name,
                 else {
                     p->mType = NULL;
                 }
-                p->mBlockLevel = table->mBlockLevel;
                 p->mLLVMValue = llvm_value;
                 p->mLLVMValue.var = p;
                 p->mGlobal = global;
@@ -422,19 +436,21 @@ void free_objects(sVarTable* table, sCompileInfo* info)
                 sNodeType* node_type = p->mType;
                 sCLClass* klass = node_type->mClass;
 
-                if(node_type->mHeap)
+                if(node_type->mHeap && !p->mNoFree)
                 {
                     if(p->mLLVMValue.value)
                     {
                         if(p->mType->mConstant) {
                             LLVMValueRef obj = p->mLLVMValue.value;
                             free_object(p->mType, obj, p->mCValueName, FALSE, info);
+                            //add_come_code(info, "%s = (void*)0;\n", p->mCValueName);
                             remove_object_from_right_values(obj, info);
                         }
                         else {
                             LLVMTypeRef llvm_type = create_llvm_type_from_node_type(p->mType);
                             LLVMValueRef obj = LLVMBuildLoad2(gBuilder, llvm_type, p->mLLVMValue.value, "vtable_obj");
                             free_object(p->mType, obj, p->mCValueName, FALSE, info);
+                            //add_come_code(info, "%s = (void*)0;\n", p->mCValueName);
                             remove_object_from_right_values(obj, info);
                         }
 
@@ -484,7 +500,7 @@ static void free_block_variables(sVarTable* table, LLVMValueRef ret_value, sComp
             if(node_type) {
                 sCLClass* klass = node_type->mClass;
                 
-                if(node_type->mHeap)
+                if(node_type->mHeap && !p->mNoFree)
                 {
                     if(p->mLLVMValue.value)
                     {
@@ -492,12 +508,15 @@ static void free_block_variables(sVarTable* table, LLVMValueRef ret_value, sComp
                             if(p->mType->mConstant) {
                                 LLVMValueRef obj = p->mLLVMValue.value;
                                 free_object(p->mType, obj, p->mCValueName, FALSE, info);
+                                //add_come_code(info, "%s = (void*)0;\n", p->mCValueName);
+                                
                                 remove_object_from_right_values(obj, info);
                             }
                             else {
                                 LLVMTypeRef llvm_type = create_llvm_type_from_node_type(p->mType);
                                 LLVMValueRef obj = LLVMBuildLoad2(gBuilder, llvm_type, p->mLLVMValue.value, "vtable_obj");
                                 free_object(p->mType, obj, p->mCValueName, FALSE, info);
+                                //add_come_code(info, "%s = (void*)0;\n", p->mCValueName);
                                 remove_object_from_right_values(obj, info);
                             }
                         }

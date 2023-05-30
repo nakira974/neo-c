@@ -356,6 +356,38 @@ struct _IO_marker;
 struct _IO_codecvt;
 struct _IO_wide_data;
 typedef void _IO_lock_t;
+struct _IO_FILE
+{
+    int _flags;
+    char* _IO_read_ptr;
+    char* _IO_read_end;
+    char* _IO_read_base;
+    char* _IO_write_base;
+    char* _IO_write_ptr;
+    char* _IO_write_end;
+    char* _IO_buf_base;
+    char* _IO_buf_end;
+    char* _IO_save_base;
+    char* _IO_backup_base;
+    char* _IO_save_end;
+    struct _IO_marker* _markers;
+    struct _IO_FILE* _chain;
+    int _fileno;
+    int _flags2;
+    long _old_offset;
+    unsigned short _cur_column;
+    char _vtable_offset;
+    char _shortbuf[1];
+    void* _lock;
+    long _offset;
+    struct _IO_codecvt* _codecvt;
+    struct _IO_wide_data* _wide_data;
+    struct _IO_FILE* _freeres_list;
+    void* _freeres_buf;
+    unsigned long __pad5;
+    int _mode;
+    char _unused2[20];
+};
 typedef __builtin_va_list va_list;
 typedef __fpos_t fpos_t;
 extern FILE* stdin;
@@ -375,90 +407,71 @@ void* ncmemdup(void* block);
 void* call_cloner(void* fun, void* mem);
 void unwrap_exception(char* sname, int sline, char* mem);
 
-void come_gc_init()
-{
+void come_gc_init(){
 }
 
-void come_gc_final()
-{
+void come_gc_final(){
 }
 
-void ncfree(void* mem)
-{
+void ncfree(void* mem){
     if(mem) {
         (free(mem));
     }
 }
 
-void* igc_calloc(unsigned long count, unsigned long size)
-{
-    char* __tmp_variable1 = (calloc(1,sizeof(int)+sizeof(long)+count*size));
-    char* mem__1=__tmp_variable1;
-    int* __tmp_variable2 = ((int*)mem__1);
-    int* ref_count__1=__tmp_variable2;
-    *(&(*ref_count__1))=(*ref_count__1)+1;
-    long* __tmp_variable3 = ((long*)(mem__1+sizeof(int)));
-    long* size2__1=__tmp_variable3;
-    *size2__1=size*count+sizeof(long)+sizeof(int);
-        void* __result_value = mem__1+sizeof(int)+sizeof(long);
+void* igc_calloc(unsigned long count, unsigned long size){
+    char* mem=(calloc(1,sizeof(int)+sizeof(long)+count*size));
+    int* ref_count=((int*)mem);
+    *(&(*ref_count))=(*ref_count)+1;
+    long* size2=((long*)(mem+sizeof(int)));
+    *size2=size*count+sizeof(long)+sizeof(int);
+        void* __result_value = mem+sizeof(int)+sizeof(long);
     return __result_value;
 }
 
-void igc_increment_ref_count(void* mem)
-{
+void igc_increment_ref_count(void* mem){
     if(mem==(((void*)0))) {
                 return;    }
-    int* __tmp_variable4 = ((int*)(((char*)mem)-sizeof(int)-sizeof(long)));
-    int* ref_count__1=__tmp_variable4;
-    *(&(*ref_count__1))=(*ref_count__1)+1;
+    int* ref_count=((int*)(((char*)mem)-sizeof(int)-sizeof(long)));
+    *(&(*ref_count))=(*ref_count)+1;
 }
 
-void igc_decrement_ref_count(void* mem)
-{
+void igc_decrement_ref_count(void* mem){
     if(mem==(((void*)0))) {
                 return;    }
-    int* __tmp_variable5 = ((int*)(((char*)mem)-sizeof(int)-sizeof(long)));
-    int* ref_count__1=__tmp_variable5;
-    *(&(*ref_count__1))=(*ref_count__1)-1;
-    int __tmp_variable6 = *ref_count__1;
-    int count__1=__tmp_variable6;
-    if(count__1==0) {
-        (ncfree(ref_count__1));
+    int* ref_count=((int*)(((char*)mem)-sizeof(int)-sizeof(long)));
+    *(&(*ref_count))=(*ref_count)-1;
+    int count=*ref_count;
+    if(count==0) {
+        (ncfree(ref_count));
     }
 }
 
-void free_object(void* mem)
-{
+void free_object(void* mem){
     if(mem==(((void*)0))) {
                 return;    }
-    int* __tmp_variable7 = ((int*)(((char*)mem)-sizeof(int)-sizeof(long)));
-    int* ref_count__1=__tmp_variable7;
-    (ncfree(ref_count__1));
+    int* ref_count=((int*)(((char*)mem)-sizeof(int)-sizeof(long)));
+    (ncfree(ref_count));
 }
 
-void call_finalizer(void* fun, void* mem, int call_finalizer_only)
-{
+void call_finalizer(void* fun, void* mem, int call_finalizer_only){
     if(mem==(((void*)0))) {
                 return;    }
     if(call_finalizer_only) {
         if(fun) {
-            void (*__tmp_variable8)(void*) = fun;
-            void (*finalizer__3)(void*)=__tmp_variable8;
-            finalizer__3(mem);
+            void (*finalizer)(void*)=fun;
+            finalizer(mem);
         }
     }
     else {
-        int* __tmp_variable9 = ((int*)(((char*)mem)-sizeof(int)-sizeof(long)));
-        int* ref_count__2=__tmp_variable9;
-        *(&(*ref_count__2))=(*ref_count__2)-1;
-        int __tmp_variable10 = *ref_count__2;
-        int count__2=__tmp_variable10;
-        if(count__2==0) {
+        int* ref_count=((int*)(((char*)mem)-sizeof(int)-sizeof(long)));
+        *(&(*ref_count))=(*ref_count)-1;
+        int count=*ref_count;
+        if(count==0) {
             if(mem) {
                 if(fun) {
-                    void (*__tmp_variable11)(void*) = fun;
-                    void (*finalizer__5)(void*)=__tmp_variable11;
-                    finalizer__5(mem);
+                    void (*finalizer)(void*)=fun;
+                    finalizer(mem);
                 }
                 (free_object(mem));
             }
@@ -466,65 +479,49 @@ void call_finalizer(void* fun, void* mem, int call_finalizer_only)
     }
 }
 
-void* nccalloc(unsigned long nmemb, unsigned long size)
-{
-    void* __tmp_variable12 = (calloc(nmemb,size));
-    void* result__1=__tmp_variable12;
-        void* __result_value = result__1;
+void* nccalloc(unsigned long nmemb, unsigned long size){
+    void* result=(calloc(nmemb,size));
+        void* __result_value = result;
     return __result_value;
 }
 
-void* ncmemdup(void* block)
-{
+void* ncmemdup(void* block){
     if(!block) {
                 void* __result_value = ((void*)0);
         return __result_value;
     }
-    char* __tmp_variable13 = ((char*)block)-sizeof(int)-sizeof(long);
-    char* mem__1=__tmp_variable13;
-    long* __tmp_variable14 = ((long*)(mem__1+sizeof(int)));
-    long* size_p__1=__tmp_variable14;
-    unsigned long __tmp_variable15 = *size_p__1;
-    unsigned long size__1=__tmp_variable15;
-    void* __tmp_variable16 = (calloc(1,size__1));
-    void* ret__1=__tmp_variable16;
-    int* __tmp_variable17 = ret__1;
-    int* ref_count__1=__tmp_variable17;
-    if(ret__1) {
-        char* __tmp_variable18 = ret__1;
-        char* p__2=__tmp_variable18;
-        char* __tmp_variable19 = mem__1;
-        char* p2__2=__tmp_variable19;
-        while (p__2-((char*)ret__1)<size__1) {
-            *p__2=*p2__2;
-            char* __tmp_variable20 = p__2+1;
-            p__2=__tmp_variable20;
-            char* __tmp_variable21 = p2__2+1;
-            p2__2=__tmp_variable21;
+    char* mem=((char*)block)-sizeof(int)-sizeof(long);
+    long* size_p=((long*)(mem+sizeof(int)));
+    unsigned long size=*size_p;
+    void* ret=(calloc(1,size));
+    int* ref_count=ret;
+    if(ret) {
+        char* p=ret;
+        char* p2=mem;
+        while (p-((char*)ret)<size) {
+            *p=*p2;
+            p=p+1;
+            p2=p2+1;
         }
     }
-    *(&(*ref_count__1))=1;
-    long* __tmp_variable22 = ((long*)(((char*)ret__1)+sizeof(int)));
-    long* size_p2__1=__tmp_variable22;
-    *size_p2__1=size__1;
-        void* __result_value = ((char*)ret__1)+sizeof(int)+sizeof(long);
+    *(&(*ref_count))=1;
+    long* size_p2=((long*)(((char*)ret)+sizeof(int)));
+    *size_p2=size;
+        void* __result_value = ((char*)ret)+sizeof(int)+sizeof(long);
     return __result_value;
 }
 
-void* call_cloner(void* fun, void* mem)
-{
+void* call_cloner(void* fun, void* mem){
     if(fun&&mem) {
-        void* (*__tmp_variable23)(void*) = fun;
-        void* (*cloner__2)(void*)=__tmp_variable23;
-                void* __result_value = cloner__2(mem);
+        void* (*cloner)(void*)=fun;
+                void* __result_value = cloner(mem);
         return __result_value;
     }
         void* __result_value = ((void*)0);
     return __result_value;
 }
 
-void unwrap_exception(char* sname, int sline, char* mem)
-{
+void unwrap_exception(char* sname, int sline, char* mem){
     if(mem==((void*)0)) {
         (fprintf(stderr,"%s %d: unwrap exception. The value is null\n",sname,sline));
         (exit(2));

@@ -11,6 +11,7 @@ struct sOutputStruct
 {
     char* mName;
     struct sOutputStruct* mNext;
+    BOOL mUndefinedBody;
 };
 
 struct sOutputStruct* gHeadOutputStruct;
@@ -223,6 +224,14 @@ void add_come_code(struct sCompileInfoStruct* info, const char* msg, ...)
     }
 }
 
+void transpiler_remove_last_semicolon(struct sCompileInfoStruct* info)
+{
+    if(info->come_fun) {
+        info->come_fun->mSource.mBuf[strlen(info->come_fun->mSource.mBuf)-2] = ' ';
+        info->come_fun->mSource.mBuf[strlen(info->come_fun->mSource.mBuf)-1] = ' ';
+    }
+}
+
 void add_come_code_at_head(struct sCompileInfoStruct* info, const char* msg, ...)
 {
     if(info->no_output_come_code) {
@@ -377,7 +386,13 @@ char* make_define_var(sNodeType* node_type, char* name, struct sCompileInfoStruc
         sBuf_append_str(&buf, node_type_str);
         
         sBuf_append_str(&buf, " ");
+        if(node_type->mNoArrayPointerNum > 0) {
+            sBuf_append_str(&buf, "(*");
+        }
         sBuf_append_str(&buf, name);
+        if(node_type->mNoArrayPointerNum > 0) {
+            sBuf_append_str(&buf, ")");
+        }
         
         int i=0;
         for(i=0; i<node_type->mArrayDimentionNum; i++) {
@@ -390,7 +405,13 @@ char* make_define_var(sNodeType* node_type, char* name, struct sCompileInfoStruc
         sBuf_append_str(&buf, node_type_str);
         
         sBuf_append_str(&buf, " ");
+        if(node_type->mNoArrayPointerNum > 0) {
+            sBuf_append_str(&buf, "(*");
+        }
         sBuf_append_str(&buf, name);
+        if(node_type->mNoArrayPointerNum > 0) {
+            sBuf_append_str(&buf, ")");
+        }
     }
     
     char* result = xsprintf("%s", buf.mBuf);
@@ -434,10 +455,49 @@ void output_function(sBuf* output, sComeFun* fun)
         
         sBuf_append_str(output, str);
         
+        sBuf_append_str(output, ")");
+        
         sBuf_append_str(&gComeModule.mSourceHead, output->mBuf);
         sBuf_append_str(&gComeModule.mSourceHead, ";\n");
         
         free(output2.mBuf);
+    }
+    else if(fun->mResultType->mArrayDimentionNum > 0) {
+        sNodeType* base_result_type = clone_node_type(fun->mResultType);
+        base_result_type->mArrayDimentionNum = 0;
+        
+        char* result_type_str = make_type_name_string(base_result_type);
+        
+        sBuf_append_str(output, result_type_str);
+        sBuf_append_str(output, " (*");
+        
+        sBuf_append_str(output, fun->mName);
+        sBuf_append_str(output, "(");
+        
+        int i;
+        gInFunctionParam = TRUE;
+        for(i=0; i<fun->mNumParams; i++) {
+            sNodeType* param_type = fun->mParamTypes[i];
+            char* name = fun->mParamNames[i];
+            
+            char* str = make_define_var(param_type, name, NULL);
+            sBuf_append_str(output, str);
+            
+            if(i == fun->mNumParams-1) {
+                if(fun->mVarArgs) {
+                    sBuf_append_str(output, ", ...");
+                }
+            }
+            else {
+                sBuf_append_str(output, ", ");
+            }
+        }
+        gInFunctionParam = FALSE;
+        
+        sBuf_append_str(output, xsprintf("))[%d]", fun->mResultType->mArrayNum[0]));
+        
+        sBuf_append_str(&gComeModule.mSourceHead, output->mBuf);
+        sBuf_append_str(&gComeModule.mSourceHead, ";\n");
     }
     else {
         char* result_type_str = make_type_name_string(fun->mResultType);
@@ -468,11 +528,13 @@ void output_function(sBuf* output, sComeFun* fun)
         }
         gInFunctionParam = FALSE;
         
+        sBuf_append_str(output, ")");
+        
         sBuf_append_str(&gComeModule.mSourceHead, output->mBuf);
-        sBuf_append_str(&gComeModule.mSourceHead, ");\n");
+        sBuf_append_str(&gComeModule.mSourceHead, ";\n");
     }
     
-    sBuf_append_str(output, ")\n{\n");
+    sBuf_append_str(output, "{\n");
     
     sBuf_append_str(output, fun->mSourceHead.mBuf);
     sBuf_append_str(output, fun->mSource.mBuf);
@@ -515,6 +577,40 @@ void header_function(sBuf* output, sComeFun* fun)
         
         free(output2.mBuf);
     }
+    else if(fun->mResultType->mArrayDimentionNum > 0) {
+        sNodeType* base_result_type = clone_node_type(fun->mResultType);
+        base_result_type->mArrayDimentionNum = 0;
+        
+        char* result_type_str = make_type_name_string(base_result_type);
+        
+        sBuf_append_str(output, result_type_str);
+        sBuf_append_str(output, " (*");
+        
+        sBuf_append_str(output, fun->mName);
+        sBuf_append_str(output, "(");
+        
+        int i;
+        gInFunctionParam = TRUE;
+        for(i=0; i<fun->mNumParams; i++) {
+            sNodeType* param_type = fun->mParamTypes[i];
+            char* name = fun->mParamNames[i];
+            
+            char* str = make_define_var(param_type, name, NULL);
+            sBuf_append_str(output, str);
+            
+            if(i == fun->mNumParams-1) {
+                if(fun->mVarArgs) {
+                    sBuf_append_str(output, ", ...");
+                }
+            }
+            else {
+                sBuf_append_str(output, ", ");
+            }
+        }
+        gInFunctionParam = FALSE;
+        
+        sBuf_append_str(output, xsprintf("))[%d];\n", fun->mResultType->mArrayNum[0]));
+    }
     else {
         char* result_type_str = make_type_name_string(fun->mResultType);
         
@@ -555,13 +651,19 @@ void output_struct(char* struct_name, sNodeType* struct_type, sNodeType* generic
     struct sOutputStruct* it = gHeadOutputStruct;
     while(it) {
         if(strcmp(it->mName, struct_name) == 0) {
-            return;
+            if(it->mUndefinedBody && !undefined_body) {
+                break;
+            }
+            else {
+                return;
+            }
         }
         it = it->mNext;
     }
     struct sOutputStruct* output_struct = GC_malloc(sizeof(struct sOutputStruct));
     
     output_struct->mName = xsprintf("%s", struct_name);;
+    output_struct->mUndefinedBody = undefined_body;
     output_struct->mNext = gHeadOutputStruct;
     gHeadOutputStruct = output_struct;
     
@@ -735,9 +837,11 @@ char* make_type_name_string(sNodeType* node_type)
         }
     }
     
-    int i;
-    for(i=0; i<node_type->mPointerNum; i++) {
-        sBuf_append_str(&output, "*");
+    if(node_type->mNoArrayPointerNum == 0 && strcmp(class_name, "lambda") != 0) {
+        int i;
+        for(i=0; i<node_type->mPointerNum; i++) {
+            sBuf_append_str(&output, "*");
+        }
     }
     
     if(node_type->mRestrict) {

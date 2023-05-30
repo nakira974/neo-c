@@ -323,6 +323,19 @@ ts-test:
 	./code/HelloWorld12-ts
 	PWD=`pwd` ./comelang -o code/HelloWorld13-ts -t code/HelloWorld13.c
 	./code/HelloWorld13-ts
+	PWD=`pwd` ./comelang -o code/HelloWorld14-ts -t code/HelloWorld14.c
+	./code/HelloWorld14-ts
+	PWD=`pwd` ./comelang -o code/HelloWorld15-ts -t code/HelloWorld15.c
+	./code/HelloWorld15-ts
+	PWD=`pwd` ./comelang -o code/HelloWorld16-ts -t code/HelloWorld16.c
+	./code/HelloWorld16-ts
+	PWD=`pwd` ./comelang -o code/HelloWorld17-ts -t code/HelloWorld17.c
+	./code/HelloWorld17-ts
+	PWD=`pwd` ./comelang -o code/HelloWorld18-ts -t code/HelloWorld18.c
+	./code/HelloWorld18-ts
+	PWD=`pwd` ./comelang -o code/HelloWorld19-ts -t code/HelloWorld19.c
+	PWD=`pwd` ./comelang -o code/HelloWorld20-ts -t code/HelloWorld20.c
+	./code/HelloWorld20-ts
 
 tcc-test:
 	PWD=`pwd` ./comelang -no-gc code/tcctest.c

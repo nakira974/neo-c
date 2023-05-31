@@ -1460,6 +1460,12 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
             (*result_type)->mHeap = TRUE;
         }
         (*result_type)->mNumGenericsTypes = 2;
+/*
+        if(type_identify_with_class_name(node_type, "void") && node_type->mPointerNum == 0)
+        {
+            node_type = create_node_type_with_class_name("int");
+        }
+*/
         (*result_type)->mGenericsTypes[0] = node_type;
         (*result_type)->mGenericsTypes[1] = create_node_type_with_class_name("bool");
         (*result_type)->mPointerNum = 1;

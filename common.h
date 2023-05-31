@@ -3,6 +3,8 @@
 
 #include <comelang.h>
 
+using unsafe;
+
 struct sType;
 
 struct sClass {
@@ -98,6 +100,17 @@ struct sVar {
     bool mAllocaValue;
     bool mFunctionParam;
     bool mNoFree;
+};
+
+struct sInfo
+{
+    smart_pointer<char>*% p;
+    char* head;
+    string sname;
+    int sline;
+    int err_num;
+    string clang_option;
+    bool no_output_err;
 };
 
 /*
@@ -200,5 +213,19 @@ struct sInfo
     char* continue_code;
 };
 */
+
+/////////////////////////////////////////////////////////////////////
+/// 01main.c ///
+/////////////////////////////////////////////////////////////////////
+int come_main(int argc, char** argv) version 1;
+
+/////////////////////////////////////////////////////////////////////
+/// 02transpile.c ///
+/////////////////////////////////////////////////////////////////////
+int come_main(int argc, char** argv) version 2;
+void come_init() version 2;
+void come_final() version 2;
+void err_msg(sInfo* info, char* str);
+exception int transpile(sInfo* info) version 2;
 
 #endif

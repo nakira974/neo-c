@@ -37,14 +37,17 @@ all: comelang no-self-host real-self-host
 
 no-self-host: comelang lib lib-gc lib-ts
 
-real-self-host: 01main.o 02transpile.o common.h
-	./comelang -o rcomelang -no-gc 01main.o 02transpile.o
+real-self-host: 01main.o 02transpile.o 03transpile2.o common.h
+	./comelang -no-gc -g -o rcomelang 01main.o 02transpile.o 03transpile2.o
 
 01main.o: 01main.c common.h
-	./comelang -c -no-gc 01main.c
+	./comelang -no-gc -g -c 01main.c
 
 02transpile.o: 02transpile.c common.h
-	./comelang -c -no-gc 02transpile.c
+	./comelang -no-gc -g -c 02transpile.c
+
+03transpile2.o: 03transpile2.c common.h
+	./comelang -no-gc -g -c 03transpile2.c
 
 comelang: config.h src/main.o $(OBJS) src/llvm.o
 	$(CC) -c src/main.c -o src/main.o $(CFLAGS)

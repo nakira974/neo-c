@@ -16,7 +16,17 @@ void err_msg(sInfo* info, char* str)
     }
 }
 
+exception int parse(sInfo* info) version 2
+{
+    return 0;
+}
+
 exception int transpile(sInfo* info) version 2
+{
+    return 0;
+}
+
+exception int output_source_file(sInfo* info) version 2
 {
     string output_file_name = xsprintf("%s.c", info.sname);
     
@@ -120,6 +130,9 @@ int come_main(int argc, char** argv) version 2
         else if(argv[i] === "-c") {
             output_object_file = true;
         }
+        else if(argv[i][0] == '-') {
+            clang_option.append_str(argv[i] + " ");
+        }
         else if(memcmp(argv[i] + strlen(argv[i]) -2, ".o", 2) == 0) {
             object_files.push_back(string(argv[i]));
         }
@@ -139,9 +152,21 @@ int come_main(int argc, char** argv) version 2
         info.err_num = 0;
         info.clang_option = clang_option.to_string();
         info.no_output_err = false;
+        info.funcs = new list<sFun*%>();
+        info.module = new sModule();
+        
+        parse(&info).catch {
+            fprintf(stderr, "%s %d: parse faield\n", info.sname, info.sline);
+            exit(2);
+        }
         
         transpile(&info).catch {
             fprintf(stderr, "%s %d: traspile faield\n", info.sname, info.sline);
+            exit(2);
+        }
+        
+        output_source_file(&info).catch {
+            fprintf(stderr, "%s %d: output source file faield\n", info->sname, info->sline);
             exit(2);
         }
         

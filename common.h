@@ -3,9 +3,14 @@
 
 #include <comelang.h>
 
+#define COME_CODE_MAX 2048
+
 using unsafe;
 
 struct sType;
+
+void sType*::finalize(sType* self);
+sType*% sType*::clone(sType* self);
 
 struct sClass {
     bool mStruct;
@@ -15,7 +20,7 @@ struct sClass {
     bool mProtocol;
     bool mNumber;
     
-    string name;
+    string mName;
     
     int mGenericsNum;
     int mMethodGenericsNum;
@@ -24,17 +29,16 @@ struct sClass {
     list<sType*%>*% mFieldTypes;
 };
 
-struct sType;
-
 struct sType
 {
-    sClass*% mClass;
+    sClass* mClass;
 
-    list<sType*>*% mGenericsTypes;
+    list<sType*>* mGenericsTypes;
     
-    list<int>*% mArrayNum;
+    list<int>* mArrayNum;
+    bool mOmitArrayNum;
     
-    list<sType*>*% mParamTypes;
+    list<sType*>* mParamTypes;
     sType* mResultType;
     
     bool mUnsigned;
@@ -57,25 +61,10 @@ struct sType
     unsigned int mDynamicArrayNum;
     unsigned int mTypeOfExpression;
 
-    string mOriginalTypeName;
+    char* mOriginalTypeName;
     int mOriginalPointerNum;
     
-/*
-    BOOL mCurrentStackVariable;
-    BOOL mMethodGenericsResult;
-    BOOL mAllocaValue;
-    
-    BOOL mArrayPointer;
-    BOOL mOmitArrayNum;
-    BOOL mOriginalOmitArrayNum;
-    BOOL mException;
-    
-    BOOL mFunctionParam;
-    
-    BOOL mArrayParam;
-    BOOL mCastedPointerToPointer;
-    BOOL mNoAutoCast;
-*/
+    bool mFunctionParam;
 };
 
 struct sVar;
@@ -102,6 +91,29 @@ struct sVar {
     bool mNoFree;
 };
 
+struct sFun
+{
+    string mName;
+    
+    sType*% mResultType;
+    list<sType*%>*% mParamTypes;
+    list<string%>*% mParamNames;
+    
+    bool mExternal;
+    bool mVarArgs;
+    
+    buffer*% mSource;
+    buffer*% mSourceHead;
+    buffer*% mSourceDefer;
+};
+
+struct sModule
+{
+    buffer*% mSourceHead;
+    buffer*% mSource;
+    string mLastCode;
+};
+
 struct sInfo
 {
     smart_pointer<char>*% p;
@@ -111,6 +123,13 @@ struct sInfo
     int err_num;
     string clang_option;
     bool no_output_err;
+    bool no_output_come_code;
+    
+    sFun* come_fun;
+    int come_nest;
+
+    list<sFun*%>*% funcs;
+    sModule*% module;
 };
 
 /*
@@ -226,6 +245,22 @@ int come_main(int argc, char** argv) version 2;
 void come_init() version 2;
 void come_final() version 2;
 void err_msg(sInfo* info, char* str);
+exception int parse(sInfo* info) version 2;
 exception int transpile(sInfo* info) version 2;
+exception int output_source_file(sInfo* info) version 2;
+
+/////////////////////////////////////////////////////////////////////
+/// 03transpile2.c ///
+/////////////////////////////////////////////////////////////////////
+void come_init() version 3;
+void come_final() version 3;
+
+sModule*% sModule*::initialize(sModule*% self);
+sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, bool external, bool var_args, sInfo* info);
+sClass*% sClass*::initialize(sClass*% self, char* name);
+sType*% sType*::initialize(sType*% self, char* name, int pointer_num=0, bool heap=false);
+
+exception int transpile(sInfo* info) version 3;
+exception int output_source_file(sInfo* info) version 3;
 
 #endif

@@ -253,6 +253,11 @@ string make_type_name_string(sType* type, bool in_header, sInfo* info)
     return buf.to_string();
 }
 
+void show_type(sType* type, sInfo* info)
+{
+    puts(make_type_name_string(type, false@in_header, info));
+}
+
 string make_lambda_type_name_string(sType* type, char* var_name, sInfo* info)
 {
     var buf = new buffer();
@@ -578,8 +583,7 @@ sClass*% sClass*::initialize(sClass*% self, char* name)
     self.mGenericsNum = -1;
     self.mMethodGenericsNum = -1;
     
-    self.mFieldNames = new list<string>();
-    self.mFieldTypes = new list<sType*%>();
+    self.mFields = new list<tuple2<string, sType*%>*%>();
     
     return self;
 };
@@ -618,7 +622,7 @@ exception int transpile(sInfo* info) version 3
     var main_fun = new sFun(name, result_type, param_types, param_names
                             , false@external, false@var_args, info);
     
-    info.funcs.push_back(main_fun);
+    info.funcs.insert(name, main_fun);
     
     add_come_code(info, "#include <stdio.h>\n");
     
@@ -641,7 +645,8 @@ exception int output_source_file(sInfo* info) version 3
     fprintf(f, "%s\n", info.module.mSourceHead.to_string());
     
     foreach(it, info.funcs) {
-        string header = header_function(it, info);
+        sFun* it2 = info.funcs[it];
+        string header = header_function(it2, info);
         
         fprintf(f, "%s", header);
     }
@@ -649,8 +654,10 @@ exception int output_source_file(sInfo* info) version 3
     fprintf(f, "\n");
     
     foreach(it, info.funcs) {
-        if(!it->mExternal) {
-            string output = output_function(it, info);
+        sFun* it2 = info.funcs[it];
+        
+        if(!it2->mExternal) {
+            string output = output_function(it2, info);
             
             fprintf(f, "%s", output);
             
@@ -677,4 +684,25 @@ sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sTy
     self.mSourceDefer = new buffer();
     
     return self;
+}
+
+void add_come_code_at_function_head(sInfo* info, char* code)
+{
+    if(info->no_output_come_code) {
+        return;
+    }
+    if(info.come_fun) {
+        info->come_fun->mSourceHead.append_str(code);
+    }
+}
+
+void add_last_code_to_source(sInfo* info)
+{
+    if(info->no_output_come_code) {
+        return;
+    }
+    if(info.module.mLastCode) {
+       add_come_code(info, "%s", info.module.mLastCode);
+       info.module.mLastCode = null;
+    }
 }

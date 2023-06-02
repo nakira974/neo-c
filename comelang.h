@@ -2941,7 +2941,7 @@ impl smart_pointer<T>
         var result = new smart_pointer<T>;
         
         result.memory = self.memory;
-        int n = (char*)self.p - self.memory.buf;
+        int n = self.p - (T*)self.memory.buf;
         result.p = ((T*)result.memory.buf) + n + value;
         
         if((char*)result.p > result.memory.buf + result.memory.len) {
@@ -2973,7 +2973,7 @@ impl smart_pointer<T>
         smart_pointer<T>*% result = new smart_pointer<T>;
         
         result.memory = self.memory;
-        int n = (char*)self.p - self.memory.buf;
+        int n = self.p - (T*)self.memory.buf;
         result.p = ((T*)result.memory.buf) + n - value;
         
         if((char*)result.p < result.memory.buf) {

@@ -1,7 +1,10 @@
 #include "common.h"
 
+int gComeLang;
+
 void come_init() version 2
 {
+    gComeLang = false;
 }
 
 void come_final() version 2
@@ -152,8 +155,10 @@ int come_main(int argc, char** argv) version 2
         info.err_num = 0;
         info.clang_option = clang_option.to_string();
         info.no_output_err = false;
-        info.funcs = new list<sFun*%>();
+        info.funcs = new map<string, sFun*%>();
         info.module = new sModule();
+        info.right_value_objects = new list<sRightValueObject*%>();
+        info.stack = new list<LVALUE*%>();
         
         parse(&info).catch {
             fprintf(stderr, "%s %d: parse faield\n", info.sname, info.sline);

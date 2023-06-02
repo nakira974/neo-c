@@ -33,12 +33,12 @@ SELF_HOST_OBJS=@SELF_HOST_OBJS@
 #########################################
 # main
 #########################################
-all: comelang no-self-host real-self-host
+all: comelang no-self-host 
 
 no-self-host: comelang lib lib-gc lib-ts
 
-real-self-host: 01main.o 02transpile.o 03transpile2.o common.h
-	./comelang -no-gc -g -o rcomelang 01main.o 02transpile.o 03transpile2.o
+real-self-host: 01main.o 02transpile.o 03transpile2.o 04heap.o common.h
+	./comelang -no-gc -g -o rcomelang 01main.o 02transpile.o 03transpile2.o 04heap.o
 
 01main.o: 01main.c common.h
 	./comelang -no-gc -g -c 01main.c
@@ -48,6 +48,9 @@ real-self-host: 01main.o 02transpile.o 03transpile2.o common.h
 
 03transpile2.o: 03transpile2.c common.h
 	./comelang -no-gc -g -c 03transpile2.c
+
+04heap.o: 04heap.c common.h
+	./comelang -no-gc -g -c 04heap.c
 
 comelang: config.h src/main.o $(OBJS) src/llvm.o
 	$(CC) -c src/main.c -o src/main.o $(CFLAGS)

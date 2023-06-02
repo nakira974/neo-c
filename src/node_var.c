@@ -9270,7 +9270,45 @@ BOOL compile_null_value(unsigned int node, sCompileInfo* info)
     llvm_value.type = clone_node_type(result_type);
     llvm_value.address = NULL;
     llvm_value.var = NULL;
-    llvm_value.c_value = xsprintf("((void*)0)");
+    llvm_value.c_value = xsprintf("((%s)0)", make_type_name_string(result_type));
+
+    push_value_to_stack_ptr(&llvm_value, info);
+
+    info->type = clone_node_type(result_type);
+
+    return TRUE;
+}
+
+unsigned int sNodeTree_create_throw_null_value(sParserInfo* info)
+{
+    unsigned node = alloc_node();
+
+    gNodes[node].mNodeType = kNodeTypeThrowNullValue;
+
+    xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
+    gNodes[node].mLine = info->sline;
+
+    gNodes[node].mLeft = 0;
+    gNodes[node].mRight = 0;
+    gNodes[node].mMiddle = 0;
+
+    return node;
+}
+
+BOOL compile_throw_null_value(unsigned int node, sCompileInfo* info)
+{
+    sNodeType* result_type;
+    if(gComeFunctionResultType->mNumGenericsTypes > 0) {
+        result_type = clone_node_type(gComeFunctionResultType->mGenericsTypes[0]);
+    }
+
+    LVALUE llvm_value;
+    
+    llvm_value.value = create_null_value(result_type);
+    llvm_value.type = clone_node_type(result_type);
+    llvm_value.address = NULL;
+    llvm_value.var = NULL;
+    llvm_value.c_value = xsprintf("((%s)0)", make_type_name_string(result_type));
 
     push_value_to_stack_ptr(&llvm_value, info);
 

@@ -1554,12 +1554,14 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         return FALSE;
     }
     
+/*
     if(!parse_catch && result_type->mException) {
         if(!omit_exception_catch(fun, info))
         {
             return FALSE;
         }
     }
+*/
 
     info->method_block_generics_type = method_block_generics_type;
     xstrncpy(info->calling_fun_name, calling_fun_name_before, VAR_NAME_MAX);

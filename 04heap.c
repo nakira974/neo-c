@@ -18,7 +18,9 @@ exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
     sClass* klass = type->mClass;
 
     if(klass->mName === "lambda") {
-        result->mResultType = borrow solve_generics(type->mResultType, generics_type, info);
+        result->mResultType = borrow solve_generics(type->mResultType, generics_type, info).catch {
+            throw;
+        }
         
         list<sType*>* new_param_types = borrow new list<sType*>();
 

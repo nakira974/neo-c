@@ -120,7 +120,7 @@ BOOL parse_if(unsigned int* node, sParserInfo* info)
 
 BOOL parse_throw(unsigned int* node, sParserInfo* info)
 {
-    *node = sNodeTree_create_int_value(0, info);
+    *node = sNodeTree_create_throw_null_value(info);
     
     create_exception_result_value(node, TRUE, info);
     

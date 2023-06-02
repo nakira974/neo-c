@@ -9,7 +9,9 @@ struct sData
 exception int solve_generics(sData* data)
 {
     sData data2;
-    int a = solve_generics(&data2);
+    int a = solve_generics(&data2).catch {
+        throw
+    }
 }
 
 int main()

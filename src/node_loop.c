@@ -1155,7 +1155,7 @@ BOOL compile_return(unsigned int node, sCompileInfo* info)
         }
         
         sNodeType* result_type = clone_node_type(gComeFunctionResultType);
-            
+        
         sNodeType* right_type = clone_node_type(info->type);
     
 
@@ -1411,7 +1411,6 @@ BOOL compile_normal_block(unsigned int node, sCompileInfo* info)
     if(!compile_block(node_block, force_hash_result, info)) {
         return FALSE;
     }
-    
     
     if(gNCTranspile && !(type_identify_with_class_name(info->type, "void") && info->type->mPointerNum == 0)) {
         LVALUE llvm_value = *get_value_from_stack(-1);

@@ -831,6 +831,13 @@ BOOL compile(unsigned int node, sCompileInfo* info)
                 return FALSE;
             }
             break;
+            
+        case kNodeTypeThrowNullValue:
+            if(!compile_throw_null_value(node, info))
+            {
+                return FALSE;
+            }
+            break;
     }
 
     return node;

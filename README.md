@@ -8,7 +8,7 @@ Yet another modern compiler. It has a collection and string library using Boehm 
 もう一つのモダンコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 1.1.1
+version 1.1.2
 
 ``` C
 #include <comelang.h>
@@ -350,7 +350,11 @@ From version 1.1.0 With -t option, traspiled to C code.
 
 From vresion 1.1.1 smart_pointerが1.1.0でバグがでてました。修正。
 
-From version 1.1.0 There is a bug with smart pointer. At version 1.1.1 repaire it.
+From version 1.1.1 There is a bug with smart pointer. At version 1.1.1 repaire it.
+
+From version 1.1.2 例外のバグを修正しました。
+
+From version 1.1.2 Fixed a bug with exception.
 
 # Language specifications
 

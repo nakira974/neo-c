@@ -152,14 +152,14 @@ BOOL parse_catch(unsigned int* node, sParserInfo* info)
     check_already_added_variable(info->lv_table, var_names[0], info);
     if(!add_variable_to_table(info->lv_table, var_names[0], "", NULL, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
     {
-        fprintf(stderr, "overflow variable table\n");
+        fprintf(stderr, "%s %d: overflow variable table\n", gSName, gSLine);
         exit(2);
     }
     
     check_already_added_variable(info->lv_table, var_names[1], info);
     if(!add_variable_to_table(info->lv_table, var_names[1], "", NULL, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
     {
-        fprintf(stderr, "overflow variable table\n");
+        fprintf(stderr, "%s %d: overflow variable table\n", gSName, gSLine);
         exit(2);
     }
     
@@ -202,6 +202,10 @@ BOOL parse_catch(unsigned int* node, sParserInfo* info)
     }
     
     *node = sNodeTree_create_normal_block(node_block, info);
+/*
+    BOOL in_macro = FALSE;
+    *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
+*/
     
     return TRUE;
 }

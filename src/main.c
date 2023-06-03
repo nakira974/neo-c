@@ -10,6 +10,8 @@ sVarTable* gModuleVarTable;
 BOOL gNCSafeMode = FALSE;
 BOOL gNCCome = FALSE;
 BOOL gNCTranspile = FALSE;
+int gSLine = 0;
+char* gSName = NULL;
 
 static void compiler_init(char* sname)
 {
@@ -38,7 +40,7 @@ static void compiler_final(char* sname)
     node_loop_final();
 }
 
-static BOOL compiler(char* fname, BOOL optimize, sVarTable* module_var_table, BOOL neo_c_header, char* macro_definition, char* include_path, BOOL output_cpp_souce, BOOL output_assembler_source)
+BOOL compiler(char* fname, BOOL optimize, sVarTable* module_var_table, BOOL neo_c_header, char* macro_definition, char* include_path, BOOL output_cpp_souce, BOOL output_assembler_source)
 {
     if(access(fname, F_OK) != 0) {
         fprintf(stderr, "%s doesn't exist\n", fname);
@@ -85,7 +87,7 @@ static BOOL compiler(char* fname, BOOL optimize, sVarTable* module_var_table, BO
     int rc = system(cmd);
     if(rc != 0) {
         char cmd[1024];
-        snprintf(cmd, 1024, "cpp -I. -I%s/include %s -C %s %s > %s", PREFIX, cflags, fname, macro_definition, cpp_fname);
+        snprintf(cmd, 1024, "cpp -I. -I%s/include %s -C %s %s > %s", PREFIX, cflags, fname, macro_definition ? macro_definition : "", cpp_fname);
 
         //puts(cmd);
         rc = system(cmd);
@@ -450,7 +452,7 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
 
 int main(int argc, char** argv)
 {
-    gVersion = "1.1.2";
+    gVersion = "1.1.3";
     
     setlocale(LC_ALL, "");
     

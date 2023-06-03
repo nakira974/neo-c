@@ -111,7 +111,7 @@ void remove_come_function(char* fun_name)
                     it = gComeFunctions;
                 }
                 else if(it == gComeFunctions + hash_key) {
-                    fprintf(stderr, "overflow come functions\n");
+                    fprintf(stderr, "%s %d: overflow come functions\n", gSName, gSLine);
                     exit(2);
                 }
             }
@@ -166,7 +166,7 @@ void add_come_function(char* fun_name, sNodeType* result_type, int num_params, s
                 it = gComeFunctions;
             }
             else if(it == gComeFunctions + hash_key) {
-                fprintf(stderr, "overflow come functions\n");
+                fprintf(stderr, "%s %d: overflow come functions\n", gSName, gSLine);
                 exit(2);
             }
         }
@@ -681,7 +681,7 @@ void output_struct(char* struct_name, sNodeType* struct_type, sNodeType* generic
             sNodeType* field = clone_node_type(klass->mFields[i]);
     
             if(!solve_generics(&field, generics_type)) {
-                fprintf(stderr, "can't solve generics types(2)");
+                fprintf(stderr, "%s %d: can't solve generics types(2)", gSName, gSLine);
                 exit(70);
             }
             
@@ -724,7 +724,7 @@ void output_union(char* struct_name, sNodeType* union_type, sNodeType* generics_
             sNodeType* field = clone_node_type(klass->mFields[i]);
     
             if(!solve_generics(&field, generics_type)) {
-                fprintf(stderr, "can't solve generics types(2)");
+                fprintf(stderr, "%s %d: can't solve generics types(2)", gSName, gSLine);
                 exit(71);
             }
             

@@ -1,49 +1,42 @@
 #include "common.h"
 
-void come_init() version 3
+/*
+bool solve_generics(sType** type, sType* generics_type, sInfo* info)
 {
-}
-
-void come_final() version 3
-{
-}
-
-exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
-{
-    sType*% result = clone type;
-    if(generics_type == NULL) {
-        return result;
+    if(generics_type == null) {
+        return true;
     }
 
     sClass* klass = type->mClass;
 
     if(klass->mName === "lambda") {
-        result->mResultType = borrow solve_generics(type->mResultType, generics_type, info).catch {
-            throw;
+        if(!solve_generics(&type->mResultType, generics_type, info)) {
+            return false;
         }
         
         list<sType*>* new_param_types = borrow new list<sType*>();
 
         foreach(it, type->mParamTypes) {
-            sType* new_param_type = borrow solve_generics(it, generics_type, info).catch
-            {
-                throw
+            if(!solve_generics(&it, generics_type, info)) {
+                return false;
             }
             
-            new_param_types.push_back(new_param_type);
+            new_param_types.push_back(it);
         }
         
-        result->mParamTypes = new_param_types;
+        delete (*type)->mParamTypes;
+        (*type)->mParamTypes = new_param_types;
     }
     else if(klass->mGenerics) {
         int generics_number = klass->mGenericsNum;
 
         if(generics_number >= generics_type->mGenericsTypes.length())
         {
-            throw;
+            err_msg(info, "can't solve generics type");
+            return false;
         }
 
-        sCLClass* klass2 = generics_type->mGenericsTypes[generics_number]->mClass;
+        sClass* klass2 = generics_type->mGenericsTypes[generics_number]->mClass;
 
         int generics_number2 = klass2->mGenericsNum;
 
@@ -56,63 +49,62 @@ exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
 
             bool no_heap = type->mNoHeap;
             
-            result = clone generics_type->mGenericsTypes[generics_number];
+            (*type) = borrow clone generics_type->mGenericsTypes[generics_number];
 
 
             if(heap) {
-                result->mHeap = heap;
+                (*type)->mHeap = heap;
             }
             if(no_heap) {
-                result->mHeap = false;
+                (*type)->mHeap = false;
             }
             if(immutable_) {
-                result->mImmutable = immutable_;
+                (*type)->mImmutable = immutable_;
             }
             if(array_num.length() > 0) {
-                result->mArrayNum = array_num;
+                (*type)->mArrayNum = array_num;
             }
             
             if(pointer_num > 0) {
-                result->mPointerNum += pointer_num;
+                (*type)->mPointerNum += pointer_num;
             }
         }
     }
     else {
         int i = 0;
         foreach(it, type->mGenericsTypes) {
-            result->mGenericsTypes[i] = solve_generics(it, generics_type, info)
-                .catch
+            if(!solve_generics(&(*type)->mGenericsTypes[i], generics_type, info))
             {
-                throw;
+                return false;
             }
             i++;
         }
-        
     }
 
-    if(result->mPointerNum == 0) {
-        result->mHeap = false;
+    if((*type)->mPointerNum == 0) {
+        (*type)->mHeap = false;
     }
 
-    return result;
+    return true;
 }
+*/
 
-exception sType*% solve_method_generics(sType* type, list<sType*%>* method_generics_types, sInfo* info)
+/*
+bool solve_method_generics(sType** type, list<sType*%>* method_generics_types, sInfo* info)
 {
-    sType*% result = clone type;
-    sCLClass* klass = type->mClass;
+    sClass* klass = type->mClass;
 
     if(klass->mName === "lambda")
     {
-        result->mResultType = borrow solve_method_generics(type->mResultType, method_generics_types, info).catch 
+        if(!solve_method_generics(&type->mResultType, method_generics_types, info))
         {
-            throw
+            return false;
         }
 
         list<sType*>* new_param_types = borrow new list<sType*>();
 
         foreach(it, type->mParamTypes) {
-            sType* new_param_type = borrow solve_method_generics(it, method_generics_type, info).catch
+            if(!solve_method_generics(&it, method_generics_types, info).catch
             {
                 throw
             }
@@ -120,7 +112,8 @@ exception sType*% solve_method_generics(sType* type, list<sType*%>* method_gener
             new_param_types.push_back(new_param_type);
         }
         
-        result->mParamTypes = new_param_types;
+        delete (*type)->mParamTypes;
+        (*type)->mParamTypes = new_param_types;
     }
     else if(klass->mMethodGenerics)
     {
@@ -135,36 +128,36 @@ exception sType*% solve_method_generics(sType* type, list<sType*%>* method_gener
 
             bool no_heap = type->mNoHeap;
             
-            result = clone method_generics_types[method_generics_number];
+            (*type) = borrow clone method_generics_types[method_generics_number];
 
             if(heap) {
-                result->mHeap = heap;
+                (*type)->mHeap = heap;
             }
             if(no_heap) {
-                result->mHeap = false;
+                (*type)->mHeap = false;
             }
             if(immutable_) {
-                result->mImmutable = immutable_;
+                (*type)->mImmutable = immutable_;
             }
             if(array_num.length() > 0) {
-                result->mArrayNum = array_num;
+                (*type)->mArrayNum = array_num;
             }
             
             if(pointer_num > 0) {
-                result->mPointerNum += pointer_num;
+                (*type)->mPointerNum += pointer_num;
             }
         }
         else {
-            throw
+            err_msg(info, "invalid method generics");
+            return false;
         }
     }
     else {
         int i = 0;
-        foreach(it, type->mGenericsTypes) {
-            result->mGenericsTypes[i] = solve_method_generics(it, method_generics_types, info)
-                .catch
+        foreach(it, (*type)->mGenericsTypes) {
+            if(!solve_method_generics(&(*type)->mGenericsTypes[i], method_generics_types, info)
             {
-                throw;
+                return false;
             }
             i++;
         }
@@ -176,15 +169,16 @@ exception sType*% solve_method_generics(sType* type, list<sType*%>* method_gener
 
     return result;
 }
+*/
 
-exception sType*% solve_type(sType*% type, sType* generics_type, list<sType*%>* method_generics_types, sInfo* info)
+exception sType*% solve_type(sType* type, sType* generics_type, list<sType*%>* method_generics_types, sInfo* info)
 {
     sType*% result = clone type;
     if(method_generics_types.length() > 0) {
         result = solve_method_generics(result, method_generics_types,info).catch
         {
             err_msg(info, "Can't solve method generics type(2)");
-            show_type(type);
+            show_type(type, info);
             throw;
         }
     }
@@ -192,8 +186,8 @@ exception sType*% solve_type(sType*% type, sType* generics_type, list<sType*%>* 
     if(generics_type) {
         result = solve_generics(result, generics_type, info).catch {
             err_msg(info, "Can't solve generics types(3)");
-            show_type(type);
-            show_type(generics_type);
+            show_type(type, info);
+            show_type(generics_type, info);
             throw;
         }
     }
@@ -207,7 +201,7 @@ char* append_object_to_right_values(char* obj, sType*% type, sInfo* info)
 {
     var new_value = new sRightValueObject;
     new_value.mType = type;
-    new_value.mFree = false;
+    new_value.mFreed = false;
     new_value.mObj = obj;
     new_value->mFreed = FALSE;
     new_value.mVarName = xsprintf("right_value%d", gRightValueNum++);
@@ -215,32 +209,32 @@ char* append_object_to_right_values(char* obj, sType*% type, sInfo* info)
     
     info.right_value_objects.push_back(new_value);
     
-    string buf = xsprintf("void* %s;\n", var_name);
+    string buf = xsprintf("void* right_value%d;\n", gRightValueNum-1);
     add_come_code_at_function_head(info, buf);
     
-    return new_list_item->var_name;
+    return new_value->mVarName;
 }
 
 void remove_object_from_right_values(char* obj, sInfo* info)
 {
     int i = 0;
     foreach(it, info->right_value_objects) {
-        if(it->obj == obj) {
+        if(it->mObj == obj) {
             break;
         }
         i++;
     }
     
-    info->right_value_obejct.delete(i, i+1);
+    info->right_value_objects.delete(i, i+1);
 }
 
-sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sCompileInfo* info)
+sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sInfo* info)
 {
     sFun* finalizer = null;
     string real_fun_name = null;
     
-    if(type->mNumGenericsTypes) {
-        string struct_name = create_generics_name(type, sInfo* info)
+    if(type->mGenericsTypes.length() > 0) {
+        string struct_name = create_generics_name(type, info)
         
         real_fun_name = xsprintf("%s_%s", fun_name, struct_name);
     }
@@ -251,11 +245,11 @@ sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sCompil
     char* last_code = borrow info.module.mLastCode;
     info.module.mLastCode = NULL;
     char* last_stack_c_value = borrow info.stack[-1].c_value;
-    nfo.stack[-1].c_value = NULL;
+    info.stack[-1].c_value = NULL;
     
     sType* come_function_result_type = borrow info.come_function_result_type;
     
-    sCLClass* klass = type->mClass;
+    sClass* klass = type->mClass;
     
     if(type->mPointerNum > 0 && klass->mStruct) {
         var source = new buffer();
@@ -274,6 +268,7 @@ sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sCompil
                 var name, field_type = it;
                 
                 if(type->mClass->mName === field_type->mClass->mName && type->mPointerNum == field_type->mPointerNum && field_type->mHeap)
+                {
                     fprintf(stderr, "Defining recusively the finalizer. exited. Define the finalizer mannually or remove %% of the field type from the recursively defined field.%s in %s.\n", name, type->mClass->mName);
                     exit(21);
                 }
@@ -282,7 +277,7 @@ sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sCompil
                     char source2[1024];
                     snprintf(source2, 1024, "if(self != ((void*)0) && self.%s != ((void*)0)) { delete (borrow self.%s); }\n", name, name);
                     
-                    source2.append_str(source2);
+                    source.append_str(source2);
                 }
             }
         }
@@ -300,10 +295,10 @@ sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sCompil
         
         info.funcs.insert(name, dummy_heap finalizer);
         
-        info.come_fun = main_fun;
+        info.come_fun = finalizer;
         
         info.come_nest++;
-        add_come_code(info, souce.to_string());
+        add_come_code(info, source.to_string());
         info.come_nest--;
     }
     
@@ -315,15 +310,30 @@ sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sCompil
     (finalizer, real_fun_name);
 }
 
-void free_object(sType* type, char* obj, char* c_value, bool force_delete, sInfo* info)
+static void free_protocol_object(sType* protocol_type, char* protocol_value_c_source, sInfo* info)
 {
-    if(!gNCGC && (type->mAllocaValue || type->mPointerNum > 0)) {
-        string c_value2;
-        if(type->mAllocaValue) {
-            c_value2 = xsprintf("(&%s)", c_value);
+    char* fun_name = "call_finalizer";
+    sFun* come_fun = info.funcs[fun_name];
+    
+    if(!gGC) {
+        if(come_fun == NULL) {
+            add_come_code(info, "igc_decrement_ref_count(%s._porotocol_obj);\n", protocol_value_c_source);
         }
         else {
-            c_value2 = string(c_value);
+            add_come_code(info, "call_finalizer(%s->finalize, %s->_protocol_obj, 0);\n", protocol_value_c_source, protocol_value_c_source);
+        }
+    }
+}
+
+void free_object(sType* type, char* obj, bool force_delete, sInfo* info)
+{
+    if(!gGC && (type->mAllocaValue || type->mPointerNum > 0)) {
+        string c_value;
+        if(type->mAllocaValue) {
+            c_value = xsprintf("(&%s)", obj);
+        }
+        else {
+            c_value = string(obj);
         }
         
         sClass* klass = type->mClass;
@@ -333,7 +343,7 @@ void free_object(sType* type, char* obj, char* c_value, bool force_delete, sInfo
         string fun_name = xsprintf("%s_finalize", class_name);
 
         int i;
-        sComeFun* finalizer = NULL;
+        sFun* finalizer = NULL;
         for(i=FUN_VERSION_MAX-1; i>=1; i--) {
             string new_fun_name = xsprintf("%s_v%d", fun_name, i);
             finalizer = info->funcs[new_fun_name];
@@ -345,7 +355,7 @@ void free_object(sType* type, char* obj, char* c_value, bool force_delete, sInfo
         }
         
         if(finalizer == NULL) {
-            finalizer = info->fucs[fun_name];
+            finalizer = info->funcs[fun_name];
         }
         
         if(finalizer == NULL && !type->mProtocol && !type->mNumber 
@@ -357,40 +367,40 @@ void free_object(sType* type, char* obj, char* c_value, bool force_delete, sInfo
 
         /// call finalizer ///
         if(finalizer != null) {
-            if(c_value2) add_come_code(info, xsprintf("call_finalizer(%s,%s,%d);\n", fun_name, c_value2, type->mAllocaValue));
+            if(c_value) add_come_code(info, xsprintf("call_finalizer(%s,%s,%d);\n", fun_name, c_value, type->mAllocaValue));
         }
         else {
             if(klass->mProtocol && type->mPointerNum == 1) {
-                free_protocol_object(type, obj, c_value, info);
+                free_protocol_object(type, c_value, info);
             }
             
             /// free memmory ///
             if(force_delete) {
                 /// free ///
-                if(c_value2) add_come_code(info, xsprintf("igc_decrement_ref_count(%s);\n", c_value2));
+                if(c_value) add_come_code(info, xsprintf("igc_decrement_ref_count(%s);\n", c_value));
             }
-            else if(node_type->mHeap) {
-                if(c_value2) add_come_code(info, xsprintf("igc_decrement_ref_count(%s);\n", c_value2));
+            else if(type->mHeap) {
+                if(c_value) add_come_code(info, xsprintf("igc_decrement_ref_count(%s);\n", c_value));
             }
         }
     }
 }
 
-void free_right_value_objects(sCompileInfo* info)
+void free_right_value_objects(sInfo* info)
 {
     foreach(it, info->right_value_objects) {
         if(!it->mFreed) {
             if(it->mFunName === info->come_fun->mName) {
                 sType*% type = clone it->mType;
                 
-                var type = solve_type(type, info->generics_type, info->method_generics_type, info).catch
+                type = solve_type(type, info->generics_type, info->method_generics_types, info).catch
                 {
                     err_msg(info, "Can't solve type");
-                    show_type(type);
+                    show_type(type, info);
                     exit(1);
                 }
 
-                free_object(type, it->mObj, it->mVarName, true@force_delete, info);
+                free_object(type, it->mVarName, true@force_delete, info);
 
                 it->mFreed = true;
             }
@@ -398,10 +408,10 @@ void free_right_value_objects(sCompileInfo* info)
     }
 }
 
-bool is_right_values(LLVMValueRef obj, sCompileInfo* info)
+bool is_right_values(char* obj, sInfo* info)
 {
     foreach(it, info->right_value_objects) {
-        if(it->obj == obj) {
+        if(it->mObj == obj) {
             return true;
         }
     }
@@ -409,16 +419,6 @@ bool is_right_values(LLVMValueRef obj, sCompileInfo* info)
     return false;
 }
 
-sVarTable*% initialize(sVarTable*% self, bool global, sVarTable* parent)
-{
-    self.mVars = new map<string, sVar*%>();
-    self.mGlobal = global;
-    self.mParent = parent;
-    static int id = 0;
-    self.mID = ++id;
-    
-    return self;
-}
 
 sVar* get_variable_from_table(sVarTable* table, char* name)
 {
@@ -459,7 +459,7 @@ void free_objects(sVarTable* table, char* ret_value, sInfo* info)
             
             bool exist_heap_fields = false;
             foreach(it, klass->mFields) {
-                sType* field_type = klass->mFields.v2;
+                var name, field_type = it;
                 if(field_type->mHeap) {
                     exist_heap_fields = true;
                 }
@@ -474,25 +474,11 @@ void free_objects(sVarTable* table, char* ret_value, sInfo* info)
 
 void free_objects_on_return(sBlock* current_block, sInfo* info, char* ret_value, bool top_block)
 {
-    sVarTable* current_lv_table = info->lv_table;
-
-    sVarTable* current_block_lv_table = current_node_block->mLVTable;
-
-    sVarTable* it = current_lv_table;
+    sVarTable* it = info->lv_table;
     
-    if(current_lv_table->mID == current_block_lv_table->mID) {
+    while(it.mID != info->come_fun->mVarTable) {
         free_objects(it, ret_value, info);
-    }
-    else {
-        while(it != null && it->mID != current_block_lv_table->mID)
-        {
-            free_objects(it, ret_value, info);
 
-            it = it->mParent;
-        }
-
-        if(top_block && it != NULL) {
-            free_objects(it, ret_value, info);
-        }
+        it = it->mParent;
     }
 }

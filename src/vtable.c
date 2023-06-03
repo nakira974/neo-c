@@ -58,7 +58,7 @@ sVarTable* clone_var_table(sVarTable* lv_table)
         if(p->mName[0] != 0) {
             if(!add_variable_to_table(result, p->mName, p->mInlineRealName, p->mType, p->mLLVMValue, p->mIndex, p->mGlobal, p->mAllocaValue, p->mFunctionParam))
             {
-                fprintf(stderr, "overflow variable table\n");
+                fprintf(stderr, "%s %d: overflow variable table\n", gSName, gSLine);
                 exit(2);
             }
         }

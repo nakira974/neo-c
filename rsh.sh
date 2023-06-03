@@ -1,2 +1,2 @@
-rm 0*.o
-make real-self-host
+#rm 0*.o
+make rcomelang

@@ -106,7 +106,7 @@ void call_come_gc_final(sCompileInfo* info)
             LLVMBuildCall2(gBuilder, function_type, llvm_fun, NULL, num_params, "");
         }
         else {
-            fprintf(stderr, "come_gc_init not found\n");
+            fprintf(stderr, "%s %d: come_gc_init not found\n", gSName, gSLine);
             exit(2);
         }
     }
@@ -339,7 +339,7 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
     BOOL generics_function = FALSE;
     BOOL flag_asm_fun_name = FALSE;
     if(!add_function_to_table(fun_name, num_params, param_names2, param_types, param_default_values2, param_labels, result_type, llvm_fun, block_text, generics_function, var_arg, 0, NULL, 0, NULL, FALSE, asm_fun_name, TRUE, node_block->mSource.mBuf, info->sname, info->sline, immutable_, flag_asm_fun_name, llvm_fun_type)) {
-        fprintf(stderr, "overflow function table\n");
+        fprintf(stderr, "%s %d: overflow function table\n", gSName, gSLine);
         info->function_node_block = function_node_block;
         return FALSE;
     }
@@ -468,7 +468,7 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
                 LLVMBuildCall2(gBuilder, function_type, llvm_fun2, NULL, num_params, "");
             }
             else {
-                fprintf(stderr, "come_boehm_gc_init not found\n");
+                fprintf(stderr, "%s %d: come_boehm_gc_init not found\n", gSName, gSLine);
                 exit(2);
             }
             
@@ -496,7 +496,7 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
                 LLVMBuildCall2(gBuilder, function_type, llvm_fun, NULL, num_params, "");
             }
             else {
-                fprintf(stderr, "come_gc_init not found\n");
+                fprintf(stderr, "%s %d: come_gc_init not found\n", gSName, gSLine);
                 exit(2);
             }
             
@@ -934,7 +934,7 @@ BOOL compile_inline_function(unsigned int node, sCompileInfo* info)
     BOOL flag_asm_fun_name = FALSE;
     if(!add_function_to_table(fun_name, num_params, param_names2, param_types, param_default_values2, param_labels, result_type, llvm_fun, block_text, generics_function, var_arg
     , 0, NULL, 0, NULL, FALSE, NULL, TRUE, block_text, info->sname, info->sline, immutable_, flag_asm_fun_name, NULL)) {
-        fprintf(stderr, "overflow function table\n");
+        fprintf(stderr, "%s %d: overflow function table\n", gSName, gSLine);
         return FALSE;
     }
     info->inline_result_variable = inline_result_variable;
@@ -1283,7 +1283,7 @@ BOOL compile_external_function(unsigned int node, sCompileInfo* info)
 
             BOOL generics_function = FALSE;
             if(!add_function_to_table(new_fun_name, num_params, param_names2, param_types, param_default_values2, param_labels, result_type, llvm_fun, block_text, generics_function, var_arg, 0, NULL, 0, NULL, TRUE, asm_fun_name, TRUE, NULL, info->sname, info->sline, immutable_, flag_asm_fun_name, function_type)) {
-                fprintf(stderr, "overflow function table\n");
+                fprintf(stderr, "%s %d: overflow function table\n", gSName, gSLine);
                 return FALSE;
             }
 
@@ -1326,7 +1326,7 @@ BOOL compile_external_function(unsigned int node, sCompileInfo* info)
 
             BOOL generics_function = FALSE;
             if(!add_function_to_table(new_fun_name, num_params, param_names2, param_types, param_default_values2, param_labels, result_type, llvm_fun, block_text, generics_function, var_arg, 0, NULL, 0, NULL, TRUE, asm_fun_name, TRUE, NULL, info->sname, info->sline, immutable_, flag_asm_fun_name, function_type)) {
-                fprintf(stderr, "overflow function table\n");
+                fprintf(stderr, "%s %d: overflow function table\n", gSName, gSLine);
                 return FALSE;
             }
 
@@ -1379,7 +1379,7 @@ BOOL compile_external_function(unsigned int node, sCompileInfo* info)
     
             BOOL generics_function = FALSE;
             if(!add_function_to_table(fun_name, num_params, param_names2, param_types, param_default_values2, param_labels, result_type, llvm_fun, block_text, generics_function, var_arg, 0, NULL, 0, NULL, TRUE, asm_fun_name, TRUE, NULL, info->sname, info->sline, immutable_, flag_asm_fun_name, function_type)) {
-                fprintf(stderr, "overflow function table\n");
+                fprintf(stderr, "%s %d: overflow function table\n", gSName, gSLine);
                 return FALSE;
             }
             add_come_function(fun_name, result_type, num_params, param_types, param_names2, TRUE, var_arg);
@@ -1508,7 +1508,7 @@ BOOL create_generics_function(LLVMValueRef* llvm_fun, char** llvm_fun_name, sFun
         }
 
         if(info2.err_num > 0) {
-            fprintf(stderr, "Parser error number is %d. ", info2.err_num);
+            fprintf(stderr, "%s %d: Parser error number is %d. ", gSName, gSLine, info2.err_num);
             return FALSE;
         }
 
@@ -1568,7 +1568,7 @@ BOOL create_generics_function(LLVMValueRef* llvm_fun, char** llvm_fun_name, sFun
             return FALSE;
         }
         if(cinfo.err_num > 0) {
-            fprintf(stderr, "Compile error number is %d. ", cinfo.err_num);
+            fprintf(stderr, "%s %d: Compile error number is %d. ", gSName, gSLine, cinfo.err_num);
             return FALSE;
         }
 

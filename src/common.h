@@ -117,6 +117,10 @@ extern BOOL gNCTranspile;
 extern BOOL gNCNoNullCheck;
 extern char gFName[PATH_MAX];
 extern struct sVarTableStruct* gModuleVarTable;
+extern int gSLine;
+extern char* gSName;
+
+BOOL compiler(char* fname, BOOL optimize, struct sVarTableStruct* module_var_table, BOOL neo_c_header, char* macro_definition, char* include_path, BOOL output_cpp_souce, BOOL output_assembler_source);
 
 //////////////////////////////
 /// klass.c 

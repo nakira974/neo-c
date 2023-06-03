@@ -8,117 +8,6 @@ void come_final() version 3
 {
 }
 
-sType*% sType*::initialize(sType*% self, char* name, int pointer_num=0, bool heap=false)
-{
-    self.mClass = borrow new sClass(name);
-    
-    self.mGenericsTypes = borrow new list<sType*>();
-    self.mArrayNum = borrow new list<int>();
-    self.mOmitArrayNum = false;
-    self.mParamTypes = borrow new list<sType*>();
-    self.mResultType = null;
-    self.mUnsigned = false;
-    self.mConstant = false;
-    self.mRegister = false;
-    self.mVolatile = false;
-    self.mStatic = false;
-    self.mRestrict = false;
-    self.mImmutable = false;
-    self.mLongLong = false;
-    self.mHeap = heap;
-    self.mDummyHeap = false;
-    self.mNoHeap = false;
-    self.mRefference = false;
-    
-    self.mPointerNum = pointer_num;
-    self.mNoArrayPointerNum = 0;
-    self.mSizeNum = 0;
-    
-    self.mDynamicArrayNum = 0;
-    self.mTypeOfExpression = 0;
-
-    self.mOriginalTypeName = borrow string("");
-    self.mOriginalPointerNum = 0;
-    
-    self.mFunctionParam = false;
-    
-    return self;
-}
-
-void sType*::finalize(sType* self)
-{
-    delete self.mClass;
-    
-    foreach(it, self.mGenericsTypes) {
-        delete it;
-    }
-    delete self.mGenericsTypes;
-    delete self.mArrayNum;
-    foreach(it, self.mParamTypes) {
-        delete it;
-    }
-    delete self.mParamTypes;
-    if(self.mResultType) self.mResultType;
-
-    delete self.mOriginalTypeName;
-}
-
-sType*% sType::clone(sType* self)
-{
-    var result = new sType;
-    
-    result.mClass = borrow clone self.mClass;
-    
-    result.mGenericsTypes = borrow new list<sType*>();
-    foreach(it, self.mGenericsTypes) {
-        result.mGenericsTypes.push_back(borrow clone it);
-    }
-    result.mArrayNum = borrow new list<int>();
-    foreach(it, self.mArrayNum) {
-        result.mArrayNum.push_back(it);
-    }
-    result.mOmitArrayNum = self.mOmitArrayNum;
-    result.mParamTypes = borrow new list<sType*>();
-    foreach(it, self.mParamTypes) {
-        result.mParamTypes.push_back(borrow clone it);
-    }
-    result.mResultType = borrow clone self.mResultType;
-    result.mUnsigned = self.mUnsigned;
-    result.mConstant = self.mConstant;
-    result.mRegister = self.mRegister;
-    result.mVolatile = self.mVolatile;
-    result.mStatic = self.mStatic;
-    result.mRestrict = self.mRestrict;
-    result.mImmutable = self.mImmutable;
-    result.mLongLong = self.mLongLong;
-    result.mHeap = self.mHeap;
-    result.mDummyHeap = self.mDummyHeap;
-    result.mNoHeap = self.mNoHeap;
-    result.mRefference = self.mRefference;
-    
-    result.mPointerNum = self.mPointerNum;
-    result.mNoArrayPointerNum = self.mNoArrayPointerNum;
-    result.mSizeNum = self.mSizeNum;
-    
-    result.mDynamicArrayNum = self.mDynamicArrayNum;
-    result.mTypeOfExpression = self.mTypeOfExpression;
-
-    result.mOriginalTypeName = borrow clone self.mOriginalTypeName;
-    result.mOriginalPointerNum = self.mOriginalPointerNum;
-    
-    result.mFunctionParam = self.mFunctionParam;
-    
-    return result;
-}
-
-sModule*% sModule*::initialize(sModule*% self)
-{
-    self.mSourceHead = new buffer();
-    self.mSource = new buffer();
-    self.mLastCode = null;
-    
-    return self;
-}
 
 string create_generics_name(sType* generics_type, sInfo* info)
 {
@@ -569,24 +458,6 @@ string header_function(sFun* fun, sInfo* info)
     return output.to_string();
 }
 
-sClass*% sClass*::initialize(sClass*% self, char* name)
-{
-    self.mStruct = false;
-    self.mUnion = false;
-    self.mGenerics = false;
-    self.mEnum = false;
-    self.mProtocol = false;
-    self.mNumber = false;
-    
-    self.mName = string(name);
-    
-    self.mGenericsNum = -1;
-    self.mMethodGenericsNum = -1;
-    
-    self.mFields = new list<tuple2<string, sType*%>*%>();
-    
-    return self;
-};
 
 void add_come_code(sInfo* info, const char* msg, ...)
 {
@@ -613,7 +484,7 @@ void add_come_code(sInfo* info, const char* msg, ...)
 }
 
 
-exception int transpile(sInfo* info) version 3
+bool transpile(sInfo* info) version 3
 {
     var name = string("main");
     var result_type = new sType("int");
@@ -633,10 +504,10 @@ exception int transpile(sInfo* info) version 3
     add_come_code(info, "return 0;\n");
     info.come_nest--;
     
-    return 0;
+    return true;
 }
 
-exception int output_source_file(sInfo* info) version 3
+bool output_source_file(sInfo* info) version 3
 {
     string output_file_name = xsprintf("%s.c", info.sname);
     
@@ -667,24 +538,9 @@ exception int output_source_file(sInfo* info) version 3
     
     fclose(f);
     
-    return 0;
+    return true;
 }
 
-sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, bool external, bool var_args, sInfo* info)
-{
-    self.mName = name;
-    self.mResultType = result_type;
-    self.mParamTypes = param_types;
-    self.mParamNames = param_names;
-    self.mExternal = external;
-    self.mVarArgs = var_args;
-    
-    self.mSource = new buffer();
-    self.mSourceHead = new buffer();
-    self.mSourceDefer = new buffer();
-    
-    return self;
-}
 
 void add_come_code_at_function_head(sInfo* info, char* code)
 {

@@ -53,7 +53,7 @@ void rehash_labels()
                         p = new_labels;
                     }
                     else if(p == new_labels + hash_value) {
-                        fprintf(stderr, "ovewflow rehash_labels\n");
+                        fprintf(stderr, "%s %d: ovewflow rehash_labels\n", gSName, gSLine);
                         exit(71);
                     }
                 }
@@ -1782,7 +1782,7 @@ BOOL compile_label_expression(unsigned int node, sCompileInfo* info)
     if(block == NULL) {
         block = LLVMAppendBasicBlockInContext(gContext, gFunction, label_name2);
         if(!add_label_to_table(label_name2, block)) {
-            fprintf(stderr, "overflow label max\n");
+            fprintf(stderr, "%s %d: overflow label max\n", gSName, gSLine);
             return FALSE;
         }
     }
@@ -1828,7 +1828,7 @@ BOOL compile_create_label(unsigned int node, sCompileInfo* info)
     if(block == NULL) {
         block = LLVMAppendBasicBlockInContext(gContext, gFunction, label_name2);
         if(!add_label_to_table(label_name2, block)) {
-            fprintf(stderr, "overflow label max\n");
+            fprintf(stderr, "%s %d: overflow label max\n", gSName, gSLine);
             return FALSE;
         }
     }
@@ -1894,7 +1894,7 @@ BOOL compile_goto_expression(unsigned int node, sCompileInfo* info)
         if(block == NULL) {
             block = LLVMAppendBasicBlockInContext(gContext, gFunction, label_name2);
             if(!add_label_to_table(label_name2, block)) {
-                fprintf(stderr, "overflow label max\n");
+                fprintf(stderr, "%s %d: overflow label max\n", gSName, gSLine);
                 return FALSE;
             }
         }

@@ -237,7 +237,7 @@ void show_type_core(sNodeType* type, int* num_classes, char** classes, BOOL no_o
             }
 
             if(*num_classes >= 128) {
-                fprintf(stderr, "overflow class\n");
+                fprintf(stderr, "%s %d: overflow class\n", gSName, gSLine);
                 exit(2);
             }
 
@@ -1219,7 +1219,7 @@ BOOL included_generics_type(sNodeType* node_type, sCLClass* checked_class[], int
 
     if(*num_checked_class >= STRUCT_FIELD_MAX) 
     {
-        fprintf(stderr, "overflow struct field max at included_generics_type");
+        fprintf(stderr, "%s %d: overflow struct field max at included_generics_type", gSName, gSLine);
         exit(2);
     }
 

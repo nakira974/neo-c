@@ -788,7 +788,7 @@ BOOL parse_sharp(sParserInfo* info)
     skip_spaces_and_lf(info);
 
     if(!parse_annotation(info)) {
-        fprintf(stderr, "parse_annotaion is FALSE\n");
+        fprintf(stderr, "%s %d: parse_annotaion is FALSE\n", gSName, gSLine);
         return FALSE;
     }
 

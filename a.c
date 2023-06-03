@@ -1,25 +1,26 @@
 #include <comelang.h>
 
-struct sData
+class sData(int a, int b)
 {
-    int a;
-    int b;
+    int self.a = a;
+    int self.b = b;
 };
 
-exception int solve_generics(sData* data)
+exception sData*% fun(sData* data)
 {
-    sData data2;
-    int a = solve_generics(&data2).catch {
-        throw
-    }
+    sData*% result = new sData(data.a, data.b);
+    
+    return result;
 }
 
-int main()
+int main(int argc, char** argv)
 {
-    sData data;
-    solve_generics(&data).catch {
-        puts("AAAA");
+    sData*% data = new sData(1, 2);
+    printf("%d %d\n", data.a, data.b);
+    sData*% data2 = fun(data).catch {
+        puts("AAA");
     }
+    printf("%d %d\n", data2.a, data.b);
     return 0;
 }
 

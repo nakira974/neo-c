@@ -160,7 +160,7 @@ void rehash_funcs()
                         p = new_funcs;
                     }
                     else if(p == new_funcs + hash_value) {
-                        fprintf(stderr, "ovewflow rehash_funcs\n");
+                        fprintf(stderr, "%s %d: ovewflow rehash_funcs\n", gSName, gSLine);
                         exit(2);
                     }
                 }

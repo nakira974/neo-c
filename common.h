@@ -9,6 +9,7 @@ using unsafe;
 #define FUN_VERSION_MAX 128
 
 extern bool gComelang;
+extern bool gGC;
 
 struct sType;
 
@@ -19,6 +20,7 @@ struct sClass {
     bool mStruct;
     bool mUnion;
     bool mGenerics;
+    bool mMethodGenerics;
     bool mEnum;
     bool mProtocol;
     bool mNumber;
@@ -67,6 +69,7 @@ struct sType
     int mOriginalPointerNum;
     
     bool mFunctionParam;
+    bool mAllocaValue;
 };
 
 struct sVar;
@@ -93,6 +96,10 @@ struct sVar {
     bool mNoFree;
 };
 
+struct sVarTable;
+
+struct sBlock;
+
 struct sFun
 {
     string mName;
@@ -101,12 +108,16 @@ struct sFun
     list<sType*%>*% mParamTypes;
     list<string%>*% mParamNames;
     
+    sBlock*% mBlock;
+    
     bool mExternal;
     bool mVarArgs;
     
     buffer*% mSource;
     buffer*% mSourceHead;
     buffer*% mSourceDefer;
+    
+    sVarTable* mVarTable;
 };
 
 struct sModule
@@ -134,8 +145,7 @@ interface sNode {
 struct sBlock
 {
     list<sNode*%>*% mNodes;
-    sVarTable*% mLVTable;
-    bool mHasResult;
+    sVarTable*% mVarTable;
 };
 
 struct sRightValueObject 
@@ -144,7 +154,7 @@ struct sRightValueObject
     string mVarName;
     string mFunName;
     bool mFreed;
-    int mObjectID;
+    char* mObj;
 };
 
 struct sInfo
@@ -191,9 +201,15 @@ int come_main(int argc, char** argv) version 2;
 void come_init() version 2;
 void come_final() version 2;
 void err_msg(sInfo* info, char* str);
-exception int parse(sInfo* info) version 2;
-exception int transpile(sInfo* info) version 2;
-exception int output_source_file(sInfo* info) version 2;
+bool transpile(sInfo* info) version 2;
+bool output_source_file(sInfo* info) version 2;
+sModule*% sModule*::initialize(sModule*% self);
+sVarTable*% initialize(sVarTable*% self, bool global, sVarTable* parent);
+sType*% sType*::initialize(sType*% self, char* name, int pointer_num=0, bool heap=false);
+sType*% sType::clone(sType* self);
+void sType*::finalize(sType* self);
+sClass*% sClass*::initialize(sClass*% self, char* name);
+sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, bool external, bool var_args, sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
 /// 03transpile2.c ///
@@ -201,22 +217,43 @@ exception int output_source_file(sInfo* info) version 2;
 void come_init() version 3;
 void come_final() version 3;
 
-sModule*% sModule*::initialize(sModule*% self);
-sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, bool external, bool var_args, sInfo* info);
-sClass*% sClass*::initialize(sClass*% self, char* name);
-sType*% sType*::initialize(sType*% self, char* name, int pointer_num=0, bool heap=false);
-
-exception int transpile(sInfo* info) version 3;
-exception int output_source_file(sInfo* info) version 3;
+bool transpile(sInfo* info) version 3;
+bool output_source_file(sInfo* info) version 3;
 void show_type(sType* type, sInfo* info);
 string create_generics_name(sType* generics_type, sInfo* info);
 void add_last_code_to_source(sInfo* info);
+void add_come_code_at_function_head(sInfo* info, char* code);
+void add_come_code(sInfo* info, const char* msg, ...);
 
+/*
 /////////////////////////////////////////////////////////////////////
-/// 04function.c ///
+/// 04heap.c ///
 /////////////////////////////////////////////////////////////////////
-sVarTable*% initialize(sVarTable*% self, bool global, sVarTable* parent);
 sVar* get_variable_from_table(sVarTable* table, char* name);
 void free_objects_on_return(sBlock* current_block, sInfo* info, char* ret_value, bool top_block);
+void free_right_value_objects(sInfo* info);
+void free_objects(sVarTable* table, char* ret_value, sInfo* info);
+
+/////////////////////////////////////////////////////////////////////
+/// 05parse.c ///
+/////////////////////////////////////////////////////////////////////
+bool parsecmp(char* str, sInfo* info);
+exception string parse_word(sInfo* info);
+void skip_spaces_and_lf(sInfo* info);
+exception int expected_next_character(char c, sInfo* info);
+sBlock*% sBlock*::initialize(sBlock*% self, sVarTable* lv_table, sInfo* info);
+
+exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_name=false);
+exception sBlock*% parse_block(sInfo* info);
+exception int transpile_block(sBlock* block, sInfo* info);
+void dec_stack_ptr(int value, sInfo* info);
+void arrange_stack(sInfo* info, int top);
+exception int expected_next_character(char c, sInfo* info);
+exception sNode*% parse_function(sInfo* info);
+
+exception sNode*% expression(sInfo* info) version 5;
+
+exception int transpile(sInfo* info) version 5;
+*/
 
 #endif

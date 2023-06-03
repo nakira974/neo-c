@@ -62,7 +62,7 @@ void* call_cloner(void* fun, void* mem);
 
 string string(char* str);
 void ncfree(void* mem);
-void free_object(void* mem);
+void ncfree_object(void* mem);
 void* nccalloc(size_t nmemb, size_t size);
 void*%? ncmemdup(void*% block);
 void* gc_ncmemdup(void* block);
@@ -267,7 +267,7 @@ impl vector<T>
             }
         }
         if(self && self.items) {
-            free_object((char*)self.items);
+            ncfree_object((char*)self.items);
         }
     }
     
@@ -3462,6 +3462,10 @@ void fopen_block(const char* path, const char* mode, void* parent, void (*block)
 
 inline string string::read(char* file_name) {
     FILE* f = fopen(file_name, "r");
+    
+    if(f == NULL) {
+        return string("");
+    }
     
     string result = f.read();
     

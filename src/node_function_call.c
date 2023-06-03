@@ -83,7 +83,7 @@ BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_meth
     }
 
     if(info2.err_num > 0) {
-        fprintf(stderr, "Parser error number is %d. ", info2.err_num);
+        fprintf(stderr, "%s %d: Parser error number is %d. ", gSName, gSLine, info2.err_num);
         return FALSE;
     }
 
@@ -279,40 +279,6 @@ unsigned int sNodeTree_create_function_call(char* fun_name, unsigned int* params
     gNodes[node].mMiddle = 0;
 
     return node;
-}
-
-BOOL omit_exception_catch(sFunction* fun, sCompileInfo* info)
-{
-    sNodeType* result_type = clone_node_type(fun->mResultType);
-    
-    result_type = clone_node_type(result_type->mGenericsTypes[0]);
-    
-    LVALUE tuple_value = *get_value_from_stack(-1);
-    
-    LLVMValueRef tuple_obj = tuple_value.value;
-    
-    int field_index = 0;
-    
-    LLVMTypeRef llvm_type = create_llvm_type_from_node_type(tuple_value.type);
-    
-    LVALUE llvm_value;
-    LLVMValueRef field_address = LLVMBuildStructGEP2(gBuilder, llvm_type, tuple_obj, field_index, "field");
-    
-    LLVMTypeRef llvm_type2 = create_llvm_type_from_node_type(result_type);
-    
-    llvm_value.value = LLVMBuildLoad2(gBuilder, llvm_type2, field_address, "catch_obj");
-
-    llvm_value.type = clone_node_type(result_type);
-    llvm_value.address = field_address;
-    llvm_value.var = NULL;
-    llvm_value.c_value = xsprintf("%s.v1", tuple_value.c_value);
-
-    dec_stack_ptr(1, info);
-    push_value_to_stack_ptr(&llvm_value, info);
-
-    info->type = result_type;
-    
-    return TRUE;
 }
 
 BOOL compile_function_call(unsigned int node, sCompileInfo* info)
@@ -1265,7 +1231,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         }
 
         if(info2.err_num > 0) {
-            fprintf(stderr, "Parser error number is %d. ", info2.err_num);
+            fprintf(stderr, "%s %d: Parser error number is %d. ", gSName, gSLine, info2.err_num);
             return FALSE;
         }
 
@@ -1553,15 +1519,6 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
     if(!solve_type(&info->type, generics_type, num_method_generics_types, method_generics_types, info)) {
         return FALSE;
     }
-    
-/*
-    if(!parse_catch && result_type->mException) {
-        if(!omit_exception_catch(fun, info))
-        {
-            return FALSE;
-        }
-    }
-*/
 
     info->method_block_generics_type = method_block_generics_type;
     xstrncpy(info->calling_fun_name, calling_fun_name_before, VAR_NAME_MAX);

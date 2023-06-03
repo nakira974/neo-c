@@ -2,6 +2,9 @@
 
 BOOL compile(unsigned int node, sCompileInfo* info)
 {
+    gSLine = info->sline;
+    gSName = info->sname;
+    
     if(node == 0) {
         return TRUE;
     }

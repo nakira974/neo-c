@@ -55,7 +55,7 @@ BOOL parse_param(sParserParam* param, sParserInfo* info)
         char* p2 = info->p;
         
         if(p2 - p >= METHOD_DEFAULT_PARAM_MAX) {
-            fprintf(stderr, "overflow default parametor value\n");
+            fprintf(stderr, "%s %d: overflow default parametor value\n", gSName, gSLine);
             exit(2);
         }
         
@@ -303,7 +303,7 @@ BOOL parse_come_param(sParserParam* param, sParserInfo* info)
         char* p2 = info->p;
         
         if(p2 - p >= METHOD_DEFAULT_PARAM_MAX) {
-            fprintf(stderr, "overflow default parametor value\n");
+            fprintf(stderr, "%s %d: overflow default parametor value\n", gSName, gSLine);
             exit(2);
         }
         
@@ -567,7 +567,7 @@ void parse_version(int* version, sParserInfo* info)
         }
         
         if(*version >= FUNCTION_VERSION_MAX) {
-            fprintf(stderr, "overflow function version max");
+            fprintf(stderr, "%s %d: overflow function version max", gSName, gSLine);
             exit(2);
         }
 

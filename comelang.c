@@ -62,7 +62,7 @@ void igc_decrement_ref_count(void* mem)
     }
 }
 
-void free_object(void* mem)
+void ncfree_object(void* mem)
 {
     if(mem == NULL) {
         return;
@@ -97,7 +97,7 @@ void call_finalizer(void* fun, void* mem, int call_finalizer_only)
                     void (*finalizer)(void*) = fun;
                     finalizer(mem);
                 }
-                free_object(mem);
+                ncfree_object(mem);
             }
         }
     }

@@ -769,7 +769,7 @@ BOOL parse_sizeof(unsigned int* node, sParserInfo* info)
             nodes[num_nodes++] = *node;
             
             if(num_nodes >= NODES_MAX) {
-                fprintf(stderr, "overflow sizeof expression\n");
+                fprintf(stderr, "%s %d: overflow sizeof expression\n", gSName, gSLine);
                 exit(20);
             }
             
@@ -964,7 +964,7 @@ BOOL parse_var(unsigned int* node, sParserInfo* info, BOOL readonly)
         check_already_added_variable(info->lv_table, buf[i], info);
         if(!add_variable_to_table(info->lv_table, buf[i], "", node_type, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
         {
-            fprintf(stderr, "overflow variable table\n");
+            fprintf(stderr, "%s %d: overflow variable table\n", gSName, gSLine);
             exit(22);
         }
     }

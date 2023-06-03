@@ -1805,7 +1805,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
             num_result_type++;
             
             if(num_result_type >= 32) {
-                fprintf(stderr, "multiple result type overflow\n");
+                fprintf(stderr, "%s %d: multiple result type overflow\n", gSName, gSLine);
                 exit(2);
             }
         }

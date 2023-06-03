@@ -174,7 +174,7 @@ void rehash_classes()
                         p = new_classes;
                     }
                     else if(p == new_classes + hash_value) {
-                        fprintf(stderr, "overflow classes\n");
+                        fprintf(stderr, "%s %d: overflow classes\n", gSName, gSLine);
                         exit(3);
                     }
                 }
@@ -228,7 +228,7 @@ static sCLClass* alloc_class(char* class_name_, BOOL primitive_, BOOL struct_, B
                     p = gClasses;
                 }
                 else if(p == gClasses + hash_value) {
-                    fprintf(stderr, "overflow classes\n");
+                    fprintf(stderr, "%s %d: overflow classes\n", gSName, gSLine);
                     exit(4);
                 }
             }

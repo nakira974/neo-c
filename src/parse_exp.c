@@ -2118,7 +2118,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                             info->p++;
                             
                             if(p - buf5 >= VAR_NAME_MAX) {
-                                fprintf(stderr, "overflow buffer in __typeof__\n");
+                                fprintf(stderr, "%s %d: overflow buffer in __typeof__\n", gSName, gSLine);
                                 exit(2);
                             }
                         }
@@ -2330,6 +2330,30 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
         else if(gNCCome && strcmp(buf, "fn") == 0) {
             char* struct_name = NULL;
             if(!parse_come_function(node, struct_name, info)) {
+                return FALSE;
+            }
+        }
+        else if(strcmp(buf, "import") == 0) {
+            char fname[PATH_MAX];
+            char* p2 = fname;
+            if(*info->p > 0 && *info->p < '~') {
+                while(*info->p > 0 && *info->p < '~') {
+                    if(*info->p == ';' || *info->p == '\n') {
+                        *p2++ = '\0';
+                        break;
+                    }
+                    else if(p2 - fname < PATH_MAX-1) {
+                        *p2++ = *info->p;
+                        info->p++;
+                    }
+                    else {
+                        parser_err_msg(info, "length of word is too long");
+                        return FALSE;
+                    }
+                }
+            }
+            else {
+                parser_err_msg(info, "length of word is too long");
                 return FALSE;
             }
         }
@@ -2781,7 +2805,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                     nodes[num_nodes++] = *node;
 
                     if(num_nodes >= NODES_MAX) {
-                        fprintf(stderr, "overflow define variable max");
+                        fprintf(stderr, "%s %d: overflow define variable max", gSName, gSLine);
                         return FALSE;
                     }
 
@@ -2958,7 +2982,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                         check_already_added_variable(info->lv_table, name, info);
                         if(!add_variable_to_table(info->lv_table, name, "", result_type, gNullLVALUE, -1, global, FALSE, FALSE))
                         {
-                            fprintf(stderr, "overflow variable table\n");
+                            fprintf(stderr, "%s %d: overflow variable table\n", gSName, gSLine);
                             exit(2);
                         }
                         *node = sNodeTree_create_store_variable(name, right_node, alloc, global, info);
@@ -3053,7 +3077,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                     nodes[num_nodes++] = *node;
 
                     if(num_nodes >= NODES_MAX) {
-                        fprintf(stderr, "overflow define variable max");
+                        fprintf(stderr, "%s %d: overflow define variable max", gSName, gSLine);
                         return FALSE;
                     }
 

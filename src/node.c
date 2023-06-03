@@ -200,7 +200,7 @@ void free_protocol_object(sNodeType* protocol_type, LLVMValueRef protocol_value,
             LLVMValueRef llvm_fun3 = LLVMGetNamedFunction(gModule, fun_name2);
             
             if(llvm_fun3 == NULL) {
-                fprintf(stderr, "require free\n");
+                fprintf(stderr, "%s %d: require free\n", gSName, gSLine);
                 exit(20);
             }
             
@@ -435,7 +435,7 @@ sFunction* create_finalizer_automatically(sNodeType* node_type, char* fun_name, 
                 sNodeType* field_type = klass->mFields[i];
                 
                 if(type_identify(node_type, field_type) && node_type->mPointerNum == field_type->mPointerNum && field_type->mHeap) {
-                    fprintf(stderr, "Defining recusively the finalizer. exited. Define the finalizer mannually or remove %% of the field type from the recursively defined field\n");
+                    fprintf(stderr, "%s %d: Defining recusively the finalizer. exited. Define the finalizer mannually or remove %% of the field type from the recursively defined field(%s at field num %d)\n", gSName, gSLine, CLASS_NAME(klass), i);
                     exit(21);
                 }
                 
@@ -650,7 +650,7 @@ sFunction* create_equals_automatically(sNodeType* node_type, char* fun_name, cha
             sNodeType* field_type = klass->mFields[i];
             
             if(type_identify(node_type, field_type)) {
-                fprintf(stderr, "Defining recusively the equals. exited. Define the equals mannually %s\n", CLASS_NAME(node_type->mClass));
+                fprintf(stderr, "%s %d: Defining recusively the equals. exited. Define the equals mannually %s field num %d\n", gSName, gSLine, CLASS_NAME(klass), i);
                 exit(22);
             }
             
@@ -796,7 +796,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL for
                 BOOL immutable_ = finalizer->mImmutable;
                 char* llvm_fun_name = NULL;
                 if(!create_generics_function(&llvm_fun, &llvm_fun_name, finalizer, fun_name, node_type, 0, NULL, immutable_, info)) {
-                    fprintf(stderr, "can't craete generics finalizer %s\n", fun_name);
+                    fprintf(stderr, "%s %d: can't craete generics finalizer %s\n", gSName, gSLine, fun_name);
                     return;
                 }
                 
@@ -836,7 +836,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL for
                     LLVMValueRef llvm_fun3 = LLVMGetNamedFunction(gModule, fun_name3);
                     
                     if(llvm_fun3 == NULL) {
-                        fprintf(stderr, "require free\n");
+                        fprintf(stderr, "%s %d: require free\n", gSName, gSLine);
                         exit(23);
                     }
                     
@@ -1120,7 +1120,7 @@ sFunction* create_cloner_automatically(sNodeType* node_type, char* fun_name, cha
             sNodeType* field_type = klass->mFields[i];
             
             if(type_identify(node_type, field_type) && node_type->mPointerNum == field_type->mPointerNum && field_type->mHeap) {
-                fprintf(stderr, "Defining recursively the cloner.sexited. Define the cloner mannually or remove %% of the field type from the recursively defined field\n");
+                fprintf(stderr, "%s %d: Defining recursively the cloner.sexited. Define the cloner mannually or remove %% of the field type from the recursively defined field. %s field num %d\n", gSName, gSLine, CLASS_NAME(klass), i);
                 exit(27);
             }
             
@@ -1255,7 +1255,7 @@ LLVMValueRef clone_object(sNodeType* node_type, LLVMValueRef obj, char* obj_c_va
 
                 char* llvm_fun_name = NULL;
                 if(!create_generics_function(&llvm_fun, &llvm_fun_name, cloner, fun_name, node_type, 0, NULL, immutable_, info)) {
-                    fprintf(stderr, "can't craete generics cloner %s\n", fun_name);
+                    fprintf(stderr, "%s %d: can't craete generics cloner %s\n", gSName, gSLine, fun_name);
                     exit(28);
                 }
 
@@ -1782,7 +1782,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(32);
         }
         
@@ -1829,7 +1829,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(33);
         }
         
@@ -1877,7 +1877,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(34);
         }
         
@@ -1917,7 +1917,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(35);
         }
         
@@ -1958,7 +1958,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(36);
         }
     }
@@ -1991,7 +1991,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(37);
         }
         add_come_function(name, result_type, num_params, param_types, param_names2, TRUE, FALSE);
@@ -2032,7 +2032,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(38);
         }
     }
@@ -2072,7 +2072,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(39);
         }
     }
@@ -2116,7 +2116,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(40);
         }
     }
@@ -2145,7 +2145,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(41);
         }
         add_come_function(name, result_type, num_params, param_types, param_names2, TRUE, FALSE);
@@ -2174,7 +2174,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(42);
         }
         add_come_function(name, result_type, num_params, param_types, param_names2, TRUE, FALSE);
@@ -2203,7 +2203,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(43);
         }
         add_come_function(name, result_type, num_params, param_types, param_names2, TRUE, FALSE);
@@ -2260,7 +2260,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(44);
         }
         add_come_function(name, result_type, num_params, param_types, param_names2, TRUE, FALSE);
@@ -2300,7 +2300,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(45);
         }
         add_come_function(name, result_type, num_params, param_types, param_names2, TRUE, FALSE);
@@ -2340,7 +2340,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(46);
         }
         add_come_function(name, result_type, num_params, param_types, param_names2, TRUE, FALSE);
@@ -2387,7 +2387,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(47);
         }
         add_come_function(name, result_type, num_params, param_types, param_names2, TRUE, FALSE);
@@ -2427,7 +2427,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(48);
         }
     }
@@ -2465,7 +2465,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(49);
         }
     }
@@ -2500,7 +2500,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(50);
         }
     }
@@ -2538,7 +2538,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(51);
         }
     }
@@ -2576,7 +2576,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(52);
         }
     }
@@ -2614,7 +2614,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(53);
         }
     }
@@ -2652,7 +2652,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(54);
         }
     }
@@ -2693,7 +2693,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(55);
         }
     }
@@ -2734,7 +2734,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(56);
         }
     }
@@ -2775,7 +2775,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(57);
         }
     }
@@ -2816,7 +2816,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(58);
         }
     }
@@ -2857,7 +2857,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(59);
         }
     }
@@ -2898,7 +2898,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(60);
         }
     }
@@ -2939,7 +2939,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(61);
         }
     }
@@ -2980,7 +2980,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(62);
         }
     }
@@ -3018,7 +3018,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(63);
         }
     }
@@ -3056,7 +3056,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(64);
         }
     }
@@ -3094,7 +3094,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(71);
         }
     }
@@ -3139,7 +3139,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(81);
         }
     }
@@ -3187,7 +3187,7 @@ void init_nodes(char* sname)
         BOOL var_args = FALSE;
         if(!add_function_to_table(name, num_params, param_names2, param_types, NULL, NULL, result_type, llvm_fun, block_text, generics_function, var_args, 0, NULL, 0, NULL, FALSE, NULL, FALSE, NULL, "", -1, immutable_, FALSE, function_type))
         {
-            fprintf(stderr, "overflow function number\n");
+            fprintf(stderr, "%s %d: overflow function number\n", gSName, gSLine);
             exit(91);
         }
     }
@@ -3859,7 +3859,7 @@ LLVMTypeRef create_llvm_type_from_node_type(sNodeType* node_type)
             result_type = LLVMInt8TypeInContext(gContext);
         }
         else {
-            fprintf(stderr, "invalid type %s(1)\n", class_name);
+            fprintf(stderr, "%s %d: invalid type %s(1)\n", gSName, gSLine, class_name);
             exit(33);
         }
     }
@@ -4985,7 +4985,7 @@ BOOL create_llvm_struct_type(char* struct_name, sNodeType* node_type, sNodeType*
                 sNodeType* field = clone_node_type(klass->mFields[i]);
     
                 if(!solve_generics(&field, generics_type)) {
-                    fprintf(stderr, "can't solve generics types(1)");
+                    fprintf(stderr, "%s %d: can't solve generics types(1)%s field num %d\n", gSName, gSLine, CLASS_NAME(klass), i);
                     return FALSE;
                 }
                 
@@ -5009,7 +5009,7 @@ BOOL create_llvm_struct_type(char* struct_name, sNodeType* node_type, sNodeType*
                 sNodeType* field = clone_node_type(klass->mFields[i]);
 
                 if(!solve_generics(&field, generics_type)) {
-                    fprintf(stderr, "can't solve generics types(2)");
+                    fprintf(stderr, "%s %d: can't solve generics types(2) %s field num %d", gSName, gSLine, CLASS_NAME(klass), i);
                     return FALSE;
                 }
 
@@ -5743,7 +5743,7 @@ static LLVMValueRef craete_null_const_union(sNodeType* node_type)
     }
     
     if(max_field == NULL) {
-        fprintf(stderr, "empty union\n");
+        fprintf(stderr, "%s %d: empty union %s\n", gSName, gSLine, CLASS_NAME(klass));
         exit(34);
     }
     

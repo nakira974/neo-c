@@ -1325,40 +1325,46 @@ BOOL compile_clone(unsigned int node, sCompileInfo* info)
         compile_err_msg(info, "Can't get address of this value on clone operator");
         return TRUE;
     }
-
-    sNodeType* left_type = clone_node_type(info->type);
-    sNodeType* left_type2 = clone_node_type(left_type);
-    if(!gNCGC) {
-        left_type2->mHeap = TRUE;
-    }
-
-    char* c_value = NULL;
-    LLVMValueRef obj = clone_object(left_type2, lvalue.value, lvalue.c_value, &c_value, info);
-
-    dec_stack_ptr(1, info);
-
-    LVALUE llvm_value;
-    llvm_value.value = obj;
-    llvm_value.type = clone_node_type(left_type2);
-    llvm_value.address = NULL;
-    llvm_value.var = NULL;
     
-    if(left_type2->mHeap) {
-        char* var_name = append_object_to_right_values(obj, left_type2, info);
-        if(c_value) {
-            llvm_value.c_value = xsprintf("(%s = %s)", var_name, c_value);
+    if(is_number_type(info->type)) {
+        dec_stack_ptr(1, info);
+        push_value_to_stack_ptr(&lvalue, info);
+    }
+    else {
+        sNodeType* left_type = clone_node_type(info->type);
+        sNodeType* left_type2 = clone_node_type(left_type);
+        if(!gNCGC) {
+            left_type2->mHeap = TRUE;
+        }
+    
+        char* c_value = NULL;
+        LLVMValueRef obj = clone_object(left_type2, lvalue.value, lvalue.c_value, &c_value, info);
+    
+        dec_stack_ptr(1, info);
+    
+        LVALUE llvm_value;
+        llvm_value.value = obj;
+        llvm_value.type = clone_node_type(left_type2);
+        llvm_value.address = NULL;
+        llvm_value.var = NULL;
+        
+        if(left_type2->mHeap) {
+            char* var_name = append_object_to_right_values(obj, left_type2, info);
+            if(c_value) {
+                llvm_value.c_value = xsprintf("(%s = %s)", var_name, c_value);
+            }
+            else {
+                llvm_value.c_value = xsprintf("%s", lvalue.c_value);
+            }
         }
         else {
             llvm_value.c_value = xsprintf("%s", lvalue.c_value);
         }
+    
+        push_value_to_stack_ptr(&llvm_value, info);
+    
+        info->type = clone_node_type(left_type2);
     }
-    else {
-        llvm_value.c_value = xsprintf("%s", lvalue.c_value);
-    }
-
-    push_value_to_stack_ptr(&llvm_value, info);
-
-    info->type = clone_node_type(left_type2);
 
     return TRUE;
 }

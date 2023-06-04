@@ -21,6 +21,7 @@ int main(int argc, char** argv)
         puts("AAA");
     }
     printf("%d %d\n", data2.a, data.b);
+    
     return 0;
 }
 

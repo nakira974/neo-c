@@ -204,8 +204,8 @@ void err_msg(sInfo* info, char* str);
 bool transpile(sInfo* info) version 2;
 bool output_source_file(sInfo* info) version 2;
 sModule*% sModule*::initialize(sModule*% self);
-sVarTable*% initialize(sVarTable*% self, bool global, sVarTable* parent);
 sType*% sType*::initialize(sType*% self, char* name, int pointer_num=0, bool heap=false);
+sVarTable*% sVarTable*::initialize(sVarTable*% self, bool global, sVarTable* parent);
 sType*% sType::clone(sType* self);
 void sType*::finalize(sType* self);
 sClass*% sClass*::initialize(sClass*% self, char* name);
@@ -225,7 +225,6 @@ void add_last_code_to_source(sInfo* info);
 void add_come_code_at_function_head(sInfo* info, char* code);
 void add_come_code(sInfo* info, const char* msg, ...);
 
-/*
 /////////////////////////////////////////////////////////////////////
 /// 04heap.c ///
 /////////////////////////////////////////////////////////////////////
@@ -254,6 +253,5 @@ exception sNode*% parse_function(sInfo* info);
 exception sNode*% expression(sInfo* info) version 5;
 
 exception int transpile(sInfo* info) version 5;
-*/
 
 #endif

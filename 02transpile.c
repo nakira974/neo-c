@@ -328,17 +328,17 @@ int come_main(int argc, char** argv) version 2
         info.p = it.read().to_buffer().to_pointer();
         info.head = info.p.p;
         
-        transpile(&info).expect {
+        if(!transpile(&info)) {
             fprintf(stderr, "%s %d: traspile faield\n", info.sname, info.sline);
             exit(2);
         }
         
-        output_source_file(&info).expect {
+        if(!output_source_file(&info)) {
             fprintf(stderr, "%s %d: output source file faield\n", info->sname, info->sline);
             exit(2);
         }
         
-        compile(&info, output_object_file, object_files).expect {
+        if(!compile(&info, output_object_file, object_files)) {
             fprintf(stderr, "%s %d: compile faield\n", info.sname, info.sline);
             exit(1);
         }

@@ -1,39 +1,38 @@
 #include "common.h"
 
-/*
-bool solve_generics(sType** type, sType* generics_type, sInfo* info)
+exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
 {
-    if(generics_type == null) {
-        return true;
+    sType*% result = clone type;
+    if(generics_type == NULL) {
+        return result;
     }
 
     sClass* klass = type->mClass;
 
     if(klass->mName === "lambda") {
-        if(!solve_generics(&type->mResultType, generics_type, info)) {
-            return false;
+        result->mResultType = borrow solve_generics(type->mResultType, generics_type, info).catch {
+            throw;
         }
         
         list<sType*>* new_param_types = borrow new list<sType*>();
 
         foreach(it, type->mParamTypes) {
-            if(!solve_generics(&it, generics_type, info)) {
-                return false;
+            sType* new_param_type = borrow solve_generics(it, generics_type, info).catch
+            {
+                throw
             }
             
-            new_param_types.push_back(it);
+            new_param_types.push_back(new_param_type);
         }
         
-        delete (*type)->mParamTypes;
-        (*type)->mParamTypes = new_param_types;
+        result->mParamTypes = new_param_types;
     }
     else if(klass->mGenerics) {
         int generics_number = klass->mGenericsNum;
 
         if(generics_number >= generics_type->mGenericsTypes.length())
         {
-            err_msg(info, "can't solve generics type");
-            return false;
+            throw;
         }
 
         sClass* klass2 = generics_type->mGenericsTypes[generics_number]->mClass;
@@ -49,62 +48,63 @@ bool solve_generics(sType** type, sType* generics_type, sInfo* info)
 
             bool no_heap = type->mNoHeap;
             
-            (*type) = borrow clone generics_type->mGenericsTypes[generics_number];
+            result = clone generics_type->mGenericsTypes[generics_number];
 
 
             if(heap) {
-                (*type)->mHeap = heap;
+                result->mHeap = heap;
             }
             if(no_heap) {
-                (*type)->mHeap = false;
+                result->mHeap = false;
             }
             if(immutable_) {
-                (*type)->mImmutable = immutable_;
+                result->mImmutable = immutable_;
             }
             if(array_num.length() > 0) {
-                (*type)->mArrayNum = array_num;
+                result->mArrayNum = array_num;
             }
             
             if(pointer_num > 0) {
-                (*type)->mPointerNum += pointer_num;
+                result->mPointerNum += pointer_num;
             }
         }
     }
     else {
         int i = 0;
         foreach(it, type->mGenericsTypes) {
-            if(!solve_generics(&(*type)->mGenericsTypes[i], generics_type, info))
+            result->mGenericsTypes[i] = solve_generics(it, generics_type, info)
+                .catch
             {
-                return false;
+                throw;
             }
             i++;
         }
+        
     }
 
-    if((*type)->mPointerNum == 0) {
-        (*type)->mHeap = false;
+    if(result->mPointerNum == 0) {
+        result->mHeap = false;
     }
 
-    return true;
+    return result;
 }
-*/
 
-/*
-bool solve_method_generics(sType** type, list<sType*%>* method_generics_types, sInfo* info)
+exception sType*% solve_method_generics(sType* type, list<sType*%>* method_generics_types, sInfo* info)
 {
+    sType*% result = clone type;
     sClass* klass = type->mClass;
 
     if(klass->mName === "lambda")
     {
-        if(!solve_method_generics(&type->mResultType, method_generics_types, info))
+        result->mResultType = borrow solve_method_generics(type->mResultType, method_generics_types, info).catch 
         {
-            return false;
+            throw
         }
 
         list<sType*>* new_param_types = borrow new list<sType*>();
 
         foreach(it, type->mParamTypes) {
-            if(!solve_method_generics(&it, method_generics_types, info).catch
+            sType* new_param_type = borrow solve_method_generics(it, method_generics_types, info).catch
             {
                 throw
             }
@@ -112,8 +112,7 @@ bool solve_method_generics(sType** type, list<sType*%>* method_generics_types, s
             new_param_types.push_back(new_param_type);
         }
         
-        delete (*type)->mParamTypes;
-        (*type)->mParamTypes = new_param_types;
+        result->mParamTypes = new_param_types;
     }
     else if(klass->mMethodGenerics)
     {
@@ -128,36 +127,36 @@ bool solve_method_generics(sType** type, list<sType*%>* method_generics_types, s
 
             bool no_heap = type->mNoHeap;
             
-            (*type) = borrow clone method_generics_types[method_generics_number];
+            result = clone method_generics_types[method_generics_number];
 
             if(heap) {
-                (*type)->mHeap = heap;
+                result->mHeap = heap;
             }
             if(no_heap) {
-                (*type)->mHeap = false;
+                result->mHeap = false;
             }
             if(immutable_) {
-                (*type)->mImmutable = immutable_;
+                result->mImmutable = immutable_;
             }
             if(array_num.length() > 0) {
-                (*type)->mArrayNum = array_num;
+                result->mArrayNum = array_num;
             }
             
             if(pointer_num > 0) {
-                (*type)->mPointerNum += pointer_num;
+                result->mPointerNum += pointer_num;
             }
         }
         else {
-            err_msg(info, "invalid method generics");
-            return false;
+            throw
         }
     }
     else {
         int i = 0;
-        foreach(it, (*type)->mGenericsTypes) {
-            if(!solve_method_generics(&(*type)->mGenericsTypes[i], method_generics_types, info)
+        foreach(it, type->mGenericsTypes) {
+            result->mGenericsTypes[i] = solve_method_generics(it, method_generics_types, info)
+                .catch
             {
-                return false;
+                throw;
             }
             i++;
         }
@@ -169,7 +168,6 @@ bool solve_method_generics(sType** type, list<sType*%>* method_generics_types, s
 
     return result;
 }
-*/
 
 exception sType*% solve_type(sType* type, sType* generics_type, list<sType*%>* method_generics_types, sInfo* info)
 {

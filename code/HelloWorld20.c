@@ -2,6 +2,19 @@
 
 using unsafe;
 
+class sData(int a, int b)
+{
+    int self.a = a;
+    int self.b = b;
+};
+
+exception sData*% fun(sData* data)
+{
+    sData*% result = new sData(data.a, data.b);
+    
+    return result;
+}
+
 struct sInfo;
 
 extern int gNodeID;
@@ -176,6 +189,17 @@ int main(int argc, char** argv)
     xassert("map test", ma === ["AAA":1, "BBB":2, "CCC":3]);
     xassert("map", ["AAA":1, "BBB":2] === ["AAA":1, "BBB":2]);
     xassert("map", ["AAA":1, "BBB":2] !== ["BBB":2, "AAA":1]);
+    
+    sData*% data = new sData(1, 2);
+    printf("%d %d\n", data.a, data.b);
+    sData*% data2 = fun(data).catch {
+        puts("AAA");
+    }
+    printf("%d %d\n", data2.a, data.b);
+    
+    var t = new tuple2<sData*%, string>(data, string("ABC"));
+    
+    var data3, str = t;
     
     return 0;
 }

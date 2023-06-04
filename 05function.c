@@ -232,7 +232,7 @@ exception int transpile_block(sBlock* block, sInfo* info)
         }
     }
 
-    free_objects(info->lv_table, null, info);
+    free_objects(info->lv_table, null!, info);
     
     info->lv_table = old_table;
     info->come_nest = nest;
@@ -283,10 +283,15 @@ bool sFunNode*::compile(sFunNode* self, sInfo* info)
 {
     info.funcs.insert(self.mFun.mName, self.mFun);
     
+    sFun* come_fun = info.come_fun;
+    info.come_fun = self.mFun;
+    
     bool result = true;
     transpile_block(self.mFun.mBlock, info).catch {
         result = false;
     }
+    
+    info.come_fun = come_fun;
     
     return result;
 }

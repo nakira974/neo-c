@@ -1571,6 +1571,7 @@ void create_exception_result_value(unsigned int* node, BOOL throw_, sParserInfo*
     unsigned int nodes[TUPLE_ELEMENT_MAX];
     int num_nodes = 0;
     
+    //nodes[num_nodes] = *node;
     nodes[num_nodes] = sNodeTree_create_clone(*node, gNCGC, info);
     num_nodes++;
     

@@ -69,19 +69,19 @@ then
     git push -f -u origin master
 fi
 
-echo shsh
-(cd shsh && rm -rf .git && git init && bash update.sh)
-
-echo mf
-(cd mf && rm -rf .git && git init && bash update.sh)
-
-echo vin
-(cd vin && rm -rf .git && git init && bash update.sh)
-
-echo zed
-(cd zed && rm -rf .git && git init && bash update.sh)
-
-echo zed2
-(cd zed2 && rm -rf .git && git init && bash update.sh)
-
-
+#echo shsh
+#(cd shsh && rm -rf .git && git init && bash update.sh)
+#
+#echo mf
+#(cd mf && rm -rf .git && git init && bash update.sh)
+#
+#echo vin
+#(cd vin && rm -rf .git && git init && bash update.sh)
+#
+#echo zed
+#(cd zed && rm -rf .git && git init && bash update.sh)
+#
+#echo zed2
+#(cd zed2 && rm -rf .git && git init && bash update.sh)
+#
+#

@@ -358,7 +358,11 @@ From version 1.1.2 Fixed a bug with exception.
 
 From version 1.1.3 例外とヒープとのバグを修正しました。
 
-From version 1.1.2 Fixed a heap bug with exception.
+From version 1.1.3 Fixed a heap bug with exception.
+
+From version 1.1.4 例外とヒープとマルチアサインのバグを修正しました。
+
+From version 1.1.4 Fixed a multi-assign, heap, exception bug.
 
 # Language specifications
 

@@ -136,6 +136,7 @@ BOOL compiler(char* fname, BOOL optimize, struct sVarTableStruct* module_var_tab
 #define CLASS_FLAGS_ENUM 0x100
 #define CLASS_FLAGS_ANONYMOUS_VAR_NAME 0x200
 #define CLASS_FLAGS_PROTOCOL 0x400
+#define CLASS_FLAGS_TUPLE 0x800
 
 struct sCLClassStruct {
     long long mFlags;

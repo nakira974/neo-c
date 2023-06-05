@@ -15,6 +15,13 @@ exception sData*% fun(sData* data)
     return result;
 }
 
+exception tuple2<sData*%,string>*% funX(sData* data)
+{
+    sData*% result = new sData(data.a, data.b);
+    
+    return new tuple2<sData*%,string>(result, string("ABC"));
+}
+
 struct sInfo;
 
 extern int gNodeID;
@@ -200,6 +207,10 @@ int main(int argc, char** argv)
     var t = new tuple2<sData*%, string>(data, string("ABC"));
     
     var data3, str = t;
+    
+    var data4, str2 = funX(data).catch {
+        puts("AAA");
+    }
     
     return 0;
 }

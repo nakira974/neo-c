@@ -1030,6 +1030,7 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
     add_come_code(info, "%s;\n", rvalue.c_value);
     
     int tuple_right_value_num = gRightValueNum;
+    int tuple_right_value_num2 = gRightValueNum+1;
     
     for(j=0; j<num_vars; j++) {
         sVar* var_ = get_variable_from_table(info->pinfo->lv_table, var_names[j]);
@@ -1263,6 +1264,7 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
             char* code = xsprintf("%s=%s", var_names[j], tmp_rvalue);
             
             add_come_code(info, "%s;\n", code);
+            
         }
         else {
             add_come_code(info, "%s=%s;\n", var_names[j], tmp_rvalue);
@@ -1270,129 +1272,13 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
             
             add_come_code(info, "%s;\n", code);
         }
-        
-/*
-        static int tmp_var_num = 0;
-        char* tmp_rvalue = NULL;
-        
-        if(global || left_type->mStatic || left_type->mConstant) {
-            tmp_rvalue = rvalue2.c_value;
-        }
-        else if(left_type->mHeap) {
-            tmp_rvalue = xsprintf("__tmp_variable_multiple%d", ++tmp_var_num);
-            if(right_type2->mHeap && gNCTranspile) {
-                char* c_value = NULL;
-                rvalue2.value = clone_object(right_type2, rvalue2.value, rvalue2.c_value, &c_value, info);
-                rvalue2.c_value = c_value;
-            }
-            add_come_code(info, "%s = %s;\n", make_define_var(right_type, tmp_rvalue, info), rvalue2.c_value);
-        }
-        else { 
-            tmp_rvalue = rvalue2.c_value;
-        }
-        
-        BOOL constant = var_->mType->mConstant;
-        if(alloc) {
-            LLVMTypeRef llvm_type = create_llvm_type_from_node_type(left_type);
+    }
     
-#if defined(__X86_64_CPU__ ) || defined(__DARWIN__)
-            if(type_identify_with_class_name(left_type, "__builtin_va_list") || type_identify_with_class_name(left_type, "va_list")) {
-                llvm_type = LLVMArrayType(llvm_type, 1);
-            }
-#endif
-
-            LLVMBasicBlockRef this_block = LLVMGetInsertBlock(gBuilder);
-            LLVMBasicBlockRef entry_block = LLVMGetEntryBasicBlock(gFunction);
-            LLVMValueRef inst = LLVMGetFirstInstruction(entry_block);
-            if(inst != NULL) {
-                LLVMPositionBuilderBefore(gBuilder, inst);
-            }
-            if(gNCDebug) {
-                setNullCurrentDebugLocation(info->sline, info);
-            }
-
-            LLVMValueRef alloca_value = LLVMBuildAlloca(gBuilder, llvm_type, var_names[j]);
-
-            llvm_change_block(this_block, info);
-            
-            if(right_type2->mHeap) {
-                char* c_value = NULL;
-                rvalue2.value = clone_object(right_type2, rvalue2.value, rvalue2.c_value, &c_value, info);
-                rvalue2.c_value = c_value;
-            }
-
-            LLVMBuildStore(gBuilder, rvalue2.value, alloca_value);
-            
-            obj = var_->mLLVMValue.value;
-            
-            if(obj && left_type->mHeap) {
-                LLVMTypeRef llvm_type = create_llvm_type_from_node_type(left_type);
-                LLVMValueRef obj2 = LLVMBuildLoad2(gBuilder, llvm_type, obj, "objA");
-                free_object(left_type, obj2, NULL, FALSE, info);
-            }
-
-            var_->mLLVMValue.value = alloca_value;
-
-            info->type = left_type;
-            
-            //set_debug_info_to_variable(alloca_value, left_type, var_names[j], sline, info);
-        }
-        else {
-            if(var_->mType->mConstant && !var_->mGlobal) {
-                compile_err_msg(info, "%s is constant(4)", var_names[j]);
-            }
-            
-            LLVMTypeRef llvm_type = create_llvm_type_from_node_type(left_type);
+//    free_right_value_objects(info);
     
-#if defined(__X86_64_CPU__ ) || defined(__DARWIN__)
-            if(type_identify_with_class_name(left_type, "__builtin_va_list") || type_identify_with_class_name(left_type, "va_list")) {
-                llvm_type = LLVMArrayType(llvm_type, 1);
-            }
-#endif
-    
-            obj = var_->mLLVMValue.value;
-            
-            if(right_type2->mHeap) {
-                char* c_value = NULL;
-                //rvalue2.value = clone_object(right_type2, rvalue2.value, rvalue2.c_value, &c_value, info);
-                rvalue2.c_value = c_value;
-            }
-            
-            if(obj && left_type->mHeap) {
-                LLVMTypeRef llvm_type = create_llvm_type_from_node_type(left_type);
-                LLVMValueRef obj2 = LLVMBuildLoad2(gBuilder, llvm_type, obj, "objC");
-                free_object(left_type, obj2, NULL, FALSE, info);
-            }
-    
-            LLVMValueRef alloca_value = var_->mLLVMValue.value;
-    
-            LLVMBuildStore(gBuilder, rvalue2.value, alloca_value);
-    
-            info->type = left_type;
-        }
-    
-        if(left_type->mHeap) {
-            remove_object_from_right_values(rvalue2.value, info);
-        }
-*/
-        
-/*
-        if(alloc) {
-            char* define_str = make_define_var(left_type, var_names[j], info);
-            sBuf_append_str(&info->come_fun->mSourceHead, define_str);
-            sBuf_append_str(&info->come_fun->mSourceHead, ";\n");
-            
-            char* code = xsprintf("%s=%s", var_names[j], tmp_rvalue);
-            
-            add_come_code(info, "%s;\n", code);
-        }
-        else {
-            add_come_code(info, "%s=%s;\n", var_names[j], tmp_rvalue);
-            char* code = xsprintf("%s", var_->mCValueName);
-            
-            add_come_code(info, "%s;\n", code);
-        }
-*/        
+    if(right_type->mNumGenericsTypes > 0 && right_type->mGenericsTypes[0]->mClass->mFlags & CLASS_FLAGS_TUPLE) {
+        char* code = xsprintf("right_value%d=%s", tuple_right_value_num-1, var_names[0]);
+        add_come_code(info, "%s;\n", code);
     }
 
     return TRUE;

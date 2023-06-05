@@ -6,21 +6,20 @@ class sData(int a, int b)
     int self.b = b;
 };
 
-exception sData*% fun(sData* data)
+exception tuple2<sData*%,string>*% fun(sData* data)
 {
     sData*% result = new sData(data.a, data.b);
     
-    return result;
+    return new tuple2<sData*%,string>(result, string("ABC"));
 }
 
 int main(int argc, char** argv)
 {
     sData*% data = new sData(1, 2);
-    printf("%d %d\n", data.a, data.b);
-    sData*% data2 = fun(data).catch {
+    var data2, str = fun(data).catch {
         puts("AAA");
     }
-    printf("%d %d\n", data2.a, data.b);
+    printf("%d %d %s\n", data2.a, data2.b, str);
     
     return 0;
 }

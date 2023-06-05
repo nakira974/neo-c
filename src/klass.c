@@ -108,6 +108,11 @@ static sCLClass* create_class(char* class_name_, BOOL primitive_, BOOL struct_, 
     klass->mName = strdup(class_name_);
     
     klass->mFlags = 0;
+    
+    if(memcmp(klass->mName, "tuple", strlen("tuple")) == 0 && klass->mName[strlen("tuple")] >= '0' && klass->mName[strlen("tuple")] <= '9')
+    {
+        klass->mFlags = CLASS_FLAGS_TUPLE;
+    }
 
     klass->mFlags |= (primitive_ ? CLASS_FLAGS_PRIMITIVE:0) | (struct_ ? CLASS_FLAGS_STRUCT:0) | (number_type ? CLASS_FLAGS_NUMBER:0) | (unsigned_number ? CLASS_FLAGS_UNSIGNED_NUMBER:0) | (union_ ? CLASS_FLAGS_UNION:0) | (anonymous ? CLASS_FLAGS_ANONYMOUS:0) | (enum_ ? CLASS_FLAGS_ENUM:0) | (anonymous_var_name ? CLASS_FLAGS_ANONYMOUS_VAR_NAME:0) |  (protocol_ ? CLASS_FLAGS_PROTOCOL:0);
 

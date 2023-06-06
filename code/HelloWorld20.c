@@ -208,9 +208,11 @@ int main(int argc, char** argv)
     
     var data3, str = t;
     
+/*
     var data4, str2 = funX(data).catch {
         puts("AAA");
     }
+*/
     
     return 0;
 }

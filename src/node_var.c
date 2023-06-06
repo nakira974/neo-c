@@ -1274,7 +1274,7 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
         }
     }
     
-//    free_right_value_objects(info);
+    free_right_value_objects(info);
     
     if(right_type->mNumGenericsTypes > 0 && right_type->mGenericsTypes[0]->mClass->mFlags & CLASS_FLAGS_TUPLE) {
         char* code = xsprintf("right_value%d=%s", tuple_right_value_num-1, var_names[0]);

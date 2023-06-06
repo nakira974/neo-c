@@ -1339,7 +1339,12 @@ BOOL compile_clone(unsigned int node, sCompileInfo* info)
         return TRUE;
     }
     
-    if(is_number_type(info->type)) {
+    BOOL is_null_value = FALSE;
+    if(LLVMIsNull(lvalue.value) != 0) {
+        is_null_value = TRUE;
+    }
+    
+    if(is_number_type(info->type) || is_null_value) {
         dec_stack_ptr(1, info);
         push_value_to_stack_ptr(&lvalue, info);
     }

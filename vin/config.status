@@ -714,6 +714,7 @@ D["HAVE_PCRE_H"]=" 1"
 D["HAVE_NCURSESW_H"]=" 1"
 D["HAVE_READLINE_H"]=" 1"
 D["HAVE_PTHREAD_H"]=" 1"
+D["HAVE_LCHMOD"]=" 1"
 D["HAVE_EXECVPE"]=" 1"
   for (key in D) D_is_set[key] = 1
   FS = ""

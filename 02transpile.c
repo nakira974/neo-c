@@ -13,10 +13,17 @@ void come_final() version 2
 {
 }
 
-void err_msg(sInfo* info, char* str)
+void err_msg(sInfo* info, char* msg, ...)
 {
     if(!info.no_output_err) {
-        fprintf(stderr, "%s %d: %s\n", info.sname, info.sline, str);
+        char msg2[COME_CODE_MAX];
+    
+        va_list args;
+        va_start(args, msg);
+        vsnprintf(msg2, COME_CODE_MAX, msg, args);
+        va_end(args);
+        
+        fprintf(stderr, "%s %d: %s\n", info.sname, info.sline, msg2);
         info.err_num++;
     }
 }
@@ -322,7 +329,7 @@ int come_main(int argc, char** argv) version 2
         info.funcs = new map<string, sFun*%>();
         info.module = new sModule();
         info.right_value_objects = new list<sRightValueObject*%>();
-        info.stack = new list<LVALUE*%>();
+        info.stack = new list<CVALUE*%>();
         info.lv_table = new sVarTable(global:true, parent:null);
         
         info.p = it.read().to_buffer().to_pointer();

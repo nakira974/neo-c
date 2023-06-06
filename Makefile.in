@@ -37,8 +37,8 @@ all: comelang no-self-host
 
 no-self-host: comelang lib lib-gc lib-ts
 
-rcomelang: 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o common.h
-	./comelang -no-gc -g -o rcomelang 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o
+comelang2: 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o common.h
+	./comelang -no-gc -g -o comelang2 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o
 
 01main.o: 01main.c common.h
 	./comelang -g -no-gc -c 01main.c
@@ -89,35 +89,34 @@ comelang7-ts.o:
 comelang8-ts.o:
 	./comelang -o comelang8-ts.o -t -c comelang8.c
 
-lib: comelang.o comelang2.o comelang3.o comelang4.o comelang5.o comelang6.o comelang7.o comelang8.o
-	ar r libcomelang.a comelang.o comelang2.o comelang3.o comelang4.o comelang5.o comelang6.o comelang7.o comelang8.o
+lib: libcomelang.o libcomelang2.o libcomelang3.o libcomelang4.o libcomelang5.o libcomelang6.o libcomelang7.o libcomelang8.o
+	ar r libcomelang.a libcomelang.o libcomelang2.o libcomelang3.o libcomelang4.o libcomelang5.o libcomelang6.o libcomelang7.o libcomelang8.o
 
-comelang.o:
-	./comelang -c -no-gc comelang.c -fPIC
+libcomelang.o:
+	./comelang -o libcomelang.o -c -no-gc comelang.c -fPIC
 
-comelang2.o:
-	./comelang -c -no-gc comelang2.c -fPIC
+libcomelang2.o:
+	./comelang -o libcomelang2.o -c -no-gc comelang2.c -fPIC
 
-comelang3.o:
-	./comelang -c -no-gc comelang3.c -fPIC
+libcomelang3.o:
+	./comelang -o libcomelang3.o -c -no-gc comelang3.c -fPIC
 
-comelang4.o:
-	./comelang -c -no-gc comelang4.c -fPIC
+libcomelang4.o:
+	./comelang -o libcomelang4.o -c -no-gc comelang4.c -fPIC
 
-comelang5.o:
-	./comelang -c -no-gc comelang5.c -fPIC
+libcomelang5.o:
+	./comelang -o libcomelang5.o -c -no-gc comelang5.c -fPIC
 
-comelang6.o:
-	clang -c -o comelang6.o comelang6.c -I/usr/local/include -I/opt/homebrew/include -fPIC
+libcomelang6.o:
+	clang -c -o libcomelang6.o comelang6.c -I/usr/local/include -I/opt/homebrew/include -fPIC
 
-comelang7.o:
-	./comelang -c -no-gc comelang7.c -fPIC
+libcomelang7.o:
+	./comelang -c -o libcomelang7.o -no-gc comelang7.c -fPIC
 
-comelang8.o:
-	./comelang -c -no-gc comelang8.c -fPIC
+libcomelang8.o:
+	./comelang -o libcomelang8.o -c -no-gc comelang8.c -fPIC
 
-	./comelang -c -no-gc comelang8.c -fPIC
-	ar r libcomelang.a comelang.o comelang2.o comelang3.o comelang4.o comelang5.o comelang6.o comelang7.o comelang8.o
+	ar r libcomelang.a libcomelang.o libcomelang2.o libcomelang3.o libcomelang4.o libcomelang5.o libcomelang6.o libcomelang7.o libcomelang8.o
 
 lib-gc: comelang-gc.o comelang2-gc.o comelang3-gc.o comelang4-gc.o comelang5-gc.o comelang6-gc.o comelang7-gc.o comelang8-gc.o
 	ar r libcomelang-gc.a comelang-gc.o comelang2-gc.o comelang3-gc.o comelang4-gc.o comelang5-gc.o comelang6-gc.o comelang7-gc.o comelang8-gc.o
@@ -270,7 +269,7 @@ permission:
 # clean
 #########################################
 clean:
-	rm -fR a comelang rcomelang *.a src/*.o src/*.i src/*.ll code/*.i code/*.ll code/HelloWorld code/HelloWorld2 code/HelloWorld3 code/HelloWorld4 code/HelloWorld5 *.i *.ll a.out src/*.o code/HelloWorld.dSYM code/HelloWorld2.dSYM code/HelloWorld3.dSYM code/HelloWorld4.dSYM code/HelloWorld5.dSYM code/HelloWorld6.dSYM code/HelloWorld7.dSYM code/HelloWorld8.dSYM code/HelloWorld9.dSYM code/HelloWorld10.dSYM code/HelloWorld11.dSYM code/HelloWorld12.dSYM code/HelloWorld13.dSYM code/HelloWorld14.dSYM code/HelloWorld15.dSYM code/HelloWorld16.dSYM code/HelloWorld17.dSYM comelang.dSYM code/HelloWorld6 code/HelloWorld7 code/HelloWorld8 code/HelloWorld9 code/HelloWorld10 code/HelloWorld11 code/HelloWorld12 code/HelloWorld13 code/HelloWorld14 code/HelloWorld15 code/HelloWorld16 code/HelloWorld17 code/HelloWorld18 code/HelloWorld19 code/HelloWorld20 code/HelloWorld*-ts b c a *.o libcomelang.a a *.i a.out code/tcctest.c.o *.c.c code/HelloWorld*.c.c
+	rm -fR a comelang comelang2 *.a src/*.o src/*.i src/*.ll code/*.i code/*.ll code/HelloWorld code/HelloWorld2 code/HelloWorld3 code/HelloWorld4 code/HelloWorld5 *.i *.ll a.out src/*.o code/HelloWorld.dSYM code/HelloWorld2.dSYM code/HelloWorld3.dSYM code/HelloWorld4.dSYM code/HelloWorld5.dSYM code/HelloWorld6.dSYM code/HelloWorld7.dSYM code/HelloWorld8.dSYM code/HelloWorld9.dSYM code/HelloWorld10.dSYM code/HelloWorld11.dSYM code/HelloWorld12.dSYM code/HelloWorld13.dSYM code/HelloWorld14.dSYM code/HelloWorld15.dSYM code/HelloWorld16.dSYM code/HelloWorld17.dSYM comelang.dSYM code/HelloWorld6 code/HelloWorld7 code/HelloWorld8 code/HelloWorld9 code/HelloWorld10 code/HelloWorld11 code/HelloWorld12 code/HelloWorld13 code/HelloWorld14 code/HelloWorld15 code/HelloWorld16 code/HelloWorld17 code/HelloWorld18 code/HelloWorld19 code/HelloWorld20 code/HelloWorld*-ts b c a *.o libcomelang.a a *.i a.out code/tcctest.c.o *.c.c code/HelloWorld*.c.c
 
 
 distclean: clean

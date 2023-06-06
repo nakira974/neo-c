@@ -18,7 +18,7 @@ exception string parse_word(sInfo* info)
     skip_spaces_and_lf(info);
     
     if(buf.length() == 0) {
-        err_msg(info, xsprintf("unexpected character(%c)\n", *info->p));
+        err_msg(info, "unexpected character(%c)\n", *info->p);
         throw;
     }
     
@@ -134,25 +134,78 @@ sIntNode*% sIntNode*::initialize(sIntNode*% self, int value, sInfo* info)
 
 bool sIntNode*::compile(sIntNode* self, sInfo* info)
 {
-    LVALUE*% lvalue = new LVALUE;
+    CVALUE*% come_value = new CVALUE;
     
-    lvalue.c_value = xsprintf("%d", self.value);
-    lvalue.type = new sType("int");
-    lvalue.var = null;
+    come_value.c_value = xsprintf("%d", self.value);
+    come_value.type = new sType("int");
+    come_value.var = null;
     
-add_come_code(info, "%d;\n", self.value);
+    info.stack.push_back(come_value);
     
-    info.stack.push_back(lvalue);
+    return true;
+}
+
+struct sReturnNode
+{
+    sNode*%? value;
+};
+
+sReturnNode*% sReturnNode*::initialize(sReturnNode*% self, sNode*% value, sInfo* info)
+{
+    self.value = value;
+    return self;
+}
+
+bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
+{
+    if(self.value) {
+        if(!self.value->compile->(info)) {
+            return false;
+        }
+        
+        CVALUE* come_value = info.stack[-1];
+        
+        add_come_code(info, "return %s;\n", come_value.c_value);
+        
+        dec_stack_ptr(1, info);
+    }
+    else {
+        add_come_code(info, "return\n");
+    }
     
     return true;
 }
 
 exception sNode*% expression(sInfo* info) version 5
 {
-    skip_spaces_and_lf(info);
-    info->p++;
-    skip_spaces_and_lf(info);
-    return new sNode(new sIntNode(2, info));
+    if(xisdigit(*info->p)) {
+        int n = 0;
+        while(xisdigit(*info->p)) {
+            n = n * 10 + (*info->p - '0');
+            info->p++;
+            skip_spaces_and_lf(info);
+        }
+        
+        return new sNode(new sIntNode(n, info));
+    }
+    else if(parsecmp("return", info)) {
+        info->p += strlen("return");
+        skip_spaces_and_lf(info);
+        
+        if(*info->p == ';') {
+            return new sNode(new sReturnNode(null!, info));
+        }
+        else {
+            sNode*% value = expression(info).catch {
+                throw;
+            }
+            
+            return new sNode(new sReturnNode(value, info));
+        }
+    }
+    
+    err_msg(info, "invalid character(%c)\n", *info->p);
+    throw;
 }
 
 exception sBlock*% parse_block(sInfo* info)
@@ -163,6 +216,7 @@ exception sBlock*% parse_block(sInfo* info)
     info->lv_table = result.mVarTable;
     
     if(*info->p == '{') {
+        info->p++;
         while(true) {
             if(*info->p == '}') {
                 info->p++;
@@ -184,6 +238,7 @@ exception sBlock*% parse_block(sInfo* info)
         }
     }
     else {
+puts("BBB");
         sNode*% node = expression(info).catch {
             throw;
         }
@@ -259,7 +314,7 @@ void arrange_stack(sInfo* info, int top)
 exception int expected_next_character(char c, sInfo* info)
 {
     if(*info->p != c) {
-        err_msg(info, xsprintf("expected next charaster is %c, but %c\n", c, *info->p));
+        err_msg(info, "expected next charaster is %c, but %c\n", c, *info->p);
         throw;
     }
     
@@ -315,9 +370,18 @@ exception sNode*% parse_function(sInfo* info)
     bool var_args = false;
     
     while(true) {
+        if(*info->p == ')') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            break;
+        }
+        
         var param_type, param_name = parse_type(info, parse_variable_name:true).catch {
             throw
         }
+        
+        param_types.push_back(param_type);
+        param_names.push_back(param_name);
         
         if(*info->p == ',') {
             info->p++;

@@ -74,7 +74,7 @@ struct sType
 
 struct sVar;
 
-struct LVALUE {
+struct CVALUE {
     string c_value;
     sType*% type;
     sVar* var;
@@ -88,7 +88,7 @@ struct sVar {
 
     int mBlockLevel;
 
-    LVALUE mLLVMValue;
+    CVALUE mLLVMValue;
 
     bool mGlobal;
     bool mAllocaValue;
@@ -181,7 +181,7 @@ struct sInfo
     sType*% generics_type;
     list<sType*%>*% method_generics_types;
     
-    list<LVALUE*%>*% stack;
+    list<CVALUE*%>*% stack;
     
     sType*% come_function_result_type;
     
@@ -200,7 +200,7 @@ int come_main(int argc, char** argv) version 1;
 int come_main(int argc, char** argv) version 2;
 void come_init() version 2;
 void come_final() version 2;
-void err_msg(sInfo* info, char* str);
+void err_msg(sInfo* info, char* msg, ...);
 bool transpile(sInfo* info) version 2;
 bool output_source_file(sInfo* info) version 2;
 sModule*% sModule*::initialize(sModule*% self);

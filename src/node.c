@@ -239,13 +239,24 @@ void free_protocol_object(sNodeType* protocol_type, LLVMValueRef protocol_value,
             
             LLVMBuildCall2(gBuilder, function_type, llvm_fun2, llvm_params, num_params, "");
             
-            add_come_code(info, "call_finalizer(%s->finalize, %s->_protocol_obj, 0);\n", protocol_value_c_source, protocol_value_c_source);
+            add_come_code(info, "if(%s) {call_finalizer(%s->finalize, %s->_protocol_obj, 0);}\n", protocol_value_c_source, protocol_value_c_source, protocol_value_c_source);
         }
     }
 }
 
 static void clone_protocol_object(sNodeType* protocol_type, LLVMValueRef protocol_value, char* protocol_c_value, char** c_value, char* new_obj_name, sCompileInfo* info)
 {
+    LLVMValueRef null_value = create_null_value(protocol_type);
+    
+    LLVMBasicBlockRef cond_block = LLVMAppendBasicBlockInContext(gContext, gFunction, "cond_block");
+    LLVMBasicBlockRef cond_end_block = LLVMAppendBasicBlockInContext(gContext, gFunction, "cond_end");
+    
+    LLVMValueRef cond_value = LLVMBuildICmp(gBuilder, LLVMIntEQ, protocol_value, null_value, "nullcheck");
+    
+    LLVMBuildCondBr(gBuilder, cond_value, cond_end_block, cond_block);
+    
+    llvm_change_block(cond_block, info);
+        
     sCLClass* protocol_class = protocol_type->mClass;
     sNodeType* protocol_type2 = clone_node_type(protocol_type);
     protocol_type2->mPointerNum = 0;
@@ -328,7 +339,11 @@ static void clone_protocol_object(sNodeType* protocol_type, LLVMValueRef protoco
     field_address = LLVMBuildInBoundsGEP2(gBuilder, create_llvm_type_from_node_type(protocol_type2), protocol_value, indices, 2, "fieldQQQQUOX");
     
     LLVMBuildStore(gBuilder, new_protocol_value, field_address);
-    *c_value = xsprintf("((%s)%s)->_protocol_obj = call_cloner(%s->clone, %s->_protocol_obj);\n", make_type_name_string(protocol_type), new_obj_name, protocol_c_value, protocol_c_value);
+    *c_value = xsprintf("if(%s) { ((%s)%s)->_protocol_obj = call_cloner(%s->clone, %s->_protocol_obj); }\n", new_obj_name, make_type_name_string(protocol_type), new_obj_name, protocol_c_value, protocol_c_value);
+    
+    LLVMBuildBr(gBuilder, cond_end_block);
+    
+    llvm_change_block(cond_end_block, info);
 }
 
 static void create_generics_name(char* real_name, int size_real_name, sNodeType* generics_type)
@@ -511,6 +526,18 @@ void increment_protocol_obj_ref_count(LLVMValueRef obj, sNodeType* protocol_type
     sNodeType* protocol_type2 = clone_node_type(protocol_type);
     protocol_type2->mPointerNum = 0;
     
+    sNodeType* node_type = clone_node_type(protocol_type);
+    LLVMValueRef null_value = create_null_value(node_type);
+    
+    LLVMBasicBlockRef cond_block = LLVMAppendBasicBlockInContext(gContext, gFunction, "cond_block");
+    LLVMBasicBlockRef cond_end_block = LLVMAppendBasicBlockInContext(gContext, gFunction, "cond_end");
+    
+    LLVMValueRef cond_value = LLVMBuildICmp(gBuilder, LLVMIntEQ, obj, null_value, "nullcheck");
+    
+    LLVMBuildCondBr(gBuilder, cond_value, cond_end_block, cond_block);
+    
+    llvm_change_block(cond_block, info);
+    
     int field_index = 0;
     
     LLVMValueRef indices[5];
@@ -547,7 +574,11 @@ void increment_protocol_obj_ref_count(LLVMValueRef obj, sNodeType* protocol_type
     LLVMValueRef llvm_fun = LLVMGetNamedFunction(gModule, "igc_increment_ref_count");
     LLVMBuildCall2(gBuilder, function_type, llvm_fun, llvm_params, num_params, "");
     
-    if(c_value) add_come_code(info, "igc_increment_ref_count(%s->_protocol_obj);\n", c_value);
+    if(c_value) add_come_code(info, "if(%s) { igc_increment_ref_count(%s->_protocol_obj);} \n", c_value, c_value);
+    
+    LLVMBuildBr(gBuilder, cond_end_block);
+    
+    llvm_change_block(cond_end_block, info);
 }
 
 void increment_ref_count(LLVMValueRef obj, sNodeType* node_type, char* c_value, sCompileInfo* info)

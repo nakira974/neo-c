@@ -37,23 +37,28 @@ all: comelang no-self-host
 
 no-self-host: comelang lib lib-gc lib-ts
 
-comelang2: 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o common.h
-	./comelang -no-gc -g -o comelang2 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o
+comelang2: common.h 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 06str.o
+	./comelang -no-gc -g -o comelang2 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 06str.o
+	mkdir -p "$(DESTDIR)/bin"
+	$(INSTALL) -m 755 ./comelang2 "$(DESTDIR)/bin"
 
 01main.o: 01main.c common.h
-	./comelang -g -no-gc -c 01main.c
+	./comelang -g -no-gc -s -c 01main.c
 
 02transpile.o: 02transpile.c common.h
-	./comelang -no-gc -g -c 02transpile.c
+	./comelang -no-gc -g -s -c 02transpile.c
 
 03transpile2.o: 03transpile2.c common.h
-	./comelang -no-gc -g -c 03transpile2.c
+	./comelang -no-gc -g -s -c 03transpile2.c
 
 04heap.o: 04heap.c common.h
-	./comelang -no-gc -g -c 04heap.c
+	./comelang -no-gc -g -s -c 04heap.c
 
 05function.o: 05function.c common.h
-	./comelang -no-gc -g -c 05function.c
+	./comelang -no-gc -g -s -c 05function.c
+
+06str.o: 06str.c common.h
+	./comelang -no-gc -g -s -c 06str.c
 
 comelang: config.h src/main.o $(OBJS) src/llvm.o
 	$(CC) -c src/main.c -o src/main.o $(CFLAGS)

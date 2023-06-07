@@ -5567,7 +5567,7 @@ BOOL compile_block(sNodeBlock* block, BOOL force_hash_result, sCompileInfo* info
             }
             else if(gNCCome && i == block->mNumNodes -1 && function_body && !(type_identify_with_class_name(gComeFunctionResultType, "void") && gComeFunctionResultType->mPointerNum == 0) && type_identify_with_class_name(info->type, "void") && info->type->mPointerNum == 0 && gNodes[node].mNodeType != kNodeTypeReturn && gNodes[node].mNodeType != kNodeTypeGoto)
             {
-                compile_err_msg(info, "require function result value");
+                compile_err_msg(info, "require function result value(%s)", gFunctionName);
                 return FALSE;
             }
             else if(has_result && i == block->mNumNodes -1 && !(type_identify_with_class_name(info->type, "void") 

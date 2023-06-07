@@ -140,6 +140,8 @@ struct sInfo;
 
 interface sNode {
     bool compile(sInfo* info);
+    int sline();
+    string sname();
 };
 
 struct sBlock
@@ -224,6 +226,9 @@ string create_generics_name(sType* generics_type, sInfo* info);
 void add_last_code_to_source(sInfo* info);
 void add_come_code_at_function_head(sInfo* info, char* code);
 void add_come_code(sInfo* info, const char* msg, ...);
+void add_come_last_code(sInfo* info, const char* msg, ...);
+void dec_stack_ptr(int value, sInfo* info);
+CVALUE* get_value_from_stack(int offset, sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
 /// 04heap.c ///
@@ -234,7 +239,7 @@ void free_right_value_objects(sInfo* info);
 void free_objects(sVarTable* table, char* ret_value, sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
-/// 05parse.c ///
+/// 05function.c ///
 /////////////////////////////////////////////////////////////////////
 bool parsecmp(char* str, sInfo* info);
 exception string parse_word(sInfo* info);
@@ -245,13 +250,20 @@ sBlock*% sBlock*::initialize(sBlock*% self, sVarTable* lv_table, sInfo* info);
 exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_name=false);
 exception sBlock*% parse_block(sInfo* info);
 exception int transpile_block(sBlock* block, sInfo* info);
-void dec_stack_ptr(int value, sInfo* info);
 void arrange_stack(sInfo* info, int top);
 exception int expected_next_character(char c, sInfo* info);
 exception sNode*% parse_function(sInfo* info);
 
 exception sNode*% expression(sInfo* info) version 5;
+exception sNode*% expression_node(sInfo* info) version 99;
 
 exception int transpile(sInfo* info) version 5;
+void parse_sharp(sInfo* info) version 5;
+exception sNode*% string_node(char* buf, sInfo* info) version 99;
+
+/////////////////////////////////////////////////////////////////////
+/// 06str.c ///
+/////////////////////////////////////////////////////////////////////
+exception sNode*% expression_node(sInfo* info) version 98;
 
 #endif

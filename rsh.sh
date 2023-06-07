@@ -1,3 +1,3 @@
 #rm 0*.o
-make comelang2
-./comelang2 c.c
+sudo make comelang2
+#valgrind ./comelang2 c.c

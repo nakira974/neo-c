@@ -1,0 +1,1277 @@
+In file included from comelang2.c:1:
+comelang.h:40:1: error: unknown type name ‘using’
+   40 | using comelang;
+      | ^~~~~
+comelang.h:44:14: error: expected identifier or ‘(’ before ‘%’ token
+   44 | typedef char*% string;
+      |              ^
+comelang.h:46:38: error: unknown type name ‘bool’
+   46 | inline void xassert(const char* msg, bool exp)
+      |                                      ^~~~
+comelang.h:26:1: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+   25 | #include <ncurses.h>
+  +++ |+#include <stdbool.h>
+   26 | 
+comelang.h:63:1: error: unknown type name ‘string’; did you mean ‘stdin’?
+   63 | string string(char* str);
+      | ^~~~~~
+      | stdin
+comelang.h:67:6: error: expected identifier or ‘(’ before ‘%’ token
+   67 | void*%? ncmemdup(void*% block);
+      |      ^
+comelang.h:69:1: error: unknown type name ‘string’; did you mean ‘stdin’?
+   69 | string xsprintf(char* msg, ...);
+      | ^~~~~~
+      | stdin
+comelang.h:70:1: error: unknown type name ‘string’; did you mean ‘stdin’?
+   70 | string string::reverse(char* str);
+      | ^~~~~~
+      | stdin
+comelang.h:70:14: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+   70 | string string::reverse(char* str);
+      |              ^~
+comelang.h:71:14: error: expected ‘;’ before ‘char’
+   71 | inline string char*::reverse(char* str)
+      |              ^~~~~
+      |              ;
+comelang.h:71:20: error: expected identifier or ‘(’ before ‘::’ token
+   71 | inline string char*::reverse(char* str)
+      |                    ^~
+comelang.h:76:1: error: unknown type name ‘string’; did you mean ‘stdin’?
+   76 | string string::chomp(char* str);
+      | ^~~~~~
+      | stdin
+comelang.h:76:14: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+   76 | string string::chomp(char* str);
+      |              ^~
+comelang.h:77:14: error: expected ‘;’ before ‘char’
+   77 | inline string char*::chomp(char* str)
+      |              ^~~~~
+      |              ;
+comelang.h:77:20: error: expected identifier or ‘(’ before ‘::’ token
+   77 | inline string char*::chomp(char* str)
+      |                    ^~
+comelang.h:82:1: error: unknown type name ‘string’; did you mean ‘stdin’?
+   82 | string string::lower_case(char* str);
+      | ^~~~~~
+      | stdin
+comelang.h:82:14: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+   82 | string string::lower_case(char* str);
+      |              ^~
+comelang.h:83:14: error: expected ‘;’ before ‘char’
+   83 | inline string char*::lower_case(char* str)
+      |              ^~~~~
+      |              ;
+comelang.h:83:20: error: expected identifier or ‘(’ before ‘::’ token
+   83 | inline string char*::lower_case(char* str)
+      |                    ^~
+comelang.h:87:1: error: unknown type name ‘string’; did you mean ‘stdin’?
+   87 | string string::lower_case(char* str);
+      | ^~~~~~
+      | stdin
+comelang.h:87:14: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+   87 | string string::lower_case(char* str);
+      |              ^~
+comelang.h:88:14: error: expected ‘;’ before ‘char’
+   88 | inline string char*::lower_case(char* str)
+      |              ^~~~~
+      |              ;
+comelang.h:88:20: error: expected identifier or ‘(’ before ‘::’ token
+   88 | inline string char*::lower_case(char* str)
+      |                    ^~
+comelang.h:92:1: error: unknown type name ‘string’; did you mean ‘stdin’?
+   92 | string string::upper_case(char* str);
+      | ^~~~~~
+      | stdin
+comelang.h:92:14: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+   92 | string string::upper_case(char* str);
+      |              ^~
+comelang.h:93:14: error: expected ‘;’ before ‘char’
+   93 | inline string char*::upper_case(char* str)
+      |              ^~~~~
+      |              ;
+comelang.h:93:20: error: expected identifier or ‘(’ before ‘::’ token
+   93 | inline string char*::upper_case(char* str)
+      |                    ^~
+comelang.h:98:1: error: unknown type name ‘string’; did you mean ‘stdin’?
+   98 | string string::substring(char* str, int head, int tail);
+      | ^~~~~~
+      | stdin
+comelang.h:98:14: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+   98 | string string::substring(char* str, int head, int tail);
+      |              ^~
+comelang.h:99:14: error: expected ‘;’ before ‘char’
+   99 | inline string char*::substring(char* str, int head, int tail)
+      |              ^~~~~
+      |              ;
+comelang.h:99:20: error: expected identifier or ‘(’ before ‘::’ token
+   99 | inline string char*::substring(char* str, int head, int tail)
+      |                    ^~
+comelang.h:104:11: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+  104 | int string::length(char* str);
+      |           ^~
+comelang.h:105:12: error: two or more data types in declaration specifiers
+  105 | inline int char*::length(char* str)
+      |            ^~~~
+comelang.h:105:17: error: expected identifier or ‘(’ before ‘::’ token
+  105 | inline int char*::length(char* str)
+      |                 ^~
+comelang.h:110:14: error: two or more data types in declaration specifiers
+  110 | unsigned int int::get_hash_key(int value);
+      |              ^~~
+comelang.h:110:17: error: expected identifier or ‘(’ before ‘::’ token
+  110 | unsigned int int::get_hash_key(int value);
+      |                 ^~
+comelang.h:111:18: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+  111 | unsigned int bool::get_hash_key(bool value);
+      |                  ^~
+comelang.h:113:1: error: unknown type name ‘bool’
+  113 | bool bool::equals(bool left, bool right);
+      | ^~~~
+comelang.h:113:1: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+comelang.h:113:10: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+  113 | bool bool::equals(bool left, bool right);
+      |          ^~
+comelang.h:115:20: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+  115 | unsigned int string::get_hash_key(char* value);
+      |                    ^~
+comelang.h:116:21: error: two or more data types in declaration specifiers
+  116 | inline unsigned int char*::get_hash_key(char* value)
+      |                     ^~~~
+comelang.h:116:26: error: expected identifier or ‘(’ before ‘::’ token
+  116 | inline unsigned int char*::get_hash_key(char* value)
+      |                          ^~
+comelang.h:121:1: error: unknown type name ‘bool’
+  121 | bool string::equals(char* left, char* right);
+      | ^~~~
+comelang.h:121:1: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+comelang.h:121:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+  121 | bool string::equals(char* left, char* right);
+      |            ^~
+comelang.h:122:12: error: expected ‘;’ before ‘char’
+  122 | inline bool char*::equals(char* left, char* right)
+      |            ^~~~~
+      |            ;
+comelang.h:122:18: error: expected identifier or ‘(’ before ‘::’ token
+  122 | inline bool char*::equals(char* left, char* right)
+      |                  ^~
+comelang.h:127:12: error: expected ‘;’ before ‘int’
+  127 | inline bool int::equals(int left, int right)
+      |            ^~~~
+      |            ;
+comelang.h:127:16: error: expected identifier or ‘(’ before ‘::’ token
+  127 | inline bool int::equals(int left, int right)
+      |                ^~
+comelang.h:132:12: error: expected ‘;’ before ‘short’
+  132 | inline bool short::equals(short left, short right)
+      |            ^~~~~~
+      |            ;
+comelang.h:132:18: error: expected identifier or ‘(’ before ‘::’ token
+  132 | inline bool short::equals(short left, short right)
+      |                  ^~
+comelang.h:137:12: error: expected ‘;’ before ‘char’
+  137 | inline bool char::equals(char left, char right)
+      |            ^~~~~
+      |            ;
+comelang.h:137:17: error: expected identifier or ‘(’ before ‘::’ token
+  137 | inline bool char::equals(char left, char right)
+      |                 ^~
+comelang.h:142:12: error: expected ‘;’ before ‘long’
+  142 | inline bool long::equals(long left, long right)
+      |            ^~~~~
+      |            ;
+comelang.h:142:17: error: expected identifier or ‘(’ before ‘::’ token
+  142 | inline bool long::equals(long left, long right)
+      |                 ^~
+comelang.h:147:16: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+  147 | inline int bool::compare(bool left, bool right)
+      |                ^~
+comelang.h:165:5: error: two or more data types in declaration specifiers
+  165 | int char::compare(char left, char right);
+      |     ^~~~
+comelang.h:165:9: error: expected identifier or ‘(’ before ‘::’ token
+  165 | int char::compare(char left, char right);
+      |         ^~
+comelang.h:166:5: error: two or more data types in declaration specifiers
+  166 | int int::compare(int left, int right);
+      |     ^~~
+comelang.h:166:8: error: expected identifier or ‘(’ before ‘::’ token
+  166 | int int::compare(int left, int right);
+      |        ^~
+comelang.h:167:10: error: expected identifier or ‘(’ before ‘::’ token
+  167 | int short::compare(short left, short right);
+      |          ^~
+comelang.h:168:9: error: expected identifier or ‘(’ before ‘::’ token
+  168 | int long::compare(long left, long right);
+      |         ^~
+comelang.h:170:14: error: expected ‘;’ before ‘char’
+  170 | inline string char::to_string(char self)
+      |              ^~~~~
+      |              ;
+comelang.h:170:19: error: expected identifier or ‘(’ before ‘::’ token
+  170 | inline string char::to_string(char self)
+      |                   ^~
+comelang.h:175:14: error: expected ‘;’ before ‘short’
+  175 | inline string short::to_string(short self)
+      |              ^~~~~~
+      |              ;
+comelang.h:175:20: error: expected identifier or ‘(’ before ‘::’ token
+  175 | inline string short::to_string(short self)
+      |                    ^~
+comelang.h:180:14: error: expected ‘;’ before ‘int’
+  180 | inline string int::to_string(int self)
+      |              ^~~~
+      |              ;
+comelang.h:180:18: error: expected identifier or ‘(’ before ‘::’ token
+  180 | inline string int::to_string(int self)
+      |                  ^~
+comelang.h:185:14: error: expected ‘;’ before ‘long’
+  185 | inline string long::to_string(long self)
+      |              ^~~~~
+      |              ;
+comelang.h:185:19: error: expected identifier or ‘(’ before ‘::’ token
+  185 | inline string long::to_string(long self)
+      |                   ^~
+comelang.h:190:14: error: expected ‘;’ before ‘float’
+  190 | inline string float::to_string(float self)
+      |              ^~~~~~
+      |              ;
+comelang.h:190:20: error: expected identifier or ‘(’ before ‘::’ token
+  190 | inline string float::to_string(float self)
+      |                    ^~
+comelang.h:195:14: error: expected ‘;’ before ‘double’
+  195 | inline string double::to_string(double self)
+      |              ^~~~~~~
+      |              ;
+comelang.h:195:21: error: expected identifier or ‘(’ before ‘::’ token
+  195 | inline string double::to_string(double self)
+      |                     ^~
+comelang.h:200:15: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘string’
+  200 | inline string string::to_string(char* self)
+      |               ^~~~~~
+comelang.h:205:14: error: expected ‘;’ before ‘char’
+  205 | inline string char*::to_string(char* self)
+      |              ^~~~~
+      |              ;
+comelang.h:205:20: error: expected identifier or ‘(’ before ‘::’ token
+  205 | inline string char*::to_string(char* self)
+      |                    ^~
+comelang.h:211:14: error: expected identifier or ‘(’ before ‘<’ token
+  211 | struct vector<T>
+      |              ^
+comelang.h:220:1: error: unknown type name ‘impl’
+  220 | impl vector<T>
+      | ^~~~
+comelang.h:220:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+  220 | impl vector<T>
+      |            ^
+comelang.h:343:38: error: stray ‘`’ in program
+  343 |     void push_back(vector<T>* self, T` item) mutable {
+      |                                      ^
+comelang.h:481:17: error: expected identifier or ‘(’ before ‘<’ token
+  481 | struct list_item<T>
+      |                 ^
+comelang.h:488:12: error: expected identifier or ‘(’ before ‘<’ token
+  488 | struct list<T>
+      |            ^
+comelang.h:498:1: error: unknown type name ‘impl’
+  498 | impl list <T>
+      | ^~~~
+comelang.h:498:11: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+  498 | impl list <T>
+      |           ^
+comelang.h:507:70: error: stray ‘`’ in program
+  507 |     list<T>*% initialize_with_values(list<T>*% self, int num_value, T`* values)
+      |                                                                      ^
+comelang.h:533:37: error: stray ‘`’ in program
+  533 |     void push_back2(list<T>* self, T` item) mutable
+      |                                     ^
+comelang.h:692:36: error: stray ‘`’ in program
+  692 |     void push_back(list<T>* self, T` item) mutable
+      |                                    ^
+comelang.h:749:47: error: stray ‘`’ in program
+  749 |     void insert(list<T>* self, int position, T` item) mutable
+      |                                               ^
+comelang.h:1501:1: error: unknown type name ‘impl’
+ 1501 | impl vector<T>
+      | ^~~~
+comelang.h:1501:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 1501 | impl vector<T>
+      |            ^
+comelang.h:1524:11: error: expected identifier or ‘(’ before ‘<’ token
+ 1524 | struct map<T, T2>
+      |           ^
+comelang.h:1539:1: error: unknown type name ‘impl’
+ 1539 | impl map <T, T2>
+      | ^~~~
+comelang.h:1539:10: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 1539 | impl map <T, T2>
+      |          ^
+comelang.h:1561:73: error: stray ‘`’ in program
+ 1561 |     map<T,T2>*% initialize_with_values(map<T,T2>*% self, int num_keys, T`* keys, T2`* values)
+      |                                                                         ^
+comelang.h:1561:84: error: stray ‘`’ in program
+ 1561 |     map<T,T2>*% initialize_with_values(map<T,T2>*% self, int num_keys, T`* keys, T2`* values)
+      |                                                                                    ^
+comelang.h:1613:36: error: stray ‘`’ in program
+ 1613 |     void insert2(map<T,T2>* self, T` key, T2` item) mutable
+      |                                    ^
+comelang.h:1613:45: error: stray ‘`’ in program
+ 1613 |     void insert2(map<T,T2>* self, T` key, T2` item) mutable
+      |                                             ^
+comelang.h:1958:35: error: stray ‘`’ in program
+ 1958 |     void insert(map<T,T2>* self, T` key, T2` item) mutable
+      |                                   ^
+comelang.h:1958:44: error: stray ‘`’ in program
+ 1958 |     void insert(map<T,T2>* self, T` key, T2` item) mutable
+      |                                            ^
+comelang.h:2166:14: error: expected identifier or ‘(’ before ‘<’ token
+ 2166 | struct tuple1<T>
+      |              ^
+comelang.h:2171:1: error: unknown type name ‘impl’
+ 2171 | impl tuple1 <T>
+      | ^~~~
+comelang.h:2171:13: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 2171 | impl tuple1 <T>
+      |             ^
+comelang.h:2229:14: error: expected identifier or ‘(’ before ‘<’ token
+ 2229 | struct tuple2<T, T2>
+      |              ^
+comelang.h:2235:1: error: unknown type name ‘impl’
+ 2235 | impl tuple2 <T, T2>
+      | ^~~~
+comelang.h:2235:13: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 2235 | impl tuple2 <T, T2>
+      |             ^
+comelang.h:2314:14: error: expected identifier or ‘(’ before ‘<’ token
+ 2314 | struct tuple3<T, T2, T3>
+      |              ^
+comelang.h:2321:1: error: unknown type name ‘impl’
+ 2321 | impl tuple3 <T, T2, T3>
+      | ^~~~
+comelang.h:2321:13: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 2321 | impl tuple3 <T, T2, T3>
+      |             ^
+comelang.h:2421:14: error: expected identifier or ‘(’ before ‘<’ token
+ 2421 | struct tuple4<T, T2, T3, T4>
+      |              ^
+comelang.h:2429:1: error: unknown type name ‘impl’
+ 2429 | impl tuple4 <T, T2, T3, T4>
+      | ^~~~
+comelang.h:2429:13: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 2429 | impl tuple4 <T, T2, T3, T4>
+      |             ^
+comelang.h:2551:14: error: expected identifier or ‘(’ before ‘<’ token
+ 2551 | struct tuple5<T, T2, T3, T4, T5>
+      |              ^
+comelang.h:2560:1: error: unknown type name ‘impl’
+ 2560 | impl tuple5 <T, T2, T3, T4, T5>
+      | ^~~~
+comelang.h:2560:13: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 2560 | impl tuple5 <T, T2, T3, T4, T5>
+      |             ^
+In file included from comelang2.c:1:
+comelang.h:2682:14: error: expected identifier or ‘(’ before ‘<’ token
+ 2682 | struct tuple6<T, T2, T3, T4, T5, T6>
+      |              ^
+comelang.h:2692:1: error: unknown type name ‘impl’
+ 2692 | impl tuple6 <T, T2, T3, T4, T5, T6>
+      | ^~~~
+comelang.h:2692:13: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 2692 | impl tuple6 <T, T2, T3, T4, T5, T6>
+      |             ^
+comelang.h:2833:10: error: expected identifier or ‘(’ before ‘%’ token
+ 2833 |     char*% buf;
+      |          ^
+comelang.h:2838:1: error: unknown type name ‘impl’
+ 2838 | impl buffer*
+      | ^~~~
+comelang.h:2838:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+ 2838 | impl buffer*
+      |            ^
+comelang.h:2865:21: error: expected identifier or ‘(’ before ‘<’ token
+ 2865 | struct smart_pointer<T> {
+      |                     ^
+comelang.h:2870:21: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 2870 | inline smart_pointer<char>*% buffer*::to_pointer(buffer* self)
+      |                     ^
+comelang.h:2880:21: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 2880 | inline smart_pointer<int>*% buffer*::to_int_pointer(buffer* self)
+      |                     ^
+comelang.h:2890:21: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 2890 | inline smart_pointer<short>*% buffer*::to_short_pointer(buffer* self)
+      |                     ^
+comelang.h:2900:21: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 2900 | inline smart_pointer<long>*% buffer*::to_long_pointer(buffer* self)
+      |                     ^
+comelang.h:2910:1: error: unknown type name ‘impl’
+ 2910 | impl smart_pointer<T>
+      | ^~~~
+comelang.h:2910:19: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 2910 | impl smart_pointer<T>
+      |                   ^
+comelang.h:3042:1: error: unknown type name ‘buffer’; use ‘struct’ keyword to refer to the type
+ 3042 | buffer*% string::to_buffer(char* self);
+      | ^~~~~~
+      | struct 
+comelang.h:3042:8: error: expected identifier or ‘(’ before ‘%’ token
+ 3042 | buffer*% string::to_buffer(char* self);
+      |        ^
+comelang.h:3043:8: error: unknown type name ‘buffer’
+ 3043 | inline buffer*% char*::to_buffer(char* self) {
+      |        ^~~~~~
+comelang.h:3043:15: error: expected identifier or ‘(’ before ‘%’ token
+ 3043 | inline buffer*% char*::to_buffer(char* self) {
+      |               ^
+comelang.h:3048:5: error: two or more data types in declaration specifiers
+ 3048 | int int::except(int self, void* parent, void (*block)(void* parent));
+      |     ^~~
+comelang.h:3048:8: error: expected identifier or ‘(’ before ‘::’ token
+ 3048 | int int::except(int self, void* parent, void (*block)(void* parent));
+      |        ^~
+comelang.h:3049:1: error: unknown type name ‘bool’
+ 3049 | bool bool::except(bool self, void* parent, void (*block)(void* parent));
+      | ^~~~
+comelang.h:3049:1: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+comelang.h:3049:10: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3049 | bool bool::except(bool self, void* parent, void (*block)(void* parent));
+      |          ^~
+comelang.h:3050:1: error: unknown type name ‘bool’
+ 3050 | bool bool::if(bool self, void* parent, void (*block)(void* parent));
+      | ^~~~
+comelang.h:3050:1: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+comelang.h:3050:10: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3050 | bool bool::if(bool self, void* parent, void (*block)(void* parent));
+      |          ^~
+comelang.h:3051:6: error: two or more data types in declaration specifiers
+ 3051 | void int::times(int self, void* parent, void (*block)(void* parent));
+      |      ^~~
+comelang.h:3051:9: error: expected identifier or ‘(’ before ‘::’ token
+ 3051 | void int::times(int self, void* parent, void (*block)(void* parent));
+      |         ^~
+comelang.h:3053:17: error: expected identifier or ‘(’ before ‘%’ token
+ 3053 | typedef wchar_t*% wstring;
+      |                 ^
+comelang.h:3055:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+ 3055 | int wchar_t*::compare(wchar_t* left, wchar_t* right);
+      |            ^
+comelang.h:3056:19: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3056 | inline int wstring::compare(wchar_t* left, wchar_t* right) {
+      |                   ^~
+comelang.h:3060:5: error: two or more data types in declaration specifiers
+ 3060 | int char*::compare(char* left, char* right);
+      |     ^~~~
+comelang.h:3060:10: error: expected identifier or ‘(’ before ‘::’ token
+ 3060 | int char*::compare(char* left, char* right);
+      |          ^~
+comelang.h:3061:18: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3061 | inline int string::compare(char* left, char* right) {
+      |                  ^~
+comelang.h:3067:1: error: unknown type name ‘impl’
+ 3067 | impl list<T>
+      | ^~~~
+comelang.h:3067:10: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 3067 | impl list<T>
+      |          ^
+comelang.h:3121:1: error: unknown type name ‘bool’
+ 3121 | bool xiswalpha(wchar_t c);
+      | ^~~~
+comelang.h:3121:1: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+comelang.h:3122:1: error: unknown type name ‘bool’
+ 3122 | bool xiswblank(wchar_t c);
+      | ^~~~
+comelang.h:3122:1: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+comelang.h:3123:1: error: unknown type name ‘bool’
+ 3123 | bool xiswdigit(wchar_t c);
+      | ^~~~
+comelang.h:3123:1: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+comelang.h:3124:1: error: unknown type name ‘bool’
+ 3124 | bool xiswalnum(wchar_t c);
+      | ^~~~
+comelang.h:3124:1: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+comelang.h:3125:1: error: unknown type name ‘bool’
+ 3125 | bool xiswascii(wchar_t c);
+      | ^~~~
+comelang.h:3125:1: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+comelang.h:3126:1: error: unknown type name ‘bool’
+ 3126 | bool xisalpha(char c);
+      | ^~~~
+comelang.h:3126:1: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+comelang.h:3127:1: error: unknown type name ‘bool’
+ 3127 | bool xisblank(char c);
+      | ^~~~
+comelang.h:3127:1: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+comelang.h:3128:1: error: unknown type name ‘bool’
+ 3128 | bool xisdigit(char c);
+      | ^~~~
+comelang.h:3128:1: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+comelang.h:3129:1: error: unknown type name ‘bool’
+ 3129 | bool xisascii(char c);
+      | ^~~~
+comelang.h:3129:1: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+comelang.h:3130:1: error: unknown type name ‘bool’
+ 3130 | bool xisalnum(char c);
+      | ^~~~
+comelang.h:3130:1: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+comelang.h:3132:1: error: unknown type name ‘string’; did you mean ‘stdin’?
+ 3132 | string xbasename(char* path);
+      | ^~~~~~
+      | stdin
+comelang.h:3133:1: error: unknown type name ‘string’; did you mean ‘stdin’?
+ 3133 | string xextname(char* path);
+      | ^~~~~~
+      | stdin
+comelang.h:3134:1: error: unknown type name ‘string’; did you mean ‘stdin’?
+ 3134 | string xrealpath(char* path);
+      | ^~~~~~
+      | stdin
+comelang.h:3143:5: error: expected specifier-qualifier-list before ‘string’
+ 3143 |     string str;
+      |     ^~~~~~
+comelang.h:3160:9: error: unknown type name ‘regex_struct’
+ 3160 | typedef regex_struct*% nregex;
+      |         ^~~~~~~~~~~~
+comelang.h:3160:22: error: expected identifier or ‘(’ before ‘%’ token
+ 3160 | typedef regex_struct*% nregex;
+      |                      ^
+comelang.h:3162:1: error: unknown type name ‘regex_struct’; use ‘struct’ keyword to refer to the type
+ 3162 | regex_struct*% regex_struct*::clone(regex_struct* reg);
+      | ^~~~~~~~~~~~
+      | struct 
+comelang.h:3162:14: error: expected identifier or ‘(’ before ‘%’ token
+ 3162 | regex_struct*% regex_struct*::clone(regex_struct* reg);
+      |              ^
+comelang.h:3163:1: error: unknown type name ‘nregex’
+ 3163 | nregex nregex::clone(regex_struct* reg);
+      | ^~~~~~
+comelang.h:3163:14: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3163 | nregex nregex::clone(regex_struct* reg);
+      |              ^~
+comelang.h:3164:18: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+ 3164 | void regex_struct*::finalize(regex_struct* reg);
+      |                  ^
+comelang.h:3165:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3165 | void nregex::finalize(regex_struct* reg);;
+      |            ^~
+comelang.h:3167:1: error: unknown type name ‘regex_struct’; use ‘struct’ keyword to refer to the type
+ 3167 | regex_struct*% regex(char* str, bool ignore_case=false, bool multiline=false, bool global=false, bool extended=false, bool dotall=false, bool anchored=false, bool dollar_endonly=false, bool ungreedy=false);
+      | ^~~~~~~~~~~~
+      | struct 
+comelang.h:3167:14: error: expected identifier or ‘(’ before ‘%’ token
+ 3167 | regex_struct*% regex(char* str, bool ignore_case=false, bool multiline=false, bool global=false, bool extended=false, bool dotall=false, bool anchored=false, bool dollar_endonly=false, bool ungreedy=false);
+      |              ^
+comelang.h:3169:5: error: expected ‘;’ before ‘char’
+ 3169 | bool char*::match(char* self, regex_struct* reg);
+      |     ^~~~~
+      |     ;
+comelang.h:3169:11: error: expected identifier or ‘(’ before ‘::’ token
+ 3169 | bool char*::match(char* self, regex_struct* reg);
+      |           ^~
+comelang.h:3170:8: error: unknown type name ‘bool’
+ 3170 | inline bool string::match(char* self, regex_struct* reg)
+      |        ^~~~
+comelang.h:3170:19: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3170 | inline bool string::match(char* self, regex_struct* reg)
+      |                   ^~
+comelang.h:3175:5: error: two or more data types in declaration specifiers
+ 3175 | int char*::index(char* str, char* search_str, int default_value);
+      |     ^~~~
+comelang.h:3175:10: error: expected identifier or ‘(’ before ‘::’ token
+ 3175 | int char*::index(char* str, char* search_str, int default_value);
+      |          ^~
+comelang.h:3176:18: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3176 | inline int string::index(char* str, char* search_str, int default_value)
+      |                  ^~
+comelang.h:3182:5: error: two or more data types in declaration specifiers
+ 3182 | int char*::index_regex(char* self, regex_struct* reg, int default_value);
+      |     ^~~~
+comelang.h:3182:10: error: expected identifier or ‘(’ before ‘::’ token
+ 3182 | int char*::index_regex(char* self, regex_struct* reg, int default_value);
+      |          ^~
+comelang.h:3183:18: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3183 | inline int string::index_regex(char* self, regex_struct* reg, int default_value)
+      |                  ^~
+comelang.h:3188:7: error: expected ‘;’ before ‘char’
+ 3188 | string char*::replace(char* self, int index, char c);
+      |       ^~~~~
+      |       ;
+comelang.h:3188:13: error: expected identifier or ‘(’ before ‘::’ token
+ 3188 | string char*::replace(char* self, int index, char c);
+      |             ^~
+comelang.h:3189:15: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘string’
+ 3189 | inline string string::replace(char* self, int index, char c)
+      |               ^~~~~~
+comelang.h:3194:7: error: expected ‘;’ before ‘char’
+ 3194 | string char*::multiply(char* str, int n);
+      |       ^~~~~
+      |       ;
+comelang.h:3194:13: error: expected identifier or ‘(’ before ‘::’ token
+ 3194 | string char*::multiply(char* str, int n);
+      |             ^~
+comelang.h:3195:15: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘string’
+ 3195 | inline string string::multiply(char* str, int n)
+      |               ^~~~~~
+comelang.h:3200:7: error: expected ‘;’ before ‘char’
+ 3200 | string char*::sub(char* self, regex_struct* reg, char* replace);
+      |       ^~~~~
+      |       ;
+comelang.h:3200:13: error: expected identifier or ‘(’ before ‘::’ token
+ 3200 | string char*::sub(char* self, regex_struct* reg, char* replace);
+      |             ^~
+comelang.h:3201:15: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘string’
+ 3201 | inline string string::sub(char* self, regex_struct* reg, char* replace)
+      |               ^~~~~~
+comelang.h:3207:5: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 3207 | list<string>*% char*::scan(char* self, regex_struct* reg);
+      |     ^
+comelang.h:3208:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 3208 | inline list<string>*% string::scan(char* self, regex_struct* reg)
+      |            ^
+comelang.h:3214:5: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 3214 | list<string>*% char*::split(char* self, regex_struct* reg);
+      |     ^
+comelang.h:3215:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 3215 | inline list<string>*% string::split(char* self, regex_struct* reg)
+      |            ^
+comelang.h:3220:5: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 3220 | list<string>*% char*::split_char(char* self, char c) ;
+      |     ^
+comelang.h:3221:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 3221 | inline list<string>*% string::split_char(char* self, char c)
+      |            ^
+comelang.h:3226:1: error: unknown type name ‘regex_struct’; use ‘struct’ keyword to refer to the type
+ 3226 | regex_struct*% char*::to_regex(char* self) ;
+      | ^~~~~~~~~~~~
+      | struct 
+comelang.h:3226:14: error: expected identifier or ‘(’ before ‘%’ token
+ 3226 | regex_struct*% char*::to_regex(char* self) ;
+      |              ^
+comelang.h:3227:8: error: unknown type name ‘regex_struct’
+ 3227 | inline regex_struct*% string::to_regex(char* self)
+      |        ^~~~~~~~~~~~
+comelang.h:3227:21: error: expected identifier or ‘(’ before ‘%’ token
+ 3227 | inline regex_struct*% string::to_regex(char* self)
+      |                     ^
+comelang.h:3232:7: error: expected ‘;’ before ‘char’
+ 3232 | string char*::printable(char* str);
+      |       ^~~~~
+      |       ;
+comelang.h:3232:13: error: expected identifier or ‘(’ before ‘::’ token
+ 3232 | string char*::printable(char* str);
+      |             ^~
+comelang.h:3233:15: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘string’
+ 3233 | inline string string::printable(char* str)
+      |               ^~~~~~
+comelang.h:3238:7: error: expected ‘;’ before ‘char’
+ 3238 | string char*::delete(char* str, int head, int tail) ;
+      |       ^~~~~
+      |       ;
+comelang.h:3238:13: error: expected identifier or ‘(’ before ‘::’ token
+ 3238 | string char*::delete(char* str, int head, int tail) ;
+      |             ^~
+comelang.h:3239:15: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘string’
+ 3239 | inline string string::delete(char* str, int head, int tail)
+      |               ^~~~~~
+comelang.h:3245:1: error: unknown type name ‘string’; did you mean ‘stdin’?
+ 3245 | string wchar_t*::to_string(wchar_t* wstr);
+      | ^~~~~~
+      | stdin
+comelang.h:3245:15: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+ 3245 | string wchar_t*::to_string(wchar_t* wstr);
+      |               ^
+comelang.h:3246:15: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘wstring’
+ 3246 | inline string wstring::to_string(wchar_t* wstr)
+      |               ^~~~~~~
+comelang.h:3251:1: error: unknown type name ‘wstring’; did you mean ‘stdin’?
+ 3251 | wstring wstring(char* str);
+      | ^~~~~~~
+      | stdin
+comelang.h:3253:8: error: expected ‘;’ before ‘char’
+ 3253 | wstring char*::to_wstring(char* str);
+      |        ^~~~~
+      |        ;
+comelang.h:3253:14: error: expected identifier or ‘(’ before ‘::’ token
+ 3253 | wstring char*::to_wstring(char* str);
+      |              ^~
+comelang.h:3254:16: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘string’
+ 3254 | inline wstring string::to_wstring(char* str)
+      |                ^~~~~~
+comelang.h:3259:1: error: unknown type name ‘wstring’; did you mean ‘stdin’?
+ 3259 | wstring wchar_t*::substring(wchar_t* str, int head, int tail);
+      | ^~~~~~~
+      | stdin
+comelang.h:3259:16: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+ 3259 | wstring wchar_t*::substring(wchar_t* str, int head, int tail);
+      |                ^
+comelang.h:3260:16: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘wstring’
+ 3260 | inline wstring wstring::substring(wchar_t* str, int head, int tail)
+      |                ^~~~~~~
+comelang.h:3266:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+ 3266 | int wchar_t*::length(wchar_t* str);
+      |            ^
+comelang.h:3267:19: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3267 | inline int wstring::length(wchar_t* str)
+      |                   ^~
+comelang.h:3272:1: error: unknown type name ‘wstring’; did you mean ‘stdin’?
+ 3272 | wstring wchar_t*::delete(wchar_t* str, int head, int tail) ;
+      | ^~~~~~~
+      | stdin
+comelang.h:3272:16: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+ 3272 | wstring wchar_t*::delete(wchar_t* str, int head, int tail) ;
+      |                ^
+comelang.h:3273:16: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘wstring’
+ 3273 | inline wstring wstring::delete(wchar_t* str, int head, int tail)
+      |                ^~~~~~~
+comelang.h:3278:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+ 3278 | int wchar_t*::index(wchar_t* str, wchar_t* search_str, int default_value);
+      |            ^
+comelang.h:3279:19: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3279 | inline int wstring::index(wchar_t* str, wchar_t* search_str, int default_value)
+      |                   ^~
+comelang.h:3284:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+ 3284 | int wchar_t*::rindex(wchar_t* str, wchar_t* search_str, int default_value);
+      |            ^
+comelang.h:3285:19: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3285 | inline int wstring::rindex(wchar_t* str, wchar_t* search_str, int default_value)
+      |                   ^~
+comelang.h:3290:1: error: unknown type name ‘wstring’; did you mean ‘stdin’?
+ 3290 | wstring wchar_t*::reverse(wchar_t* str) ;
+      | ^~~~~~~
+      | stdin
+comelang.h:3290:16: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+ 3290 | wstring wchar_t*::reverse(wchar_t* str) ;
+      |                ^
+comelang.h:3291:16: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘wtring’
+ 3291 | inline wstring wtring::reverse(wchar_t* str)
+      |                ^~~~~~
+comelang.h:3296:1: error: unknown type name ‘wstring’; did you mean ‘stdin’?
+ 3296 | wstring wchar_t*::multiply(wchar_t* str, int n);
+      | ^~~~~~~
+      | stdin
+comelang.h:3296:16: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+ 3296 | wstring wchar_t*::multiply(wchar_t* str, int n);
+      |                ^
+comelang.h:3297:16: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘wstring’
+ 3297 | inline wstring wstring::multiply(wchar_t* str, int n)
+      |                ^~~~~~~
+comelang.h:3302:1: error: unknown type name ‘wstring’; did you mean ‘stdin’?
+ 3302 | wstring wchar_t*::printable(wchar_t* str);
+      | ^~~~~~~
+      | stdin
+comelang.h:3302:16: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+ 3302 | wstring wchar_t*::printable(wchar_t* str);
+      |                ^
+comelang.h:3303:16: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘wstring’
+ 3303 | inline wstring wstring::printable(wchar_t* str)
+      |                ^~~~~~~
+comelang.h:3308:1: error: unknown type name ‘regex_struct’; use ‘struct’ keyword to refer to the type
+ 3308 | regex_struct*% char*::to_regex_flags(char* self, bool global, bool ignore_case);
+      | ^~~~~~~~~~~~
+      | struct 
+comelang.h:3308:14: error: expected identifier or ‘(’ before ‘%’ token
+ 3308 | regex_struct*% char*::to_regex_flags(char* self, bool global, bool ignore_case);
+      |              ^
+comelang.h:3310:8: error: unknown type name ‘regex_struct’
+ 3310 | inline regex_struct*% string::to_regex_flags(char* self, bool global, bool ignore_case)
+      |        ^~~~~~~~~~~~
+comelang.h:3310:21: error: expected identifier or ‘(’ before ‘%’ token
+ 3310 | inline regex_struct*% string::to_regex_flags(char* self, bool global, bool ignore_case)
+      |                     ^
+comelang.h:3315:5: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 3315 | list<string>*% char*::split_str(char* self, char* str);
+      |     ^
+comelang.h:3317:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 3317 | inline list<string>*% string::split_str(char* self, char* str)
+      |            ^
+comelang.h:3323:5: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 3323 | list<string>*% char*::split_maxsplit(char* self, regex_struct* reg, int maxsplit);
+      |     ^
+comelang.h:3325:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 3325 | inline list<string>*% string::split_maxsplit(char* self, regex_struct* reg, int maxsplit)
+      |            ^
+comelang.h:3330:5: error: two or more data types in declaration specifiers
+ 3330 | int char*::index_count(char* str, char* search_str, int count, int default_value);
+      |     ^~~~
+comelang.h:3330:10: error: expected identifier or ‘(’ before ‘::’ token
+ 3330 | int char*::index_count(char* str, char* search_str, int count, int default_value);
+      |          ^~
+comelang.h:3332:18: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3332 | inline int string::index_count(char* str, char* search_str, int count, int default_value)
+      |                  ^~
+comelang.h:3337:5: error: two or more data types in declaration specifiers
+ 3337 | int char*::index_regex_count(char* self, regex_struct* reg, int count, int default_value);
+      |     ^~~~
+comelang.h:3337:10: error: expected identifier or ‘(’ before ‘::’ token
+ 3337 | int char*::index_regex_count(char* self, regex_struct* reg, int count, int default_value);
+      |          ^~
+comelang.h:3339:18: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3339 | inline int string::index_regex_count(char* self, regex_struct* reg, int count, int default_value)
+      |                  ^~
+comelang.h:3344:5: error: two or more data types in declaration specifiers
+ 3344 | int char*::rindex(char* str, char* search_str, int default_value);
+      |     ^~~~
+comelang.h:3344:10: error: expected identifier or ‘(’ before ‘::’ token
+ 3344 | int char*::rindex(char* str, char* search_str, int default_value);
+      |          ^~
+comelang.h:3346:18: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3346 | inline int string::rindex(char* str, char* search_str, int default_value)
+      |                  ^~
+comelang.h:3351:5: error: two or more data types in declaration specifiers
+ 3351 | int char*::rindex_regex(char* self, regex_struct* reg, int default_value);
+      |     ^~~~
+comelang.h:3351:10: error: expected identifier or ‘(’ before ‘::’ token
+ 3351 | int char*::rindex_regex(char* self, regex_struct* reg, int default_value);
+      |          ^~
+comelang.h:3353:18: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3353 | inline int string::rindex_regex(char* self, regex_struct* reg, int default_value)
+      |                  ^~
+comelang.h:3358:5: error: two or more data types in declaration specifiers
+ 3358 | int char*::rindex_count(char* str, char* search_str, int count, int default_value);
+      |     ^~~~
+comelang.h:3358:10: error: expected identifier or ‘(’ before ‘::’ token
+ 3358 | int char*::rindex_count(char* str, char* search_str, int count, int default_value);
+      |          ^~
+comelang.h:3360:18: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3360 | inline int string::rindex_count(char* str, char* search_str, int count, int default_value)
+      |                  ^~
+comelang.h:3365:5: error: two or more data types in declaration specifiers
+ 3365 | int char*::rindex_regex_count(char* self, regex_struct* reg, int count, int default_value);
+      |     ^~~~
+comelang.h:3365:10: error: expected identifier or ‘(’ before ‘::’ token
+ 3365 | int char*::rindex_regex_count(char* self, regex_struct* reg, int count, int default_value);
+      |          ^~
+comelang.h:3367:18: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3367 | inline int string::rindex_regex_count(char* self, regex_struct* reg, int count, int default_value)
+      |                  ^~
+comelang.h:3372:5: error: expected ‘;’ before ‘char’
+ 3372 | bool char*::match_count(char* self, regex_struct* reg, int count);
+      |     ^~~~~
+      |     ;
+comelang.h:3372:11: error: expected identifier or ‘(’ before ‘::’ token
+ 3372 | bool char*::match_count(char* self, regex_struct* reg, int count);
+      |           ^~
+comelang.h:3374:8: error: unknown type name ‘bool’
+ 3374 | inline bool string::match_count(char* self, regex_struct* reg, int count)
+      |        ^~~~
+comelang.h:3374:19: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3374 | inline bool string::match_count(char* self, regex_struct* reg, int count)
+      |                   ^~
+comelang.h:3379:7: error: expected ‘;’ before ‘char’
+ 3379 | string char*::sub_count(char* self, regex_struct* reg, char* replace, int count);
+      |       ^~~~~
+      |       ;
+comelang.h:3379:13: error: expected identifier or ‘(’ before ‘::’ token
+ 3379 | string char*::sub_count(char* self, regex_struct* reg, char* replace, int count);
+      |             ^~
+comelang.h:3381:15: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘string’
+ 3381 | inline string string::sub_count(char* self, regex_struct* reg, char* replace, int count)
+      |               ^~~~~~
+comelang.h:3386:7: error: expected ‘;’ before ‘char’
+ 3386 | string char*::sub_block(char* self, regex_struct* reg, void* parent, string (*block)(void* parent, char* match_string, list<string>* group_strings));
+      |       ^~~~~
+      |       ;
+comelang.h:3386:13: error: expected identifier or ‘(’ before ‘::’ token
+ 3386 | string char*::sub_block(char* self, regex_struct* reg, void* parent, string (*block)(void* parent, char* match_string, list<string>* group_strings));
+      |             ^~
+comelang.h:3388:15: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘string’
+ 3388 | inline string string::sub_block(char* self, regex_struct* reg, void* parent, string (*block)(void* parent, char* match_string, list<string>* group_strings))
+      |               ^~~~~~
+comelang.h:3394:7: error: expected ‘;’ before ‘char’
+ 3394 | string char*::sub_block_count(char* self, regex_struct* reg, int count, void* parent, string (*block)(void* parent, char* match_string, list<string>* group_strings));
+      |       ^~~~~
+      |       ;
+comelang.h:3394:13: error: expected identifier or ‘(’ before ‘::’ token
+ 3394 | string char*::sub_block_count(char* self, regex_struct* reg, int count, void* parent, string (*block)(void* parent, char* match_string, list<string>* group_strings));
+      |             ^~
+comelang.h:3397:15: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘string’
+ 3397 | inline string string::sub_block_count(char* self, regex_struct* reg, int count, void* parent, string (*block)(void* parent, char* match_string, list<string>* group_strings))
+      |               ^~~~~~
+comelang.h:3402:5: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 3402 | list<string>*% string::scan_block(char* self, regex_struct* reg, void* parent, string (*block)(void* parent, char* match_string, list<string>* group_strings));
+      |     ^
+comelang.h:3404:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 3404 | inline list<string>*% char*::scan_block(char* self, regex_struct* reg, void* parent, string (*block)(void* parent, char* match_string, list<string>* group_strings))
+      |            ^
+comelang.h:3409:5: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 3409 | list<string>*% char*::scan_block_count(char* self, regex_struct* reg, int count, void* parent, string (*block)(void* parent, char* match_string, list<string>* group_strings));
+      |     ^
+comelang.h:3411:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 3411 | inline list<string>*% string::scan_block_count(char* self, regex_struct* reg, int count, void* parent, string (*block)(void* parent, char* match_string, list<string>* group_strings))
+      |            ^
+comelang.h:3416:5: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 3416 | list<string>*% char*::split_block(char* self, regex_struct* reg, void* parent, string (*block)(void* parent, char* match_string, list<string>* group_strings));
+      |     ^
+comelang.h:3418:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 3418 | inline list<string>*% string::split_block(char* self, regex_struct* reg, void* parent, string (*block)(void* parent, char* match_string, list<string>* group_strings))
+      |            ^
+comelang.h:3423:5: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 3423 | list<string>*% char*::split_block_count(char* self, regex_struct* reg, int count, void* parent, string (*block)(void* parent, char* match_string, list<string>* group_strings));
+      |     ^
+comelang.h:3425:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 3425 | inline list<string>*% string::split_block_count(char* self, regex_struct* reg, int count, void* parent, string (*block)(void* parent, char* match_string, list<string>* group_strings))
+      |            ^
+comelang.h:3430:1: error: unknown type name ‘bool’
+ 3430 | bool regex_struct*::equals(regex_struct* left, regex_struct* right);
+      | ^~~~
+comelang.h:3430:1: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+comelang.h:3430:18: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+ 3430 | bool regex_struct*::equals(regex_struct* left, regex_struct* right);
+      |                  ^
+comelang.h:3432:8: error: unknown type name ‘bool’
+ 3432 | inline bool nregex::equals(regex_struct* left, regex_struct* right) {
+      |        ^~~~
+comelang.h:3432:19: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3432 | inline bool nregex::equals(regex_struct* left, regex_struct* right) {
+      |                   ^~
+comelang.h:3436:8: error: unknown type name ‘bool’
+ 3436 | inline bool regex_struct::equals(regex_struct* left, regex_struct* right) {
+      |        ^~~~
+comelang.h:3436:25: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3436 | inline bool regex_struct::equals(regex_struct* left, regex_struct* right) {
+      |                         ^~
+comelang.h:3440:5: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 3440 | list<string>*% char*::scan_group_strings(char* self, regex_struct* reg, list<string>* group_strings, int* num_group_string_in_regex);
+      |     ^
+comelang.h:3442:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 3442 | inline list<string>*% string::scan_group_strings(char* self, regex_struct* reg, list<string>* group_strings, int* num_group_string_in_regex)
+      |            ^
+comelang.h:3447:5: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 3447 | list<string>*% FILE::readlines(FILE* f);
+      |     ^
+comelang.h:3448:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘<’ token
+ 3448 | inline list<string>*% FILE*::readlines(FILE* f) {
+      |            ^
+comelang.h:3451:1: error: unknown type name ‘string’; did you mean ‘stdin’?
+ 3451 | string FILE::read(FILE* f);
+      | ^~~~~~
+      | stdin
+comelang.h:3451:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3451 | string FILE::read(FILE* f);
+      |            ^~
+comelang.h:3452:14: error: expected ‘;’ before ‘FILE’
+ 3452 | inline string FILE*::read(FILE* f) {
+      |              ^~~~~
+      |              ;
+comelang.h:3452:20: error: expected identifier or ‘(’ before ‘::’ token
+ 3452 | inline string FILE*::read(FILE* f) {
+      |                    ^~
+comelang.h:3455:11: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3455 | FILE* FILE::fprintf(FILE* f, const char* msg, ...);
+      |           ^~
+comelang.h:3456:11: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+ 3456 | FILE* FILE*::fprintf(FILE* f, const char* msg, ...);
+      |           ^
+comelang.h:3457:10: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3457 | void FILE::fclose(FILE* f);
+      |          ^~
+comelang.h:3458:17: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+ 3458 | inline void FILE*::fclose(FILE* f) {
+      |                 ^
+comelang.h:3463:15: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘string’
+ 3463 | inline string string::read(char* file_name) {
+      |               ^~~~~~
+comelang.h:3477:14: error: expected ‘;’ before ‘char’
+ 3477 | inline string char*::read(char* file_name) {
+      |              ^~~~~
+      |              ;
+comelang.h:3477:20: error: expected identifier or ‘(’ before ‘::’ token
+ 3477 | inline string char*::read(char* file_name) {
+      |                    ^~
+comelang.h:3481:15: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘string’
+ 3481 | inline string string::write(char* self, char* file_name, bool append=false) {
+      |               ^~~~~~
+comelang.h:3497:14: error: expected ‘;’ before ‘char’
+ 3497 | inline string char*::write(char* self, char* file_name, bool append=false) {
+      |              ^~~~~
+      |              ;
+comelang.h:3497:20: error: expected identifier or ‘(’ before ‘::’ token
+ 3497 | inline string char*::write(char* self, char* file_name, bool append=false) {
+      |                    ^~
+comelang.h:3501:6: error: two or more data types in declaration specifiers
+ 3501 | void char*::puts(char* self);
+      |      ^~~~
+comelang.h:3501:11: error: expected identifier or ‘(’ before ‘::’ token
+ 3501 | void char*::puts(char* self);
+      |           ^~
+comelang.h:3502:19: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3502 | inline void string::puts(char* self) {
+      |                   ^~
+comelang.h:3506:12: error: two or more data types in declaration specifiers
+ 3506 | inline int int::puts(int self)
+      |            ^~~
+comelang.h:3506:15: error: expected identifier or ‘(’ before ‘::’ token
+ 3506 | inline int int::puts(int self)
+      |               ^~
+comelang.h:3512:12: error: two or more data types in declaration specifiers
+ 3512 | inline int int::print(int self)
+      |            ^~~
+comelang.h:3512:15: error: expected identifier or ‘(’ before ‘::’ token
+ 3512 | inline int int::print(int self)
+      |               ^~
+comelang.h:3518:6: error: two or more data types in declaration specifiers
+ 3518 | void char*::print(char* self);
+      |      ^~~~
+comelang.h:3518:11: error: expected identifier or ‘(’ before ‘::’ token
+ 3518 | void char*::print(char* self);
+      |           ^~
+comelang.h:3520:19: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3520 | inline void string::print(char* self) {
+      |                   ^~
+comelang.h:3524:7: error: expected ‘;’ before ‘char’
+ 3524 | string char*::strip(char* self);
+      |       ^~~~~
+      |       ;
+comelang.h:3524:13: error: expected identifier or ‘(’ before ‘::’ token
+ 3524 | string char*::strip(char* self);
+      |             ^~
+comelang.h:3526:15: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘string’
+ 3526 | inline string string::strip(char* self) {
+      |               ^~~~~~
+comelang.h:3531:6: error: two or more data types in declaration specifiers
+ 3531 | void char*::printf(char* self, const char* msg);
+      |      ^~~~
+comelang.h:3531:11: error: expected identifier or ‘(’ before ‘::’ token
+ 3531 | void char*::printf(char* self, const char* msg);
+      |           ^~
+comelang.h:3533:19: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3533 | inline void string::printf(char* self, const char* msg) {
+      |                   ^~
+comelang.h:3537:5: error: two or more data types in declaration specifiers
+ 3537 | int int::printf(int self, const char* msg);
+      |     ^~~
+comelang.h:3537:8: error: expected identifier or ‘(’ before ‘::’ token
+ 3537 | int int::printf(int self, const char* msg);
+      |        ^~
+comelang.h:3538:6: error: two or more data types in declaration specifiers
+ 3538 | char char::putc(char self);
+      |      ^~~~
+comelang.h:3538:10: error: expected identifier or ‘(’ before ‘::’ token
+ 3538 | char char::putc(char self);
+      |          ^~
+comelang.h:3540:21: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3540 | unsigned int wchar_t::get_hash_key(wchar_t value);
+      |                     ^~
+comelang.h:3541:1: error: unknown type name ‘bool’
+ 3541 | bool wchar_t::equals(wchar_t left, wchar_t right);
+      | ^~~~
+comelang.h:3541:1: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+comelang.h:3541:13: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3541 | bool wchar_t::equals(wchar_t left, wchar_t right);
+      |             ^~
+comelang.h:3543:21: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+ 3543 | unsigned int wchar_t*::get_hash_key(wchar_t* value);
+      |                     ^
+comelang.h:3545:28: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3545 | inline unsigned int wstring::get_hash_key(wchar_t* value) {
+      |                            ^~
+comelang.h:3549:21: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+ 3549 | unsigned int wchar_t*::get_hash_key(wchar_t* value);
+      |                     ^
+comelang.h:3551:28: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3551 | inline unsigned int wstring::get_hash_key(wchar_t* value) {
+      |                            ^~
+comelang.h:3555:1: error: unknown type name ‘bool’
+ 3555 | bool wchar_t*::equals(wchar_t* left, wchar_t* right);
+      | ^~~~
+comelang.h:3555:1: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+comelang.h:3555:13: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+ 3555 | bool wchar_t*::equals(wchar_t* left, wchar_t* right);
+      |             ^
+comelang.h:3557:8: error: unknown type name ‘bool’
+ 3557 | inline bool wstring::equals(wchar_t* left, wchar_t* right)
+      |        ^~~~
+comelang.h:3557:20: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3557 | inline bool wstring::equals(wchar_t* left, wchar_t* right)
+      |                    ^~
+comelang.h:3562:26: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+ 3562 | unsigned int regex_struct*::get_hash_key(regex_struct* self);
+      |                          ^
+comelang.h:3564:27: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3564 | inline unsigned int nregex::get_hash_key(regex_struct* self) {
+      |                           ^~
+comelang.h:3568:33: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3568 | inline unsigned int regex_struct::get_hash_key(regex_struct self)
+      |                                 ^~
+comelang.h:3575:5: error: expected ‘;’ before ‘char’
+ 3575 | bool char*::match_group_strings(char* self, regex_struct* reg, int count, list<string>* group_strings);
+      |     ^~~~~
+      |     ;
+comelang.h:3575:11: error: expected identifier or ‘(’ before ‘::’ token
+ 3575 | bool char*::match_group_strings(char* self, regex_struct* reg, int count, list<string>* group_strings);
+      |           ^~
+comelang.h:3576:8: error: unknown type name ‘bool’
+ 3576 | inline bool string::match_group_strings(char* self, regex_struct* reg, int count, list<string>* group_strings) {
+      |        ^~~~
+comelang.h:3576:19: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3576 | inline bool string::match_group_strings(char* self, regex_struct* reg, int count, list<string>* group_strings) {
+      |                   ^~
+comelang.h:3589:15: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘bool’
+ 3589 | inline string bool::to_string(bool self)
+      |               ^~~~
+comelang.h:3601:7: error: expected ‘;’ before ‘char’
+ 3601 | string char*::operator_mult(char* str, int n);
+      |       ^~~~~
+      |       ;
+comelang.h:3601:13: error: expected identifier or ‘(’ before ‘::’ token
+ 3601 | string char*::operator_mult(char* str, int n);
+      |             ^~
+comelang.h:3602:1: error: unknown type name ‘string’; did you mean ‘stdin’?
+ 3602 | string string::operator_mult(char* str, int n);
+      | ^~~~~~
+      | stdin
+comelang.h:3602:14: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3602 | string string::operator_mult(char* str, int n);
+      |              ^~
+comelang.h:3603:1: error: unknown type name ‘wstring’; did you mean ‘stdin’?
+ 3603 | wstring wchar_t*::operator_mult(wchar_t* str, int n);
+      | ^~~~~~~
+      | stdin
+comelang.h:3603:16: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+ 3603 | wstring wchar_t*::operator_mult(wchar_t* str, int n);
+      |                ^
+comelang.h:3604:1: error: unknown type name ‘wstring’; did you mean ‘stdin’?
+ 3604 | wstring wstring::operator_mult(wchar_t* str, int n);
+      | ^~~~~~~
+      | stdin
+comelang.h:3604:16: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3604 | wstring wstring::operator_mult(wchar_t* str, int n);
+      |                ^~
+comelang.h:3605:5: error: expected ‘;’ before ‘char’
+ 3605 | bool char*::operator_equals(char* left, char* right);
+      |     ^~~~~
+      |     ;
+comelang.h:3605:11: error: expected identifier or ‘(’ before ‘::’ token
+ 3605 | bool char*::operator_equals(char* left, char* right);
+      |           ^~
+comelang.h:3606:1: error: unknown type name ‘bool’
+ 3606 | bool string::operator_equals(char* left, char* right);
+      | ^~~~
+comelang.h:3606:1: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+comelang.h:3606:12: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3606 | bool string::operator_equals(char* left, char* right);
+      |            ^~
+comelang.h:3607:1: error: unknown type name ‘bool’
+ 3607 | bool wchar_t*::operator_equals(wchar_t* left, wchar_t* right);
+      | ^~~~
+comelang.h:3607:1: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+comelang.h:3607:13: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+ 3607 | bool wchar_t*::operator_equals(wchar_t* left, wchar_t* right);
+      |             ^
+comelang.h:3608:1: error: unknown type name ‘bool’
+ 3608 | bool wstring::operator_equals(wchar_t* left, wchar_t* right);
+      | ^~~~
+comelang.h:3608:1: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+comelang.h:3608:13: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3608 | bool wstring::operator_equals(wchar_t* left, wchar_t* right);
+      |             ^~
+comelang.h:3610:7: error: expected ‘;’ before ‘char’
+ 3610 | string char*::operator_add(char* left, char* right);
+      |       ^~~~~
+      |       ;
+comelang.h:3610:13: error: expected identifier or ‘(’ before ‘::’ token
+ 3610 | string char*::operator_add(char* left, char* right);
+      |             ^~
+comelang.h:3611:1: error: unknown type name ‘string’; did you mean ‘stdin’?
+ 3611 | string string::operator_add(char* left, char* right);
+      | ^~~~~~
+      | stdin
+comelang.h:3611:14: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3611 | string string::operator_add(char* left, char* right);
+      |              ^~
+comelang.h:3612:1: error: unknown type name ‘wstring’; did you mean ‘stdin’?
+ 3612 | wstring wchar_t*::operator_add(wchar_t* left, wchar_t* right);
+      | ^~~~~~~
+      | stdin
+comelang.h:3612:16: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+ 3612 | wstring wchar_t*::operator_add(wchar_t* left, wchar_t* right);
+      |                ^
+comelang.h:3613:1: error: unknown type name ‘wstring’; did you mean ‘stdin’?
+ 3613 | wstring wstring::operator_add(wchar_t* left, wchar_t* right);
+      | ^~~~~~~
+      | stdin
+comelang.h:3613:16: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3613 | wstring wstring::operator_add(wchar_t* left, wchar_t* right);
+      |                ^~
+comelang.h:3616:1: error: unknown type name ‘string’; did you mean ‘stdin’?
+ 3616 | string regex_struct*::to_string(regex_struct* regex);
+      | ^~~~~~
+      | stdin
+comelang.h:3616:20: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘*’ token
+ 3616 | string regex_struct*::to_string(regex_struct* regex);
+      |                    ^
+comelang.h:3618:15: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘nregex’
+ 3618 | inline string nregex::to_string(regex_struct* regex)
+      |               ^~~~~~
+comelang.h:3629:8: error: unknown type name ‘bool’
+ 3629 | inline bool xiswalpha(wchar_t c)
+      |        ^~~~
+comelang.h: In function ‘xiswalpha’:
+comelang.h:3631:5: error: unknown type name ‘bool’
+ 3631 |     bool result = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+      |     ^~~~
+comelang.h:3631:5: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+comelang.h: At top level:
+comelang.h:3635:8: error: unknown type name ‘bool’
+ 3635 | inline bool xiswblank(wchar_t c)
+      |        ^~~~
+comelang.h:3640:8: error: unknown type name ‘bool’
+ 3640 | inline bool xiswdigit(wchar_t c)
+      |        ^~~~
+comelang.h:3645:8: error: unknown type name ‘bool’
+ 3645 | inline bool xiswalnum(wchar_t c)
+      |        ^~~~
+comelang.h:3650:8: error: unknown type name ‘bool’
+ 3650 | inline bool xisalpha(char c)
+      |        ^~~~
+comelang.h: In function ‘xisalpha’:
+comelang.h:3652:5: error: unknown type name ‘bool’
+ 3652 |     bool result = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+      |     ^~~~
+comelang.h:3652:5: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+comelang.h: At top level:
+comelang.h:3656:8: error: unknown type name ‘bool’
+ 3656 | inline bool xisblank(char c)
+      |        ^~~~
+comelang.h:3661:8: error: unknown type name ‘bool’
+ 3661 | inline bool xisdigit(char c)
+      |        ^~~~
+comelang.h:3666:8: error: unknown type name ‘bool’
+ 3666 | inline bool xisalnum(char c)
+      |        ^~~~
+comelang.h:3671:8: error: unknown type name ‘bool’
+ 3671 | inline bool xisascii(char c)
+      |        ^~~~
+comelang.h: In function ‘xisascii’:
+comelang.h:3673:5: error: unknown type name ‘bool’
+ 3673 |     bool result = (c >= ' ' && c <= '~');
+      |     ^~~~
+comelang.h:3673:5: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+comelang.h: At top level:
+comelang.h:3677:8: error: unknown type name ‘bool’
+ 3677 | inline bool xiswascii(wchar_t c)
+      |        ^~~~
+comelang.h: In function ‘xiswascii’:
+comelang.h:3679:5: error: unknown type name ‘bool’
+ 3679 |     bool result = (c >= ' ' && c <= '~');
+      |     ^~~~
+comelang.h:3679:5: note: ‘bool’ is defined in header ‘<stdbool.h>’; did you forget to ‘#include <stdbool.h>’?
+comelang.h: At top level:
+comelang.h:3694:10: error: expected ‘=’, ‘,’, ‘;’, ‘asm’ or ‘__attribute__’ before ‘::’ token
+ 3694 | void bool::expect(bool self, void* parent, void (*block_)(void* parent));
+      |          ^~
+comelang.h:3696:1: error: unknown type name ‘using’
+ 3696 | using comelang;
+      | ^~~~~
+comelang.h:3698:1: error: unknown type name ‘using’
+ 3698 | using safe;
+      | ^~~~~
+comelang2.c: In function ‘gc_ncmemdup’:
+comelang2.c:11:5: error: unknown type name ‘using’
+   11 |     using unsafe;
+      |     ^~~~~
+comelang2.c:14:16: error: ‘null’ undeclared (first use in this function)
+   14 |         return null;
+      |                ^~~~
+comelang2.c:14:16: note: each undeclared identifier is reported only once for each function it appears in
+make: *** [<ビルトイン>: comelang2] エラー 1
+rsh.sh: 行 3: ./comelang2: そのようなファイルやディレクトリはありません

@@ -562,3 +562,29 @@ void add_last_code_to_source(sInfo* info)
        info.module.mLastCode = null;
     }
 }
+
+void add_come_last_code(sInfo* info, const char* msg, ...)
+{
+    if(info->no_output_come_code) {
+        return;
+    }
+    char msg2[COME_CODE_MAX];
+
+    va_list args;
+    va_start(args, msg);
+    vsnprintf(msg2, COME_CODE_MAX, msg, args);
+    va_end(args);
+    
+    info.module.mLastCode = xsprintf("%s", msg2);
+}
+
+void dec_stack_ptr(int value, sInfo* info)
+{
+    info.stack.delete(-value-1, -1);
+}
+
+CVALUE* get_value_from_stack(int offset, sInfo* info)
+{
+    info.module.mLastCode = null;
+    return info.stack[offset];
+}

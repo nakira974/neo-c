@@ -1,6 +1,10 @@
 #include "common.h"
 #include <ctype.h>
 
+void parse_sharp(sInfo* info) version 5
+{
+}
+
 bool parsecmp(char* str, sInfo* info) 
 {
     return memcmp(info.p.p, str, strlen(str)) == 0;
@@ -45,6 +49,53 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
 {
     string type_name = parse_word(info).catch {
         throw;
+    }
+    
+    bool constant = false;
+    bool static_ = false;
+    bool volatile_ = false;
+    bool register_ = false;
+    bool exception_ = false;
+    
+    while(true) {
+        if(type_name === "const") {
+            constant = true;
+            
+            type_name = parse_word(info).catch {
+                throw;
+            }
+        }
+        else if(type_name == "static") {
+            static_ = true;
+            
+            type_name = parse_word(info).catch {
+                throw;
+            }
+        }
+        else if(type_name == "volatile") {
+            static_ = true;
+            
+            type_name = parse_word(info).catch {
+                throw;
+            }
+        }
+        else if(type_name == "register") {
+            register_ = true;
+            
+            type_name = parse_word(info).catch {
+                throw;
+            }
+        }
+        else if(type_name == "exception") {
+            exception_ = true;
+            
+            type_name = parse_word(info).catch {
+                throw;
+            }
+        }
+        else {
+            break;
+        }
     }
     
     sType*% type = new sType(type_name);
@@ -124,11 +175,17 @@ sBlock*% sBlock*::initialize(sBlock*% self, sVarTable* lv_table, sInfo* info)
 struct sIntNode
 {
     int value;
+    int sline;
+    string sname;
 };
 
 sIntNode*% sIntNode*::initialize(sIntNode*% self, int value, sInfo* info)
 {
     self.value = value;
+    
+    self.sline = info->sline;
+    self.sname = string(info->sname);
+    
     return self;
 }
 
@@ -145,15 +202,40 @@ bool sIntNode*::compile(sIntNode* self, sInfo* info)
     return true;
 }
 
+int sIntNode*::sline(sIntNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sIntNode*::sname(sIntNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
 struct sReturnNode
 {
     sNode*%? value;
+    int sline;
+    string sname;
 };
 
 sReturnNode*% sReturnNode*::initialize(sReturnNode*% self, sNode*% value, sInfo* info)
 {
     self.value = value;
+    self.sline = info.sline;
+    self.sname = string(info.sname);
+    
     return self;
+}
+
+int sReturnNode*::sline(sReturnNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sReturnNode*::sname(sReturnNode* self, sInfo* info)
+{
+    return string(self.sname);
 }
 
 bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
@@ -163,7 +245,7 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
             return false;
         }
         
-        CVALUE* come_value = info.stack[-1];
+        CVALUE* come_value = get_value_from_stack(-1, info);
         
         add_come_code(info, "return %s;\n", come_value.c_value);
         
@@ -176,9 +258,145 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
     return true;
 }
 
-exception sNode*% expression(sInfo* info) version 5
+exception sNode*% expression_node(sInfo* info) version 1
 {
     skip_spaces_and_lf(info);
+    parse_sharp(info);
+    
+    err_msg(info, "invalid character(%c)\n", *info->p);
+    throw;
+}
+
+struct sFunCallNode {
+    string fun_name;
+    list<sNode*%>*% params
+    int sline;
+    string sname;
+};
+
+sFunCallNode*% sFunCallNode*::initialize(sFunCallNode*% self, char* fun_name, list<sNode*%>* params, sInfo* info)
+{
+    self.fun_name = string(fun_name);
+    self.params = clone params;
+    self.sline = info.sline;
+    self.sname = string(info.sname);
+    
+    return self;
+}
+
+int sFunCallNode*::sline(sFunCallNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sFunCallNode*::sname(sFunCallNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
+{
+    string fun_name = self.fun_name;
+    list<sNode*%>* params = self.params;
+    
+    sFun* fun = info.funcs.at(fun_name, null!);
+    
+    if(fun == null) {
+        err_msg(info, "founction not found(%s)\n", fun_name);
+        return false;
+    }
+    
+    sType* result_type = fun->mResultType;
+    
+    list<CVALUE*>*% come_params = new list<CVALUE*>();
+    
+    foreach(it, params) {
+        if(!it.compile->(info)) {
+            return false;
+        }
+        
+        CVALUE* come_value = get_value_from_stack(-1, info);
+        
+        come_params.push_back(come_value);
+    }
+    
+    buffer*% buf = new buffer();
+    
+    buf.append_str(self.fun_name);
+    buf.append_str("(");
+    
+    int j = 0;
+    foreach(it, come_params) {
+        buf.append_str(it.c_value);
+        
+        if(j != come_params.length()-1) {
+            buf.append_str(",");
+        }
+        
+        j++;
+    }
+    buf.append_str(")");
+    
+    CVALUE*% come_value = new CVALUE;
+    
+    come_value.c_value = buf.to_string();
+    come_value.type = clone result_type;
+    come_value.var = null;
+    
+    add_come_last_code(info, "%s;\n", buf.to_string());
+    
+    dec_stack_ptr(self.params.length(), info);
+    info.stack.push_back(come_value);
+    
+    return true;
+}
+
+exception sNode*% parse_function_call(char* fun_name, sInfo* info)
+{
+    expected_next_character('(', info).catch {
+        throw;
+    }
+    
+    list<sNode*%>*% params = new list<sNode*%>();
+    
+    while(true) {
+        if(*info->p == ')') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            break;
+        }
+        
+        sNode*% node = expression(info).catch {
+            throw;
+        }
+        
+        params.push_back(node);
+        
+        if(*info->p == ',') {
+            info->p++;
+            skip_spaces_and_lf(info);
+        }
+        else if(*info->p == ')') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            break;
+        }
+    }
+    
+    return new sNode(new sFunCallNode(fun_name, params, info));
+}
+
+exception sNode*% string_node(char* buf, sInfo* info) version 99
+{
+    err_msg(info, "unexpected word(%s)\n", buf);
+    throw
+}
+
+exception sNode*% expression_node(sInfo* info) version 99
+{
+    skip_spaces_and_lf(info);
+    
+    parse_sharp(info);
     if(xisdigit(*info->p)) {
         int n = 0;
         while(xisdigit(*info->p)) {
@@ -204,12 +422,43 @@ exception sNode*% expression(sInfo* info) version 5
             return new sNode(new sReturnNode(value, info));
         }
     }
+    else if(xisalpha(*info->p)) {
+        string buf = parse_word(info).catch {
+            throw;
+        };
+        
+        if(*info->p == '(') {
+            sNode*% node = parse_function_call(buf, info).catch {
+                throw;
+            }
+            
+            return node;
+        }
+        else {
+            sNode*% node = string_node(buf, info).catch {
+                throw;
+            }
+            return node;
+        }
+    }
+    else {
+        sNode* node = inherit(info).catch {
+            throw;
+        }
+        
+        return node;
+    }
     
-    skip_spaces_and_lf(info);
-    
-    err_msg(info, "invalid character(%c)\n", *info->p);
-    throw;
+    return (sNode*%)null;
 }
+
+exception sNode*% expression(sInfo* info) version 5
+{
+    return expression_node(info).catch {
+        throw
+    }
+}
+
 
 exception sBlock*% parse_block(sInfo* info)
 {
@@ -227,16 +476,21 @@ exception sBlock*% parse_block(sInfo* info)
                 break;
             }
             
+            parse_sharp(info);
+            
             sNode*% node = expression(info).catch {
                 throw;
             }
             
             result.mNodes.push_back(node);
             
+            parse_sharp(info);
+            
             while(*info->p == ';') {
                 info->p++;
                 skip_spaces_and_lf(info);
             }
+            parse_sharp(info);
             
             if(*info->p == '}') {
                 info->p++;
@@ -246,10 +500,11 @@ exception sBlock*% parse_block(sInfo* info)
         }
     }
     else {
-puts("BBB");
+        parse_sharp(info);
         sNode*% node = expression(info).catch {
             throw;
         }
+        parse_sharp(info);
         
         result.mNodes.push_back(node);
     }
@@ -278,12 +533,19 @@ exception int transpile_block(sBlock* block, sInfo* info)
             info.module.mLastCode = null;
             
             int stack_num_before = info->stack.length();
-
-            if(!node.compile->(info))
-            {
-                info->lv_table = old_table;
+            
+            int sline = info.sline;
+            string sname = string(info.sname);
+            
+            info.sline = node.sline->();
+            info.sname = node.sname->();
+            
+            if(!node.compile->(info)) {
                 throw;
             }
+            
+            info.sline = sline;
+            info.sname = string(sname);
     
             add_last_code_to_source(info);
 
@@ -303,10 +565,6 @@ exception int transpile_block(sBlock* block, sInfo* info)
     return 0;
 }
 
-void dec_stack_ptr(int value, sInfo* info)
-{
-    info.stack.delete(-value-1, -1);
-}
 
 void arrange_stack(sInfo* info, int top)
 {
@@ -333,13 +591,27 @@ exception int expected_next_character(char c, sInfo* info)
 
 struct sFunNode {
     sFun*% mFun;
+    int sline;
+    string sname;
 };
 
 sFunNode*% sFunNode*::initialize(sFunNode*% self, sFun*% fun, sInfo* info)
 {
     self.mFun = fun;
+    self.sline = info.sline;
+    self.sname = info.sname;
     
     return self;
+}
+
+int sFunNode*::sline(sFunNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sFunNode*::sname(sFunNode* self, sInfo* info)
+{
+    return string(self.sname);
 }
 
 bool sFunNode*::compile(sFunNode* self, sInfo* info)
@@ -350,14 +622,17 @@ bool sFunNode*::compile(sFunNode* self, sInfo* info)
     info.come_fun = self.mFun;
     
     bool result = true;
-    transpile_block(self.mFun.mBlock, info).catch {
-        result = false;
+    if(self.mFun.mBlock) {
+        transpile_block(self.mFun.mBlock, info).catch {
+            result = false;
+        }
     }
     
     info.come_fun = come_fun;
     
     return result;
 }
+
 
 exception sNode*% parse_function(sInfo* info)
 {
@@ -409,30 +684,53 @@ exception sNode*% parse_function(sInfo* info)
         }
     }
     
-    sBlock*% block = parse_block(info).catch {
+    if(*info->p == ';') {
+        info->p++;
+        skip_spaces_and_lf(info);
+        
+        var fun = new sFun(fun_name, result_type, param_types, param_names
+                                , true@external, var_args, info);
+        
+        return new sNode(new sFunNode(fun, info));
+    }
+    else if(*info->p == '{') {
+        sBlock*% block = parse_block(info).catch {
+            throw;
+        }
+        
+        var fun = new sFun(fun_name, result_type, param_types, param_names
+                                , false@external, var_args, info);
+        fun.mBlock = block;
+        
+        return new sNode(new sFunNode(fun, info));
+    }
+    else {
+        err_msg(info, "invalid character(%c)\n", *info->p);
         throw;
     }
     
-    var fun = new sFun(fun_name, result_type, param_types, param_names
-                            , false@external, var_args, info);
-    fun.mBlock = block;
-    
-    return new sNode(new sFunNode(fun, info));
+    return (sNode*)null;
 }
 
 exception int transpile(sInfo* info) version 5
 {
     skip_spaces_and_lf(info);
+    parse_sharp(info);
     
-    sNode* node = parse_function(info).catch {
-        throw
+    while(*info->p) {
+        parse_sharp(info);
+        sNode*% node = parse_function(info).catch {
+            throw;
+        }
+        parse_sharp(info);
+        
+        if(!node.compile->(info)) {
+            throw;
+        }
+        parse_sharp(info);
+        
+        skip_spaces_and_lf(info);
     }
-    
-    if(node.compile->(info)) {
-        throw;
-    }
-    
-    skip_spaces_and_lf(info);
     
     return 0;
 }

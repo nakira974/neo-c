@@ -63,6 +63,18 @@ string make_type_name_string(sType* type, bool in_header, sInfo* info)
         buf.append_str("unsigned ");
     }
     
+    if(type->mLongLong) {
+        buf.append_str("long long ");
+    }
+    
+    if(type->mLong) {
+        buf.append_str("long ");
+    }
+    
+    if(type->mShort) {
+        buf.append_str("short ");
+    }
+    
     if(type->mGenericsTypes.length() > 0) {
         string struct_name = create_generics_name(type, info);
         
@@ -90,9 +102,6 @@ string make_type_name_string(sType* type, bool in_header, sInfo* info)
         else if(type->mUnion) {
             buf.append_str("union ");
             buf.append_str(class_name);
-        }
-        else if(class_name === "long_double") {
-            buf.append_str("long double");
         }
         else if(type->mLongLong) {
             if(class_name === "int") {

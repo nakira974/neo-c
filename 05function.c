@@ -56,6 +56,11 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
     bool volatile_ = false;
     bool register_ = false;
     bool exception_ = false;
+    bool unsigned_ = false;
+    bool long_ = false;
+    bool long_long = false;
+    bool short_ = false;
+    bool restrict_ = false;
     
     while(true) {
         if(type_name === "const") {
@@ -65,29 +70,63 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                 throw;
             }
         }
-        else if(type_name == "static") {
+        else if(type_name === "static") {
             static_ = true;
             
             type_name = parse_word(info).catch {
                 throw;
             }
         }
-        else if(type_name == "volatile") {
-            static_ = true;
+        else if(type_name === "volatile") {
+            volatile_ = true;
             
             type_name = parse_word(info).catch {
                 throw;
             }
         }
-        else if(type_name == "register") {
+        else if(type_name === "long") {
+            if(long_) {
+                long_long = true;
+                long_ = false;
+            }
+            else {
+                long_ = true;
+            }
+            
+            type_name = parse_word(info).catch {
+                throw;
+            }
+        }
+        else if(type_name === "unsigned") {
+            unsigned_ = true;
+            
+            type_name = parse_word(info).catch {
+                throw;
+            }
+        }
+        else if(type_name === "register") {
             register_ = true;
             
             type_name = parse_word(info).catch {
                 throw;
             }
         }
-        else if(type_name == "exception") {
+        else if(type_name === "exception") {
             exception_ = true;
+            
+            type_name = parse_word(info).catch {
+                throw;
+            }
+        }
+        else if(type_name === "restrict") {
+            restrict_ = true;
+            
+            type_name = parse_word(info).catch {
+                throw;
+            }
+        }
+        else if(type_name === "short") {
+            short_ = true;
             
             type_name = parse_word(info).catch {
                 throw;
@@ -99,6 +138,16 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
     }
     
     sType*% type = new sType(type_name);
+    
+    type->mConstant = constant;
+    type->mRegister = register_;
+    type->mUnsigned = unsigned_;
+    type->mVolatile = volatile_;
+    type->mStatic = static_;
+    type->mRestrict = restrict_;
+    type->mLongLong = long_long;
+    type->mLong = long_;
+    type->mShort = short_;
     
     if(*info->p == '<') {
         info->p++;
@@ -135,7 +184,6 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         type->mPointerNum++;
     }
     
-    bool heap = false;
     if(*info->p == '%') {
         info->p++;
         skip_spaces_and_lf(info);

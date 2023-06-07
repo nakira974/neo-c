@@ -46,6 +46,9 @@ struct sType
     sType* mResultType;
     
     bool mUnsigned;
+    bool mShort;
+    bool mLong;
+    bool mLongLong;
     bool mConstant;
     bool mRegister;
     bool mVolatile;
@@ -174,6 +177,7 @@ struct sInfo
     int come_nest;
 
     map<string, sFun*%>*% funcs;
+    map<string, sClass*%>*% classes;
     sModule*% module;
     
     sType*% type;
@@ -206,7 +210,7 @@ void err_msg(sInfo* info, char* msg, ...);
 bool transpile(sInfo* info) version 2;
 bool output_source_file(sInfo* info) version 2;
 sModule*% sModule*::initialize(sModule*% self);
-sType*% sType*::initialize(sType*% self, char* name, int pointer_num=0, bool heap=false);
+sType*% sType*::initialize(sType*% self, char* name, sInfo* info, int pointer_num=0, bool heap=false);
 sVarTable*% sVarTable*::initialize(sVarTable*% self, bool global, sVarTable* parent);
 sType*% sType::clone(sType* self);
 void sType*::finalize(sType* self);
@@ -229,6 +233,7 @@ void add_come_code(sInfo* info, const char* msg, ...);
 void add_come_last_code(sInfo* info, const char* msg, ...);
 void dec_stack_ptr(int value, sInfo* info);
 CVALUE* get_value_from_stack(int offset, sInfo* info);
+string make_define_var(sType* type, char* name, sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
 /// 04heap.c ///

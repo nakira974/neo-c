@@ -144,8 +144,13 @@ sVarTable*% sVarTable*::initialize(sVarTable*% self, bool global, sVarTable* par
     return self;
 }
 
-sType*% sType*::initialize(sType*% self, char* name, int pointer_num=0, bool heap=false)
+sType*% sType*::initialize(sType*% self, char* name, sInfo* info, int pointer_num=0, bool heap=false)
 {
+    sClass* klass = info.classes[name];
+    
+    if(klass == null) {
+        err_msg(info
+    }
     self.mClass = borrow new sClass(name);
     
     self.mGenericsTypes = borrow new list<sType*>();
@@ -327,6 +332,7 @@ int come_main(int argc, char** argv) version 2
         info.clang_option = clang_option.to_string();
         info.no_output_err = false;
         info.funcs = new map<string, sFun*%>();
+        info.classes = new map<string, sClass*%>();
         info.module = new sModule();
         info.right_value_objects = new list<sRightValueObject*%>();
         info.stack = new list<CVALUE*%>();

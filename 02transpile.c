@@ -144,14 +144,29 @@ sVarTable*% sVarTable*::initialize(sVarTable*% self, bool global, sVarTable* par
     return self;
 }
 
-sType*% sType*::initialize(sType*% self, char* name, sInfo* info, int pointer_num=0, bool heap=false)
+sType*% sType*::initialize(sType*% self, char* name, sInfo* info, bool heap=false)
 {
-    sClass* klass = info.classes[name];
+    int pointer_num = 0;
+    char* p = name;
+    while(*p) {
+        if(xisalpha(*p)) {
+            p++;
+        }
+        else {
+            break;
+        }
+    }
+    while(*p == '*') {
+        pointer_num++;
+        p++;
+    }
+    string name2 = string(name).substring(0, -pointer_num-1);
+    sClass* klass = info.classes[name2];
     
     if(klass == null) {
-        err_msg(info
+        err_msg(info, "class not found(%s)\n", name2);
     }
-    self.mClass = borrow new sClass(name);
+    self.mClass = klass;
     
     self.mGenericsTypes = borrow new list<sType*>();
     self.mArrayNum = borrow new list<int>();
@@ -188,7 +203,7 @@ sType*% sType*::initialize(sType*% self, char* name, sInfo* info, int pointer_nu
 
 void sType*::finalize(sType* self)
 {
-    delete self.mClass;
+//    delete self.mClass;
     
     foreach(it, self.mGenericsTypes) {
         delete it;
@@ -208,7 +223,7 @@ sType*% sType::clone(sType* self)
 {
     var result = new sType;
     
-    if(self.mClass) result.mClass = borrow clone self.mClass;
+    result.mClass = self.mClass;
     
     result.mGenericsTypes = borrow new list<sType*>();
     foreach(it, self.mGenericsTypes) {
@@ -252,20 +267,20 @@ sType*% sType::clone(sType* self)
     return result;
 }
 
-sClass*% sClass*::initialize(sClass*% self, char* name)
+sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool struct_=false, bool union_=false, bool generics=false, bool method_generics=false, bool protocol_=false, bool struct_=false, int generics_num=-1, int method_generics_num=-1)
 {
-    self.mStruct = false;
-    self.mUnion = false;
-    self.mGenerics = false;
+    self.mNumber = number;
+    self.mStruct = struct_;
+    self.mUnion = union_;
+    self.mGenerics = generics;
+    self.mMethodGenerics = method_generics;
     self.mEnum = false;
-    self.mProtocol = false;
-    self.mNumber = false;
-    self.mMethodGenerics = false;
+    self.mProtocol = protocol_;
     
     self.mName = string(name);
     
-    self.mGenericsNum = -1;
-    self.mMethodGenericsNum = -1;
+    self.mGenericsNum = generics_num;
+    self.mMethodGenericsNum = method_generics_num;
     
     self.mFields = new list<tuple2<string, sType*%>*%>();
     
@@ -286,6 +301,16 @@ sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sTy
     self.mSourceDefer = new buffer();
     
     return self;
+}
+
+void init_classes(sInfo* info)
+{
+    info.classes.insert(string("int"), new sClass("int", number:true));
+    info.classes.insert(string("short"), new sClass("short", number:true));
+    info.classes.insert(string("long"), new sClass("long", number:true));
+    info.classes.insert(string("char"), new sClass("char", number:true));
+    info.classes.insert(string("bool"), new sClass("bool", number:true));
+    info.classes.insert(string("void"), new sClass("void"));
 }
 
 int come_main(int argc, char** argv) version 2
@@ -341,6 +366,8 @@ int come_main(int argc, char** argv) version 2
         info.p = it.read().to_buffer().to_pointer();
         info.head = info.p.p;
         
+        init_classes(&info);
+        
         if(!transpile(&info)) {
             fprintf(stderr, "%s %d: traspile faield\n", info.sname, info.sline);
             exit(2);
@@ -348,6 +375,11 @@ int come_main(int argc, char** argv) version 2
         
         if(!output_source_file(&info)) {
             fprintf(stderr, "%s %d: output source file faield\n", info->sname, info->sline);
+            exit(2);
+        }
+        
+        if(info.err_num > 0) {
+            fprintf(stderr, "transpile error. err num %d\n", info->err_num);
             exit(2);
         }
         

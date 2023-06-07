@@ -283,7 +283,7 @@ sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sInfo* 
         source.append_char('}');
         
         var name = clone real_fun_name;
-        var result_type = new sType("void");
+        var result_type = new sType("void", info);
         var self_type = clone type;
         self_type->mHeap = false;
         var param_types = [self_type];

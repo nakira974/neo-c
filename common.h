@@ -210,11 +210,11 @@ void err_msg(sInfo* info, char* msg, ...);
 bool transpile(sInfo* info) version 2;
 bool output_source_file(sInfo* info) version 2;
 sModule*% sModule*::initialize(sModule*% self);
-sType*% sType*::initialize(sType*% self, char* name, sInfo* info, int pointer_num=0, bool heap=false);
+sType*% sType*::initialize(sType*% self, char* name, sInfo* info, bool heap=false);
 sVarTable*% sVarTable*::initialize(sVarTable*% self, bool global, sVarTable* parent);
 sType*% sType::clone(sType* self);
 void sType*::finalize(sType* self);
-sClass*% sClass*::initialize(sClass*% self, char* name);
+sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool struct_=false, bool union_=false, bool generics=false, bool method_generics=false, bool protocol_=false, bool struct_=false, int generics_num=-1, int method_generics_num=-1);
 sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, bool external, bool var_args, sInfo* info);
 
 /////////////////////////////////////////////////////////////////////

@@ -137,7 +137,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         }
     }
     
-    sType*% type = new sType(type_name);
+    sType*% type = new sType(type_name, info);
     
     type->mConstant = constant;
     type->mRegister = register_;
@@ -242,7 +242,7 @@ bool sIntNode*::compile(sIntNode* self, sInfo* info)
     CVALUE*% come_value = new CVALUE;
     
     come_value.c_value = xsprintf("%d", self.value);
-    come_value.type = new sType("int");
+    come_value.type = new sType("int", info);
     come_value.var = null;
     
     info.stack.push_back(come_value);
@@ -572,7 +572,7 @@ exception int transpile_block(sBlock* block, sInfo* info)
 
     if(block->mNodes.length() == 0) {
         free_right_value_objects(info);
-        info->type = new sType("void");
+        info->type = new sType("void", info);
     }
     else {
         bool last_expression_is_return = false;

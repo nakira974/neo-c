@@ -496,8 +496,8 @@ void add_come_code(sInfo* info, const char* msg, ...)
 bool transpile(sInfo* info) version 3
 {
     var name = string("main");
-    var result_type = new sType("int");
-    var param_types = [new sType("int"), new sType("char", 2)];
+    var result_type = new sType("int", info);
+    var param_types = [new sType("int", info), new sType("char**", info)];
     var param_names = [string("argc"), string("argv")];
     var main_fun = new sFun(name, result_type, param_types, param_names
                             , false@external, false@var_args, info);

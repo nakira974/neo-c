@@ -178,6 +178,7 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
 
 exception sNode*% expression(sInfo* info) version 5
 {
+    skip_spaces_and_lf(info);
     if(xisdigit(*info->p)) {
         int n = 0;
         while(xisdigit(*info->p)) {
@@ -204,6 +205,8 @@ exception sNode*% expression(sInfo* info) version 5
         }
     }
     
+    skip_spaces_and_lf(info);
+    
     err_msg(info, "invalid character(%c)\n", *info->p);
     throw;
 }
@@ -229,6 +232,11 @@ exception sBlock*% parse_block(sInfo* info)
             }
             
             result.mNodes.push_back(node);
+            
+            while(*info->p == ';') {
+                info->p++;
+                skip_spaces_and_lf(info);
+            }
             
             if(*info->p == '}') {
                 info->p++;

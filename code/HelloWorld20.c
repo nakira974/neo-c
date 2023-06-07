@@ -117,6 +117,16 @@ int funXYZ(int a=123, string b = string("ABC"), list<int>*% c = [1,2,3])
     return 0;
 }
 
+protocol sNode{
+    int a;
+    int b;
+};
+
+exception sNode*% expression()
+{
+    throw;
+}
+
 int main(int argc, char** argv)
 {
     string a = string("AAAA");
@@ -213,6 +223,10 @@ int main(int argc, char** argv)
         puts("AAA");
     }
 */
+
+    sNode*% node = expression().catch {
+        puts("AAA");
+    }
     
     return 0;
 }

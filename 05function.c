@@ -434,7 +434,7 @@ exception sNode*% parse_function_call(char* fun_name, sInfo* info)
     return new sNode(new sFunCallNode(fun_name, params, info));
 }
 
-exception sNode*% string_node(char* buf, sInfo* info) version 99
+exception sNode*% string_node(char* buf, char* head, sInfo* info) version 99
 {
     err_msg(info, "unexpected word(%s)\n", buf);
     throw
@@ -471,6 +471,8 @@ exception sNode*% expression_node(sInfo* info) version 99
         }
     }
     else if(xisalpha(*info->p)) {
+        char* head = info.p.p;
+        
         string buf = parse_word(info).catch {
             throw;
         };
@@ -483,7 +485,7 @@ exception sNode*% expression_node(sInfo* info) version 99
             return node;
         }
         else {
-            sNode*% node = string_node(buf, info).catch {
+            sNode*% node = string_node(buf, head, info).catch {
                 throw;
             }
             return node;

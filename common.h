@@ -264,11 +264,12 @@ exception sNode*% expression_node(sInfo* info) version 99;
 
 exception int transpile(sInfo* info) version 5;
 void parse_sharp(sInfo* info) version 5;
-exception sNode*% string_node(char* buf, sInfo* info) version 99;
+exception sNode*% string_node(char* buf, char* head, sInfo* info) version 99;
 
 /////////////////////////////////////////////////////////////////////
 /// 06str.c ///
 /////////////////////////////////////////////////////////////////////
 exception sNode*% expression_node(sInfo* info) version 98;
+exception sNode*% string_node(char* buf, char* head, sInfo* info) version 98;
 
 #endif

@@ -1723,7 +1723,8 @@ void set_caller_sname(char* sname)
     LLVMTypeRef llvm_type = create_llvm_type_with_class_name("char*");
     LLVMValueRef value = LLVMBuildPointerCast(gBuilder, LLVMBuildGlobalString(gBuilder, sname, sname), llvm_type, "sname");
     
-    LLVMBuildStore(gBuilder, value, gCallerSName);
+    LLVMValueRef global = LLVMBuildCast(gBuilder, LLVMBitCast, gCallerSName, create_llvm_type_with_class_name("char**"), "CallerSName");
+    LLVMBuildStore(gBuilder, value, global);
     
     gCallerSNameCValue = xsprintf("%s", sname);
 }
@@ -1733,7 +1734,8 @@ void set_caller_sline(int sline)
     LLVMTypeRef llvm_type = create_llvm_type_with_class_name("int");
     LLVMValueRef value = LLVMConstInt(llvm_type, sline, TRUE);
     
-    LLVMBuildStore(gBuilder, value, gCallerSLine);
+    LLVMValueRef global = LLVMBuildCast(gBuilder, LLVMBitCast, gCallerSLine, create_llvm_type_with_class_name("int*"), "CallerSLine");
+    LLVMBuildStore(gBuilder, value, global);
     gCallerSLineCValue = sline;
 }
 

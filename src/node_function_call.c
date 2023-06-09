@@ -1047,9 +1047,10 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
     if(fun->mGenericsFunction) {
         LLVMTypeRef llvm_param_types[PARAMS_MAX];
         
-        for(i=0; i<num_params; i++) {
-            sNodeType* fun_param_type = clone_node_type(fun->mParamTypes[i]);
-            sNodeType* param_type = param_types[i];
+        int k;
+        for(k=0; k<num_params; k++) {
+            sNodeType* fun_param_type = clone_node_type(fun->mParamTypes[k]);
+            sNodeType* param_type = param_types[k];
 
             if(!solve_type(&fun_param_type, generics_type, num_method_generics_types, method_generics_types, info))
             {
@@ -1057,10 +1058,10 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
             }
 
             if(fun_param_type->mHeap) {
-                remove_object_from_right_values(llvm_params[i], info);
+                remove_object_from_right_values(llvm_params[k], info);
             }
             
-            llvm_param_types[i] = create_llvm_type_from_node_type(fun_param_type);
+            llvm_param_types[k] = create_llvm_type_from_node_type(fun_param_type);
         }
 
         LLVMValueRef llvm_fun= NULL;

@@ -8,7 +8,7 @@ Yet another modern compiler. It has a collection and string library using Boehm 
 もう一つのモダンコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 1.2.0
+version 1.2.1
 
 ``` C
 #include <comelang.h>
@@ -379,6 +379,12 @@ From version 1.1.8 Fixed exception bug.
 From version 1.2.0 プロトコルと例外のバグを修正しました。
 
 From version 1.2.0 Fixed exception and protocol bug.
+
+From version 1.2.1 リファレンスカウントを+1するgc_incとリファレンスカウントを-1するgc_decが入りました。浅いコピーをするshallow_cloneが入りました。マルチディフィニションと例外とヒープの3使った場合のバグを修正。
+
+From version 1.2.1 gc_inc to +1 the reference count and the reference count to -1 gc_dec entered. shallow_clone for shallow copying is included. Fixed a bug when using multi-definition, exceptions and heap 3.
+
+From 
 
 # Language specifications
 
@@ -1377,8 +1383,15 @@ int main(int argc, char** argv)
 ```
 
 sData*::cloneも自動的に定義されます。浅いコピーでなく深いコピーです。
+浅いコピーはshallow_copyとしてください。sData*::shallow_copyがもし定義されていれば呼ばれます。
 
 構造体やunionも普通の変数と同じルールです。
+
+sData*::clone is also defined automatically. It's a deep copy, not a shallow copy.
+Use shallow_copy for shallow copies. At this time, if sData*::shallow_copy is defined ~
+is called.
+
+Structures and unions follow the same rules as ordinary variables.
 
 ``` C
 struct sA {
@@ -1400,6 +1413,39 @@ int main()
 ```
 
 aのリファレンスカウントは２なので、aがfreeされるのはブロックをぬけだしたときです。
+
+リファレンスカウントを+1するにはgc_incを使います。リファレンスカウントを-1するにはgc_decを使います。
+
+``` C
+struct sA {
+   int*% a;
+};
+
+int main()
+{
+    sA*% data = new sA;
+    
+    gc_inc data; // no free data, memory leak
+
+    return 0;
+}
+```
+
+``` C
+struct sA {
+   int*% a;
+};
+
+int main()
+{
+    sA*% data = new sA;
+    
+    gc_inc data;
+    gc_dec data;  // free object, calling finalizer
+
+    return 0;
+}
+```
 
 
 finalizeとcloneメソッドとequalsメソッドは自動的に定義されます。

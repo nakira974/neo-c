@@ -201,6 +201,10 @@ string make_define_var(sType* type, char* name, sInfo* info)
 {
     var buf = new buffer();
     
+if(type == null || type->mClass == null) {
+int a = 0;
+int b = 1/a;
+}
     if(type->mClass->mName === "lambda") {
         var str = make_lambda_type_name_string(type, name, info);
         
@@ -296,7 +300,7 @@ string output_function(sFun* fun, sInfo* info)
     }
     else if(fun->mResultType->mArrayNum.length() > 0) {
         sType*% base_result_type = clone fun->mResultType;
-        base_result_type.mArrayNum = new list<int>();
+        base_result_type.mArrayNum = borrow new list<int>();
         
         string result_type_str = make_type_name_string(base_result_type, false@in_header, info);
         
@@ -404,7 +408,7 @@ string header_function(sFun* fun, sInfo* info)
     }
     else if(fun->mResultType->mArrayNum.length() > 0) {
         sType*% base_result_type = clone fun->mResultType;
-        base_result_type->mArrayNum = new list<int>();
+        base_result_type->mArrayNum = borrow new list<int>();
         
         string result_type_str = make_type_name_string(base_result_type, true@in_header, info);
         
@@ -482,7 +486,7 @@ void add_come_code(sInfo* info, const char* msg, ...)
     
     if(info->come_fun) {
         int i;
-        for(i=0; i<info->come_nest; i++) {
+        for(i=0; i<info->block_level; i++) {
             info.come_fun.mSource.append_str("    ");
         }
         info.come_fun.mSource.append_str(xsprintf("%s", msg2));
@@ -508,10 +512,10 @@ bool transpile(sInfo* info) version 3
     
     info.come_fun = main_fun;
     
-    info.come_nest++;
+    info.block_level++;
     add_come_code(info, "puts(\"HELLO COMELANG\");\n\n");
     add_come_code(info, "return 0;\n");
-    info.come_nest--;
+    info.block_level--;
     
     return true;
 }

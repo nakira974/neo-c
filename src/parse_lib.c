@@ -529,7 +529,7 @@ BOOL parse_variable_name(char* buf, int buf_size, sParserInfo* info, sNodeType* 
                 return FALSE;
             }
             
-            if(strcmp(buf2, "finalize") != 0 && strcmp(buf2, "clone") != 0) {
+            if(strcmp(buf2, "finalize") != 0 && strcmp(buf2, "clone") != 0 && strcmp(buf2, "shallow_clone") != 0) {
                 int k;
                 for(k=0; k<pointer_num; k++) {
                     strncat(buf, "p", buf_size);

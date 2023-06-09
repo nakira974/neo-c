@@ -1295,6 +1295,12 @@ BOOL compile_tuple_value(unsigned int node, sCompileInfo* info)
         
         dec_stack_ptr(1, info);
         
+/*
+        if(element_types[i]->mHeap) {
+            increment_ref_count(elements_value[i].value, element_types[i], elements_value[i].c_value, info);
+        }
+*/
+        
         remove_object_from_right_values(elements_value[i].value, info);
     }
     

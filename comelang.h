@@ -24,6 +24,12 @@
 
 #include <ncurses.h>
 
+#ifdef __DARWIN_ARM__
+#include <malloc/malloc.h>
+#else
+#include <malloc.h>
+#endif
+
 #undef bool
 #undef true
 #undef false

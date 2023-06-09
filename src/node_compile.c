@@ -375,8 +375,29 @@ BOOL compile(unsigned int node, sCompileInfo* info)
             }
             break;
             
+        case kNodeTypeShallowClone:
+            if(!compile_shallow_clone(node, info))
+            { 
+                return FALSE;
+            }
+            break;
+            
         case kNodeTypeIsHeap:
             if(!compile_is_heap(node, info))
+            { 
+                return FALSE;
+            }
+            break;
+            
+        case kNodeTypeGCInc:
+            if(!compile_gc_inc(node, info))
+            { 
+                return FALSE;
+            }
+            break;
+            
+        case kNodeTypeGCDec:
+            if(!compile_gc_dec(node, info))
             { 
                 return FALSE;
             }

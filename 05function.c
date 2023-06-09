@@ -148,6 +148,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
     type->mLongLong = long_long;
     type->mLong = long_;
     type->mShort = short_;
+    type->mGenericsTypes = borrow new list<sType*>();
     
     if(*info->p == '<') {
         info->p++;
@@ -219,6 +220,18 @@ sBlock*% sBlock*::initialize(sBlock*% self, sVarTable* lv_table, sInfo* info)
     
     return self;
 }
+
+/*
+sBlock*% sBlock*::clone(sBlock* self)
+{
+    sBlock*% result = new sBlock;
+    
+    result.mNodes = self.mNodes;
+    result.mVarTable = self.mVarTable;
+    
+    return result;
+}
+*/
 
 struct sIntNode
 {
@@ -434,7 +447,7 @@ exception sNode*% parse_function_call(char* fun_name, sInfo* info)
     return new sNode(new sFunCallNode(fun_name, params, info));
 }
 
-exception sNode*% string_node(char* buf, char* head, sInfo* info) version 99
+exception sNode*% string_node(char* buf, char* head, sInfo* info) version 5
 {
     err_msg(info, "unexpected word(%s)\n", buf);
     throw
@@ -569,9 +582,9 @@ exception int transpile_block(sBlock* block, sInfo* info)
     sVarTable* old_table = info->lv_table;
     info->lv_table = block->mVarTable;
     
-    int nest = info->come_nest;
-    info->come_nest++;
-
+    int block_level = info->block_level;
+    info->block_level++;
+    
     if(block->mNodes.length() == 0) {
         free_right_value_objects(info);
         info->type = new sType("void", info);
@@ -610,7 +623,7 @@ exception int transpile_block(sBlock* block, sInfo* info)
     free_objects(info->lv_table, null!, info);
     
     info->lv_table = old_table;
-    info->come_nest = nest;
+    info->block_level = block_level;
     
     return 0;
 }
@@ -640,12 +653,12 @@ exception int expected_next_character(char c, sInfo* info)
 }
 
 struct sFunNode {
-    sFun*% mFun;
+    sFun* mFun;
     int sline;
     string sname;
 };
 
-sFunNode*% sFunNode*::initialize(sFunNode*% self, sFun*% fun, sInfo* info)
+sFunNode*% sFunNode*::initialize(sFunNode*% self, sFun* fun, sInfo* info)
 {
     self.mFun = fun;
     self.sline = info.sline;
@@ -666,8 +679,6 @@ string sFunNode*::sname(sFunNode* self, sInfo* info)
 
 bool sFunNode*::compile(sFunNode* self, sInfo* info)
 {
-    info.funcs.insert(self.mFun.mName, self.mFun);
-    
     sFun* come_fun = info.come_fun;
     info.come_fun = self.mFun;
     
@@ -741,6 +752,8 @@ exception sNode*% parse_function(sInfo* info)
         var fun = new sFun(fun_name, result_type, param_types, param_names
                                 , true@external, var_args, info);
         
+        info.funcs.insert(string(fun_name), fun);
+        
         return new sNode(new sFunNode(fun, info));
     }
     else if(*info->p == '{') {
@@ -751,6 +764,8 @@ exception sNode*% parse_function(sInfo* info)
         var fun = new sFun(fun_name, result_type, param_types, param_names
                                 , false@external, var_args, info);
         fun.mBlock = block;
+        
+        info.funcs.insert(string(fun_name), fun);
         
         return new sNode(new sFunNode(fun, info));
     }

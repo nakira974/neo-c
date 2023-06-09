@@ -1076,6 +1076,40 @@ BOOL parse_clone(unsigned int* node, sParserInfo* info)
     return TRUE;
 }
 
+BOOL parse_shallow_clone(unsigned int* node, sParserInfo* info)
+{
+    BOOL gc = gNCGC;
+    if(*info->p == '(') {
+        info->p++;
+        skip_spaces_and_lf(info);
+
+        if(*info->p == 'G' && *(info->p+1) == 'C') {
+            info->p += 2;
+            skip_spaces_and_lf(info);
+        }
+
+        if(*info->p == ')') {
+            info->p++;
+            skip_spaces_and_lf(info);
+        }
+
+        gc = TRUE;
+    }
+
+    if(!expression(node, FALSE, info)) {
+        return FALSE;
+    }
+
+    if(*node == 0) {
+        parser_err_msg(info, "Require expression for clone");
+        return TRUE;
+    };
+
+    *node = sNodeTree_create_shallow_clone(*node, gc, info);
+
+    return TRUE;
+}
+
 BOOL parse_borrow(unsigned int* node, sParserInfo* info)
 {
     unsigned int object_node;
@@ -1096,6 +1130,30 @@ BOOL parse_dummy_heap(unsigned int* node, sParserInfo* info)
     };
 
     *node = sNodeTree_create_dummy_heap(object_node, info);
+
+    return TRUE;
+}
+
+BOOL parse_gc_inc(unsigned int* node, sParserInfo* info)
+{
+    unsigned int object_node;
+    if(!expression(&object_node, FALSE, info)) {
+        return FALSE;
+    };
+
+    *node = sNodeTree_create_gc_inc(object_node, info);
+
+    return TRUE;
+}
+
+BOOL parse_gc_dec(unsigned int* node, sParserInfo* info)
+{
+    unsigned int object_node;
+    if(!expression(&object_node, FALSE, info)) {
+        return FALSE;
+    };
+
+    *node = sNodeTree_create_gc_dec(object_node, info);
 
     return TRUE;
 }

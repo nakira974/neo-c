@@ -144,6 +144,18 @@ sVarTable*% sVarTable*::initialize(sVarTable*% self, bool global, sVarTable* par
     return self;
 }
 
+sVarTable*% sVarTable*::clone(sVarTable* self)
+{
+    sVarTable*% result = new sVarTable;
+    
+    result.mVars = self.mVars;
+    result.mGlobal = self.mGlobal;
+    result.mParent = self.mParent;
+    result.mID = self.mID;
+    
+    return result;
+}
+
 sType*% sType*::initialize(sType*% self, char* name, sInfo* info, bool heap=false)
 {
     int pointer_num = 0;
@@ -219,13 +231,14 @@ void sType*::finalize(sType* self)
     delete self.mOriginalTypeName;
 }
 
-sType*% sType::clone(sType* self)
+sType*% sType*::clone(sType* self)
 {
-    var result = new sType;
+    sType*% result = new sType;
     
     result.mClass = self.mClass;
     
     result.mGenericsTypes = borrow new list<sType*>();
+    
     foreach(it, self.mGenericsTypes) {
         result.mGenericsTypes.push_back(borrow clone it);
     }
@@ -260,6 +273,55 @@ sType*% sType::clone(sType* self)
     result.mTypeOfExpression = self.mTypeOfExpression;
 
     if(self.mOriginalTypeName) result.mOriginalTypeName = borrow clone self.mOriginalTypeName;
+    result.mOriginalPointerNum = self.mOriginalPointerNum;
+    
+    result.mFunctionParam = self.mFunctionParam;
+    
+    return result;
+}
+
+sType*% sType*::shallow_clone(sType* self)
+{
+    var result = new sType;
+    
+    result.mClass = self.mClass;
+    
+    result.mGenericsTypes = self.mGenericsTypes;
+    igc_increment_ref_count(result.mGenericsTypes);
+
+    result.mArrayNum = self.mArrayNum;
+    igc_increment_ref_count(result.mArrayNum);
+    
+    result.mParamTypes = self.mParamTypes;
+    igc_increment_ref_count(self.mParamTypes);
+    if(self.mResultType) {
+        result.mResultType = self.mResultType;
+        igc_increment_ref_count(self.mResultType);
+    }
+    result.mUnsigned = self.mUnsigned;
+    result.mConstant = self.mConstant;
+    result.mRegister = self.mRegister;
+    result.mVolatile = self.mVolatile;
+    result.mStatic = self.mStatic;
+    result.mRestrict = self.mRestrict;
+    result.mImmutable = self.mImmutable;
+    result.mLongLong = self.mLongLong;
+    result.mHeap = self.mHeap;
+    result.mDummyHeap = self.mDummyHeap;
+    result.mNoHeap = self.mNoHeap;
+    result.mRefference = self.mRefference;
+    
+    result.mPointerNum = self.mPointerNum;
+    result.mNoArrayPointerNum = self.mNoArrayPointerNum;
+    result.mSizeNum = self.mSizeNum;
+    
+    result.mDynamicArrayNum = self.mDynamicArrayNum;
+    result.mTypeOfExpression = self.mTypeOfExpression;
+
+    if(self.mOriginalTypeName) {
+        result.mOriginalTypeName = self.mOriginalTypeName;
+        igc_increment_ref_count(result.mOriginalTypeName);
+    }
     result.mOriginalPointerNum = self.mOriginalPointerNum;
     
     result.mFunctionParam = self.mFunctionParam;
@@ -361,7 +423,8 @@ int come_main(int argc, char** argv) version 2
         info.module = new sModule();
         info.right_value_objects = new list<sRightValueObject*%>();
         info.stack = new list<CVALUE*%>();
-        info.lv_table = new sVarTable(global:true, parent:null);
+        info.gv_table = new sVarTable(global:true, parent:null);
+        info.lv_table = borrow info.gv_table;
         
         info.p = it.read().to_buffer().to_pointer();
         info.head = info.p.p;

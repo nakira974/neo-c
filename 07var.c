@@ -9,7 +9,7 @@ struct sStoreNode
     string sname;
 };
 
-sStoreNode*% sStoreNode*::initialize(sStoreNode*% self, string name, bool alloc, sNode*% right_value, sInfo* info)
+sStoreNode*% sStoreNode*::initialize(sStoreNode*% self, string name, bool alloc, sNode*%? right_value, sInfo* info)
 {
     self.name = string(name);
     self.alloc = alloc;
@@ -23,41 +23,73 @@ sStoreNode*% sStoreNode*::initialize(sStoreNode*% self, string name, bool alloc,
 
 bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
 {
-    if(!self.right_value.compile->(info)) {
-        return false;
+    if(self.right_value == null) {
+        sVar* var_ = get_variable_from_table(info.lv_table, self.name);
+        
+        if(var_ == null) {
+            err_msg(info, "var not found(%s) at definition of variable\n", self.name);
+            return true;
+        }
+        
+        if(var_->mType == null) {
+            err_msg(info, "require varible type(%s)\n", self.name);
+            return true;
+        }
+        sType*% left_type = clone var_->mType;
+        
+        if(self.alloc) {
+            add_come_code(info, "%s;\n", make_define_var(left_type, var_->mCValueName, info));
+        }
+        else {
+            err_msg(info, "unexpected error. define(%s)\n", self.name);
+            return false;
+        }
+        
+        CVALUE*% come_value = new CVALUE;
+        
+        come_value.c_value = xsprintf("%s", var_->mCValueName);
+        come_value.type = clone left_type;
+        come_value.var = var_;
+        
+        info.stack.push_back(come_value);
     }
-    
-    sVar* var_ = get_variable_from_table(info.lv_table, self.name);
-    
-    if(var_ == null) {
-        err_msg("var not found(%s)\n", self.name);
-        return true;
+    else {
+        if(!self.right_value.compile->(info)) {
+            return false;
+        }
+        
+        CVALUE* right_value = get_value_from_stack(-1, info);
+        sType* right_type = right_value.type;
+        
+        sVar* var_ = get_variable_from_table(info.lv_table, self.name);
+        
+        if(var_ == null) {
+            err_msg(info, "var not found(%s) at storing variable\n", self.name);
+            return true;
+        }
+        
+        if(var_->mType == NULL) {
+            var_->mType = clone right_type;
+        }
+        sType*% left_type = clone var_->mType;
+        
+        if(self.alloc) {
+            add_come_code(info, "%s=%s;\n", make_define_var(left_type, var_->mCValueName, info), right_value->c_value);
+        }
+        else {
+            add_come_code(info, "%s=%s;\n", var_->mCValueName, right_value->c_value);
+        }
+        
+        CVALUE*% come_value = new CVALUE;
+        
+        come_value.c_value = xsprintf("%s", var_->mCValueName);
+        come_value.type = clone left_type;
+        come_value.var = var_;
+        
+        dec_stack_ptr(-1, info);
+        
+        info.stack.push_back(come_value);
     }
-    
-    if(var_->mType == NULL) {
-        var_->mType = clone right_type;
-    }
-    sType* left_type = clone var_->mType;
-    
-    CLVALUE* right_value = get_value_from_stack(-1, info);
-    sType* right_type = right_value.type;
-    
-    if(alloc) {
-        add_come_code(info, "%s=%s;\n", make_define_var(left_type, var_->mCValueName, info), right_value->c_value);
-    }
-    eles {
-        add_come_code(info, "%s=%s;\n", var_->mCValueName, right_value->c_value);
-    }
-    
-    CVALUE*% come_value = new CVALUE;
-    
-    come_value.c_value = xsprintf("%s", var_->CValueName);
-    come_value.type = clone left_type;
-    come_value.var = var_;
-    
-    dec_stack_ptr(-1, info);
-    
-    info.stack.push_back(come_value);
     
     return true;
 }
@@ -95,14 +127,14 @@ bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
     sVar* var_ = get_variable_from_table(info.lv_table, self.name);
     
     if(var_ == null) {
-        err_msg("var not found(%s)\n", self.name);
+        err_msg(info, "var not found(%s) at loading variable\n", self.name);
         return true;
     }
     
     CVALUE*% come_value = new CVALUE;
     
     come_value.c_value = xsprintf("%s", var_->mCValueName);
-    come_value.type = clone var_->type;
+    come_value.type = clone var_->mType;
     come_value.var = var_;
     
     info.stack.push_back(come_value);
@@ -128,7 +160,23 @@ bool is_type_name(char* buf, sInfo* info)
 
 }
 
-exception sNode*% string_node(char* buf, char* head, sInfo* info) version 98
+sVar*% sVar*::initialize(sVar*% self, char* name, sType* type, sInfo* info)
+{
+    self->mName = string(name);
+    self->mType = clone type;
+    
+    self->mGlobal = info->block_level == 0;
+    self->mCValueName = xsprintf("%s_%d", name, info->block_level);
+    
+    self->mBlockLevel = info->block_level;
+    self->mAllocaValue = false;
+    self->mFunctionParam = false;
+    self->mNoFree = false;
+    
+    return self;
+}
+
+exception sNode*% string_node(char* buf, char* head, sInfo* info) version 7
 {
     sVar* var_ = get_variable_from_table(info.lv_table, buf);
     bool is_type_name_flag = is_type_name(buf, info);
@@ -143,7 +191,8 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 98
         
         return new sNode(new sStoreNode(string(buf)@name, false@alloc, right_value, info));
     }
-    else if(var_) {
+    else if(var_ && *info->p != '(') {
+        return new sNode(new sLoadNode(string(buf)@name, info));
     }
     else if(is_type_name_flag && *info->p != '(') {
         info.p.p = head;
@@ -152,8 +201,7 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 98
             throw;
         }
         
-        info.lv_table.insert(string(name), new sVar
-        , type, name);
+        info.lv_table.mVars.insert(string(name), new sVar(name, type, info));
         
         if(*info->p == '=') {
             info.p++;
@@ -163,9 +211,14 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 98
                 throw;
             }
             
-            return new sNode(new sStoreNode(string(buf)@name, true@alloc, right_value, info));
+            return new sNode(new sStoreNode(string(name)@name, true@alloc, right_value, info));
         }
         else {
+            return new sNode(new sStoreNode(string(name)@name, true@alloc, null!, info));
         }
+    }
+    
+    return inherit(buf, head ,info).catch {
+        throw;
     }
 }

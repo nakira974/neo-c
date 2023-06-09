@@ -600,6 +600,7 @@ BOOL parse_alloca(unsigned int* node, sParserInfo* info);
 BOOL parse_sizeof(unsigned int* node, sParserInfo* info);
 BOOL parse_alignof(unsigned int* node, sParserInfo* info);
 BOOL parse_clone(unsigned int* node, sParserInfo* info);
+BOOL parse_shallow_clone(unsigned int* node, sParserInfo* info);
 BOOL parse_delete(unsigned int* node, sParserInfo* info);
 BOOL parse_managed(unsigned int* node, sParserInfo* info);
 BOOL parse_dummy_heap(unsigned int* node, sParserInfo* info);
@@ -622,6 +623,8 @@ BOOL parse_impl(unsigned int* node, sParserInfo* info);
 void parse_impl_end(sParserInfo* info);
 BOOL parse_new(unsigned int* node, sParserInfo* info);
 BOOL parse_var(unsigned int* node, sParserInfo* info, BOOL readonly);
+BOOL parse_gc_dec(unsigned int* node, sParserInfo* info);
+BOOL parse_gc_inc(unsigned int* node, sParserInfo* info);
 BOOL parse_inherit(unsigned int* node, sParserInfo* info);
 BOOL parse_defer(unsigned int* node, sParserInfo* info);
 BOOL parse_call_macro(unsigned int* node, char* name, sParserInfo* info);
@@ -742,7 +745,7 @@ extern LLVMBuilderRef gBuilder;
 
 enum { kNodeTypeIntValue, kNodeTypeList, kNodeTypeMap, kNodeTypeFloatValue, kNodeTypeDoubleValue, kNodeTypeUIntValue, kNodeTypeLongValue, kNodeTypeULongValue, kNodeTypeAdd, kNodeTypeSub, kNodeTypeStoreVariable, kNodeTypeStoreVariableMultiple, kNodeTypeLoadVariable, kNodeTypeLoadChannelElement, kNodeTypeDefineVariable, kNodeTypeIsHeap, kNodeTypeCString, kNodeTypeRegex, kNodeTypeFunction, kNodeTypeExternalFunction, kNodeTypeFunctionCall, kNodeTypeComeFunctionCall, kNodeTypeIf, kNodeTypeGuard, kNodeTypeEquals, kNodeTypeNotEquals, kNodeTypeEquals2, kNodeTypeNotEquals2, kNodeTypeStruct, kNodeTypeObject, kNodeTypeStackObject, kNodeTypeStoreField, kNodeTypeStoreFieldOfProtocol, kNodeTypeLoadField, kNodeTypeWhile, kNodeTypeDoWhile, kNodeTypeGteq, kNodeTypeLeeq, kNodeTypeGt, kNodeTypeLe, kNodeTypeLogicalDenial, kNodeTypeTrue, kNodeTypeFalse, kNodeTypeAndAnd, kNodeTypeOrOr, kNodeTypeFor, kNodeTypeLambdaCall, kNodeTypeDerefference, kNodeTypeRefference, kNodeTypeRefferenceLoadField, kNodeTypeNull, kNodeTypeClone, kNodeTypeLoadElement, kNodeTypeStoreElement, kNodeTypeChar, kNodeTypeMult, kNodeTypeDiv, kNodeTypeMod, kNodeTypeCast, kNodeTypeGenericsFunction, kNodeTypeInlineFunction, kNodeTypeTypeDef, kNodeTypeUnion, kNodeTypeLeftShift, kNodeTypeRightShift, kNodeTypeAnd, kNodeTypeXor, kNodeTypeOr, kNodeTypeReturn, kNodeTypeSizeOf, kNodeTypeSizeOfExpression, kNodeTypeNodes, kNodeTypeLoadFunction, kNodeTypeArrayWithInitialization, kNodeTypeStructInitializer, kNodeTypeNormalBlock, kNodeTypeSelect, kNodeTypePSelect, kNodeTypeSwitch, kNodeTypeBreak, kNodeTypeContinue, kNodeTypeCase, kNodeTypeLabel, kNodeTypeGoto, kNodeTypeConditional, kNodeTypeAlignOf, kNodeTypeAlignOfExpression, kNodeTypeComplement, kNodeTypeStoreAddress, kNodeTypeLoadAddressValue, kNodeTypePlusPlus, kNodeTypeMinusMinus, kNodeTypeEqualPlus, kNodeTypeEqualMinus, kNodeTypeEqualMult, kNodeTypeEqualDiv, kNodeTypeEqualMod, kNodeTypeEqualLShift, kNodeTypeEqualRShift, kNodeTypeEqualAnd, kNodeTypeEqualXor, kNodeTypeEqualOr, kNodeTypeComma, kNodeTypeFunName, kNodeTypeJoin, kNodeTypeWriteChannel, kNodeTypeReadChannel, kNodeTypeStack, kNodeTypeMethodBlock, kNodeTypeDefer, kNodeTypeManaged, kNodeTypeDelete, kNodeTypeDummyHeap, kNodeTypeBorrow, kNodeTypeNoMove, kNodeTypeNullable, kNodeTypeNoNullable, kNodeTypeIsGCHeap, kNodeTypeUnwrap, kNodeTypeDupeFunction, kNodeTypeSName, kNodeTypeSLine, kNodeTypeCallerSName, kNodeTypeCallerSLine, kNodeTypeStoreDerefference, kNodeTypeVaArg };
 
-enum { kNodeTypeLChar = kNodeTypeVaArg + 1, kNodeTypeWCString, kNodeTypeCreateLabel, kNodeTypeNullValue, kNodeTypeMacro, kNodeTypeIsGC, kNodeTypeTuple, kNodeTypeParen, kNodeTypeDefineArrayWithInitializer, kNodeTypeThrowNullValue };
+enum { kNodeTypeLChar = kNodeTypeVaArg + 1, kNodeTypeWCString, kNodeTypeCreateLabel, kNodeTypeNullValue, kNodeTypeMacro, kNodeTypeIsGC, kNodeTypeTuple, kNodeTypeParen, kNodeTypeDefineArrayWithInitializer, kNodeTypeThrowNullValue, kNodeTypeShallowClone, kNodeTypeGCInc, kNodeTypeGCDec };
 
 static const BOOL gMultDivPlusPlusEnableNode[] = {
     1, 1, 1, 1, 1, 1, 1,     1, 1, 1, 0, 0, 1,     1, 0, 0, 1, 1, 0, 0,     1, 1, 0, 0, 1, 1, 1,     1, 0, 0, 0, 1, 1,     1, 0, 0, 1, 1, 1, 1, 1,     1, 1, 1, 1, 0, 1, 1, 1,     1, 1, 1, 1, 1, 1, 1, 1, 1,     1, 0, 0, 0, 1, 1, 1,     1, 1, 0, 1, 1, 0, 0,     0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0, 1, 1,     1, 0, 0, 1, 1, 0,     0, 0, 0, 0, 0, 0, 0,     0, 0, 1, 0, 0, 1, 1, 0,     0, 0, 0, 0, 0, 0, 0, 1,     1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0 
@@ -1104,6 +1107,7 @@ struct sNodeTreeStruct
 };
 
 void increment_ref_count(LLVMValueRef obj, sNodeType* node_type, char* c_value, sCompileInfo* info);
+void decrement_ref_count(LLVMValueRef obj, sNodeType* node_type, char* c_value, sCompileInfo* info);
 char* append_object_to_right_values(LLVMValueRef obj, sNodeType* node_type, sCompileInfo* info);
 void remove_object_from_right_values(LLVMValueRef obj, sCompileInfo* info);
 void free_right_value_objects(sCompileInfo* info);
@@ -1159,6 +1163,7 @@ void append_node_to_node_block(sNodeBlock* node_block, unsigned int node);
 
 void compile_err_msg(sCompileInfo* info, const char* msg, ...);
 LLVMValueRef clone_object(sNodeType* node_type, LLVMValueRef obj, char* obj_c_value, char** c_value, sCompileInfo* info);
+LLVMValueRef shallow_clone_object(sNodeType* node_type, LLVMValueRef obj, LLVMValueRef obj_address, char* obj_c_value, char** c_value, sCompileInfo* info);
 
 void show_node(unsigned int node);
 BOOL compile(unsigned int node, sCompileInfo* info);
@@ -1368,6 +1373,7 @@ unsigned int sNodeTree_create_stack_object(sNodeType* node_type, unsigned int ob
 unsigned int sNodeTree_create_derefference(unsigned int left_node, BOOL parent, sNodeType* cast_pointer_type, BOOL no_check_safe_mode, sParserInfo* info);
 unsigned int sNodeTree_create_refference(unsigned int left_node, sParserInfo* info);
 unsigned int sNodeTree_create_clone(unsigned int left, BOOL gc, sParserInfo* info);
+unsigned int sNodeTree_create_shallow_clone(unsigned int left, BOOL gc, sParserInfo* info);
 unsigned int sNodeTree_create_is_gc_heap(unsigned int left, sParserInfo* info);
 unsigned int sNodeTree_create_load_array_element(unsigned int array, unsigned int index_node[], int num_dimention, sParserInfo* info);
 unsigned int sNodeTree_create_store_element(unsigned int array, unsigned int index_node[], int num_dimetion, unsigned int right_node, sParserInfo* info);
@@ -1443,6 +1449,7 @@ BOOL compile_load_field(unsigned int node, sCompileInfo* info);
 BOOL compile_derefference(unsigned int node, sCompileInfo* info);
 BOOL compile_refference(unsigned int node, sCompileInfo* info);
 BOOL compile_clone(unsigned int node, sCompileInfo* info);
+BOOL compile_shallow_clone(unsigned int node, sCompileInfo* info);
 BOOL compile_is_gc_heap(unsigned int node, sCompileInfo* info);
 BOOL compile_is_gc(unsigned int node, sCompileInfo* info);
 BOOL compile_load_element(unsigned int node, sCompileInfo* info);
@@ -1633,6 +1640,10 @@ void add_declare_right_value_var(struct sCompileInfoStruct* info, char* var_name
 
 unsigned int sNodeTree_create_throw_null_value(sParserInfo* info);
 BOOL compile_throw_null_value(unsigned int node, sCompileInfo* info);
+unsigned int sNodeTree_create_gc_inc(unsigned int object_node, sParserInfo* info);
+BOOL compile_gc_inc(unsigned int node, sCompileInfo* info);
+unsigned int sNodeTree_create_gc_dec(unsigned int object_node, sParserInfo* info);
+BOOL compile_gc_dec(unsigned int node, sCompileInfo* info);
 
 #endif
 

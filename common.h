@@ -85,13 +85,10 @@ struct CVALUE {
 
 struct sVar {
     string mName;
-    string mValue;
-    int mIndex;
-    sType* mType;
+    string mCValueName;
+    sType*% mType;
 
     int mBlockLevel;
-
-    CVALUE mLLVMValue;
 
     bool mGlobal;
     bool mAllocaValue;
@@ -119,8 +116,6 @@ struct sFun
     buffer*% mSource;
     buffer*% mSourceHead;
     buffer*% mSourceDefer;
-    
-    sVarTable* mVarTable;
 };
 
 struct sModule
@@ -174,7 +169,7 @@ struct sInfo
     bool no_output_come_code;
     
     sFun* come_fun;
-    int come_nest;
+    int block_level;
 
     map<string, sFun*%>*% funcs;
     map<string, sClass*%>*% classes;
@@ -192,7 +187,7 @@ struct sInfo
     sType*% come_function_result_type;
     
     sVarTable* lv_table;
-    sVarTable*% head_lv_tabale;
+    sVarTable*% gv_table;
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -212,7 +207,9 @@ bool output_source_file(sInfo* info) version 2;
 sModule*% sModule*::initialize(sModule*% self);
 sType*% sType*::initialize(sType*% self, char* name, sInfo* info, bool heap=false);
 sVarTable*% sVarTable*::initialize(sVarTable*% self, bool global, sVarTable* parent);
-sType*% sType::clone(sType* self);
+sVarTable*% sVarTable*::clone(sVarTable* self);
+sType*% sType*::clone(sType* self);
+sType*% sType*::shallow_clone(sType* self);
 void sType*::finalize(sType* self);
 sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool struct_=false, bool union_=false, bool generics=false, bool method_generics=false, bool protocol_=false, bool struct_=false, int generics_num=-1, int method_generics_num=-1);
 sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, bool external, bool var_args, sInfo* info);
@@ -264,12 +261,17 @@ exception sNode*% expression_node(sInfo* info) version 99;
 
 exception int transpile(sInfo* info) version 5;
 void parse_sharp(sInfo* info) version 5;
-exception sNode*% string_node(char* buf, char* head, sInfo* info) version 99;
+exception sNode*% string_node(char* buf, char* head, sInfo* info) version 5;
 
 /////////////////////////////////////////////////////////////////////
 /// 06str.c ///
 /////////////////////////////////////////////////////////////////////
 exception sNode*% expression_node(sInfo* info) version 98;
-exception sNode*% string_node(char* buf, char* head, sInfo* info) version 98;
+
+/////////////////////////////////////////////////////////////////////
+/// 07var.c
+/////////////////////////////////////////////////////////////////////
+sVar*% sVar*::initialize(sVar*% self, char* name, sType* type, sInfo* info);
+exception sNode*% string_node(char* buf, char* head, sInfo* info) version 7;
 
 #endif

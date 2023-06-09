@@ -2569,6 +2569,11 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 return FALSE;
             }
         }
+        else if(gNCCome && strcmp(buf, "shallow_clone") == 0) {
+            if(!parse_shallow_clone(node, info)) {
+                return FALSE;
+            }
+        }
         else if(gNCCome && strcmp(buf, "new") == 0) {
             if(!parse_new(node, info)) {
                 return FALSE;
@@ -2626,6 +2631,16 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
         }
         else if(strcmp(buf, "dummy_heap") == 0) {
             if(!parse_dummy_heap(node, info)) {
+                return FALSE;
+            }
+        }
+        else if(strcmp(buf, "gc_inc") == 0) {
+            if(!parse_gc_inc(node, info)) {
+                return FALSE;
+            }
+        }
+        else if(strcmp(buf, "gc_dec") == 0) {
+            if(!parse_gc_dec(node, info)) {
                 return FALSE;
             }
         }
@@ -3034,7 +3049,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                         {
                             struct_name = info->impl_struct_name;
                             
-                            if(strcmp(name, "finalize") == 0 || strcmp(name, "clone") == 0) {
+                            if(strcmp(name, "finalize") == 0 || strcmp(name, "clone") == 0 || strcmp(name, "shallow_clone") == 0) {
                                 struct_name = info->impl_struct_name2;
                             }
                         }
@@ -3048,7 +3063,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                             if(info->mInClass) {
                                 char name2[VAR_NAME_MAX];
                                 xstrncpy(name2, info->impl_struct_name, VAR_NAME_MAX);
-                                if(strcmp(name, "finalize") == 0 || strcmp(name, "clone") == 0) {
+                                if(strcmp(name, "finalize") == 0 || strcmp(name, "clone") == 0 || strcmp(name, "shallow_clone") == 0) {
                                     xstrncat(name2, "_", VAR_NAME_MAX);
                                 }
                                 else {

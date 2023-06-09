@@ -1,8 +1,9 @@
-
 int puts(const char* str);
 
 int main(int argc, char** argv)
 {
-    puts("HELLO WORLD");
+    int a;
+    
     return 0;
 }
+

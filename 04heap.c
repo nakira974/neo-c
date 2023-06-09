@@ -295,9 +295,9 @@ sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sInfo* 
         
         info.come_fun = finalizer;
         
-        info.come_nest++;
+        info.block_level++;
         add_come_code(info, source.to_string());
-        info.come_nest--;
+        info.block_level--;
     }
     
     info->come_function_result_type = dummy_heap come_function_result_type;
@@ -442,14 +442,14 @@ void free_objects(sVarTable* table, char* ret_value, sInfo* info)
         sType* type = p->mType;
         sClass* klass = type->mClass;
 
-        if(type->mHeap && !p->mNoFree && p->mValue && p->mValue != ret_value)
+        if(type->mHeap && !p->mNoFree && p->mCValueName && p->mCValueName !== ret_value)
         {
-            free_object(p->mType, p->mValue, false@force_delete, info);
-            remove_object_from_right_values(p->mValue, info);
+            free_object(p->mType, p->mCValueName, false@force_delete, info);
+            remove_object_from_right_values(p->mCValueName, info);
 
-            p->mValue = null;
+            p->mCValueName = null;
         }
-        else if(p->mAllocaValue && klass->mStruct && gComelang && p->mValue != ret_value) 
+        else if(p->mAllocaValue && klass->mStruct && gComelang && p->mCValueName !== ret_value) 
         {
             sType*% type = clone p->mType;
             type->mPointerNum++;
@@ -464,7 +464,7 @@ void free_objects(sVarTable* table, char* ret_value, sInfo* info)
             }
             
             if(exist_heap_fields) {
-                free_object(type, p->mValue, false@force_delete, info);
+                free_object(type, p->mCValueName, false@force_delete, info);
             }
         }
     }

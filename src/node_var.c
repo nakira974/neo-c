@@ -926,6 +926,11 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
     if(left_type->mHeap) {
         remove_object_from_right_values(rvalue.value, info);
     }
+    
+    if(!left_type->mHeap && right_type->mHeap && is_right_values(rvalue.value, info)) {
+        compile_err_msg(info, "append %% to variable type. This stored object is freed");
+        return FALSE;
+    }
 
     return TRUE;
 }
@@ -1146,11 +1151,6 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
         
         if(left_type->mHeap) {
             tmp_rvalue = xsprintf("__tmp_variable_multiple%d", ++tmp_var_num);
-            if(right_type2->mHeap && gNCTranspile) {
-                char* c_value = NULL;
-                rvalue2.value = clone_object(right_type2, rvalue2.value, rvalue2.c_value, &c_value, info);
-                rvalue2.c_value = c_value;
-            }
             add_come_code(info, "%s = %s;\n", make_define_var(right_type, tmp_rvalue, info), rvalue2.c_value);
         }
         else { 
@@ -1168,7 +1168,8 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
                     free_object(left_type, obj2, var_->mLLVMValue.c_value, FALSE, info);
                 }
                 
-                var_->mLLVMValue.value = clone_object(right_type2, rvalue2.value, rvalue2.c_value, &c_value, info);
+                var_->mLLVMValue.value = rvalue2.value;
+                increment_ref_count(rvalue2.value, right_type2, rvalue2.c_value, info);
     
                 info->type = left_type;
             }
@@ -1196,9 +1197,7 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
                 llvm_change_block(this_block, info);
                 
                 if(right_type2->mHeap) {
-                    char* c_value = NULL;
-                    rvalue2.value = clone_object(right_type2, rvalue2.value, rvalue2.c_value, &c_value, info);
-                    rvalue2.c_value = c_value;
+                    increment_ref_count(rvalue2.value, right_type2, rvalue2.c_value, info);
                 }
     
                 LLVMBuildStore(gBuilder, rvalue2.value, alloca_value);
@@ -1234,9 +1233,7 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
             obj = var_->mLLVMValue.value;
             
             if(right_type2->mHeap) {
-                char* c_value = NULL;
-                rvalue2.value = clone_object(right_type2, rvalue2.value, rvalue2.c_value, &c_value, info);
-                rvalue2.c_value = c_value;
+                increment_ref_count(rvalue2.value, right_type2, rvalue2.c_value, info);
             }
             
             if(obj && left_type->mHeap) {
@@ -1357,6 +1354,89 @@ BOOL compile_clone(unsigned int node, sCompileInfo* info)
     
         char* c_value = NULL;
         LLVMValueRef obj = clone_object(left_type2, lvalue.value, lvalue.c_value, &c_value, info);
+    
+        dec_stack_ptr(1, info);
+    
+        LVALUE llvm_value;
+        llvm_value.value = obj;
+        llvm_value.type = clone_node_type(left_type2);
+        llvm_value.address = NULL;
+        llvm_value.var = NULL;
+        
+        if(left_type2->mHeap) {
+            char* var_name = append_object_to_right_values(obj, left_type2, info);
+            if(c_value) {
+                llvm_value.c_value = xsprintf("(%s = %s)", var_name, c_value);
+            }
+            else {
+                llvm_value.c_value = xsprintf("%s", lvalue.c_value);
+            }
+        }
+        else {
+            llvm_value.c_value = xsprintf("%s", lvalue.c_value);
+        }
+    
+        push_value_to_stack_ptr(&llvm_value, info);
+    
+        info->type = clone_node_type(left_type2);
+    }
+
+    return TRUE;
+}
+
+unsigned int sNodeTree_create_shallow_clone(unsigned int left, BOOL gc, sParserInfo* info)
+{
+    unsigned int node = alloc_node();
+
+    gNodes[node].mNodeType = kNodeTypeShallowClone;
+
+    xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
+    gNodes[node].mLine = info->sline;
+
+    gNodes[node].uValue.sClone.mGC = gc;
+
+    gNodes[node].mLeft = left;
+    gNodes[node].mRight = 0;
+    gNodes[node].mMiddle = 0;
+
+    return node;
+}
+
+BOOL compile_shallow_clone(unsigned int node, sCompileInfo* info)
+{
+    BOOL gc = gNodes[node].uValue.sClone.mGC;
+
+    unsigned int left_node = gNodes[node].mLeft;
+
+    if(!compile(left_node, info)) {
+        return FALSE;
+    }
+
+    LVALUE lvalue = *get_value_from_stack(-1);
+
+    if(lvalue.value == NULL) {
+        compile_err_msg(info, "Can't get address of this value on clone operator");
+        return TRUE;
+    }
+    
+    BOOL is_null_value = FALSE;
+    if(LLVMIsNull(lvalue.value) != 0) {
+        is_null_value = TRUE;
+    }
+    
+    if(is_number_type(info->type) || is_null_value) {
+        dec_stack_ptr(1, info);
+        push_value_to_stack_ptr(&lvalue, info);
+    }
+    else {
+        sNodeType* left_type = clone_node_type(info->type);
+        sNodeType* left_type2 = clone_node_type(left_type);
+        if(!gNCGC) {
+            left_type2->mHeap = TRUE;
+        }
+    
+        char* c_value = NULL;
+        LLVMValueRef obj = shallow_clone_object(left_type2, lvalue.value, lvalue.address, lvalue.c_value, &c_value, info);
     
         dec_stack_ptr(1, info);
     
@@ -5780,7 +5860,7 @@ BOOL store_obj_to_protocol(unsigned int interface_node, unsigned int obj_node, s
             char struct_name[VAR_NAME_MAX];
             xstrncpy(struct_name, obj_class_name, VAR_NAME_MAX);
             
-            if(strcmp(field_name, "finalize") != 0 && strcmp(field_name, "clone") != 0) {
+            if(strcmp(field_name, "finalize") != 0 && strcmp(field_name, "clone") != 0 && strcmp(field_name, "shallow_clone") != 0) {
                 int j;
                 for(j=0; j<obj_type->mPointerNum; j++) {
                     xstrncat(struct_name, "p", VAR_NAME_MAX);
@@ -6591,6 +6671,11 @@ BOOL compile_store_field(unsigned int node, sCompileInfo* info)
     push_value_to_stack_ptr(&llvm_value, info);
 
     info->type = clone_node_type(right_type);
+    
+    if(!field_type->mHeap && right_type->mHeap && is_right_values(rvalue.value, info)) {
+        compile_err_msg(info, "append %% to variable type. This stored object is freed");
+        return FALSE;
+    }
 
     return TRUE;
 }
@@ -8251,6 +8336,100 @@ BOOL compile_dummy_heap(unsigned int node, sCompileInfo* info)
     push_value_to_stack_ptr(&llvm_value, info);
 
     info->type = clone_node_type(llvm_value.type);
+
+    return TRUE;
+}
+
+unsigned int sNodeTree_create_gc_inc(unsigned int object_node, sParserInfo* info)
+{
+    unsigned node = alloc_node();
+
+    gNodes[node].mNodeType = kNodeTypeGCInc;
+
+    xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
+    gNodes[node].mLine = info->sline;
+    
+    gNodes[node].uValue.sDummyHeap.mNCCome = gNCCome;
+
+    gNodes[node].mLeft = object_node;
+    gNodes[node].mRight = 0;
+    gNodes[node].mMiddle = 0;
+
+    return node;
+}
+
+BOOL compile_gc_inc(unsigned int node, sCompileInfo* info)
+{
+    BOOL nc_come = gNodes[node].uValue.sDummyHeap.mNCCome;
+    unsigned int left_node = gNodes[node].mLeft;
+
+    if(left_node == 0) {
+        compile_err_msg(info, "require dummy heap target object");
+        return TRUE;
+    }
+
+    if(!compile(left_node, info)) {
+        return FALSE;
+    }
+
+    LVALUE llvm_value = *get_value_from_stack(-1);
+
+    if(nc_come) {
+        LLVMValueRef obj = llvm_value.value;
+        char* c_value = llvm_value.c_value;
+        increment_ref_count(obj, info->type, c_value, info);
+    }
+    
+    dec_stack_ptr(1, info);
+
+    info->type = create_node_type_with_class_name("void");
+
+    return TRUE;
+}
+
+unsigned int sNodeTree_create_gc_dec(unsigned int object_node, sParserInfo* info)
+{
+    unsigned node = alloc_node();
+
+    gNodes[node].mNodeType = kNodeTypeGCDec;
+
+    xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
+    gNodes[node].mLine = info->sline;
+    
+    gNodes[node].uValue.sDummyHeap.mNCCome = gNCCome;
+
+    gNodes[node].mLeft = object_node;
+    gNodes[node].mRight = 0;
+    gNodes[node].mMiddle = 0;
+
+    return node;
+}
+
+BOOL compile_gc_dec(unsigned int node, sCompileInfo* info)
+{
+    BOOL nc_come = gNodes[node].uValue.sDummyHeap.mNCCome;
+    unsigned int left_node = gNodes[node].mLeft;
+
+    if(left_node == 0) {
+        compile_err_msg(info, "require dummy heap target object");
+        return TRUE;
+    }
+
+    if(!compile(left_node, info)) {
+        return FALSE;
+    }
+
+    LVALUE llvm_value = *get_value_from_stack(-1);
+
+    if(nc_come) {
+        LLVMValueRef obj = llvm_value.value;
+        char* c_value = llvm_value.c_value;
+        decrement_ref_count(obj, info->type, c_value, info);
+    }
+    
+    dec_stack_ptr(1, info);
+
+    info->type = create_node_type_with_class_name("void");
 
     return TRUE;
 }

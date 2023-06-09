@@ -1137,7 +1137,7 @@ BOOL parse_inline_function(unsigned int* node, sParserInfo* info)
             return FALSE;
         }
         
-        if(strcmp(fun_name, "finalize") != 0 && strcmp(fun_name, "clone") != 0) {
+        if(strcmp(fun_name, "finalize") != 0 && strcmp(fun_name, "clone") != 0 && strcmp(fun_name, "shallow_clone") != 0) {
             int k;
             for(k=0; k<pointer_num; k++) {
                 xstrncat(struct_name, "p", VAR_NAME_MAX);

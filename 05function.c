@@ -148,7 +148,6 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
     type->mLongLong = long_long;
     type->mLong = long_;
     type->mShort = short_;
-    type->mGenericsTypes = borrow new list<sType*>();
     
     if(*info->p == '<') {
         info->p++;
@@ -220,18 +219,6 @@ sBlock*% sBlock*::initialize(sBlock*% self, sVarTable* lv_table, sInfo* info)
     
     return self;
 }
-
-/*
-sBlock*% sBlock*::clone(sBlock* self)
-{
-    sBlock*% result = new sBlock;
-    
-    result.mNodes = self.mNodes;
-    result.mVarTable = self.mVarTable;
-    
-    return result;
-}
-*/
 
 struct sIntNode
 {
@@ -530,6 +517,9 @@ exception sBlock*% parse_block(sInfo* info)
     var result = new sBlock(lv_table, info);
     info->lv_table = result.mVarTable;
     
+    int block_level = info->block_level;
+    info->block_level++;
+    
     if(*info->p == '{') {
         info->p++;
         while(true) {
@@ -573,6 +563,7 @@ exception sBlock*% parse_block(sInfo* info)
     }
     
     info->lv_table = lv_table;
+    info->block_level = block_level;
     
     return result;
 }

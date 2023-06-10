@@ -46,6 +46,17 @@ void igc_increment_ref_count(void* mem)
     (*ref_count)++;
 }
 
+void print_ref_count(void* mem)
+{
+    if(mem == NULL) {
+        return;
+    }
+    
+    int* ref_count = (int*)((char*)mem - sizeof(int) - sizeof(long));
+    
+    printf("ref count %d\n", *ref_count);
+}
+
 void igc_decrement_ref_count(void* mem)
 {
     if(mem == NULL) {
@@ -162,3 +173,4 @@ void unwrap_exception(char* sname, int sline, char* mem)
         exit(2);
     }
 }
+

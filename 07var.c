@@ -211,10 +211,10 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 7
                 throw;
             }
             
-            return new sNode(new sStoreNode(string(name)@name, true@alloc, right_value, info));
+            return new sNode(new sStoreNode(name, true@alloc, right_value, info));
         }
         else {
-            return new sNode(new sStoreNode(string(name)@name, true@alloc, null!, info));
+            return new sNode(new sStoreNode(name, true@alloc, null!, info));
         }
     }
     

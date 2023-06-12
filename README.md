@@ -8,7 +8,7 @@ Yet another modern compiler. It has a collection and string library using Boehm 
 もう一つのモダンコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 1.2.2
+version 1.2.3
 
 ``` C
 #include <comelang.h>
@@ -383,6 +383,10 @@ From version 1.2.0 Fixed exception and protocol bug.
 From version 1.2.1 リファレンスカウントを+1するgc_incとリファレンスカウントを-1するgc_decが入りました。浅いコピーをするshallow_cloneが入りました。マルチディフィニションと例外とヒープの3使った場合のバグを修正。
 
 From version 1.2.1 gc_inc to +1 the reference count and the reference count to -1 gc_dec entered. shallow_clone for shallow copying is included. Fixed a bug when using multi-definition, exceptions and heap 3.
+
+From version 1.2.3 stringの!==が定義されてませんでした。定義しました。
+
+From version 1.2.3 appended string !==
 
 From 
 

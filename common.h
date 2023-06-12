@@ -231,6 +231,7 @@ void add_come_last_code(sInfo* info, const char* msg, ...);
 void dec_stack_ptr(int value, sInfo* info);
 CVALUE* get_value_from_stack(int offset, sInfo* info);
 string make_define_var(sType* type, char* name, sInfo* info);
+void transpiler_clear_last_code(sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
 /// 04heap.c ///
@@ -257,6 +258,7 @@ exception int expected_next_character(char c, sInfo* info);
 exception sNode*% parse_function(sInfo* info);
 
 exception sNode*% expression(sInfo* info) version 5;
+exception sNode*% expression_node(sInfo* info) version 1;
 exception sNode*% expression_node(sInfo* info) version 99;
 
 exception int transpile(sInfo* info) version 5;
@@ -273,5 +275,10 @@ exception sNode*% expression_node(sInfo* info) version 98;
 /////////////////////////////////////////////////////////////////////
 sVar*% sVar*::initialize(sVar*% self, char* name, sType* type, sInfo* info);
 exception sNode*% string_node(char* buf, char* head, sInfo* info) version 7;
+
+/////////////////////////////////////////////////////////////////////
+/// 08if.c
+/////////////////////////////////////////////////////////////////////
+exception sNode*% string_node(char* buf, char* head, sInfo* info) version 8;
 
 #endif

@@ -3,6 +3,60 @@
 
 void parse_sharp(sInfo* info) version 5
 {
+    while(*info->p == '#') {
+        skip_spaces_and_lf(info);
+    
+        info->p++;
+        skip_spaces_and_lf(info);
+
+        if(xisdigit(*info->p)) {
+            int line = 0;
+            char fname[PATH_MAX];
+
+            while(xisdigit(*info->p)) {
+                line = line * 10 + (*info->p - '0');
+                info->p++;
+            }
+            skip_spaces_and_lf(info);
+
+            if(*info->p == '"') {
+                info->p++;
+
+                char* p = fname;
+
+                while(*info->p != '"') {
+                    *p = *info->p;
+                    p++;
+                    info->p++;
+                }
+                *p = '\0';
+
+                while(*info->p != '\n') {
+                    info->p++;
+                }
+                info->p++;
+            }
+
+            info->sline = line;
+            info->sname = string(fname);
+
+            skip_spaces_and_lf(info);
+        }
+        else if(*info->p == '"') {
+            info->p++;
+
+            while(*info->p != '"') {
+                info->p++;
+            }
+
+            while(*info->p != '\n') {
+                info->p++;
+            }
+            info->p++;
+        }
+    
+        skip_spaces_and_lf(info);
+    }
 }
 
 bool parsecmp(char* str, sInfo* info) 
@@ -475,9 +529,15 @@ exception sNode*% expression_node(sInfo* info) version 99
         
         string buf = parse_word(info).catch {
             throw;
-        };
+        }
+puts(buf);
         
-        if(*info->p == '(') {
+        if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "return" && *info->p == '(') 
+        {
+puts("DDD");
+printf("%d\n", strcmp(buf, "if"));
+printf("%c\n", *info->p);
+printf("%d\n", buf !== "if" && buf !== "while" && buf !== "for" && buf !== "return" && *info->p == '(');
             sNode*% node = parse_function_call(buf, info).catch {
                 throw;
             }
@@ -485,6 +545,7 @@ exception sNode*% expression_node(sInfo* info) version 99
             return node;
         }
         else {
+puts("CCC");
             sNode*% node = string_node(buf, head, info).catch {
                 throw;
             }
@@ -723,6 +784,8 @@ exception sNode*% parse_function(sInfo* info)
             skip_spaces_and_lf(info);
             
             if(parsecmp("...", info)) {
+                info->p += strlen("...");
+                skip_spaces_and_lf(info);
                 var_args = true;
                 
                 expected_next_character(')', info);

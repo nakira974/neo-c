@@ -455,6 +455,33 @@ string xbasename(char* path)
     return string("");
 }
 
+string xnoextname(char* path)
+{
+    using unsafe;
+    
+    string path2 = xbasename(path);
+    
+    char* p = path2 + strlen(path2);
+    
+    while(p >= path2) {
+        if(*p == '.') {
+            break;
+        }
+        else {
+            p--;
+        }
+    }
+    
+    if(p < path2) {
+        return string(path2);
+    }
+    else {
+        return path2.substring(0, p - path2);
+    }
+    
+    return string("");
+}
+
 string xextname(char* path)
 {
     using unsafe;

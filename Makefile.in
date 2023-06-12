@@ -37,10 +37,12 @@ all: comelang no-self-host
 
 no-self-host: comelang lib lib-gc lib-ts
 
-comelang2: common.h 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 06str.o 07var.o
-	./comelang -no-gc -g -o comelang2 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 06str.o 07var.o
-	mkdir -p "$(DESTDIR)/bin"
+comelang2-install: comelang2
 	$(INSTALL) -m 755 ./comelang2 "$(DESTDIR)/bin"
+
+comelang2: common.h 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 06str.o 07var.o 08if.o
+	./comelang -no-gc -g -o comelang2 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 06str.o 07var.o 08if.o
+	mkdir -p "$(DESTDIR)/bin"
 
 01main.o: 01main.c common.h
 	./comelang -g -no-gc -s -c 01main.c
@@ -62,6 +64,9 @@ comelang2: common.h 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 
 
 07var.o: 07var.c common.h
 	./comelang -no-gc -g -s -c 07var.c
+
+08if.o: 08if.c common.h
+	./comelang -no-gc -g -s -c 08if.c
 
 comelang: config.h src/main.o $(OBJS) src/llvm.o
 	$(CC) -c src/main.c -o src/main.o $(CFLAGS)

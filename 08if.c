@@ -1,0 +1,196 @@
+#include "common.h"
+
+struct sIfNode
+{
+  sNode*% mExpressionNode;
+  sBlock*% mIfBlock;
+  list<sNode*%>*% mElifExpressionNodes;
+  list<sBlock*%>*% mElifBlocks;
+  int mElifNum;
+  sBlock*% mElseBlock;
+  
+  int sline;
+  string sname;
+};
+
+
+sIfNode*% sIfNode*::initialize(sIfNode*% self, sNode*% expression_node, sBlock* if_block, list<sNode*%>* elif_expression_nodes, list<sBlock*%>* elif_blocks, int elif_num, sBlock*? else_block, sInfo* info)
+{
+    self.sline = info.sline;
+    self.sname = string(info.sname);
+
+    self.mExpressionNode = clone expression_node;
+    self.mIfBlock = clone if_block;
+    self.mElifExpressionNodes = clone elif_expression_nodes;
+    self.mElifBlocks = clone elif_blocks;
+    self.mElifNum = elif_num;
+    
+    if(else_block) {
+        self.mElseBlock = clone else_block;
+    }
+    else {
+        self.mElseBlock = null;
+    }
+
+    return self;
+}
+
+bool sIfNode*::compile(sIfNode* self, sInfo* info)
+{
+    sBlock* else_block = self.mElseBlock;
+    int elif_num = self.mElifNum;
+
+    /// compile expression ///
+    sNode* expression_node = self.mExpressionNode;
+
+    if(!expression_node.compile->(info)) {
+        return false;
+    }
+
+    CVALUE* conditional_value = get_value_from_stack(-1, info);
+
+    free_right_value_objects(info);
+
+    sBlock* if_block = self.mIfBlock;
+    
+    add_come_code(info, "if(%s) {\n", conditional_value.c_value);
+    dec_stack_ptr(1, info);
+
+    transpile_block(if_block, info).catch {
+        return false;
+    }
+    
+    add_come_code(info, "}\n");
+
+    //// elif ///
+    if(elif_num > 0) {
+        for(int i=0; i<elif_num; i++) {
+            sNode* expression_node2 = self.mElifExpressionNodes[i];
+
+            if(!expression_node2.compile->(info)) {
+                return false;
+            }
+
+            CVALUE* conditional_value = get_value_from_stack(-1, info);
+
+            free_right_value_objects(info);
+
+            sBlock* elif_node_block = self.mElifBlocks[i];
+
+            add_come_code(info, "else if(%s) {\n", conditional_value.c_value);
+            
+            transpile_block(elif_node_block, info).catch {
+                return false;
+            }
+
+            add_come_code(info, "}\n");
+
+            dec_stack_ptr(1, info);
+        }
+    }
+
+    if(else_block) {
+        add_come_code(info, "else {\n");
+
+        transpile_block(else_block, info).catch {
+            return false;
+        }
+        
+        add_come_code(info, "}\n");
+    }
+    
+    transpiler_clear_last_code(info);
+
+    return TRUE;
+}
+
+int sIfNode*::sline(sIfNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sIfNode*::sname(sIfNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+exception sNode*% string_node(char* buf, char* head, sInfo* info) version 8
+{
+puts(buf);
+    if(buf === "if") {
+puts("AAA");
+        string sname = clone info->sname;
+        int sline = info->sline;
+    
+        expected_next_character('(', info).catch { throw; }
+    
+        /// expression ///
+        sNode*% expression_node = expression(info).catch {
+            throw;
+        }
+        
+        expected_next_character(')', info).catch { throw; }
+    
+        sBlock*% if_block = parse_block(info).catch { throw; }
+    
+        list<sNode*%>*% elif_expression_nodes = new list<sNode*%>();
+    
+        list<sBlock*%>*% elif_blocks = new list<sBlock*%>();
+    
+        int elif_num = 0;
+    
+        sBlock*% else_block = null;
+    
+        while(1) {
+            char* saved_p = info->p.p;
+            int saved_sline = info->sline;
+    
+            /// else ///
+            if(!xisalpha(*info->p)) {
+                break;
+            }
+            
+            string buf = parse_word(info).catch { throw };
+    
+            if(buf === "else") {
+                if(parsecmp("if", info)) {
+                    info->p+=strlen("if");
+                    skip_spaces_and_lf(info);
+    
+                    expected_next_character('(', info).catch { throw };
+    
+                    /// expression ///
+                    sNode*% expression_node = expression(info).catch {
+                        throw;
+                    }
+                    
+                    elif_expression_nodes.push_back(expression_node);
+    
+                    expected_next_character(')', info).catch { throw; }
+    
+                    
+                    sBlock*% elif_block = parse_block(info).catch { throw; }
+                    
+                    elif_blocks.push_back(elif_block);
+    
+                    elif_num++;
+                }
+                else {
+                    else_block = parse_block(info).catch { throw; }
+                    break;
+                }
+            }
+            else {
+                info->p.p = saved_p;
+                info->sline = saved_sline;
+                break;
+            }
+        };
+    
+        return new sNode(new sIfNode(expression_node, if_block, elif_expression_nodes, elif_blocks, elif_num, else_block, info));
+    }
+    
+    return inherit(buf, head ,info).catch {
+        throw;
+    }
+}

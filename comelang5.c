@@ -386,6 +386,26 @@ bool wstring::operator_equals(wchar_t* left, wchar_t* right)
     return wcscmp(left, right) == 0;
 }
 
+bool char*::operator_not_equals(char* left, char* right)
+{
+    return strcmp(left, right) != 0;
+}
+
+bool string::operator_not_equals(char* left, char* right)
+{
+    return strcmp(left, right) != 0;
+}
+
+bool wchar_t*::operator_not_equals(wchar_t* left, wchar_t* right)
+{
+    return wcscmp(left, right) != 0;
+}
+
+bool wstring::operator_not_equals(wchar_t* left, wchar_t* right)
+{
+    return wcscmp(left, right) != 0;
+}
+
 string char*::operator_add(char* left, char* right)
 {
     buffer*% buf = new buffer.initialize();

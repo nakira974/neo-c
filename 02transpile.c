@@ -43,28 +43,40 @@ bool output_source_file(sInfo* info) version 2
     return true;
 }
 
+static bool cpp(sInfo* info)
+{
+    string input_file_name = info.sname;
+    string output_file_name = xsprintf("%s.i", info.sname);
+    
+    char cmd[1024];
+#ifdef __DARWIN_ARM__
+    snprintf(cmd, 1024, "/opt/homebrew/opt/llvm/bin/clang-cpp -I. -I/usr/local/include -I%s/include -I/opt/homebrew/opt/llvm@16/include -I/opt/homebrew/opt/libgc/include -I/opt/homebrew/opt/pcre/include -D__DARWIN_ARM__ -U__GNUC__ %s > %s", input_file_name, output_file_name);
+#else
+    snprintf(cmd, 1024, "cpp -I. -U__GNUC__ %s > %s", input_file_name, output_file_name);
+#endif
+    //puts(cmd);
+
+    int rc = system(cmd);
+    if(rc != 0) {
+        char cmd[1024];
+        snprintf(cmd, 1024, "cpp -I. -C %s > %s", input_file_name, output_file_name);
+
+        //puts(cmd);
+        rc = system(cmd);
+
+        if(rc != 0) {
+            fprintf(stderr, "failed to cpp(2) (%s)\n", cmd);
+            exit(5);
+        }
+    }
+    
+    return true;
+}
+
 static bool compile(sInfo* info, bool output_object_file, list<string>* object_files)
 {
-    char* p = info.sname + strlen(info.sname);
-    
-    while(p >= info.sname) {
-        if(*p == '.') {
-            break;
-        }
-        else {
-            p--;
-        }
-    }
-    
-    if(p == info.sname) {
-        err_msg(info, "invalid source file name. require suffix");
-        return false;
-    }
-    
-    char output_file_name[PATH_MAX];
-    memcpy(output_file_name, info.sname, p - info.sname);
-    output_file_name[p - info.sname] = '\0'
-    strncat(output_file_name, ".o", PATH_MAX);
+    string noextname = xnoextname(info.sname);
+    string output_file_name = noextname + ".o";
     
     string input_file_name = xsprintf("%s.c", info.sname);
     
@@ -86,25 +98,7 @@ static bool compile(sInfo* info, bool output_object_file, list<string>* object_f
 
 static bool linker(sInfo* info, list<string>* object_files)
 {
-    char* p = info.sname + strlen(info.sname);
-    
-    while(p >= info.sname) {
-        if(*p == '.') {
-            break;
-        }
-        else {
-            p--;
-        }
-    }
-    
-    if(p == info.sname) {
-        err_msg(info, "invalid source file name. require suffix");
-        return false;
-    }
-    
-    char output_file_name[PATH_MAX];
-    memcpy(output_file_name, info.sname, p - info.sname);
-    output_file_name[p - info.sname] = '\0'
+    string output_file_name = xnoextname(info.sname);
     
     var command = new buffer();
     
@@ -382,9 +376,13 @@ int come_main(int argc, char** argv) version 2
     var object_files = new list<string>();
     bool output_object_file = false;
     bool output_cpp_file = false;
+    bool output_source_file_flag = false;
     for(int i=1; i<argc; i++) {
         if(argv[i] === "-g") {
             clang_option.append_str("-g ");
+        }
+        else if(argv[i] === "-s" || argv[i] === "-S") {
+            output_source_file_flag = true;
         }
         else if(argv[i] === "-c") {
             output_object_file = true;
@@ -426,33 +424,47 @@ int come_main(int argc, char** argv) version 2
         info.gv_table = new sVarTable(global:true, parent:null);
         info.lv_table = borrow info.gv_table;
         
-        info.p = it.read().to_buffer().to_pointer();
-        info.head = info.p.p;
-        
         init_classes(&info);
         
-        if(!transpile(&info)) {
+        if(!cpp(&info)) {
             fprintf(stderr, "%s %d: traspile faield\n", info.sname, info.sline);
             exit(2);
         }
         
-        if(!output_source_file(&info)) {
-            fprintf(stderr, "%s %d: output source file faield\n", info->sname, info->sline);
-            exit(2);
-        }
+        info.p = xsprintf("%s.i", it).read().to_buffer().to_pointer();
+        info.head = info.p.p;
         
-        if(info.err_num > 0) {
-            fprintf(stderr, "transpile error. err num %d\n", info->err_num);
-            exit(2);
-        }
-        
-        if(!compile(&info, output_object_file, object_files)) {
-            fprintf(stderr, "%s %d: compile faield\n", info.sname, info.sline);
-            exit(1);
+        if(!output_cpp_file) {
+            if(!transpile(&info)) {
+                fprintf(stderr, "%s %d: traspile faield\n", info.sname, info.sline);
+                exit(2);
+            }
+            
+            if(!output_source_file(&info)) {
+                fprintf(stderr, "%s %d: output source file faield\n", info->sname, info->sline);
+                exit(2);
+            }
+            
+            (void)system(xsprintf("rm -f %s.i", info.sname));
+            
+            if(info.err_num > 0) {
+                fprintf(stderr, "transpile error. err num %d\n", info->err_num);
+                exit(2);
+            }
+            else {
+                if(!compile(&info, output_object_file, object_files)) {
+                    fprintf(stderr, "%s %d: compile faield\n", info.sname, info.sline);
+                    exit(1);
+                }
+                
+                if(!output_source_file_flag) {
+                    (void)system(xsprintf("rm -f %s.c", info.sname));
+                }
+            }
         }
     }
     
-    if(!output_object_file && files.length() > 0) {
+    if(!output_object_file && !output_cpp_file && files.length() > 0) {
         sInfo info;
         
         info.sname = clone files[0];
@@ -462,6 +474,8 @@ int come_main(int argc, char** argv) version 2
             fprintf(stderr, "%s %d: linker faield\n", info.sname, info.sline);
             exit(1);
         }
+        
+        (void)system(xsprintf("rm -f %s.o", xnoextname(info.sname)));
     }
     
     come_final();

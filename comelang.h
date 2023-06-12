@@ -3138,6 +3138,7 @@ bool xisalnum(char c);
 string xbasename(char* path);
 string xextname(char* path);
 string xrealpath(char* path);
+string xnoextname(char* path);
 
 void come_fd_zero(fd_set* fds);
 void come_fd_set(int fd, fd_set* fds);
@@ -3612,6 +3613,10 @@ bool char*::operator_equals(char* left, char* right);
 bool string::operator_equals(char* left, char* right);
 bool wchar_t*::operator_equals(wchar_t* left, wchar_t* right);
 bool wstring::operator_equals(wchar_t* left, wchar_t* right);
+bool char*::operator_not_equals(char* left, char* right);
+bool string::operator_not_equals(char* left, char* right);
+bool wchar_t*::operator_not_equals(wchar_t* left, wchar_t* right);
+bool wstring::operator_not_equals(wchar_t* left, wchar_t* right);
 
 string char*::operator_add(char* left, char* right);
 string string::operator_add(char* left, char* right);

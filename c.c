@@ -24,8 +24,9 @@ int main()
         puts("GUOOOOO");
     } while(0);
     
-    while(1) {
-        puts("GUOOOOO");
+    for(int i=0; 3; 2) {
+        printf("%d\n", a);
+        printf("%d\n", i);
     }
     
     return 0;

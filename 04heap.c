@@ -423,7 +423,7 @@ sVar* get_variable_from_table(sVarTable* table, char* name)
     sVarTable* it = table;
 
     while(it) {
-        sVar* var_ = table.mVars[name];
+        sVar* var_ = it.mVars[name];
 
         if(var_) {
             return var_;

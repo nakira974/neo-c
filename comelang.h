@@ -1884,7 +1884,7 @@ impl map <T, T2>
     {
         int hash = ((T)key).get_hash_key() % self.size;
         int it = hash;
-
+        
         while(true) {
             if(self.item_existance[it])
             {

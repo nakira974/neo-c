@@ -1,21 +1,12 @@
-#include <comelang.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 int main(int argc, char** argv)
 {
-    using unsafe;
+    int a = { 1 + 1 };
     
-    string buf = string("if");
-    char* p = "(";
-    
-    printf("%d\n", buf !== "if");
-    
-    if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "return" && *p == '(') 
-    {
-        puts("AAA");
-    }
-    else {
-        puts("BBB");
-    }
+    printf("a %d\n", a);
     
     return 0;
 }

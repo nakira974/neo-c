@@ -20,5 +20,13 @@ int main()
         puts("ELSE OK");
     }
     
+    do {
+        puts("GUOOOOO");
+    } while(0);
+    
+    while(1) {
+        puts("GUOOOOO");
+    }
+    
     return 0;
 }

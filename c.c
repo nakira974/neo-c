@@ -13,6 +13,12 @@ int main()
     if(1) {
         puts("IF OK");
     }
+    else if(2) {
+        puts("ELSE IF OK");
+    }
+    else {
+        puts("ELSE OK");
+    }
     
     return 0;
 }

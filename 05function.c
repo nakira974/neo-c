@@ -530,14 +530,9 @@ exception sNode*% expression_node(sInfo* info) version 99
         string buf = parse_word(info).catch {
             throw;
         }
-puts(buf);
         
         if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "return" && *info->p == '(') 
         {
-puts("DDD");
-printf("%d\n", strcmp(buf, "if"));
-printf("%c\n", *info->p);
-printf("%d\n", buf !== "if" && buf !== "while" && buf !== "for" && buf !== "return" && *info->p == '(');
             sNode*% node = parse_function_call(buf, info).catch {
                 throw;
             }
@@ -545,7 +540,6 @@ printf("%d\n", buf !== "if" && buf !== "while" && buf !== "for" && buf !== "retu
             return node;
         }
         else {
-puts("CCC");
             sNode*% node = string_node(buf, head, info).catch {
                 throw;
             }
@@ -700,6 +694,7 @@ exception int expected_next_character(char c, sInfo* info)
     }
     
     info->p++;
+    skip_spaces_and_lf(info);
     
     return 0;
 }

@@ -116,9 +116,7 @@ string sIfNode*::sname(sIfNode* self, sInfo* info)
 
 exception sNode*% string_node(char* buf, char* head, sInfo* info) version 8
 {
-puts(buf);
     if(buf === "if") {
-puts("AAA");
         string sname = clone info->sname;
         int sline = info->sline;
     
@@ -187,7 +185,7 @@ puts("AAA");
             }
         };
     
-        return new sNode(new sIfNode(expression_node, if_block, elif_expression_nodes, elif_blocks, elif_num, else_block, info));
+        return new sNode(new sIfNode(expression_node, if_block, elif_expression_nodes, elif_blocks, elif_num, else_block!, info));
     }
     
     return inherit(buf, head ,info).catch {

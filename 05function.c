@@ -531,7 +531,7 @@ exception sNode*% expression_node(sInfo* info) version 99
             throw;
         }
         
-        if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "return" && *info->p == '(') 
+        if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && *info->p == '(') 
         {
             sNode*% node = parse_function_call(buf, info).catch {
                 throw;

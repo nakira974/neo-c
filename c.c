@@ -29,5 +29,12 @@ int main()
         printf("%d\n", i);
     }
     
+    switch (1) {
+    case 1:
+        break;
+    case 2:
+        break;
+    }
+    
     return 0;
 }

@@ -41,12 +41,12 @@ bool sForNode*::compile(sForNode* self, sInfo* info)
         return false;
     }
     
-    CVALUE* conditional_value = get_value_from_stack(-1, info);
+    CVALUE*% conditional_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
 
     free_right_value_objects(info);
     
     add_come_code(info, "%s;\n", conditional_value.c_value);
-    dec_stack_ptr(1, info);
     
     /// compile expression ///
     sNode* expression_node2 = self.mExpressionNode2;
@@ -55,7 +55,8 @@ bool sForNode*::compile(sForNode* self, sInfo* info)
         return false;
     }
     
-    CVALUE* conditional_value2 = get_value_from_stack(-1, info);
+    CVALUE*% conditional_value2 = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
 
     free_right_value_objects(info);
     
@@ -65,12 +66,12 @@ bool sForNode*::compile(sForNode* self, sInfo* info)
         return false;
     }
     
-    CVALUE* conditional_value3 = get_value_from_stack(-1, info);
+    CVALUE*% conditional_value3 = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
 
     free_right_value_objects(info);
     
     add_come_code(info, "for(;%s;%s) {\n", conditional_value2.c_value, conditional_value3.c_value);
-    dec_stack_ptr(2, info);
 
     transpile_block(block, info).catch {
         return false;

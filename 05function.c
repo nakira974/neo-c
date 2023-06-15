@@ -347,11 +347,10 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
             return false;
         }
         
-        CVALUE* come_value = get_value_from_stack(-1, info);
+        CVALUE*% come_value = get_value_from_stack(-1, info);
+        dec_stack_ptr(1, info);
         
         add_come_code(info, "return %s;\n", come_value.c_value);
-        
-        dec_stack_ptr(1, info);
     }
     else {
         add_come_code(info, "return\n");
@@ -410,16 +409,16 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
     
     sType* result_type = fun->mResultType;
     
-    list<CVALUE*>*% come_params = new list<CVALUE*>();
+    list<CVALUE*%>*% come_params = new list<CVALUE*%>();
     
     foreach(it, params) {
         if(!it.compile->(info)) {
             return false;
         }
         
-        CVALUE* come_value = get_value_from_stack(-1, info);
-        
+        CVALUE*% come_value = get_value_from_stack(-1, info);
         come_params.push_back(come_value);
+        dec_stack_ptr(1, info);
     }
     
     buffer*% buf = new buffer();
@@ -447,7 +446,6 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
     
     add_come_last_code(info, "%s;\n", buf.to_string());
     
-    dec_stack_ptr(self.params.length(), info);
     info.stack.push_back(come_value);
     
     return true;
@@ -554,7 +552,9 @@ exception sNode*% expression_node(sInfo* info) version 99
         return node;
     }
     
-    return (sNode*%)null;
+    err_msg(info, "unexpected operator(%c)\n", *info->p);
+    throw;
+    return (sNode*)null;
 }
 
 exception sNode*% expression(sInfo* info) version 5

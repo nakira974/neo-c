@@ -1,12 +1,14 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <comelang.h>
 
 int main(int argc, char** argv)
 {
-    int a = { 1 + 1 };
+    list<char*>*% li = new list<char*>();
     
-    printf("a %d\n", a);
+    {
+        string a = string("ABC");
+        
+        li.push_back(a);
+    }
     
     return 0;
 }

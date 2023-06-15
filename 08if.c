@@ -47,14 +47,14 @@ bool sIfNode*::compile(sIfNode* self, sInfo* info)
         return false;
     }
 
-    CVALUE* conditional_value = get_value_from_stack(-1, info);
+    CVALUE*% conditional_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
 
     free_right_value_objects(info);
 
     sBlock* if_block = self.mIfBlock;
     
     add_come_code(info, "if(%s) {\n", conditional_value.c_value);
-    dec_stack_ptr(1, info);
 
     transpile_block(if_block, info).catch {
         return false;
@@ -71,7 +71,8 @@ bool sIfNode*::compile(sIfNode* self, sInfo* info)
                 return false;
             }
 
-            CVALUE* conditional_value = get_value_from_stack(-1, info);
+            CVALUE*% conditional_value = get_value_from_stack(-1, info);
+            dec_stack_ptr(1, info);
 
             free_right_value_objects(info);
 
@@ -84,8 +85,6 @@ bool sIfNode*::compile(sIfNode* self, sInfo* info)
             }
 
             add_come_code(info, "}\n");
-
-            dec_stack_ptr(1, info);
         }
     }
 

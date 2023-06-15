@@ -58,7 +58,8 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
             return false;
         }
         
-        CVALUE* right_value = get_value_from_stack(-1, info);
+        CVALUE*% right_value = get_value_from_stack(-1, info);
+        dec_stack_ptr(1, info);
         sType* right_type = right_value.type;
         
         sVar* var_ = get_variable_from_table(info.lv_table, self.name);
@@ -85,8 +86,6 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         come_value.c_value = xsprintf("%s", var_->mCValueName);
         come_value.type = clone left_type;
         come_value.var = var_;
-        
-        dec_stack_ptr(-1, info);
         
         info.stack.push_back(come_value);
     }

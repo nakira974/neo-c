@@ -596,10 +596,10 @@ void dec_stack_ptr(int value, sInfo* info)
     info.stack.delete(-value-1, -1);
 }
 
-CVALUE* get_value_from_stack(int offset, sInfo* info)
+CVALUE*% get_value_from_stack(int offset, sInfo* info)
 {
     info.module.mLastCode = null;
-    return info.stack[offset];
+    return clone info.stack[offset];
 }
 
 void transpiler_clear_last_code(sInfo* info)

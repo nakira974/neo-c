@@ -32,12 +32,12 @@ bool sSwitchNode*::compile(sSwitchNode* self, sInfo* info)
         return false;
     }
     
-    CVALUE* conditional_value = get_value_from_stack(-1, info);
+    CVALUE*% conditional_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
 
     free_right_value_objects(info);
     
     add_come_code(info, "switch (%s) {\n", conditional_value.c_value);
-    dec_stack_ptr(1, info);
 
     transpile_block(block, info).catch {
         return false;

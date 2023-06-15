@@ -36,5 +36,8 @@ int main()
         break;
     }
     
+    int c = 1+3*4;
+    printf("%d\n", c);
+    
     return 0;
 }

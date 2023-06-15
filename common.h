@@ -229,7 +229,7 @@ void add_come_code_at_function_head(sInfo* info, char* code);
 void add_come_code(sInfo* info, const char* msg, ...);
 void add_come_last_code(sInfo* info, const char* msg, ...);
 void dec_stack_ptr(int value, sInfo* info);
-CVALUE* get_value_from_stack(int offset, sInfo* info);
+CVALUE*% get_value_from_stack(int offset, sInfo* info);
 string make_define_var(sType* type, char* name, sInfo* info);
 void transpiler_clear_last_code(sInfo* info);
 
@@ -300,5 +300,10 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 11;
 /// 12switch.c
 /////////////////////////////////////////////////////////////////////
 exception sNode*% string_node(char* buf, char* head, sInfo* info) version 12;
+
+/////////////////////////////////////////////////////////////////////
+/// 13op.c
+/////////////////////////////////////////////////////////////////////
+exception sNode*% expression(sInfo* info) version 13;
 
 #endif

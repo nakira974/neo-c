@@ -38,7 +38,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         sType*% left_type = clone var_->mType;
         
         if(self.alloc) {
-            add_come_code(info, "%s;\n", make_define_var(left_type, var_->mCValueName, info));
+            add_come_code_at_function_head(info, "%s;\n", make_define_var(left_type, var_->mCValueName, info));
         }
         else {
             err_msg(info, "unexpected error. define(%s)\n", self.name);
@@ -75,7 +75,8 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         sType*% left_type = clone var_->mType;
         
         if(self.alloc) {
-            add_come_code(info, "%s=%s;\n", make_define_var(left_type, var_->mCValueName, info), right_value->c_value);
+            add_come_code_at_function_head(info, "%s;\n", make_define_var(left_type, var_->mCValueName, info));
+            add_come_code(info, "%s=%s;\n", var_->mCValueName, right_value->c_value);
         }
         else {
             add_come_code(info, "%s=%s;\n", var_->mCValueName, right_value->c_value);

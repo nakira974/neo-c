@@ -38,6 +38,7 @@ int main()
     
     int c = 1+3*4;
     printf("%d\n", c);
+    printf("%d\n", c<<1);
     
     return 0;
 }

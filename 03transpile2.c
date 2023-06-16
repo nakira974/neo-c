@@ -555,13 +555,20 @@ bool output_source_file(sInfo* info) version 3
 }
 
 
-void add_come_code_at_function_head(sInfo* info, char* code)
+void add_come_code_at_function_head(sInfo* info, char* code, ...)
 {
     if(info->no_output_come_code) {
         return;
     }
+    char msg2[COME_CODE_MAX];
+
+    va_list args;
+    va_start(args, code);
+    vsnprintf(msg2, COME_CODE_MAX, code, args);
+    va_end(args);
+    
     if(info.come_fun) {
-        info->come_fun->mSourceHead.append_str(code);
+        info->come_fun->mSourceHead.append_str(msg2);
     }
 }
 

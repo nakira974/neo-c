@@ -188,6 +188,8 @@ struct sInfo
     
     sVarTable* lv_table;
     sVarTable*% gv_table;
+    
+    bool comma;
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -225,7 +227,7 @@ bool output_source_file(sInfo* info) version 3;
 void show_type(sType* type, sInfo* info);
 string create_generics_name(sType* generics_type, sInfo* info);
 void add_last_code_to_source(sInfo* info);
-void add_come_code_at_function_head(sInfo* info, char* code);
+void add_come_code_at_function_head(sInfo* info, char* code, ...);
 void add_come_code(sInfo* info, const char* msg, ...);
 void add_come_last_code(sInfo* info, const char* msg, ...);
 void dec_stack_ptr(int value, sInfo* info);

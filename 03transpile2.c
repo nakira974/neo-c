@@ -583,6 +583,17 @@ void add_last_code_to_source(sInfo* info)
     }
 }
 
+void add_last_code_to_source_without_semicolon(sInfo* info)
+{
+    if(info->no_output_come_code) {
+        return;
+    }
+    if(info.module.mLastCode) {
+       add_come_code(info, "%s\n", info.module.mLastCode.substring(0,-3));
+       info.module.mLastCode = null;
+    }
+}
+
 void add_come_last_code(sInfo* info, const char* msg, ...)
 {
     if(info->no_output_come_code) {

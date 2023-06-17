@@ -421,7 +421,7 @@ int come_main(int argc, char** argv) version 2
         info.module = new sModule();
         info.right_value_objects = new list<sRightValueObject*%>();
         info.stack = new list<CVALUE*%>();
-        info.gv_table = new sVarTable(global:true, parent:null!);
+        info.gv_table = new sVarTable(global:true, parent:null);
         info.lv_table = borrow info.gv_table;
         
         init_classes(&info);
@@ -457,9 +457,11 @@ int come_main(int argc, char** argv) version 2
                     exit(1);
                 }
                 
+/*
                 if(!output_source_file_flag) {
                     (void)system(xsprintf("rm -f %s.c", info.sname));
                 }
+*/
             }
         }
     }

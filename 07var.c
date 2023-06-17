@@ -76,15 +76,15 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         
         if(self.alloc) {
             add_come_code_at_function_head(info, "%s;\n", make_define_var(left_type, var_->mCValueName, info));
-            add_come_code(info, "%s=%s;\n", var_->mCValueName, right_value->c_value);
+            add_come_last_code(info, "%s=%s;\n", var_->mCValueName, right_value->c_value);
         }
         else {
-            add_come_code(info, "%s=%s;\n", var_->mCValueName, right_value->c_value);
+            add_come_last_code(info, "%s=%s;\n", var_->mCValueName, right_value->c_value);
         }
         
         CVALUE*% come_value = new CVALUE;
         
-        come_value.c_value = xsprintf("%s=%s", var_->mCValueName, right_value->c_value);
+        come_value.c_value = xsprintf("%s", var_->mCValueName);
         come_value.type = clone left_type;
         come_value.var = var_;
         

@@ -34,12 +34,16 @@ bool sForNode*::compile(sForNode* self, sInfo* info)
     sVarTable* lv_table = info->lv_table;
     info->lv_table = block->mVarTable;
     
+    add_come_code(info, "for(\n");
+    
     /// compile expression ///
     sNode* expression_node = self.mExpressionNode;
 
     if(!expression_node.compile->(info)) {
         return false;
     }
+    
+    add_last_code_to_source(info);
     
     CVALUE*% conditional_value = get_value_from_stack(-1, info);
     dec_stack_ptr(1, info);
@@ -53,6 +57,8 @@ bool sForNode*::compile(sForNode* self, sInfo* info)
         return false;
     }
     
+    add_last_code_to_source(info);
+    
     CVALUE*% conditional_value2 = get_value_from_stack(-1, info);
     dec_stack_ptr(1, info);
 
@@ -64,12 +70,14 @@ bool sForNode*::compile(sForNode* self, sInfo* info)
         return false;
     }
     
+    add_last_code_to_source_without_semicolon(info);
+    
     CVALUE*% conditional_value3 = get_value_from_stack(-1, info);
     dec_stack_ptr(1, info);
 
     free_right_value_objects(info);
     
-    add_come_code(info, "for(%s;%s;%s) {\n", conditional_value.c_value, conditional_value2.c_value, conditional_value3.c_value);
+    add_come_code(info, "){\n");
 
     transpile_block(block, info).catch {
         return false;
@@ -97,7 +105,7 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 11
 {
     if(buf === "for") {
         sVarTable* lv_table = info->lv_table;
-        sVarTable*% for_block_var_table = new sVarTable(global:false, parent:info.lv_table!);
+        sVarTable*% for_block_var_table = new sVarTable(global:false, parent:info.lv_table);
         
         info->lv_table = for_block_var_table;
         

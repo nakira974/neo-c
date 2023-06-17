@@ -318,7 +318,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
         unsigned int params[PARAMS_MAX];
         int num_params = 0;
 
-        if(!parse_funcation_call_params(&num_params, params, info)) 
+        if(!parse_function_call_params(&num_params, params, info)) 
         {
             return FALSE;
         };
@@ -3017,7 +3017,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 unsigned int params[PARAMS_MAX];
                 int num_params = 0;
 
-                if(!parse_funcation_call_params(&num_params, params, info)) 
+                if(!parse_function_call_params(&num_params, params, info)) 
                 {
                     return FALSE;
                 }
@@ -3119,7 +3119,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
             unsigned int params[PARAMS_MAX];
             int num_params = 0;
 
-            if(!parse_funcation_call_params(&num_params, params, info)) 
+            if(!parse_function_call_params(&num_params, params, info)) 
             {
                 return FALSE;
             }
@@ -3147,7 +3147,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
             unsigned int params[PARAMS_MAX];
             int num_params = 0;
 
-            if(!parse_funcation_call_params(&num_params, params, info)) 
+            if(!parse_function_call_params(&num_params, params, info)) 
             {
                 return FALSE;
             }
@@ -3578,7 +3578,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
         unsigned int params[PARAMS_MAX];
         int num_params = 0;
 
-        if(!parse_funcation_call_params(&num_params, params, info)) 
+        if(!parse_function_call_params(&num_params, params, info)) 
         {
             return FALSE;
         };

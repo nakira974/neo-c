@@ -8,7 +8,7 @@ Yet another modern compiler. It has a collection and string library using Boehm 
 もう一つのモダンコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 1.2.3
+version 1.2.4
 
 ``` C
 #include <comelang.h>
@@ -388,7 +388,10 @@ From version 1.2.3 stringの!==が定義されてませんでした。定義し�
 
 From version 1.2.3 appended string !==
 
-From 
+From version 1.2.4 引数ラベルの場合nullチェックを無視する!が必要ありませんでしたが、必要あるようにしました。
+
+From version 1.2.4 Ignore null checks for argument labels ! was not needed~
+However, I made it necessary.
 
 # Language specifications
 

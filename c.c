@@ -28,6 +28,7 @@ int main()
         printf("%d\n", a);
         printf("%d\n", i);
     }
+/*
     
     switch (1) {
     case 1:
@@ -39,6 +40,11 @@ int main()
     int c = 1+3*4;
     printf("%d\n", c);
     printf("%d\n", c<<1);
+    
+    for(int i=0; i<3;i=i+1) {
+        printf("%d\n", i);
+    }
+*/
     
     return 0;
 }

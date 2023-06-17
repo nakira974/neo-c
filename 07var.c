@@ -84,7 +84,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         
         CVALUE*% come_value = new CVALUE;
         
-        come_value.c_value = xsprintf("%s", var_->mCValueName);
+        come_value.c_value = xsprintf("%s=%s", var_->mCValueName, right_value->c_value);
         come_value.type = clone left_type;
         come_value.var = var_;
         
@@ -160,20 +160,31 @@ bool is_type_name(char* buf, sInfo* info)
 
 }
 
-sVar*% sVar*::initialize(sVar*% self, char* name, sType* type, sInfo* info)
+void add_variable_to_table(char* name, sType* type, sInfo* info)
 {
+    sVar*% self = new sVar;
+    
     self->mName = string(name);
     self->mType = clone type;
     
-    self->mGlobal = info->block_level == 0;
-    self->mCValueName = xsprintf("%s_%d", name, info->block_level);
+    bool global = info->block_level == 0;
+    
+    self->mGlobal = global;
+    
+    if(global) {
+        self->mCValueName = string(name);
+    }
+    else {
+        static int n = 0;
+        self->mCValueName = xsprintf("%s_%d", name, n++);
+    }
     
     self->mBlockLevel = info->block_level;
     self->mAllocaValue = false;
     self->mFunctionParam = false;
     self->mNoFree = false;
     
-    return self;
+    info.lv_table.mVars.insert(string(name), self);
 }
 
 exception sNode*% string_node(char* buf, char* head, sInfo* info) version 7
@@ -201,7 +212,7 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 7
             throw;
         }
         
-        info.lv_table.mVars.insert(string(name), new sVar(name, type, info));
+        add_variable_to_table(name, type, info);
         
         if(*info->p == '=') {
             info.p++;

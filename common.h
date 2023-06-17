@@ -4,6 +4,7 @@
 #include <comelang.h>
 
 using unsafe;
+using no-null-check;
 
 #define COME_CODE_MAX 2048
 #define FUN_VERSION_MAX 128

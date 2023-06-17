@@ -6,13 +6,14 @@ struct sForNode
   sNode*% mExpressionNode2;
   sNode*% mExpressionNode3;
   sBlock*% mBlock;
+  sVarTable*% mForBlockVarTable;
   
   int sline;
   string sname;
 };
 
 
-sForNode*% sForNode*::initialize(sForNode*% self, sNode*% expression_node, sNode*% expression_node2, sNode*% expression_node3, sBlock* block, sInfo* info)
+sForNode*% sForNode*::initialize(sForNode*% self, sNode*% expression_node, sNode*% expression_node2, sNode*% expression_node3, sBlock* block, sVarTable*% for_block_var_table, sInfo* info)
 {
     self.sline = info.sline;
     self.sname = string(info.sname);
@@ -21,6 +22,7 @@ sForNode*% sForNode*::initialize(sForNode*% self, sNode*% expression_node, sNode
     self.mExpressionNode2 = clone expression_node2;
     self.mExpressionNode3 = clone expression_node3;
     self.mBlock = clone block;
+    self.mForBlockVarTable = for_block_var_table;
 
     return self;
 }
@@ -28,8 +30,6 @@ sForNode*% sForNode*::initialize(sForNode*% self, sNode*% expression_node, sNode
 bool sForNode*::compile(sForNode* self, sInfo* info)
 {
     sBlock* block = self.mBlock;
-    
-    add_come_code(info, "{\n");
     
     sVarTable* lv_table = info->lv_table;
     info->lv_table = block->mVarTable;
@@ -45,8 +45,6 @@ bool sForNode*::compile(sForNode* self, sInfo* info)
     dec_stack_ptr(1, info);
 
     free_right_value_objects(info);
-    
-    add_come_code(info, "%s;\n", conditional_value.c_value);
     
     /// compile expression ///
     sNode* expression_node2 = self.mExpressionNode2;
@@ -71,13 +69,12 @@ bool sForNode*::compile(sForNode* self, sInfo* info)
 
     free_right_value_objects(info);
     
-    add_come_code(info, "for(;%s;%s) {\n", conditional_value2.c_value, conditional_value3.c_value);
+    add_come_code(info, "for(%s;%s;%s) {\n", conditional_value.c_value, conditional_value2.c_value, conditional_value3.c_value);
 
     transpile_block(block, info).catch {
         return false;
     }
 
-    add_come_code(info, "}\n");
     add_come_code(info, "}\n");
     
     transpiler_clear_last_code(info);
@@ -99,6 +96,11 @@ string sForNode*::sname(sForNode* self, sInfo* info)
 exception sNode*% string_node(char* buf, char* head, sInfo* info) version 11
 {
     if(buf === "for") {
+        sVarTable* lv_table = info->lv_table;
+        sVarTable*% for_block_var_table = new sVarTable(global:false, parent:info.lv_table!);
+        
+        info->lv_table = for_block_var_table;
+        
         expected_next_character('(', info).catch { throw; }
         
         /// expression ///
@@ -116,8 +118,10 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 11
         expected_next_character(')', info).catch { throw; }
         
         sBlock*% block = parse_block(info).catch { throw; }
+        
+        info->lv_table = lv_table;
     
-        return new sNode(new sForNode(expression_node, expression_node2, expression_node3, block, info));
+        return new sNode(new sForNode(expression_node, expression_node2, expression_node3, block, for_block_var_table, info));
     }
     
     return inherit(buf, head ,info).catch {

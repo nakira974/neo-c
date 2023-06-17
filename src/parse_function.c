@@ -1233,7 +1233,7 @@ BOOL parse_inline_function(unsigned int* node, sParserInfo* info)
     return TRUE;
 }
 
-BOOL parse_funcation_call_params(int* num_params, unsigned int* params, sParserInfo* info)
+BOOL parse_function_call_params(int* num_params, unsigned int* params, sParserInfo* info)
 {
     if(*info->p == '(') {
         info->p++;
@@ -1292,16 +1292,18 @@ BOOL parse_funcation_call_params(int* num_params, unsigned int* params, sParserI
                 
                 BOOL null_value = FALSE;
                 
+/*
                 if(!gNCCome || label[0] != 0) {
                     null_value = TRUE;
                 }
                 else {
+*/
                     if(*info->p == '!' && *(info->p +1) != '=') {
                         info->p++;
                         skip_spaces_and_lf(info);
                         null_value = TRUE;
                     }
-                }
+//                }
                 
                 xstrncpy(gNodes[node].mLabel, label, VAR_NAME_MAX);
                 
@@ -1433,7 +1435,7 @@ BOOL parse_inherit(unsigned int* node, sParserInfo* info)
         unsigned int params[PARAMS_MAX];
         int num_params = 0;
 
-        if(!parse_funcation_call_params(&num_params, params, info)) 
+        if(!parse_function_call_params(&num_params, params, info)) 
         {
             return FALSE;
         }

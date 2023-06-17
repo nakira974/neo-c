@@ -588,7 +588,7 @@ BOOL parse_method_generics_function(unsigned int* node, char* struct_name, sPars
 void parse_version(int* version, sParserInfo* info);
 BOOL parse_function(unsigned int* node, sNodeType* result_type, char* fun_name, char* struct_name, char* definition_top, sParserInfo* info);
 BOOL parse_inline_function(unsigned int* node, sParserInfo* info);
-BOOL parse_funcation_call_params(int* num_params, unsigned int* params, sParserInfo* info);
+BOOL parse_function_call_params(int* num_params, unsigned int* params, sParserInfo* info);
 BOOL parse_if(unsigned int* node, sParserInfo* info);
 BOOL parse_throw(unsigned int* node, sParserInfo* info);
 BOOL parse_catch(unsigned int* node, sParserInfo* info);

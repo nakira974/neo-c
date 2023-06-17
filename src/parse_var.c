@@ -115,7 +115,7 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
                         unsigned int params[PARAMS_MAX];
                         int num_params = 0;
 
-                        if(!parse_funcation_call_params(&num_params, params, info)) 
+                        if(!parse_function_call_params(&num_params, params, info)) 
                         {
                             return FALSE;
                         };
@@ -140,7 +140,7 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
                             params[0] = *node;
                             num_params++;
         
-                            if(!parse_funcation_call_params(&num_params, params, info)) 
+                            if(!parse_function_call_params(&num_params, params, info)) 
                             {
                                 return FALSE;
                             };
@@ -418,7 +418,7 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
                             
                             params[0] = obj_node;
 
-                            if(!parse_funcation_call_params(&num_params, params, info)) 
+                            if(!parse_function_call_params(&num_params, params, info)) 
                             {
                                 return FALSE;
                             };
@@ -434,7 +434,7 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
                             unsigned int params[PARAMS_MAX];
                             int num_params = 0;
 
-                            if(!parse_funcation_call_params(&num_params, params, info)) 
+                            if(!parse_function_call_params(&num_params, params, info)) 
                             {
                                 return FALSE;
                             };
@@ -875,7 +875,7 @@ BOOL parse_new(unsigned int* node, sParserInfo* info)
             unsigned int params[PARAMS_MAX];
             int num_params = 0;
 
-            if(!parse_funcation_call_params(&num_params, params, info)) 
+            if(!parse_function_call_params(&num_params, params, info)) 
             {
                 return FALSE;
             }
@@ -901,7 +901,7 @@ BOOL parse_new(unsigned int* node, sParserInfo* info)
                 
                 params[0] = sNodeTree_create_object(node_type, object_num, 0, NULL, info->sname, info->sline, gc, info);
     
-                if(!parse_funcation_call_params(&num_params, params, info)) 
+                if(!parse_function_call_params(&num_params, params, info)) 
                 {
                     return FALSE;
                 }

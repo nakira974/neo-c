@@ -1,6 +1,6 @@
 #include "common.h"
 
-struct sStructNode
+struct sUnionNode
 {
     sType*% mType;
   
@@ -8,7 +8,7 @@ struct sStructNode
     string sname;
 };
 
-sStructNode*% sStructNode*::initialize(sStructNode*% self, sType*% type, sInfo* info)
+sUnionNode*% sUnionNode*::initialize(sUnionNode*% self, sType*% type, sInfo* info)
 {
     self.sline = info.sline;
     self.sname = string(info.sname);
@@ -20,13 +20,13 @@ sStructNode*% sStructNode*::initialize(sStructNode*% self, sType*% type, sInfo* 
     return self;
 }
 
-bool sStructNode*::compile(sStructNode* self, sInfo* info)
+bool sUnionNode*::compile(sUnionNode* self, sInfo* info)
 {
     sType* type = self.mType;
     
     buffer*% buf = new buffer();
     
-    buf.append_str(xsprintf("struct %s\n{\n", type.mName));
+    buf.append_str(xsprintf("union %s\n{\n", type.mName));
     
     foreach(it, type.mFields) {
         var name, type = it;
@@ -42,22 +42,22 @@ bool sStructNode*::compile(sStructNode* self, sInfo* info)
     return TRUE;
 }
 
-int sStructNode*::sline(sStructNode* self, sInfo* info)
+int sUnionNode*::sline(sUnionNode* self, sInfo* info)
 {
     return self.sline;
 }
 
-string sStructNode*::sname(sStructNode* self, sInfo* info)
+string sUnionNode*::sname(sUnionNode* self, sInfo* info)
 {
     return string(self.sname);
 }
 
-exception sNode*% top_level(char* buf, char* head, sInfo* info) version 98
+exception sNode*% top_level(char* buf, char* head, sInfo* info) version 97
 {
-    if(buf === "struct") {
+    if(buf === "union") {
         string type_name = parse_word(info).catch { throw; };
         
-        info.classes.insert(type_name, new sClass(name:type_name, struct_:true));
+        info.classes.insert(type_name, new sClass(name:type_name, union_:true));
         
         sType*% type = new sType(type_name, info);
         
@@ -78,7 +78,7 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 98
             }
         }
         
-        return new sNode(new sStructNode(type, info));
+        return new sNode(new sUnionNode(type, info));
     }
     
     return inherit(buf, head, info).catch {

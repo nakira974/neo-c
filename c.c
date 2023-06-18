@@ -14,6 +14,12 @@ struct Data
     int b;
 };
 
+union Data2
+{
+    float a;
+    double b;
+};
+
 int main()
 {
 /*

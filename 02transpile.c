@@ -323,7 +323,7 @@ sType*% sType*::shallow_clone(sType* self)
     return result;
 }
 
-sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool union_=false, bool generics=false, bool method_generics=false, bool protocol_=false, bool struct_=false, int generics_num=-1, int method_generics_num=-1)
+sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool union_=false, bool generics=false, bool method_generics=false, bool protocol_=false, bool struct_=false, bool float_=false, int generics_num=-1, int method_generics_num=-1)
 {
     self.mNumber = number;
     self.mStruct = struct_;
@@ -332,6 +332,7 @@ sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool 
     self.mMethodGenerics = method_generics;
     self.mEnum = false;
     self.mProtocol = protocol_;
+    self.mFloat = float_;
     
     self.mName = string(name);
     
@@ -369,6 +370,8 @@ void init_classes(sInfo* info)
     info.classes.insert(string("char"), new sClass("char", number:true));
     info.classes.insert(string("bool"), new sClass("bool", number:true));
     info.classes.insert(string("void"), new sClass("void"));
+    info.classes.insert(string("float"), new sClass("float", float_:true));
+    info.classes.insert(string("double"), new sClass("double", float_:true));
 }
 
 int come_main(int argc, char** argv) version 2

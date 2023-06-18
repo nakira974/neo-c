@@ -207,44 +207,6 @@ sType*% sType*::initialize(sType*% self, char* name, sInfo* info, bool heap=fals
     return self;
 }
 
-sType*% sType*::initialize2(sType*% self, char* name, sInfo* info)
-{
-    self.mName = string(name);
-    self.mClass = null;
-    
-    self.mGenericsTypes = borrow new list<sType*>();
-    self.mArrayNum = borrow new list<int>();
-    self.mOmitArrayNum = false;
-    self.mParamTypes = borrow new list<sType*>();
-    self.mResultType = null;
-    self.mUnsigned = false;
-    self.mConstant = false;
-    self.mRegister = false;
-    self.mVolatile = false;
-    self.mStatic = false;
-    self.mRestrict = false;
-    self.mImmutable = false;
-    self.mLongLong = false;
-    self.mHeap = false;
-    self.mDummyHeap = false;
-    self.mNoHeap = false;
-    self.mRefference = false;
-    
-    self.mPointerNum = 0;
-    self.mNoArrayPointerNum = 0;
-    self.mSizeNum = 0;
-    
-    self.mDynamicArrayNum = 0;
-    self.mTypeOfExpression = 0;
-
-    self.mOriginalTypeName = borrow string("");
-    self.mOriginalPointerNum = 0;
-    
-    self.mFunctionParam = false;
-    
-    return self;
-}
-
 void sType*::finalize(sType* self)
 {
 //    delete self.mClass;
@@ -361,7 +323,7 @@ sType*% sType*::shallow_clone(sType* self)
     return result;
 }
 
-sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool struct_=false, bool union_=false, bool generics=false, bool method_generics=false, bool protocol_=false, bool struct_=false, int generics_num=-1, int method_generics_num=-1)
+sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool union_=false, bool generics=false, bool method_generics=false, bool protocol_=false, bool struct_=false, int generics_num=-1, int method_generics_num=-1)
 {
     self.mNumber = number;
     self.mStruct = struct_;

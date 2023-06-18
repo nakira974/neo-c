@@ -876,14 +876,17 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 99
         }
     }
     
-    info.p.p = head;
-    info.sline = sline;
-    
     if(define_function_flag) {
+        info.p.p = head;
+        info.sline = sline;
+        
         return parse_function(info).catch {
             throw;
         }
     }
+    
+    info.p.p = p;
+    info.sline = sline;
  
     return inherit(buf, head, info).catch {
         throw
@@ -903,8 +906,16 @@ exception int transpile(sInfo* info) version 5
             throw;
         }
         
+        parse_sharp(info);
+        
         sNode*% node = top_level(buf, head, info).catch {
             throw;
+        }
+        parse_sharp(info);
+        
+        while(*info->p == ';') {
+            info->p++;
+            skip_spaces_and_lf(info);
         }
         parse_sharp(info);
         

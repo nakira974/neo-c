@@ -36,6 +36,8 @@ bool sStructNode*::compile(sStructNode* self, sInfo* info)
     }
     
     buf.append_str(xsprintf("\n};\n", type.mName));
+    
+    add_come_code(info, "%s", buf.to_string());
 
     return TRUE;
 }
@@ -55,17 +57,19 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 98
     if(buf === "struct") {
         string type_name = parse_word(info).catch { throw; };
         
-        sType*% type = new sType.initialize2(type_name, info);
+        info.classes.insert(type_name, new sClass(name:type_name, struct_:true));
+        
+        sType*% type = new sType(type_name, info);
         
         expected_next_character('{', info).catch { throw; }
         
         while(true) {
-            var type, name = parse_type(info, true@parse_variable_name).catch {
+            var type2, name = parse_type(info, true@parse_variable_name).catch {
                 throw;
             }
             expected_next_character(';', info).catch { throw; }
             
-            type.mFields.push_back(new tuple2<string, sType*%>(name, type));
+            type.mFields.push_back(new tuple2<string, sType*%>(name, type2));
             
             if(*info->p == '}') {
                 info->p++;

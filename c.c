@@ -8,6 +8,12 @@ int fun(int x, int y)
     return x + y;
 }
 
+struct Data
+{
+    int a;
+    int b;
+};
+
 int main()
 {
 /*

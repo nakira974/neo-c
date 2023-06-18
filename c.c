@@ -3,8 +3,14 @@ int printf(const char *format, ...);
 
 #define TEST 1
 
+int fun(int x, int y)
+{
+    return x + y;
+}
+
 int main()
 {
+/*
     int a = TEST;
     const char* str = "HELLO WORLD";
     puts(str);
@@ -28,7 +34,6 @@ int main()
         printf("%d\n", a);
         printf("%d\n", i);
     }
-/*
     
     switch (1) {
     case 1:
@@ -45,6 +50,25 @@ int main()
         printf("%d\n", i);
     }
 */
+    for(int i=0; i<3; i=i+1) {
+        printf("%d\n", i);
+    }
+    int a = 2;
+    for(int i=0; i<3; i=i+1) {
+        printf("%d %d\n", i, a);
+    }
+    if(1) {
+        puts("IF OK");
+    }
+    else if(2) {
+        puts("ELSE IF OK");
+    }
+    else {
+        puts("ELSE OK");
+    }
+    
+    printf("%d\n", fun(1,2));
     
     return 0;
 }
+

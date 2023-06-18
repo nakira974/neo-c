@@ -426,6 +426,7 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
     char struct_name[VAR_NAME_MAX];
     
     sVar* var_ = NULL;
+    int obj_block_level = -1;
     if(method) {
         params[0] = gNodes[node].uValue.sFunctionCall.mParams[0];
         xstrncpy(param_labels[0], gNodes[gNodes[node].uValue.sFunctionCall.mParams[0]].mLabel, VAR_NAME_MAX);
@@ -439,6 +440,10 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
         LVALUE param = *get_value_from_stack(-1);
         
         var_ = param.var;
+        
+        if(var_) {
+            obj_block_level = var_->mBlockLevel;
+        }
 
         generics_type = clone_node_type(info->type);
 
@@ -893,6 +898,18 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
 
         if(!solve_type(&fun_param_type, generics_type, num_method_generics_types, method_generics_types, info)) {
             return FALSE;
+        }
+        
+        int param_block_level = -1;
+        
+        if(param.type->mHeap) {
+            sVar* var_ = param.var;
+            if(var_) {
+                param_block_level = var_->mBlockLevel;
+            }
+        }
+        
+        if(obj_block_level != -1 && param_block_level != -1) {
         }
 
         if(fun_param_type->mHeap && param.type->mHeap) 

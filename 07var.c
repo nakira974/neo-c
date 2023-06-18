@@ -152,13 +152,6 @@ string sLoadNode*::sname(sLoadNode* self, sInfo* info)
     return string(self.sname);
 }
 
-bool is_type_name(char* buf, sInfo* info)
-{
-    sClass* klass = info.classes[buf];
-    
-    return klass || buf === "const" || buf === "register" || buf === "static" || buf === "volatile" || buf === "unsigned" || buf === "immutable" || buf === "mutable";
-
-}
 
 void add_variable_to_table(char* name, sType* type, sInfo* info)
 {
@@ -192,7 +185,37 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 7
     sVar* var_ = get_variable_from_table(info.lv_table, buf);
     bool is_type_name_flag = is_type_name(buf, info);
     
-    if(var_ && *info->p == '=' && *(info.p + 1) != '=') {
+    char* p = info.p.p;
+    int sline = info.sline;
+    
+    buffer*% buf2 = new buffer();
+    
+    while(xisalnum(*info->p)) {
+        buf2.append_char(*info->p);
+        info->p++;
+    }
+    skip_spaces_and_lf(info);
+    
+    bool lambda_call_flag = false;
+    bool define_function_flag = false;
+    if(buf2.length() > 0 && *info->p == '(') {
+        if(var_) {
+            lambda_call_flag = true;
+        }
+        else if(is_type_name_flag) {
+            define_function_flag = true;
+        }
+    }
+    
+    info.p.p = p;
+    info.sline = sline;
+    
+    if(define_function_flag) {
+        return parse_function(info).catch {
+            throw;
+        }
+    }
+    else if(var_ && *info->p == '=' && *(info.p + 1) != '=') {
         info.p++;
         skip_spaces_and_lf(info);
         

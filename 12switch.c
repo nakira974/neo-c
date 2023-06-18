@@ -154,7 +154,7 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 12
         }
         expected_next_character(')', info).catch { throw; }
         
-        sBlock*% block = parse_block(info).catch { throw; }
+        sBlock*% block = parse_block(null!, null!, info).catch { throw; }
     
         return new sNode(new sSwitchNode(expression_node, block, info));
     }

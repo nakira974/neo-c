@@ -2,12 +2,20 @@
 
 int main(int argc, char** argv)
 {
-    list<char*>*% li = new list<char*>();
+    list<string>*% li = new list<string>();
     
     {
         string a = string("ABC");
         
         li.push_back(a);
+        
+        string b = string("DEF");
+        
+        li.push_back(b);
+    }
+    
+    li.each {
+        printf("%s\n", it);
     }
     
     return 0;

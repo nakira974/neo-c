@@ -824,7 +824,7 @@ void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL for
         }
 
         /// call finalizer ///
-        if(finalizer != NULL) {
+        if(finalizer != NULL && node_type->mArrayDimentionNum == 0) {
         //if((node_type->mHeap || node_type->mAllocaValue || force_delete) && finalizer != NULL) {
             if(finalizer->mGenericsFunction) {
                 LLVMValueRef llvm_fun = NULL;

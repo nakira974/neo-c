@@ -212,7 +212,7 @@ int b = 1/a;
     }
     else if(type->mSizeNum > 0) {
         buf.append_str("int ");
-        buf.append_str(xsprintf("%s:%d;\n", name, type->mSizeNum));
+        buf.append_str(xsprintf("%s:%d", name, type->mSizeNum));
     }
     else if(type->mOmitArrayNum) {
         var type_str = make_type_name_string(type, false@in_header, info);
@@ -504,7 +504,7 @@ bool transpile(sInfo* info) version 3
     var param_types = [new sType("int", info), new sType("char**", info)];
     var param_names = [string("argc"), string("argv")];
     var main_fun = new sFun(name, result_type, param_types, param_names
-                            , false@external, false@var_args, info);
+                            , false@external, false@var_args, null!@block, info);
     
     info.funcs.insert(name, main_fun);
     

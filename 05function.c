@@ -301,6 +301,8 @@ bool sIntNode*::compile(sIntNode* self, sInfo* info)
     
     info.stack.push_back(come_value);
     
+    add_come_last_code(info, "%s;\n", come_value.c_value);
+    
     return true;
 }
 
@@ -497,6 +499,7 @@ exception sNode*% expression_node(sInfo* info) version 99
     skip_spaces_and_lf(info);
     
     parse_sharp(info);
+    
     if(xisdigit(*info->p)) {
         int n = 0;
         while(xisdigit(*info->p)) {
@@ -565,12 +568,21 @@ exception sNode*% expression(sInfo* info) version 5
 }
 
 
-exception sBlock*% parse_block(sInfo* info)
+exception sBlock*% parse_block(list<sType*%>*? param_types, list<string>*? param_names, sInfo* info)
 {
     sVarTable* lv_table = info->lv_table;
     
     var result = new sBlock(lv_table, info);
     info->lv_table = result.mVarTable;
+    
+    if(param_types && param_names) {
+        int i;
+        foreach(name, param_names) {
+            sType* type = param_types[i];
+            add_variable_to_table(name, type, info);
+            i++;
+        }
+    }
     
     int block_level = info->block_level;
     info->block_level++;
@@ -799,20 +811,19 @@ exception sNode*% parse_function(sInfo* info)
         skip_spaces_and_lf(info);
         
         var fun = new sFun(fun_name, result_type, param_types, param_names
-                                , true@external, var_args, info);
+                                , true@external, var_args, null!@block, info);
         
         info.funcs.insert(string(fun_name), fun);
         
         return new sNode(new sFunNode(fun, info));
     }
     else if(*info->p == '{') {
-        sBlock*% block = parse_block(info).catch {
+        sBlock*% block = parse_block(param_types, param_names, info).catch {
             throw;
         }
         
         var fun = new sFun(fun_name, result_type, param_types, param_names
-                                , false@external, var_args, info);
-        fun.mBlock = block;
+                                , false@external, var_args, block, info);
         
         info.funcs.insert(string(fun_name), fun);
         
@@ -826,6 +837,59 @@ exception sNode*% parse_function(sInfo* info)
     return (sNode*)null;
 }
 
+exception sNode*% top_level(char* buf, char* head, sInfo* info) version 1
+{
+    err_msg(info, "unexpected word(%s)\n", buf);
+    throw;
+    
+    return (sNode*)null;
+}
+
+bool is_type_name(char* buf, sInfo* info)
+{
+    sClass* klass = info.classes[buf];
+    
+    return klass || buf === "const" || buf === "register" || buf === "static" || buf === "volatile" || buf === "unsigned" || buf === "immutable" || buf === "mutable";
+
+}
+
+exception sNode*% top_level(char* buf, char* head, sInfo* info) version 99
+{
+    bool is_type_name_flag = is_type_name(buf, info);
+    
+    int sline = info.sline;
+    char* p = info.p.p;
+    
+    buffer*% buf2 = new buffer();
+    
+    while(xisalnum(*info->p)) {
+        buf2.append_char(*info->p);
+        info->p++;
+    }
+    skip_spaces_and_lf(info);
+    
+    bool lambda_call_flag = false;
+    bool define_function_flag = false;
+    if(buf2.length() > 0 && *info->p == '(') {
+        if(is_type_name_flag) {
+            define_function_flag = true;
+        }
+    }
+    
+    info.p.p = head;
+    info.sline = sline;
+    
+    if(define_function_flag) {
+        return parse_function(info).catch {
+            throw;
+        }
+    }
+ 
+    return inherit(buf, head, info).catch {
+        throw
+    }
+}
+
 exception int transpile(sInfo* info) version 5
 {
     skip_spaces_and_lf(info);
@@ -833,7 +897,13 @@ exception int transpile(sInfo* info) version 5
     
     while(*info->p) {
         parse_sharp(info);
-        sNode*% node = parse_function(info).catch {
+        
+        char* head = info.p.p;
+        string buf = parse_word(info).catch {
+            throw;
+        }
+        
+        sNode*% node = top_level(buf, head, info).catch {
             throw;
         }
         parse_sharp(info);

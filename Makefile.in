@@ -37,51 +37,54 @@ all: comelang no-self-host
 
 no-self-host: comelang lib lib-gc lib-ts
 
-comelang2-install: comelang2
+comelang2-install: 
 	$(INSTALL) -m 755 ./comelang2 "$(DESTDIR)/bin"
 
-comelang2: common.h 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 06str.o 07var.o 08if.o 09while.o 10do_while.o 11for.o 12switch.o 13op.o
-	./comelang -no-gc -g -o comelang2 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 06str.o 07var.o 08if.o 09while.o 10do_while.o 11for.o 12switch.o 13op.o
+comelang2: common.h 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 06str.o 07var.o 08if.o 09while.o 10do_while.o 11for.o 12switch.o 13op.o 14struct.o
+	./comelang -no-gc -g -o comelang2 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 06str.o 07var.o 08if.o 09while.o 10do_while.o 11for.o 12switch.o 13op.o 14struct.o
 	mkdir -p "$(DESTDIR)/bin"
 
 01main.o: 01main.c common.h
-	./comelang -g -no-gc -s -c 01main.c
+	./comelang -g -no-gc -c 01main.c
 
 02transpile.o: 02transpile.c common.h
-	./comelang -no-gc -g -s -c 02transpile.c
+	./comelang -no-gc -g -c 02transpile.c
 
 03transpile2.o: 03transpile2.c common.h
-	./comelang -no-gc -g -s -c 03transpile2.c
+	./comelang -no-gc -g -c 03transpile2.c
 
 04heap.o: 04heap.c common.h
-	./comelang -no-gc -g -s -c 04heap.c
+	./comelang -no-gc -g -c 04heap.c
 
 05function.o: 05function.c common.h
-	./comelang -no-gc -g -s -c 05function.c
+	./comelang -no-gc -g  -c 05function.c
 
 06str.o: 06str.c common.h
-	./comelang -no-gc -g -s -c 06str.c
+	./comelang -no-gc -g -c 06str.c
 
 07var.o: 07var.c common.h
-	./comelang -no-gc -g -s -c 07var.c
+	./comelang -no-gc -g -c 07var.c
 
 08if.o: 08if.c common.h
-	./comelang -no-gc -g -s -c 08if.c
+	./comelang -no-gc -g -c 08if.c
 
 09while.o: 09while.c common.h
-	./comelang -no-gc -g -s -c 09while.c
+	./comelang -no-gc -g -c 09while.c
 
 10do_while.o: 10do_while.c common.h
-	./comelang -no-gc -g -s -c 10do_while.c
+	./comelang -no-gc -g -c 10do_while.c
 
 11for.o: 11for.c common.h
-	./comelang -no-gc -g -s -c 11for.c
+	./comelang -no-gc -g -c 11for.c
 
 12switch.o: 12switch.c common.h
-	./comelang -no-gc -g -s -c 12switch.c
+	./comelang -no-gc -g -c 12switch.c
 
 13op.o: 13op.c common.h
-	./comelang -no-gc -g -s -c 13op.c
+	./comelang -no-gc -g -c 13op.c
+
+14struct.o: 14struct.c common.h
+	./comelang -no-gc -g -c 14struct.c
 
 comelang2-clean:
 	rm -f 0*.o 1*.o 2*.o

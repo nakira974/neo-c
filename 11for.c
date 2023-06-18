@@ -125,7 +125,7 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 11
         }
         expected_next_character(')', info).catch { throw; }
         
-        sBlock*% block = parse_block(info).catch { throw; }
+        sBlock*% block = parse_block(null!, null!, info).catch { throw; }
         
         info->lv_table = lv_table;
     

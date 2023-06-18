@@ -8,7 +8,7 @@ Yet another modern compiler. It has a collection and string library using Boehm 
 もう一つのモダンコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 1.2.3
+version 1.2.4
 
 ``` C
 #include <comelang.h>
@@ -387,6 +387,10 @@ From version 1.2.1 gc_inc to +1 the reference count and the reference count to -
 From version 1.2.3 stringの!==が定義されてませんでした。定義しました。
 
 From version 1.2.3 appended string !==
+
+From version 1.2.4 Fixed bug with map::finalize
+
+From version 1.2.4 mapのファイナライザのバグを修正しました。
 
 # Language specifications
 

@@ -207,6 +207,44 @@ sType*% sType*::initialize(sType*% self, char* name, sInfo* info, bool heap=fals
     return self;
 }
 
+sType*% sType*::initialize2(sType*% self, char* name, sInfo* info)
+{
+    self.mName = string(name);
+    self.mClass = null;
+    
+    self.mGenericsTypes = borrow new list<sType*>();
+    self.mArrayNum = borrow new list<int>();
+    self.mOmitArrayNum = false;
+    self.mParamTypes = borrow new list<sType*>();
+    self.mResultType = null;
+    self.mUnsigned = false;
+    self.mConstant = false;
+    self.mRegister = false;
+    self.mVolatile = false;
+    self.mStatic = false;
+    self.mRestrict = false;
+    self.mImmutable = false;
+    self.mLongLong = false;
+    self.mHeap = false;
+    self.mDummyHeap = false;
+    self.mNoHeap = false;
+    self.mRefference = false;
+    
+    self.mPointerNum = 0;
+    self.mNoArrayPointerNum = 0;
+    self.mSizeNum = 0;
+    
+    self.mDynamicArrayNum = 0;
+    self.mTypeOfExpression = 0;
+
+    self.mOriginalTypeName = borrow string("");
+    self.mOriginalPointerNum = 0;
+    
+    self.mFunctionParam = false;
+    
+    return self;
+}
+
 void sType*::finalize(sType* self)
 {
 //    delete self.mClass;
@@ -343,7 +381,7 @@ sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool 
     return self;
 };
 
-sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, bool external, bool var_args, sInfo* info)
+sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, bool external, bool var_args, sBlock*% block, sInfo* info)
 {
     self.mName = name;
     self.mResultType = result_type;
@@ -355,6 +393,8 @@ sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sTy
     self.mSource = new buffer();
     self.mSourceHead = new buffer();
     self.mSourceDefer = new buffer();
+    
+    self.mBlock = block;
     
     return self;
 }
@@ -418,6 +458,7 @@ int come_main(int argc, char** argv) version 2
         info.no_output_err = false;
         info.funcs = new map<string, sFun*%>();
         info.classes = new map<string, sClass*%>();
+        info.types = new map<string, sType*%>();
         info.module = new sModule();
         info.right_value_objects = new list<sRightValueObject*%>();
         info.stack = new list<CVALUE*%>();

@@ -1600,7 +1600,7 @@ impl map <T, T2>
                 }
             }
         }
-        delete self.items;
+        ncfree_object((char*)self.items);
 
         for(int i=0; i<self.size; i++) {
             if(self.item_existance[i]) {
@@ -1609,7 +1609,7 @@ impl map <T, T2>
                 }
             }
         }
-        delete self.keys;
+        ncfree_object((char*)self.keys);
         
         delete self.key_list;
 

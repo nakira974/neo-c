@@ -66,7 +66,7 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 10
         string sname = clone info->sname;
         int sline = info->sline;
     
-        sBlock*% block = parse_block(info).catch { throw; }
+        sBlock*% block = parse_block(null!, null!, info).catch { throw; }
         
         string buf2 = parse_word(info).catch {
             throw;

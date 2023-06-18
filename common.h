@@ -4,6 +4,7 @@
 #include <comelang.h>
 
 using unsafe;
+using no-gc;
 using no-null-check;
 
 #define COME_CODE_MAX 2048
@@ -174,6 +175,7 @@ struct sInfo
 
     map<string, sFun*%>*% funcs;
     map<string, sClass*%>*% classes;
+    map<string, sType*%>*% types;
     sModule*% module;
     
     sType*% type;
@@ -209,13 +211,14 @@ bool transpile(sInfo* info) version 2;
 bool output_source_file(sInfo* info) version 2;
 sModule*% sModule*::initialize(sModule*% self);
 sType*% sType*::initialize(sType*% self, char* name, sInfo* info, bool heap=false);
+sType*% sType*::initialize2(sType*% self, char* name, sInfo* info);
 sVarTable*% sVarTable*::initialize(sVarTable*% self, bool global, sVarTable* parent);
 sVarTable*% sVarTable*::clone(sVarTable* self);
 sType*% sType*::clone(sType* self);
 sType*% sType*::shallow_clone(sType* self);
 void sType*::finalize(sType* self);
 sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool struct_=false, bool union_=false, bool generics=false, bool method_generics=false, bool protocol_=false, bool struct_=false, int generics_num=-1, int method_generics_num=-1);
-sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, bool external, bool var_args, sInfo* info);
+sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, bool external, bool var_args, sBlock*% block, sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
 /// 03transpile2.c ///
@@ -248,6 +251,7 @@ void free_objects(sVarTable* table, char* ret_value, sInfo* info);
 /////////////////////////////////////////////////////////////////////
 /// 05function.c ///
 /////////////////////////////////////////////////////////////////////
+bool is_type_name(char* buf, sInfo* info);
 bool parsecmp(char* str, sInfo* info);
 exception string parse_word(sInfo* info);
 void skip_spaces_and_lf(sInfo* info);
@@ -255,13 +259,14 @@ exception int expected_next_character(char c, sInfo* info);
 sBlock*% sBlock*::initialize(sBlock*% self, sVarTable* lv_table, sInfo* info);
 
 exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_name=false);
-exception sBlock*% parse_block(sInfo* info);
+exception sBlock*% parse_block(list<sType*%>*? param_types, list<string>*? param_names, sInfo* info);
 exception int transpile_block(sBlock* block, sInfo* info);
 void arrange_stack(sInfo* info, int top);
 exception int expected_next_character(char c, sInfo* info);
 exception sNode*% parse_function(sInfo* info);
 
 exception sNode*% expression(sInfo* info) version 5;
+exception sNode*% top_level(char* buf, char* head, sInfo* info) version 99;
 exception sNode*% expression_node(sInfo* info) version 1;
 exception sNode*% expression_node(sInfo* info) version 99;
 
@@ -277,8 +282,8 @@ exception sNode*% expression_node(sInfo* info) version 98;
 /////////////////////////////////////////////////////////////////////
 /// 07var.c
 /////////////////////////////////////////////////////////////////////
-sVar*% sVar*::initialize(sVar*% self, char* name, sType* type, sInfo* info);
 exception sNode*% string_node(char* buf, char* head, sInfo* info) version 7;
+void add_variable_to_table(char* name, sType* type, sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
 /// 08if.c
@@ -309,5 +314,10 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 12;
 /// 13op.c
 /////////////////////////////////////////////////////////////////////
 exception sNode*% expression(sInfo* info) version 13;
+
+/////////////////////////////////////////////////////////////////////
+/// 14struct.c
+/////////////////////////////////////////////////////////////////////
+exception sNode*% top_level(char* buf, char* head, sInfo* info) version 98;
 
 #endif

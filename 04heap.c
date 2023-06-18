@@ -289,7 +289,7 @@ sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sInfo* 
         var param_types = [self_type];
         var param_names = [string("self")];
         finalizer = borrow new sFun(name, result_type, param_types, param_names
-                                , false@external, false@var_args, info);
+                    , false@external, false@var_args, null!@block, info);
         
         info.funcs.insert(name, dummy_heap finalizer);
         

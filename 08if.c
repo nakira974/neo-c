@@ -128,7 +128,7 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 8
         
         expected_next_character(')', info).catch { throw; }
     
-        sBlock*% if_block = parse_block(info).catch { throw; }
+        sBlock*% if_block = parse_block(null!, null!, info).catch { throw; }
     
         list<sNode*%>*% elif_expression_nodes = new list<sNode*%>();
     
@@ -166,14 +166,14 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 8
                     expected_next_character(')', info).catch { throw; }
     
                     
-                    sBlock*% elif_block = parse_block(info).catch { throw; }
+                    sBlock*% elif_block = parse_block(null!, null!, info).catch { throw; }
                     
                     elif_blocks.push_back(elif_block);
     
                     elif_num++;
                 }
                 else {
-                    else_block = parse_block(info).catch { throw; }
+                    else_block = parse_block(null!, null!, info).catch { throw; }
                     break;
                 }
             }

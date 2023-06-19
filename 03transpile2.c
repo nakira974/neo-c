@@ -103,6 +103,10 @@ string make_type_name_string(sType* type, bool in_header, sInfo* info)
             buf.append_str("union ");
             buf.append_str(class_name);
         }
+        else if(type->mEnum) {
+            buf.append_str("enum ");
+            buf.append_str(class_name);
+        }
         else if(type->mLongLong) {
             if(class_name === "int") {
                 buf.append_str("long long int");
@@ -201,10 +205,6 @@ string make_define_var(sType* type, char* name, sInfo* info)
 {
     var buf = new buffer();
     
-if(type == null || type->mClass == null) {
-int a = 0;
-int b = 1/a;
-}
     if(type->mClass->mName === "lambda") {
         var str = make_lambda_type_name_string(type, name, info);
         

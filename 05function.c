@@ -115,9 +115,33 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
     bool long_long = false;
     bool short_ = false;
     bool restrict_ = false;
+    bool struct_ = false;
+    bool union_ = false;
+    bool enum_ = false;
     
     while(true) {
-        if(type_name === "const") {
+        if(type_name === "struct") {
+            struct_ = true;
+            
+            type_name = parse_word(info).catch {
+                throw;
+            }
+        }
+        else if(type_name === "union") {
+            union_ = true;
+            
+            type_name = parse_word(info).catch {
+                throw;
+            }
+        }
+        else if(type_name === "enum") {
+            enum_ = true;
+            
+            type_name = parse_word(info).catch {
+                throw;
+            }
+        }
+        else if(type_name === "const") {
             constant = true;
             
             type_name = parse_word(info).catch {
@@ -191,7 +215,13 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         }
     }
     
-    sType*% type = new sType(type_name, info);
+    sType*% type;
+    if(info.types[type_name]) {
+        type = clone info.types[type_name];
+    }
+    else {
+        type = new sType(type_name, info);
+    }
     
     type->mConstant = constant;
     type->mRegister = register_;
@@ -848,8 +878,9 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 1
 bool is_type_name(char* buf, sInfo* info)
 {
     sClass* klass = info.classes[buf];
+    sType* type = info.types[buf];
     
-    return klass || buf === "const" || buf === "register" || buf === "static" || buf === "volatile" || buf === "unsigned" || buf === "immutable" || buf === "mutable";
+    return klass || type || buf === "const" || buf === "register" || buf === "static" || buf === "volatile" || buf === "unsigned" || buf === "immutable" || buf === "mutable";
 
 }
 

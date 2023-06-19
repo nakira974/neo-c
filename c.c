@@ -20,7 +20,17 @@ union Data2
     double b;
 };
 
-enum { kA, kB };
+enum eEnumA { kA, kB };
+
+typedef int int32;
+
+struct sDataX
+{
+    int a;
+    int b;
+}
+
+typedef struct sDataX DataX;
 
 int main()
 {
@@ -82,6 +92,14 @@ int main()
     }
     
     printf("%d\n", fun(1,2));
+    
+    int32 x = 123;
+    
+    printf("%d\n" x);
+    
+    DataX data;
+    
+    eEnumA enum_data;
     
     return 0;
 }

@@ -3,9 +3,8 @@
 
 #include <comelang.h>
 
-using unsafe;
-using no-gc;
 using no-null-check;
+using unsafe;
 
 #define COME_CODE_MAX 2048
 #define FUN_VERSION_MAX 128
@@ -27,6 +26,7 @@ struct sClass {
     bool mEnum;
     bool mProtocol;
     bool mNumber;
+    bool mEnum;
     
     string mName;
     
@@ -217,7 +217,7 @@ sVarTable*% sVarTable*::clone(sVarTable* self);
 sType*% sType*::clone(sType* self);
 sType*% sType*::shallow_clone(sType* self);
 void sType*::finalize(sType* self);
-sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool union_=false, bool generics=false, bool method_generics=false, bool protocol_=false, bool struct_=false, bool float_=false, int generics_num=-1, int method_generics_num=-1);
+sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool union_=false, bool generics=false, bool method_generics=false, bool protocol_=false, bool struct_=false, bool float_=false, int generics_num=-1, int method_generics_num=-1, bool enum_=false);
 sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, bool external, bool var_args, sBlock*% block, sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
@@ -324,5 +324,10 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 98;
 /// 15union.c
 /////////////////////////////////////////////////////////////////////
 exception sNode*% top_level(char* buf, char* head, sInfo* info) version 97;
+
+/////////////////////////////////////////////////////////////////////
+/// 16enum.c
+/////////////////////////////////////////////////////////////////////
+exception sNode*% top_level(char* buf, char* head, sInfo* info) version 96;
 
 #endif

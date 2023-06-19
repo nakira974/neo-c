@@ -1092,44 +1092,70 @@ BOOL is_typeof_type(sNodeType* node_type)
 
 BOOL solve_typeof(sNodeType** node_type, sCompileInfo* info)
 {
-    int pointer_num = (*node_type)->mPointerNum;
+//    char* type_name = (*node_type)->mOriginalTypeName;
     
-    int array_dimention_num = (*node_type)->mArrayDimentionNum;
-    int array_num[ARRAY_DIMENTION_MAX];
-    int i;
-    for(i=0; i<array_dimention_num; i++) {
-        array_num[i] = (*node_type)->mArrayNum[i];
-    }
+//    sNodeType* node_type2 = get_typedef(type_name);
     
-    for(i=0; i<(*node_type)->mNumGenericsTypes; i++)
-    {
-        if(!solve_typeof(&(*node_type)->mGenericsTypes[i], info))
+    if(is_typeof_type(*node_type)) {
+        int pointer_num = (*node_type)->mPointerNum;
+        
+        int array_dimention_num = (*node_type)->mArrayDimentionNum;
+        int array_num[ARRAY_DIMENTION_MAX];
+        int i;
+        for(i=0; i<array_dimention_num; i++) {
+            array_num[i] = (*node_type)->mArrayNum[i];
+        }
+        
+        for(i=0; i<(*node_type)->mNumGenericsTypes; i++)
         {
-            return FALSE;
+            if(!solve_typeof(&(*node_type)->mGenericsTypes[i], info))
+            {
+                return FALSE;
+            }
         }
-    }
-
-    unsigned int node = (*node_type)->mTypeOfExpression;
-
-    if(node) {
-        BOOL no_output = info->no_output;
-        info->no_output = TRUE;
-        if(!compile(node, info)) {
-            compile_err_msg(info, "can't get type from typedef");
-            return TRUE;
-        }
-        info->no_output = no_output;
-
-        dec_stack_ptr(1, info);
-
-        *node_type = clone_node_type(info->type);
-    }
     
-    (*node_type)->mPointerNum += pointer_num;
-    (*node_type)->mArrayDimentionNum = array_dimention_num;
-    for(i=0; i<array_dimention_num; i++ ) {
-        (*node_type)->mArrayNum[i] = array_num[i];
+        unsigned int node = (*node_type)->mTypeOfExpression;
+    
+        if(node) {
+            BOOL no_output = info->no_output;
+            info->no_output = TRUE;
+            if(!compile(node, info)) {
+                compile_err_msg(info, "can't get type from typedef");
+                return TRUE;
+            }
+            info->no_output = no_output;
+    
+            dec_stack_ptr(1, info);
+    
+            *node_type = clone_node_type(info->type);
+        }
+        
+        (*node_type)->mPointerNum += pointer_num;
+        (*node_type)->mArrayDimentionNum = array_dimention_num;
+        for(i=0; i<array_dimention_num; i++ ) {
+            (*node_type)->mArrayNum[i] = array_num[i];
+        }
     }
+/*
+    else if(node_type2) {
+        int pointer_num = (*node_type)->mPointerNum;
+        
+        int array_dimention_num = (*node_type)->mArrayDimentionNum;
+        int array_num[ARRAY_DIMENTION_MAX];
+        int i;
+        for(i=0; i<array_dimention_num; i++) {
+            array_num[i] = (*node_type)->mArrayNum[i];
+        }
+        
+        *node_type = clone_node_type(node_type2);
+        
+        (*node_type)->mPointerNum += pointer_num;
+        (*node_type)->mArrayDimentionNum = array_dimention_num;
+        for(i=0; i<array_dimention_num; i++ ) {
+            (*node_type)->mArrayNum[i] = array_num[i];
+        }
+    }
+*/
 
     return TRUE;
 }
@@ -1153,16 +1179,12 @@ BOOL solve_type(sNodeType** node_type, sNodeType* generics_type, int num_method_
         }
     }
 
-    if(is_typeof_type(*node_type))
+    if(!solve_typeof(node_type, info)) 
     {
-        if(!solve_typeof(node_type, info)) 
-        {
-            compile_err_msg(info, "Can't solve typeof types");
-            show_node_type(*node_type);
-            return TRUE;
-        }
+        compile_err_msg(info, "Can't solve typeof types");
+        show_node_type(*node_type);
+        return TRUE;
     }
-
 
     return TRUE;
 }

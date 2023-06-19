@@ -229,15 +229,12 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
     for(i=0; i<num_params; i++) {
         param_types[i] = params[i].mType;
 
-        if(is_typeof_type(param_types[i]))
+        if(!solve_typeof(&param_types[i], info))
         {
-            if(!solve_typeof(&param_types[i], info))
-            {
-                compile_err_msg(info, "Can't solve typeof types");
-                show_node_type(param_types[i]);
-                info->function_node_block = function_node_block;
-                return TRUE;
-            }
+            compile_err_msg(info, "Can't solve typeof types");
+            show_node_type(param_types[i]);
+            info->function_node_block = function_node_block;
+            return TRUE;
         }
         
         if(!create_generics_struct_type(CLASS_NAME(param_types[i]->mClass), param_types[i])) {

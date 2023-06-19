@@ -604,14 +604,11 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
                 }
             }
 
-            if(is_typeof_type(fun_param_type))
+            if(!solve_typeof(&fun_param_type, info)) 
             {
-                if(!solve_typeof(&fun_param_type, info)) 
-                {
-                    compile_err_msg(info, "Can't solve typeof types");
-                    show_node_type(fun_param_type);
-                    return TRUE;
-                }
+                compile_err_msg(info, "Can't solve typeof types");
+                show_node_type(fun_param_type);
+                return TRUE;
             }
 
             if(auto_cast_posibility(fun_param_type, param_types[0], FALSE)) {
@@ -747,16 +744,12 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
                 }
             }
 
-            if(is_typeof_type(fun_param_type))
+            if(!solve_typeof(&fun_param_type, info)) 
             {
-                if(!solve_typeof(&fun_param_type, info)) 
-                {
-                    compile_err_msg(info, "Can't solve typeof types");
-                    show_node_type(fun_param_type);
-                    return TRUE;
-                }
+                compile_err_msg(info, "Can't solve typeof types");
+                show_node_type(fun_param_type);
+                return TRUE;
             }
-
 
             solve_method_generics2(&fun_param_type, param_types[i]);
 
@@ -1584,15 +1577,12 @@ BOOL compile_lambda_call(unsigned int node, sCompileInfo* info)
 
     sNodeType* lambda_type = info->type;
     
-    if(is_typeof_type(lambda_type))
+    if(!solve_typeof(&lambda_type, info))
     {
-        if(!solve_typeof(&lambda_type, info))
-        {
-            compile_err_msg(info, "Can't solve typeof types");
-            show_node_type(lambda_type);
+        compile_err_msg(info, "Can't solve typeof types");
+        show_node_type(lambda_type);
 
-            return TRUE;
-        }
+        return TRUE;
     }
 
     LVALUE lambda_value = *get_value_from_stack(-1);
@@ -1674,6 +1664,11 @@ BOOL compile_lambda_call(unsigned int node, sCompileInfo* info)
 
     sBuf_append_str(&buf, ")");
 
+    if(lambda_type->mResultType == NULL) {
+        compile_err_msg(info, "Invalid lambda call\n");
+        return FALSE;
+    }
+    
     if(type_identify_with_class_name(lambda_type->mResultType, "void") && lambda_type->mResultType->mPointerNum == 0)
     {
         add_come_code(info, "%s;\n", buf.mBuf);

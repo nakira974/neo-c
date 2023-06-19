@@ -362,7 +362,7 @@ impl vector<T>
 
             self.size = new_size;
 
-            delete items;
+            ncfree_object((char*)items);
         }
 
         self.items[self.len] = dummy_heap item;
@@ -440,10 +440,9 @@ impl vector<T>
             for(int i=0; i<self.len; i++) 
             {
                 delete borrow self.items[i];
-
             }
         }
-        delete self.items;
+        ncfree_object((char*)self.items);
         
         self.size = 16;
         self.len = 0;
@@ -528,11 +527,11 @@ impl list <T>
         list_item<T>* it = self->head;
         while(it != null) {
             if(isheap(T)) {
-                delete it.item;
+                delete borrow it.item;
             }
             auto prev_it = it;
             it = it.next;
-            delete prev_it;
+            delete borrow prev_it;
         }
     }
     
@@ -827,11 +826,11 @@ impl list <T>
         list_item<T>*? it = self.head;
         while(it != null) {
             if(isheap(T)) {
-                delete it.item;
+                delete borrow it.item;
             }
             auto prev_it = it;
             it = it.next;
-            delete prev_it;
+            delete borrow prev_it;
         }
 
         self.head = null;
@@ -877,14 +876,14 @@ impl list <T>
             while(it != null) {
                 if(i < tail) {
                     if(isheap(T)) {
-                        delete it.item;
+                        delete borrow it.item;
                     }
                     list_item<T>*? prev_it = it;
 
                     it = it.next;
                     i++;
 
-                    delete prev_it;
+                    delete borrow prev_it;
 
                     self.len--;
                 }
@@ -910,14 +909,14 @@ impl list <T>
 
                 if(i >= head) {
                     if(isheap(T)) {
-                        delete it.item;
+                        delete borrow it.item;
                     }
                     list_item<T>*? prev_it = it;
 
                     it = it.next;
                     i++;
 
-                    delete prev_it;
+                    delete borrow prev_it;
 
                     self.len--;
                 }
@@ -946,14 +945,14 @@ impl list <T>
                 if(i >= head && i < tail) 
                 {
                     if(isheap(T)) {
-                        delete it.item;
+                        delete borrow it.item;
                     }
                     list_item<T>*? prev_it = it;
 
                     it = it.next;
                     i++;
 
-                    delete prev_it;
+                    delete borrow prev_it;
 
                     self.len--;
                 }
@@ -985,7 +984,7 @@ impl list <T>
         while(it != null) {
             if(position == i) {
                 if(isheap(T)) {
-                    delete it.item;
+                    delete borrow it.item;
                 }
 
                 it.item = item;
@@ -1596,7 +1595,7 @@ impl map <T, T2>
         for(int i=0; i<self.size; i++) {
             if(self.item_existance[i]) {
                 if(isheap(T2)) {
-                    delete self.items[i];
+                    delete borrow self.items[i];
                 }
             }
         }
@@ -1605,15 +1604,15 @@ impl map <T, T2>
         for(int i=0; i<self.size; i++) {
             if(self.item_existance[i]) {
                 if(isheap(T)) {
-                    delete self.keys[i];
+                    delete borrow self.keys[i];
                 }
             }
         }
         ncfree_object((char*)self.keys);
         
-        delete self.key_list;
+        delete borrow self.key_list;
 
-        delete self.item_existance;
+        delete borrow self.item_existance;
     }
     
     void insert2(map<T,T2>* self, T` key, T2` item) mutable
@@ -1634,10 +1633,10 @@ impl map <T, T2>
                 if(self.keys[it].equals(key)) 
                 {
                     if(isheap(T)) {
-                        delete dummy_heap self.keys[it];
+                        delete borrow self.keys[it];
                     }
                     if(isheap(T2)) {
-                        delete dummy_heap self.items[it];
+                        delete borrow self.items[it];
                     }
                     self.keys[it] = key;
                     self.items[it] = item;
@@ -1949,9 +1948,9 @@ impl map <T, T2>
             }
         }
 
-        delete self.items;
-        delete self.item_existance;
-        delete self.keys;
+        ncfree_object((char*)self.items);
+        delete borrow self.item_existance;
+        ncfree_object((char*)self.keys);
 
         self.keys = keys;
         self.items = items;
@@ -1979,10 +1978,10 @@ impl map <T, T2>
                 if(self.keys[it].equals(key)) 
                 {
                     if(isheap(T)) {
-                        delete dummy_heap self.keys[it];
+                        delete borrow self.keys[it];
                     }
                     if(isheap(T2)) {
-                        delete dummy_heap self.items[it];
+                        delete borrow self.items[it];
                     }
                     self.keys[it] = key;
                     self.items[it] = item;

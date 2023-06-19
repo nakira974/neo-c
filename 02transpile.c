@@ -323,7 +323,7 @@ sType*% sType*::shallow_clone(sType* self)
     return result;
 }
 
-sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool union_=false, bool generics=false, bool method_generics=false, bool protocol_=false, bool struct_=false, bool float_=false, int generics_num=-1, int method_generics_num=-1)
+sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool union_=false, bool generics=false, bool method_generics=false, bool protocol_=false, bool struct_=false, bool float_=false, int generics_num=-1, int method_generics_num=-1, bool enum_=false)
 {
     self.mNumber = number;
     self.mStruct = struct_;
@@ -333,6 +333,7 @@ sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool 
     self.mEnum = false;
     self.mProtocol = protocol_;
     self.mFloat = float_;
+    self.mEnum = enum_;
     
     self.mName = string(name);
     

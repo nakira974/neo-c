@@ -20,6 +20,8 @@ union Data2
     double b;
 };
 
+enum { kA, kB };
+
 int main()
 {
 /*

@@ -1207,14 +1207,11 @@ BOOL compile_return(unsigned int node, sCompileInfo* info)
                 return TRUE;
             }
         
-            if(is_typeof_type(result_type))
+            if(!solve_typeof(&result_type, info)) 
             {
-                if(!solve_typeof(&result_type, info)) 
-                {
-                    compile_err_msg(info, "Can't solve typeof types");
-                    show_node_type(result_type); 
-                    return FALSE;
-                }
+                compile_err_msg(info, "Can't solve typeof types");
+                show_node_type(result_type); 
+                return FALSE;
             }
     
             if(auto_cast_posibility(result_type, right_type, FALSE))

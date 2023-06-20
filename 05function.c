@@ -524,6 +524,11 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 5
     throw
 }
 
+exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 5
+{
+    return node;
+}
+
 exception sNode*% expression_node(sInfo* info) version 99
 {
     skip_spaces_and_lf(info);
@@ -538,7 +543,11 @@ exception sNode*% expression_node(sInfo* info) version 99
             skip_spaces_and_lf(info);
         }
         
-        return new sNode(new sIntNode(n, info));
+        sNode*% node = new sNode(new sIntNode(n, info));
+        
+        node = post_position_operator(node, info).catch { throw };
+        
+        return node;
     }
     else if(parsecmp("return", info)) {
         info->p += strlen("return");
@@ -568,19 +577,40 @@ exception sNode*% expression_node(sInfo* info) version 99
                 throw;
             }
             
+            node = post_position_operator(node, info).catch { throw };
+            
             return node;
         }
         else {
             sNode*% node = string_node(buf, head, info).catch {
                 throw;
             }
+            
+            node = post_position_operator(node, info).catch { throw };
+            
             return node;
         }
     }
+    else if(*info->p == '(') {
+        info->p++;
+        skip_spaces_and_lf(info);
+        
+        sNode*% node = expression(info).catch {
+            throw
+        }
+        
+        expected_next_character(')', info);
+        
+        node = post_position_operator(node, info).catch { throw };
+        
+        return node;
+    }
     else {
-        sNode* node = inherit(info).catch {
+        sNode*% node = inherit(info).catch {
             throw;
         }
+        
+        node = post_position_operator(node, info).catch { throw };
         
         return node;
     }

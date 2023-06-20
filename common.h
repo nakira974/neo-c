@@ -273,6 +273,7 @@ exception sNode*% expression_node(sInfo* info) version 99;
 exception int transpile(sInfo* info) version 5;
 void parse_sharp(sInfo* info) version 5;
 exception sNode*% string_node(char* buf, char* head, sInfo* info) version 5;
+exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 5;
 
 /////////////////////////////////////////////////////////////////////
 /// 06str.c ///
@@ -314,6 +315,7 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 12;
 /// 13op.c
 /////////////////////////////////////////////////////////////////////
 exception sNode*% expression(sInfo* info) version 13;
+exception sNode*% post_op(sNode*% node, sInfo* info) version 13;
 
 /////////////////////////////////////////////////////////////////////
 /// 14struct.c
@@ -334,5 +336,10 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 96;
 /// 17typedef.c
 /////////////////////////////////////////////////////////////////////
 exception sNode*% top_level(char* buf, char* head, sInfo* info) version 95;
+
+/////////////////////////////////////////////////////////////////////
+/// 18field.c
+/////////////////////////////////////////////////////////////////////
+exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 18;
 
 #endif

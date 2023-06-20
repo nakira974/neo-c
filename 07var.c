@@ -226,7 +226,9 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 7
         return new sNode(new sStoreNode(string(buf)@name, false@alloc, right_value, info));
     }
     else if(var_ && *info->p != '(') {
-        return new sNode(new sLoadNode(string(buf)@name, info));
+        sNode*% node = new sNode(new sLoadNode(string(buf)@name, info));
+        
+        return node;
     }
     else if(is_type_name_flag && *info->p != '(') {
         info.p.p = head;

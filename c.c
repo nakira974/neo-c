@@ -99,14 +99,14 @@ int main()
     
     printf("%d\n", x);
     
+    enum eEnumA enum_data;
+    
     DataX data;
     
     data.a = 123;
     data.b = 234;
     
     printf("%d %d\n", data.a, data.b);
-    
-    enum eEnumA enum_data;
     
     return 0;
 }

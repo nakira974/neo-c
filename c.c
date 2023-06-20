@@ -28,9 +28,11 @@ struct sDataX
 {
     int a;
     int b;
-}
+};
 
-typedef struct sDataX DataX;
+typedef struct sDataX DataY;
+
+typedef DataY DataX;
 
 int main()
 {
@@ -95,11 +97,16 @@ int main()
     
     int32 x = 123;
     
-    printf("%d\n" x);
+    printf("%d\n", x);
     
     DataX data;
     
-    eEnumA enum_data;
+    data.a = 123;
+    data.b = 234;
+    
+    printf("%d %d\n", data.a, data.b);
+    
+    enum eEnumA enum_data;
     
     return 0;
 }

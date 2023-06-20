@@ -880,7 +880,7 @@ bool is_type_name(char* buf, sInfo* info)
     sClass* klass = info.classes[buf];
     sType* type = info.types[buf];
     
-    return klass || type || buf === "const" || buf === "register" || buf === "static" || buf === "volatile" || buf === "unsigned" || buf === "immutable" || buf === "mutable";
+    return klass || type || buf === "const" || buf === "register" || buf === "static" || buf === "volatile" || buf === "unsigned" || buf === "immutable" || buf === "mutable" || buf === "struct" || buf === "enum" || buf === "union";
 
 }
 

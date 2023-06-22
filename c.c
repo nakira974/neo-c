@@ -75,7 +75,6 @@ int main()
     for(int i=0; i<3;i=i+1) {
         printf("%d\n", i);
     }
-*/
     for(int i=0; i<3; i=i+1) {
         printf("%d\n", i);
     }
@@ -98,6 +97,7 @@ int main()
     int32 x = 123;
     
     printf("%d\n", x);
+*/
     
     enum eEnumA enum_data;
     
@@ -107,6 +107,10 @@ int main()
     data.b = 234;
     
     printf("%d %d\n", data.a, data.b);
+    
+    data.a++;
+    
+    printf("data.a %d\n", data.a);
     
     return 0;
 }

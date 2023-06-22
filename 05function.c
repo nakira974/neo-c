@@ -68,7 +68,7 @@ exception string parse_word(sInfo* info)
 {
     var buf = new buffer();
     
-    while(*info->p >= 'a' && *info->p <= 'z' || *info->p >= 'A' && *info->p <= 'Z' || *info->p == '_' || *info->p >= '0' && *info->p <= '9')
+    while((*info->p >= 'a' && *info->p <= 'z') || (*info->p >= 'A' && *info->p <= 'Z') || *info->p == '_' || (*info->p >= '0' && *info->p <= '9'))
     {
         buf.append_char(*info->p);
         info->p++;

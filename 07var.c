@@ -228,6 +228,8 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 7
     else if(var_ && *info->p != '(') {
         sNode*% node = new sNode(new sLoadNode(string(buf)@name, info));
         
+        node = post_position_operator(node, info).catch { throw };
+        
         return node;
     }
     else if(is_type_name_flag && *info->p != '(') {

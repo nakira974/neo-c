@@ -1248,7 +1248,7 @@ BOOL compile_map_value(unsigned int node, sCompileInfo* info)
     return TRUE;
 }
 
-unsigned int sNodeTree_create_tuple(int num_elements, unsigned int* elements, sParserInfo* info)
+unsigned int sNodeTree_create_tuple(int num_elements, unsigned int* elements, BOOL append_right_values, sParserInfo* info)
 {
     unsigned int node = alloc_node();
 
@@ -1263,6 +1263,7 @@ unsigned int sNodeTree_create_tuple(int num_elements, unsigned int* elements, sP
         gNodes[node].uValue.sNodes.mNodes[i] = elements[i];
     }
     gNodes[node].uValue.sNodes.mNumNodes = num_elements;
+    gNodes[node].uValue.sNodes.mAppendRightValues = append_right_values;
 
     gNodes[node].mLeft = 0;
     gNodes[node].mRight = 0;
@@ -1279,6 +1280,7 @@ BOOL compile_tuple_value(unsigned int node, sCompileInfo* info)
     for(i=0; i<num_nodes; i++) {
         nodes[i] = gNodes[node].uValue.sNodes.mNodes[i];
     }
+    BOOL append_right_values = gNodes[node].uValue.sNodes.mAppendRightValues;
     
     sNodeType* element_types[TUPLE_ELEMENT_MAX];
     LVALUE elements_value[LIST_ELEMENT_MAX];
@@ -1384,30 +1386,15 @@ BOOL compile_tuple_value(unsigned int node, sCompileInfo* info)
     llvm_value.type = clone_node_type(tuple_type);
     llvm_value.address = NULL;
     llvm_value.var = NULL;
+    llvm_value.c_value = xsprintf("");
     
-    char* var_name = append_object_to_right_values(llvm_value.value, tuple_type, info);
-    
-    sBuf buf2;
-    sBuf_init(&buf2);
-    
-    sBuf_append_str(&buf2, xsprintf("(%s = %s(%s, ", var_name, llvm_fun_name, tuple_value.c_value));
-    
-    for(i=0; i<num_nodes; i++) {
-        sBuf_append_str(&buf2, elements_value[i].c_value);
-        if(i != num_nodes-1) {
-            sBuf_append_str(&buf2, ",");
-        }
-        else {
-            sBuf_append_str(&buf2, "))");
-        }
+    if(append_right_values) {
+        append_object_to_right_values(llvm_value.value, tuple_type, info);
     }
-    llvm_value.c_value = xsprintf("%s", buf2.mBuf);
 
     push_value_to_stack_ptr(&llvm_value, info);
 
     info->type = clone_node_type(tuple_type);
-    
-    free(buf2.mBuf);
     
     return TRUE;
 }

@@ -531,8 +531,12 @@ int main(int argc, char** argv)
             xstrncat(clang_optiones, "-c ", 1024);
         }
         else if(strcmp(argv[i], "-t") == 0) {
+            fprintf(stderr, "No support to traspile\n");
+            exit(2);
+            /*
             gNCTranspile = TRUE;
             gNCGC = FALSE;
+            */
         }
         else if(strcmp(argv[i], "libs") == 0)
         {

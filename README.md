@@ -8,7 +8,7 @@ Yet another modern compiler. It has a collection and string library using Boehm 
 もう一つのモダンコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 1.2.6
+version 1.2.7
 
 ``` C
 #include <comelang.h>
@@ -395,6 +395,8 @@ From version 1.2.4 mapのファイナライザのバグを修正しました。
 From version 1.2.5 int a = 0; a(); --> segmentation fault. This bug has been fixed.
 
 From version 1.2.6 Fixed exception heap bug.
+
+From version 1.2.7 Fixed exception heap bug. No support to transpile mode, -t option.
 
 # Language specifications
 

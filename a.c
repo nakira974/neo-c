@@ -1,22 +1,19 @@
 #include <comelang.h>
 
+exception string fun(string a)
+{
+    return (string)null;
+}
+
 int main(int argc, char** argv)
 {
-    list<string>*% li = new list<string>();
+    string b = string("ABC");
     
-    {
-        string a = string("ABC");
-        
-        li.push_back(a);
-        
-        string b = string("DEF");
-        
-        li.push_back(b);
+    string c = fun(b).catch {
+        puts("catch");
     }
     
-    li.each {
-        printf("%s\n", it);
-    }
+    printf("%p\n", c!);
     
     return 0;
 }

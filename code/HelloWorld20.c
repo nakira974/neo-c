@@ -228,6 +228,20 @@ int main(int argc, char** argv)
         puts("AAA");
     }
     
+    list<string>*% li = new list<string>();
+    
+    {
+        string a = string("ABC");
+        
+        li.push_back(a);
+        
+        string b = string("DEF");
+        
+        li.push_back(b);
+    }
+    
+    xassert("list test", li === [string("ABC"), string("DEF")]);
+    
     return 0;
 }
 

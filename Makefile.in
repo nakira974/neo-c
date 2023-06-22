@@ -35,7 +35,7 @@ SELF_HOST_OBJS=@SELF_HOST_OBJS@
 #########################################
 all: comelang no-self-host 
 
-no-self-host: comelang lib lib-gc lib-ts
+no-self-host: comelang lib lib-gc #lib-ts
 
 comelang2-install: 
 	$(INSTALL) -m 755 ./comelang2 "$(DESTDIR)/bin"
@@ -324,7 +324,7 @@ distclean: clean
 #########################################
 # test
 #########################################
-test: gc-debug-test debug-test ts-test
+test: gc-debug-test debug-test #ts-test
 
 no-gc-test:
 	@echo "Compile to gc test code..."

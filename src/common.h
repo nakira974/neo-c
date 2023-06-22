@@ -827,6 +827,7 @@ struct sNodeTreeStruct
             unsigned int* mNodes;
             int mNumNodes;
             BOOL mInMacro;
+            BOOL mAppendRightValues;
         } sNodes;
         
         struct {
@@ -1479,7 +1480,7 @@ unsigned int sNodeTree_create_true(sParserInfo* info);
 unsigned int sNodeTree_create_false(sParserInfo* info);
 unsigned int sNodeTree_create_null(sParserInfo* info);
 unsigned int sNodeTree_create_map(int num_keys, unsigned int* keys, unsigned int* values, sParserInfo* info);
-unsigned int sNodeTree_create_tuple(int num_nodes, unsigned int* nodes, sParserInfo* info);
+unsigned int sNodeTree_create_tuple(int num_nodes, unsigned int* nodes, BOOL append_right_value, sParserInfo* info);
 unsigned int sNodeTree_create_list(int num_elements, unsigned int* elements, sParserInfo* info);
 
 BOOL compile_c_string_value(unsigned int node, sCompileInfo* info);

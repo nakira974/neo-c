@@ -465,7 +465,7 @@ BOOL parse_tuple(unsigned int* node, sParserInfo* info)
         }
     }
     
-    *node = sNodeTree_create_tuple(num_nodes, nodes, info);
+    *node = sNodeTree_create_tuple(num_nodes, nodes, TRUE, info);
     
     info->container_nest--;
     info->tuple_nest--;
@@ -1585,7 +1585,7 @@ void create_exception_result_value(unsigned int* node, BOOL throw_, sParserInfo*
         num_nodes++;
     }
     
-    *node = sNodeTree_create_tuple(num_nodes, nodes, info);
+    *node = sNodeTree_create_tuple(num_nodes, nodes, FALSE, info);
 }
 
 BOOL parse_return(unsigned int* node, sParserInfo* info)

@@ -125,6 +125,7 @@ sNodeType* clone_node_type(sNodeType* node_type)
     node_type2->mArrayParam = node_type->mArrayParam;
     node_type2->mCastedPointerToPointer = node_type->mCastedPointerToPointer;
     node_type2->mNoAutoCast = node_type->mNoAutoCast;
+    node_type2->mCatchHeapMark = node_type->mCatchHeapMark;
     
     return node_type2;
 }

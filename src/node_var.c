@@ -544,6 +544,7 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
     LLVMValueRef obj = NULL;
 
     sNodeType* right_type = clone_node_type(info->type);
+    BOOL catch_heap_mark = right_type->mCatchHeapMark;
     
     /// type inference ///
     if(var_->mType == NULL) {
@@ -921,7 +922,7 @@ BOOL compile_store_variable(unsigned int node, sCompileInfo* info)
         remove_object_from_right_values(rvalue.value, info);
     }
     
-    if(!left_type->mHeap && right_type->mHeap && is_right_values(rvalue.value, info)) {
+    if(!left_type->mHeap && right_type->mHeap && (is_right_values(rvalue.value, info) || catch_heap_mark)) {
         compile_err_msg(info, "append %% to variable type. This stored object is freed(1)");
         return FALSE;
     }
@@ -1271,7 +1272,7 @@ BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info)
     return TRUE;
 }
 
-unsigned int sNodeTree_create_load_variable(char* var_name, sParserInfo* info)
+unsigned int sNodeTree_create_load_variable(char* var_name, BOOL append_right_value, sParserInfo* info)
 {
     unsigned node = alloc_node();
 
@@ -1283,6 +1284,7 @@ unsigned int sNodeTree_create_load_variable(char* var_name, sParserInfo* info)
     xstrncpy(gNodes[node].uValue.sLoadVariable.mVarName, var_name, VAR_NAME_MAX);
     gNodes[node].uValue.sLoadVariable.mGlobal = info->mBlockLevel == 0;
     gNodes[node].uValue.sLoadVariable.mGettingRefference = info->getting_refference;
+    gNodes[node].uValue.sLoadVariable.mAppendRightValue = append_right_value;
     
     gNodes[node].mLeft = 0;
     gNodes[node].mRight = 0;
@@ -5255,6 +5257,7 @@ BOOL compile_caller_sline(unsigned int node, sCompileInfo* info)
 
 BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
 {
+    BOOL append_right_value = gNodes[node].uValue.sLoadVariable.mAppendRightValue;
     char* var_name = gNodes[node].uValue.sLoadVariable.mVarName;
     
     sVar* var_ = get_variable_from_table(info->pinfo->lv_table, var_name);
@@ -5362,6 +5365,10 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
             push_value_to_stack_ptr(&llvm_value, info);
             
             info->type = clone_node_type(var_type2);
+            
+            if(append_right_value && var_type2->mHeap) {
+                info->type->mCatchHeapMark = TRUE;
+            }
         }
         else {
             LLVMTypeRef llvm_type = create_llvm_type_from_node_type(var_type2);
@@ -5383,6 +5390,10 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
             push_value_to_stack_ptr(&llvm_value, info);
             
             info->type = clone_node_type(var_type2);
+            
+            if(append_right_value && var_type2->mHeap) {
+                info->type->mCatchHeapMark = TRUE;
+            }
         }
     }
     else if(LLVMIsConstant(var_address) != 0) {
@@ -5604,6 +5615,10 @@ BOOL compile_load_variable(unsigned int node, sCompileInfo* info)
             push_value_to_stack_ptr(&llvm_value, info);
 
             info->type = clone_node_type(var_type);
+            
+            if(append_right_value && var_type->mHeap) {
+                info->type->mCatchHeapMark = TRUE;
+            }
         }
     }
     
@@ -6508,6 +6523,7 @@ BOOL compile_store_field(unsigned int node, sCompileInfo* info)
     }
 
     sNodeType* right_type = clone_node_type(info->type);
+    BOOL catch_heap_mark = right_type->mCatchHeapMark;
 
     LVALUE rvalue = *get_value_from_stack(-1);
     
@@ -6640,7 +6656,7 @@ BOOL compile_store_field(unsigned int node, sCompileInfo* info)
 
     info->type = clone_node_type(right_type);
     
-    if(!field_type->mHeap && right_type->mHeap && is_right_values(rvalue.value, info)) {
+    if(!field_type->mHeap && right_type->mHeap && (is_right_values(rvalue.value, info) || catch_heap_mark)) {
         compile_err_msg(info, "append %% to variable type. This stored object is freed(2)");
         return FALSE;
     }

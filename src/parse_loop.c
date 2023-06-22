@@ -168,7 +168,7 @@ BOOL parse_catch(unsigned int* node, sParserInfo* info)
     nodes[num_nodes] = sNodeTree_create_store_variable_multiple(num_vars, var_names2, *node, alloc, info);
     num_nodes++;
     
-    unsigned int node2 = sNodeTree_create_load_variable(var_names[1], info);
+    unsigned int node2 = sNodeTree_create_load_variable(var_names[1], FALSE, info);
     
     unsigned int expression_node = sNodeTree_create_logical_denial(node2, 0, 0, info);
 
@@ -192,7 +192,7 @@ BOOL parse_catch(unsigned int* node, sParserInfo* info)
     nodes[num_nodes] = sNodeTree_if_expression(expression_node, MANAGED if_node_block, elif_expression_nodes, elif_node_blocks, elif_num, MANAGED else_node_block, info, sname, sline);
     num_nodes++;
     
-    nodes[num_nodes] = sNodeTree_create_load_variable(var_names[0], info);
+    nodes[num_nodes] = sNodeTree_create_load_variable(var_names[0], TRUE, info);
     num_nodes++;
     
     BOOL result_type_is_void2 = FALSE;

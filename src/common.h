@@ -233,6 +233,7 @@ struct sNodeTypeStruct
     BOOL mArrayParam;
     BOOL mCastedPointerToPointer;
     BOOL mNoAutoCast;
+    BOOL mCatchHeapMark;
 };
 
 typedef struct sNodeTypeStruct sNodeType;
@@ -838,6 +839,7 @@ struct sNodeTreeStruct
             char mVarName[VAR_NAME_MAX];
             BOOL mGlobal;
             BOOL mGettingRefference;
+            BOOL mAppendRightValue;
         } sLoadVariable;
 
         struct {
@@ -1389,7 +1391,7 @@ unsigned int sNodeTree_create_sizeof(sNodeType* node_type, sParserInfo* info);
 unsigned int sNodeTree_create_sizeof_expression(int num_nodes, unsigned int* nodes, sParserInfo* info);
 unsigned int sNodeTree_create_alignof(sNodeType* node_type, sParserInfo* info);
 unsigned int sNodeTree_create_alignof_expression(unsigned int lnode, sParserInfo* info);
-unsigned int sNodeTree_create_load_variable(char* var_name, sParserInfo* info);
+unsigned int sNodeTree_create_load_variable(char* var_name, BOOL append_right_value, sParserInfo* info);
 unsigned int sNodeTree_create_define_variable(char* var_name, BOOL extern_, BOOL global, sParserInfo* info);
 unsigned int sNodeTree_create_store_variable(char* var_name, int right, BOOL alloc, BOOL global, sParserInfo* info);
 unsigned int sNodeTree_create_store_variable_multiple(int num_vars, char** var_names, int right, BOOL alloc, sParserInfo* info);

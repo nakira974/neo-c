@@ -1805,7 +1805,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                 *node = 0;
             }
             else {
-                *node = sNodeTree_create_load_variable("self", info);
+                *node = sNodeTree_create_load_variable("self", FALSE, info);
                 *node = sNodeTree_create_store_field(var_name, *node, right_node, info);
             }
         }
@@ -2323,7 +2323,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                     nodes[num_nodes++] = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
                     
                     sCLClass* klass = result_type->mClass;
-                    unsigned int array_node = sNodeTree_create_load_variable(name, info);
+                    unsigned int array_node = sNodeTree_create_load_variable(name, FALSE, info);
                     
                     if(result_type->mOmitArrayNum) {
                         char* p = info->p;
@@ -2470,7 +2470,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                     
                     sCLClass* klass = result_type->mClass;
                     
-                    unsigned int array_node = sNodeTree_create_load_variable(name, info);
+                    unsigned int array_node = sNodeTree_create_load_variable(name, FALSE, info);
                     
                     int i;
                     for(i=0; i<klass->mNumFields; i++) {
@@ -2557,7 +2557,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
         
                         nodes[num_nodes++] = *node;
                         
-                        unsigned int right_node = sNodeTree_create_load_variable(name2, info);
+                        unsigned int right_node = sNodeTree_create_load_variable(name2, FALSE, info);
                         right_node = sNodeTree_create_refference(right_node, info);
                         
                         BOOL alloc = TRUE;
@@ -3047,7 +3047,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
         
                         nodes[num_nodes++] = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
                         
-                        unsigned int array_node = sNodeTree_create_load_variable(name, info);
+                        unsigned int array_node = sNodeTree_create_load_variable(name, FALSE, info);
                         
                         int array_num = result_type->mArrayNum[0];
         
@@ -3091,7 +3091,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
         
                         nodes[num_nodes++] = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
         
-                        unsigned int array_node = sNodeTree_create_load_variable(name, info);
+                        unsigned int array_node = sNodeTree_create_load_variable(name, FALSE, info);
                         
                         sCLClass* klass = result_type->mClass;
         
@@ -3123,7 +3123,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
     
                     nodes[num_nodes++] = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
     
-                    unsigned int array_node = sNodeTree_create_load_variable(name, info);
+                    unsigned int array_node = sNodeTree_create_load_variable(name, FALSE, info);
     
                     if(num_dimention == 1) {
                         if(type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 0 && num_initialize_array_value == 1 && gNodes[initialize_array_values[0]].mNodeType == kNodeTypeCString) 
@@ -3308,7 +3308,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
                 
                 sCLClass* klass = result_type->mClass;
                 
-                unsigned int array_node = sNodeTree_create_load_variable(name, info);
+                unsigned int array_node = sNodeTree_create_load_variable(name, FALSE, info);
                 
                 int i;
                 for(i=0; i<klass->mNumFields; i++) {
@@ -3388,7 +3388,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
         
                         nodes[num_nodes++] = *node;
                         
-                        unsigned int right_node = sNodeTree_create_load_variable(name2, info);
+                        unsigned int right_node = sNodeTree_create_load_variable(name2, FALSE, info);
                         right_node = sNodeTree_create_refference(right_node, info);
                         
                         BOOL alloc = TRUE;
@@ -3682,7 +3682,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
         
                         nodes[num_nodes++] = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
                         
-                        unsigned int array_node = sNodeTree_create_load_variable(name, info);
+                        unsigned int array_node = sNodeTree_create_load_variable(name, FALSE, info);
                         
                         int array_num = result_type->mArrayNum[0];
         
@@ -3726,7 +3726,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
         
                         nodes[num_nodes++] = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
         
-                        unsigned int array_node = sNodeTree_create_load_variable(name, info);
+                        unsigned int array_node = sNodeTree_create_load_variable(name, FALSE, info);
                         
                         sCLClass* klass = result_type->mClass;
         
@@ -3758,7 +3758,7 @@ BOOL parse_variable(unsigned int* node, sNodeType* result_type, char* name, BOOL
     
                     nodes[num_nodes++] = sNodeTree_create_define_variable(name, extern_, info->mBlockLevel == 0, info);
     
-                    unsigned int array_node = sNodeTree_create_load_variable(name, info);
+                    unsigned int array_node = sNodeTree_create_load_variable(name, FALSE, info);
     
                     if(num_dimention == 1) {
                         if(type_identify_with_class_name(result_type, "char") && result_type->mPointerNum == 0 && num_initialize_array_value == 1 && gNodes[initialize_array_values[0]].mNodeType == kNodeTypeCString) 

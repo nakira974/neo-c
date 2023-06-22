@@ -40,7 +40,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
 
         xstrncpy(var_name, bufs[0], VAR_NAME_MAX);
 
-        unsigned int left_node = sNodeTree_create_load_variable(var_name, info);
+        unsigned int left_node = sNodeTree_create_load_variable(var_name, FALSE, info);
         left_node = sNodeTree_create_unwrap(left_node, FALSE, info);
 
         unsigned int right_node = sNodeTree_create_int_value(1, info);
@@ -55,7 +55,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
         
         nodes[0] = *node;
 
-        unsigned int left_node2 = sNodeTree_create_load_variable(var_name, info);
+        unsigned int left_node2 = sNodeTree_create_load_variable(var_name, FALSE, info);
         unsigned int right_node2 = sNodeTree_create_int_value(1, info);
 
         *node = sNodeTree_create_sub(left_node2, right_node2, 0, FALSE, info);
@@ -73,7 +73,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
 
         xstrncpy(var_name, bufs[0], VAR_NAME_MAX);
 
-        unsigned int left_node = sNodeTree_create_load_variable(var_name, info);
+        unsigned int left_node = sNodeTree_create_load_variable(var_name, FALSE, info);
         left_node = sNodeTree_create_unwrap(left_node, FALSE, info);
         sVar* var_ = get_variable_from_table(info->lv_table, var_name);
 
@@ -103,7 +103,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
         xstrncpy(var_name, bufs[0], VAR_NAME_MAX);
         
 
-        unsigned int left_node = sNodeTree_create_load_variable(var_name, info);
+        unsigned int left_node = sNodeTree_create_load_variable(var_name, FALSE, info);
         left_node = sNodeTree_create_unwrap(left_node, FALSE, info);
 
         *node = sNodeTree_create_add(left_node, right_node, 0, TRUE, info);
@@ -127,7 +127,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
 
         xstrncpy(var_name, bufs[0], VAR_NAME_MAX);
 
-        unsigned int left_node = sNodeTree_create_load_variable(var_name, info);
+        unsigned int left_node = sNodeTree_create_load_variable(var_name, FALSE, info);
         left_node = sNodeTree_create_unwrap(left_node, FALSE, info);
 
         *node = sNodeTree_create_sub(left_node, right_node, 0, TRUE, info);
@@ -151,7 +151,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
 
         xstrncpy(var_name, bufs[0], VAR_NAME_MAX);
 
-        unsigned int left_node = sNodeTree_create_load_variable(var_name, info);
+        unsigned int left_node = sNodeTree_create_load_variable(var_name, FALSE, info);
         left_node = sNodeTree_create_unwrap(left_node, FALSE, info);
 
         *node = sNodeTree_create_mult(left_node, right_node, 0, info);
@@ -173,7 +173,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
 
         xstrncpy(var_name, bufs[0],  VAR_NAME_MAX);
 
-        unsigned int left_node = sNodeTree_create_load_variable(var_name, info);
+        unsigned int left_node = sNodeTree_create_load_variable(var_name, FALSE, info);
         left_node = sNodeTree_create_unwrap(left_node, FALSE, info);
 
         *node = sNodeTree_create_div(left_node, right_node, 0, info);
@@ -195,7 +195,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
 
         xstrncpy(var_name, bufs[0], VAR_NAME_MAX);
 
-        unsigned int left_node = sNodeTree_create_load_variable(var_name, info);
+        unsigned int left_node = sNodeTree_create_load_variable(var_name, FALSE, info);
         left_node = sNodeTree_create_unwrap(left_node, FALSE, info);
 
         *node = sNodeTree_create_mod(left_node, right_node, 0, info);
@@ -217,7 +217,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
 
         xstrncpy(var_name, bufs[0], VAR_NAME_MAX);
 
-        unsigned int left_node = sNodeTree_create_load_variable(var_name, info);
+        unsigned int left_node = sNodeTree_create_load_variable(var_name, FALSE, info);
         left_node = sNodeTree_create_unwrap(left_node, FALSE, info);
 
         *node = sNodeTree_create_left_shift(left_node, right_node, 0, info);
@@ -239,7 +239,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
 
         xstrncpy(var_name, bufs[0], VAR_NAME_MAX);
 
-        unsigned int left_node = sNodeTree_create_load_variable(var_name, info);
+        unsigned int left_node = sNodeTree_create_load_variable(var_name, FALSE, info);
         left_node = sNodeTree_create_unwrap(left_node, FALSE, info);
 
         *node = sNodeTree_create_right_shift(left_node, right_node, 0, info);
@@ -261,7 +261,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
 
         xstrncpy(var_name, bufs[0], VAR_NAME_MAX);
 
-        unsigned int left_node = sNodeTree_create_load_variable(var_name, info);
+        unsigned int left_node = sNodeTree_create_load_variable(var_name, FALSE, info);
         left_node = sNodeTree_create_unwrap(left_node, FALSE, info);
 
         *node = sNodeTree_create_and(left_node, right_node, 0, info);
@@ -283,7 +283,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
 
         xstrncpy(var_name, bufs[0], VAR_NAME_MAX);
 
-        unsigned int left_node = sNodeTree_create_load_variable(var_name, info);
+        unsigned int left_node = sNodeTree_create_load_variable(var_name, FALSE, info);
         left_node = sNodeTree_create_unwrap(left_node, FALSE, info);
 
         *node = sNodeTree_create_xor(left_node, right_node, 0, info);
@@ -305,7 +305,7 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
 
         xstrncpy(var_name, bufs[0], VAR_NAME_MAX);
 
-        unsigned int left_node = sNodeTree_create_load_variable(var_name, info);
+        unsigned int left_node = sNodeTree_create_load_variable(var_name, FALSE, info);
         left_node = sNodeTree_create_unwrap(left_node, FALSE, info);
 
         *node = sNodeTree_create_or(left_node, right_node, 0, info);
@@ -323,13 +323,13 @@ static BOOL expression_node_variable(unsigned int* node, BOOL enable_assginment,
             return FALSE;
         };
 
-        *node = sNodeTree_create_load_variable(bufs[0], info);
+        *node = sNodeTree_create_load_variable(bufs[0], FALSE, info);
         *node = sNodeTree_create_unwrap(*node, FALSE, info);
 
         *node = sNodeTree_create_lambda_call(*node, params, num_params, info);
     }
     else {
-        *node = sNodeTree_create_load_variable(bufs[0], info);
+        *node = sNodeTree_create_load_variable(bufs[0], FALSE, info);
     }
     
     return TRUE;
@@ -352,7 +352,7 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
             *node = 0;
         }
         else {
-            *node = sNodeTree_create_load_variable("parent", info);
+            *node = sNodeTree_create_load_variable("parent", FALSE, info);
             *node = sNodeTree_create_load_field(buf, *node, info);
             *node = sNodeTree_create_store_value_to_address(*node, right_node, TRUE, NULL, FALSE, info);
         }
@@ -366,7 +366,7 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
 
         xstrncpy(var_name, buf, VAR_NAME_MAX);
         
-        *node = sNodeTree_create_load_variable("parent", info);
+        *node = sNodeTree_create_load_variable("parent", FALSE, info);
         *node = sNodeTree_create_load_field(buf, *node, info);
         unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, FALSE, info);
 
@@ -374,7 +374,7 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
 
         *node = sNodeTree_create_add(left_node, right_node, 0, TRUE, info);
         
-        unsigned int node2 = sNodeTree_create_load_variable("parent", info);
+        unsigned int node2 = sNodeTree_create_load_variable("parent", FALSE, info);
         unsigned int node3 = sNodeTree_create_load_field(buf, node2, info);
         unsigned int left_node2 = sNodeTree_create_store_value_to_address(node3, *node, TRUE, NULL, FALSE, info);
 
@@ -391,7 +391,7 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
 
         xstrncpy(var_name, buf, VAR_NAME_MAX);
         
-        *node = sNodeTree_create_load_variable("parent", info);
+        *node = sNodeTree_create_load_variable("parent", FALSE, info);
         *node = sNodeTree_create_load_field(buf, *node, info);
         unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, FALSE, info);
 
@@ -399,7 +399,7 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
 
         *node = sNodeTree_create_sub(left_node, right_node, 0, TRUE, info);
 
-        unsigned int node2 = sNodeTree_create_load_variable("parent", info);
+        unsigned int node2 = sNodeTree_create_load_variable("parent", FALSE, info);
         unsigned int node3 = sNodeTree_create_load_field(buf, node2, info);
         unsigned int left_node2 = sNodeTree_create_store_value_to_address(node3, *node, TRUE, NULL, FALSE, info);
 
@@ -421,13 +421,13 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
 
         xstrncpy(var_name, buf, VAR_NAME_MAX);
 
-        *node = sNodeTree_create_load_variable("parent", info);
+        *node = sNodeTree_create_load_variable("parent", FALSE, info);
         *node = sNodeTree_create_load_field(buf, *node, info);
         unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, FALSE, info);
 
         *node = sNodeTree_create_add(left_node, right_node, 0, TRUE, info);
 
-        unsigned int node2 = sNodeTree_create_load_variable("parent", info);
+        unsigned int node2 = sNodeTree_create_load_variable("parent", FALSE, info);
         unsigned int node3 = sNodeTree_create_load_field(buf, node2, info);
         unsigned int left_node2 = sNodeTree_create_store_value_to_address(node3, *node, TRUE, NULL, FALSE, info);
 
@@ -449,13 +449,13 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
 
         xstrncpy(var_name, buf, VAR_NAME_MAX);
 
-        *node = sNodeTree_create_load_variable("parent", info);
+        *node = sNodeTree_create_load_variable("parent", FALSE, info);
         *node = sNodeTree_create_load_field(buf, *node, info);
         unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, FALSE, info);
 
         *node = sNodeTree_create_sub(left_node, right_node, 0, TRUE, info);
 
-        unsigned int node2 = sNodeTree_create_load_variable("parent", info);
+        unsigned int node2 = sNodeTree_create_load_variable("parent", FALSE, info);
         unsigned int node3 = sNodeTree_create_load_field(buf, node2, info);
         unsigned int left_node2 = sNodeTree_create_store_value_to_address(node3, *node, TRUE, NULL, FALSE, info);
 
@@ -477,13 +477,13 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
 
         xstrncpy(var_name, buf, VAR_NAME_MAX);
 
-        *node = sNodeTree_create_load_variable("parent", info);
+        *node = sNodeTree_create_load_variable("parent", FALSE, info);
         *node = sNodeTree_create_load_field(buf, *node, info);
         unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, FALSE, info);
 
         *node = sNodeTree_create_mult(left_node, right_node, 0, info);
 
-        unsigned int node2 = sNodeTree_create_load_variable("parent", info);
+        unsigned int node2 = sNodeTree_create_load_variable("parent", FALSE, info);
         unsigned int node3 = sNodeTree_create_load_field(buf, node2, info);
         *node = sNodeTree_create_store_value_to_address(node3, *node, TRUE, NULL, FALSE, info);
     }
@@ -501,13 +501,13 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
 
         xstrncpy(var_name, buf, VAR_NAME_MAX);
 
-        *node = sNodeTree_create_load_variable("parent", info);
+        *node = sNodeTree_create_load_variable("parent", FALSE, info);
         *node = sNodeTree_create_load_field(buf, *node, info);
         unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, FALSE, info);
 
         *node = sNodeTree_create_div(left_node, right_node, 0, info);
 
-        unsigned int node2 = sNodeTree_create_load_variable("parent", info);
+        unsigned int node2 = sNodeTree_create_load_variable("parent", FALSE, info);
         unsigned int node3 = sNodeTree_create_load_field(buf, node2, info);
         *node = sNodeTree_create_store_value_to_address(node3, *node, TRUE, NULL, FALSE, info);
     }
@@ -525,13 +525,13 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
 
         xstrncpy(var_name, buf, VAR_NAME_MAX);
 
-        *node = sNodeTree_create_load_variable("parent", info);
+        *node = sNodeTree_create_load_variable("parent", FALSE, info);
         *node = sNodeTree_create_load_field(buf, *node, info);
         unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, FALSE, info);
 
         *node = sNodeTree_create_mod(left_node, right_node, 0, info);
 
-        unsigned int node2 = sNodeTree_create_load_variable("parent", info);
+        unsigned int node2 = sNodeTree_create_load_variable("parent", FALSE, info);
         unsigned int node3 = sNodeTree_create_load_field(buf, node2, info);
         *node = sNodeTree_create_store_value_to_address(node3, *node, TRUE, NULL, FALSE, info);
     }
@@ -549,13 +549,13 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
 
         xstrncpy(var_name, buf, VAR_NAME_MAX);
 
-        *node = sNodeTree_create_load_variable("parent", info);
+        *node = sNodeTree_create_load_variable("parent", FALSE, info);
         *node = sNodeTree_create_load_field(buf, *node, info);
         unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, FALSE, info);
 
         *node = sNodeTree_create_left_shift(left_node, right_node, 0, info);
 
-        unsigned int node2 = sNodeTree_create_load_variable("parent", info);
+        unsigned int node2 = sNodeTree_create_load_variable("parent", FALSE, info);
         unsigned int node3 = sNodeTree_create_load_field(buf, node2, info);
         *node = sNodeTree_create_store_value_to_address(node3, *node, TRUE, NULL, FALSE, info);
     }
@@ -573,13 +573,13 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
 
         xstrncpy(var_name, buf, VAR_NAME_MAX);
 
-        *node = sNodeTree_create_load_variable("parent", info);
+        *node = sNodeTree_create_load_variable("parent", FALSE, info);
         *node = sNodeTree_create_load_field(buf, *node, info);
         unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, FALSE, info);
 
         *node = sNodeTree_create_right_shift(left_node, right_node, 0, info);
 
-        unsigned int node2 = sNodeTree_create_load_variable("parent", info);
+        unsigned int node2 = sNodeTree_create_load_variable("parent", FALSE, info);
         unsigned int node3 = sNodeTree_create_load_field(buf, node2, info);
         *node = sNodeTree_create_store_value_to_address(node3, *node, TRUE, NULL, FALSE, info);
     }
@@ -595,13 +595,13 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
 
         char var_name[VAR_NAME_MAX];
 
-        *node = sNodeTree_create_load_variable("parent", info);
+        *node = sNodeTree_create_load_variable("parent", FALSE, info);
         *node = sNodeTree_create_load_field(buf, *node, info);
         unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, FALSE, info);
 
         *node = sNodeTree_create_and(left_node, right_node, 0, info);
 
-        unsigned int node2 = sNodeTree_create_load_variable("parent", info);
+        unsigned int node2 = sNodeTree_create_load_variable("parent", FALSE, info);
         unsigned int node3 = sNodeTree_create_load_field(buf, node2, info);
         *node = sNodeTree_create_store_value_to_address(node3, *node, TRUE, NULL, FALSE, info);
     }
@@ -619,13 +619,13 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
 
         xstrncpy(var_name, buf, VAR_NAME_MAX);
         
-        *node = sNodeTree_create_load_variable("parent", info);
+        *node = sNodeTree_create_load_variable("parent", FALSE, info);
         *node = sNodeTree_create_load_field(buf, *node, info);
         unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, FALSE, info);
 
         *node = sNodeTree_create_xor(left_node, right_node, 0, info);
 
-        unsigned int node2 = sNodeTree_create_load_variable("parent", info);
+        unsigned int node2 = sNodeTree_create_load_variable("parent", FALSE, info);
         unsigned int node3 = sNodeTree_create_load_field(buf, node2, info);
         *node = sNodeTree_create_store_value_to_address(node3, *node, TRUE, NULL, FALSE, info);
     }
@@ -643,18 +643,18 @@ static BOOL expression_node_variable_method_block_parent(unsigned int* node, BOO
 
         xstrncpy(var_name, buf, VAR_NAME_MAX);
 
-        *node = sNodeTree_create_load_variable("parent", info);
+        *node = sNodeTree_create_load_variable("parent", FALSE, info);
         *node = sNodeTree_create_load_field(buf, *node, info);
         unsigned int left_node = sNodeTree_create_derefference(*node, TRUE, NULL, FALSE, info);
 
         *node = sNodeTree_create_or(left_node, right_node, 0, info);
 
-        unsigned int node2 = sNodeTree_create_load_variable("parent", info);
+        unsigned int node2 = sNodeTree_create_load_variable("parent", FALSE, info);
         unsigned int node3 = sNodeTree_create_load_field(buf, node2, info);
         *node = sNodeTree_create_store_value_to_address(node3, *node, TRUE, NULL, FALSE, info);
     }
     else {
-        *node = sNodeTree_create_load_variable("parent", info);
+        *node = sNodeTree_create_load_variable("parent", FALSE, info);
         *node = sNodeTree_create_load_field(buf, *node, info);
         *node = sNodeTree_create_derefference(*node, TRUE, NULL, TRUE, info);
     }
@@ -1207,7 +1207,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
 
             xstrncpy(var_name, gNodes[exp].uValue.sLoadVariable.mVarName, VAR_NAME_MAX);
 
-            unsigned int left_node = sNodeTree_create_load_variable(var_name, info);
+            unsigned int left_node = sNodeTree_create_load_variable(var_name, FALSE, info);
 
             unsigned int right_node = sNodeTree_create_int_value(1, info);
 
@@ -1323,7 +1323,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
 
             xstrncpy(var_name, gNodes[exp].uValue.sLoadVariable.mVarName, VAR_NAME_MAX);
 
-            unsigned int left_node = sNodeTree_create_load_variable(var_name, info);
+            unsigned int left_node = sNodeTree_create_load_variable(var_name, FALSE, info);
             unsigned int right_node = sNodeTree_create_int_value(1, info);
 
             *node = sNodeTree_create_sub(left_node, right_node, 0, TRUE, info);

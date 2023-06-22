@@ -1971,7 +1971,7 @@ exception sNode*% expression(sInfo* info) version 13
 {
     parse_sharp(info);
     skip_spaces_and_lf(info);
-    sNode* node = conditional_exp(info).catch {
+    sNode*% node = conditional_exp(info).catch {
         throw
     }
     

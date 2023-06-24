@@ -84,7 +84,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         
         CVALUE*% come_value = new CVALUE;
         
-        come_value.c_value = xsprintf("%s", var_->mCValueName);
+        come_value.c_value = xsprintf("%s=%s", var_->mCValueName, right_value.c_value);
         come_value.type = clone left_type;
         come_value.var = var_;
         

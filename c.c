@@ -112,6 +112,46 @@ int main()
     
     printf("data.a %d\n", data.a);
     
+    data.a--;
+    
+    printf("data.a %d\n", data.a);
+    
+    data.a+=2;
+    
+    printf("data.a %d\n", data.a);
+    
+    data.a*=2;
+    
+    printf("data.a %d\n", data.a);
+    
+    data.a/=2;
+    
+    printf("data.a %d\n", data.a);
+    
+    data.a%=2;
+    
+    printf("data.a %d\n", data.a);
+    
+    data.a<<=2;
+    
+    printf("data.a %d\n", data.a);
+    
+    data.a>>=2;
+    
+    printf("data.a %d\n", data.a);
+    
+    data.a&=2;
+    
+    printf("data.a %d\n", data.a);
+    
+    data.a|=2;
+    
+    printf("data.a %d\n", data.a);
+    
+    data.a^=2;
+    
+    printf("data.a %d\n", data.a);
+    
     return 0;
 }
 

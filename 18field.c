@@ -64,13 +64,13 @@ bool sStoreFieldNode*::compile(sStoreFieldNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("%s.%s", left_value.c_value, name);
+    come_value.c_value = xsprintf("%s.%s=%s", left_value.c_value, name, right_value.c_value);
     come_value.type = clone field_type;
     come_value.var = null;
     
     info.stack.push_back(come_value);
     
-    add_come_code(info, "%s.%s=%s;\n", left_value.c_value,name, right_value.c_value);
+    add_come_last_code(info, "%s;\n", come_value.c_value);
 
     return true;
 }

@@ -1,19 +1,14 @@
-#include <comelang.h>
-
-exception string fun(string a)
-{
-    return (string)null;
-}
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 int main(int argc, char** argv)
 {
-    string b = string("ABC");
+    int a = 0;
     
-    string c = fun(b).catch {
-        puts("catch");
-    }
+    int b = a+=2;
     
-    printf("%p\n", c!);
+    printf("%d\n", b);
     
     return 0;
 }

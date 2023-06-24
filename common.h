@@ -340,6 +340,12 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 95;
 /////////////////////////////////////////////////////////////////////
 /// 18field.c
 /////////////////////////////////////////////////////////////////////
-exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 99;
+exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 18;
+exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 18;
+
+/////////////////////////////////////////////////////////////////////
+/// 19eq.c
+/////////////////////////////////////////////////////////////////////
+exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 19;
 
 #endif

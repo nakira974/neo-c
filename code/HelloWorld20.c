@@ -127,6 +127,13 @@ exception sNode*% expression()
     throw;
 }
 
+exception string funXYZ2(string a)
+{
+    return (string)null;
+}
+
+
+
 int main(int argc, char** argv)
 {
     string a = string("AAAA");
@@ -241,6 +248,14 @@ int main(int argc, char** argv)
     }
     
     xassert("list test", li === [string("ABC"), string("DEF")]);
+    
+    string bb = string("ABC");
+    
+    string cc = funXYZ2(bb).catch {
+        puts("catch");
+    }
+    
+    xassert("exception test", cc == null);
     
     return 0;
 }

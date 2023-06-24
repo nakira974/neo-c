@@ -249,9 +249,9 @@ int main(int argc, char** argv)
     
     xassert("list test", li === [string("ABC"), string("DEF")]);
     
-    string bb = string("ABC");
+    string bbc = string("ABC");
     
-    string cc = funXYZ2(bb).catch {
+    string cc = funXYZ2(bbc).catch {
         puts("catch");
     }
     

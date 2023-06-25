@@ -376,6 +376,9 @@ BOOL expression_equal(unsigned int* node, sParserInfo* info)
             if(right == 0) {
                 parser_err_msg(info, "require right value for === operator");
             };
+            
+            *node = sNodeTree_create_unwrap(*node, FALSE, info);
+            right = sNodeTree_create_unwrap(right, FALSE, info);
 
             *node = sNodeTree_create_equals2(*node, right, 0, info);
         }
@@ -406,6 +409,9 @@ BOOL expression_equal(unsigned int* node, sParserInfo* info)
             if(right == 0) {
                 parser_err_msg(info, "require right value for !== operator");
             };
+            
+            *node = sNodeTree_create_unwrap(*node, FALSE, info);
+            right = sNodeTree_create_unwrap(right, FALSE, info);
 
             *node = sNodeTree_create_not_equals2(*node, right, 0, info);
         }

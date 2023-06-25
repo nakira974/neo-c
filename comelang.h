@@ -3704,6 +3704,7 @@ void check_null_pointer(int sline, char* sname);
 void bool::expect(bool self, void* parent, void (*block_)(void* parent));
 void print_ref_count(void* mem);
 
+
 using comelang;
 
 using safe;

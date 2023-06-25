@@ -813,6 +813,20 @@ bool sFunNode*::compile(sFunNode* self, sInfo* info)
     return result;
 }
 
+string crete_method_name(sType* obj_type, char* fun_name)
+{
+    string pointer_name = "p" * obj_type->mPointerNum;
+    string heap_name;
+    if(obj_type->mHeap) {
+        heap_name = string("h");
+    }
+    else {
+        heap_name = string("");
+    }
+    string class_name = obj_type->mClass->mName;
+    
+    return xsprintf("%s%s%s_%s", class_name, pointer_name, heap_name, fun_name);
+}
 
 exception sNode*% parse_function(sInfo* info)
 {
@@ -820,8 +834,54 @@ exception sNode*% parse_function(sInfo* info)
         throw;
     }
     
-    string fun_name = parse_word(info).catch {
-        throw;
+    /// backtrace ///
+    bool method_definition = false;
+    {
+        char* p = info.p.p;
+        int sline = info.sline;
+        
+        buffer*% buf2 = new buffer();
+        while(xisalnum(*info->p)) {
+            buf2.append_char(*info->p);
+            info->p++;
+        }
+        skip_spaces_and_lf(info);
+        
+        while(*info->p == '*') {
+            info->p++;
+            skip_spaces_and_lf(info);
+        }
+        while(*info->p == '%') {
+            info->p++;
+            skip_spaces_and_lf(info);
+        }
+        
+        if(buf2.length() > 0 && *info->p == ':' && *(info->p+1) == ':') {
+            method_definition = true;
+        }
+        
+        info.p.p = p;
+        info.sline = sline;
+    }
+    
+    string fun_name;
+    if(method_definition) {
+        var obj_type, name = parse_type(info).catch {
+            throw;
+        }
+        
+        expected_next_character(':', info).catch { throw; }
+        expected_next_character(':', info).catch { throw; }
+        
+        string fun_name2 = parse_word(info).catch {
+            throw;
+        }
+        fun_name = crete_method_name(obj_type, fun_name2)
+    }
+    else {
+        fun_name = parse_word(info).catch {
+            throw;
+        }
     }
     
     expected_next_character('(', info).catch {
@@ -929,9 +989,18 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 99
     }
     skip_spaces_and_lf(info);
     
+    while(*info->p == '*') {
+        info->p++;
+        skip_spaces_and_lf(info);
+    }
+    while(*info->p == '%') {
+        info->p++;
+        skip_spaces_and_lf(info);
+    }
+    
     bool lambda_call_flag = false;
     bool define_function_flag = false;
-    if(buf2.length() > 0 && *info->p == '(') {
+    if(buf2.length() > 0 && (*info->p == '(' || (*info->p == ':' && *(info->p+1) == ':'))) {
         if(is_type_name_flag) {
             define_function_flag = true;
         }
@@ -990,3 +1059,4 @@ exception int transpile(sInfo* info) version 5
     
     return 0;
 }
+

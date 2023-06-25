@@ -8833,14 +8833,20 @@ BOOL compile_unwrap(unsigned int node, sCompileInfo* info)
         LLVMTypeRef llvm_type3 = create_llvm_type_with_class_name("int");
         LLVMValueRef param1 = LLVMConstInt(llvm_type3, info->sline, FALSE);
         
-        int num_params = 3;
+        LLVMValueRef param2 = LLVMBuildLoad2(gBuilder, create_llvm_type_with_class_name("char*"), gCallerSName, "caller_sname");
+        
+        LLVMValueRef param3 = LLVMBuildLoad2(gBuilder, create_llvm_type_with_class_name("int"), gCallerSLine, "caller_sname");
+        
+        int num_params = 5;
         
         LLVMValueRef llvm_params[PARAMS_MAX];
         memset(llvm_params, 0, sizeof(LLVMValueRef)*PARAMS_MAX);
         
         llvm_params[0] = param0;
         llvm_params[1] = param1;
-        llvm_params[2] = value2;
+        llvm_params[2] = param2;
+        llvm_params[3] = param3;
+        llvm_params[4] = value2;
     
         char* fun_name = "unwrap_exception";
         LLVMValueRef llvm_fun = LLVMGetNamedFunction(gModule, fun_name);

@@ -3,7 +3,6 @@
 
 #include <comelang.h>
 
-using no-null-check;
 using unsafe;
 
 #define COME_CODE_MAX 2048
@@ -274,6 +273,7 @@ exception int transpile(sInfo* info) version 5;
 void parse_sharp(sInfo* info) version 5;
 exception sNode*% string_node(char* buf, char* head, sInfo* info) version 5;
 exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 5;
+string crete_method_name(sType* obj_type, char* fun_name);
 
 /////////////////////////////////////////////////////////////////////
 /// 06str.c ///
@@ -342,10 +342,16 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 95;
 /////////////////////////////////////////////////////////////////////
 exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 18;
 exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 18;
+exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) version 18;
 
 /////////////////////////////////////////////////////////////////////
 /// 19eq.c
 /////////////////////////////////////////////////////////////////////
 exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 19;
+
+/////////////////////////////////////////////////////////////////////
+/// 20method.c
+/////////////////////////////////////////////////////////////////////
+//exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) version 19;
 
 #endif

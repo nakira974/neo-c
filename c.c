@@ -1,6 +1,13 @@
 int puts(const char* str);
 int printf(const char *format, ...);
 
+void char*%::fun2(char*% self)
+{
+    puts(self);
+}
+
+
+/*
 #define TEST 1
 
 int fun(int x, int y)
@@ -33,6 +40,12 @@ struct sDataX
 typedef struct sDataX DataY;
 
 typedef DataY DataX;
+
+void int::fun(int self)
+{
+    printf("%d\n", self);
+}
+*/
 
 int main()
 {
@@ -97,7 +110,6 @@ int main()
     int32 x = 123;
     
     printf("%d\n", x);
-*/
     
     enum eEnumA enum_data;
     
@@ -151,6 +163,7 @@ int main()
     data.a^=2;
     
     printf("data.a %d\n", data.a);
+*/
     
     return 0;
 }

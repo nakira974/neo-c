@@ -442,14 +442,14 @@ void free_objects(sVarTable* table, char* ret_value, sInfo* info)
         sType* type = p->mType;
         sClass* klass = type->mClass;
 
-        if(type->mHeap && !p->mNoFree && p->mCValueName && p->mCValueName !== ret_value)
+        if(type->mHeap && !p->mNoFree && p->mCValueName && (ret_value == null || p->mCValueName !== ret_value))
         {
             free_object(p->mType, p->mCValueName, false@force_delete, info);
             remove_object_from_right_values(p->mCValueName, info);
 
             p->mCValueName = null;
         }
-        else if(p->mAllocaValue && klass->mStruct && gComelang && p->mCValueName !== ret_value) 
+        else if(p->mAllocaValue && klass->mStruct && gComelang && (ret_value == null || p->mCValueName !== ret_value)) 
         {
             sType*% type = clone p->mType;
             type->mPointerNum++;

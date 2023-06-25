@@ -163,6 +163,13 @@ exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 18
     return (sNode*)null;
 }
 
+exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) version 18
+{
+    throw;
+    
+    return (sNode*)null;
+}
+
 exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 18
 {
     while(true){
@@ -179,6 +186,11 @@ exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 18
                 sNode*% right_node = expression(info).catch { throw }
                 
                 node = new sNode(new sStoreFieldNode(node, right_node, field_name, info));
+            }
+            else if(*info->p == '(') {
+                node = parse_method_call(node, field_name, info).catch {
+                    throw;
+                }
             }
             else {
                 node = new sNode(new sLoadFieldNode(node, field_name, info));

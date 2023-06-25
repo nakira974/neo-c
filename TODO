@@ -1,6 +1,2 @@
-stdarg
-va_start
-va_end
-
-sort_with_lambda
-
+method call
+operator overload

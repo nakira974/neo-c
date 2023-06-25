@@ -165,12 +165,10 @@ void* call_cloner(void* fun, void* mem)
     return null;
 }
 
-
-void unwrap_exception(char* sname, int sline, char* mem)
+void unwrap_exception(char* sname, int sline, char* caller_sname, int caller_sline, char* mem)
 {
     if(mem == null) {
-        fprintf(stderr, "%s %d: unwrap exception. The value is null\n", sname, sline);
-        exit(2);
+        fprintf(stderr, "%s %d: unwrap exception. The value is null\n", sname!, sline);
+        fprintf(stderr, "%s %d: caller is this point\n", caller_sname!, caller_sline);
     }
 }
-

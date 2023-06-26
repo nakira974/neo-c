@@ -33,7 +33,6 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
 {
     char* fun_name = self.fun_name;
     list<sNode*%>* params = self.params;
-    method = self.method;
     sNode* obj = self.obj;
     
     if(!obj.compile->(info)) {
@@ -70,7 +69,7 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
     
     buffer*% buf = new buffer();
     
-    buf.append_str(self.fun_name);
+    buf.append_str(fun_name2);
     buf.append_str("(");
     
     int j = 0;
@@ -85,15 +84,15 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
     }
     buf.append_str(")");
     
-    CVALUE*% come_value = new CVALUE;
+    CVALUE*% come_value2 = new CVALUE;
     
-    come_value.c_value = buf.to_string();
-    come_value.type = clone result_type;
-    come_value.var = null;
+    come_value2.c_value = buf.to_string();
+    come_value2.type = clone result_type;
+    come_value2.var = null;
     
     add_come_last_code(info, "%s;\n", buf.to_string());
     
-    info.stack.push_back(come_value);
+    info.stack.push_back(come_value2);
     
     return true;
 }
@@ -132,5 +131,5 @@ exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) v
         }
     }
     
-    return new sNode(new sMethodCallNode(obj, fun_name, params, info));
+    return new sNode(new sMethodCallNode(fun_name, obj, params, info));
 }

@@ -352,6 +352,6 @@ exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 19;
 /////////////////////////////////////////////////////////////////////
 /// 20method.c
 /////////////////////////////////////////////////////////////////////
-//exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) version 19;
+exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) version 20;
 
 #endif

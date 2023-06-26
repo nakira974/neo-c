@@ -1,8 +1,14 @@
 int puts(const char* str);
 int printf(const char *format, ...);
 
-int main(int argc, char** argv)
+void int::fun(int self)
 {
+    printf("%d\n", self);
+}
+
+int main()
+{
+    1.fun();
     
     return 0;
 }

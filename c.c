@@ -1,13 +1,6 @@
 int puts(const char* str);
 int printf(const char *format, ...);
 
-void char*%::fun2(char*% self)
-{
-    puts(self);
-}
-
-
-/*
 #define TEST 1
 
 int fun(int x, int y)
@@ -15,6 +8,7 @@ int fun(int x, int y)
     return x + y;
 }
 
+/*
 struct Data
 {
     int a;
@@ -40,12 +34,12 @@ struct sDataX
 typedef struct sDataX DataY;
 
 typedef DataY DataX;
+*/
 
 void int::fun(int self)
 {
     printf("%d\n", self);
 }
-*/
 
 int main()
 {
@@ -164,6 +158,7 @@ int main()
     
     printf("data.a %d\n", data.a);
 */
+    1.fun();
     
     return 0;
 }

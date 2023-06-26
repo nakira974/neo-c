@@ -8,7 +8,7 @@ Yet another modern compiler. It has a collection and string library using Boehm 
 もう一つのモダンコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 1.2.8
+version 1.2.9
 
 ``` C
 #include <comelang.h>
@@ -399,6 +399,8 @@ From version 1.2.6 Fixed exception heap bug.
 From version 1.2.7 Fixed exception heap bug. No support to transpile mode, -t option.
 
 From version 1.2.8 !==, ===, operator overloads has been null-checked.
+
+From version 1.2.9 Detected invalid inherit
 
 # Language specifications
 

@@ -163,16 +163,32 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             }
         }
         else if(type_name === "long") {
-            if(long_) {
-                long_long = true;
-                long_ = false;
-            }
-            else {
-                long_ = true;
-            }
-            
-            type_name = parse_word(info).catch {
-                throw;
+            /// backward ///
+            {
+                char* p = info.p.p;
+                int sline = info.sline;
+                
+                type_name = parse_word(info).catch {
+                    throw;
+                }
+                
+                if(is_type_name(type_name, info)) {
+                    if(long_) {
+                        long_long = true;
+                        long_ = false;
+                    }
+                    else {
+                        long_ = true;
+                    }
+                    break;
+                }
+                else {
+                    info.p.p = p;
+                    info.sline = sline;
+                    
+                    type_name = string("long");
+                    break;
+                }
             }
         }
         else if(type_name === "unsigned") {
@@ -223,15 +239,15 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         type = new sType(type_name, info);
     }
     
-    type->mConstant = constant;
+    type->mConstant = type->mConstant || constant;
     type->mRegister = register_;
-    type->mUnsigned = unsigned_;
+    type->mUnsigned = type->mUnsigned || unsigned_;
     type->mVolatile = volatile_;
-    type->mStatic = static_;
-    type->mRestrict = restrict_;
-    type->mLongLong = long_long;
-    type->mLong = long_;
-    type->mShort = short_;
+    type->mStatic = type->mStatic || static_;
+    type->mRestrict = type->mRestrict || restrict_;
+    type->mLongLong = type->mLongLong || long_long;
+    type->mLong = type->mLong || long_;
+    type->mShort = type->mShort || short_;
     
     if(*info->p == '<') {
         info->p++;
@@ -289,6 +305,20 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
     string var_name = string("");
     if(parse_variable_name) {
         var_name = parse_word(info).catch {
+            throw;
+        }
+    }
+    
+    while(*info->p == '[') {
+        info->p++;
+        skip_spaces_and_lf(info);
+        
+        sNode*% node = expression(info).catch {
+            throw;
+        }
+        type.mArrayNum.push_back(node);
+        
+        expected_next_character(']', info).catch {
             throw;
         }
     }
@@ -977,33 +1007,47 @@ bool is_type_name(char* buf, sInfo* info)
 exception sNode*% top_level(char* buf, char* head, sInfo* info) version 99
 {
     bool is_type_name_flag = is_type_name(buf, info);
-    
     int sline = info.sline;
-    char* p = info.p.p;
     
-    buffer*% buf2 = new buffer();
-    
-    while(xisalnum(*info->p)) {
-        buf2.append_char(*info->p);
-        info->p++;
-    }
-    skip_spaces_and_lf(info);
-    
-    while(*info->p == '*') {
-        info->p++;
-        skip_spaces_and_lf(info);
-    }
-    while(*info->p == '%') {
-        info->p++;
-        skip_spaces_and_lf(info);
-    }
-    
-    bool lambda_call_flag = false;
+    /// back trace ///
     bool define_function_flag = false;
-    if(buf2.length() > 0 && (*info->p == '(' || (*info->p == ':' && *(info->p+1) == ':'))) {
-        if(is_type_name_flag) {
-            define_function_flag = true;
+    {
+        char* p = info.p.p;
+        
+        while(*info->p == '*') {
+            info->p++;
+            skip_spaces_and_lf(info);
         }
+        while(*info->p == '%') {
+            info->p++;
+            skip_spaces_and_lf(info);
+        }
+        
+        buffer*% buf2 = new buffer();
+        
+        while(xisalnum(*info->p)) {
+            buf2.append_char(*info->p);
+            info->p++;
+        }
+        skip_spaces_and_lf(info);
+        
+        while(*info->p == '*') {
+            info->p++;
+            skip_spaces_and_lf(info);
+        }
+        while(*info->p == '%') {
+            info->p++;
+            skip_spaces_and_lf(info);
+        }
+        
+        if(buf2.length() > 0 && (*info->p == '(' || (*info->p == ':' && *(info->p+1) == ':'))) {
+            if(is_type_name_flag) {
+                define_function_flag = true;
+            }
+        }
+        
+        info.p.p = p;
+        info.sline = sline;
     }
     
     if(define_function_flag) {
@@ -1014,9 +1058,6 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 99
             throw;
         }
     }
-    
-    info.p.p = p;
-    info.sline = sline;
  
     return inherit(buf, head, info).catch {
         throw

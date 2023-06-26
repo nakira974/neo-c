@@ -175,7 +175,7 @@ sType*% sType*::initialize(sType*% self, char* name, sInfo* info, bool heap=fals
     self.mClass = klass;
     
     self.mGenericsTypes = borrow new list<sType*>();
-    self.mArrayNum = borrow new list<int>();
+    self.mArrayNum = borrow new list<sNode*%>();
     self.mOmitArrayNum = false;
     self.mParamTypes = borrow new list<sType*>();
     self.mResultType = null;
@@ -236,7 +236,7 @@ sType*% sType*::clone(sType* self)
     foreach(it, self.mGenericsTypes) {
         result.mGenericsTypes.push_back(borrow clone it);
     }
-    result.mArrayNum = borrow new list<int>();
+    result.mArrayNum = borrow new list<sNode*%>();
     foreach(it, self.mArrayNum) {
         result.mArrayNum.push_back(it);
     }

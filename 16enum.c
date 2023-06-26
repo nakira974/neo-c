@@ -105,7 +105,7 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 96
                 elements.push_back(new tuple2<string,sNode*%>(element_name, element_value));
             }
             else {
-                elements.push_back(new tuple2<string,sNode*%>(element_name, null));
+                elements.push_back(new tuple2<string,sNode*%>(element_name, null!));
             }
             
             if(*info->p == ',') {

@@ -35,13 +35,21 @@ struct sClass {
     list<tuple2<string, sType*%>*%>*% mFields;
 };
 
+struct sInfo;
+
+interface sNode {
+    bool compile(sInfo* info);
+    int sline();
+    string sname();
+};
+
 struct sType
 {
     sClass* mClass;
 
     list<sType*>* mGenericsTypes;
     
-    list<int>* mArrayNum;
+    list<sNode*%>* mArrayNum;
     bool mOmitArrayNum;
     
     list<sType*>* mParamTypes;
@@ -137,12 +145,6 @@ struct sVarTable {
 };
 
 struct sInfo;
-
-interface sNode {
-    bool compile(sInfo* info);
-    int sline();
-    string sname();
-};
 
 struct sBlock
 {
@@ -265,6 +267,7 @@ exception int expected_next_character(char c, sInfo* info);
 exception sNode*% parse_function(sInfo* info);
 
 exception sNode*% expression(sInfo* info) version 5;
+exception sNode*% top_level(char* buf, char* head, sInfo* info) version 1;
 exception sNode*% top_level(char* buf, char* head, sInfo* info) version 99;
 exception sNode*% expression_node(sInfo* info) version 1;
 exception sNode*% expression_node(sInfo* info) version 99;
@@ -353,5 +356,10 @@ exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 19;
 /// 20method.c
 /////////////////////////////////////////////////////////////////////
 exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) version 20;
+
+/////////////////////////////////////////////////////////////////////
+/// 21obj.c
+/////////////////////////////////////////////////////////////////////
+exception sNode*% string_node(char* buf, char* head, sInfo* info) version 21;
 
 #endif

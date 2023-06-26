@@ -239,6 +239,11 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 7
             throw;
         }
         
+        sVar* var_ = get_variable_from_table(info.lv_table, name);
+        if(var_) {
+            err_msg(info, "Already appended this var name(%s)", name);
+            throw;
+        }
         add_variable_to_table(name, type, info);
         
         if(*info->p == '=') {

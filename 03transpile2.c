@@ -63,6 +63,7 @@ string make_type_name_string(sType* type, bool in_header, sInfo* info)
         buf.append_str("unsigned ");
     }
     
+/*
     if(type->mLongLong) {
         buf.append_str("long long ");
     }
@@ -70,6 +71,7 @@ string make_type_name_string(sType* type, bool in_header, sInfo* info)
     if(type->mLong) {
         buf.append_str("long ");
     }
+*/
     
     if(type->mShort) {
         buf.append_str("short ");
@@ -110,6 +112,14 @@ string make_type_name_string(sType* type, bool in_header, sInfo* info)
         else if(type->mLongLong) {
             if(class_name === "int") {
                 buf.append_str("long long int");
+            }
+            else if(class_name === "long") {
+                buf.append_str("long long");
+            }
+        }
+        else if(type->mLong) {
+            if(class_name === "int") {
+                buf.append_str("long int");
             }
             else if(class_name === "long") {
                 buf.append_str("long long");
@@ -239,7 +249,14 @@ string make_define_var(sType* type, char* name, sInfo* info)
         }
         
         foreach(it, type->mArrayNum) {
-            buf.append_str(xsprintf("[%d]", it));
+            if(!it.compile->(info)) {
+                err_msg(info, "invalid array number");
+                exit(1);
+            }
+            CVALUE*% cvalue = get_value_from_stack(-1, info);
+            dec_stack_ptr(1, info);
+        
+            buf.append_str(xsprintf("[%s]", cvalue.c_value));
         }
     }
     else {
@@ -300,7 +317,7 @@ string output_function(sFun* fun, sInfo* info)
     }
     else if(fun->mResultType->mArrayNum.length() > 0) {
         sType*% base_result_type = clone fun->mResultType;
-        base_result_type.mArrayNum = borrow new list<int>();
+        base_result_type.mArrayNum = borrow new list<sNode*%>();
         
         string result_type_str = make_type_name_string(base_result_type, false@in_header, info);
         
@@ -329,7 +346,14 @@ string output_function(sFun* fun, sInfo* info)
             i++;
         }
         
-        output.append_str(xsprintf("))[%d]", fun->mResultType->mArrayNum[0]));
+        if(!fun->mResultType->mArrayNum[0].compile->(info)) {
+            err_msg(info, "invalid array number");
+            exit(1);
+        }
+        CVALUE*% cvalue = get_value_from_stack(-1, info);
+        dec_stack_ptr(1, info);
+        
+        output.append_str(xsprintf("))[%s]", cvalue.c_value));
         
         info.module.mSourceHead.append_str(output.to_string());
         info.module.mSourceHead.append_str(";\n");
@@ -408,7 +432,7 @@ string header_function(sFun* fun, sInfo* info)
     }
     else if(fun->mResultType->mArrayNum.length() > 0) {
         sType*% base_result_type = clone fun->mResultType;
-        base_result_type->mArrayNum = borrow new list<int>();
+        base_result_type->mArrayNum = borrow new list<sNode*%>();
         
         string result_type_str = make_type_name_string(base_result_type, true@in_header, info);
         
@@ -436,7 +460,14 @@ string header_function(sFun* fun, sInfo* info)
             i++;
         }
         
-        output.append_str(xsprintf("))[%d];\n", fun->mResultType->mArrayNum[0]));
+        if(!fun->mResultType->mArrayNum[0].compile->(info)) {
+            err_msg(info, "invalid array number");
+            exit(1);
+        }
+        CVALUE*% cvalue = get_value_from_stack(-1, info);
+        dec_stack_ptr(1, info);
+        
+        output.append_str(xsprintf("))[%s];\n", cvalue.c_value));
     }
     else {
         string result_type_str = make_type_name_string(fun->mResultType, true@in_header, info);

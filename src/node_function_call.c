@@ -539,6 +539,11 @@ BOOL compile_function_call(unsigned int node, sCompileInfo* info)
             if(fun) {
                 xstrncpy(fun_name, new_fun_name, VAR_NAME_MAX);
             }
+            
+            if(strcmp(fun_name, gFunctionName) == 0) {
+                compile_err_msg(info, "invalid inherit");
+                return FALSE;
+            }
         }
     }
     else {

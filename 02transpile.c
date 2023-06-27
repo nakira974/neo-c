@@ -238,7 +238,7 @@ sType*% sType*::clone(sType* self)
     }
     result.mArrayNum = borrow new list<sNode*%>();
     foreach(it, self.mArrayNum) {
-        result.mArrayNum.push_back(it);
+        result.mArrayNum.push_back(clone it);
     }
     result.mOmitArrayNum = self.mOmitArrayNum;
     result.mParamTypes = borrow new list<sType*>();

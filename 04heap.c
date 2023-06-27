@@ -474,9 +474,14 @@ void free_objects_on_return(sBlock* current_block, sInfo* info, char* ret_value,
 {
     sVarTable* it = info->lv_table;
     
-    while(it.mID != info->come_fun->mVarTable) {
-        free_objects(it, ret_value, info);
-
-        it = it->mParent;
+    if(it == info->come_fun->mVarTable) {
+        free_objects(it, ret_value!, info);
+    }
+    else {
+        while(it != info->come_fun->mVarTable) {
+            free_objects(it, ret_value!, info);
+    
+            it = it->mParent;
+        }
     }
 }

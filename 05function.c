@@ -411,10 +411,14 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
         
         CVALUE*% come_value = get_value_from_stack(-1, info);
         dec_stack_ptr(1, info);
+        sFun* come_fun = info.come_fun;
+        free_objects_on_return(come_fun.mBlock, info, come_value.c_value, false@top_block);
         
         add_come_code(info, "return %s;\n", come_value.c_value);
     }
     else {
+        sFun* come_fun = info.come_fun;
+        free_objects_on_return(come_fun.mBlock, info, null!, false@top_block);
         add_come_code(info, "return\n");
     }
     

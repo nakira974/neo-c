@@ -8,6 +8,7 @@ void free(void *ptr);
 void *calloc(size_t nmemb, size_t size);
 void *realloc(void *ptr, size_t size);
 
+/*
 void ncfree(void* mem)
 {
     if(mem) {
@@ -106,12 +107,15 @@ void* come_memdup(void* block)
     
     return (char*)ret + sizeof(int) + sizeof(long);
 }
+*/
 
 int main()
 {
     if(1) {
         char*% a = new char[128];
     }
+    
+    printf("%ld\n", sizeof(unsigned long));
     
     return 0;
 }

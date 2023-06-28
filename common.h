@@ -220,6 +220,7 @@ sType*% sType*::shallow_clone(sType* self);
 void sType*::finalize(sType* self);
 sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool union_=false, bool generics=false, bool method_generics=false, bool protocol_=false, bool struct_=false, bool float_=false, int generics_num=-1, int method_generics_num=-1, bool enum_=false);
 sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, bool external, bool var_args, sBlock*% block, sInfo* info);
+string make_type_name_string(sType* type, bool in_header, sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
 /// 03transpile2.c ///

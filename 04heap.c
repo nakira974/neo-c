@@ -257,7 +257,7 @@ sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sInfo* 
         if(klass->mProtocol) {
             char* name = "_protocol_obj";
             char source2[1024];
-            snprintf(source2, 1024, "if(self != ((void*)0) && self.%s != ((void*)0) && self.finalize) { void (*finalizer)(void*) = self.finalize; finalizer(self._protocol_obj); igc_decrement_ref_count(self.%s); }\n", name, name);
+            snprintf(source2, 1024, "if(self != ((void*)0) && self.%s != ((void*)0) && self.finalize) { void (*finalizer)(void*) = self.finalize; finalizer(self._protocol_obj); come_decrement_ref_count(self.%s); }\n", name, name);
             
             source.append_str(source2);
         }
@@ -315,7 +315,7 @@ static void free_protocol_object(sType* protocol_type, char* protocol_value_c_so
     
     if(!gGC) {
         if(come_fun == NULL) {
-            add_come_code(info, "igc_decrement_ref_count(%s._porotocol_obj);\n", protocol_value_c_source);
+            add_come_code(info, "come_decrement_ref_count(%s._porotocol_obj);\n", protocol_value_c_source);
         }
         else {
             add_come_code(info, "call_finalizer(%s->finalize, %s->_protocol_obj, 0);\n", protocol_value_c_source, protocol_value_c_source);
@@ -375,10 +375,10 @@ void free_object(sType* type, char* obj, bool force_delete, sInfo* info)
             /// free memmory ///
             if(force_delete) {
                 /// free ///
-                if(c_value) add_come_code(info, xsprintf("igc_decrement_ref_count(%s);\n", c_value));
+                if(c_value) add_come_code(info, xsprintf("come_decrement_ref_count(%s);\n", c_value));
             }
             else if(type->mHeap) {
-                if(c_value) add_come_code(info, xsprintf("igc_decrement_ref_count(%s);\n", c_value));
+                if(c_value) add_come_code(info, xsprintf("come_decrement_ref_count(%s);\n", c_value));
             }
         }
     }

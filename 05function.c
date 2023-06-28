@@ -168,26 +168,35 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                 char* p = info.p.p;
                 int sline = info.sline;
                 
-                type_name = parse_word(info).catch {
-                    throw;
-                }
-                
-                if(is_type_name(type_name, info)) {
-                    if(long_) {
-                        long_long = true;
-                        long_ = false;
-                    }
-                    else {
-                        long_ = true;
-                    }
-                    break;
-                }
-                else {
+                if(!xisalpha(*info->p)) {
                     info.p.p = p;
                     info.sline = sline;
                     
                     type_name = string("long");
                     break;
+                }
+                else {
+                    type_name = parse_word(info).catch {
+                        throw;
+                    }
+                    
+                    if(is_type_name(type_name, info)) {
+                        if(long_) {
+                            long_long = true;
+                            long_ = false;
+                        }
+                        else {
+                            long_ = true;
+                        }
+                        break;
+                    }
+                    else {
+                        info.p.p = p;
+                        info.sline = sline;
+                        
+                        type_name = string("long");
+                        break;
+                    }
                 }
             }
         }
@@ -301,6 +310,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             type->mNoHeap = true;
         }
     }
+    
     
     string var_name = string("");
     if(parse_variable_name) {
@@ -605,7 +615,7 @@ exception sNode*% expression_node(sInfo* info) version 99
             throw;
         }
         
-        if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && *info->p == '(') 
+        if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && *info->p == '(') 
         {
             sNode*% node = parse_function_call(buf, info).catch {
                 throw;
@@ -1029,7 +1039,7 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 99
         
         buffer*% buf2 = new buffer();
         
-        while(xisalnum(*info->p)) {
+        while(xisalnum(*info->p) || *info->p == '_') {
             buf2.append_char(*info->p);
             info->p++;
         }

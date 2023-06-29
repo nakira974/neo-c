@@ -111,11 +111,21 @@ void* come_memdup(void* block)
 
 int main()
 {
+/*
     if(1) {
         char*% a = new char[128];
     }
+*/
     
     printf("%ld\n", sizeof(unsigned long));
+    
+    char* p = "ABC";
+    
+    void* p2 = "ABC";
+    
+    printf("%s\n", (char*)p2);
+    
+//    printf("%c\n", *p);
     
     return 0;
 }

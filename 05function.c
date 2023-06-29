@@ -527,6 +527,58 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
     return true;
 }
 
+struct sCastNode {
+    sType*% mType;
+    sNode*% mLeft;
+    int sline;
+    string sname;
+};
+
+sCastNode*% sCastNode*::initialize(sCastNode*% self, sType* type, sNode* left, sInfo* info)
+{
+    self.mType = clone type;
+    self.mLeft = clone left;
+    self.sline = info.sline;
+    self.sname = string(info.sname);
+    
+    return self;
+}
+
+int sCastNode*::sline(sCastNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sCastNode*::sname(sCastNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+bool sCastNode*::compile(sCastNode* self, sInfo* info)
+{
+    sType* type = self.mType;
+    sNode* left = self.mLeft;
+    
+    if(!left.compile->(info)) {
+        return false;
+    }
+    
+    CVALUE*% left_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
+    
+    CVALUE*% come_value = new CVALUE;
+    
+    come_value.c_value = xsprintf("(%s)%s", make_type_name_string(type, false@in_header, info), left_value.c_value);
+    come_value.type = clone type;
+    come_value.var = null;
+    
+    add_come_last_code(info, "%s;\n", come_value.c_value);
+    
+    info.stack.push_back(come_value);
+    
+    return true;
+}
+
 exception sNode*% parse_function_call(char* fun_name, sInfo* info)
 {
     expected_next_character('(', info).catch {
@@ -639,15 +691,48 @@ exception sNode*% expression_node(sInfo* info) version 99
         info->p++;
         skip_spaces_and_lf(info);
         
-        sNode*% node = expression(info).catch {
-            throw
+        /// backtrace ///
+        bool cast_exp_flag = false;
+        {
+            char* p = info.p.p;
+            int sline = info.sline;
+            
+            string word = parse_word(info).catch {
+                throw;
+            }
+            
+            if(is_type_name(word, info)) {
+                cast_exp_flag = true;
+            }
+            
+            info.p.p = p;
+            info.sline = sline;
         }
         
-        expected_next_character(')', info);
-        
-        node = post_position_operator(node, info).catch { throw };
-        
-        return node;
+        if(cast_exp_flag) {
+            var type, name = parse_type(info).catch {
+                throw;
+            }
+            
+            expected_next_character(')', info);
+            
+            sNode*% node = expression(info).catch {
+                throw;
+            }
+            
+            return new sNode(new sCastNode(type, node, info));
+        }
+        else {
+            sNode*% node = expression(info).catch {
+                throw
+            }
+            
+            expected_next_character(')', info);
+            
+            node = post_position_operator(node, info).catch { throw };
+            
+            return node;
+        }
     }
     else {
         sNode*% node = inherit(info).catch {

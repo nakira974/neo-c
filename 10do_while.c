@@ -27,7 +27,7 @@ bool sDoWhileNode*::compile(sDoWhileNode* self, sInfo* info)
     
     add_come_code(info, "do {\n");
 
-    transpile_block(block, info).catch {
+    transpile_block(block, null!, null!, info).catch {
         return false;
     }
     
@@ -66,7 +66,7 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 10
         string sname = clone info->sname;
         int sline = info->sline;
     
-        sBlock*% block = parse_block(null!, null!, info).catch { throw; }
+        sBlock*% block = parse_block(info).catch { throw; }
         
         string buf2 = parse_word(info).catch {
             throw;

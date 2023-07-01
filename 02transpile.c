@@ -6,7 +6,7 @@ bool gGC;
 void come_init() version 2
 {
     gComelang = false;
-    gGC = true;
+    gGC = false;
 }
 
 void come_final() version 2
@@ -138,16 +138,9 @@ sVarTable*% sVarTable*::initialize(sVarTable*% self, bool global, sVarTable* par
     return self;
 }
 
-sVarTable*% sVarTable*::clone(sVarTable* self)
+void sVarTable*::finalize(sVarTable* self)
 {
-    sVarTable*% result = new sVarTable;
-    
-    result.mVars = self.mVars;
-    result.mGlobal = self.mGlobal;
-    result.mParent = self.mParent;
-    result.mID = self.mID;
-    
-    return result;
+    delete borrow self.mVars;
 }
 
 sType*% sType*::initialize(sType*% self, char* name, sInfo* info, bool heap=false)

@@ -64,7 +64,7 @@ bool parsecmp(char* str, sInfo* info)
     return memcmp(info.p.p, str, strlen(str)) == 0;
 }
 
-exception string parse_word(sInfo* info)
+exception string parse_word(sInfo* info, bool no_check_err=false)
 {
     var buf = new buffer();
     
@@ -75,7 +75,7 @@ exception string parse_word(sInfo* info)
     }
     skip_spaces_and_lf(info);
     
-    if(buf.length() == 0) {
+    if(!no_check_err && buf.length() == 0) {
         err_msg(info, "unexpected character(%c)\n", *info->p);
         throw;
     }
@@ -163,7 +163,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             }
         }
         else if(type_name === "long") {
-            /// backward ///
+            /// backtrace ///
             {
                 char* p = info.p.p;
                 int sline = info.sline;
@@ -176,7 +176,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                     break;
                 }
                 else {
-                    type_name = parse_word(info).catch {
+                    type_name = parse_word(info, true).catch {
                         throw;
                     }
                     
@@ -336,10 +336,9 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
     return new tuple2<sType*%, string>(type, var_name);
 }
 
-sBlock*% sBlock*::initialize(sBlock*% self, sVarTable* lv_table, sInfo* info)
+sBlock*% sBlock*::initialize(sBlock*% self, sInfo* info)
 {
     self.mNodes = new list<sNode*%>();
-    self.mVarTable = new sVarTable(global:false, parent:lv_table);
     
     return self;
 }
@@ -429,8 +428,167 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
     else {
         sFun* come_fun = info.come_fun;
         free_objects_on_return(come_fun.mBlock, info, null!, false@top_block);
-        add_come_code(info, "return\n");
+        add_come_code(info, "return;\n");
     }
+    
+    info->last_statment_is_return = true;
+    
+    return true;
+}
+
+struct sDerefferenceNode
+{
+    sNode*%? value;
+    int sline;
+    string sname;
+};
+
+sDerefferenceNode*% sDerefferenceNode*::initialize(sDerefferenceNode*% self, sNode*% value, sInfo* info)
+{
+    self.value = value;
+    self.sline = info.sline;
+    self.sname = string(info.sname);
+    
+    return self;
+}
+
+int sDerefferenceNode*::sline(sDerefferenceNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sDerefferenceNode*::sname(sDerefferenceNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+bool sDerefferenceNode*::compile(sDerefferenceNode* self, sInfo* info)
+{
+    sNode* value = self.value;
+    
+    if(!value->compile->(info)) {
+        return false;
+    }
+    
+    CVALUE*% left_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
+    
+    CVALUE*% come_value = new CVALUE;
+    
+    come_value.c_value = xsprintf("*%s", left_value.c_value);
+    come_value.type = clone left_value.type;
+    come_value.type->mPointerNum--;
+    come_value.var = null;
+    
+    add_come_last_code(info, "%s;\n", come_value.c_value);
+    
+    info.stack.push_back(come_value);
+    
+    return true;
+    
+    return true;
+}
+
+struct sRefferenceNode
+{
+    sNode*%? value;
+    int sline;
+    string sname;
+};
+
+sRefferenceNode*% sRefferenceNode*::initialize(sRefferenceNode*% self, sNode*% value, sInfo* info)
+{
+    self.value = value;
+    self.sline = info.sline;
+    self.sname = string(info.sname);
+    
+    return self;
+}
+
+int sRefferenceNode*::sline(sRefferenceNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sRefferenceNode*::sname(sRefferenceNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+bool sRefferenceNode*::compile(sRefferenceNode* self, sInfo* info)
+{
+    sNode* value = self.value;
+    
+    if(!value->compile->(info)) {
+        return false;
+    }
+    
+    CVALUE*% left_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
+    
+    CVALUE*% come_value = new CVALUE;
+    
+    come_value.c_value = xsprintf("&%s", left_value.c_value);
+    come_value.type = clone left_value.type;
+    come_value.type->mPointerNum--;
+    come_value.var = null;
+    
+    add_come_last_code(info, "%s;\n", come_value.c_value);
+    
+    info.stack.push_back(come_value);
+    
+    return true;
+    
+    return true;
+}
+
+struct sReverseNode
+{
+    sNode*%? value;
+    int sline;
+    string sname;
+};
+
+sReverseNode*% sReverseNode*::initialize(sReverseNode*% self, sNode*% value, sInfo* info)
+{
+    self.value = value;
+    self.sline = info.sline;
+    self.sname = string(info.sname);
+    
+    return self;
+}
+
+int sReverseNode*::sline(sReverseNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sReverseNode*::sname(sReverseNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+bool sReverseNode*::compile(sReverseNode* self, sInfo* info)
+{
+    sNode* value = self.value;
+    
+    if(!value->compile->(info)) {
+        return false;
+    }
+    
+    CVALUE*% left_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
+    
+    CVALUE*% come_value = new CVALUE;
+    
+    come_value.c_value = xsprintf("!%s", left_value.c_value);
+    come_value.type = clone left_value.type;
+    come_value.type->mPointerNum--;
+    come_value.var = null;
+    
+    add_come_last_code(info, "%s;\n", come_value.c_value);
+    
+    info.stack.push_back(come_value);
     
     return true;
 }
@@ -515,8 +673,12 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
     buf.append_str(")");
     
     CVALUE*% come_value = new CVALUE;
-    
     come_value.c_value = buf.to_string();
+    
+    if(fun->mResultType->mHeap) {
+        come_value.c_value = append_object_to_right_values(come_value.c_value, fun->mResultType, info);
+    }
+    
     come_value.type = clone result_type;
     come_value.var = null;
     
@@ -570,6 +732,55 @@ bool sCastNode*::compile(sCastNode* self, sInfo* info)
     
     come_value.c_value = xsprintf("(%s)%s", make_type_name_string(type, false@in_header, info), left_value.c_value);
     come_value.type = clone type;
+    come_value.var = null;
+    
+    add_come_last_code(info, "%s;\n", come_value.c_value);
+    
+    info.stack.push_back(come_value);
+    
+    return true;
+}
+
+struct sParenNode {
+    sNode*% mLeft;
+    int sline;
+    string sname;
+};
+
+sParenNode*% sParenNode*::initialize(sParenNode*% self, sNode* left, sInfo* info)
+{
+    self.mLeft = clone left;
+    self.sline = info.sline;
+    self.sname = string(info.sname);
+    
+    return self;
+}
+
+int sParenNode*::sline(sParenNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sParenNode*::sname(sParenNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+bool sParenNode*::compile(sParenNode* self, sInfo* info)
+{
+    sNode* left = self.mLeft;
+    
+    if(!left.compile->(info)) {
+        return false;
+    }
+    
+    CVALUE*% left_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
+    
+    CVALUE*% come_value = new CVALUE;
+    
+    come_value.c_value = xsprintf("(%s)", left_value.c_value);
+    come_value.type = clone left_value.type;
     come_value.var = null;
     
     add_come_last_code(info, "%s;\n", come_value.c_value);
@@ -660,6 +871,36 @@ exception sNode*% expression_node(sInfo* info) version 99
             return new sNode(new sReturnNode(value, info));
         }
     }
+    else if(*info->p == '*') {
+        info->p ++;
+        skip_spaces_and_lf(info);
+        
+        sNode*% value = expression_node(info).catch {
+            throw;
+        }
+        
+        return new sNode(new sDerefferenceNode(value, info));
+    }
+    else if(*info->p == '&') {
+        info->p ++;
+        skip_spaces_and_lf(info);
+        
+        sNode*% value = expression_node(info).catch {
+            throw;
+        }
+        
+        return new sNode(new sRefferenceNode(value, info));
+    }
+    else if(*info->p == '!') {
+        info->p ++;
+        skip_spaces_and_lf(info);
+        
+        sNode*% value = expression_node(info).catch {
+            throw;
+        }
+        
+        return new sNode(new sReverseNode(value, info));
+    }
     else if(xisalpha(*info->p)) {
         char* head = info.p.p;
         
@@ -697,7 +938,7 @@ exception sNode*% expression_node(sInfo* info) version 99
             char* p = info.p.p;
             int sline = info.sline;
             
-            string word = parse_word(info).catch {
+            string word = parse_word(info, true).catch {
                 throw;
             }
             
@@ -716,7 +957,7 @@ exception sNode*% expression_node(sInfo* info) version 99
             
             expected_next_character(')', info);
             
-            sNode*% node = expression(info).catch {
+            sNode*% node = expression_node(info).catch {
                 throw;
             }
             
@@ -728,6 +969,8 @@ exception sNode*% expression_node(sInfo* info) version 99
             }
             
             expected_next_character(')', info);
+            
+            node = new sNode(new sParenNode(node, info));
             
             node = post_position_operator(node, info).catch { throw };
             
@@ -757,21 +1000,11 @@ exception sNode*% expression(sInfo* info) version 5
 }
 
 
-exception sBlock*% parse_block(list<sType*%>*? param_types, list<string>*? param_names, sInfo* info)
+exception sBlock*% parse_block(sInfo* info)
 {
     sVarTable* lv_table = info->lv_table;
     
-    var result = new sBlock(lv_table, info);
-    info->lv_table = result.mVarTable;
-    
-    if(param_types && param_names) {
-        int i;
-        foreach(name, param_names) {
-            sType* type = param_types[i];
-            add_variable_to_table(name, type, info);
-            i++;
-        }
-    }
+    var result = new sBlock(info);
     
     int block_level = info->block_level;
     info->block_level++;
@@ -818,26 +1051,32 @@ exception sBlock*% parse_block(list<sType*%>*? param_types, list<string>*? param
         result.mNodes.push_back(node);
     }
     
-    info->lv_table = lv_table;
     info->block_level = block_level;
     
     return result;
 }
 
-exception int transpile_block(sBlock* block, sInfo* info)
+exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<string>*? param_names, sInfo* info)
 {
     sVarTable* old_table = info->lv_table;
+    block->mVarTable = new sVarTable(false@global, old_table);
     info->lv_table = block->mVarTable;
+    
+    if(param_types && param_names) {
+        int i;
+        foreach(name, param_names) {
+            sType* type = param_types[i];
+            add_variable_to_table(name, type, info);
+            i++;
+        }
+    }
     
     int block_level = info->block_level;
     info->block_level++;
     
     if(block->mNodes.length() == 0) {
-        free_right_value_objects(info);
-        info->type = new sType("void", info);
     }
     else {
-        bool last_expression_is_return = false;
         int i;
         foreach(node, block->mNodes) {
             info.module.mLastCode = null;
@@ -846,6 +1085,8 @@ exception int transpile_block(sBlock* block, sInfo* info)
             
             int sline = info.sline;
             string sname = string(info.sname);
+            
+            info->last_statment_is_return = false;
             
             info.sline = node.sline->();
             info.sname = node.sname->();
@@ -859,7 +1100,7 @@ exception int transpile_block(sBlock* block, sInfo* info)
     
             add_last_code_to_source(info);
 
-            if(!last_expression_is_return) {
+            if(!info->last_statment_is_return) {
                 free_right_value_objects(info);
             }
 
@@ -867,7 +1108,9 @@ exception int transpile_block(sBlock* block, sInfo* info)
         }
     }
 
-    free_objects(info->lv_table, null!, info);
+    if(!info->last_statment_is_return) {
+        free_objects(info->lv_table, null!, info);
+    }
     
     info->lv_table = old_table;
     info->block_level = block_level;
@@ -932,7 +1175,7 @@ bool sFunNode*::compile(sFunNode* self, sInfo* info)
     
     bool result = true;
     if(self.mFun.mBlock) {
-        transpile_block(self.mFun.mBlock, info).catch {
+        transpile_block(self.mFun.mBlock, self.mParamTypes, self.mParamNames, info).catch {
             result = false;
         }
     }
@@ -1067,7 +1310,7 @@ exception sNode*% parse_function(sInfo* info)
         return new sNode(new sFunNode(fun, info));
     }
     else if(*info->p == '{') {
-        sBlock*% block = parse_block(param_types, param_names, info).catch {
+        sBlock*% block = parse_block(info).catch {
             throw;
         }
         
@@ -1189,8 +1432,10 @@ exception int transpile(sInfo* info) version 5
         }
         parse_sharp(info);
         
-        if(!node.compile->(info)) {
-            throw;
+        if(node != null) {
+            if(!node.compile->(info)) {
+                throw;
+            }
         }
         parse_sharp(info);
         

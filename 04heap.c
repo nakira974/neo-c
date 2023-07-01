@@ -195,13 +195,12 @@ exception sType*% solve_type(sType* type, sType* generics_type, list<sType*%>* m
 
 int gRightValueNum = 0;
 
-char* append_object_to_right_values(char* obj, sType*% type, sInfo* info)
+string append_object_to_right_values(char* obj, sType*% type, sInfo* info)
 {
     var new_value = new sRightValueObject;
     new_value.mType = type;
     new_value.mFreed = false;
     new_value.mObj = obj;
-    new_value->mFreed = FALSE;
     new_value.mVarName = xsprintf("right_value%d", gRightValueNum++);
     new_value.mFunName = clone info->come_fun->mName;
     
@@ -210,14 +209,14 @@ char* append_object_to_right_values(char* obj, sType*% type, sInfo* info)
     string buf = xsprintf("void* right_value%d;\n", gRightValueNum-1);
     add_come_code_at_function_head(info, buf);
     
-    return new_value->mVarName;
+    return xsprintf("(%s)(%s=%s)", make_type_name_string(type, false@in_header, info), new_value->mVarName, obj);
 }
 
 void remove_object_from_right_values(char* obj, sInfo* info)
 {
     int i = 0;
     foreach(it, info->right_value_objects) {
-        if(it->mObj == obj) {
+        if(it->mVarName == obj) {
             break;
         }
         i++;
@@ -323,16 +322,10 @@ static void free_protocol_object(sType* protocol_type, char* protocol_value_c_so
     }
 }
 
-void free_object(sType* type, char* obj, bool force_delete, sInfo* info)
+void free_object(sType* type, char* obj, sInfo* info)
 {
-    if(!gGC && (type->mAllocaValue || type->mPointerNum > 0)) {
-        string c_value;
-        if(type->mAllocaValue) {
-            c_value = xsprintf("(&%s)", obj);
-        }
-        else {
-            c_value = string(obj);
-        }
+    if(!gGC && type->mPointerNum > 0) {
+        string c_value = string(obj);
         
         sClass* klass = type->mClass;
         
@@ -356,12 +349,14 @@ void free_object(sType* type, char* obj, bool force_delete, sInfo* info)
             finalizer = info->funcs[fun_name];
         }
         
+/*
         if(finalizer == NULL && !type->mProtocol && !type->mNumber 
             && gComelang)
         {
             var finalizer,new_fun_name = create_finalizer_automatically(type, fun_name, info);
             fun_name = new_fun_name;
         }
+*/
 
         /// call finalizer ///
         if(finalizer != null) {
@@ -372,14 +367,25 @@ void free_object(sType* type, char* obj, bool force_delete, sInfo* info)
                 free_protocol_object(type, c_value, info);
             }
             
+            if(klass->mStruct && type->mPointerNum == 0) {
+                foreach(it, klass->mFields) {
+                    var name, field_type = it;
+                    if(field_type->mHeap && field_type->mPointerNum > 0) {
+                        add_come_code(info, "come_decrement_ref_count(%s.%s);\n", c_value, name);
+                    }
+                }
+            }
+            else if(klass->mStruct && type->mPointerNum == 1) {
+                foreach(it, klass->mFields) {
+                    var name, field_type = it;
+                    if(field_type->mHeap && field_type->mPointerNum > 0) {
+                        add_come_code(info, "come_decrement_ref_count(%s->%s);\n", c_value, name);
+                    }
+                }
+            }
+            
             /// free memmory ///
-            if(force_delete) {
-                /// free ///
-                if(c_value) add_come_code(info, xsprintf("come_decrement_ref_count(%s);\n", c_value));
-            }
-            else if(type->mHeap) {
-                if(c_value) add_come_code(info, xsprintf("come_decrement_ref_count(%s);\n", c_value));
-            }
+            if(c_value) add_come_code(info, "come_decrement_ref_count(%s);\n", c_value);
         }
     }
 }
@@ -391,14 +397,16 @@ void free_right_value_objects(sInfo* info)
             if(it->mFunName === info->come_fun->mName) {
                 sType*% type = clone it->mType;
                 
+/*
                 type = solve_type(type, info->generics_type, info->method_generics_types, info).catch
                 {
                     err_msg(info, "Can't solve type");
                     show_type(type, info);
                     exit(1);
                 }
+*/
 
-                free_object(type, it->mVarName, true@force_delete, info);
+                free_object(type, it->mVarName, info);
 
                 it->mFreed = true;
             }
@@ -442,29 +450,21 @@ void free_objects(sVarTable* table, char* ret_value, sInfo* info)
         sType* type = p->mType;
         sClass* klass = type->mClass;
 
-        if(type->mHeap && !p->mNoFree && p->mCValueName && (ret_value == null || p->mCValueName !== ret_value))
+        if(type->mHeap && p->mCValueName && (ret_value == null || p->mCValueName !== ret_value))
         {
-            free_object(p->mType, p->mCValueName, false@force_delete, info);
+            free_object(p->mType, p->mCValueName, info);
             remove_object_from_right_values(p->mCValueName, info);
 
             p->mCValueName = null;
         }
-        else if(p->mAllocaValue && klass->mStruct && gComelang && (ret_value == null || p->mCValueName !== ret_value)) 
+        else if(klass->mStruct && gComelang && (ret_value == null || p->mCValueName !== ret_value)) 
         {
-            sType*% type = clone p->mType;
-            type->mPointerNum++;
-            type->mAllocaValue = TRUE;
-            
-            bool exist_heap_fields = false;
             foreach(it, klass->mFields) {
                 var name, field_type = it;
-                if(field_type->mHeap) {
-                    exist_heap_fields = true;
+                if(field_type->mHeap && field_type->mPointerNum > 0) {
+                    p->mCValueName = xsprintf("(&%s)", p->mCValueName);
+                    free_object(field_type, xsprintf("%s->%s", p->mCValueName, name), info);
                 }
-            }
-            
-            if(exist_heap_fields) {
-                free_object(type, p->mCValueName, false@force_delete, info);
             }
         }
     }

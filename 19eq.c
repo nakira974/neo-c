@@ -734,6 +734,69 @@ string sAndEqualNode*::sname(sAndEqualNode* self, sInfo* info)
     return string(self.sname);
 }
 
+struct sExpEqualNode
+{
+    sNode*% mLeft;
+    sNode*% mRight;
+  
+    int sline;
+    string sname;
+};
+
+sExpEqualNode*% sExpEqualNode*::initialize(sExpEqualNode*% self, sNode*% left, sNode*% right, sInfo* info)
+{
+    self.sline = info.sline;
+    self.sname = string(info.sname);
+
+    self.mLeft = clone left;
+    self.mRight = clone right;
+
+    return self;
+}
+
+bool sExpEqualNode*::compile(sExpEqualNode* self, sInfo* info)
+{
+    sNode* left = self.mLeft;
+    
+    if(!left.compile->(info)) {
+        return false;
+    }
+    
+    CVALUE*% left_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
+    
+    sNode* right = self.mRight;
+    
+    if(!right.compile->(info)) {
+        return false;
+    }
+    
+    CVALUE*% right_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
+    
+    CVALUE*% come_value = new CVALUE;
+    
+    come_value.c_value = xsprintf("%s=%s", left_value.c_value, right_value.c_value);
+    come_value.type = clone left_value.type;
+    come_value.var = null;
+    
+    info.stack.push_back(come_value);
+    
+    add_come_last_code(info, "%s;\n", come_value.c_value);
+
+    return true;
+}
+
+int sExpEqualNode*::sline(sExpEqualNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sExpEqualNode*::sname(sExpEqualNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
 exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 19
 {
     if(*info->p == '+' && *(info->p+1) == '+') {
@@ -847,6 +910,16 @@ exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 19
          }
         
          return new sNode(new sOrEqualNode(node, right_node, info));
+    }
+    else if(*info->p == '=' && *(info->p+1) != '=') {
+         info->p++;
+         skip_spaces_and_lf(info);
+         
+         sNode*% right_node = expression(info).catch {
+             throw;
+         }
+        
+         return new sNode(new sExpEqualNode(node, right_node, info));
     }
     
     return (sNode*)null;

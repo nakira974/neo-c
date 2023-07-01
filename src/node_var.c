@@ -9430,6 +9430,11 @@ BOOL compile_throw_null_value(unsigned int node, sCompileInfo* info)
 
     LVALUE llvm_value;
     
+    if(result_type == NULL || result_type->mClass == NULL) {
+        compile_err_msg(info, "throw null value error");
+        return FALSE;
+    }
+    
     llvm_value.value = create_null_value(result_type);
     llvm_value.type = clone_node_type(result_type);
     llvm_value.address = NULL;

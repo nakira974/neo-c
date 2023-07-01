@@ -56,7 +56,7 @@ bool sIfNode*::compile(sIfNode* self, sInfo* info)
     
     add_come_code(info, "if(%s) {\n", conditional_value.c_value);
 
-    transpile_block(if_block, info).catch {
+    transpile_block(if_block, null!, null!, info).catch {
         return false;
     }
     
@@ -80,7 +80,7 @@ bool sIfNode*::compile(sIfNode* self, sInfo* info)
 
             add_come_code(info, "else if(%s) {\n", conditional_value.c_value);
             
-            transpile_block(elif_node_block, info).catch {
+            transpile_block(elif_node_block, null!, null!, info).catch {
                 return false;
             }
 
@@ -91,7 +91,7 @@ bool sIfNode*::compile(sIfNode* self, sInfo* info)
     if(else_block) {
         add_come_code(info, "else {\n");
 
-        transpile_block(else_block, info).catch {
+        transpile_block(else_block, null!, null!, info).catch {
             return false;
         }
         
@@ -128,8 +128,8 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 8
         
         expected_next_character(')', info).catch { throw; }
     
-        sBlock*% if_block = parse_block(null!, null!, info).catch { throw; }
-    
+        sBlock*% if_block = parse_block(info).catch { throw; }
+        
         list<sNode*%>*% elif_expression_nodes = new list<sNode*%>();
     
         list<sBlock*%>*% elif_blocks = new list<sBlock*%>();
@@ -166,14 +166,14 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 8
                     expected_next_character(')', info).catch { throw; }
     
                     
-                    sBlock*% elif_block = parse_block(null!, null!, info).catch { throw; }
+                    sBlock*% elif_block = parse_block(info).catch { throw; }
                     
                     elif_blocks.push_back(elif_block);
     
                     elif_num++;
                 }
                 else {
-                    else_block = parse_block(null!, null!, info).catch { throw; }
+                    else_block = parse_block(info).catch { throw; }
                     break;
                 }
             }
@@ -184,7 +184,9 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 8
             }
         };
     
-        return new sNode(new sIfNode(expression_node, if_block, elif_expression_nodes, elif_blocks, elif_num, else_block!, info));
+        sNode*% result = new sNode(new sIfNode(expression_node, if_block, elif_expression_nodes, elif_blocks, elif_num, else_block!, info));
+        
+        return result;
     }
     
     return inherit(buf, head ,info).catch {

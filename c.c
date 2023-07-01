@@ -1,3 +1,5 @@
+using comelang;
+
 int puts(const char* str);
 int printf(const char *format, ...);
 
@@ -8,7 +10,10 @@ void free(void *ptr);
 void *calloc(size_t nmemb, size_t size);
 void *realloc(void *ptr, size_t size);
 
-/*
+void *memset(void *s, int c, size_t n);
+
+#define NULL ((void*)0)
+
 void ncfree(void* mem)
 {
     if(mem) {
@@ -16,13 +21,14 @@ void ncfree(void* mem)
     }
 }
 
+
 void* come_calloc(size_t count, size_t size)
 {
     char* mem = calloc(1, sizeof(int)+sizeof(long)+count*size);
     
-    int* ref_count = (int*)mem;
+//    int* ref_count = (int*)mem;
     
-    (*ref_count)++;
+//    (*ref_count)++;
     
     long* size2 = (long*)(mem + sizeof(int));
     
@@ -31,15 +37,17 @@ void* come_calloc(size_t count, size_t size)
     return mem + sizeof(int) + sizeof(long);
 }
 
-void come_increment_ref_count(void* mem)
+void* come_increment_ref_count(void* mem)
 {
     if(mem == NULL) {
-        return;
+        return mem;
     }
     
     int* ref_count = (int*)((char*)mem - sizeof(int) - sizeof(long));
     
     (*ref_count)++;
+    
+    return mem;
 }
 
 void come_decrement_ref_count(void* mem)
@@ -69,7 +77,7 @@ void come_free_object(void* mem)
     ncfree(ref_count);
 }
 
-void* come_calloc(size_t nmemb, size_t size)
+void* nccalloc(size_t nmemb, size_t size)
 {
     void* result = calloc(nmemb, size);
     return result;
@@ -107,7 +115,20 @@ void* come_memdup(void* block)
     
     return (char*)ret + sizeof(int) + sizeof(long);
 }
-*/
+
+struct sData
+{
+    char*% a;
+};
+
+int*% funHeap(int x, int y)
+{
+    int*% result = new int;
+    
+    *result = x + y;
+    
+    return result;
+}
 
 int main()
 {
@@ -115,7 +136,6 @@ int main()
     if(1) {
         char*% a = new char[128];
     }
-*/
     
     printf("%ld\n", sizeof(unsigned long));
     
@@ -125,7 +145,51 @@ int main()
     
     printf("%s\n", (char*)p2);
     
-//    printf("%c\n", *p);
+    printf("%c\n", *p);
+    
+    int count = 0;
+    int size2 = 1;
+    
+    char* mem2 = calloc(1, sizeof(int)+sizeof(long)+count*size2);
+    
+    int b;
+    int *a = &b;
+    
+    (*a) = 123;
+    int size = 123;
+    int ret = 1;
+    char* mem = "ABC";
+    if (ret) {
+        char* p = ret;
+        char* p2 = mem;
+        while(p - (char*)ret < size) {
+            *p = *p2;
+            p++;
+            p2++;
+        }
+    }
+    
+    int a2 = 123;
+    
+    if(true) {
+        int b = 234;
+        while(true) {
+            printf("a %d\n", a2);
+            printf("b %d\n", b);
+        }
+    }
+*/
+    char*% a = new char[128];
+    
+    if(1) {
+        char*% a = new char[128];
+        char*% b = a;
+        
+        sData data;
+        data.a = a;
+    }
+    
+    int*% x = funHeap(1, 2);
     
     return 0;
 }

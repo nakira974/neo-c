@@ -85,7 +85,7 @@ bool sAddNode*::compile(sAddNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("(%s+%s)", left_value.c_value, right_value.c_value);
+    come_value.c_value = xsprintf("%s+%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
     come_value.var = null;
     
@@ -150,7 +150,7 @@ bool sSubNode*::compile(sSubNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("(%s-%s)", left_value.c_value, right_value.c_value);
+    come_value.c_value = xsprintf("%s-%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
     come_value.var = null;
     
@@ -215,7 +215,7 @@ bool sMultNode*::compile(sMultNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("(%s*%s)", left_value.c_value, right_value.c_value);
+    come_value.c_value = xsprintf("%s*%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
     come_value.var = null;
     
@@ -280,7 +280,7 @@ bool sDivNode*::compile(sDivNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("(%s/%s)", left_value.c_value, right_value.c_value);
+    come_value.c_value = xsprintf("%s/%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
     come_value.var = null;
     
@@ -345,7 +345,7 @@ bool sModNode*::compile(sModNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("(%s%%%s)", left_value.c_value, right_value.c_value);
+    come_value.c_value = xsprintf("%s%%%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
     come_value.var = null;
     
@@ -410,7 +410,7 @@ bool sLShiftNode*::compile(sLShiftNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("(%s<<%s)", left_value.c_value, right_value.c_value);
+    come_value.c_value = xsprintf("%s<<%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
     come_value.var = null;
     
@@ -475,7 +475,7 @@ bool sRShiftNode*::compile(sRShiftNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("(%s>>%s)", left_value.c_value, right_value.c_value);
+    come_value.c_value = xsprintf("%s>>%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
     come_value.var = null;
     
@@ -540,7 +540,7 @@ bool sGtEqNode*::compile(sGtEqNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("(%s>=%s)", left_value.c_value, right_value.c_value);
+    come_value.c_value = xsprintf("%s>=%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
     come_value.var = null;
     
@@ -605,7 +605,7 @@ bool sLtEqNode*::compile(sLtEqNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("(%s<=%s)", left_value.c_value, right_value.c_value);
+    come_value.c_value = xsprintf("%s<=%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
     come_value.var = null;
     
@@ -670,7 +670,7 @@ bool sLtNode*::compile(sLtNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("(%s<%s)", left_value.c_value, right_value.c_value);
+    come_value.c_value = xsprintf("%s<%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
     come_value.var = null;
     
@@ -735,7 +735,7 @@ bool sGtNode*::compile(sGtNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("(%s<%s)", left_value.c_value, right_value.c_value);
+    come_value.c_value = xsprintf("%s<%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
     come_value.var = null;
     
@@ -800,7 +800,7 @@ bool sEqNode*::compile(sEqNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("(%s==%s)", left_value.c_value, right_value.c_value);
+    come_value.c_value = xsprintf("%s==%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
     come_value.var = null;
     
@@ -865,7 +865,7 @@ bool sNotEqNode*::compile(sNotEqNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("(%s==%s)", left_value.c_value, right_value.c_value);
+    come_value.c_value = xsprintf("%s==%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
     come_value.var = null;
     
@@ -930,7 +930,7 @@ bool sEq2Node*::compile(sEq2Node* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("(%s==%s)", left_value.c_value, right_value.c_value);
+    come_value.c_value = xsprintf("%s==%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
     come_value.var = null;
     
@@ -995,7 +995,7 @@ bool sNotEq2Node*::compile(sNotEq2Node* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("(%s==%s)", left_value.c_value, right_value.c_value);
+    come_value.c_value = xsprintf("%s==%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
     come_value.var = null;
     
@@ -1060,7 +1060,7 @@ bool sAndNode*::compile(sAndNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("(%s&%s)", left_value.c_value, right_value.c_value);
+    come_value.c_value = xsprintf("%s&%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
     come_value.var = null;
     
@@ -1125,7 +1125,7 @@ bool sXOrNode*::compile(sXOrNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("(%s^%s)", left_value.c_value, right_value.c_value);
+    come_value.c_value = xsprintf("%s^%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
     come_value.var = null;
     
@@ -1189,7 +1189,7 @@ bool sOrNode*::compile(sOrNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("(%s|%s)", left_value.c_value, right_value.c_value);
+    come_value.c_value = xsprintf("%s|%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
     come_value.var = null;
     
@@ -1253,7 +1253,7 @@ bool sAndAndNode*::compile(sAndAndNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("(%s|%s)", left_value.c_value, right_value.c_value);
+    come_value.c_value = xsprintf("%s|%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
     come_value.var = null;
     
@@ -1317,7 +1317,7 @@ bool sOrOrNode*::compile(sOrOrNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("(%s|%s)", left_value.c_value, right_value.c_value);
+    come_value.c_value = xsprintf("%s|%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
     come_value.var = null;
     
@@ -1382,7 +1382,7 @@ bool sCommaNode*::compile(sCommaNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("(%s,%s)", left_value.c_value, right_value.c_value);
+    come_value.c_value = xsprintf("%s,%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
     come_value.var = null;
     
@@ -1458,7 +1458,7 @@ bool sConditionalNode*::compile(sConditionalNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("((%s?)%s:%s)", value1_value.c_value, value2_value.c_value, value3_value.c_value);
+    come_value.c_value = xsprintf("%s?%s:%s", value1_value.c_value, value2_value.c_value, value3_value.c_value);
     come_value.type = clone value1_value.type;
     come_value.var = null;
     
@@ -1492,7 +1492,7 @@ exception sNode*% mult_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% right = expression_node(info).catch {
+            sNode*% right = mult_exp(info).catch {
                 throw;
             }
             
@@ -1502,7 +1502,7 @@ exception sNode*% mult_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% right = expression_node(info).catch {
+            sNode*% right = mult_exp(info).catch {
                 throw;
             }
             
@@ -1542,7 +1542,7 @@ exception sNode*% add_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% right = mult_exp(info).catch {
+            sNode*% right = add_exp(info).catch {
                 throw;
             }
             
@@ -1553,7 +1553,7 @@ exception sNode*% add_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% right = mult_exp(info).catch {
+            sNode*% right = add_exp(info).catch {
                 throw;
             }
             
@@ -1584,7 +1584,7 @@ exception sNode*% shift_exp(sInfo* info)
             info->p+=2;
             skip_spaces_and_lf(info);
 
-            sNode*% right = add_exp(info).catch {
+            sNode*% right = shift_exp(info).catch {
                 throw;
             }
             
@@ -1594,7 +1594,7 @@ exception sNode*% shift_exp(sInfo* info)
             info->p+=2;
             skip_spaces_and_lf(info);
 
-            sNode*% right = add_exp(info).catch {
+            sNode*% right = shift_exp(info).catch {
                 throw;
             }
             
@@ -1978,3 +1978,13 @@ exception sNode*% expression(sInfo* info) version 13
     return node;
 }
 
+exception sNode*% string_node(char* buf, char* head, sInfo* info) version 13
+{
+    if(buf === "null") {
+        return new sNode(new sNullNode(info));
+    }
+    
+    return inherit(buf, head ,info).catch {
+        throw;
+    }
+}

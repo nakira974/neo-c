@@ -195,6 +195,7 @@ struct sInfo
     sVarTable*% gv_table;
     
     bool comma;
+    bool last_statment_is_return;
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -214,7 +215,7 @@ bool output_source_file(sInfo* info) version 2;
 sModule*% sModule*::initialize(sModule*% self);
 sType*% sType*::initialize(sType*% self, char* name, sInfo* info, bool heap=false);
 sVarTable*% sVarTable*::initialize(sVarTable*% self, bool global, sVarTable* parent);
-sVarTable*% sVarTable*::clone(sVarTable* self);
+void sVarTable*::finalize(sVarTable* self);
 sType*% sType*::clone(sType* self);
 sType*% sType*::shallow_clone(sType* self);
 void sType*::finalize(sType* self);
@@ -249,20 +250,22 @@ sVar* get_variable_from_table(sVarTable* table, char* name);
 void free_objects_on_return(sBlock* current_block, sInfo* info, char* ret_value, bool top_block);
 void free_right_value_objects(sInfo* info);
 void free_objects(sVarTable* table, char* ret_value, sInfo* info);
+string append_object_to_right_values(char* obj, sType*% type, sInfo* info);
+void remove_object_from_right_values(char* obj, sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
 /// 05function.c ///
 /////////////////////////////////////////////////////////////////////
 bool is_type_name(char* buf, sInfo* info);
 bool parsecmp(char* str, sInfo* info);
-exception string parse_word(sInfo* info);
+exception string parse_word(sInfo* info, bool no_check_err=false);
 void skip_spaces_and_lf(sInfo* info);
 exception int expected_next_character(char c, sInfo* info);
-sBlock*% sBlock*::initialize(sBlock*% self, sVarTable* lv_table, sInfo* info);
+sBlock*% sBlock*::initialize(sBlock*% self, sInfo* info);
 
 exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_name=false);
-exception sBlock*% parse_block(list<sType*%>*? param_types, list<string>*? param_names, sInfo* info);
-exception int transpile_block(sBlock* block, sInfo* info);
+exception sBlock*% parse_block(sInfo* info);
+exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<string>*? param_names, sInfo* info);
 void arrange_stack(sInfo* info, int top);
 exception int expected_next_character(char c, sInfo* info);
 exception sNode*% parse_function(sInfo* info);
@@ -320,6 +323,7 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 12;
 /////////////////////////////////////////////////////////////////////
 exception sNode*% expression(sInfo* info) version 13;
 exception sNode*% post_op(sNode*% node, sInfo* info) version 13;
+exception sNode*% string_node(char* buf, char* head, sInfo* info) version 13;
 
 /////////////////////////////////////////////////////////////////////
 /// 14struct.c
@@ -362,5 +366,6 @@ exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) v
 /// 21obj.c
 /////////////////////////////////////////////////////////////////////
 exception sNode*% string_node(char* buf, char* head, sInfo* info) version 21;
+exception sNode*% top_level(char* buf, char* head, sInfo* info) version 94;
 
 #endif

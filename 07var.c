@@ -4,15 +4,22 @@ struct sStoreNode
 {
     string name;
     sNode*% right_value;
+    sType*% type;
     bool alloc;
     int sline;
     string sname;
 };
 
-sStoreNode*% sStoreNode*::initialize(sStoreNode*% self, string name, bool alloc, sNode*%? right_value, sInfo* info)
+sStoreNode*% sStoreNode*::initialize(sStoreNode*% self, string name, sType*% type, bool alloc, sNode*%? right_value, sInfo* info)
 {
     self.name = string(name);
     self.alloc = alloc;
+    if(type) {
+        self.type = clone type;
+    }
+    else {
+        self.type = null;
+    }
     self.right_value = right_value;
     
     self.sline = info->sline;
@@ -23,6 +30,15 @@ sStoreNode*% sStoreNode*::initialize(sStoreNode*% self, string name, bool alloc,
 
 bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
 {
+    if(self.alloc) {
+        sVar* var_ = info.lv_table.mVars[self.name];
+        if(var_) {
+            err_msg(info, "Already appended this var name(%s)", self.name);
+            return false;
+        }
+        add_variable_to_table(self.name, self.type, info);
+    }
+    
     if(self.right_value == null) {
         sVar* var_ = get_variable_from_table(info.lv_table, self.name);
         
@@ -52,6 +68,10 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         come_value.var = var_;
         
         info.stack.push_back(come_value);
+        
+        if(self.alloc && left_type->mClass->mStruct) {
+            add_come_code(info, "memset(&%s, 0, sizeof(struct %s));\n", var_->mCValueName, left_type->mClass->mName);
+        }
     }
     else {
         if(!self.right_value.compile->(info)) {
@@ -74,19 +94,25 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         }
         sType*% left_type = clone var_->mType;
         
-        if(self.alloc) {
-            add_come_code_at_function_head(info, "%s;\n", make_define_var(left_type, var_->mCValueName, info));
-            add_come_last_code(info, "%s=%s;\n", var_->mCValueName, right_value->c_value);
-        }
-        else {
-            add_come_last_code(info, "%s=%s;\n", var_->mCValueName, right_value->c_value);
-        }
-        
         CVALUE*% come_value = new CVALUE;
         
-        come_value.c_value = xsprintf("%s=%s", var_->mCValueName, right_value.c_value);
+        if(left_type->mHeap && (self.alloc || left_type->mClass->mStruct)) {
+            come_value.c_value = xsprintf("%s=come_increment_ref_count(%s)", var_->mCValueName, right_value.c_value);
+            remove_object_from_right_values(right_value.c_value, info);
+        }
+        else {
+            come_value.c_value = xsprintf("%s=%s", var_->mCValueName, right_value.c_value);
+        }
         come_value.type = clone left_type;
         come_value.var = var_;
+        
+        if(self.alloc) {
+            add_come_code_at_function_head(info, "%s;\n", make_define_var(left_type, var_->mCValueName, info));
+            add_come_last_code(info, "%s;\n", come_value.c_value);
+        }
+        else {
+            add_come_last_code(info, "%s;\n", come_value.c_value);
+        }
         
         info.stack.push_back(come_value);
     }
@@ -182,7 +208,6 @@ void add_variable_to_table(char* name, sType* type, sInfo* info)
 
 exception sNode*% string_node(char* buf, char* head, sInfo* info) version 7
 {
-    sVar* var_ = get_variable_from_table(info.lv_table, buf);
     bool is_type_name_flag = is_type_name(buf, info);
     
     char* p = info.p.p;
@@ -199,10 +224,7 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 7
     bool lambda_call_flag = false;
     bool define_function_flag = false;
     if(buf2.length() > 0 && *info->p == '(') {
-        if(var_) {
-            lambda_call_flag = true;
-        }
-        else if(is_type_name_flag) {
+        if(is_type_name_flag) {
             define_function_flag = true;
         }
     }
@@ -215,7 +237,7 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 7
             throw;
         }
     }
-    else if(var_ && *info->p == '=' && *(info.p + 1) != '=') {
+    else if(!is_type_name_flag && *info->p == '=' && *(info.p + 1) != '=') {
         info.p++;
         skip_spaces_and_lf(info);
         
@@ -223,9 +245,9 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 7
             throw;
         }
         
-        return new sNode(new sStoreNode(string(buf)@name, false@alloc, right_value, info));
+        return new sNode(new sStoreNode(string(buf)@name, null!, false@alloc, right_value, info));
     }
-    else if(var_ && *info->p != '(') {
+    else if(!is_type_name_flag && *info->p != '(') {
         sNode*% node = new sNode(new sLoadNode(string(buf)@name, info));
         
         node = post_position_operator(node, info).catch { throw };
@@ -239,13 +261,6 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 7
             throw;
         }
         
-        sVar* var_ = get_variable_from_table(info.lv_table, name);
-        if(var_) {
-            err_msg(info, "Already appended this var name(%s)", name);
-            throw;
-        }
-        add_variable_to_table(name, type, info);
-        
         if(*info->p == '=') {
             info.p++;
             skip_spaces_and_lf(info);
@@ -254,10 +269,10 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 7
                 throw;
             }
             
-            return new sNode(new sStoreNode(name, true@alloc, right_value, info));
+            return new sNode(new sStoreNode(name, type, true@alloc, right_value, info));
         }
         else {
-            return new sNode(new sStoreNode(name, true@alloc, null!, info));
+            return new sNode(new sStoreNode(name, type, true@alloc, null!, info));
         }
     }
     

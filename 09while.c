@@ -39,7 +39,7 @@ bool sWhileNode*::compile(sWhileNode* self, sInfo* info)
     
     add_come_code(info, "while(%s) {\n", conditional_value.c_value);
 
-    transpile_block(block, info).catch {
+    transpile_block(block, null!, null!, info).catch {
         return false;
     }
     
@@ -75,7 +75,7 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 9
         
         expected_next_character(')', info).catch { throw; }
     
-        sBlock*% block = parse_block(null!, null!, info).catch { throw; }
+        sBlock*% block = parse_block(info).catch { throw; }
     
         return new sNode(new sWhileNode(expression_node, block, info));
     }

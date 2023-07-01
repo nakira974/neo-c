@@ -64,7 +64,12 @@ bool sStoreFieldNode*::compile(sStoreFieldNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("%s.%s=%s", left_value.c_value, name, right_value.c_value);
+    if(field_type->mHeap) {
+        come_value.c_value = xsprintf("%s.%s=come_increment_ref_count(%s)", left_value.c_value, name, right_value.c_value);
+    }
+    else {
+        come_value.c_value = xsprintf("%s.%s=%s", left_value.c_value, name, right_value.c_value);
+    }
     come_value.type = clone field_type;
     come_value.var = null;
     

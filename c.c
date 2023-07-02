@@ -26,9 +26,9 @@ void* come_calloc(size_t count, size_t size)
 {
     char* mem = calloc(1, sizeof(int)+sizeof(long)+count*size);
     
-//    int* ref_count = (int*)mem;
+    int* ref_count = (int*)mem;
     
-//    (*ref_count)++;
+    (*ref_count)++;
     
     long* size2 = (long*)(mem + sizeof(int));
     
@@ -61,7 +61,7 @@ void come_decrement_ref_count(void* mem)
     (*ref_count)--;
     
     int count = *ref_count;
-    if(count == 0) {
+    if(count <= 0) {
         ncfree(ref_count);
     }
 }
@@ -179,6 +179,7 @@ int main()
         }
     }
 */
+/*
     char*% a = new char[128];
     
     if(1) {
@@ -188,6 +189,7 @@ int main()
         sData data;
         data.a = a;
     }
+*/
     
     int*% x = funHeap(1, 2);
     

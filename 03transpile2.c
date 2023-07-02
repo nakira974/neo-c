@@ -45,7 +45,7 @@ string create_generics_name(sType* generics_type, sInfo* info)
     return buf.to_string();
 }
 
-string make_type_name_string(sType* type, bool in_header, sInfo* info)
+string make_type_name_string(sType* type, bool in_header, bool array_cast_pointer, sInfo* info)
 {
     var buf = new buffer();
     
@@ -132,13 +132,13 @@ string make_type_name_string(sType* type, bool in_header, sInfo* info)
             buf.append_str("_Bool");
         }
         else if(class_name === "lambda") {
-            string result_type_str = make_type_name_string(type->mResultType, in_header, info);
+            string result_type_str = make_type_name_string(type->mResultType, in_header, false@array_cast_pointer, info);
             buf.append_str(result_type_str);
             buf.append_str(" (*)(");
             
             int j = 0;
             foreach(it, type->mParamTypes) {
-                string param_type_str = make_type_name_string(it, in_header, info);
+                string param_type_str = make_type_name_string(it, in_header, false@array_cast_pointer, info);
                 
                 if(j != type->mParamTypes.length()-1) {
                     buf.append_str(",");
@@ -158,6 +158,10 @@ string make_type_name_string(sType* type, bool in_header, sInfo* info)
         }
     }
     
+    if(array_cast_pointer && type->mArrayNum.length() > 0) {
+        buf.append_str("*");
+    }
+    
     if(type->mRestrict) {
         buf.append_str("restrict");
     }
@@ -167,7 +171,7 @@ string make_type_name_string(sType* type, bool in_header, sInfo* info)
 
 void show_type(sType* type, sInfo* info)
 {
-    puts(make_type_name_string(type, false@in_header, info));
+    puts(make_type_name_string(type, false@in_header, false@array_cast_pointer, info));
 }
 
 string make_lambda_type_name_string(sType* type, char* var_name, sInfo* info)
@@ -178,7 +182,7 @@ string make_lambda_type_name_string(sType* type, char* var_name, sInfo* info)
         
         int i = 0;
         foreach(it, type->mParamTypes) {
-            buf.append_str(make_type_name_string(it, false@in_header, info));
+            buf.append_str(make_type_name_string(it, false@in_header, false@array_cast_pointer, info));
             if(i != type->mParamTypes.length()-1) {
                 buf.append_str(",");
             }
@@ -191,11 +195,11 @@ string make_lambda_type_name_string(sType* type, char* var_name, sInfo* info)
         return make_lambda_type_name_string(type->mResultType, buf.to_string(), info);
     }
     else {
-        buf.append_str(xsprintf("%s (*%s)(", make_type_name_string(type->mResultType, false@in_header, info), var_name));
+        buf.append_str(xsprintf("%s (*%s)(", make_type_name_string(type->mResultType, false@in_header, false@array_cast_pointer, info), var_name));
         
         int i = 0;
         foreach(it, type->mParamTypes) {
-            buf.append_str(make_type_name_string(it, false@in_header, info));
+            buf.append_str(make_type_name_string(it, false@in_header, false@array_cast_pointer, info));
             if(i != type->mParamTypes.length()-1) {
                 buf.append_str(",");
             }
@@ -225,7 +229,7 @@ string make_define_var(sType* type, char* name, sInfo* info)
         buf.append_str(xsprintf("%s:%d", name, type->mSizeNum));
     }
     else if(type->mOmitArrayNum) {
-        var type_str = make_type_name_string(type, false@in_header, info);
+        var type_str = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
         
         buf.append_str(type_str);
         
@@ -235,7 +239,7 @@ string make_define_var(sType* type, char* name, sInfo* info)
         buf.append_str("[]");
     }
     else if(type->mArrayNum.length() > 0) {
-        var type_str = make_type_name_string(type, false@in_header, info);
+        var type_str = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
         
         buf.append_str(type_str);
         
@@ -260,7 +264,7 @@ string make_define_var(sType* type, char* name, sInfo* info)
         }
     }
     else {
-        var type_str = make_type_name_string(type, false@in_header, info);
+        var type_str = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
         
         buf.append_str(type_str);
         
@@ -319,7 +323,7 @@ string output_function(sFun* fun, sInfo* info)
         sType*% base_result_type = clone fun->mResultType;
         base_result_type.mArrayNum = borrow new list<sNode*%>();
         
-        string result_type_str = make_type_name_string(base_result_type, false@in_header, info);
+        string result_type_str = make_type_name_string(base_result_type, false@in_header, false@array_cast_pointer, info);
         
         output.append_str(result_type_str);
         output.append_str(" (*");
@@ -359,7 +363,7 @@ string output_function(sFun* fun, sInfo* info)
         info.module.mSourceHead.append_str(";\n");
     }
     else {
-        string result_type_str = make_type_name_string(fun->mResultType, false@in_header, info);
+        string result_type_str = make_type_name_string(fun->mResultType, false@in_header, false@array_cast_pointer, info);
         
         output.append_str(result_type_str);
         output.append_str(" ");
@@ -434,7 +438,7 @@ string header_function(sFun* fun, sInfo* info)
         sType*% base_result_type = clone fun->mResultType;
         base_result_type->mArrayNum = borrow new list<sNode*%>();
         
-        string result_type_str = make_type_name_string(base_result_type, true@in_header, info);
+        string result_type_str = make_type_name_string(base_result_type, true@in_header, false@array_cast_pointer, info);
         
         output.append_str(result_type_str);
         output.append_str(" (*");
@@ -470,7 +474,7 @@ string header_function(sFun* fun, sInfo* info)
         output.append_str(xsprintf("))[%s];\n", cvalue.c_value));
     }
     else {
-        string result_type_str = make_type_name_string(fun->mResultType, true@in_header, info);
+        string result_type_str = make_type_name_string(fun->mResultType, true@in_header, false@array_cast_pointer, info);
         
         output.append_str(result_type_str);
         output.append_str(" ");

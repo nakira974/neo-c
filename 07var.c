@@ -98,7 +98,6 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         
         if(left_type->mHeap && (self.alloc || left_type->mClass->mStruct)) {
             come_value.c_value = xsprintf("%s=come_increment_ref_count(%s)", var_->mCValueName, right_value.c_value);
-            remove_object_from_right_values(right_value.c_value, info);
         }
         else {
             come_value.c_value = xsprintf("%s=%s", var_->mCValueName, right_value.c_value);

@@ -421,6 +421,11 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
         CVALUE*% come_value = get_value_from_stack(-1, info);
         dec_stack_ptr(1, info);
         sFun* come_fun = info.come_fun;
+        
+        if(come_value.type->mHeap && come_value.var == null) {
+            add_come_code(info, "come_increment_ref_count(%s);\n", come_value.c_value);
+        }
+        
         free_objects_on_return(come_fun.mBlock, info, come_value.c_value, false@top_block);
         
         add_come_code(info, "return %s;\n", come_value.c_value);
@@ -730,7 +735,7 @@ bool sCastNode*::compile(sCastNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("(%s)%s", make_type_name_string(type, false@in_header, info), left_value.c_value);
+    come_value.c_value = xsprintf("(%s)%s", make_type_name_string(type, false@in_header, false@array_cast_pointer, info), left_value.c_value);
     come_value.type = clone type;
     come_value.var = null;
     

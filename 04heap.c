@@ -209,21 +209,9 @@ string append_object_to_right_values(char* obj, sType*% type, sInfo* info)
     string buf = xsprintf("void* right_value%d;\n", gRightValueNum-1);
     add_come_code_at_function_head(info, buf);
     
-    return xsprintf("(%s)(%s=%s)", make_type_name_string(type, false@in_header, info), new_value->mVarName, obj);
+    return xsprintf("(%s)(%s=%s)", make_type_name_string(type, false@in_header, true@array_cast_pointer, info), new_value->mVarName, obj);
 }
 
-void remove_object_from_right_values(char* obj, sInfo* info)
-{
-    int i = 0;
-    foreach(it, info->right_value_objects) {
-        if(it->mVarName == obj) {
-            break;
-        }
-        i++;
-    }
-    
-    info->right_value_objects.delete(i, i+1);
-}
 
 sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sInfo* info)
 {
@@ -453,7 +441,6 @@ void free_objects(sVarTable* table, char* ret_value, sInfo* info)
         if(type->mHeap && p->mCValueName && (ret_value == null || p->mCValueName !== ret_value))
         {
             free_object(p->mType, p->mCValueName, info);
-            remove_object_from_right_values(p->mCValueName, info);
 
             p->mCValueName = null;
         }

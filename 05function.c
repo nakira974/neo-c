@@ -1380,6 +1380,27 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 99
     bool define_function_flag = false;
     {
         char* p = info.p.p;
+        if(buf === "const" || buf === "register" || buf === "static" || buf === "volatile" || buf === "unsigned" || buf === "immutable" || buf === "mutable" || buf === "struct" || buf === "enum" || buf === "union") 
+        {
+            while(true) {
+                string buf2 = parse_word(info).catch {
+                    throw;
+                }
+                
+                sClass* klass = info.classes[buf2];
+                sType* type = info.types[buf2];
+                
+                if(buf2 === "const" || buf2 === "register" || buf2 === "static" || buf2 === "volatile" || buf2 === "unsigned" || buf2 === "immutable" || buf2 === "mutable" || buf2 === "struct" || buf2 === "enum" || buf2 === "union") 
+                {
+                }
+                else if(klass || type) {
+                    break;
+                }
+                else if(*info->p == '{') {
+                    break;
+                }
+            }
+        }
         
         while(*info->p == '*') {
             info->p++;
@@ -1390,24 +1411,16 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 99
             skip_spaces_and_lf(info);
         }
         
-        buffer*% buf2 = new buffer();
+        /// fun name ///
+        buffer*% buf3 = new buffer();
         
         while(xisalnum(*info->p) || *info->p == '_') {
-            buf2.append_char(*info->p);
+            buf3.append_char(*info->p);
             info->p++;
         }
         skip_spaces_and_lf(info);
         
-        while(*info->p == '*') {
-            info->p++;
-            skip_spaces_and_lf(info);
-        }
-        while(*info->p == '%') {
-            info->p++;
-            skip_spaces_and_lf(info);
-        }
-        
-        if(buf2.length() > 0 && (*info->p == '(' || (*info->p == ':' && *(info->p+1) == ':'))) {
+        if(buf3.length() > 0 && (*info->p == '(' || (*info->p == ':' && *(info->p+1) == ':'))) {
             if(is_type_name_flag) {
                 define_function_flag = true;
             }

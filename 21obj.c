@@ -49,9 +49,11 @@ bool sNewNode*::compile(sNewNode* self, sInfo* info)
     
     string type_name = make_type_name_string(type, false@in_header, true@array_cast_pointer, info);
     
-    come_value.c_value = xsprintf("(%s)come_calloc(1, sizeof(%s)*%s)", type_name, type_name, num_string.to_string());
+    come_value.c_value = xsprintf("(%s*)come_calloc(1, sizeof(%s)*%s)", type_name, type_name, num_string.to_string());
     come_value.type = clone type;
-    come_value.c_value = append_object_to_right_values(come_value.c_value, come_value.type, info);
+    sType*% type2 = clone type;
+    type2->mPointerNum++;
+    come_value.c_value = append_object_to_right_values(come_value.c_value, type2 ,info);
     come_value.type->mPointerNum ++;
     come_value.var = null;
     

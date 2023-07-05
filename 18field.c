@@ -65,10 +65,25 @@ bool sStoreFieldNode*::compile(sStoreFieldNode* self, sInfo* info)
     CVALUE*% come_value = new CVALUE;
     
     if(field_type->mHeap) {
-        come_value.c_value = xsprintf("%s.%s=come_increment_ref_count(%s)", left_value.c_value, name, right_value.c_value);
+        if(left_value.type->mPointerNum == 1) {
+            come_value.c_value = xsprintf("%s->%s=come_increment_ref_count(%s)", left_value.c_value, name, right_value.c_value);
+        }
+        else {
+            come_value.c_value = xsprintf("%s.%s=come_increment_ref_count(%s)", left_value.c_value, name, right_value.c_value);
+        }
+        int right_value_id = get_right_value_id_from_obj(right_value.c_value);
+        
+        if(right_value_id != -1) {
+            remove_object_from_right_values(right_value_id, info);
+        }
     }
     else {
-        come_value.c_value = xsprintf("%s.%s=%s", left_value.c_value, name, right_value.c_value);
+        if(left_value.type->mPointerNum == 1) {
+            come_value.c_value = xsprintf("%s->%s=%s", left_value.c_value, name, right_value.c_value);
+        }
+        else {
+            come_value.c_value = xsprintf("%s.%s=%s", left_value.c_value, name, right_value.c_value);
+        }
     }
     come_value.type = clone field_type;
     come_value.var = null;
@@ -144,7 +159,12 @@ bool sLoadFieldNode*::compile(sLoadFieldNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("%s.%s", left_value.c_value, name);
+    if(left_value.type->mPointerNum > 0) {
+        come_value.c_value = xsprintf("%s->%s", left_value.c_value, name);
+    }
+    else {
+        come_value.c_value = xsprintf("%s.%s", left_value.c_value, name);
+    }
     come_value.type = clone field_type;
     come_value.var = null;
     

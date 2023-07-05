@@ -11,6 +11,7 @@ void *calloc(size_t nmemb, size_t size);
 void *realloc(void *ptr, size_t size);
 
 void *memset(void *s, int c, size_t n);
+char *strncpy(char *dest, const char *src, size_t n);
 
 #define NULL ((void*)0)
 
@@ -28,7 +29,7 @@ void* come_calloc(size_t count, size_t size)
     
     int* ref_count = (int*)mem;
     
-    (*ref_count)++;
+//    (*ref_count)++;
     
     long* size2 = (long*)(mem + sizeof(int));
     
@@ -50,10 +51,10 @@ void* come_increment_ref_count(void* mem)
     return mem;
 }
 
-void come_decrement_ref_count(void* mem)
+void* come_decrement_ref_count(void* mem)
 {
     if(mem == NULL) {
-        return;
+        return NULL;
     }
     
     int* ref_count = (int*)((char*)mem - sizeof(int) - sizeof(long));
@@ -63,7 +64,21 @@ void come_decrement_ref_count(void* mem)
     int count = *ref_count;
     if(count <= 0) {
         ncfree(ref_count);
+        return NULL;
     }
+    
+    return mem;
+}
+
+void come_decrement_ref_count2(void* mem)
+{
+    if(mem == NULL) {
+        return;
+    }
+    
+    int* ref_count = (int*)((char*)mem - sizeof(int) - sizeof(long));
+    
+    (*ref_count)--;
 }
 
 void come_free_object(void* mem)
@@ -108,7 +123,7 @@ void* come_memdup(void* block)
         }
     }
 
-    (*ref_count) = 1;
+//    (*ref_count) = 1;
     
     long* size_p2 = (long*)((char*)ret + sizeof(int));
     *size_p2 = size;
@@ -128,6 +143,11 @@ int*% funHeap(int x, int y)
     *result = x + y;
     
     return result;
+}
+
+int funHeap2(int* x, int* y)
+{
+    return *x + *y;
 }
 
 int main()
@@ -191,7 +211,14 @@ int main()
     }
 */
     
-    int*% x = funHeap(1, 2);
+    char*% str = new char[128];
+    
+    strncpy(str, "ABC", 128);
+    
+    sData*% data = new sData;
+    data.a = str;
+    
+    puts(data.a);
     
     return 0;
 }

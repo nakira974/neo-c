@@ -87,6 +87,7 @@ bool sAddNode*::compile(sAddNode* self, sInfo* info)
     
     come_value.c_value = xsprintf("%s+%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
+    come_value.type->mHeap = false;
     come_value.var = null;
     
     add_come_last_code(info, "%s;\n", come_value.c_value);
@@ -152,6 +153,7 @@ bool sSubNode*::compile(sSubNode* self, sInfo* info)
     
     come_value.c_value = xsprintf("%s-%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
+    come_value.type->mHeap = false;
     come_value.var = null;
     
     add_come_last_code(info, "%s;\n", come_value.c_value);
@@ -217,6 +219,7 @@ bool sMultNode*::compile(sMultNode* self, sInfo* info)
     
     come_value.c_value = xsprintf("%s*%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
+    come_value.type->mHeap = false;
     come_value.var = null;
     
     add_come_last_code(info, "%s;\n", come_value.c_value);
@@ -282,6 +285,7 @@ bool sDivNode*::compile(sDivNode* self, sInfo* info)
     
     come_value.c_value = xsprintf("%s/%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
+    come_value.type->mHeap = false;
     come_value.var = null;
     
     add_come_last_code(info, "%s;\n", come_value.c_value);
@@ -347,6 +351,7 @@ bool sModNode*::compile(sModNode* self, sInfo* info)
     
     come_value.c_value = xsprintf("%s%%%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
+    come_value.type->mHeap = false;
     come_value.var = null;
     
     add_come_last_code(info, "%s;\n", come_value.c_value);
@@ -412,6 +417,7 @@ bool sLShiftNode*::compile(sLShiftNode* self, sInfo* info)
     
     come_value.c_value = xsprintf("%s<<%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
+    come_value.type->mHeap = false;
     come_value.var = null;
     
     add_come_last_code(info, "%s;\n", come_value.c_value);
@@ -477,6 +483,7 @@ bool sRShiftNode*::compile(sRShiftNode* self, sInfo* info)
     
     come_value.c_value = xsprintf("%s>>%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
+    come_value.type->mHeap = false;
     come_value.var = null;
     
     add_come_last_code(info, "%s;\n", come_value.c_value);
@@ -542,6 +549,7 @@ bool sGtEqNode*::compile(sGtEqNode* self, sInfo* info)
     
     come_value.c_value = xsprintf("%s>=%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
+    come_value.type->mHeap = false;
     come_value.var = null;
     
     add_come_last_code(info, "%s;\n", come_value.c_value);
@@ -607,6 +615,7 @@ bool sLtEqNode*::compile(sLtEqNode* self, sInfo* info)
     
     come_value.c_value = xsprintf("%s<=%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
+    come_value.type->mHeap = false;
     come_value.var = null;
     
     add_come_last_code(info, "%s;\n", come_value.c_value);
@@ -672,6 +681,7 @@ bool sLtNode*::compile(sLtNode* self, sInfo* info)
     
     come_value.c_value = xsprintf("%s<%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
+    come_value.type->mHeap = false;
     come_value.var = null;
     
     add_come_last_code(info, "%s;\n", come_value.c_value);
@@ -737,6 +747,7 @@ bool sGtNode*::compile(sGtNode* self, sInfo* info)
     
     come_value.c_value = xsprintf("%s<%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
+    come_value.type->mHeap = false;
     come_value.var = null;
     
     add_come_last_code(info, "%s;\n", come_value.c_value);
@@ -802,6 +813,7 @@ bool sEqNode*::compile(sEqNode* self, sInfo* info)
     
     come_value.c_value = xsprintf("%s==%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
+    come_value.type->mHeap = false;
     come_value.var = null;
     
     add_come_last_code(info, "%s;\n", come_value.c_value);
@@ -867,6 +879,7 @@ bool sNotEqNode*::compile(sNotEqNode* self, sInfo* info)
     
     come_value.c_value = xsprintf("%s==%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
+    come_value.type->mHeap = false;
     come_value.var = null;
     
     add_come_last_code(info, "%s;\n", come_value.c_value);
@@ -932,6 +945,7 @@ bool sEq2Node*::compile(sEq2Node* self, sInfo* info)
     
     come_value.c_value = xsprintf("%s==%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
+    come_value.type->mHeap = false;
     come_value.var = null;
     
     add_come_last_code(info, "%s;\n", come_value.c_value);
@@ -997,6 +1011,7 @@ bool sNotEq2Node*::compile(sNotEq2Node* self, sInfo* info)
     
     come_value.c_value = xsprintf("%s==%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
+    come_value.type->mHeap = false;
     come_value.var = null;
     
     add_come_last_code(info, "%s;\n", come_value.c_value);
@@ -1062,6 +1077,7 @@ bool sAndNode*::compile(sAndNode* self, sInfo* info)
     
     come_value.c_value = xsprintf("%s&%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
+    come_value.type->mHeap = false;
     come_value.var = null;
     
     add_come_last_code(info, "%s;\n", come_value.c_value);
@@ -1127,6 +1143,7 @@ bool sXOrNode*::compile(sXOrNode* self, sInfo* info)
     
     come_value.c_value = xsprintf("%s^%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
+    come_value.type->mHeap = false;
     come_value.var = null;
     
     add_come_last_code(info, "%s;\n", come_value.c_value);
@@ -1191,6 +1208,7 @@ bool sOrNode*::compile(sOrNode* self, sInfo* info)
     
     come_value.c_value = xsprintf("%s|%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
+    come_value.type->mHeap = false;
     come_value.var = null;
     
     add_come_last_code(info, "%s;\n", come_value.c_value);
@@ -1255,6 +1273,7 @@ bool sAndAndNode*::compile(sAndAndNode* self, sInfo* info)
     
     come_value.c_value = xsprintf("%s|%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
+    come_value.type->mHeap = false;
     come_value.var = null;
     
     add_come_last_code(info, "%s;\n", come_value.c_value);
@@ -1319,6 +1338,7 @@ bool sOrOrNode*::compile(sOrOrNode* self, sInfo* info)
     
     come_value.c_value = xsprintf("%s|%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
+    come_value.type->mHeap = false;
     come_value.var = null;
     
     add_come_last_code(info, "%s;\n", come_value.c_value);

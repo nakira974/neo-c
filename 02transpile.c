@@ -50,18 +50,18 @@ static bool cpp(sInfo* info)
     
     char cmd[1024];
 #ifdef __DARWIN_ARM__
-    snprintf(cmd, 1024, "/opt/homebrew/opt/llvm/bin/clang-cpp -I. -I/usr/local/include -I%s/include -I/opt/homebrew/opt/llvm@16/include -I/opt/homebrew/opt/libgc/include -I/opt/homebrew/opt/pcre/include -D__DARWIN_ARM__ -U__GNUC__ %s > %s", input_file_name, output_file_name);
+    snprintf(cmd, 1024, "/opt/homebrew/opt/llvm/bin/clang-cpp -I. -I/usr/local/include -D__DARWIN_ARM__ -U__GNUC__ %s > %s", input_file_name, output_file_name);
 #else
     snprintf(cmd, 1024, "cpp -I. -U__GNUC__ %s > %s", input_file_name, output_file_name);
 #endif
-    //puts(cmd);
+    puts(cmd);
 
     int rc = system(cmd);
     if(rc != 0) {
         char cmd[1024];
         snprintf(cmd, 1024, "cpp -I. -C %s > %s", input_file_name, output_file_name);
 
-        //puts(cmd);
+        puts(cmd);
         rc = system(cmd);
 
         if(rc != 0) {

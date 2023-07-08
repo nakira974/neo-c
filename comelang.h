@@ -1501,6 +1501,16 @@ impl list <T>
         
         return buf.to_string();
     }
+    
+    bool contained(list<T>* self, T item) {
+        foreach(it, self) {
+            if(it === item) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
 }
 
 impl vector<T> 
@@ -2017,7 +2027,6 @@ impl map <T, T2>
             self.key_list.push_back(key);
         }
     }
-
 
     bool find(map<T, T2>* self, T& key) {
         int hash = ((T)key).get_hash_key() % self.size;
@@ -3597,9 +3606,8 @@ inline string bool::to_string(bool self)
     if(self) {
         return string("true");
     }
-    else {
-        return string("false");
-    }
+    
+    return string("false");
 }
 
 void unwrap_exception(char* sname, int sline, char* mem);

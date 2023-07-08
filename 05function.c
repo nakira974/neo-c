@@ -244,30 +244,27 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
     if(info.types[type_name]) {
         type = clone info.types[type_name];
     }
+    else if(info.generics_type_names.contained(type_name)) {
+        for(int i=0; i<info.generics_type_names.length(); i++) {
+            if(info.generics_type_names[i] === type_name) {
+                type = new sType(xsprintf("generics_type%d", i), info);
+            }
+        }
+    }
     else {
         type = new sType(type_name, info);
     }
-    
-    type->mConstant = type->mConstant || constant;
-    type->mRegister = register_;
-    type->mUnsigned = type->mUnsigned || unsigned_;
-    type->mVolatile = volatile_;
-    type->mStatic = type->mStatic || static_;
-    type->mRestrict = type->mRestrict || restrict_;
-    type->mLongLong = type->mLongLong || long_long;
-    type->mLong = type->mLong || long_;
-    type->mShort = type->mShort || short_;
     
     if(*info->p == '<') {
         info->p++;
         skip_spaces_and_lf(info);
         
         while(true) {
-            var generics_type, var_name = borrow parse_type(info).catch {
+            var generics_type, var_name = parse_type(info).catch {
                 throw;
             }
             
-            type->mGenericsTypes.push_back(generics_type);
+            type->mGenericsTypes.push_back(borrow clone generics_type);
             
             if(*info->p == ',') {
                 info->p++;
@@ -284,7 +281,27 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                 throw;
             }
         }
+        string new_name = create_generics_name(type, info);
+        if(info.classes[new_name] == null) {
+            if(!define_generics_struct(type, info)) {
+                throw;
+            }
+            type->mClass = info.classes[new_name];
+        }
+        else {
+            type->mClass = info.classes[new_name];
+        }
     }
+    
+    type->mConstant = type->mConstant || constant;
+    type->mRegister = register_;
+    type->mUnsigned = type->mUnsigned || unsigned_;
+    type->mVolatile = volatile_;
+    type->mStatic = type->mStatic || static_;
+    type->mRestrict = type->mRestrict || restrict_;
+    type->mLongLong = type->mLongLong || long_long;
+    type->mLong = type->mLong || long_;
+    type->mShort = type->mShort || short_;
     
     while(*info->p == '*') {
         info->p++;
@@ -1397,6 +1414,9 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 99
                     break;
                 }
                 else if(*info->p == '{') {
+                    break;
+                }
+                else if(*info->p == '<') {
                     break;
                 }
             }

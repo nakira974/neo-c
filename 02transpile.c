@@ -263,6 +263,7 @@ sType*% sType*::clone(sType* self)
     result.mOriginalPointerNum = self.mOriginalPointerNum;
     
     result.mFunctionParam = self.mFunctionParam;
+    result.mGenericsStruct = self.mGenericsStruct;
     
     return result;
 }
@@ -312,6 +313,7 @@ sType*% sType*::shallow_clone(sType* self)
     result.mOriginalPointerNum = self.mOriginalPointerNum;
     
     result.mFunctionParam = self.mFunctionParam;
+    result.mGenericsStruct = self.mGenericsStruct;
     
     return result;
 }
@@ -366,6 +368,10 @@ void init_classes(sInfo* info)
     info.classes.insert(string("void"), new sClass("void"));
     info.classes.insert(string("float"), new sClass("float", float_:true));
     info.classes.insert(string("double"), new sClass("double", float_:true));
+    for(int i=0; i<GENERICS_TYPE_MAX; i++) {
+        string generics_type = xsprintf("generics_type%d", i);
+        info.classes.insert(generics_type, new sClass(generics_type, generics:true, generics_num:i));
+    }
 }
 
 int come_main(int argc, char** argv) version 2
@@ -423,6 +429,7 @@ int come_main(int argc, char** argv) version 2
         info.stack = new list<CVALUE*%>();
         info.gv_table = new sVarTable(global:true, parent:null);
         info.lv_table = borrow info.gv_table;
+        info.generics_type_names = new list<string>();
         
         init_classes(&info);
         

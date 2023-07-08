@@ -36,6 +36,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
             err_msg(info, "Already appended this var name(%s)", self.name);
             return false;
         }
+        
         add_variable_to_table(self.name, self.type, info);
     }
     

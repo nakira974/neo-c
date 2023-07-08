@@ -3,7 +3,7 @@
 exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
 {
     sType*% result = clone type;
-    if(generics_type == NULL) {
+    if(generics_type == null) {
         return result;
     }
 
@@ -32,6 +32,7 @@ exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
 
         if(generics_number >= generics_type->mGenericsTypes.length())
         {
+            err_msg(info, "invalid generics parametor number");
             throw;
         }
 
@@ -72,14 +73,14 @@ exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
     else {
         int i = 0;
         foreach(it, type->mGenericsTypes) {
-            result->mGenericsTypes[i] = solve_generics(it, generics_type, info)
+            var type = solve_generics(it, generics_type, info)
                 .catch
             {
                 throw;
             }
+            result->mGenericsTypes.push_back(borrow clone type);
             i++;
         }
-        
     }
 
     if(result->mPointerNum == 0) {

@@ -15,29 +15,74 @@ sStructNode*% sStructNode*::initialize(sStructNode*% self, sType*% type, sInfo* 
 
     self.mType = clone type;
     
-    info.types.insert(string(type.mName), clone type);
+    if(!type.mGenericsStruct) {
+        info.types.insert(string(type.mName), clone type);
+    }
 
     return self;
+}
+
+bool define_generics_struct(sType* type, sInfo* info)
+{
+    sType*% generics_type = clone type;
+    string new_name = create_generics_name(generics_type, info);
+    
+    if(!info.classes.find(new_name)) {
+        sClass*% new_class = new sClass(name:new_name, struct_:true);
+        sClass*% generics_class = clone info.classes[type.mName];
+        
+        buffer*% buf = new buffer();
+        
+        buf.append_str(xsprintf("struct %s\n{\n", new_name));
+        
+        int i = 0;
+        foreach(it, generics_class.mFields) {
+            var name, type = it;
+            
+            sType*% new_type = solve_generics(type, generics_type, info).catch {
+                return false;
+            }
+            
+            new_class.mFields.push_back((name, new_type));
+            
+            buf.append_str("    ");
+            buf.append_str(make_define_var(new_type, name, info));
+            buf.append_str(";\n");
+            
+            i++;
+        }
+        
+        buf.append_str("};\n");
+        
+        add_come_code_at_source_head(info, "%s", buf.to_string());
+        
+        info.classes.insert(new_name, new_class);
+    }
+    
+    return true;
 }
 
 bool sStructNode*::compile(sStructNode* self, sInfo* info)
 {
     sType* type = self.mType;
     
-    buffer*% buf = new buffer();
-    
-    buf.append_str(xsprintf("struct %s\n{\n", type.mName));
-    
-    foreach(it, type.mFields) {
-        var name, type = it;
+    if(!type.mGenericsStruct) {
+        buffer*% buf = new buffer();
         
-        buf.append_str(make_define_var(type, name, info));
-        buf.append_str(";\n");
+        buf.append_str(xsprintf("struct %s\n{\n", type.mName));
+        
+        foreach(it, type.mFields) {
+            var name, type = it;
+            
+            buf.append_str("    ");
+            buf.append_str(make_define_var(type, name, info));
+            buf.append_str(";\n");
+        }
+        
+        buf.append_str("};\n");
+        
+        add_come_code(info, "%s", buf.to_string());
     }
-    
-    buf.append_str(xsprintf("};\n", type.mName));
-    
-    add_come_code(info, "%s", buf.to_string());
 
     return TRUE;
 }
@@ -56,6 +101,37 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 98
 {
     if(buf === "struct") {
         string type_name = parse_word(info).catch { throw; };
+        
+        bool generics_struct = false;
+        if(*info->p == '<') {
+            generics_struct = true;
+            
+            info.generics_type_names.reset();
+            
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            while(true) {
+                var T = parse_word(info).catch {
+                    throw;
+                }
+                info.generics_type_names.push_back(T);
+                
+                if(*info->p == '>') {
+                    info->p++;
+                    skip_spaces_and_lf(info);
+                    break;
+                }
+                else if(*info->p == ',') {
+                    info->p++;
+                    skip_spaces_and_lf(info);
+                }
+                else {
+                    err_msg(info, "invalid generics struct definition");
+                    throw;
+                }
+            }
+        }
         
         info.classes.insert(type_name, new sClass(name:type_name, struct_:true));
         
@@ -77,6 +153,10 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 98
                 break;
             }
         }
+        
+        info.generics_type_names.reset();
+        
+        type.mGenericsStruct = generics_struct;
         
         return new sNode(new sStructNode(type, info));
     }

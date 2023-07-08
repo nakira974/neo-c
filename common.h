@@ -4,9 +4,11 @@
 #include <comelang.h>
 
 using unsafe;
+using no-null-check;
 
 #define COME_CODE_MAX 2048
 #define FUN_VERSION_MAX 128
+#define GENERICS_TYPE_MAX 12
 
 extern bool gComelang;
 extern bool gGC;
@@ -83,6 +85,7 @@ struct sType
     
     bool mFunctionParam;
     bool mAllocaValue;
+    bool mGenericsStruct;
 };
 
 struct sVar;
@@ -196,6 +199,8 @@ struct sInfo
     
     bool comma;
     bool last_statment_is_return;
+    
+    list<string>*% generics_type_names;
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -235,6 +240,7 @@ void show_type(sType* type, sInfo* info);
 string create_generics_name(sType* generics_type, sInfo* info);
 void add_last_code_to_source(sInfo* info);
 void add_come_code_at_function_head(sInfo* info, char* code, ...);
+void add_come_code_at_source_head(sInfo* info, const char* msg, ...);
 void add_come_code(sInfo* info, const char* msg, ...);
 void add_come_last_code(sInfo* info, const char* msg, ...);
 void add_last_code_to_source_without_semicolon(sInfo* info);
@@ -246,6 +252,7 @@ void transpiler_clear_last_code(sInfo* info);
 /////////////////////////////////////////////////////////////////////
 /// 04heap.c ///
 /////////////////////////////////////////////////////////////////////
+exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info);
 sVar* get_variable_from_table(sVarTable* table, char* name);
 void free_objects_on_return(sBlock* current_block, sInfo* info, char* ret_value, bool top_block);
 void free_right_value_objects(sInfo* info);
@@ -331,6 +338,7 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 13;
 /// 14struct.c
 /////////////////////////////////////////////////////////////////////
 exception sNode*% top_level(char* buf, char* head, sInfo* info) version 98;
+bool define_generics_struct(sType* type, sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
 /// 15union.c

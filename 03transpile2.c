@@ -34,7 +34,7 @@ string create_generics_name(sType* generics_type, sInfo* info)
             
             buf.append_str(type_name);
     
-            if(i != generics_type->mGenericsTypes.length()) {
+            if(i != generics_type->mGenericsTypes.length() -1) {
                 buf.append_str("_");
             }
             
@@ -77,6 +77,7 @@ string make_type_name_string(sType* type, bool in_header, bool array_cast_pointe
         buf.append_str("short ");
     }
     
+/*
     if(type->mGenericsTypes.length() > 0) {
         string struct_name = create_generics_name(type, info);
         
@@ -84,6 +85,7 @@ string make_type_name_string(sType* type, bool in_header, bool array_cast_pointe
         buf.append_str(struct_name);
     }
     else {
+*/
         if(type->mStruct) {
             if(class_name === "__builtin_va_list") {
                 if(in_header) {
@@ -150,7 +152,6 @@ string make_type_name_string(sType* type, bool in_header, bool array_cast_pointe
         else {
             buf.append_str(class_name);
         }
-    }
     
     if(type->mNoArrayPointerNum == 0 && class_name !== "lambda") {
         for(int i=0; i<type->mPointerNum; i++) {
@@ -531,6 +532,20 @@ void add_come_code(sInfo* info, const char* msg, ...)
     }
 }
 
+void add_come_code_at_source_head(sInfo* info, const char* msg, ...)
+{
+    if(info->no_output_come_code) {
+        return;
+    }
+    char msg2[COME_CODE_MAX];
+
+    va_list args;
+    va_start(args, msg);
+    vsnprintf(msg2, COME_CODE_MAX, msg, args);
+    va_end(args);
+    
+    info.module.mSourceHead.append_str(xsprintf("%s", msg2));
+}
 
 bool transpile(sInfo* info) version 3
 {

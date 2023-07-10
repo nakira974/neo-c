@@ -201,6 +201,7 @@ struct sInfo
     bool last_statment_is_return;
     
     list<string>*% generics_type_names;
+    sType*% impl_type;
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -289,7 +290,7 @@ exception int transpile(sInfo* info) version 5;
 void parse_sharp(sInfo* info) version 5;
 exception sNode*% string_node(char* buf, char* head, sInfo* info) version 5;
 exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 5;
-string crete_method_name(sType* obj_type, char* fun_name);
+string create_method_name(sType* obj_type, char* fun_name);
 
 /////////////////////////////////////////////////////////////////////
 /// 06str.c ///
@@ -377,5 +378,10 @@ exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) v
 /////////////////////////////////////////////////////////////////////
 exception sNode*% string_node(char* buf, char* head, sInfo* info) version 21;
 exception sNode*% top_level(char* buf, char* head, sInfo* info) version 94;
+
+/////////////////////////////////////////////////////////////////////
+/// 22impl.c
+/////////////////////////////////////////////////////////////////////
+exception sNode*% top_level(char* buf, char* head, sInfo* info) version 93;
 
 #endif

@@ -44,7 +44,7 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
     
     sType*% obj_type = clone come_value.type;
     
-    string fun_name2 = crete_method_name(obj_type, fun_name);
+    string fun_name2 = create_method_name(obj_type, fun_name);
     
     sFun* fun = info.funcs.at(fun_name2, null!);
     

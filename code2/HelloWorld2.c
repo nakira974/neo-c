@@ -20,6 +20,13 @@ int funHeap2(int*% x, int*% y)
     return *x + *y;
 }
 
+impl int*
+{
+    int fun(int* self) {
+        return *self;
+    }
+}
+
 int main()
 {
     if(1) {
@@ -95,6 +102,12 @@ int main()
     
     int* zzz = new int;
     new int;
+    
+    int bzyz = 123;
+    
+    int* azyz = &bzyz;
+    
+    xassert("impl", azyz.fun() == 123);
     
     return 0;
 }

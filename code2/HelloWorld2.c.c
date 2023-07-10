@@ -1,7 +1,7 @@
 typedef unsigned long size_t;
 struct sData
 {
-char* a;
+    char* a;
 };
 
 int puts(const char* str);
@@ -24,6 +24,7 @@ static void* nccalloc(unsigned long nmemb, unsigned long size);
 static void* come_memdup(void* block);
 int* funHeap(int x, int y);
 int funHeap2(int* x, int* y);
+int intp_fun(int* self);
 int main();
 
 static void xassert(char* msg, _Bool test){
@@ -148,6 +149,10 @@ int funHeap2(int* x, int* y){
     return *x+*y;
 }
 
+int intp_fun(int* self){
+    return *self;
+}
+
 int main(){
 void* right_value1;
 char* a_18;
@@ -182,6 +187,8 @@ int* yyy_37;
 void* right_value11;
 int* zzz_38;
 void* right_value12;
+int bzyz_39;
+int* azyz_40;
     if(1) {
         a_18=come_increment_ref_count((char**)(right_value1=(char**)come_calloc(1, sizeof(char*)*1*128)));
         a_18 = come_decrement_ref_count(a_18);
@@ -237,6 +244,9 @@ void* right_value12;
     right_value11 = come_decrement_ref_count(right_value11);
     (int*)(right_value12=(int*)come_calloc(1, sizeof(int)*1));
     right_value12 = come_decrement_ref_count(right_value12);
+    bzyz_39=123;
+    azyz_40=&bzyz_39;
+    xassert("impl",intp_fun(azyz_40)==123);
     ax_29 = come_decrement_ref_count(ax_29);
     str_33 = come_decrement_ref_count(str_33);
     data_34->a = come_decrement_ref_count(data_34->a);

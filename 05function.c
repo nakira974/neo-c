@@ -1227,7 +1227,7 @@ bool sFunNode*::compile(sFunNode* self, sInfo* info)
     return result;
 }
 
-string crete_method_name(sType* obj_type, char* fun_name)
+string create_method_name(sType* obj_type, char* fun_name)
 {
     string pointer_name = "p" * obj_type->mPointerNum;
     string heap_name;
@@ -1290,7 +1290,16 @@ exception sNode*% parse_function(sInfo* info)
         string fun_name2 = parse_word(info).catch {
             throw;
         }
-        fun_name = crete_method_name(obj_type, fun_name2)
+        fun_name = create_method_name(obj_type, fun_name2)
+    }
+    else if(info->impl_type) {
+        string fun_name2 = parse_word(info).catch {
+            throw;
+        }
+    
+        fun_name = create_method_name(info->impl_type, fun_name2);
+    }
+    else if(info.generics_type_names.length() > 0) {
     }
     else {
         fun_name = parse_word(info).catch {

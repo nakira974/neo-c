@@ -1453,24 +1453,6 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
         (*result_type)->mHeap = FALSE;
     }
     
-    if(exception_ && get_class("tuple2")) {
-        sNodeType* node_type = clone_node_type(*result_type);
-        *result_type = create_node_type_with_class_name("tuple2");
-        if(!gNCGC) {
-            (*result_type)->mHeap = TRUE;
-        }
-        (*result_type)->mNumGenericsTypes = 2;
-/*
-        if(type_identify_with_class_name(node_type, "void") && node_type->mPointerNum == 0)
-        {
-            node_type = create_node_type_with_class_name("int");
-        }
-*/
-        (*result_type)->mGenericsTypes[0] = node_type;
-        (*result_type)->mGenericsTypes[1] = create_node_type_with_class_name("bool");
-        (*result_type)->mPointerNum = 1;
-        (*result_type)->mException = TRUE;
-    }
     
     (*result_type)->mOriginalPointerNum = parser_pointer_num;
     
@@ -1843,6 +1825,25 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
         }
         
         *result_type = generics_type;
+    }
+    
+    if(exception_ && get_class("tuple2")) {
+        sNodeType* node_type = clone_node_type(*result_type);
+        *result_type = create_node_type_with_class_name("tuple2");
+        if(!gNCGC) {
+            (*result_type)->mHeap = TRUE;
+        }
+        (*result_type)->mNumGenericsTypes = 2;
+/*
+        if(type_identify_with_class_name(node_type, "void") && node_type->mPointerNum == 0)
+        {
+            node_type = create_node_type_with_class_name("int");
+        }
+*/
+        (*result_type)->mGenericsTypes[0] = node_type;
+        (*result_type)->mGenericsTypes[1] = create_node_type_with_class_name("bool");
+        (*result_type)->mPointerNum = 1;
+        (*result_type)->mException = TRUE;
     }
     
 /*

@@ -53,7 +53,9 @@ struct sType
     bool mOmitArrayNum;
     
     list<sType*%>*% mParamTypes;
+    list<string>*% mParamNames;
     tuple1<sType*%>*% mResultType;
+    bool mVarArgs;
     
     bool mUnsigned;
     bool mShort;

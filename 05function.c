@@ -114,6 +114,55 @@ bool is_contained_generics_class(sType* type, sInfo* info)
     return false;
 }
 
+exception list<sType*%>*%, list<string>*%, bool parse_params(sInfo* info)
+{
+    var param_types = new list<sType*%>();
+    var param_names = new list<string>();
+    bool var_args = false;
+    
+    expected_next_character('(', info).catch {
+        throw;
+    }
+    
+    while(true) {
+        if(*info->p == ')') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            break;
+        }
+        
+        var param_type, param_name = parse_type(info, parse_variable_name:true).catch {
+            throw
+        }
+        
+        param_type->mFunctionParam = true;
+        
+        param_types.push_back(param_type);
+        param_names.push_back(param_name);
+        
+        if(*info->p == ',') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            if(parsecmp("...", info)) {
+                info->p += strlen("...");
+                skip_spaces_and_lf(info);
+                var_args = true;
+                
+                expected_next_character(')', info);
+                break;
+            }
+        }
+        else if(*info->p == ')') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            break;
+        }
+    }
+    
+    return (param_types, param_names, var_vargs);
+}
+
 exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_name=false)
 {
     string type_name = parse_word(info).catch {
@@ -256,102 +305,150 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
     }
     
     sType*% type;
-    if(info.types[type_name]) {
-        type = clone info.types[type_name];
-    }
-    else if(info.generics_type_names.contained(type_name)) {
-        for(int i=0; i<info.generics_type_names.length(); i++) {
-            if(info.generics_type_names[i] === type_name) {
-                type = new sType(xsprintf("generics_type%d", i), info);
-            }
-        }
-    }
-    else {
-        type = new sType(type_name, info);
-    }
-    
-    if(*info->p == '<') {
+    string var_name;
+    if(*info->p == '(') {
         info->p++;
         skip_spaces_and_lf(info);
         
-        while(true) {
-            var generics_type, var_name = parse_type(info).catch {
-                throw;
-            }
-            
-            type->mGenericsTypes.push_back(generics_type);
-            
-            if(*info->p == ',') {
-                info->p++;
-                skip_spaces_and_lf(info);
-            }
-            else if(*info->p == '>') {
-                info->p++;
-                skip_spaces_and_lf(info);
-                
-                break;
-            }
-            else {
-                err_msg(info, "invalid generics type\n");
-                throw;
-            }
+        expected_next_character('*', info);
+        
+        sType*% result_type;
+        if(info.types[type_name]) {
+            result_type = clone info.types[type_name];
         }
-        string new_name = create_generics_name(type, info);
-        if(info.classes[new_name] == null) {
-            if(!define_generics_struct(type, info)) {
-                throw;
-            }
-            if(!is_contained_generics_class(type, info)) {
-                type->mClass = info.classes[new_name];
+        else if(info.generics_type_names.contained(type_name)) {
+            for(int i=0; i<info.generics_type_names.length(); i++) {
+                if(info.generics_type_names[i] === type_name) {
+                    result_type = new sType(xsprintf("generics_type%d", i), info);
+                }
             }
         }
         else {
-            if(!is_contained_generics_class(type, info)) {
-                type->mClass = info.classes[new_name];
-            }
+            result_type = new sType(type_name, info);
         }
-    }
-    
-    type->mConstant = type->mConstant || constant;
-    type->mRegister = register_;
-    type->mUnsigned = type->mUnsigned || unsigned_;
-    type->mVolatile = volatile_;
-    type->mStatic = type->mStatic || static_;
-    type->mRestrict = type->mRestrict || restrict_;
-    type->mLongLong = type->mLongLong || long_long;
-    type->mLong = type->mLong || long_;
-    type->mShort = type->mShort || short_;
-    
-    while(*info->p == '*') {
-        info->p++;
-        skip_spaces_and_lf(info);
         
-        type->mPointerNum++;
-    }
-    
-    if(*info->p == '%') {
-        info->p++;
-        skip_spaces_and_lf(info);
+        result_type->mConstant = result_type->mConstant || constant;
+        result_type->mRegister = register_;
+        result_type->mUnsigned = result_type->mUnsigned || unsigned_;
+        result_type->mVolatile = volatile_;
+        result_type->mStatic = result_type->mStatic || static_;
+        result_type->mRestrict = result_type->mRestrict || restrict_;
+        result_type->mLongLong = result_type->mLongLong || long_long;
+        result_type->mLong = result_type->mLong || long_;
+        result_type->mShort = result_type->mShort || short_;
         
-        if(!gGC) {
-            type->mHeap = true;
-        }
-    }
-    
-    if(*info->p == '&') {
-        info->p++;
-        skip_spaces_and_lf(info);
-        
-        if(!gGC) {
-            type->mNoHeap = true;
-        }
-    }
-    
-    
-    string var_name = string("");
-    if(parse_variable_name) {
         var_name = parse_word(info).catch {
             throw;
+        }
+        expected_next_character(')', info);
+        
+        var param_types, param_names, var_args = parse_params(info).catch {
+            throw;
+        }
+        
+        type = new sType("lambda", info);
+        
+        type->mResultType = new tuple1<sType*%>(result_type);
+        type->mParamTypes = param_types;
+        type->mParamNames = param_names;
+        type->mVarArgs = var_args;
+    }
+    else {
+        if(info.types[type_name]) {
+            type = clone info.types[type_name];
+        }
+        else if(info.generics_type_names.contained(type_name)) {
+            for(int i=0; i<info.generics_type_names.length(); i++) {
+                if(info.generics_type_names[i] === type_name) {
+                    type = new sType(xsprintf("generics_type%d", i), info);
+                }
+            }
+        }
+        else {
+            type = new sType(type_name, info);
+        }
+        
+        if(*info->p == '<') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            while(true) {
+                var generics_type, var_name = parse_type(info).catch {
+                    throw;
+                }
+                
+                type->mGenericsTypes.push_back(generics_type);
+                
+                if(*info->p == ',') {
+                    info->p++;
+                    skip_spaces_and_lf(info);
+                }
+                else if(*info->p == '>') {
+                    info->p++;
+                    skip_spaces_and_lf(info);
+                    
+                    break;
+                }
+                else {
+                    err_msg(info, "invalid generics type\n");
+                    throw;
+                }
+            }
+            string new_name = create_generics_name(type, info);
+            if(info.classes[new_name] == null) {
+                if(!define_generics_struct(type, info)) {
+                    throw;
+                }
+                if(!is_contained_generics_class(type, info)) {
+                    type->mClass = info.classes[new_name];
+                }
+            }
+            else {
+                if(!is_contained_generics_class(type, info)) {
+                    type->mClass = info.classes[new_name];
+                }
+            }
+        }
+        
+        type->mConstant = type->mConstant || constant;
+        type->mRegister = register_;
+        type->mUnsigned = type->mUnsigned || unsigned_;
+        type->mVolatile = volatile_;
+        type->mStatic = type->mStatic || static_;
+        type->mRestrict = type->mRestrict || restrict_;
+        type->mLongLong = type->mLongLong || long_long;
+        type->mLong = type->mLong || long_;
+        type->mShort = type->mShort || short_;
+        
+        while(*info->p == '*') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            type->mPointerNum++;
+        }
+        
+        if(*info->p == '%') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            if(!gGC) {
+                type->mHeap = true;
+            }
+        }
+        
+        if(*info->p == '&') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            if(!gGC) {
+                type->mNoHeap = true;
+            }
+        }
+        
+        if(parse_variable_name) {
+            var_name = parse_word(info).catch {
+                throw;
+            }
         }
     }
     
@@ -1453,6 +1550,7 @@ exception string skip_block(sInfo* info)
     return string(buf);
 }
 
+
 exception sNode*% parse_function(sInfo* info)
 {
     var result_type, var_name = parse_type(info).catch {
@@ -1516,48 +1614,8 @@ exception sNode*% parse_function(sInfo* info)
         }
     }
     
-    expected_next_character('(', info).catch {
+    var param_types, param_names, var_args = parse_params(info).catch {
         throw;
-    }
-    
-    var param_types = new list<sType*%>();
-    var param_names = new list<string>();
-    bool var_args = false;
-    
-    while(true) {
-        if(*info->p == ')') {
-            info->p++;
-            skip_spaces_and_lf(info);
-            break;
-        }
-        
-        var param_type, param_name = parse_type(info, parse_variable_name:true).catch {
-            throw
-        }
-        
-        param_type->mFunctionParam = true;
-        
-        param_types.push_back(param_type);
-        param_names.push_back(param_name);
-        
-        if(*info->p == ',') {
-            info->p++;
-            skip_spaces_and_lf(info);
-            
-            if(parsecmp("...", info)) {
-                info->p += strlen("...");
-                skip_spaces_and_lf(info);
-                var_args = true;
-                
-                expected_next_character(')', info);
-                break;
-            }
-        }
-        else if(*info->p == ')') {
-            info->p++;
-            skip_spaces_and_lf(info);
-            break;
-        }
     }
     
     if(*info->p == ';') {

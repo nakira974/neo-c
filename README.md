@@ -8,7 +8,7 @@ Yet another modern compiler. It has a collection and string library using Boehm 
 もう一つのモダンコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 1.3.0
+version 1.3.1
 
 ``` C
 #include <comelang.h>
@@ -403,6 +403,8 @@ From version 1.2.8 !==, ===, operator overloads has been null-checked.
 From version 1.2.9 Detected invalid inherit
 
 From version 1.3.0 Default is unsafe mode.
+
+From version 1.3.1 multiple result values and exception bug has been fixed.
 
 # Language specifications
 

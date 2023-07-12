@@ -44,12 +44,21 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
     
     sType*% obj_type = clone come_value.type;
     
-    string fun_name2 = create_method_name(obj_type, fun_name);
+    string fun_name2 = create_method_name(obj_type, false@no_pointer_name, fun_name);
+    string fun_name3 = xsprintf("%s_%s", obj_type->mClass->mNoneGenericsName, fun_name);
+    
+    sGenericsFun* generics_fun = info.generics_funcs.at(fun_name3, null!);
+    
+    if(generics_fun) {
+        if(!create_generics_fun(fun_name2, generics_fun, obj_type, info)) {
+            return false;
+        }
+    }
     
     sFun* fun = info.funcs.at(fun_name2, null!);
     
     if(fun == null) {
-        err_msg(info, "founction not found(%s)\n", fun_name);
+        err_msg(info, "function not found(%s) at method\n", fun_name2);
         return false;
     }
     

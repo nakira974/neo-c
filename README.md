@@ -8,7 +8,7 @@ Yet another modern compiler. It has a collection and string library using Boehm 
 もう一つのモダンコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 1.2.9
+version 1.3.0
 
 ``` C
 #include <comelang.h>
@@ -401,6 +401,8 @@ From version 1.2.7 Fixed exception heap bug. No support to transpile mode, -t op
 From version 1.2.8 !==, ===, operator overloads has been null-checked.
 
 From version 1.2.9 Detected invalid inherit
+
+From version 1.3.0 Default is unsafe mode.
 
 # Language specifications
 
@@ -2196,6 +2198,10 @@ no faults.
 配列もセーフモードでは宣言禁止です。配列を使う場合はusing unsafeしてください。
 
 Arrays are also not allowed to be declared in safe mode. Use unsafe when using arrays.
+
+From version 1.3.0, unsafe mode is default.
+
+1.3.0よりアンセーフモードがデフォルトになりました。
 
 # fn
 

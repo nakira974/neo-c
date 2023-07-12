@@ -54,14 +54,14 @@ static bool cpp(sInfo* info)
 #else
     snprintf(cmd, 1024, "cpp -I. -U__GNUC__ %s > %s", input_file_name, output_file_name);
 #endif
-    puts(cmd);
+    //puts(cmd);
 
     int rc = system(cmd);
     if(rc != 0) {
         char cmd[1024];
         snprintf(cmd, 1024, "cpp -I. -C %s > %s", input_file_name, output_file_name);
 
-        puts(cmd);
+        //puts(cmd);
         rc = system(cmd);
 
         if(rc != 0) {
@@ -167,10 +167,10 @@ sType*% sType*::initialize(sType*% self, char* name, sInfo* info, bool heap=fals
     }
     self.mClass = klass;
     
-    self.mGenericsTypes = borrow new list<sType*>();
-    self.mArrayNum = borrow new list<sNode*%>();
+    self.mGenericsTypes = new list<sType*%>();
+    self.mArrayNum = new list<sNode*%>();
     self.mOmitArrayNum = false;
-    self.mParamTypes = borrow new list<sType*>();
+    self.mParamTypes = new list<sType*%>();
     self.mResultType = null;
     self.mUnsigned = false;
     self.mConstant = false;
@@ -192,130 +192,12 @@ sType*% sType*::initialize(sType*% self, char* name, sInfo* info, bool heap=fals
     self.mDynamicArrayNum = 0;
     self.mTypeOfExpression = 0;
 
-    self.mOriginalTypeName = borrow string("");
+    self.mOriginalTypeName = string("");
     self.mOriginalPointerNum = 0;
     
     self.mFunctionParam = false;
     
     return self;
-}
-
-void sType*::finalize(sType* self)
-{
-//    delete self.mClass;
-    
-    foreach(it, self.mGenericsTypes) {
-        delete it;
-    }
-    delete self.mGenericsTypes;
-    delete self.mArrayNum;
-    foreach(it, self.mParamTypes) {
-        delete it;
-    }
-    delete self.mParamTypes;
-    if(self.mResultType) self.mResultType;
-
-    delete self.mOriginalTypeName;
-}
-
-sType*% sType*::clone(sType* self)
-{
-    sType*% result = new sType;
-    
-    result.mClass = self.mClass;
-    
-    result.mGenericsTypes = borrow new list<sType*>();
-    
-    foreach(it, self.mGenericsTypes) {
-        result.mGenericsTypes.push_back(borrow clone it);
-    }
-    result.mArrayNum = borrow new list<sNode*%>();
-    foreach(it, self.mArrayNum) {
-        result.mArrayNum.push_back(clone it);
-    }
-    result.mOmitArrayNum = self.mOmitArrayNum;
-    result.mParamTypes = borrow new list<sType*>();
-    foreach(it, self.mParamTypes) {
-        result.mParamTypes.push_back(borrow clone it);
-    }
-    if(self.mResultType) result.mResultType = borrow clone self.mResultType;
-    result.mUnsigned = self.mUnsigned;
-    result.mConstant = self.mConstant;
-    result.mRegister = self.mRegister;
-    result.mVolatile = self.mVolatile;
-    result.mStatic = self.mStatic;
-    result.mRestrict = self.mRestrict;
-    result.mImmutable = self.mImmutable;
-    result.mLongLong = self.mLongLong;
-    result.mHeap = self.mHeap;
-    result.mDummyHeap = self.mDummyHeap;
-    result.mNoHeap = self.mNoHeap;
-    result.mRefference = self.mRefference;
-    
-    result.mPointerNum = self.mPointerNum;
-    result.mNoArrayPointerNum = self.mNoArrayPointerNum;
-    result.mSizeNum = self.mSizeNum;
-    
-    result.mDynamicArrayNum = self.mDynamicArrayNum;
-    result.mTypeOfExpression = self.mTypeOfExpression;
-
-    if(self.mOriginalTypeName) result.mOriginalTypeName = borrow clone self.mOriginalTypeName;
-    result.mOriginalPointerNum = self.mOriginalPointerNum;
-    
-    result.mFunctionParam = self.mFunctionParam;
-    result.mGenericsStruct = self.mGenericsStruct;
-    
-    return result;
-}
-
-sType*% sType*::shallow_clone(sType* self)
-{
-    var result = new sType;
-    
-    result.mClass = self.mClass;
-    
-    result.mGenericsTypes = self.mGenericsTypes;
-    igc_increment_ref_count(result.mGenericsTypes);
-
-    result.mArrayNum = self.mArrayNum;
-    igc_increment_ref_count(result.mArrayNum);
-    
-    result.mParamTypes = self.mParamTypes;
-    igc_increment_ref_count(self.mParamTypes);
-    if(self.mResultType) {
-        result.mResultType = self.mResultType;
-        igc_increment_ref_count(self.mResultType);
-    }
-    result.mUnsigned = self.mUnsigned;
-    result.mConstant = self.mConstant;
-    result.mRegister = self.mRegister;
-    result.mVolatile = self.mVolatile;
-    result.mStatic = self.mStatic;
-    result.mRestrict = self.mRestrict;
-    result.mImmutable = self.mImmutable;
-    result.mLongLong = self.mLongLong;
-    result.mHeap = self.mHeap;
-    result.mDummyHeap = self.mDummyHeap;
-    result.mNoHeap = self.mNoHeap;
-    result.mRefference = self.mRefference;
-    
-    result.mPointerNum = self.mPointerNum;
-    result.mNoArrayPointerNum = self.mNoArrayPointerNum;
-    result.mSizeNum = self.mSizeNum;
-    
-    result.mDynamicArrayNum = self.mDynamicArrayNum;
-    result.mTypeOfExpression = self.mTypeOfExpression;
-
-    if(self.mOriginalTypeName) {
-        result.mOriginalTypeName = self.mOriginalTypeName;
-        igc_increment_ref_count(result.mOriginalTypeName);
-    }
-    result.mOriginalPointerNum = self.mOriginalPointerNum;
-    
-    result.mFunctionParam = self.mFunctionParam;
-    result.mGenericsStruct = self.mGenericsStruct;
-    
-    return result;
 }
 
 sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool union_=false, bool generics=false, bool method_generics=false, bool protocol_=false, bool struct_=false, bool float_=false, int generics_num=-1, int method_generics_num=-1, bool enum_=false)
@@ -422,6 +304,7 @@ int come_main(int argc, char** argv) version 2
         info.clang_option = clang_option.to_string();
         info.no_output_err = false;
         info.funcs = new map<string, sFun*%>();
+        info.generics_funcs = new map<string, sGenericsFun*%>();
         info.classes = new map<string, sClass*%>();
         info.types = new map<string, sType*%>();
         info.module = new sModule();

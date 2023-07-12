@@ -198,6 +198,9 @@ void add_variable_to_table(char* name, sType* type, sInfo* info)
     if(global) {
         self->mCValueName = string(name);
     }
+    else if(type->mFunctionParam) {
+        self->mCValueName = string(name);
+    }
     else {
         static int n = 0;
         self->mCValueName = xsprintf("%s_%d", name, n++);

@@ -99,6 +99,21 @@ void skip_spaces_and_lf(sInfo* info)
     }
 }
 
+bool is_contained_generics_class(sType* type, sInfo* info)
+{
+    foreach(it, type->mGenericsTypes) {
+        if(it->mClass->mGenerics) {
+            return true;
+        }
+    }
+    
+    if(type->mClass->mGenerics) {
+        return true;
+    }
+    
+    return false;
+}
+
 exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_name=false)
 {
     string type_name = parse_word(info).catch {
@@ -264,7 +279,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                 throw;
             }
             
-            type->mGenericsTypes.push_back(borrow clone generics_type);
+            type->mGenericsTypes.push_back(generics_type);
             
             if(*info->p == ',') {
                 info->p++;
@@ -286,10 +301,14 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             if(!define_generics_struct(type, info)) {
                 throw;
             }
-            type->mClass = info.classes[new_name];
+            if(!is_contained_generics_class(type, info)) {
+                type->mClass = info.classes[new_name];
+            }
         }
         else {
-            type->mClass = info.classes[new_name];
+            if(!is_contained_generics_class(type, info)) {
+                type->mClass = info.classes[new_name];
+            }
         }
     }
     
@@ -356,6 +375,23 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
 sBlock*% sBlock*::initialize(sBlock*% self, sInfo* info)
 {
     self.mNodes = new list<sNode*%>();
+    
+    return self;
+}
+
+sGenericsFun*% sGenericsFun*::initialize(sGenericsFun*% self, sType*% impl_type, list<string>* generics_type_names, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, bool var_args, string block, sInfo* info)
+{
+    self.mImplType = clone impl_type;
+    self.mGenericsTypeNames = clone generics_type_names;
+    
+    self.mName = name;
+    self.mResultType = result_type;
+    self.mParamTypes = param_types;
+    self.mParamNames = param_names;
+    self.mVarArgs = var_args;
+    
+    self.mBlock = block;
+    self.mSLine = info.sline;
     
     return self;
 }
@@ -629,7 +665,8 @@ exception sNode*% expression_node(sInfo* info) version 1
     throw;
 }
 
-struct sFunCallNode {
+struct sFunCallNode 
+{
     string fun_name;
     list<sNode*%>*% params
     int sline;
@@ -661,10 +698,11 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
     string fun_name = self.fun_name;
     list<sNode*%>* params = self.params;
     
+    
     sFun* fun = info.funcs.at(fun_name, null!);
     
     if(fun == null) {
-        err_msg(info, "founction not found(%s)\n", fun_name);
+        err_msg(info, "function not found(%s) at normal function call\n", fun_name);
         return false;
     }
     
@@ -1227,7 +1265,7 @@ bool sFunNode*::compile(sFunNode* self, sInfo* info)
     return result;
 }
 
-string create_method_name(sType* obj_type, char* fun_name)
+string create_method_name(sType* obj_type, bool no_pointer_name, char* fun_name)
 {
     string pointer_name = "p" * obj_type->mPointerNum;
     string heap_name;
@@ -1239,7 +1277,180 @@ string create_method_name(sType* obj_type, char* fun_name)
     }
     string class_name = obj_type->mClass->mName;
     
+    if(no_pointer_name) {
+        return xsprintf("%s_%s", class_name, fun_name);
+    }
+    
     return xsprintf("%s%s%s_%s", class_name, pointer_name, heap_name, fun_name);
+}
+struct sFun
+{
+    string mName;
+    
+    sType*% mResultType;
+    list<sType*%>*% mParamTypes;
+    list<string%>*% mParamNames;
+    
+    sBlock*% mBlock;
+    
+    bool mExternal;
+    bool mVarArgs;
+    
+    buffer*% mSource;
+    buffer*% mSourceHead;
+    buffer*% mSourceDefer;
+};
+
+bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* generics_type, sInfo* info)
+{
+    sType*% result_type = solve_generics(generics_fun->mResultType, generics_type, info).catch {
+        return false;
+    }
+    
+    list<sType*%>*% param_types = new list<sType*%>();
+    foreach(it, generics_fun->mParamTypes) {
+        var param_type = solve_generics(it, generics_type, info).catch {
+            return false;
+        }
+        
+        param_type->mFunctionParam = true;
+
+        param_types.push_back(clone param_type);
+    }
+    list<string>*% param_names = clone generics_fun->mParamNames;
+    
+    smart_pointer<char>*% p = info.p;
+    int sline = generics_fun->mSLine;
+    info.p = generics_fun->mBlock.to_buffer().to_pointer();
+    sBlock*% block = parse_block(info).catch {
+        return false;
+    }
+    info.p = info.p;
+    info.sline = sline;
+    bool var_args = generics_fun.mVarArgs;
+    sFun*% fun = new sFun(fun_name, result_type
+                    , param_types
+                    , param_names, false@external
+                    , var_args, block, info);
+    
+    info.funcs.insert(string(fun_name), fun);
+    
+    sNode*% node = new sNode(new sFunNode(fun, info));
+    
+    if(!node.compile->(info)) {
+        return false
+    }
+    
+    return true;
+}
+
+exception string skip_block(sInfo* info)
+{
+    char* head = info.p.p;
+    if(*info->p == '{') {
+        info->p++;
+
+        bool dquort = false;
+        bool squort = false;
+        int sline = 0;
+        int nest = 0;
+        while(1) {
+            if(dquort) {
+                if(*info->p == '\\') {
+                    info->p++;
+                    if(*info->p == '\0') {
+                        err_msg(info, "%s %d: unexpected the source end. close single quote or double quote.", info->sname, sline);
+                        throw
+                    }
+                    info->p++;
+                }
+                else if(*info->p == '"') {
+                    info->p++;
+                    dquort = !dquort;
+                }
+                else {
+                    info->p++;
+
+                    if(*info->p == '\0') {
+                        err_msg(info, "%s %d: unexpected the source end. close single quote or double quote.", info->sname, sline);
+                        throw;
+                    }
+                }
+            }
+            else if(squort) {
+                if(*info->p == '\\') {
+                    info->p++;
+                    if(*info->p == '\0') {
+                        err_msg(info, "%s %d: unexpected the source end. close single quote or double quote.", info->sname, sline);
+                        throw;
+                    }
+                    info->p++;
+                }
+                else if(*info->p == '\'') {
+                    info->p++;
+                    squort = !squort;
+                }
+                else {
+                    info->p++;
+
+                    if(*info->p == '\0') {
+                        err_msg(info, "%s %d: unexpected the source end. close single quote or double quote.", info->sname, sline);
+                        throw;
+                    }
+                }
+            }
+            else if(*info->p == '\'') {
+                sline = info->sline;
+                info->p++;
+                squort = !squort;
+            }
+            else if(*info->p == '"') {
+                sline = info->sline;
+                info->p++;
+                dquort = !dquort;
+            }
+            else if(*info->p == '#') {
+                parse_sharp(info);
+            }
+            else if(*info->p == '{') {
+                info->p++;
+
+                nest++;
+            }
+            else if(*info->p == '}') {
+                info->p++;
+
+                if(nest == 0) {
+                    skip_spaces_and_lf(info);
+                    break;
+                }
+
+                nest--;
+            }
+            else if(*info->p == '\0') {
+                err_msg(info, "The block requires } character for closing block");
+                throw
+            }
+            else if(*info->p == '\n') {
+                info->p++;
+                info->sline++;
+            }
+            else {
+                info->p++;
+            }
+        }
+    }
+    else {
+        err_msg(info, "Require block. This is %c", *info->p);
+    }
+    
+    char* tail = info.p.p;
+    
+    char*% buf = new char[tail-head+1];
+    memcpy(buf, head, tail-head);
+    buf[tail-head] = '\0';
+    
+    return string(buf);
 }
 
 exception sNode*% parse_function(sInfo* info)
@@ -1290,16 +1501,14 @@ exception sNode*% parse_function(sInfo* info)
         string fun_name2 = parse_word(info).catch {
             throw;
         }
-        fun_name = create_method_name(obj_type, fun_name2)
+        fun_name = create_method_name(obj_type, false@no_pointer_name, fun_name2)
     }
     else if(info->impl_type) {
         string fun_name2 = parse_word(info).catch {
             throw;
         }
     
-        fun_name = create_method_name(info->impl_type, fun_name2);
-    }
-    else if(info.generics_type_names.length() > 0) {
+        fun_name = create_method_name(info->impl_type, false@no_pointer_name, fun_name2);
     }
     else {
         fun_name = parse_word(info).catch {
@@ -1325,6 +1534,8 @@ exception sNode*% parse_function(sInfo* info)
         var param_type, param_name = parse_type(info, parse_variable_name:true).catch {
             throw
         }
+        
+        param_type->mFunctionParam = true;
         
         param_types.push_back(param_type);
         param_names.push_back(param_name);
@@ -1359,6 +1570,17 @@ exception sNode*% parse_function(sInfo* info)
         info.funcs.insert(string(fun_name), fun);
         
         return new sNode(new sFunNode(fun, info));
+    }
+    else if(info.impl_type && info.generics_type_names.length() > 0) {
+        string block = skip_block(info).catch {
+            throw;
+        }
+        
+        var fun = new sGenericsFun(info.impl_type, info.generics_type_names, fun_name, result_type, param_types, param_names, var_args, block, info);
+        
+        info.generics_funcs.insert(string(fun_name), fun);
+        
+        return (sNode*)null;
     }
     else if(*info->p == '{') {
         sBlock*% block = parse_block(info).catch {

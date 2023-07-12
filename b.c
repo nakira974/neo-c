@@ -1,21 +1,16 @@
 #include <comelang.h>
 
-using unsafe;
+#include <comelang.h>
 
-exception int*% fun(int a)
+struct sType
 {
-    int*% aa = new int;
-    *aa = a;
-    return aa;
-}
+    string mName;
+    list<sType*%>*% types;
+};
 
 int main(int argc, char** argv)
 {
-    int* a = fun(123).catch {
-        puts("EERRRO");
-    }
-    
-    printf("%d\n", *a);
+    sType*% a = new sType;
     
     return 0;
 }

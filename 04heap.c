@@ -10,14 +10,16 @@ exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
     sClass* klass = type->mClass;
 
     if(klass->mName === "lambda") {
-        result->mResultType = borrow solve_generics(type->mResultType, generics_type, info).catch {
+        var result_type = solve_generics(type->mResultType.0, generics_type, info).catch {
             throw;
         }
         
-        list<sType*>* new_param_types = borrow new list<sType*>();
+        result->mResultType = new tuple1<sType*%>(result_type);
+        
+        list<sType*%>*% new_param_types = new list<sType*%>();
 
         foreach(it, type->mParamTypes) {
-            sType* new_param_type = borrow solve_generics(it, generics_type, info).catch
+            sType*% new_param_type = solve_generics(it, generics_type, info).catch
             {
                 throw
             }
@@ -72,14 +74,30 @@ exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
     }
     else {
         int i = 0;
+        result.mGenericsTypes.reset();
         foreach(it, type->mGenericsTypes) {
             var type = solve_generics(it, generics_type, info)
                 .catch
             {
                 throw;
             }
-            result->mGenericsTypes.push_back(borrow clone type);
+            result->mGenericsTypes.push_back(clone type);
             i++;
+        }
+        
+        string new_name = create_generics_name(result, info);
+        if(info.classes[new_name] == null) {
+            if(!define_generics_struct(result, info)) {
+                throw;
+            }
+            if(!is_contained_generics_class(result, info)) {
+                result->mClass = info.classes[new_name];
+            }
+        }
+        else {
+            if(!is_contained_generics_class(result, info)) {
+                result->mClass = info.classes[new_name];
+            }
         }
     }
 
@@ -97,15 +115,17 @@ exception sType*% solve_method_generics(sType* type, list<sType*%>* method_gener
 
     if(klass->mName === "lambda")
     {
-        result->mResultType = borrow solve_method_generics(type->mResultType, method_generics_types, info).catch 
+        var result_type = solve_method_generics(type->mResultType.0, method_generics_types, info).catch 
         {
             throw
         }
+        
+        result->mResultType = new tuple1<sType*%>(result_type);
 
-        list<sType*>* new_param_types = borrow new list<sType*>();
+        list<sType*%>*% new_param_types = new list<sType*%>();
 
         foreach(it, type->mParamTypes) {
-            sType* new_param_type = borrow solve_method_generics(it, method_generics_types, info).catch
+            sType*% new_param_type = solve_method_generics(it, method_generics_types, info).catch
             {
                 throw
             }

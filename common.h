@@ -15,9 +15,6 @@ extern bool gGC;
 
 struct sType;
 
-void sType*::finalize(sType* self);
-sType*% sType*::clone(sType* self);
-
 struct sClass {
     bool mStruct;
     bool mFloat;
@@ -30,6 +27,7 @@ struct sClass {
     bool mEnum;
     
     string mName;
+    string mNoneGenericsName;
     
     int mGenericsNum;
     int mMethodGenericsNum;
@@ -49,13 +47,13 @@ struct sType
 {
     sClass* mClass;
 
-    list<sType*>* mGenericsTypes;
+    list<sType*%>*% mGenericsTypes;
     
-    list<sNode*%>* mArrayNum;
+    list<sNode*%>*% mArrayNum;
     bool mOmitArrayNum;
     
-    list<sType*>* mParamTypes;
-    sType* mResultType;
+    list<sType*%>*% mParamTypes;
+    tuple1<sType*%>*% mResultType;
     
     bool mUnsigned;
     bool mShort;
@@ -80,7 +78,7 @@ struct sType
     unsigned int mDynamicArrayNum;
     unsigned int mTypeOfExpression;
 
-    char* mOriginalTypeName;
+    string mOriginalTypeName;
     int mOriginalPointerNum;
     
     bool mFunctionParam;
@@ -131,6 +129,23 @@ struct sFun
     buffer*% mSourceDefer;
 };
 
+struct sGenericsFun
+{
+    sType*% mImplType;
+    list<string>*% mGenericsTypeNames;
+    
+    string mName;
+    
+    sType*% mResultType;
+    list<sType*%>*% mParamTypes;
+    list<string%>*% mParamNames;
+    
+    string mBlock;
+    int mSLine;
+    
+    bool mVarArgs;
+};
+
 struct sModule
 {
     buffer*% mSourceHead;
@@ -179,6 +194,7 @@ struct sInfo
     int block_level;
 
     map<string, sFun*%>*% funcs;
+    map<string, sGenericsFun*%>*% generics_funcs;
     map<string, sClass*%>*% classes;
     map<string, sType*%>*% types;
     sModule*% module;
@@ -222,9 +238,6 @@ sModule*% sModule*::initialize(sModule*% self);
 sType*% sType*::initialize(sType*% self, char* name, sInfo* info, bool heap=false);
 sVarTable*% sVarTable*::initialize(sVarTable*% self, bool global, sVarTable* parent);
 void sVarTable*::finalize(sVarTable* self);
-sType*% sType*::clone(sType* self);
-sType*% sType*::shallow_clone(sType* self);
-void sType*::finalize(sType* self);
 sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool union_=false, bool generics=false, bool method_generics=false, bool protocol_=false, bool struct_=false, bool float_=false, int generics_num=-1, int method_generics_num=-1, bool enum_=false);
 sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, bool external, bool var_args, sBlock*% block, sInfo* info);
 string make_type_name_string(sType* type, bool in_header, bool array_cast_pointer, sInfo* info);
@@ -266,12 +279,14 @@ void remove_object_from_right_values(int right_value_num, sInfo* info);
 /////////////////////////////////////////////////////////////////////
 /// 05function.c ///
 /////////////////////////////////////////////////////////////////////
+bool is_contained_generics_class(sType* type, sInfo* info);
 bool is_type_name(char* buf, sInfo* info);
 bool parsecmp(char* str, sInfo* info);
 exception string parse_word(sInfo* info, bool no_check_err=false);
 void skip_spaces_and_lf(sInfo* info);
 exception int expected_next_character(char c, sInfo* info);
 sBlock*% sBlock*::initialize(sBlock*% self, sInfo* info);
+bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* generics_type, sInfo* info);
 
 exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_name=false);
 exception sBlock*% parse_block(sInfo* info);
@@ -290,7 +305,7 @@ exception int transpile(sInfo* info) version 5;
 void parse_sharp(sInfo* info) version 5;
 exception sNode*% string_node(char* buf, char* head, sInfo* info) version 5;
 exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 5;
-string create_method_name(sType* obj_type, char* fun_name);
+string create_method_name(sType* obj_type, bool no_pointer_name, char* fun_name);
 
 /////////////////////////////////////////////////////////////////////
 /// 06str.c ///

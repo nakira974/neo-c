@@ -134,7 +134,7 @@ string make_type_name_string(sType* type, bool in_header, bool array_cast_pointe
             buf.append_str("_Bool");
         }
         else if(class_name === "lambda") {
-            string result_type_str = make_type_name_string(type->mResultType, in_header, false@array_cast_pointer, info);
+            string result_type_str = make_type_name_string(type->mResultType.0, in_header, false@array_cast_pointer, info);
             buf.append_str(result_type_str);
             buf.append_str(" (*)(");
             
@@ -178,7 +178,7 @@ void show_type(sType* type, sInfo* info)
 string make_lambda_type_name_string(sType* type, char* var_name, sInfo* info)
 {
     var buf = new buffer();
-    if(type->mResultType && type->mResultType->mClass->mName === "lambda") {
+    if(type->mResultType.0 && type->mResultType.0->mClass->mName === "lambda") {
         buf.append_str(xsprintf("(*%s)(", var_name));
         
         int i = 0;
@@ -193,10 +193,10 @@ string make_lambda_type_name_string(sType* type, char* var_name, sInfo* info)
         
         buf.append_str(")");
         
-        return make_lambda_type_name_string(type->mResultType, buf.to_string(), info);
+        return make_lambda_type_name_string(type->mResultType.0, buf.to_string(), info);
     }
     else {
-        buf.append_str(xsprintf("%s (*%s)(", make_type_name_string(type->mResultType, false@in_header, false@array_cast_pointer, info), var_name));
+        buf.append_str(xsprintf("%s (*%s)(", make_type_name_string(type->mResultType.0, false@in_header, false@array_cast_pointer, info), var_name));
         
         int i = 0;
         foreach(it, type->mParamTypes) {
@@ -322,7 +322,7 @@ string output_function(sFun* fun, sInfo* info)
     }
     else if(fun->mResultType->mArrayNum.length() > 0) {
         sType*% base_result_type = clone fun->mResultType;
-        base_result_type.mArrayNum = borrow new list<sNode*%>();
+        base_result_type.mArrayNum = new list<sNode*%>();
         
         string result_type_str = make_type_name_string(base_result_type, false@in_header, false@array_cast_pointer, info);
         
@@ -437,7 +437,7 @@ string header_function(sFun* fun, sInfo* info)
     }
     else if(fun->mResultType->mArrayNum.length() > 0) {
         sType*% base_result_type = clone fun->mResultType;
-        base_result_type->mArrayNum = borrow new list<sNode*%>();
+        base_result_type->mArrayNum = new list<sNode*%>();
         
         string result_type_str = make_type_name_string(base_result_type, true@in_header, false@array_cast_pointer, info);
         

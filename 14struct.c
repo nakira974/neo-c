@@ -22,6 +22,25 @@ sStructNode*% sStructNode*::initialize(sStructNode*% self, sType*% type, sInfo* 
     return self;
 }
 
+bool is_no_solve_generics_type(sType* type, sInfo* info)
+{
+    sClass* klass = type->mClass;
+    
+    if(klass->mGenerics) {
+        return true;
+    }
+    
+    foreach(it, klass->mFields) {
+        var name, type = it;
+        
+        if(is_no_solve_generics_type(type, info)) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
 bool define_generics_struct(sType* type, sInfo* info)
 {
     sType*% generics_type = clone type;
@@ -29,6 +48,7 @@ bool define_generics_struct(sType* type, sInfo* info)
     
     if(!info.classes.find(new_name)) {
         sClass*% new_class = new sClass(name:new_name, struct_:true);
+        new_class.mNoneGenericsName = string(type.mName);
         sClass*% generics_class = clone info.classes[type.mName];
         
         buffer*% buf = new buffer();
@@ -36,6 +56,7 @@ bool define_generics_struct(sType* type, sInfo* info)
         buf.append_str(xsprintf("struct %s\n{\n", new_name));
         
         int i = 0;
+        bool no_solve_generics_type = false;
         foreach(it, generics_class.mFields) {
             var name, type = it;
             
@@ -43,7 +64,11 @@ bool define_generics_struct(sType* type, sInfo* info)
                 return false;
             }
             
-            new_class.mFields.push_back((name, new_type));
+            if(is_no_solve_generics_type(new_type, info)) {
+                no_solve_generics_type = true;
+            }
+            
+            new_class.mFields.push_back((clone name, clone new_type));
             
             buf.append_str("    ");
             buf.append_str(make_define_var(new_type, name, info));
@@ -54,9 +79,11 @@ bool define_generics_struct(sType* type, sInfo* info)
         
         buf.append_str("};\n");
         
-        add_come_code_at_source_head(info, "%s", buf.to_string());
-        
-        info.classes.insert(new_name, new_class);
+        if(!no_solve_generics_type) {
+            add_come_code_at_source_head(info, "%s", buf.to_string());
+            
+            info.classes.insert(new_name, new_class);
+        }
     }
     
     return true;

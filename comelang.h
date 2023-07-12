@@ -3715,6 +3715,4 @@ void print_ref_count(void* mem);
 
 using comelang;
 
-using safe;
-
 #endif

@@ -114,54 +114,6 @@ bool is_contained_generics_class(sType* type, sInfo* info)
     return false;
 }
 
-exception list<sType*%>*%, list<string>*%, bool parse_params(sInfo* info)
-{
-    var param_types = new list<sType*%>();
-    var param_names = new list<string>();
-    bool var_args = false;
-    
-    expected_next_character('(', info).catch {
-        throw;
-    }
-    
-    while(true) {
-        if(*info->p == ')') {
-            info->p++;
-            skip_spaces_and_lf(info);
-            break;
-        }
-        
-        var param_type, param_name = parse_type(info, parse_variable_name:true).catch {
-            throw
-        }
-        
-        param_type->mFunctionParam = true;
-        
-        param_types.push_back(param_type);
-        param_names.push_back(param_name);
-        
-        if(*info->p == ',') {
-            info->p++;
-            skip_spaces_and_lf(info);
-            
-            if(parsecmp("...", info)) {
-                info->p += strlen("...");
-                skip_spaces_and_lf(info);
-                var_args = true;
-                
-                expected_next_character(')', info);
-                break;
-            }
-        }
-        else if(*info->p == ')') {
-            info->p++;
-            skip_spaces_and_lf(info);
-            break;
-        }
-    }
-    
-    return (param_types, param_names, var_vargs);
-}
 
 exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_name=false)
 {
@@ -307,6 +259,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
     sType*% type;
     string var_name;
     if(*info->p == '(') {
+/*
         info->p++;
         skip_spaces_and_lf(info);
         
@@ -352,6 +305,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         type->mParamTypes = param_types;
         type->mParamNames = param_names;
         type->mVarArgs = var_args;
+*/
     }
     else {
         if(info.types[type_name]) {
@@ -1614,8 +1568,42 @@ exception sNode*% parse_function(sInfo* info)
         }
     }
     
-    var param_types, param_names, var_args = parse_params(info).catch {
-        throw;
+    var param_types = new list<sType*%>();
+    var param_names = new list<string>();
+    bool var_args = false;
+    
+    while(true) {
+        if(*info->p == ')') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            break;
+        }
+        
+        var param_type, param_name = parse_type(info, parse_variable_name:true).catch {
+            throw
+        }
+        
+        param_types.push_back(param_type);
+        param_names.push_back(param_name);
+        
+        if(*info->p == ',') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            if(parsecmp("...", info)) {
+                info->p += strlen("...");
+                skip_spaces_and_lf(info);
+                var_args = true;
+                
+                expected_next_character(')', info);
+                break;
+            }
+        }
+        else if(*info->p == ')') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            break;
+        }
     }
     
     if(*info->p == ';') {

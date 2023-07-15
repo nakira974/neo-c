@@ -869,6 +869,11 @@ BOOL compile_list_value(unsigned int node, sCompileInfo* info)
         
         elements_value[i] = *get_value_from_stack(-1);
         
+        if(element_type->mHeap && (gNodes[node].mNodeType == kNodeTypeLoadField || gNodes[node].mNodeType == kNodeTypeLoadVariable || gNodes[node].mNodeType == kNodeTypeNormalBlock))
+        {
+            increment_ref_count(elements_value[i].value, element_type, elements_value[i].c_value, info);
+        }
+        
         sBuf_append_str(&buf, xsprintf("_list_element%d[%d] = %s;\n", list_num2, i, elements_value[i].c_value));
         
         dec_stack_ptr(1, info);
@@ -1095,6 +1100,11 @@ BOOL compile_map_value(unsigned int node, sCompileInfo* info)
         key_values[i] = *get_value_from_stack(-1);
         dec_stack_ptr(1, info);
         
+        if(key_type->mHeap && (gNodes[key].mNodeType == kNodeTypeLoadField || gNodes[key].mNodeType == kNodeTypeLoadVariable || gNodes[key].mNodeType == kNodeTypeNormalBlock))
+        {
+            increment_ref_count(key_values[i].value, key_type, key_values[i].c_value, info);
+        }
+        
         remove_object_from_right_values(key_values[i].value, info);
         
         sBuf_append_str(&buf, xsprintf("_map_keys_value%d[%d] = %s;\n", map_num2, i, key_values[i].c_value));
@@ -1119,6 +1129,11 @@ BOOL compile_map_value(unsigned int node, sCompileInfo* info)
         
         value_values[i] = *get_value_from_stack(-1);
         dec_stack_ptr(1, info);
+        
+        if(value_type->mHeap && (gNodes[value].mNodeType == kNodeTypeLoadField || gNodes[value].mNodeType == kNodeTypeLoadVariable || gNodes[value].mNodeType == kNodeTypeNormalBlock))
+        {
+            increment_ref_count(value_values[i].value, value_type, value_values[i].c_value, info);
+        }
         
         sBuf_append_str(&buf, xsprintf("_map_values_value%d[%d] = %s;\n", map_num2, i, value_values[i].c_value));
         
@@ -1297,11 +1312,10 @@ BOOL compile_tuple_value(unsigned int node, sCompileInfo* info)
         
         dec_stack_ptr(1, info);
         
-/*
-        if(element_types[i]->mHeap) {
+        if(element_types[i]->mHeap && (gNodes[node].mNodeType == kNodeTypeLoadField || gNodes[node].mNodeType == kNodeTypeLoadVariable || gNodes[node].mNodeType == kNodeTypeNormalBlock))
+        {
             increment_ref_count(elements_value[i].value, element_types[i], elements_value[i].c_value, info);
         }
-*/
         
         remove_object_from_right_values(elements_value[i].value, info);
     }

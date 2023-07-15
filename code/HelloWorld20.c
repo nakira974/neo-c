@@ -132,7 +132,21 @@ exception string funXYZ2(string a)
     return (string)null;
 }
 
+struct sType
+{
+    string mName;
+};
 
+exception tuple2<tuple3<list<string>*%, bool, list<string>*%>*%, bool>*% parse_params()
+{
+    var a = new sType;
+    
+    list<sType*%>*% b = [new sType, a];
+    list<string>*% c = [string("AAAA"), string("BBB"), string("CCC")];
+    list<int>*% d = [1,2,3];
+    
+    return ((c, false, c), false);
+}
 
 int main(int argc, char** argv)
 {
@@ -256,6 +270,10 @@ int main(int argc, char** argv)
     }
     
     xassert("exception test", cc == null);
+    
+    var abxyzco2, bbcxyz = parse_params().catch {
+        puts("throw");
+    }
     
     return 0;
 }

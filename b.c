@@ -1,20 +1,24 @@
 #include <comelang.h>
-#include <comelang.h>
 
 struct sType
 {
     string mName;
 };
 
-exception list<sType*%>*%, list<string>*%, bool parse_params()
+tuple2<tuple3<list<string>*%, bool, list<string>*%>*%, bool>*% parse_params()
 {
-    throw
-    return (new list<sType*%>(), new list<string>(), false);
+    var a = new sType;
+    
+    list<sType*%>*% b = [new sType, a];
+    list<string>*% c = [string("AAAA"), string("BBB"), string("CCC")];
+    list<int>*% d = [1,2,3];
+    
+    return ((c, false, c), false);
 }
 
 int main(int argc, char** argv)
 {
-    var param_types, param_names, var_args = parse_params().catch {
+    parse_params().catch {
         return 1;
     }
     

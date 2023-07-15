@@ -210,6 +210,7 @@ void show_type_core(sNodeType* type, int* num_classes, char** classes, BOOL no_o
     }
 */
     if(type->mNumParams > 0) printf(")");
+/*
     if(!no_output_fields && ((klass->mFlags & CLASS_FLAGS_STRUCT) || (klass->mFlags & CLASS_FLAGS_UNION))) {
         puts("");
         int i;
@@ -268,6 +269,7 @@ void show_type_core(sNodeType* type, int* num_classes, char** classes, BOOL no_o
             }
         }
     }
+*/
     if(type_identify_with_class_name(type, "lambda")) {
         puts("");
         int i;

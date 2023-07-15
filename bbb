@@ -32,46 +32,46 @@ cond_endY:                                        ; preds = %cond_blockY, %entry
   call void @unwrap_exception(i8* bitcast ([4 x i8]* @36 to i8*), i32 11, i8* %caller_sname9, i32 %caller_sname10, i8* bitcast ([5 x i8]* @35 to i8*))
   %fun_result11 = call i8* @__builtin_string(i8* bitcast ([5 x i8]* @35 to i8*))
   store i8* %fun_result11, i8** %b, align 8
-  %a12 = load %list_charphp*, %list_charphp** %a, align 8
-  %castAL = bitcast %list_charphp* %a12 to i8*
-  %funCCC = call i8* @ncmemdup(i8* %castAL)
-  %castAM = bitcast i8* %funCCC to %list_charphp*
-  %fieldQQQQUOXOOO = getelementptr inbounds %list_charphp, %list_charphp* %castAM, i32 0, i32 0
-  %AUUFIELD = load %list_item_charphp*, %list_item_charphp** %fieldQQQQUOXOOO, align 8
-  %fieldQQQQUOXOOO13 = getelementptr inbounds %list_charphp, %list_charphp* %castAM, i32 0, i32 1
-  %AUUFIELD14 = load %list_item_charphp*, %list_item_charphp** %fieldQQQQUOXOOO13, align 8
-  %fieldQQQQUOXOOO15 = getelementptr inbounds %list_charphp, %list_charphp* %castAM, i32 0, i32 2
-  %AUUFIELD16 = load i32, i32* %fieldQQQQUOXOOO15, align 4
-  %fieldQQQQUOXOOO17 = getelementptr inbounds %list_charphp, %list_charphp* %castAM, i32 0, i32 3
-  %AUUFIELD18 = load %list_item_charphp*, %list_item_charphp** %fieldQQQQUOXOOO17, align 8
-  %b19 = load i8*, i8** %b, align 8
-  %funCCC20 = call i8* @ncmemdup(i8* %b19)
-  %fun_resultXXXYYYZZZZ221 = call i8* @igc_calloc(i64 1, i64 16)
-  %objW22 = bitcast i8* %fun_resultXXXYYYZZZZ221 to %tuple2_listph_charphp_charphp*
-  %fun_result223 = call %tuple2_listph_charphp_charphp* @tuple2_initialize_listph_charph_charph(%tuple2_listph_charphp_charphp* %objW22, %list_charphp* %castAM, i8* %funCCC20)
+  %fun_resultXXXYYYZZZZ212 = call i8* @igc_calloc(i64 1, i64 16)
+  %objW13 = bitcast i8* %fun_resultXXXYYYZZZZ212 to %tuple2_listph_charphp_charphp*
+  %a14 = load %list_charphp*, %list_charphp** %a, align 8
+  %unwrap_cast2 = bitcast %list_charphp* %a14 to i8*
+  %caller_sname15 = load i8*, i8** @gCallerSName, align 8
+  %caller_sname16 = load i32, i32* @gCallerSLine, align 4
+  call void @unwrap_exception(i8* bitcast ([4 x i8]* @37 to i8*), i32 12, i8* %caller_sname15, i32 %caller_sname16, i8* %unwrap_cast2)
+  %b17 = load i8*, i8** %b, align 8
+  %caller_sname18 = load i8*, i8** @gCallerSName, align 8
+  %caller_sname19 = load i32, i32* @gCallerSLine, align 4
+  call void @unwrap_exception(i8* bitcast ([4 x i8]* @38 to i8*), i32 12, i8* %caller_sname18, i32 %caller_sname19, i8* %b17)
+  %castAQ = bitcast %list_charphp* %a14 to i8*
+  call void @igc_increment_ref_count(i8* %castAQ)
+  call void @igc_increment_ref_count(i8* %b17)
+  store i32 12, i32* @gCallerSLine, align 4
+  store i8* getelementptr inbounds ([4 x i8], [4 x i8]* @b.c, i32 0, i32 0), i8** @gCallerSName, align 8
+  %fun_result220 = call %tuple2_listph_charphp_charphp* @tuple2_initialize_listph_charph_charph(%tuple2_listph_charphp_charphp* %objW13, %list_charphp* %a14, i8* %b17)
   %vtable_obj = load %list_charphp*, %list_charphp** %a, align 8
   %castAK2 = bitcast %list_charphp* %vtable_obj to i8*
-  %nullcheckY26 = icmp eq i8* %castAK2, null
-  br i1 %nullcheckY26, label %cond_endY24, label %cond_blockY25
+  %nullcheckY23 = icmp eq i8* %castAK2, null
+  br i1 %nullcheckY23, label %cond_endY21, label %cond_blockY22
 
 cond_blockY:                                      ; preds = %entry
   call void @igc_decrement_ref_count(i8* %fun_result)
   br label %cond_endY
 
-cond_endY24:                                      ; preds = %cond_blockY25, %cond_endY
-  %vtable_obj27 = load i8*, i8** %b, align 8
-  %nullcheckY30 = icmp eq i8* %vtable_obj27, null
-  br i1 %nullcheckY30, label %cond_endY28, label %cond_blockY29
+cond_endY21:                                      ; preds = %cond_blockY22, %cond_endY
+  %vtable_obj24 = load i8*, i8** %b, align 8
+  %nullcheckY27 = icmp eq i8* %vtable_obj24, null
+  br i1 %nullcheckY27, label %cond_endY25, label %cond_blockY26
 
-cond_blockY25:                                    ; preds = %cond_endY
+cond_blockY22:                                    ; preds = %cond_endY
   %castAK = bitcast %list_charphp* %vtable_obj to i8*
   call void @call_finalizer(i8* bitcast (void (%list_charphp*)* @list_finalize_charph to i8*), i8* %castAK, i32 0)
-  br label %cond_endY24
+  br label %cond_endY21
 
-cond_endY28:                                      ; preds = %cond_blockY29, %cond_endY24
-  ret %tuple2_listph_charphp_charphp* %fun_result223
+cond_endY25:                                      ; preds = %cond_blockY26, %cond_endY21
+  ret %tuple2_listph_charphp_charphp* %fun_result220
 
-cond_blockY29:                                    ; preds = %cond_endY24
-  call void @igc_decrement_ref_count(i8* %vtable_obj27)
-  br label %cond_endY28
+cond_blockY26:                                    ; preds = %cond_endY21
+  call void @igc_decrement_ref_count(i8* %vtable_obj24)
+  br label %cond_endY25
 }

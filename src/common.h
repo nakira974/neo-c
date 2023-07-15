@@ -29,7 +29,7 @@
 //////////////////////////////
 #ifdef __RASPBERRY_PI__
 #define GENERICS_TYPES_MAX 10
-#define VAR_NAME_MAX 64
+#define VAR_NAME_MAX 256
 #define CLASS_NUM_MAX 2048
 #define PARSER_ERR_MSG_MAX 5
 #define COMPILE_ERR_MSG_MAX 5
@@ -54,7 +54,7 @@
 #define ENUM_ELEMENT_MAX 1024
 //#define ENUM_ELEMENT_MAX 4096
 #define LIST_ELEMENT_MAX 128
-#define TUPLE_ELEMENT_MAX 5
+#define TUPLE_ELEMENT_MAX 6
 #define MACRO_MAX 512
 #define NUM_TUPLE_MAX 7
 #define OPEN_STRUCT_MAX 64
@@ -62,7 +62,7 @@
 #define FUNCTION_VERSION_MAX 100
 #else
 #define GENERICS_TYPES_MAX 10
-#define VAR_NAME_MAX 64
+#define VAR_NAME_MAX 256
 #define CLASS_NUM_MAX 4096
 #define PARSER_ERR_MSG_MAX 5
 #define COMPILE_ERR_MSG_MAX 5

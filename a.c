@@ -27,7 +27,7 @@ int main(int argc, char** argv)
     a.a = 123;
     a.fun();
     
-    void (*block)(void* parent);
+//    void (*block)(void* parent);
     
 /*
     3.times {

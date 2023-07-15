@@ -1,5 +1,6 @@
 #include "common.h"
 
+/*
 exception list<sType*%>*%, list<string>*%, bool parse_params(sInfo* info)
 {
     var param_types = new list<sType*%>();
@@ -48,6 +49,7 @@ exception list<sType*%>*%, list<string>*%, bool parse_params(sInfo* info)
     
     return new tuple3<list<sType*%>*%, list<string>*%, bool>(param_types, param_names, var_args);
 }
+*/
 
 exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
 {

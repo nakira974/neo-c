@@ -1568,6 +1568,10 @@ exception sNode*% parse_function(sInfo* info)
         }
     }
     
+    expected_next_character('(', info).catch {
+        throw;
+    }
+    
     var param_types = new list<sType*%>();
     var param_names = new list<string>();
     bool var_args = false;

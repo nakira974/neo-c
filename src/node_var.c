@@ -5710,6 +5710,18 @@ BOOL compile_struct(unsigned int node, sCompileInfo* info)
     }
     else {
         char* struct_name = CLASS_NAME(node_type->mClass);
+        
+        LLVMTypeRef llvm_type = LLVMGetTypeByName(gModule, struct_name);
+        
+        BOOL undefined_body2 = FALSE;
+        if(llvm_type) {
+            undefined_body2 = LLVMIsOpaqueStruct(llvm_type) != 0;
+        }
+        
+        if(llvm_type && !undefined_body2) {
+            fprintf(stderr, "%s %d: %s is redefined\n", gNodes[node].mSName, gNodes[node].mLine, struct_name);
+        }
+        
         create_llvm_struct_type(struct_name, node_type, NULL, undefined_body);
     }
     

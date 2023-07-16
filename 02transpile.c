@@ -233,6 +233,19 @@ sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sTy
     self.mExternal = external;
     self.mVarArgs = var_args;
     
+    self.mLambdaType = new sType("lambda", info);
+    
+    foreach(it, param_types) {
+        self.mLambdaType.mParamTypes.push_back(clone it);
+    }
+    
+    foreach(it, param_names) {
+        self.mLambdaType.mParamNames.push_back(clone it);
+    }
+    
+    self.mLambdaType.mResultType = new tuple1<sType*%>(result_type);
+    self.mLambdaType.mVarArgs = var_args;
+    
     self.mSource = new buffer();
     self.mSourceHead = new buffer();
     self.mSourceDefer = new buffer();
@@ -252,6 +265,7 @@ void init_classes(sInfo* info)
     info.classes.insert(string("void"), new sClass("void"));
     info.classes.insert(string("float"), new sClass("float", float_:true));
     info.classes.insert(string("double"), new sClass("double", float_:true));
+    info.classes.insert(string("lambda"), new sClass("lambda"));
     for(int i=0; i<GENERICS_TYPE_MAX; i++) {
         string generics_type = xsprintf("generics_type%d", i);
         info.classes.insert(generics_type, new sClass(generics_type, generics:true, generics_num:i));

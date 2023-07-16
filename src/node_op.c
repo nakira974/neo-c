@@ -414,6 +414,12 @@ BOOL compile_add(unsigned int node, sCompileInfo* info)
     }
 
     sNodeType* left_type = clone_node_type(info->type);
+    
+    if(type_identify_with_class_name(left_type, "void") && left_type->mPointerNum == 1)
+    {
+        compile_err_msg(info, "invalid operand void*");
+        return FALSE;
+    }
 
     LVALUE lvalue = *get_value_from_stack(-1);
     
@@ -656,6 +662,12 @@ BOOL compile_sub(unsigned int node, sCompileInfo* info)
     }
 
     sNodeType* left_type = clone_node_type(info->type);
+    
+    if(type_identify_with_class_name(left_type, "void") && left_type->mPointerNum == 1)
+    {
+        compile_err_msg(info, "invalid operand void*");
+        return FALSE;
+    }
     
     LVALUE lvalue = *get_value_from_stack(-1);
     

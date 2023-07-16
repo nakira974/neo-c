@@ -121,6 +121,8 @@ struct sFun
     list<sType*%>*% mParamTypes;
     list<string%>*% mParamNames;
     
+    sType*% mLambdaType;
+    
     sBlock*% mBlock;
     
     bool mExternal;

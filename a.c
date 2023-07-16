@@ -21,13 +21,20 @@ void int::times(int self, void* parent, void (*block)(void* parent))
 }
 */
 
+int fun(int a, int b)
+{
+    return a + b;
+}
+
 int main(int argc, char** argv)
 {
+/*
     sData<int>*% a = new sData<int>;
     a.a = 123;
     a.fun();
+*/
     
-//    void (*block)(void* parent);
+    int (*block)(int a, int b) = fun;
     
 /*
     3.times {

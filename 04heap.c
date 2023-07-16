@@ -1,55 +1,5 @@
 #include "common.h"
 
-/*
-exception list<sType*%>*%, list<string>*%, bool parse_params(sInfo* info)
-{
-    var param_types = new list<sType*%>();
-    var param_names = new list<string>();
-    bool var_args = false;
-    
-    expected_next_character('(', info).catch {
-        throw;
-    }
-    
-    while(true) {
-        if(*info->p == ')') {
-            info->p++;
-            skip_spaces_and_lf(info);
-            break;
-        }
-        
-        var param_type, param_name = parse_type(info, parse_variable_name:true).catch {
-            throw
-        }
-        
-        param_type->mFunctionParam = true;
-        
-        param_types.push_back(clone param_type);
-        param_names.push_back(clone param_name);
-        
-        if(*info->p == ',') {
-            info->p++;
-            skip_spaces_and_lf(info);
-            
-            if(parsecmp("...", info)) {
-                info->p += strlen("...");
-                skip_spaces_and_lf(info);
-                var_args = true;
-                
-                expected_next_character(')', info);
-                break;
-            }
-        }
-        else if(*info->p == ')') {
-            info->p++;
-            skip_spaces_and_lf(info);
-            break;
-        }
-    }
-    
-    return new tuple3<list<sType*%>*%, list<string>*%, bool>(param_types, param_names, var_args);
-}
-*/
 
 exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
 {

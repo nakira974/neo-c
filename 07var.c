@@ -158,8 +158,22 @@ bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
     sVar* var_ = get_variable_from_table(info.lv_table, self.name);
     
     if(var_ == null) {
-        err_msg(info, "var not found(%s) at loading variable\n", self.name);
-        return true;
+        sFun* fun = info.funcs[self.name]
+        if(fun == null) {
+            err_msg(info, "var not found(%s) at loading variable\n", self.name);
+            return false;
+        }
+        else {
+            CVALUE*% come_value = new CVALUE;
+            
+            come_value.c_value = xsprintf("%s", fun->mName);
+            come_value.type = fun->mLambdaType;
+            come_value.var = null;
+            
+            info.stack.push_back(come_value);
+            
+            return true;
+        }
     }
     
     CVALUE*% come_value = new CVALUE;
@@ -221,19 +235,34 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 7
     char* p = info.p.p;
     int sline = info.sline;
     
-    buffer*% buf2 = new buffer();
-    
-    while(xisalnum(*info->p)) {
-        buf2.append_char(*info->p);
-        info->p++;
-    }
-    skip_spaces_and_lf(info);
-    
     bool lambda_call_flag = false;
     bool define_function_flag = false;
-    if(buf2.length() > 0 && *info->p == '(') {
-        if(is_type_name_flag) {
-            define_function_flag = true;
+    bool define_function_pointer_flag = false;
+    
+    if(*info->p == '(') {
+        info->p++;
+        skip_spaces_and_lf(info);
+        
+        if(*info->p == '*') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            define_function_pointer_flag = true;
+        }
+    }
+    else {
+        buffer*% buf2 = new buffer();
+        
+        while(xisalnum(*info->p)) {
+            buf2.append_char(*info->p);
+            info->p++;
+        }
+        skip_spaces_and_lf(info);
+        
+        if(buf2.length() > 0 && *info->p == '(') {
+            if(is_type_name_flag) {
+                define_function_flag = true;
+            }
         }
     }
     
@@ -262,7 +291,7 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 7
         
         return node;
     }
-    else if(is_type_name_flag && *info->p != '(') {
+    else if(define_function_pointer_flag || (is_type_name_flag && *info->p != '(')) {
         info.p.p = head;
         
         var type, name = parse_type(info, true@parse_variable_name).catch {

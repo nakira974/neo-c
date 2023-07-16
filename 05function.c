@@ -114,6 +114,54 @@ bool is_contained_generics_class(sType* type, sInfo* info)
     return false;
 }
 
+exception list<sType*%>*%, list<string>*%, bool parse_params(sInfo* info)
+{
+    var param_types = new list<sType*%>();
+    var param_names = new list<string>();
+    bool var_args = false;
+    
+    expected_next_character('(', info).catch {
+        throw;
+    }
+    
+    while(true) {
+        if(*info->p == ')') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            break;
+        }
+        
+        var param_type, param_name = parse_type(info, parse_variable_name:true).catch {
+            throw
+        }
+        
+        param_type->mFunctionParam = true;
+        
+        param_types.push_back(clone param_type);
+        param_names.push_back(clone param_name);
+        
+        if(*info->p == ',') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            if(parsecmp("...", info)) {
+                info->p += strlen("...");
+                skip_spaces_and_lf(info);
+                var_args = true;
+                
+                expected_next_character(')', info);
+                break;
+            }
+        }
+        else if(*info->p == ')') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            break;
+        }
+    }
+    
+    return new tuple3<list<sType*%>*%, list<string>*%, bool>(param_types, param_names, var_args);
+}
 
 exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_name=false)
 {
@@ -259,7 +307,6 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
     sType*% type;
     string var_name;
     if(*info->p == '(') {
-/*
         info->p++;
         skip_spaces_and_lf(info);
         
@@ -305,7 +352,6 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         type->mParamTypes = param_types;
         type->mParamNames = param_names;
         type->mVarArgs = var_args;
-*/
     }
     else {
         if(info.types[type_name]) {
@@ -422,6 +468,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
     
     return new tuple2<sType*%, string>(type, var_name);
 }
+
 
 sBlock*% sBlock*::initialize(sBlock*% self, sInfo* info)
 {
@@ -1039,7 +1086,27 @@ exception sNode*% expression_node(sInfo* info) version 99
             throw;
         }
         
-        if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && *info->p == '(') 
+        /// backtrace ///
+        char* p = info.p.p;
+        int sline = info.sline;
+        
+        bool define_function_pointer_flag = false;
+        if(*info->p == '(') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            if(*info->p == '*') {
+                info->p++;
+                skip_spaces_and_lf(info);
+                
+                define_function_pointer_flag = true;
+            }
+        }
+        
+        info.p.p = p;
+        info.sline = sline;
+        
+        if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && *info->p == '(' && !define_function_pointer_flag) 
         {
             sNode*% node = parse_function_call(buf, info).catch {
                 throw;
@@ -1064,7 +1131,7 @@ exception sNode*% expression_node(sInfo* info) version 99
         skip_spaces_and_lf(info);
         
         /// backtrace ///
-        bool cast_exp_flag = false;
+        bool cast_expression_flag = false;
         {
             char* p = info.p.p;
             int sline = info.sline;
@@ -1074,14 +1141,14 @@ exception sNode*% expression_node(sInfo* info) version 99
             }
             
             if(is_type_name(word, info)) {
-                cast_exp_flag = true;
+                cast_expression_flag = true;
             }
             
             info.p.p = p;
             info.sline = sline;
         }
         
-        if(cast_exp_flag) {
+        if(cast_expression_flag) {
             var type, name = parse_type(info).catch {
                 throw;
             }
@@ -1334,23 +1401,6 @@ string create_method_name(sType* obj_type, bool no_pointer_name, char* fun_name)
     
     return xsprintf("%s%s%s_%s", class_name, pointer_name, heap_name, fun_name);
 }
-struct sFun
-{
-    string mName;
-    
-    sType*% mResultType;
-    list<sType*%>*% mParamTypes;
-    list<string%>*% mParamNames;
-    
-    sBlock*% mBlock;
-    
-    bool mExternal;
-    bool mVarArgs;
-    
-    buffer*% mSource;
-    buffer*% mSourceHead;
-    buffer*% mSourceDefer;
-};
 
 bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* generics_type, sInfo* info)
 {
@@ -1568,46 +1618,8 @@ exception sNode*% parse_function(sInfo* info)
         }
     }
     
-    expected_next_character('(', info).catch {
-        throw;
-    }
-    
-    var param_types = new list<sType*%>();
-    var param_names = new list<string>();
-    bool var_args = false;
-    
-    while(true) {
-        if(*info->p == ')') {
-            info->p++;
-            skip_spaces_and_lf(info);
-            break;
-        }
-        
-        var param_type, param_name = parse_type(info, parse_variable_name:true).catch {
-            throw
-        }
-        
-        param_types.push_back(param_type);
-        param_names.push_back(param_name);
-        
-        if(*info->p == ',') {
-            info->p++;
-            skip_spaces_and_lf(info);
-            
-            if(parsecmp("...", info)) {
-                info->p += strlen("...");
-                skip_spaces_and_lf(info);
-                var_args = true;
-                
-                expected_next_character(')', info);
-                break;
-            }
-        }
-        else if(*info->p == ')') {
-            info->p++;
-            skip_spaces_and_lf(info);
-            break;
-        }
+    var param_types, param_names, var_args = parse_params(info).catch {
+        throw
     }
     
     if(*info->p == ';') {

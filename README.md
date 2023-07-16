@@ -8,7 +8,7 @@ Yet another modern compiler. It has a collection and string library using Boehm 
 もう一つのモダンコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 1.3.2
+version 1.3.3
 
 ``` C
 #include <comelang.h>
@@ -407,6 +407,8 @@ From version 1.3.0 Default is unsafe mode.
 From version 1.3.1 multiple result values and exception bug has been fixed.
 
 From version 1.3.2 type name limits was exteneded. some case , it occured problem.(segmentation fault)
+
+From version 1.3.3 void* operand had occured segmentation fault. Fixed. Multidifinition of struct is detected.
 
 
 # Language specifications

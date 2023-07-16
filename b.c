@@ -2,10 +2,14 @@
 
 int main(int argc, char** argv)
 {
-    char* b = "ABC";
+    char* b = "ABCD";
     void* a = b;
     
-    char* c = a + 1;
+    map<char*, int>*% c = [b:1, "DEF":2, (char*)a:3];
+    
+    c.each{
+        puts(it);
+    }
     
     return 0;
 }

@@ -529,6 +529,7 @@ struct sParserInfoStruct
     
     int container_nest;
     int tuple_nest;
+    BOOL in_map_expression;
 };
 
 typedef struct sParserInfoStruct sParserInfo;

@@ -1484,10 +1484,13 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
         char* p = info->p;
         int sline = info->sline;
         
-        if(!expression(node, FALSE, info)) {
-            return FALSE;
-        }
+        BOOL in_map_expression = info->in_map_expression;
+        info->in_map_expression = TRUE;
+        
+        (void)expression(node, FALSE, info);
         skip_spaces_and_lf(info);
+        
+        info->in_map_expression = in_map_expression;
         
         if(*info->p == ':') {
             info->p = p;
@@ -2855,7 +2858,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 return FALSE;
             }
         }
-        else if(*info->p == ':' && !info->in_case && !info->in_conditional_operator) {
+        else if(*info->p == ':' && !info->in_case && !info->in_conditional_operator && !info->in_map_expression) {
             if(!parse_label(node, buf, info)) {
                 return FALSE;
             }

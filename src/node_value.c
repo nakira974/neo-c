@@ -1107,7 +1107,7 @@ BOOL compile_map_value(unsigned int node, sCompileInfo* info)
         
         remove_object_from_right_values(key_values[i].value, info);
         
-        sBuf_append_str(&buf, xsprintf("_map_keys_value%d[%d] = %s;\n", map_num2, i, key_values[i].c_value));
+        //sBuf_append_str(&buf, xsprintf("_map_keys_value%d[%d] = %s;\n", map_num2, i, key_values[i].c_value));
         
         unsigned int value = values[i];
 

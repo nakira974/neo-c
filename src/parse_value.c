@@ -377,9 +377,12 @@ BOOL parse_map(unsigned int* node, sParserInfo* info)
     
     while(TRUE) {
         unsigned int key = 0;
+        BOOL in_map_expression = info->in_map_expression;
+        info->in_map_expression = TRUE;
         if(!expression(&key, FALSE, info)) {
             return FALSE;
         }
+        info->in_map_expression = in_map_expression;
         
         if(*info->p == ':') {
             info->p++;

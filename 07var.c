@@ -45,12 +45,12 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         
         if(var_ == null) {
             err_msg(info, "var not found(%s) at definition of variable\n", self.name);
-            return true;
+            return false;
         }
         
         if(var_->mType == null) {
             err_msg(info, "require varible type(%s)\n", self.name);
-            return true;
+            return false;
         }
         sType*% left_type = clone var_->mType;
         
@@ -87,7 +87,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         
         if(var_ == null) {
             err_msg(info, "var not found(%s) at storing variable\n", self.name);
-            return true;
+            return false;
         }
         
         if(var_->mType == NULL) {

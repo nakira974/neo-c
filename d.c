@@ -1,14 +1,11 @@
-int puts(const char* str);
-int printf(const char *format, ...);
-
-void int::fun(int self)
-{
-    printf("%d\n", self);
-}
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 int main()
 {
-    1.fun();
+    char *str = malloc(1);
+printf("%p\n", str);
     
     return 0;
 }

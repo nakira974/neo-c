@@ -41,6 +41,10 @@ int main(int argc, char** argv)
         puts("AAA");
     }
 */
+    int i;
+    for(i=0; i<3; i++) {
+        printf("%d\n", i);
+    }
     
     return 0;
 }

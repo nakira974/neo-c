@@ -1079,7 +1079,7 @@ exception sNode*% expression_node(sInfo* info) version 99
         
         return new sNode(new sReverseNode(value, info));
     }
-    else if(xisalpha(*info->p)) {
+    else if(xisalpha(*info->p) || *info->p == '_') {
         char* head = info.p.p;
         
         string buf = parse_word(info).catch {

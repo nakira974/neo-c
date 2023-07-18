@@ -46,6 +46,8 @@ int main(int argc, char** argv)
         printf("%d\n", i);
     }
     
+    void* xyz = __current__;
+    
     return 0;
 }
 

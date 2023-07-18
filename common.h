@@ -222,6 +222,8 @@ struct sInfo
     
     list<string>*% generics_type_names;
     sType*% impl_type;
+    
+    int current_stack_num;
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -359,6 +361,7 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 13;
 /////////////////////////////////////////////////////////////////////
 exception sNode*% top_level(char* buf, char* head, sInfo* info) version 98;
 bool define_generics_struct(sType* type, sInfo* info);
+void define_struct(sClass* klass, sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
 /// 15union.c
@@ -402,5 +405,11 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 94;
 /// 22impl.c
 /////////////////////////////////////////////////////////////////////
 exception sNode*% top_level(char* buf, char* head, sInfo* info) version 93;
+
+
+/////////////////////////////////////////////////////////////////////
+/// 23method_block.c
+/////////////////////////////////////////////////////////////////////
+exception sNode*% string_node(char* buf, char* head, sInfo* info) version 23;
 
 #endif

@@ -89,26 +89,31 @@ bool define_generics_struct(sType* type, sInfo* info)
     return true;
 }
 
+void define_struct(sClass* klass, sInfo* info)
+{
+    buffer*% buf = new buffer();
+    
+    buf.append_str(xsprintf("struct %s\n{\n", klass.mName));
+    
+    foreach(it, klass.mFields) {
+        var name, type = it;
+        
+        buf.append_str("    ");
+        buf.append_str(make_define_var(type, name, info));
+        buf.append_str(";\n");
+    }
+    
+    buf.append_str("};\n");
+    
+    add_come_code_at_source_head(info, "%s", buf.to_string());
+}
+
 bool sStructNode*::compile(sStructNode* self, sInfo* info)
 {
     sType* type = self.mType;
     
     if(!type.mGenericsStruct) {
-        buffer*% buf = new buffer();
-        
-        buf.append_str(xsprintf("struct %s\n{\n", type.mName));
-        
-        foreach(it, type.mFields) {
-            var name, type = it;
-            
-            buf.append_str("    ");
-            buf.append_str(make_define_var(type, name, info));
-            buf.append_str(";\n");
-        }
-        
-        buf.append_str("};\n");
-        
-        add_come_code(info, "%s", buf.to_string());
+        define_struct(type.mClass, info);
     }
 
     return TRUE;

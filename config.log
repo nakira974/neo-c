@@ -30,8 +30,8 @@ Kernel configured for up to 8 processors.
 Processor type: arm64e (ARM64E)
 Processors active: 0 1 2 3 4 5 6 7
 Primary memory available: 8.00 gigabytes
-Default processor set: 433 tasks, 1753 threads, 8 processors
-Load average: 2.48, Mach factor: 5.51
+Default processor set: 500 tasks, 1892 threads, 8 processors
+Load average: 2.29, Mach factor: 5.70
 /bin/machine           = unknown
 /usr/bin/oslevel       = unknown
 /bin/universe          = unknown
@@ -49,6 +49,9 @@ PATH: /Library/Apple/usr/bin/
 PATH: /var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin/
 PATH: /var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin/
 PATH: /var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin/
+PATH: /opt/homebrew/opt/openjdk/bin/
+PATH: /opt/homebrew/bin/
+PATH: /opt/homebrew/opt/gcc/bin/
 
 
 ## ----------- ##
@@ -206,41 +209,41 @@ configure: failed program was:
 configure:3775: result: no
 configure:3826: checking CPU type
 configure:3939: checking Operating System
-configure:4138: checking for main in -ldl
-configure:4158: clang -o conftest -Isrc/ -I.  -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/opt/llvm/include -L/opt/homebrew/lib -I/opt/homebrew/include -I/usr/local/include   conftest.c -ldl   >&5
-configure:4158: $? = 0
-configure:4168: result: yes
-configure:4178: checking for math.h
-configure:4178: clang -c -Isrc/ -I.  -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/opt/llvm/include -L/opt/homebrew/lib -I/opt/homebrew/include -I/usr/local/include  conftest.c >&5
+configure:4135: checking for main in -ldl
+configure:4155: clang -o conftest -Isrc/ -I.  -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/opt/llvm/include -I/opt/homebrew/include -L/opt/homebrew/lib -I/usr/local/include   conftest.c -ldl   >&5
+configure:4155: $? = 0
+configure:4165: result: yes
+configure:4175: checking for math.h
+configure:4175: clang -c -Isrc/ -I.  -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/opt/llvm/include -I/opt/homebrew/include -L/opt/homebrew/lib -I/usr/local/include  conftest.c >&5
 clang: warning: argument unused during compilation: '-L/opt/homebrew/lib' [-Wunused-command-line-argument]
-configure:4178: $? = 0
-configure:4178: result: yes
-configure:4187: checking for main in -lm
-configure:4207: clang -o conftest -Isrc/ -I.  -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/opt/llvm/include -L/opt/homebrew/lib -I/opt/homebrew/include -I/usr/local/include   conftest.c -lm   -ldl >&5
-configure:4207: $? = 0
-configure:4217: result: yes
-configure:4227: checking for main in -lgc
-configure:4247: clang -o conftest -Isrc/ -I.  -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/opt/llvm/include -L/opt/homebrew/lib -I/opt/homebrew/include -I/usr/local/include   conftest.c -lgc   -ldl -lm >&5
-configure:4247: $? = 0
-configure:4257: result: yes
-configure:4267: checking for main in -lpcre
-configure:4287: clang -o conftest -Isrc/ -I.  -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/opt/llvm/include -L/opt/homebrew/lib -I/opt/homebrew/include -I/usr/local/include   conftest.c -lpcre   -ldl -lm -lgc >&5
-configure:4287: $? = 0
-configure:4297: result: yes
-configure:4307: checking for main in -lpthread
-configure:4327: clang -o conftest -Isrc/ -I.  -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/opt/llvm/include -L/opt/homebrew/lib -I/opt/homebrew/include -I/usr/local/include   conftest.c -lpthread   -ldl -lm -lgc >&5
-configure:4327: $? = 0
-configure:4337: result: yes
-configure:4347: checking for iconv.h
-configure:4347: clang -c -Isrc/ -I.  -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/opt/llvm/include -L/opt/homebrew/lib -I/opt/homebrew/include -I/usr/local/include  conftest.c >&5
+configure:4175: $? = 0
+configure:4175: result: yes
+configure:4184: checking for main in -lm
+configure:4204: clang -o conftest -Isrc/ -I.  -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/opt/llvm/include -I/opt/homebrew/include -L/opt/homebrew/lib -I/usr/local/include   conftest.c -lm   -ldl >&5
+configure:4204: $? = 0
+configure:4214: result: yes
+configure:4224: checking for main in -lgc
+configure:4244: clang -o conftest -Isrc/ -I.  -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/opt/llvm/include -I/opt/homebrew/include -L/opt/homebrew/lib -I/usr/local/include   conftest.c -lgc   -ldl -lm >&5
+configure:4244: $? = 0
+configure:4254: result: yes
+configure:4264: checking for main in -lpcre
+configure:4284: clang -o conftest -Isrc/ -I.  -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/opt/llvm/include -I/opt/homebrew/include -L/opt/homebrew/lib -I/usr/local/include   conftest.c -lpcre   -ldl -lm -lgc >&5
+configure:4284: $? = 0
+configure:4294: result: yes
+configure:4304: checking for main in -lpthread
+configure:4324: clang -o conftest -Isrc/ -I.  -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/opt/llvm/include -I/opt/homebrew/include -L/opt/homebrew/lib -I/usr/local/include   conftest.c -lpthread   -ldl -lm -lgc >&5
+configure:4324: $? = 0
+configure:4334: result: yes
+configure:4344: checking for iconv.h
+configure:4344: clang -c -Isrc/ -I.  -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/opt/llvm/include -I/opt/homebrew/include -L/opt/homebrew/lib -I/usr/local/include  conftest.c >&5
 clang: warning: argument unused during compilation: '-L/opt/homebrew/lib' [-Wunused-command-line-argument]
-configure:4347: $? = 0
-configure:4347: result: yes
-configure:4360: checking for main in -lrt
-configure:4380: clang -o conftest -Isrc/ -I.  -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/opt/llvm/include -L/opt/homebrew/lib -I/opt/homebrew/include -I/usr/local/include   conftest.c -lrt   -ldl -lm -lgc >&5
+configure:4344: $? = 0
+configure:4344: result: yes
+configure:4357: checking for main in -lrt
+configure:4377: clang -o conftest -Isrc/ -I.  -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/opt/llvm/include -I/opt/homebrew/include -L/opt/homebrew/lib -I/usr/local/include   conftest.c -lrt   -ldl -lm -lgc >&5
 ld: library not found for -lrt
 clang: error: linker command failed with exit code 1 (use -v to see invocation)
-configure:4380: $? = 1
+configure:4377: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -273,12 +276,12 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:4390: result: no
-configure:4451: checking for lchmod
-configure:4451: /opt/homebrew/Cellar/llvm/16.0.6/bin/clang-16 -o conftest -Isrc/ -I.  -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/opt/llvm/include -L/opt/homebrew/lib -I/opt/homebrew/include -I/usr/local/include   conftest.c  -ldl -lm -lgc >&5
-configure:4451: $? = 0
-configure:4451: result: yes
-configure:4643: creating ./config.status
+configure:4387: result: no
+configure:4448: checking for lchmod
+configure:4448: /opt/homebrew/Cellar/llvm/16.0.6/bin/clang-16 -o conftest -Isrc/ -I.  -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/opt/llvm/include -I/opt/homebrew/include -L/opt/homebrew/lib -I/usr/local/include   conftest.c  -ldl -lm -lgc >&5
+configure:4448: $? = 0
+configure:4448: result: yes
+configure:4640: creating ./config.status
 
 ## ---------------------- ##
 ## Running config.status. ##
@@ -357,7 +360,7 @@ ac_cv_prog_cc_stdc=
 ## ----------------- ##
 
 CC='/opt/homebrew/Cellar/llvm/16.0.6/bin/clang-16'
-CFLAGS='-I/opt/homebrew/Cellar/llvm/16.0.6/include  -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -Isrc/ -I.  -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/opt/llvm/include -L/opt/homebrew/lib -I/opt/homebrew/include -I/usr/local/include -DLLVM_VERSION=16 -DCLANG="\"/opt/homebrew/Cellar/llvm/16.0.6/bin/clang-16\"" -DGCC="\"clang\""'
+CFLAGS='-I/opt/homebrew/Cellar/llvm/16.0.6/include  -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -Isrc/ -I.  -DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H -I/usr/local/opt/llvm/include -I/opt/homebrew/include -L/opt/homebrew/lib -I/usr/local/include -DLLVM_VERSION=16 -DCLANG="\"/opt/homebrew/Cellar/llvm/16.0.6/bin/clang-16\"" -DGCC="\"clang\""'
 CLANG='/opt/homebrew/Cellar/llvm/16.0.6/bin/clang-16'
 CPPFLAGS=''
 CXX='clang++'

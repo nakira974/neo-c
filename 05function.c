@@ -1081,6 +1081,7 @@ exception sNode*% expression_node(sInfo* info) version 99
     }
     else if(xisalpha(*info->p) || *info->p == '_') {
         char* head = info.p.p;
+        int sline_head = info.sline;
         
         string buf = parse_word(info).catch {
             throw;
@@ -1103,10 +1104,29 @@ exception sNode*% expression_node(sInfo* info) version 99
             }
         }
         
+        /// backtrace2 ///
+        info.p.p = head;
+        info.sline = sline_head;
+        
+        bool lambda_flag = false;
+        
+        info.no_output_err = true;
+        
+        (void)parse_type(info);
+        
+        var word2 = parse_word(info).catch {
+        }
+        info.no_output_err = false;
+        
+        if(word2 != null && word2 === "lambda") {
+            lambda_flag = true;
+        }
+        
         info.p.p = p;
         info.sline = sline;
+            
         
-        if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && *info->p == '(' && !define_function_pointer_flag) 
+        if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && *info->p == '(' && !define_function_pointer_flag && !lambda_flag) 
         {
             sNode*% node = parse_function_call(buf, info).catch {
                 throw;
@@ -1115,6 +1135,14 @@ exception sNode*% expression_node(sInfo* info) version 99
             node = post_position_operator(node, info).catch { throw };
             
             return node;
+        }
+        else if(lambda_flag) {
+            info.p.p = head;
+            info.sline = sline_head;
+            
+            return parse_function(info).catch {
+                throw;
+            }
         }
         else {
             sNode*% node = string_node(buf, head, info).catch {
@@ -1383,6 +1411,58 @@ bool sFunNode*::compile(sFunNode* self, sInfo* info)
     return result;
 }
 
+struct sLambdaNode {
+    sFun* mFun;
+    int sline;
+    string sname;
+};
+
+sLambdaNode*% sLambdaNode*::initialize(sLambdaNode*% self, sFun* fun, sInfo* info)
+{
+    self.mFun = fun;
+    self.sline = info.sline;
+    self.sname = info.sname;
+    
+    return self;
+}
+
+int sLambdaNode*::sline(sLambdaNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sLambdaNode*::sname(sLambdaNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+bool sLambdaNode*::compile(sLambdaNode* self, sInfo* info)
+{
+    sFun* come_fun = info.come_fun;
+    info.come_fun = self.mFun;
+    
+    bool result = true;
+    if(self.mFun.mBlock) {
+        transpile_block(self.mFun.mBlock, self.mParamTypes, self.mParamNames, info).catch {
+            result = false;
+        }
+    }
+    
+    CVALUE*% come_value = new CVALUE;
+    
+    come_value.c_value = xsprintf("%s", self.mFun.mName);
+    come_value.type = clone self.mFun.mLambdaType;
+    come_value.var = null;
+    
+    add_come_last_code(info, "%s;\n", come_value.c_value);
+    
+    info.stack.push_back(come_value);
+    
+    info.come_fun = come_fun;
+    
+    return result;
+}
+
 string create_method_name(sType* obj_type, bool no_pointer_name, char* fun_name)
 {
     string pointer_name = "p" * obj_type->mPointerNum;
@@ -1622,7 +1702,24 @@ exception sNode*% parse_function(sInfo* info)
         throw
     }
     
-    if(*info->p == ';') {
+    if(fun_name === "lambda") {
+        sBlock*% block = parse_block(info).catch {
+            throw;
+        }
+        
+        static int lambda_num = 0;
+        lambda_num++;
+        
+        fun_name = xsprintf("lambda%d", lambda_num);
+        
+        var fun = new sFun(fun_name, result_type, param_types, param_names
+                                , false@external, var_args, block, info);
+        
+        info.funcs.insert(string(fun_name), fun);
+        
+        return new sNode(new sLambdaNode(fun, info));
+    }
+    else if(*info->p == ';') {
         info->p++;
         skip_spaces_and_lf(info);
         

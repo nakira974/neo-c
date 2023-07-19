@@ -141,12 +141,9 @@ elif uname -a | grep Darwin | grep arm64; then
     AC_DEFINE(__DARWIN_ARM__, 1)
 
     if test $myprefix = /usr/local; then
-        CFLAGS="-Isrc/ -I.  $CFLAGS -I/usr/local/opt/llvm/include -L/opt/homebrew/lib -I/opt/homebrew/include"
-#        CFLAGS="-Isrc/ -I.  $CFLAGS -L/usr/local/opt/llvm/lib -I/usr/local/opt/llvm/include "
-#        CFLAGS="-Isrc/ -I.  -I `xcrun --show-sdk-path`/usr/include $CFLAGS -L/usr/local/opt/llvm/lib -I/usr/local/opt/llvm/include "
+        CFLAGS="-Isrc/ -I.  $CFLAGS -I/usr/local/opt/llvm/include -I/opt/homebrew/include -L/opt/homebrew/lib"
     else 
-        CFLAGS="-Isrc/ -I. -I$myprefix/include $CFLAGS -L/usr/local/opt/llvm/lib -I/usr/local/opt/llvm/include -L/opt/homebrew/lib -I/opt/homebrew/include"
-#        CFLAGS="-Isrc/ -I. -I$myprefix/include -I `xcrun --show-sdk-path`/usr/include $CFLAGS -L/usr/local/opt/llvm/lib -I/usr/local/opt/llvm/include "
+        CFLAGS="-Isrc/ -I. -I$myprefix/include $CFLAGS -L/usr/local/opt/llvm/lib -I/usr/local/opt/llvm/include -I/opt/homebrew/include -L/opt/homebrew/lib"
     fi
 
     PATH="$PATH:/opt/homebrew/opt/llvm/bin"

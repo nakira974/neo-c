@@ -12,14 +12,15 @@ impl sData<T>
     }
 }
 
-/*
 void int::times(int self, void* parent, void (*block)(void* parent))
 {
+    puts("AAA");
+/*
     for(int i = 0; i < self; i++) {
         block(parent);
     }
-}
 */
+}
 
 int fun(int a, int b)
 {
@@ -47,6 +48,10 @@ int main(int argc, char** argv)
     }
     
     void* xyz = __current__;
+    
+    3.times(__current__, void lambda(void* parent) {
+        puts("LLL");
+    });
     
     return 0;
 }

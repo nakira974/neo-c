@@ -621,7 +621,7 @@ S["ac_ct_CC"]="gcc"
 S["CPPFLAGS"]=""
 S["LDFLAGS"]=""
 S["CFLAGS"]="-I/opt/homebrew/Cellar/llvm/16.0.6/include  -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS  -Isrc/ -I.  -DPREFIX=\"\\\"${DESTDIR"\
-"}/\\\"\" -fPIC -DCONFIG_H -I/usr/local/opt/llvm/include -L/opt/homebrew/lib -I/opt/homebrew/include -I/usr/local/include -DLLVM_VERSION=16 -DCLANG=\"\\\"/"\
+"}/\\\"\" -fPIC -DCONFIG_H -I/usr/local/opt/llvm/include -I/opt/homebrew/include -L/opt/homebrew/lib -I/usr/local/include -DLLVM_VERSION=16 -DCLANG=\"\\\"/"\
 "opt/homebrew/Cellar/llvm/16.0.6/bin/clang-16\\\"\" -DGCC=\"\\\"clang\\\"\""
 S["CC"]="/opt/homebrew/Cellar/llvm/16.0.6/bin/clang-16"
 S["target_alias"]=""

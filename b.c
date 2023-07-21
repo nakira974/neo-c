@@ -1,15 +1,21 @@
 #include <comelang.h>
 
+struct sInfo
+{
+    string c;
+}
+
 int main(int argc, char** argv)
 {
-    char* b = "ABCD";
-    void* a = b;
+    string a = null;
+    string b = clone a;
     
-    map<char*, int>*% c = [b:1, "DEF":2, (char*)a:3];
+    printf("a %p b %p\n", a!, b!);
     
-    c.each{
-        puts(it);
-    }
+    sInfo info;
+    info.c = clone b;
+    
+    printf("c %p\n", info.c!);
     
     return 0;
 }

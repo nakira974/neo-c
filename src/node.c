@@ -435,6 +435,7 @@ sFunction* create_finalizer_automatically(sNodeType* node_type, char* fun_name, 
         sBuf_init(&source);
         
         sBuf_append_char(&source, '{');
+        char source2[1024];
         
         if(klass->mFlags & CLASS_FLAGS_PROTOCOL) {
             char* name = "_protocol_obj";
@@ -1146,6 +1147,9 @@ sFunction* create_cloner_automatically(sNodeType* node_type, char* fun_name, cha
         sBuf_append_char(&source, '{');
         
         char source2[1024];
+        snprintf(source2, 1024, "if(self == null) { return null }\n");
+        sBuf_append_str(&source, source2);
+        
         snprintf(source2, 1024, "auto result = new %s;\n", CLASS_NAME(klass));
         
         sBuf_append_str(&source, source2);

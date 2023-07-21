@@ -236,6 +236,9 @@ impl vector<T>
 
     vector<T>*% clone(vector<T>* self)
     {
+        if(self == null) {
+            return null;
+        }
         vector<T>*% result = new vector<T>;
 
         result.len = self.len;
@@ -574,6 +577,9 @@ impl list <T>
     }
 
     list<T>*% clone(list<T>* self) {
+        if(self == null) {
+            return null;
+        }
         auto result = new list<T>.initialize();
 
         list_item<T>*? it = self.head;
@@ -1685,6 +1691,9 @@ impl map <T, T2>
     
     map<T, T2>*% clone(map<T, T2>* self)
     {
+        if(self == null) {
+            return null;
+        }
         auto result = new map<T,T2>.initialize();
 
         for(auto it = self.begin(); !self.end(); it = self.next()) {
@@ -2192,6 +2201,9 @@ impl tuple1 <T>
     }
     tuple1<T>*% clone(tuple1<T>* self)
     {
+        if(self == null) {
+            return null;
+        }
         tuple1<T>*% result = new tuple1<T>;
 
         if(is_gc_heap(self.v1)) {
@@ -2271,6 +2283,9 @@ impl tuple2 <T, T2>
     }
     tuple2<T,T2>*% clone(tuple2<T, T2>* self)
     {
+        if(self == null) {
+            return null;
+        }
         tuple2<T,T2>*% result = new tuple2<T, T2>;
 
         if(is_gc_heap(self.v1)) {
@@ -2348,6 +2363,9 @@ impl tuple3 <T, T2, T3>
     }
     tuple3<T,T2, T3>*% clone(tuple3<T, T2, T3>* self)
     {
+        if(self == null) {
+            return null;
+        }
         tuple3<T,T2,T3>*% result = new tuple3<T, T2, T3>;
 
         if(is_gc_heap(self.v1)) {
@@ -2457,6 +2475,9 @@ impl tuple4 <T, T2, T3, T4>
     }
     tuple4<T,T2, T3, T4>*% clone(tuple4<T, T2, T3, T4>* self)
     {
+        if(self == null) {
+            return null;
+        }
         tuple4<T,T2,T3,T4>*% result = new tuple4<T, T2, T3, T4>;
 
         if(is_gc_heap(self.v1)) {
@@ -2588,6 +2609,9 @@ impl tuple5 <T, T2, T3, T4, T5>
     }
     tuple5<T,T2, T3, T4, T5>*% clone(tuple5<T, T2, T3, T4, T5>* self)
     {
+        if(self == null) {
+            return null;
+        }
         tuple5<T,T2,T3,T4,T5>*% result = new tuple5<T, T2, T3, T4, T5>;
 
         if(is_gc_heap(self.v1)) {
@@ -2721,6 +2745,9 @@ impl tuple6 <T, T2, T3, T4, T5, T6>
     }
     tuple6<T,T2, T3, T4, T5, T6>*% clone(tuple6<T, T2, T3, T4, T5, T6>* self)
     {
+        if(self == null) {
+            return null;
+        }
         tuple6<T,T2,T3,T4,T5, T6>*% result = new tuple6<T, T2, T3, T4, T5, T6>;
 
         if(is_gc_heap(self.v1)) {

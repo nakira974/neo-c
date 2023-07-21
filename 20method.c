@@ -106,9 +106,7 @@ sMethodCallNode*% sMethodCallNode*::initialize(sMethodCallNode*% self, char* fun
     self.obj = clone obj;
     self.fun_name = string(fun_name);
     self.params = clone params;
-    if(method_block) {
-        self.method_block = clone method_block;
-    }
+    self.method_block = clone method_block;
     self.sline = info.sline;
     self.sname = string(info.sname);
     self.method_block_sline = method_block_sline;

@@ -43,6 +43,10 @@ void regex_struct*::finalize(regex_struct* reg)
 
 regex_struct*% regex_struct*::clone(regex_struct* reg)
 {
+    if(reg == null) {
+        return null;
+    }
+    
     regex_struct*% result = new regex_struct;
     
     result.str = clone reg.str;
@@ -277,6 +281,10 @@ void buffer*::finalize(buffer* self)
 
 buffer*% buffer*::clone(buffer* self)
 {
+    if(self == null) {
+        return null;
+    }
+    
     auto result = new buffer;
     
     result.size = self.size;

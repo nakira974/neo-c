@@ -224,6 +224,8 @@ struct sInfo
     sType*% impl_type;
     
     int current_stack_num;
+    int num_method_block;
+    sClass* current_stack_frame_struct;
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -285,6 +287,7 @@ void remove_object_from_right_values(int right_value_num, sInfo* info);
 /////////////////////////////////////////////////////////////////////
 /// 05function.c ///
 /////////////////////////////////////////////////////////////////////
+exception string skip_block(sInfo* info);
 bool is_contained_generics_class(sType* type, sInfo* info);
 bool is_type_name(char* buf, sInfo* info);
 bool parsecmp(char* str, sInfo* info);
@@ -394,6 +397,7 @@ exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 19;
 /// 20method.c
 /////////////////////////////////////////////////////////////////////
 exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) version 20;
+exception sNode*% string_node(char* buf, char* head, sInfo* info) version 20;
 
 /////////////////////////////////////////////////////////////////////
 /// 21obj.c
@@ -405,11 +409,5 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 94;
 /// 22impl.c
 /////////////////////////////////////////////////////////////////////
 exception sNode*% top_level(char* buf, char* head, sInfo* info) version 93;
-
-
-/////////////////////////////////////////////////////////////////////
-/// 23method_block.c
-/////////////////////////////////////////////////////////////////////
-exception sNode*% string_node(char* buf, char* head, sInfo* info) version 23;
 
 #endif

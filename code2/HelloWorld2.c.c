@@ -222,7 +222,6 @@ int* azyz_40;
         data_32.a=come_increment_ref_count(a_30);
         a_30 = come_decrement_ref_count(a_30);
         b_31 = come_decrement_ref_count(b_31);
-        (&data_32)->a = come_decrement_ref_count((&data_32)->a);
     }
     str_33=come_increment_ref_count((char**)(right_value4=(char**)come_calloc(1, sizeof(char*)*1*128)));
     strncpy(str_33,"ABC",128);

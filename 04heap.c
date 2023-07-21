@@ -548,7 +548,7 @@ void free_objects(sVarTable* table, char* ret_value, sInfo* info)
 
             p->mCValueName = null;
         }
-        else if(klass->mStruct && gComelang) 
+        else if(klass->mStruct && gComelang && type->mHeap) 
         {
             foreach(it, klass->mFields) {
                 var name, field_type = it;

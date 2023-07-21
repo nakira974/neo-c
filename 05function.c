@@ -796,73 +796,139 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
     string fun_name = self.fun_name;
     list<sNode*%>* params = self.params;
     
+    sVar* var_ = get_variable_from_table(info.lv_table, fun_name);
     
-    sFun* fun = info.funcs.at(fun_name, null!);
-    
-    if(fun == null) {
-        err_msg(info, "function not found(%s) at normal function call\n", fun_name);
-        return false;
-    }
-    
-    sType* result_type = fun->mResultType;
-    
-    list<CVALUE*%>*% come_params = new list<CVALUE*%>();
-    
-    if(fun.mParamTypes.length() != params.length() && !fun.mVarArgs) {
-        err_msg(info, "invalid param number. function param number is %d. caller param number is %d", fun.mParamTypes.length(), params.length());
-        return false;
-    }
-    
-    int i = 0;
-    foreach(it, params) {
-        if(!it.compile->(info)) {
+    if(var_) {
+        sType* lambda_type = var_->mType;
+        
+        sType* result_type = lambda_type->mResultType.0;
+        
+        list<CVALUE*%>*% come_params = new list<CVALUE*%>();
+        
+        if(lambda_type.mParamTypes.length() != params.length() && !lambda_type.mVarArgs) {
+            err_msg(info, "invalid param number. function param number is %d. caller param number is %d", lambda_type.mParamTypes.length(), params.length());
             return false;
         }
         
-        CVALUE*% come_value = get_value_from_stack(-1, info);
-        if(fun.mVarArgs && fun.mParamTypes[i] == null) {
-        }
-        else {
-            if(fun.mParamTypes[i].mHeap) {
-                come_value.c_value = xsprintf("come_increment_ref_count(%s)", come_value.c_value);
+        int i = 0;
+        foreach(it, params) {
+            if(!it.compile->(info)) {
+                return false;
             }
-        }
-        come_params.push_back(come_value);
-        dec_stack_ptr(1, info);
-        
-        i++;
-    }
-    
-    buffer*% buf = new buffer();
-    
-    buf.append_str(self.fun_name);
-    buf.append_str("(");
-    
-    int j = 0;
-    foreach(it, come_params) {
-        buf.append_str(it.c_value);
-        
-        if(j != come_params.length()-1) {
-            buf.append_str(",");
+            
+            CVALUE*% come_value = get_value_from_stack(-1, info);
+            if(lambda_type.mVarArgs && lambda_type.mParamTypes[i] == null) {
+            }
+            else {
+                if(lambda_type.mParamTypes[i].mHeap) {
+                    come_value.c_value = xsprintf("come_increment_ref_count(%s)", come_value.c_value);
+                }
+            }
+            come_params.push_back(come_value);
+            dec_stack_ptr(1, info);
+            
+            i++;
         }
         
-        j++;
+        buffer*% buf = new buffer();
+        
+        buf.append_str(fun_name);
+        buf.append_str("(");
+        
+        int j = 0;
+        foreach(it, come_params) {
+            buf.append_str(it.c_value);
+            
+            if(j != come_params.length()-1) {
+                buf.append_str(",");
+            }
+            
+            j++;
+        }
+        buf.append_str(")");
+        
+        CVALUE*% come_value = new CVALUE;
+        come_value.c_value = buf.to_string();
+        
+        if(lambda_type->mResultType.0.mHeap) {
+            come_value.c_value = append_object_to_right_values(come_value.c_value, lambda_type->mResultType.0, info);
+        }
+        
+        come_value.type = clone result_type;
+        come_value.var = null;
+        
+        add_come_last_code(info, "%s;\n", come_value.c_value);
+        
+        info.stack.push_back(come_value);
     }
-    buf.append_str(")");
-    
-    CVALUE*% come_value = new CVALUE;
-    come_value.c_value = buf.to_string();
-    
-    if(fun->mResultType->mHeap) {
-        come_value.c_value = append_object_to_right_values(come_value.c_value, fun->mResultType, info);
+    else {
+        sFun* fun = info.funcs.at(fun_name, null!);
+        
+        if(fun == null) {
+            err_msg(info, "function not found(%s) at normal function call\n", fun_name);
+            return false;
+        }
+        
+        sType* result_type = fun->mResultType;
+        
+        list<CVALUE*%>*% come_params = new list<CVALUE*%>();
+        
+        if(fun.mParamTypes.length() != params.length() && !fun.mVarArgs) {
+            err_msg(info, "invalid param number. function param number is %d. caller param number is %d", fun.mParamTypes.length(), params.length());
+            return false;
+        }
+        
+        int i = 0;
+        foreach(it, params) {
+            if(!it.compile->(info)) {
+                return false;
+            }
+            
+            CVALUE*% come_value = get_value_from_stack(-1, info);
+            if(fun.mVarArgs && fun.mParamTypes[i] == null) {
+            }
+            else {
+                if(fun.mParamTypes[i].mHeap) {
+                    come_value.c_value = xsprintf("come_increment_ref_count(%s)", come_value.c_value);
+                }
+            }
+            come_params.push_back(come_value);
+            dec_stack_ptr(1, info);
+            
+            i++;
+        }
+        
+        buffer*% buf = new buffer();
+        
+        buf.append_str(self.fun_name);
+        buf.append_str("(");
+        
+        int j = 0;
+        foreach(it, come_params) {
+            buf.append_str(it.c_value);
+            
+            if(j != come_params.length()-1) {
+                buf.append_str(",");
+            }
+            
+            j++;
+        }
+        buf.append_str(")");
+        
+        CVALUE*% come_value = new CVALUE;
+        come_value.c_value = buf.to_string();
+        
+        if(fun->mResultType->mHeap) {
+            come_value.c_value = append_object_to_right_values(come_value.c_value, fun->mResultType, info);
+        }
+        
+        come_value.type = clone result_type;
+        come_value.var = null;
+        
+        add_come_last_code(info, "%s;\n", come_value.c_value);
+        
+        info.stack.push_back(come_value);
     }
-    
-    come_value.type = clone result_type;
-    come_value.var = null;
-    
-    add_come_last_code(info, "%s;\n", come_value.c_value);
-    
-    info.stack.push_back(come_value);
     
     return true;
 }

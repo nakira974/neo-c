@@ -14,12 +14,9 @@ impl sData<T>
 
 void int::times(int self, void* parent, void (*block)(void* parent))
 {
-    puts("AAA");
-/*
     for(int i = 0; i < self; i++) {
         block(parent);
     }
-*/
 }
 
 int fun(int a, int b)
@@ -29,29 +26,26 @@ int fun(int a, int b)
 
 int main(int argc, char** argv)
 {
-/*
     sData<int>*% a = new sData<int>;
+/*
     a.a = 123;
     a.fun();
 */
     
     int (*block)(int a, int b) = fun;
     
-/*
-    3.times {
-        puts("AAA");
-    }
-*/
     int i;
     for(i=0; i<3; i++) {
         printf("%d\n", i);
     }
     
-    void* xyz = __current__;
+    int n = 0;
     
-    3.times(__current__, void lambda(void* parent) {
-        puts("LLL");
-    });
+    3.times() {
+        puts("HO!");
+        printf("%d\n", n);
+        n++;
+    }
     
     return 0;
 }

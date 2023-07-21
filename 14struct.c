@@ -31,10 +31,12 @@ bool is_no_solve_generics_type(sType* type, sInfo* info)
     }
     
     foreach(it, klass->mFields) {
-        var name, type = it;
+        var name, type2 = it;
         
-        if(is_no_solve_generics_type(type, info)) {
-            return true;
+        if(type->mClass.mName !== type2.mClass.mName) {
+            if(is_no_solve_generics_type(type2, info)) {
+                return true;
+            }
         }
     }
     
@@ -48,6 +50,7 @@ bool define_generics_struct(sType* type, sInfo* info)
     
     if(!info.classes.find(new_name)) {
         sClass*% new_class = new sClass(name:new_name, struct_:true);
+        info.classes.insert(new_name, new_class);
         new_class.mNoneGenericsName = string(type.mName);
         sClass*% generics_class = clone info.classes[type.mName];
         
@@ -81,8 +84,6 @@ bool define_generics_struct(sType* type, sInfo* info)
         
         if(!no_solve_generics_type) {
             add_come_code_at_source_head(info, "%s", buf.to_string());
-            
-            info.classes.insert(new_name, new_class);
         }
     }
     

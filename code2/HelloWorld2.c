@@ -1,4 +1,3 @@
-
 #include <comelang2.h>
 
 struct sData
@@ -108,6 +107,14 @@ int main()
     int* azyz = &bzyz;
     
     xassert("impl", azyz.fun() == 123);
+    
+    int n = 0;
+    
+    3.times() {
+        puts("HO!");
+        printf("%d\n", n);
+        n++;
+    }
     
     return 0;
 }

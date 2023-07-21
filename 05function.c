@@ -182,6 +182,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
     bool struct_ = false;
     bool union_ = false;
     bool enum_ = false;
+    bool no_heap = false;
     
     while(true) {
         if(type_name === "struct") {
@@ -443,6 +444,11 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             if(!gGC) {
                 type->mNoHeap = true;
             }
+        }
+        
+        if(*info->p == '?') {
+            info->p++;
+            skip_spaces_and_lf(info);
         }
         
         if(parse_variable_name) {
@@ -1071,7 +1077,7 @@ exception sNode*% parse_function_call(char* fun_name, sInfo* info)
 
 exception sNode*% string_node(char* buf, char* head, sInfo* info) version 5
 {
-    err_msg(info, "unexpected word(%s)\n", buf);
+    err_msg(info, "unexpected word(%s)(1)\n", buf);
     throw
 }
 
@@ -1829,7 +1835,7 @@ exception sNode*% parse_function(sInfo* info)
 
 exception sNode*% top_level(char* buf, char* head, sInfo* info) version 1
 {
-    err_msg(info, "unexpected word(%s)\n", buf);
+    err_msg(info, "unexpected word(%s)(2)\n", buf);
     throw;
     
     return (sNode*)null;
@@ -1873,7 +1879,36 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 99
                     break;
                 }
                 else if(*info->p == '<') {
+                    while(true) {
+                        if(*info->p == '\0') {
+                            break;
+                        }
+                        else if(*info->p == '>') {
+                            info->p++;
+                            skip_spaces_and_lf(info);
+                            break;
+                        }
+                        else {
+                            info->p++;
+                        }
+                    }
                     break;
+                }
+            }
+        }
+        
+        if(*info->p == '<') {
+            while(true) {
+                if(*info->p == '\0') {
+                    break;
+                }
+                else if(*info->p == '>') {
+                    info->p++;
+                    skip_spaces_and_lf(info);
+                    break;
+                }
+                else {
+                    info->p++;
                 }
             }
         }

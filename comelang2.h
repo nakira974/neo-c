@@ -141,3 +141,38 @@ static void* come_memdup(void* block)
     
     return (char*)ret + sizeof(int) + sizeof(long);
 }
+
+void int::times(int self, void* parent, void (*block)(void* parent))
+{
+    for(int i = 0; i < self; i++) {
+        block(parent);
+    }
+}
+
+struct list_item<T>
+{
+    T& item;
+    list_item<T>* prev;
+    list_item<T>* next;
+};
+
+struct list<T>
+{
+    list_item<T>* head;
+    list_item<T>* tail;
+    int len;
+
+    list_item<T>* it;
+};
+
+impl list <T>
+{
+    list<T>*% initialize(list<T>*% self) {
+        self.head = null;
+        self.tail = null;
+        self.len = 0;
+
+        return self;
+    }
+}
+

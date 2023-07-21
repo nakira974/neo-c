@@ -5,7 +5,6 @@
 int main()
 {
     char *str = malloc(1);
-printf("%p\n", str);
     
     return 0;
 }

@@ -1,6 +1,6 @@
 #include "common.h"
 
-exception sNode*% top_level(char* buf, char* head, sInfo* info) version 93
+exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 93
 {
     if(buf === "impl") {
         var word = parse_word(info).catch {
@@ -56,7 +56,7 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 93
             
             parse_sharp(info);
             
-            sNode*% node = top_level(buf, head, info).catch {
+            sNode*% node = top_level(buf, head, head_sline, info).catch {
                 throw;
             }
             parse_sharp(info);
@@ -84,7 +84,7 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 93
         return (sNode*)null;
     }
     
-    return inherit(buf, head, info).catch {
+    return inherit(buf, head, head_sline, info).catch {
         throw;
     }
 }

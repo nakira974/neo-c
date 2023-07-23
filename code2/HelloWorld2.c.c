@@ -304,7 +304,7 @@ struct __current_stack1__ __current_stack1__;
     int_times(3,&__current_stack1__,method_block1);
     ax_30 = come_decrement_ref_count(ax_30);
     str_34 = come_decrement_ref_count(str_34);
-    data_35->a = come_decrement_ref_count(data_35->a);
+    (data_35->a) = come_decrement_ref_count((data_35->a));
     data_35 = come_decrement_ref_count(data_35);
     axyz_36 = come_decrement_ref_count(axyz_36);
     xxx_37 = come_decrement_ref_count(xxx_37);

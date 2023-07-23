@@ -52,7 +52,7 @@ string sUnionNode*::sname(sUnionNode* self, sInfo* info)
     return string(self.sname);
 }
 
-exception sNode*% top_level(char* buf, char* head, sInfo* info) version 97
+exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 97
 {
     if(buf === "union") {
         string type_name = parse_word(info).catch { throw; };
@@ -81,7 +81,7 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 97
         return new sNode(new sUnionNode(type, info));
     }
     
-    return inherit(buf, head, info).catch {
+    return inherit(buf, head, head_sline, info).catch {
         throw;
     }
 }

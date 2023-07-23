@@ -76,7 +76,7 @@ string sEnumNode*::sname(sEnumNode* self, sInfo* info)
     return string(self.sname);
 }
 
-exception sNode*% top_level(char* buf, char* head, sInfo* info) version 96
+exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 96
 {
     if(buf === "enum") {
         string type_name = null;
@@ -123,7 +123,7 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 96
         return new sNode(new sEnumNode(type_name, elements, info));
     }
     
-    return inherit(buf, head, info).catch {
+    return inherit(buf, head, head_sline, info).catch {
         throw;
     }
 }

@@ -113,7 +113,7 @@ string sIfNode*::sname(sIfNode* self, sInfo* info)
     return string(self.sname);
 }
 
-exception sNode*% string_node(char* buf, char* head, sInfo* info) version 8
+exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 8
 {
     if(buf === "if") {
         string sname = clone info->sname;
@@ -189,7 +189,7 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 8
         return result;
     }
     
-    return inherit(buf, head ,info).catch {
+    return inherit(buf, head,head_sline, info).catch {
         throw;
     }
 }

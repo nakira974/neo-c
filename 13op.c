@@ -1998,13 +1998,13 @@ exception sNode*% expression(sInfo* info) version 13
     return node;
 }
 
-exception sNode*% string_node(char* buf, char* head, sInfo* info) version 13
+exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 13
 {
     if(buf === "null") {
         return new sNode(new sNullNode(info));
     }
     
-    return inherit(buf, head ,info).catch {
+    return inherit(buf, head,head_sline, info).catch {
         throw;
     }
 }

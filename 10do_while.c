@@ -60,7 +60,7 @@ string sDoWhileNode*::sname(sDoWhileNode* self, sInfo* info)
     return string(self.sname);
 }
 
-exception sNode*% string_node(char* buf, char* head, sInfo* info) version 10
+exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 10
 {
     if(buf === "do") {
         string sname = clone info->sname;
@@ -88,7 +88,7 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 10
         return new sNode(new sDoWhileNode(expression_node, block, info));
     }
     
-    return inherit(buf, head ,info).catch {
+    return inherit(buf, head,head_sline, info).catch {
         throw;
     }
 }

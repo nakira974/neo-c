@@ -210,22 +210,8 @@ bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
     sVar* var_ = get_variable_from_table(info.lv_table, self.name);
     
     if(var_ == null) {
-        sFun* fun = info.funcs[self.name]
-        if(fun == null) {
-            err_msg(info, "var not found(%s) at loading variable\n", self.name);
-            return false;
-        }
-        else {
-            CVALUE*% come_value = new CVALUE;
-            
-            come_value.c_value = xsprintf("%s", fun->mName);
-            come_value.type = fun->mLambdaType;
-            come_value.var = null;
-            
-            info.stack.push_back(come_value);
-            
-            return true;
-        }
+        err_msg(info, "var not found(%s) at loading variable\n", self.name);
+        return false;
     }
     
     CVALUE*% come_value = new CVALUE;
@@ -245,6 +231,54 @@ int sLoadNode*::sline(sLoadNode* self, sInfo* info)
 }
 
 string sLoadNode*::sname(sLoadNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+struct sFunLoadNode
+{
+    string name;
+    int sline;
+    string sname;
+};
+
+sFunLoadNode*% sFunLoadNode*::initialize(sFunLoadNode*% self, string name, sInfo* info)
+{
+    self.name = string(name);
+    
+    self.sline = info->sline;
+    self.sname = string(info->sname);
+    
+    return self;
+}
+
+bool sFunLoadNode*::compile(sFunLoadNode* self, sInfo* info)
+{
+    sFun* fun = info.funcs[self.name]
+    
+    if(fun == null) {
+        err_msg(info, "fun not found(%s) at loading variable\n", self.name);
+        return false;
+    }
+    else {
+        CVALUE*% come_value = new CVALUE;
+        
+        come_value.c_value = xsprintf("%s", fun->mName);
+        come_value.type = fun->mLambdaType;
+        come_value.var = null;
+        
+        info.stack.push_back(come_value);
+    }
+    
+    return true;
+}
+
+int sFunLoadNode*::sline(sFunLoadNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sFunLoadNode*::sname(sFunLoadNode* self, sInfo* info)
 {
     return string(self.sname);
 }
@@ -280,40 +314,13 @@ void add_variable_to_table(char* name, sType* type, sInfo* info)
     info.lv_table.mVars.insert(string(name), self);
 }
 
-exception sNode*% string_node(char* buf, char* head, sInfo* info) version 7
+exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 7
 {
     bool is_type_name_flag = is_type_name(buf, info);
     
-    /// backtrace ///
-    bool define_function_pointer_flag = false;
+    sFun* fun = info.funcs[buf]
     
-    {
-        char* p = info.p.p;
-        int sline = info.sline;
-        
-        info.p.p = head;
-        
-        info.no_output_err = true;
-        parse_type(info).catch { }
-        info.no_output_err = false;
-        
-        if(*info->p == '(') {
-            info->p++;
-            skip_spaces_and_lf(info);
-            
-            if(*info->p == '*') {
-                info->p++;
-                skip_spaces_and_lf(info);
-                
-                define_function_pointer_flag = true;
-            }
-        }
-        
-        info.p.p = p;
-        info.sline = sline;
-    }
-    
-    if(!is_type_name_flag && *info->p == '=' && *(info.p + 1) != '=') {
+    if(!is_type_name_flag && *info->p == '=' && *(info->p+1) != '=') {
         info.p++;
         skip_spaces_and_lf(info);
         
@@ -323,36 +330,56 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 7
         
         return new sNode(new sStoreNode(string(buf)@name, null!, false@alloc, right_value, info));
     }
-    else if(!is_type_name_flag && *info->p != '(') {
+    else if(fun) {
+        sNode*% node = new sNode(new sFunLoadNode(string(buf)@name, info));
+        
+        node = post_position_operator(node, info).catch { throw };
+        
+        return node;
+    }
+    else if(!is_type_name_flag) {
         sNode*% node = new sNode(new sLoadNode(string(buf)@name, info));
         
         node = post_position_operator(node, info).catch { throw };
         
         return node;
     }
-    else if(define_function_pointer_flag || (is_type_name_flag && *info->p != '(')) {
+    else {
         info.p.p = head;
+        info.sline = head_sline;
         
-        var type, name = parse_type(info, true@parse_variable_name).catch {
-            throw;
+        info.no_output_err = true;
+        string word = parse_word(info).catch {
         }
+        info.no_output_err = false;
         
-        if(*info->p == '=') {
-            info.p++;
-            skip_spaces_and_lf(info);
-            
-            sNode*% right_value = expression(info).catch {
+        bool is_type_name_flag = is_type_name(word, info);
+        
+        info.p.p = head;
+        info.sline = head_sline;
+        
+        if(is_type_name_flag) {
+            var type, name = parse_type(info, true@parse_variable_name).catch {
                 throw;
             }
             
-            return new sNode(new sStoreNode(name, type, true@alloc, right_value, info));
-        }
-        else {
-            return new sNode(new sStoreNode(name, type, true@alloc, null!, info));
+            if(*info->p == '=') {
+                info.p++;
+                skip_spaces_and_lf(info);
+                
+                sNode*% right_value = expression(info).catch {
+                    throw;
+                }
+                
+                return new sNode(new sStoreNode(name, type, true@alloc, right_value, info));
+            }
+            else {
+                return new sNode(new sStoreNode(name, type, true@alloc, null!, info));
+            }
         }
     }
     
-    return inherit(buf, head ,info).catch {
+    return inherit(buf, head,head_sline, info).catch {
         throw;
     }
 }

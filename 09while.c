@@ -60,7 +60,7 @@ string sWhileNode*::sname(sWhileNode* self, sInfo* info)
     return string(self.sname);
 }
 
-exception sNode*% string_node(char* buf, char* head, sInfo* info) version 9
+exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 9
 {
     if(buf === "while") {
         string sname = clone info->sname;
@@ -80,7 +80,7 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 9
         return new sNode(new sWhileNode(expression_node, block, info));
     }
     
-    return inherit(buf, head ,info).catch {
+    return inherit(buf, head,head_sline, info).catch {
         throw;
     }
 }

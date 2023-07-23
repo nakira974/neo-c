@@ -386,22 +386,24 @@ void free_object(sType* type, char* obj, sInfo* info)
         
         char* class_name = klass->mName;
 
-        string fun_name = xsprintf("%s_finalize", class_name);
+        char* fun_name = "finalize";
+        
+        string fun_name2 = create_method_name(type, false@no_pointer_name, fun_name);
 
         int i;
         sFun* finalizer = NULL;
         for(i=FUN_VERSION_MAX-1; i>=1; i--) {
-            string new_fun_name = xsprintf("%s_v%d", fun_name, i);
+            string new_fun_name = xsprintf("%s_v%d", fun_name2, i);
             finalizer = info->funcs[new_fun_name];
             
             if(finalizer) {
-                fun_name = string(new_fun_name);
+                fun_name2 = string(new_fun_name);
                 break;
             }
         }
         
         if(finalizer == NULL) {
-            finalizer = info->funcs[fun_name];
+            finalizer = info->funcs[fun_name2];
         }
         
 /*
@@ -415,7 +417,7 @@ void free_object(sType* type, char* obj, sInfo* info)
 
         /// call finalizer ///
         if(finalizer != null) {
-            if(c_value) add_come_code(info, xsprintf("call_finalizer(%s,%s,%d);\n", fun_name, c_value, type->mAllocaValue));
+            if(c_value) add_come_code(info, xsprintf("call_finalizer(%s,%s,%d);\n", fun_name2, c_value, type->mAllocaValue));
         }
         else {
             if(klass->mProtocol && type->mPointerNum == 1) {
@@ -426,7 +428,8 @@ void free_object(sType* type, char* obj, sInfo* info)
                 foreach(it, klass->mFields) {
                     var name, field_type = it;
                     if(field_type->mHeap && field_type->mPointerNum > 0) {
-                        add_come_code(info, "%s.%s = come_decrement_ref_count(%s.%s);\n", c_value, name, c_value, name);
+                        string obj = xsprintf("(%s.%s)", c_value, name);
+                        free_object(field_type, obj, info);
                     }
                 }
             }
@@ -434,7 +437,8 @@ void free_object(sType* type, char* obj, sInfo* info)
                 foreach(it, klass->mFields) {
                     var name, field_type = it;
                     if(field_type->mHeap && field_type->mPointerNum > 0) {
-                        add_come_code(info, "%s->%s = come_decrement_ref_count(%s->%s);\n", c_value, name, c_value, name);
+                        string obj = xsprintf("(%s->%s)", c_value, name);
+                        free_object(field_type, obj, info);
                     }
                 }
             }
@@ -547,16 +551,6 @@ void free_objects(sVarTable* table, char* ret_value, sInfo* info)
             free_object(p->mType, p->mCValueName, info);
 
             p->mCValueName = null;
-        }
-        else if(klass->mStruct && gComelang && type->mHeap) 
-        {
-            foreach(it, klass->mFields) {
-                var name, field_type = it;
-                if(field_type->mHeap && field_type->mPointerNum > 0) {
-                    p->mCValueName = xsprintf("(&%s)", p->mCValueName);
-                    free_object(field_type, xsprintf("%s->%s", p->mCValueName, name), info);
-                }
-            }
         }
     }
 }

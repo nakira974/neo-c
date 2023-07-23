@@ -1,12 +1,14 @@
+//#include <comelang2.h>
 
-
-int int::fun(int self)
+void fun(void* mem) 
 {
-    return self;
 }
 
 int main(int argc, char** argv)
 {
+    void (*funX)(void* mem) = fun;
+    
+    funX(0);
     
     return 0;
 }

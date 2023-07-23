@@ -228,7 +228,7 @@ bool sDeleteNode*::compile(sDeleteNode* self, sInfo* info)
     return true;
 }
 
-exception sNode*% string_node(char* buf, char* head, sInfo* info) version 21
+exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 21
 {
     if(buf === "new") {
         var type, name = parse_type(info).catch {
@@ -314,12 +314,12 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 21
         }
     }
     
-    return inherit(buf, head ,info).catch {
+    return inherit(buf, head, head_sline, info).catch {
         throw;
     }
 }
 
-exception sNode*% top_level(char* buf, char* head, sInfo* info) version 94
+exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 94
 {
    if(buf === "using") {
         if(memcmp(info->p.p, "comelang", strlen("comelang")) == 0) {
@@ -353,7 +353,7 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 94
         return (sNode*)null;
     }
     
-    return inherit(buf, head, info).catch {
+    return inherit(buf, head, head_sline, info).catch {
         throw;
     }
 }

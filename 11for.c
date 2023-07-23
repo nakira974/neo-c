@@ -100,7 +100,7 @@ string sForNode*::sname(sForNode* self, sInfo* info)
     return string(self.sname);
 }
 
-exception sNode*% string_node(char* buf, char* head, sInfo* info) version 11
+exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 11
 {
     if(buf === "for") {
         expected_next_character('(', info).catch { throw; }
@@ -124,7 +124,7 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 11
         return new sNode(new sForNode(expression_node, expression_node2, expression_node3, block, info));
     }
     
-    return inherit(buf, head ,info).catch {
+    return inherit(buf, head,head_sline,info).catch {
         throw;
     }
 }

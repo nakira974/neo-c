@@ -132,7 +132,7 @@ string sBreakNode*::sname(sBreakNode* self, sInfo* info)
     return string(self.sname);
 }
 
-exception sNode*% string_node(char* buf, char* head, sInfo* info) version 12
+exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 12
 {
     if(buf === "case") {
         string name = parse_word(info).catch {
@@ -159,7 +159,7 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 12
         return new sNode(new sSwitchNode(expression_node, block, info));
     }
     
-    return inherit(buf, head ,info).catch {
+    return inherit(buf, head ,head_sline, info).catch {
         throw;
     }
 }

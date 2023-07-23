@@ -461,8 +461,14 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         }
         
         if(parse_variable_name) {
-            var_name = parse_word(info).catch {
-                throw;
+            if(xisalnum(*info.p)) {
+                var_name = parse_word(info).catch {
+                    throw;
+                }
+            }
+            else {
+                static int num_anonymous_var_name = 0;
+                var_name = xsprintf("anonymous_var_name%d", num_anonymous_var_name);
             }
         }
     }
@@ -847,7 +853,7 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
         
         buffer*% buf = new buffer();
         
-        buf.append_str(fun_name);
+        buf.append_str(var_->mCValueName);
         buf.append_str("(");
         
         int j = 0;
@@ -1084,7 +1090,7 @@ exception sNode*% parse_function_call(char* fun_name, sInfo* info)
     return new sNode(new sFunCallNode(fun_name, params, info));
 }
 
-exception sNode*% string_node(char* buf, char* head, sInfo* info) version 5
+exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 5
 {
     err_msg(info, "unexpected word(%s)(1)\n", buf);
     throw
@@ -1162,7 +1168,7 @@ exception sNode*% expression_node(sInfo* info) version 99
     }
     else if(xisalpha(*info->p) || *info->p == '_') {
         char* head = info.p.p;
-        int sline_head = info.sline;
+        int head_sline = info.sline;
         
         /// backtrace ///
         bool define_function_pointer_flag = false;
@@ -1184,14 +1190,14 @@ exception sNode*% expression_node(sInfo* info) version 99
             }
             
             info.p.p = head;
-            info.sline = sline_head;
+            info.sline = head_sline;
         }
         
         /// backtrace2 ///
         bool lambda_flag = false;
         {
             info.p.p = head;
-            info.sline = sline_head;
+            info.sline = head_sline;
             
             info.no_output_err = true;
             
@@ -1205,7 +1211,7 @@ exception sNode*% expression_node(sInfo* info) version 99
             }
             
             info.p.p = head;
-            info.sline = sline_head;
+            info.sline = head_sline;
         }
         
         string buf = parse_word(info).catch {
@@ -1214,13 +1220,13 @@ exception sNode*% expression_node(sInfo* info) version 99
         
         if(lambda_flag) {
             info.p.p = head;
-            info.sline = sline_head;
+            info.sline = head_sline;
             
             return parse_function(info).catch {
                 throw;
             }
         }
-        else if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && *info->p == '(' && !define_function_pointer_flag) 
+        else if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && *info->p == '(' && *(info->p+1) != '*')
         {
             sNode*% node = parse_function_call(buf, info).catch {
                 throw;
@@ -1231,7 +1237,7 @@ exception sNode*% expression_node(sInfo* info) version 99
             return node;
         }
         else {
-            sNode*% node = string_node(buf, head, info).catch {
+            sNode*% node = string_node(buf, head, head_sline, info).catch {
                 throw;
             }
             
@@ -1323,6 +1329,7 @@ exception sBlock*% parse_block(sInfo* info)
     
     if(*info->p == '{') {
         info->p++;
+        skip_spaces_and_lf(info);
         while(true) {
             if(*info->p == '}') {
                 info->p++;
@@ -1847,7 +1854,7 @@ exception sNode*% parse_function(sInfo* info)
     return (sNode*)null;
 }
 
-exception sNode*% top_level(char* buf, char* head, sInfo* info) version 1
+exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 1
 {
     err_msg(info, "unexpected word(%s)(2)\n", buf);
     throw;
@@ -1864,7 +1871,7 @@ bool is_type_name(char* buf, sInfo* info)
 
 }
 
-exception sNode*% top_level(char* buf, char* head, sInfo* info) version 99
+exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 99
 {
     bool is_type_name_flag = is_type_name(buf, info);
     int sline = info.sline;
@@ -1936,7 +1943,7 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 99
         throw;
     }
  
-    return inherit(buf2, head, info).catch {
+    return inherit(buf2, head, head_sline, info).catch {
         throw;
     }
 }
@@ -1950,13 +1957,14 @@ exception int transpile(sInfo* info) version 5
         parse_sharp(info);
         
         char* head = info.p.p;
+        int head_sline = info.sline;
         string buf = parse_word(info).catch {
             throw;
         }
         
         parse_sharp(info);
         
-        sNode*% node = top_level(buf, head, info).catch {
+        sNode*% node = top_level(buf, head, head_sline, info).catch {
             throw;
         }
         parse_sharp(info);

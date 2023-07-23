@@ -130,7 +130,7 @@ string sStructNode*::sname(sStructNode* self, sInfo* info)
     return string(self.sname);
 }
 
-exception sNode*% top_level(char* buf, char* head, sInfo* info) version 98
+exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 98
 {
     if(buf === "struct") {
         string type_name = parse_word(info).catch { throw; };
@@ -194,7 +194,7 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 98
         return new sNode(new sStructNode(type, info));
     }
     
-    return inherit(buf, head, info).catch {
+    return inherit(buf, head, head_sline, info).catch {
         throw;
     }
 }

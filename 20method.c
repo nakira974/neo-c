@@ -351,13 +351,13 @@ exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) v
     return new sNode(new sMethodCallNode(fun_name, obj, params, method_block!, method_block_sline, info));
 }
 
-exception sNode*% string_node(char* buf, char* head, sInfo* info) version 20
+exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 20
 {
     if(buf === "__current__") {
         return new sNode(new sCurrentNode(info));
     }
     
-    return inherit(buf, head ,info).catch {
+    return inherit(buf, head, head_sline, info).catch {
         throw;
     }
 }

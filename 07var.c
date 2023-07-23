@@ -284,49 +284,36 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 7
 {
     bool is_type_name_flag = is_type_name(buf, info);
     
-    char* p = info.p.p;
-    int sline = info.sline;
-    
-    bool lambda_call_flag = false;
-    bool define_function_flag = false;
+    /// backtrace ///
     bool define_function_pointer_flag = false;
     
-    if(*info->p == '(') {
-        info->p++;
-        skip_spaces_and_lf(info);
+    {
+        char* p = info.p.p;
+        int sline = info.sline;
         
-        if(*info->p == '*') {
+        info.p.p = head;
+        
+        info.no_output_err = true;
+        parse_type(info).catch { }
+        info.no_output_err = false;
+        
+        if(*info->p == '(') {
             info->p++;
             skip_spaces_and_lf(info);
             
-            define_function_pointer_flag = true;
-        }
-    }
-    else {
-        buffer*% buf2 = new buffer();
-        
-        while(xisalnum(*info->p)) {
-            buf2.append_char(*info->p);
-            info->p++;
-        }
-        skip_spaces_and_lf(info);
-        
-        if(buf2.length() > 0 && *info->p == '(') {
-            if(is_type_name_flag) {
-                define_function_flag = true;
+            if(*info->p == '*') {
+                info->p++;
+                skip_spaces_and_lf(info);
+                
+                define_function_pointer_flag = true;
             }
         }
+        
+        info.p.p = p;
+        info.sline = sline;
     }
     
-    info.p.p = p;
-    info.sline = sline;
-    
-    if(define_function_flag) {
-        return parse_function(info).catch {
-            throw;
-        }
-    }
-    else if(!is_type_name_flag && *info->p == '=' && *(info.p + 1) != '=') {
+    if(!is_type_name_flag && *info->p == '=' && *(info.p + 1) != '=') {
         info.p++;
         skip_spaces_and_lf(info);
         

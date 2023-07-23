@@ -174,5 +174,16 @@ impl list <T>
 
         return self;
     }
+    void finalize(list<T>* self) {
+        list_item<T>* it = self->head;
+        while(it != null) {
+            if(isheap(T)) {
+                delete borrow it.item;
+            }
+            var prev_it = it;
+            it = it.next;
+            delete borrow prev_it;
+        }
+    }
 }
 

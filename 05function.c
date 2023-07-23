@@ -77,6 +77,9 @@ exception string parse_word(sInfo* info, bool no_check_err=false)
     
     if(!no_check_err && buf.length() == 0) {
         err_msg(info, "unexpected character(%c)\n", *info->p);
+int a = 1;
+int b = 0;
+int c = a/b;
         throw;
     }
     
@@ -395,18 +398,24 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                     throw;
                 }
             }
-            string new_name = create_generics_name(type, info);
-            if(info.classes[new_name] == null) {
-                if(!define_generics_struct(type, info)) {
-                    throw;
-                }
-                if(!is_contained_generics_class(type, info)) {
-                    type->mClass = info.classes[new_name];
-                }
+            if(type->mClass == null) {
+                err_msg(info, "class not found");
+                throw;
             }
-            else {
-                if(!is_contained_generics_class(type, info)) {
-                    type->mClass = info.classes[new_name];
+            string new_name = create_generics_name(type, info);
+            if(!info.no_output_err) {
+                if(info.classes[new_name] == null) {
+                    if(!define_generics_struct(type, info)) {
+                        throw;
+                    }
+                    if(!is_contained_generics_class(type, info)) {
+                        type->mClass = info.classes[new_name];
+                    }
+                }
+                else {
+                    if(!is_contained_generics_class(type, info)) {
+                        type->mClass = info.classes[new_name];
+                    }
                 }
             }
         }
@@ -1155,50 +1164,63 @@ exception sNode*% expression_node(sInfo* info) version 99
         char* head = info.p.p;
         int sline_head = info.sline;
         
+        /// backtrace ///
+        bool define_function_pointer_flag = false;
+        {
+            info.no_output_err = true;
+            parse_type(info).catch {}
+            info.no_output_err = false;
+            
+            if(*info->p == '(') {
+                info->p++;
+                skip_spaces_and_lf(info);
+                
+                if(*info->p == '*') {
+                    info->p++;
+                    skip_spaces_and_lf(info);
+                    
+                    define_function_pointer_flag = true;
+                }
+            }
+            
+            info.p.p = head;
+            info.sline = sline_head;
+        }
+        
+        /// backtrace2 ///
+        bool lambda_flag = false;
+        {
+            info.p.p = head;
+            info.sline = sline_head;
+            
+            info.no_output_err = true;
+            
+            (void)parse_type(info);
+            
+            var word2 = parse_word(info).catch {}
+            info.no_output_err = false;
+            
+            if(word2 != null && word2 === "lambda") {
+                lambda_flag = true;
+            }
+            
+            info.p.p = head;
+            info.sline = sline_head;
+        }
+        
         string buf = parse_word(info).catch {
             throw;
         }
         
-        /// backtrace ///
-        char* p = info.p.p;
-        int sline = info.sline;
-        
-        bool define_function_pointer_flag = false;
-        if(*info->p == '(') {
-            info->p++;
-            skip_spaces_and_lf(info);
+        if(lambda_flag) {
+            info.p.p = head;
+            info.sline = sline_head;
             
-            if(*info->p == '*') {
-                info->p++;
-                skip_spaces_and_lf(info);
-                
-                define_function_pointer_flag = true;
+            return parse_function(info).catch {
+                throw;
             }
         }
-        
-        /// backtrace2 ///
-        info.p.p = head;
-        info.sline = sline_head;
-        
-        bool lambda_flag = false;
-        
-        info.no_output_err = true;
-        
-        (void)parse_type(info);
-        
-        var word2 = parse_word(info).catch {
-        }
-        info.no_output_err = false;
-        
-        if(word2 != null && word2 === "lambda") {
-            lambda_flag = true;
-        }
-        
-        info.p.p = p;
-        info.sline = sline;
-            
-        
-        if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && *info->p == '(' && !define_function_pointer_flag && !lambda_flag) 
+        else if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && *info->p == '(' && !define_function_pointer_flag) 
         {
             sNode*% node = parse_function_call(buf, info).catch {
                 throw;
@@ -1207,14 +1229,6 @@ exception sNode*% expression_node(sInfo* info) version 99
             node = post_position_operator(node, info).catch { throw };
             
             return node;
-        }
-        else if(lambda_flag) {
-            info.p.p = head;
-            info.sline = sline_head;
-            
-            return parse_function(info).catch {
-                throw;
-            }
         }
         else {
             sNode*% node = string_node(buf, head, info).catch {
@@ -1859,81 +1873,47 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 99
     bool define_function_flag = false;
     {
         char* p = info.p.p;
-        if(buf === "const" || buf === "register" || buf === "static" || buf === "volatile" || buf === "unsigned" || buf === "immutable" || buf === "mutable" || buf === "struct" || buf === "enum" || buf === "union") 
-        {
-            while(true) {
-                string buf2 = parse_word(info).catch {
-                    throw;
-                }
-                
-                sClass* klass = info.classes[buf2];
-                sType* type = info.types[buf2];
-                
-                if(buf2 === "const" || buf2 === "register" || buf2 === "static" || buf2 === "volatile" || buf2 === "unsigned" || buf2 === "immutable" || buf2 === "mutable" || buf2 === "struct" || buf2 === "enum" || buf2 === "union") 
-                {
-                }
-                else if(klass || type) {
-                    break;
-                }
-                else if(*info->p == '{') {
-                    break;
-                }
-                else if(*info->p == '<') {
-                    while(true) {
-                        if(*info->p == '\0') {
-                            break;
-                        }
-                        else if(*info->p == '>') {
-                            info->p++;
-                            skip_spaces_and_lf(info);
-                            break;
-                        }
-                        else {
-                            info->p++;
-                        }
-                    }
-                    break;
-                }
-            }
-        }
+        info.p.p = head;
         
-        if(*info->p == '<') {
-            while(true) {
-                if(*info->p == '\0') {
-                    break;
-                }
-                else if(*info->p == '>') {
+        info.no_output_err = true;
+        parse_type(info).catch {};
+        string word;
+        if(xisalnum(*info.p)) {
+            word = parse_word(info).catch {}
+        }
+        else {
+            word = null;
+        }
+        info.no_output_err = false;
+        
+        if(word) {
+            if(is_type_name(word, info)) {
+                while(*info->p == '*') {
                     info->p++;
                     skip_spaces_and_lf(info);
-                    break;
                 }
-                else {
+                if(*info->p == '%') {
                     info->p++;
+                    skip_spaces_and_lf(info);
+                }
+                if(*info->p == ':') {
+                    info->p++;
+                    skip_spaces_and_lf(info);
+                }
+                if(*info->p == ':') {
+                    info->p++;
+                    skip_spaces_and_lf(info);
+                }
+                if(xisalnum(*info.p)) {
+                    word = parse_word(info).catch {}
                 }
             }
-        }
-        
-        while(*info->p == '*') {
-            info->p++;
-            skip_spaces_and_lf(info);
-        }
-        while(*info->p == '%') {
-            info->p++;
-            skip_spaces_and_lf(info);
-        }
-        
-        /// fun name ///
-        buffer*% buf3 = new buffer();
-        
-        while(xisalnum(*info->p) || *info->p == '_') {
-            buf3.append_char(*info->p);
-            info->p++;
-        }
-        skip_spaces_and_lf(info);
-        
-        if(buf3.length() > 0 && (*info->p == '(' || (*info->p == ':' && *(info->p+1) == ':'))) {
-            if(is_type_name_flag) {
-                define_function_flag = true;
+            
+            /// fun name ///
+            if(strlen(word) > 0 && (*info->p == '(' || (*info->p == ':' && *(info->p+1) == ':'))) {
+                if(is_type_name_flag) {
+                    define_function_flag = true;
+                }
             }
         }
         
@@ -1949,9 +1929,15 @@ exception sNode*% top_level(char* buf, char* head, sInfo* info) version 99
             throw;
         }
     }
+    info.p.p = head;
+    info.sline = sline;
+    
+    string buf2 = parse_word(info).catch {
+        throw;
+    }
  
-    return inherit(buf, head, info).catch {
-        throw
+    return inherit(buf2, head, info).catch {
+        throw;
     }
 }
 

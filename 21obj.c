@@ -186,6 +186,48 @@ bool sSizeOfNode*::compile(sSizeOfNode* self, sInfo* info)
     return true;
 }
 
+struct sDeleteNode {
+    sNode*% node;
+    int sline;
+    string sname;
+};
+
+sDeleteNode*% sDeleteNode*::initialize(sDeleteNode*% self, sNode*% node, sInfo* info)
+{
+    self.node = clone node;
+    
+    self.sline = info.sline;
+    self.sname = string(info.sname);
+    
+    return self;
+}
+
+int sDeleteNode*::sline(sDeleteNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sDeleteNode*::sname(sDeleteNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+bool sDeleteNode*::compile(sDeleteNode* self, sInfo* info)
+{
+    sNode* node = self.node;
+    
+    if(!node.compile->(info)) {
+        return false;
+    }
+    
+    CVALUE*% come_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
+    
+    free_object(come_value.type, come_value.c_value, info);
+    
+    return true;
+}
+
 exception sNode*% string_node(char* buf, char* head, sInfo* info) version 21
 {
     if(buf === "new") {
@@ -200,6 +242,14 @@ exception sNode*% string_node(char* buf, char* head, sInfo* info) version 21
     }
     else if(buf === "false") {
         return new sNode(new sFalseNode(info));
+    }
+    else if(buf === "delete") {
+         sNode*% node = expression(info).catch {
+             throw;
+         }
+         
+         return new sNode(new sDeleteNode(node, info));
+        
     }
     else if(buf === "using") {
         if(memcmp(info->p.p, "comelang", strlen("comelang")) == 0) {

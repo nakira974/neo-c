@@ -7,25 +7,14 @@ int*% fun(int x, int y)
     return result;
 }
 
-struct sData {
-    int*% x;
-};
+void fun2(int*% a)
+{
+}
 
 int main(int argc, char** argv)
 {
     int*% x = fun(1, 2);
-    int*% y = x;
-    
-    sData data;
-    data.x = y;
-    
-    sData*% data2 = new sData;
-    data2.x = new int;
-    
-    sData*% data3 = new sData;
-    data3.x = data2.x;
-    
-    int* z = x;
+    fun2(x);
     
     return 0;
 }

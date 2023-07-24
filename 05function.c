@@ -1435,6 +1435,17 @@ exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<s
             arrange_stack(info, stack_num_before);
         }
     }
+    
+    if(param_types && param_names) {
+        int i = 0;
+        foreach(name, param_names) {
+            sType* type = param_types[i];
+            if(type->mHeap) {
+                free_object(type, name, false@no_decrement, false@no_free, info);
+            }
+            i++;
+        }
+    }
 
     if(!info->last_statment_is_return) {
         free_objects(info->lv_table, null!, info);

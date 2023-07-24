@@ -447,10 +447,7 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
             }
             
             /// free memmory ///
-            if(type->mAllocaValue) {
-                if(c_value) add_come_code(info, "come_decrement_ref_count(%s, %d, %d);\n", c_value, no_decrement, no_free);
-            }
-            else {
+            if(!type->mAllocaValue) {
                 if(c_value) add_come_code(info, "%s = come_decrement_ref_count(%s, %d, %d);\n", c_value, c_value, no_decrement, no_free);
             }
         }

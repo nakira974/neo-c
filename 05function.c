@@ -77,9 +77,6 @@ exception string parse_word(sInfo* info, bool no_check_err=false)
     
     if(!no_check_err && buf.length() == 0) {
         err_msg(info, "unexpected character(%c)\n", *info->p);
-int a = 1;
-int b = 0;
-int c = a/b;
         throw;
     }
     

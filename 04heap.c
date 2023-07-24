@@ -276,87 +276,6 @@ void remove_object_from_right_values(int right_value_num, sInfo* info)
 }
 
 
-sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sInfo* info)
-{
-    sFun* finalizer = null;
-    string real_fun_name = null;
-    
-    if(type->mGenericsTypes.length() > 0) {
-        string struct_name = create_generics_name(type, info)
-        
-        real_fun_name = xsprintf("%s_%s", fun_name, struct_name);
-    }
-    else {
-        real_fun_name = xsprintf("%s", fun_name);
-    }
-    
-    char* last_code = borrow info.module.mLastCode;
-    info.module.mLastCode = NULL;
-    char* last_stack_c_value = borrow info.stack[-1].c_value;
-    info.stack[-1].c_value = NULL;
-    
-    sType* come_function_result_type = borrow info.come_function_result_type;
-    
-    sClass* klass = type->mClass;
-    
-    if(type->mPointerNum > 0 && klass->mStruct) {
-        var source = new buffer();
-        
-        source.append_char('{');
-        
-        if(klass->mProtocol) {
-            char* name = "_protocol_obj";
-            char source2[1024];
-            snprintf(source2, 1024, "if(self != ((void*)0) && self.%s != ((void*)0) && self.finalize) { void (*finalizer)(void*) = self.finalize; finalizer(self._protocol_obj); self.%s = come_decrement_ref_count(self.%s); }\n", name, name);
-            
-            source.append_str(source2);
-        }
-        else {
-            foreach(it, klass->mFields) {
-                var name, field_type = it;
-                
-                if(type->mClass->mName === field_type->mClass->mName && type->mPointerNum == field_type->mPointerNum && field_type->mHeap)
-                {
-                    fprintf(stderr, "Defining recusively the finalizer. exited. Define the finalizer mannually or remove %% of the field type from the recursively defined field.%s in %s.\n", name, type->mClass->mName);
-                    exit(21);
-                }
-                
-                if(field_type->mHeap) {
-                    char source2[1024];
-                    snprintf(source2, 1024, "if(self != ((void*)0) && self.%s != ((void*)0)) { delete (borrow self.%s); }\n", name, name);
-                    
-                    source.append_str(source2);
-                }
-            }
-        }
-        
-        source.append_char('}');
-        
-        var name = clone real_fun_name;
-        var result_type = new sType("void", info);
-        var self_type = clone type;
-        self_type->mHeap = false;
-        var param_types = [self_type];
-        var param_names = [string("self")];
-        finalizer = borrow new sFun(name, result_type, param_types, param_names
-                    , false@external, false@var_args, null!@block, info);
-        
-        info.funcs.insert(name, dummy_heap finalizer);
-        
-        info.come_fun = finalizer;
-        
-        info.block_level++;
-        add_come_code(info, source.to_string());
-        info.block_level--;
-    }
-    
-    info->come_function_result_type = dummy_heap come_function_result_type;
-    
-    info.module.mLastCode = dummy_heap last_code;
-    info.stack[-1].c_value = dummy_heap last_stack_c_value;
-    
-    (finalizer, real_fun_name);
-}
 
 static void free_protocol_object(sType* protocol_type, char* protocol_value_c_source, bool no_decrement, bool no_free, sInfo* info)
 {
@@ -409,14 +328,14 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
             finalizer = info->funcs[fun_name2];
         }
         
-/*
         if(finalizer == NULL && !type->mProtocol && !type->mNumber 
             && gComelang)
         {
-            var finalizer,new_fun_name = create_finalizer_automatically(type, fun_name, info);
-            fun_name = new_fun_name;
+            var fun,new_fun_name = create_finalizer_automatically(type, fun_name, info).catch { exit(1); }
+            
+            fun_name2 = new_fun_name;
+            finalizer = fun;
         }
-*/
 
         /// call finalizer ///
         if(finalizer != null) {

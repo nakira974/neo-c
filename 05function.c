@@ -1393,7 +1393,8 @@ exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<s
     if(param_types && param_names) {
         int i;
         foreach(name, param_names) {
-            sType* type = param_types[i];
+            sType*% type = clone param_types[i];
+            type->mFunctionParam = true;
             add_variable_to_table(name, type, info);
             i++;
         }
@@ -2008,3 +2009,85 @@ exception int transpile(sInfo* info) version 5
     return 0;
 }
 
+exception sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sInfo* info)
+{
+    sFun* finalizer = null;
+    string real_fun_name = null;
+    
+    if(type->mGenericsTypes.length() > 0) {
+        string struct_name = create_generics_name(type, info)
+        
+        real_fun_name = xsprintf("%s_%s", fun_name, struct_name);
+    }
+    else {
+        real_fun_name = create_method_name(type, false@no_pointer_name, fun_name);
+    }
+    
+    sClass* klass = type->mClass;
+    
+    if(type->mPointerNum > 0 && klass->mStruct) {
+        var source = new buffer();
+        
+        source.append_char('{');
+        
+        if(klass->mProtocol) {
+            char* name = "_protocol_obj";
+            char source2[1024];
+            snprintf(source2, 1024, "if(self != ((void*)0) && self.%s != ((void*)0) && self.finalize) { void (*finalizer)(void*) = self.finalize; finalizer(self._protocol_obj); self.%s = come_decrement_ref_count(self.%s); }\n", name, name);
+            
+            source.append_str(source2);
+        }
+        else {
+            foreach(it, klass->mFields) {
+                var name, field_type = it;
+                
+                if(type->mClass->mName === field_type->mClass->mName && type->mPointerNum == field_type->mPointerNum && field_type->mHeap)
+                {
+                    err_msg(info, "Define recusively the finalizer. I recommanded tuple1<%s>*%.\n", type->mClass->mName);
+                    throw;
+                }
+                
+                if(field_type->mHeap) {
+                    char source2[1024];
+                    snprintf(source2, 1024, "if(self != ((void*)0) && self.%s != ((void*)0)) { delete borrow self.%s; }\n", name, name);
+                    
+                    source.append_str(source2);
+                }
+            }
+        }
+        
+        source.append_char('}');
+        
+        var p = info.p;
+        int sline = info.sline;
+        
+        info.p = source.to_pointer();
+        
+        sBlock*% block = parse_block(info).catch {
+            throw;
+        }
+        
+        var name = clone real_fun_name;
+        var result_type = new sType("void", info);
+        var self_type = clone type;
+        self_type->mHeap = false;
+        var param_types = [self_type];
+        var param_names = [string("self")];
+        sFun*% fun = new sFun(name, result_type, param_types, param_names, false@external, false@var_args, block, info);
+        
+        info.funcs.insert(string(name), fun);
+        
+        finalizer = fun;
+        
+        sNode*% node = new sNode(new sFunNode(fun, info));
+        
+        if(!node.compile->(info)) {
+            throw;
+        }
+        
+        info.p = p;
+        info.sline = sline;
+    }
+    
+    return (finalizer, real_fun_name);
+}

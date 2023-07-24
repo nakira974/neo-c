@@ -1,20 +1,16 @@
 #include <comelang2.h>
 
-int*% fun(int x, int y)
+struct sData
 {
-    int*% result = new int;
-    *result = x + y;
-    return result;
-}
-
-void fun2(int*% a)
-{
-}
+    string a;
+    string b;
+};
 
 int main(int argc, char** argv)
 {
-    int*% x = fun(1, 2);
-    fun2(x);
+    sData*% data = new sData;
+    
+    data.a = string("ABC");
     
     return 0;
 }

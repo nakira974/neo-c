@@ -877,7 +877,7 @@ bool sNotEqNode*::compile(sNotEqNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("%s==%s", left_value.c_value, right_value.c_value);
+    come_value.c_value = xsprintf("%s!=%s", left_value.c_value, right_value.c_value);
     come_value.type = clone left_value.type;
     come_value.type->mHeap = false;
     come_value.var = null;

@@ -228,6 +228,56 @@ bool sDeleteNode*::compile(sDeleteNode* self, sInfo* info)
     return true;
 }
 
+struct sBorrowNode {
+    sNode*% node;
+    int sline;
+    string sname;
+};
+
+sBorrowNode*% sBorrowNode*::initialize(sBorrowNode*% self, sNode*% node, sInfo* info)
+{
+    self.node = clone node;
+    
+    self.sline = info.sline;
+    self.sname = string(info.sname);
+    
+    return self;
+}
+
+int sBorrowNode*::sline(sBorrowNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sBorrowNode*::sname(sBorrowNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+bool sBorrowNode*::compile(sBorrowNode* self, sInfo* info)
+{
+    sNode* node = self.node;
+    
+    if(!node.compile->(info)) {
+        return false;
+    }
+    
+    CVALUE*% come_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
+    
+    come_value.type.mHeap = false;
+    
+    int right_value_id = get_right_value_id_from_obj(come_value.c_value);
+    
+    if(right_value_id != -1) {
+        remove_object_from_right_values(right_value_id, info);
+    }
+    
+    info.stack.push_back(come_value);
+    
+    return true;
+}
+
 exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 21
 {
     if(buf === "new") {
@@ -250,6 +300,13 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
          
          return new sNode(new sDeleteNode(node, info));
         
+    }
+    else if(buf === "borrow") {
+         sNode*% node = expression(info).catch {
+             throw;
+         }
+         
+         return new sNode(new sBorrowNode(node, info));
     }
     else if(buf === "using") {
         if(memcmp(info->p.p, "comelang", strlen("comelang")) == 0) {

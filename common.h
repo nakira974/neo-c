@@ -288,6 +288,7 @@ void remove_object_from_right_values(int right_value_num, sInfo* info);
 /////////////////////////////////////////////////////////////////////
 /// 05function.c ///
 /////////////////////////////////////////////////////////////////////
+exception sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sInfo* info);
 exception string skip_block(sInfo* info);
 bool is_contained_generics_class(sType* type, sInfo* info);
 bool is_type_name(char* buf, sInfo* info);

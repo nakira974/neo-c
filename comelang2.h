@@ -10,6 +10,8 @@ void free(void *ptr);
 void *calloc(size_t nmemb, size_t size);
 void *realloc(void *ptr, size_t size);
 
+size_t strlen(const char *s);
+
 void *memset(void *s, int c, size_t n);
 char *strncpy(char *dest, const char *src, size_t n);
 
@@ -40,7 +42,7 @@ static void* come_calloc(size_t count, size_t size)
     
     int* ref_count = (int*)mem;
     
-//    (*ref_count)++;
+    //(*ref_count)++;
     
     long* size2 = (long*)(mem + sizeof(int));
     
@@ -62,7 +64,7 @@ static void* come_increment_ref_count(void* mem)
     return mem;
 }
 
-static void* come_decrement_ref_count(void* mem)
+static void* come_decrement_ref_count(void* mem, bool no_decrement, bool no_free)
 {
     if(mem == NULL) {
         return NULL;
@@ -70,10 +72,12 @@ static void* come_decrement_ref_count(void* mem)
     
     int* ref_count = (int*)((char*)mem - sizeof(int) - sizeof(long));
     
-    (*ref_count)--;
+    if(!no_decrement) {
+        (*ref_count)--;
+    }
     
     int count = *ref_count;
-    if(count <= 0) {
+    if(!no_free && count <= 0) {
         ncfree(ref_count);
         return NULL;
     }
@@ -92,7 +96,7 @@ static void come_free_object(void* mem)
     ncfree(ref_count);
 }
 
-static void call_finalizer(void* fun, void* mem, int call_finalizer_only)
+static void call_finalizer(void* fun, void* mem, int call_finalizer_only, int no_decrement, int no_free)
 {
     if(mem == NULL) {
         return;
@@ -107,10 +111,12 @@ static void call_finalizer(void* fun, void* mem, int call_finalizer_only)
     else {
         int* ref_count = (int*)((char*)mem - sizeof(int) - sizeof(long));
         
-        (*ref_count)--;
+        if(!no_decrement) {
+            (*ref_count)--;
+        }
         
         int count = *ref_count;
-        if(count <= 0) {
+        if(!no_free && count <= 0) {
             if(mem) {
                 if(fun) {
                     void (*finalizer)(void*) = fun;
@@ -120,17 +126,6 @@ static void call_finalizer(void* fun, void* mem, int call_finalizer_only)
             }
         }
     }
-}
-
-static void come_decrement_ref_count2(void* mem)
-{
-    if(mem == NULL) {
-        return;
-    }
-    
-    int* ref_count = (int*)((char*)mem - sizeof(int) - sizeof(long));
-    
-    (*ref_count)--;
 }
 
 static void* nccalloc(size_t nmemb, size_t size)
@@ -217,3 +212,15 @@ impl list <T>
     }
 }
 
+typedef char*% string;
+
+string __builtin_string(char* str)
+{
+    int len = strlen(str) + 1;
+    
+    char*% result = new char[len];
+
+    strncpy(result, str, len);
+
+    return result;
+}

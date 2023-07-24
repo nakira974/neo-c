@@ -1,14 +1,26 @@
-//#include <comelang2.h>
+#include <comelang2.h>
 
-void fun(void* mem) 
+int*% fun(int x, int y)
 {
+    int*% result = new int;
+    *result = x + y;
+    return result;
 }
+
+struct sData {
+    int*% x;
+};
 
 int main(int argc, char** argv)
 {
-    void (*funX)(void* mem) = fun;
+    int*% x = fun(1, 2);
+    int*% y = x;
     
-    funX(0);
+    sData data;
+    data.x = y;
+    
+    sData*% data2 = new sData;
+    data2.x = x;
     
     return 0;
 }

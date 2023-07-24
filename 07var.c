@@ -72,6 +72,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         
         if(self.alloc && left_type->mClass->mStruct) {
             add_come_code(info, "memset(&%s, 0, sizeof(struct %s));\n", var_->mCValueName, left_type->mClass->mName);
+            var_->mType->mAllocaValue = 1;
         }
     }
     else {

@@ -194,7 +194,7 @@ exception sType*% solve_method_generics(sType* type, list<sType*%>* method_gener
 exception sType*% solve_type(sType* type, sType* generics_type, list<sType*%>* method_generics_types, sInfo* info)
 {
     sType*% result = clone type;
-    if(method_generics_types.length() > 0) {
+    if(method_generics_types && method_generics_types.length() > 0) {
         result = solve_method_generics(result, method_generics_types,info).catch
         {
             err_msg(info, "Can't solve method generics type(2)");
@@ -358,17 +358,17 @@ sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sInfo* 
     (finalizer, real_fun_name);
 }
 
-static void free_protocol_object(sType* protocol_type, char* protocol_value_c_source, sInfo* info)
+static void free_protocol_object(sType* protocol_type, char* protocol_value_c_source, bool no_decrement, bool no_free, sInfo* info)
 {
     char* fun_name = "call_finalizer";
     sFun* come_fun = info.funcs[fun_name];
     
     if(!gGC) {
         if(come_fun == NULL) {
-            add_come_code(info, "%s._protocol_obj = come_decrement_ref_count(%s._porotocol_obj);\n", protocol_value_c_source);
+            add_come_code(info, "%s._protocol_obj = come_decrement_ref_count(%s._porotocol_obj, %d, %d);\n", protocol_value_c_source, no_decrement, no_free);
         }
         else {
-            add_come_code(info, "call_finalizer(%s->finalize, %s->_protocol_obj, 0);\n", protocol_value_c_source, protocol_value_c_source);
+            add_come_code(info, "call_finalizer(%s->finalize, %s->_protocol_obj,0, %d, %d);\n", protocol_value_c_source, protocol_value_c_source, no_decrement, no_free);
         }
     }
 }
@@ -377,7 +377,7 @@ static void decrement_ref_count_protocol_object(sType* protocol_type, char* prot
 {
 }
 
-void free_object(sType* type, char* obj, sInfo* info)
+void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo* info)
 {
     if(!gGC && type->mPointerNum > 0) {
         string c_value = string(obj);
@@ -388,7 +388,10 @@ void free_object(sType* type, char* obj, sInfo* info)
 
         char* fun_name = "finalize";
         
-        string fun_name2 = create_method_name(type, false@no_pointer_name, fun_name);
+        sType*% type2 = clone type;
+        type2->mHeap = false;
+        
+        string fun_name2 = create_method_name(type2, false@no_pointer_name, fun_name);
 
         int i;
         sFun* finalizer = NULL;
@@ -417,11 +420,11 @@ void free_object(sType* type, char* obj, sInfo* info)
 
         /// call finalizer ///
         if(finalizer != null) {
-            if(c_value) add_come_code(info, xsprintf("call_finalizer(%s,%s,%d);\n", fun_name2, c_value, type->mAllocaValue));
+            if(c_value) add_come_code(info, xsprintf("call_finalizer(%s,%s,%d, %d, %d);\n", fun_name2, c_value, type->mAllocaValue, no_decrement, no_free));
         }
         else {
             if(klass->mProtocol && type->mPointerNum == 1) {
-                free_protocol_object(type, c_value, info);
+                free_protocol_object(type, c_value, no_decrement, no_free, info);
             }
             
             if(klass->mStruct && type->mPointerNum == 0) {
@@ -429,7 +432,7 @@ void free_object(sType* type, char* obj, sInfo* info)
                     var name, field_type = it;
                     if(field_type->mHeap && field_type->mPointerNum > 0) {
                         string obj = xsprintf("(%s.%s)", c_value, name);
-                        free_object(field_type, obj, info);
+                        free_object(field_type, obj, no_decrement, no_free, info);
                     }
                 }
             }
@@ -438,49 +441,19 @@ void free_object(sType* type, char* obj, sInfo* info)
                     var name, field_type = it;
                     if(field_type->mHeap && field_type->mPointerNum > 0) {
                         string obj = xsprintf("(%s->%s)", c_value, name);
-                        free_object(field_type, obj, info);
+                        free_object(field_type, obj, no_decrement, no_free, info);
                     }
                 }
             }
             
             /// free memmory ///
-            if(c_value) add_come_code(info, "%s = come_decrement_ref_count(%s);\n", c_value, c_value);
-        }
-    }
-}
-
-void decrement_ref_count_object(sType* type, char* obj, sInfo* info)
-{
-    if(!gGC && type->mPointerNum > 0) {
-        string c_value = string(obj);
-        
-        sClass* klass = type->mClass;
-        
-        char* class_name = klass->mName;
-
-        if(klass->mProtocol && type->mPointerNum == 1) {
-            add_come_code(info, "come_decrement_ref_count2(%s._porotocol_obj);\n", obj);
-        }
-        
-        if(klass->mStruct && type->mPointerNum == 0) {
-            foreach(it, klass->mFields) {
-                var name, field_type = it;
-                if(field_type->mHeap && field_type->mPointerNum > 0) {
-                    add_come_code(info, "come_decrement_ref_count2(%s.%s);\n", c_value, name);
-                }
+            if(type->mAllocaValue) {
+                if(c_value) add_come_code(info, "come_decrement_ref_count(%s, %d, %d);\n", c_value, no_decrement, no_free);
+            }
+            else {
+                if(c_value) add_come_code(info, "%s = come_decrement_ref_count(%s, %d, %d);\n", c_value, c_value, no_decrement, no_free);
             }
         }
-        else if(klass->mStruct && type->mPointerNum == 1) {
-            foreach(it, klass->mFields) {
-                var name, field_type = it;
-                if(field_type->mHeap && field_type->mPointerNum > 0) {
-                    add_come_code(info, "come_decrement_ref_count2(%s->%s);\n", c_value, name);
-                }
-            }
-        }
-        
-        /// free memmory ///
-        if(c_value) add_come_code(info, "come_decrement_ref_count2(%s);\n", c_value);
     }
 }
 
@@ -491,16 +464,14 @@ void free_right_value_objects(sInfo* info)
             if(it->mFunName === info->come_fun->mName) {
                 sType*% type = clone it->mType;
                 
-/*
                 type = solve_type(type, info->generics_type, info->method_generics_types, info).catch
                 {
                     err_msg(info, "Can't solve type");
                     show_type(type, info);
                     exit(1);
                 }
-*/
 
-                free_object(type, it->mVarName, info);
+                free_object(type, it->mVarName, true@no_decrement, false@no_free, info);
 
                 it->mFreed = true;
             }
@@ -545,10 +516,20 @@ void free_objects(sVarTable* table, char* ret_value, sInfo* info)
         sClass* klass = type->mClass;
 
         if(type->mHeap && ret_value != null && p->mCValueName === ret_value) {
-            decrement_ref_count_object(p->mType, p->mCValueName, info);
+            free_object(p->mType, p->mCValueName, false@no_decrement, true@no_free, info);
+
+            p->mCValueName = null;
         }
         else if(type->mHeap && p->mCValueName) {
-            free_object(p->mType, p->mCValueName, info);
+            free_object(p->mType, p->mCValueName, false@no_decrement, false@no_free, info);
+
+            p->mCValueName = null;
+        }
+        else if(klass->mStruct && p->mCValueName && type->mAllocaValue) {
+            string c_value = xsprintf("(&%s)", p->mCValueName);
+            sType*% type2 = clone type;
+            type2->mPointerNum++;
+            free_object(type2, c_value, false@no_decrement, false@no_free, info);
 
             p->mCValueName = null;
         }

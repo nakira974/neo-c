@@ -461,7 +461,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         }
         
         if(parse_variable_name) {
-            if(xisalnum(*info.p)) {
+            if(xisalnum(*info.p) || *info->p == '_') {
                 var_name = parse_word(info).catch {
                     throw;
                 }
@@ -883,6 +883,9 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
         info.stack.push_back(come_value);
     }
     else {
+        if(fun_name === "string") {
+            fun_name = string("__builtin_string");
+        }
         sFun* fun = info.funcs.at(fun_name, null!);
         
         if(fun == null) {
@@ -921,7 +924,7 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
         
         buffer*% buf = new buffer();
         
-        buf.append_str(self.fun_name);
+        buf.append_str(fun_name);
         buf.append_str("(");
         
         int j = 0;
@@ -1225,6 +1228,15 @@ exception sNode*% expression_node(sInfo* info) version 99
             return parse_function(info).catch {
                 throw;
             }
+        }
+        else if((buf === "string" || buf === "wstring") && *info->p == '(') {
+            sNode*% node = parse_function_call(buf, info).catch {
+                throw;
+            }
+            
+            node = post_position_operator(node, info).catch { throw };
+            
+            return node;
         }
         else if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && *info->p == '(' && *(info->p+1) != '*')
         {
@@ -1741,7 +1753,7 @@ exception sNode*% parse_function(sInfo* info)
         int sline = info.sline;
         
         buffer*% buf2 = new buffer();
-        while(xisalnum(*info->p)) {
+        while(xisalnum(*info->p) || *info->p == '_') {
             buf2.append_char(*info->p);
             info->p++;
         }
@@ -1885,7 +1897,7 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
         info.no_output_err = true;
         parse_type(info).catch {};
         string word;
-        if(xisalnum(*info.p)) {
+        if(xisalnum(*info.p) || *info->p == '_') {
             word = parse_word(info).catch {}
         }
         else {
@@ -1911,7 +1923,7 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
                     info->p++;
                     skip_spaces_and_lf(info);
                 }
-                if(xisalnum(*info.p)) {
+                if(xisalnum(*info.p) || *info->p == '_') {
                     word = parse_word(info).catch {}
                 }
             }

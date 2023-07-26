@@ -9,7 +9,7 @@ void come_final() version 3
 }
 
 
-string create_generics_name(sType* generics_type, sInfo* info)
+string create_generics_name(sType* generics_type, bool no_pointer_name, sInfo* info)
 {
     var buf = new buffer();
     
@@ -30,7 +30,7 @@ string create_generics_name(sType* generics_type, sInfo* info)
         
         int i = 0;
         foreach(it, generics_type->mGenericsTypes) {
-            string type_name = create_generics_name(it, info);
+            string type_name = create_generics_name(it, no_pointer_name, info);
             
             buf.append_str(type_name);
     

@@ -259,7 +259,7 @@ void come_final() version 3;
 bool transpile(sInfo* info) version 3;
 bool output_source_file(sInfo* info) version 3;
 void show_type(sType* type, sInfo* info);
-string create_generics_name(sType* generics_type, sInfo* info);
+string create_generics_name(sType* generics_type, bool no_pointer_name, sInfo* info);
 void add_last_code_to_source(sInfo* info);
 void add_come_code_at_function_head(sInfo* info, char* code, ...);
 void add_come_code_at_source_head(sInfo* info, const char* msg, ...);

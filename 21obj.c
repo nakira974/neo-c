@@ -278,6 +278,62 @@ bool sBorrowNode*::compile(sBorrowNode* self, sInfo* info)
     return true;
 }
 
+struct sIsHeap {
+    sType*% type;
+    int sline;
+    string sname;
+};
+
+sIsHeap*% sIsHeap*::initialize(sIsHeap*% self, sType*% type, sInfo* info)
+{
+    self.type = clone type;
+    
+    self.sline = info.sline;
+    self.sname = string(info.sname);
+    
+    return self;
+}
+
+int sIsHeap*::sline(sIsHeap* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sIsHeap*::sname(sIsHeap* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+bool sIsHeap*::compile(sIsHeap* self, sInfo* info)
+{
+    sType* node = self.type;
+    
+    if(self.type.mHeap) {
+        CVALUE*% come_value = new CVALUE;
+        
+        come_value.c_value = xsprintf("1");
+        come_value.type = new sType("int", info);
+        come_value.var = null;
+        
+        info.stack.push_back(come_value);
+        
+        add_come_last_code(info, "%s;\n", come_value.c_value);
+    }
+    else {
+        CVALUE*% come_value = new CVALUE;
+        
+        come_value.c_value = xsprintf("0");
+        come_value.type = new sType("int", info);
+        come_value.var = null;
+        
+        info.stack.push_back(come_value);
+        
+        add_come_last_code(info, "%s;\n", come_value.c_value);
+    }
+    
+    return true;
+}
+
 exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 21
 {
     if(buf === "new") {
@@ -307,6 +363,18 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
          }
          
          return new sNode(new sBorrowNode(node, info));
+    }
+    else if(buf === "isheap" && *info->p == '(') {
+        info->p++;
+        skip_spaces_and_lf(info);
+        
+        var param_type, param_name = parse_type(info, parse_variable_name:false).catch {
+            throw
+        }
+        
+        expected_next_character(')', info).catch { throw }
+        
+        return new sNode(new sIsHeap(param_type, info));
     }
     else if(buf === "using") {
         if(memcmp(info->p.p, "comelang", strlen("comelang")) == 0) {
@@ -338,7 +406,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         }
     }
     else if(buf === "sizeof") {
-        expected_next_character('(', info);
+        expected_next_character('(', info).catch { throw }
         
         /// backtrace ///
         bool is_type_name_flag = false;

@@ -46,7 +46,7 @@ bool is_no_solve_generics_type(sType* type, sInfo* info)
 bool define_generics_struct(sType* type, sInfo* info)
 {
     sType*% generics_type = clone type;
-    string new_name = create_generics_name(generics_type, info);
+    string new_name = create_generics_name(generics_type, false@no_pointer_name, info);
     
     if(!info.classes.find(new_name)) {
         sClass*% new_class = new sClass(name:new_name, struct_:true);

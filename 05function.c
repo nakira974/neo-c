@@ -399,7 +399,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                 err_msg(info, "class not found");
                 throw;
             }
-            string new_name = create_generics_name(type, info);
+            string new_name = create_generics_name(type, false@no_pointer_name, info);
             if(!info.no_output_err) {
                 if(info.classes[new_name] == null) {
                     if(!define_generics_struct(type, info)) {
@@ -1579,21 +1579,9 @@ bool sLambdaNode*::compile(sLambdaNode* self, sInfo* info)
 
 string create_method_name(sType* obj_type, bool no_pointer_name, char* fun_name)
 {
-    string pointer_name = "p" * obj_type->mPointerNum;
-    string heap_name;
-    if(obj_type->mHeap) {
-        heap_name = string("h");
-    }
-    else {
-        heap_name = string("");
-    }
-    string class_name = obj_type->mClass->mName;
+    string struct_name = create_generics_name(obj_type, no_pointer_name, info)
     
-    if(no_pointer_name) {
-        return xsprintf("%s_%s", class_name, fun_name);
-    }
-    
-    return xsprintf("%s%s%s_%s", class_name, pointer_name, heap_name, fun_name);
+    return xsprintf("%s_%s", struct_name, fun_name);
 }
 
 bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* generics_type, sInfo* info)
@@ -2012,15 +2000,8 @@ exception int transpile(sInfo* info) version 5
 exception sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sInfo* info)
 {
     sFun* finalizer = null;
-    string real_fun_name = null;
     
-    if(type->mGenericsTypes.length() > 0) {
-        string struct_name = create_generics_name(type, info)
-        
-        real_fun_name = xsprintf("%s_%s", fun_name, struct_name);
-    }
-    else {
-        real_fun_name = create_method_name(type, false@no_pointer_name, fun_name);
+    string real_fun_name = create_method_name(type, false@no_pointer_name, fun_name);
     }
     
     sClass* klass = type->mClass;

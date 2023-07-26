@@ -86,7 +86,7 @@ exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
             i++;
         }
         
-        string new_name = create_generics_name(result, info);
+        string new_name = create_generics_name(result, false@no_pointer_name, info);
         if(info.classes[new_name] == null) {
             if(!define_generics_struct(result, info)) {
                 throw;
@@ -311,6 +311,7 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
         type2->mHeap = false;
         
         string fun_name2 = create_method_name(type2, false@no_pointer_name, fun_name);
+puts(fun_name2);
 
         int i;
         sFun* finalizer = NULL;

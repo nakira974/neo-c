@@ -132,16 +132,18 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
     buffer* method_block = self.method_block;
     int method_block_sline = self.method_block_sline;
     
+    info.no_output_come_code = true;
     if(!obj.compile->(info)) {
         return false;
     }
+    info.no_output_come_code = false;
     
     CVALUE*% come_value = get_value_from_stack(-1, info);
     dec_stack_ptr(1, info);
     
     sType*% obj_type = clone come_value.type;
     
-    string fun_name2 = create_method_name(obj_type, false@no_pointer_name, fun_name);
+    string fun_name2 = create_method_name(obj_type, false@no_pointer_name, fun_name, info);
     string fun_name3 = xsprintf("%s_%s", obj_type->mClass->mNoneGenericsName, fun_name);
     
     sGenericsFun* generics_fun = info.generics_funcs.at(fun_name3, null!);

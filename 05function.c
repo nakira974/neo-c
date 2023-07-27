@@ -399,19 +399,28 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                 err_msg(info, "class not found");
                 throw;
             }
+            type = solve_generics(type, info->generics_type, info).catch {
+                throw;
+            }
+            
+            type->mGenericsName = string(type_name);
+
+
             string new_name = create_generics_name(type, false@no_pointer_name, info);
-            if(!info.no_output_err) {
-                if(info.classes[new_name] == null) {
-                    if(!define_generics_struct(type, info)) {
-                        throw;
+            if(type->mClass->mName === type->mGenericsName) {
+                if(!info.no_output_err) {
+                    if(info.classes[new_name] == null) {
+                        if(!define_generics_struct(type, info)) {
+                            throw;
+                        }
+                        if(!is_contained_generics_class(type, info)) {
+                            type->mClass = info.classes[new_name];
+                        }
                     }
-                    if(!is_contained_generics_class(type, info)) {
-                        type->mClass = info.classes[new_name];
-                    }
-                }
-                else {
-                    if(!is_contained_generics_class(type, info)) {
-                        type->mClass = info.classes[new_name];
+                    else {
+                        if(!is_contained_generics_class(type, info)) {
+                            type->mClass = info.classes[new_name];
+                        }
                     }
                 }
             }
@@ -1235,7 +1244,7 @@ exception sNode*% expression_node(sInfo* info) version 99
             
             return node;
         }
-        else if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && *info->p == '(' && *(info->p+1) != '*')
+        else if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && *info->p == '(' && *(info->p+1) != '*')
         {
             sNode*% node = parse_function_call(buf, info).catch {
                 throw;
@@ -1340,6 +1349,7 @@ exception sBlock*% parse_block(sInfo* info)
         info->p++;
         skip_spaces_and_lf(info);
         while(true) {
+            parse_sharp(info);
             if(*info->p == '}') {
                 info->p++;
                 skip_spaces_and_lf(info);
@@ -1429,11 +1439,11 @@ exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<s
     
             add_last_code_to_source(info);
 
+            arrange_stack(info, stack_num_before);
+
             if(!info->last_statment_is_return) {
                 free_right_value_objects(info);
             }
-
-            arrange_stack(info, stack_num_before);
         }
     }
     
@@ -1466,6 +1476,9 @@ void arrange_stack(sInfo* info, int top)
     }
     if(info->stack.length() < top) {
         fprintf(stderr, "%s %d: unexpected stack value. The stack num is %d. top is %d\n", info->sname, info->sline, info->stack.length(), top);
+        int a = 0;
+        int b = 1;
+        int c = b/a;
         exit(2);
     }
 }
@@ -1577,9 +1590,10 @@ bool sLambdaNode*::compile(sLambdaNode* self, sInfo* info)
     return result;
 }
 
-string create_method_name(sType* obj_type, bool no_pointer_name, char* fun_name)
+string create_method_name(sType* obj_type, bool no_pointer_name, char* fun_name, sInfo* info)
 {
-    string struct_name = create_generics_name(obj_type, no_pointer_name, info)
+    string struct_name = obj_type->mClass->mName;
+//    string struct_name = create_generics_name(obj_type, no_pointer_name, info)
     
     return xsprintf("%s_%s", struct_name, fun_name);
 }
@@ -1603,13 +1617,25 @@ bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* gen
     list<string>*% param_names = clone generics_fun->mParamNames;
     
     smart_pointer<char>*% p = info.p;
+    
     int sline = generics_fun->mSLine;
     info.p = generics_fun->mBlock.to_buffer().to_pointer();
+    
+    var generics_type_saved = info->generics_type;
+    info->generics_type = clone generics_type;
+    var generics_type_names_saved = info->generics_type_names;
+    info->generics_type_names = clone generics_fun.mGenericsTypeNames;
+    
     sBlock*% block = parse_block(info).catch {
         return false;
     }
+    
+    info->generics_type = generics_type_saved;
+    info->generics_type_names = generics_type_names_saved;
+    
     info.p = info.p;
     info.sline = sline;
+    
     bool var_args = generics_fun.mVarArgs;
     sFun*% fun = new sFun(fun_name, result_type
                     , param_types
@@ -1785,14 +1811,14 @@ exception sNode*% parse_function(sInfo* info)
         string fun_name2 = parse_word(info).catch {
             throw;
         }
-        fun_name = create_method_name(obj_type, false@no_pointer_name, fun_name2)
+        fun_name = create_method_name(obj_type, false@no_pointer_name, fun_name2, info)
     }
     else if(info->impl_type) {
         string fun_name2 = parse_word(info).catch {
             throw;
         }
     
-        fun_name = create_method_name(info->impl_type, false@no_pointer_name, fun_name2);
+        fun_name = create_method_name(info->impl_type, false@no_pointer_name, fun_name2, info);
     }
     else {
         fun_name = parse_word(info).catch {
@@ -2001,8 +2027,7 @@ exception sFun*,string create_finalizer_automatically(sType* type, char* fun_nam
 {
     sFun* finalizer = null;
     
-    string real_fun_name = create_method_name(type, false@no_pointer_name, fun_name);
-    }
+    string real_fun_name = create_method_name(type, false@no_pointer_name, fun_name, info);
     
     sClass* klass = type->mClass;
     

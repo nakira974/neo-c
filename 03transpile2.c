@@ -18,12 +18,15 @@ string create_generics_name(sType* generics_type, bool no_pointer_name, sInfo* i
     char* class_name = klass->mName;
     
     buf.append_str(class_name);
+    
 
-    buf.append_str("p" * generics_type->mPointerNum);
+//    buf.append_str("p" * generics_type->mPointerNum);
 
+/*
     if(generics_type->mHeap) {
         buf.append_str("h");
     }
+*/
     
     if(generics_type->mGenericsTypes.length() > 0) {
         buf.append_str("_");

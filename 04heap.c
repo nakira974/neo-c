@@ -247,6 +247,9 @@ int get_right_value_id_from_obj(string obj)
 
 string append_object_to_right_values(char* obj, sType*% type, sInfo* info)
 {
+    if(info->no_output_come_code) {
+        return string("");
+    }
     var new_value = new sRightValueObject;
     new_value.mType = type;
     new_value.mFreed = false;
@@ -275,8 +278,6 @@ void remove_object_from_right_values(int right_value_num, sInfo* info)
     info->right_value_objects.delete(i, i+1);
 }
 
-
-
 static void free_protocol_object(sType* protocol_type, char* protocol_value_c_source, bool no_decrement, bool no_free, sInfo* info)
 {
     char* fun_name = "call_finalizer";
@@ -298,6 +299,9 @@ static void decrement_ref_count_protocol_object(sType* protocol_type, char* prot
 
 void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo* info)
 {
+    var stack_saved = clone info.stack;
+    var right_value_objects = clone info->right_value_objects;
+    
     if(!gGC && type->mPointerNum > 0) {
         string c_value = string(obj);
         
@@ -310,23 +314,41 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
         sType*% type2 = clone type;
         type2->mHeap = false;
         
-        string fun_name2 = create_method_name(type2, false@no_pointer_name, fun_name);
-puts(fun_name2);
-
-        int i;
+        string fun_name2 = create_method_name(type, false@no_pointer_name, fun_name, info);
+        
         sFun* finalizer = NULL;
-        for(i=FUN_VERSION_MAX-1; i>=1; i--) {
-            string new_fun_name = xsprintf("%s_v%d", fun_name2, i);
-            finalizer = info->funcs[new_fun_name];
+        if(type->mGenericsTypes.length() > 0) {
+            finalizer = info->funcs[fun_name2];
             
-            if(finalizer) {
-                fun_name2 = string(new_fun_name);
-                break;
+            if(finalizer == NULL) {
+                string generics_fun_name = xsprintf("%s_%s", type->mGenericsName, fun_name);
+                sGenericsFun* generics_fun = info->generics_funcs[generics_fun_name];
+                
+                if(generics_fun) {
+                    if(!create_generics_fun(fun_name2, generics_fun, type, info))
+                    {
+                        fprintf(stderr, "%s %d: can't create generics finalizer\n", info->sname, info->sline);
+                        exit(2);
+                    }
+                    finalizer = info->funcs[fun_name2];
+                }
             }
         }
-        
-        if(finalizer == NULL) {
-            finalizer = info->funcs[fun_name2];
+        else {
+            int i;
+            for(i=FUN_VERSION_MAX-1; i>=1; i--) {
+                string new_fun_name = xsprintf("%s_v%d", fun_name2, i);
+                finalizer = info->funcs[new_fun_name];
+                
+                if(finalizer) {
+                    fun_name2 = string(new_fun_name);
+                    break;
+                }
+            }
+            
+            if(finalizer == NULL) {
+                finalizer = info->funcs[fun_name2];
+            }
         }
         
         if(finalizer == NULL && !type->mProtocol && !type->mNumber 
@@ -372,11 +394,15 @@ puts(fun_name2);
             }
         }
     }
+    
+    info.right_value_objects = right_value_objects;
+    info.stack = stack_saved;
 }
 
 void free_right_value_objects(sInfo* info)
 {
-    foreach(it, info->right_value_objects) {
+    var right_value_objects = clone info->right_value_objects;
+    foreach(it, right_value_objects) {
         if(!it->mFreed) {
             if(it->mFunName === info->come_fun->mName) {
                 sType*% type = clone it->mType;

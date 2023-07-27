@@ -30,17 +30,17 @@ sStoreNode*% sStoreNode*::initialize(sStoreNode*% self, string name, sType*% typ
 
 bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
 {
-    if(self.alloc) {
-        sVar* var_ = info.lv_table.mVars[self.name];
-        if(var_) {
-            err_msg(info, "Already appended this var name(%s)", self.name);
-            return false;
-        }
-        
-        add_variable_to_table(self.name, self.type, info);
-    }
-    
     if(self.right_value == null) {
+        if(self.alloc) {
+            sVar* var_ = info.lv_table.mVars[self.name];
+            if(var_) {
+                err_msg(info, "Already appended this var name(%s)", self.name);
+                return false;
+            }
+            
+            add_variable_to_table(self.name, self.type, info);
+        }
+    
         sVar* var_ = get_variable_from_table(info.lv_table, self.name);
         
         if(var_ == null) {
@@ -83,6 +83,21 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         CVALUE*% right_value = get_value_from_stack(-1, info);
         dec_stack_ptr(1, info);
         sType* right_type = right_value.type;
+        
+        if(self.alloc) {
+            sVar* var_ = info.lv_table.mVars[self.name];
+            if(var_) {
+                err_msg(info, "Already appended this var name(%s)", self.name);
+                return false;
+            }
+            
+            if(self.type == null) {
+                add_variable_to_table(self.name, right_type, info);
+            }
+            else {
+                add_variable_to_table(self.name, self.type, info);
+            }
+        }
         
         sClass* current_stack_frame_struct = info->current_stack_frame_struct;
         
@@ -321,7 +336,25 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
     
     sFun* fun = info.funcs[buf]
     
-    if(!is_type_name_flag && *info->p == '=' && *(info->p+1) != '=') {
+    if(buf === "var") {
+        var buf2 = parse_word(info).catch { throw }
+        
+        if(*info->p == '=' && *(info->p+1) != '=') {
+            info.p++;
+            skip_spaces_and_lf(info);
+            
+            sNode*% right_value = expression(info).catch {
+                throw;
+            }
+            
+            return new sNode(new sStoreNode(string(buf2)@name, null!, true@alloc, right_value, info));
+        }
+        else {
+            err_msg(info, "var requires a right value");
+            throw;
+        }
+    }
+    else if(!is_type_name_flag && *info->p == '=' && *(info->p+1) != '=') {
         info.p++;
         skip_spaces_and_lf(info);
         

@@ -199,9 +199,8 @@ impl list <T>
 
         return self;
     }
-/*
     void finalize(list<T>* self) {
-        list_item<T>* it = self->head;
+        list_item<T>* it = self.head;
         while(it != null) {
             if(isheap(T)) {
                 delete borrow it.item;
@@ -211,9 +210,9 @@ impl list <T>
             delete borrow prev_it;
         }
     }
-*/
     void push_back(list<T>* self, T item)
     {
+/*
         if(self.len == 0) {
             list_item<T>* litem = borrow new list_item<T>;
             
@@ -246,6 +245,7 @@ impl list <T>
         }
 
         self.len++;
+*/
     }
 }
 

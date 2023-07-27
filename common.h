@@ -46,6 +46,8 @@ interface sNode {
 struct sType
 {
     sClass* mClass;
+    
+    string mGenericsName;
 
     list<sType*%>*% mGenericsTypes;
     
@@ -316,7 +318,7 @@ exception int transpile(sInfo* info) version 5;
 void parse_sharp(sInfo* info) version 5;
 exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 5;
 exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 5;
-string create_method_name(sType* obj_type, bool no_pointer_name, char* fun_name);
+string create_method_name(sType* obj_type, bool no_pointer_name, char* fun_name, sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
 /// 06str.c ///

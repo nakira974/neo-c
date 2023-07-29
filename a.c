@@ -8,6 +8,12 @@ int main(int argc, char** argv)
     li.push_back(2);
     li.push_back(3);
     
+    for(var it = li.begin(); !li.end(); it = li.next())
+    {
+        printf("%d\n", it);
+    }
+
+    
     return 0;
 }
 

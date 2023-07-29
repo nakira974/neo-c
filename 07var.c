@@ -38,7 +38,14 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                 return false;
             }
             
-            add_variable_to_table(self.name, self.type, info);
+printf("1. %s\n", self.type->mClass->mName);
+            var type = solve_generics(self.type, info->generics_type, info).catch {
+                return false;
+            }
+            
+printf("2. %s\n", type->mClass->mName);
+            
+            add_variable_to_table(self.name, type, info);
         }
     
         sVar* var_ = get_variable_from_table(info.lv_table, self.name);
@@ -95,7 +102,11 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                 add_variable_to_table(self.name, right_type, info);
             }
             else {
-                add_variable_to_table(self.name, self.type, info);
+                var type = solve_generics(self.type, info->generics_type, info).catch {
+                    return false;
+                }
+                
+                add_variable_to_table(self.name, type, info);
             }
         }
         

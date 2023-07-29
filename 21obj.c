@@ -172,7 +172,11 @@ bool sSizeOfNode*::compile(sSizeOfNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
+    var type2 = solve_generics(type, info->generics_type, info).catch {
+        return false;
+    }
+    
+    string type_name = make_type_name_string(type2, false@in_header, false@array_cast_pointer, info);
     
     come_value.c_value = xsprintf("sizeof(%s)", type_name);
     come_value.type = new sType("long", info);

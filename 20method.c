@@ -316,9 +316,13 @@ exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) v
             break;
         }
         
+        info.no_comma = true;
+        
         sNode*% node = expression(info).catch {
             throw;
         }
+        
+        info.no_comma = false;
         
         params.push_back(node);
         

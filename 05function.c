@@ -786,7 +786,7 @@ exception sNode*% expression_node(sInfo* info) version 1
     skip_spaces_and_lf(info);
     parse_sharp(info);
     
-    err_msg(info, "invalid character(%c)\n", *info->p);
+    err_msg(info, "invalid character(%c)(1)\n", *info->p);
     throw;
 }
 
@@ -1079,9 +1079,13 @@ exception sNode*% parse_function_call(char* fun_name, sInfo* info)
             break;
         }
         
+        info.no_comma = true;
+        
         sNode*% node = expression(info).catch {
             throw;
         }
+        
+        info.no_comma = false;
         
         params.push_back(node);
         
@@ -1441,9 +1445,9 @@ exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<s
 
             arrange_stack(info, stack_num_before);
 
-            if(!info->last_statment_is_return) {
+//            if(!info->last_statment_is_return) {
                 free_right_value_objects(info);
-            }
+//            }
         }
     }
     
@@ -1634,9 +1638,6 @@ bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* gen
         return false;
     }
     
-    info->generics_type = generics_type_saved;
-    info->generics_type_names = generics_type_names_saved;
-    
     info.p = info.p;
     info.sline = sline;
     
@@ -1653,6 +1654,9 @@ bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* gen
     if(!node.compile->(info)) {
         return false
     }
+    
+    info->generics_type = generics_type_saved;
+    info->generics_type_names = generics_type_names_saved;
     
     return true;
 }
@@ -1886,7 +1890,7 @@ exception sNode*% parse_function(sInfo* info)
         return new sNode(new sFunNode(fun, info));
     }
     else {
-        err_msg(info, "invalid character(%c)\n", *info->p);
+        err_msg(info, "invalid character(%c)(2)\n", *info->p);
         throw;
     }
     
@@ -1905,8 +1909,9 @@ bool is_type_name(char* buf, sInfo* info)
 {
     sClass* klass = info.classes[buf];
     sType* type = info.types[buf];
+    bool generics_type_name = info.generics_type_names.contained(string(buf));
     
-    return klass || type || buf === "const" || buf === "register" || buf === "static" || buf === "volatile" || buf === "unsigned" || buf === "immutable" || buf === "mutable" || buf === "struct" || buf === "enum" || buf === "union";
+    return generics_type_name || klass || type || buf === "const" || buf === "register" || buf === "static" || buf === "volatile" || buf === "unsigned" || buf === "immutable" || buf === "mutable" || buf === "struct" || buf === "enum" || buf === "union";
 
 }
 

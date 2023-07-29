@@ -1918,7 +1918,7 @@ exception sNode*% comma_exp(sInfo* info)
     parse_sharp(info);
 
     while(*info->p) {
-        if(info.comma && *info->p == ',') {
+        if(!info.no_comma && *info->p == ',') {
             info->p++;
             skip_spaces_and_lf(info);
 
@@ -1990,7 +1990,7 @@ exception sNode*% conditional_exp(sInfo* info)
 exception sNode*% expression(sInfo* info) version 13
 {
     parse_sharp(info);
-    skip_spaces_and_lf(info);
+
     sNode*% node = conditional_exp(info).catch {
         throw
     }

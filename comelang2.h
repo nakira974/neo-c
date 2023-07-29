@@ -245,7 +245,37 @@ impl list <T>
 
         self.len++;
     }
+    
+    T& begin(list<T>* self) {
+        self.it = self.head;
+
+        if(self.it) {
+            return self.it.item;
+        }
+        
+        T& result;
+        memset(&result, 0, sizeof(T));
+        return result;
+    }
+
+    T& next(list<T>* self) {
+        self.it = self.it.next;
+
+        if(self.it) {
+            return self.it.item;
+        }
+        
+        T& result;
+        memset(&result, 0, sizeof(T));
+        return result;
+    }
+
+    bool end(list<T>* self) {
+        return self.it == null;
+    }
 }
+
+#define foreach(o1, o2) for(var _obj = (o2), var o1 = _obj.begin(); !_obj.end(); o1 = _obj.next())
 
 typedef char*% string;
 

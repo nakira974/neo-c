@@ -299,8 +299,8 @@ static void decrement_ref_count_protocol_object(sType* protocol_type, char* prot
 
 void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo* info)
 {
-    var stack_saved = clone info.stack;
-    var right_value_objects = clone info->right_value_objects;
+    var stack_saved = info.stack;
+    var right_value_objects = info->right_value_objects;
     
     if(!gGC && type->mPointerNum > 0) {
         string c_value = string(obj);
@@ -401,7 +401,7 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
 
 void free_right_value_objects(sInfo* info)
 {
-    var right_value_objects = clone info->right_value_objects;
+    var right_value_objects = info->right_value_objects;
     foreach(it, right_value_objects) {
         if(!it->mFreed) {
             if(it->mFunName === info->come_fun->mName) {
@@ -415,6 +415,8 @@ void free_right_value_objects(sInfo* info)
                 }
 
                 free_object(type, it->mVarName, true@no_decrement, false@no_free, info);
+                
+printf("it %p\n", it);
 
                 it->mFreed = true;
             }

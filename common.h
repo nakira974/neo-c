@@ -219,7 +219,7 @@ struct sInfo
     sVarTable* lv_table;
     sVarTable*% gv_table;
     
-    bool comma;
+    bool no_comma;
     bool last_statment_is_return;
     
     list<string>*% generics_type_names;

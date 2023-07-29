@@ -228,6 +228,8 @@ struct sInfo
     int current_stack_num;
     int num_method_block;
     sClass* current_stack_frame_struct;
+    list<sType*%>*? param_types;
+    list<string>*? param_names;
 };
 
 /////////////////////////////////////////////////////////////////////

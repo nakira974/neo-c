@@ -38,12 +38,9 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                 return false;
             }
             
-printf("1. %s\n", self.type->mClass->mName);
             var type = solve_generics(self.type, info->generics_type, info).catch {
                 return false;
             }
-            
-printf("2. %s\n", type->mClass->mName);
             
             add_variable_to_table(self.name, type, info);
         }
@@ -79,7 +76,7 @@ printf("2. %s\n", type->mClass->mName);
         
         if(self.alloc && left_type->mClass->mStruct) {
             add_come_code(info, "memset(&%s, 0, sizeof(struct %s));\n", var_->mCValueName, left_type->mClass->mName);
-            var_->mType->mAllocaValue = 1;
+            var_->mType->mAllocaValue = true;
         }
     }
     else {

@@ -65,6 +65,7 @@ int main()
             n++;
         }
     }
+    
     char*% ax = new char[128];
     
     if(1) {

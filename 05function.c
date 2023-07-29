@@ -609,11 +609,33 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
             }
         }
         
+        if(info.param_types && info.param_names) {
+            int i = 0;
+            foreach(name, info.param_names) {
+                sType* type = info.param_types[i];
+                if(type->mHeap) {
+                    free_object(type, name, false@no_decrement, false@no_free, info);
+                }
+                i++;
+            }
+        }
+        
         free_objects_on_return(come_fun.mBlock, info, come_value.c_value, false@top_block);
         
         add_come_code(info, "return %s;\n", come_value.c_value);
     }
     else {
+        if(info.param_types && info.param_names) {
+            int i = 0;
+            foreach(name, info.param_names) {
+                sType* type = info.param_types[i];
+                if(type->mHeap) {
+                    free_object(type, name, false@no_decrement, false@no_free, info);
+                }
+                i++;
+            }
+        }
+        
         sFun* come_fun = info.come_fun;
         free_objects_on_return(come_fun.mBlock, info, null!, false@top_block);
         add_come_code(info, "return;\n");
@@ -1404,11 +1426,18 @@ exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<s
     block->mVarTable = new sVarTable(false@global, old_table);
     info->lv_table = block->mVarTable;
     
+    list<sType*%>*? param_types_ = info.param_types;
+    list<string>*? param_names_ = info.param_names;
+    
+    info.param_types = param_types;
+    info.param_names = param_names;
+    
     if(param_types && param_names) {
         int i;
         foreach(name, param_names) {
             sType*% type = clone param_types[i];
             type->mFunctionParam = true;
+            type->mAllocaValue = false;
             add_variable_to_table(name, type, info);
             i++;
         }
@@ -1445,9 +1474,7 @@ exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<s
 
             arrange_stack(info, stack_num_before);
 
-//            if(!info->last_statment_is_return) {
-                free_right_value_objects(info);
-//            }
+            free_right_value_objects(info);
         }
     }
     
@@ -1468,6 +1495,9 @@ exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<s
     
     info->lv_table = old_table;
     info->block_level = block_level;
+    
+    info.param_types = param_types_;
+    info.param_names = param_names_;
     
     return 0;
 }

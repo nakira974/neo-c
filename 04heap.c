@@ -416,8 +416,6 @@ void free_right_value_objects(sInfo* info)
 
                 free_object(type, it->mVarName, true@no_decrement, false@no_free, info);
                 
-printf("it %p\n", it);
-
                 it->mFreed = true;
             }
         }

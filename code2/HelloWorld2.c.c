@@ -1,28 +1,29 @@
 typedef unsigned long size_t;
+typedef char* string;
 struct sData
 {
     char* a;
 };
 struct __current_stack1__
 {
-    char** p_20;
-    void** p2_21;
-    int* count_22;
-    int* size2_23;
-    char** mem2_24;
-    int* b_25;
-    int** a_26;
-    int* a2_27;
-    char** ax_30;
-    char** str_34;
-    struct sData** data_35;
-    int** axyz_36;
-    int** xxx_37;
-    int** yyy_38;
-    int** zzz_39;
-    int* bzyz_40;
-    int** azyz_41;
-    int* n_42;
+    char** p_25;
+    void** p2_26;
+    int* count_27;
+    int* size2_28;
+    char** mem2_29;
+    int* b_30;
+    int** a_31;
+    int* a2_32;
+    char** ax_35;
+    char** str_39;
+    struct sData** data_40;
+    int** axyz_41;
+    int** xxx_42;
+    int** yyy_43;
+    int** zzz_44;
+    int* bzyz_45;
+    int** azyz_46;
+    int* n_47;
 };
 
 int puts(const char* str);
@@ -31,6 +32,7 @@ void* malloc(unsigned long size);
 void free(void* ptr);
 void* calloc(unsigned long nmemb, unsigned long size);
 void* realloc(void* ptr, unsigned long size);
+unsigned long strlen(const char* s);
 void* memset(void* s, int c, unsigned long n);
 char* strncpy(char* dest, const char* src, unsigned long n);
 void exit(int status);
@@ -38,16 +40,18 @@ static void xassert(char* msg, _Bool test);
 static void ncfree(void* mem);
 static void* come_calloc(unsigned long count, unsigned long size);
 static void* come_increment_ref_count(void* mem);
-static void* come_decrement_ref_count(void* mem);
-static void come_decrement_ref_count2(void* mem);
+static void* come_decrement_ref_count(void* mem, _Bool no_decrement, _Bool no_free);
 static void come_free_object(void* mem);
+static void call_finalizer(void* fun, void* mem, int call_finalizer_only, int no_decrement, int no_free);
 static void* nccalloc(unsigned long nmemb, unsigned long size);
 static void* come_memdup(void* block);
 void int_times(int self, void* parent, void (*block)(void*));
+char* __builtin_string(char* str);
 int* funHeap(int x, int y);
 int funHeap2(int* x, int* y);
-int intp_fun(int* self);
+int int_fun(int* self);
 int main();
+void sData_finalize(struct sData* self);
 void method_block1(struct __current_stack1__* parent);
 
 static void xassert(char* msg, _Bool test){
@@ -86,235 +90,281 @@ int* ref_count_3;
     return mem;
 }
 
-static void* come_decrement_ref_count(void* mem){
+static void* come_decrement_ref_count(void* mem, _Bool no_decrement, _Bool no_free){
 int* ref_count_4;
 int count_5;
     if(mem==((void*)0)) {
         return ((void*)0);
     }
     ref_count_4=(int*)((char*)mem-sizeof(int)-sizeof(long));
-    (*ref_count_4)--;
+    if(!no_decrement) {
+        (*ref_count_4)--;
+    }
     count_5=*ref_count_4;
-    if(count_5<=0) {
+    if(!no_free&&count_5<=0) {
         ncfree(ref_count_4);
         return ((void*)0);
     }
     return mem;
 }
 
-static void come_decrement_ref_count2(void* mem){
+static void come_free_object(void* mem){
 int* ref_count_6;
     if(mem==((void*)0)) {
         return;
     }
     ref_count_6=(int*)((char*)mem-sizeof(int)-sizeof(long));
-    (*ref_count_6)--;
+    ncfree(ref_count_6);
 }
 
-static void come_free_object(void* mem){
-int* ref_count_7;
+static void call_finalizer(void* fun, void* mem, int call_finalizer_only, int no_decrement, int no_free){
+void (*finalizer_7)(void*);
+int* ref_count_8;
+int count_9;
+void (*finalizer_10)(void*);
     if(mem==((void*)0)) {
         return;
     }
-    ref_count_7=(int*)((char*)mem-sizeof(int)-sizeof(long));
-    ncfree(ref_count_7);
+    if(call_finalizer_only) {
+        if(fun) {
+            finalizer_7=fun;
+            finalizer_7(mem);
+        }
+    }
+    else {
+        ref_count_8=(int*)((char*)mem-sizeof(int)-sizeof(long));
+        if(!no_decrement) {
+            (*ref_count_8)--;
+        }
+        count_9=*ref_count_8;
+        if(!no_free&&count_9<=0) {
+            if(mem) {
+                if(fun) {
+                    finalizer_10=fun;
+                    finalizer_10(mem);
+                }
+                come_free_object(mem);
+            }
+        }
+    }
 }
 
 static void* nccalloc(unsigned long nmemb, unsigned long size){
-void* result_8;
-    result_8=calloc(nmemb,size);
-    return result_8;
+void* result_11;
+    result_11=calloc(nmemb,size);
+    return result_11;
 }
 
 static void* come_memdup(void* block){
-char* mem_9;
-long* size_p_10;
-unsigned long size_11;
-void* ret_12;
-int* ref_count_13;
-char* p_14;
-char* p2_15;
-long* size_p2_16;
+char* mem_12;
+long* size_p_13;
+unsigned long size_14;
+void* ret_15;
+int* ref_count_16;
+char* p_17;
+char* p2_18;
+long* size_p2_19;
     if(!block) {
         return ((void*)0);
     }
-    mem_9=(char*)block-sizeof(int)-sizeof(long);
-    size_p_10=(long*)(mem_9+sizeof(int));
-    size_11=*size_p_10;
-    ret_12=calloc(1,size_11);
-    ref_count_13=ret_12;
-    if(ret_12) {
-        p_14=ret_12;
-        p2_15=mem_9;
-        while(p_14-(char*)ret_12<size_11) {
-            *p_14=*p2_15;
-            p_14++;
-            p2_15++;
+    mem_12=(char*)block-sizeof(int)-sizeof(long);
+    size_p_13=(long*)(mem_12+sizeof(int));
+    size_14=*size_p_13;
+    ret_15=calloc(1,size_14);
+    ref_count_16=ret_15;
+    if(ret_15) {
+        p_17=ret_15;
+        p2_18=mem_12;
+        while(p_17-(char*)ret_15<size_14) {
+            *p_17=*p2_18;
+            p_17++;
+            p2_18++;
         }
     }
-    size_p2_16=(long*)((char*)ret_12+sizeof(int));
-    *size_p2_16=size_11;
-    return (char*)ret_12+sizeof(int)+sizeof(long);
+    size_p2_19=(long*)((char*)ret_15+sizeof(int));
+    *size_p2_19=size_14;
+    return (char*)ret_15+sizeof(int)+sizeof(long);
 }
 
 void int_times(int self, void* parent, void (*block)(void*)){
-int i_17;
+int i_20;
     for(
-    i_17=0;
-    i_17<self;
-    i_17++
+    i_20=0;
+    i_20<self;
+    i_20++
     ){
         block(parent);
     }
 }
 
-int* funHeap(int x, int y){
+char* __builtin_string(char* str){
+int len_21;
 void* right_value0;
-int* result_18;
-    result_18=come_increment_ref_count((int*)(right_value0=(int*)come_calloc(1, sizeof(int)*1)));
-    *result_18=x+y;
-    come_decrement_ref_count2(result_18);
-    return result_18;
+char* result_22;
+    len_21=strlen(str)+1;
+    result_22=come_increment_ref_count((char**)(right_value0=(char**)come_calloc(1, sizeof(char*)*1*len_21)));
+    strncpy(result_22,str,len_21);
+    result_22 = come_decrement_ref_count(result_22, 0, 1);
+    return result_22;
+}
+
+int* funHeap(int x, int y){
+void* right_value1;
+int* result_23;
+    result_23=come_increment_ref_count((int*)(right_value1=(int*)come_calloc(1, sizeof(int)*1)));
+    *result_23=x+y;
+    result_23 = come_decrement_ref_count(result_23, 0, 1);
+    return result_23;
 }
 
 int funHeap2(int* x, int* y){
-    x = come_decrement_ref_count(x);
-    y = come_decrement_ref_count(y);
+    x = come_decrement_ref_count(x, 0, 0);
+    y = come_decrement_ref_count(y, 0, 0);
+    x = come_decrement_ref_count(x, 0, 0);
+    y = come_decrement_ref_count(y, 0, 0);
     return *x+*y;
+    x = come_decrement_ref_count(x, 0, 0);
+    y = come_decrement_ref_count(y, 0, 0);
 }
 
-int intp_fun(int* self){
+int int_fun(int* self){
     return *self;
 }
 
 int main(){
-void* right_value1;
-char* a_19;
-char* p_20;
-void* p2_21;
-int count_22;
-int size2_23;
-char* mem2_24;
-int b_25;
-int* a_26;
-int a2_27;
-int b_28;
-int n_29;
 void* right_value2;
-char* ax_30;
+char* a_24;
+char* p_25;
+void* p2_26;
+int count_27;
+int size2_28;
+char* mem2_29;
+int b_30;
+int* a_31;
+int a2_32;
+int b_33;
+int n_34;
 void* right_value3;
-char* a_31;
-char* b_32;
-struct sData data_33;
+char* ax_35;
 void* right_value4;
-char* str_34;
+char* a_36;
+char* b_37;
+struct sData data_38;
 void* right_value5;
-struct sData* data_35;
+char* str_39;
 void* right_value6;
+struct sData* data_40;
 void* right_value7;
 void* right_value8;
-int* axyz_36;
 void* right_value9;
-int* xxx_37;
+int* axyz_41;
 void* right_value10;
-int* yyy_38;
+int* xxx_42;
 void* right_value11;
-int* zzz_39;
+int* yyy_43;
 void* right_value12;
-int bzyz_40;
-int* azyz_41;
-int n_42;
+int* zzz_44;
+void* right_value13;
+int bzyz_45;
+int* azyz_46;
+int n_47;
 struct __current_stack1__ __current_stack1__;
     if(1) {
-        a_19=come_increment_ref_count((char**)(right_value1=(char**)come_calloc(1, sizeof(char*)*1*128)));
-        a_19 = come_decrement_ref_count(a_19);
+        a_24=come_increment_ref_count((char**)(right_value2=(char**)come_calloc(1, sizeof(char*)*1*128)));
+        a_24 = come_decrement_ref_count(a_24, 0, 0);
     }
     printf("%ld\n",sizeof(unsigned long));
-    p_20="ABC";
-    p2_21="ABC";
-    printf("%s\n",(char*)p2_21);
-    printf("%c\n",*p_20);
-    count_22=0;
-    size2_23=1;
-    mem2_24=calloc(1,sizeof(int)+sizeof(long)+count_22*size2_23);
-    free(mem2_24);
-    a_26=&b_25;
-    (*a_26)=123;
-    a2_27=123;
+    p_25="ABC";
+    p2_26="ABC";
+    printf("%s\n",(char*)p2_26);
+    printf("%c\n",*p_25);
+    count_27=0;
+    size2_28=1;
+    mem2_29=calloc(1,sizeof(int)+sizeof(long)+count_27*size2_28);
+    free(mem2_29);
+    a_31=&b_30;
+    (*a_31)=123;
+    a2_32=123;
     if((_Bool)1) {
-        b_28=234;
-        n_29=0;
-        while(n_29<3) {
-            printf("a %d\n",a2_27);
-            printf("b %d\n",b_28);
-            n_29++;
+        b_33=234;
+        n_34=0;
+        while(n_34<3) {
+            printf("a %d\n",a2_32);
+            printf("b %d\n",b_33);
+            n_34++;
         }
     }
-    ax_30=come_increment_ref_count((char**)(right_value2=(char**)come_calloc(1, sizeof(char*)*1*128)));
+    ax_35=come_increment_ref_count((char**)(right_value3=(char**)come_calloc(1, sizeof(char*)*1*128)));
     if(1) {
-        a_31=come_increment_ref_count((char**)(right_value3=(char**)come_calloc(1, sizeof(char*)*1*128)));
-        b_32=come_increment_ref_count(a_31);
-        memset(&data_33, 0, sizeof(struct sData));
-        data_33.a=come_increment_ref_count(a_31);
-        a_31 = come_decrement_ref_count(a_31);
-        b_32 = come_decrement_ref_count(b_32);
+        a_36=come_increment_ref_count((char**)(right_value4=(char**)come_calloc(1, sizeof(char*)*1*128)));
+        b_37=come_increment_ref_count(a_36);
+        memset(&data_38, 0, sizeof(struct sData));
+        data_38.a=come_increment_ref_count(a_36);
+        a_36 = come_decrement_ref_count(a_36, 0, 0);
+        b_37 = come_decrement_ref_count(b_37, 0, 0);
+        call_finalizer(sData_finalize,(&data_38),1, 0, 0);
     }
-    str_34=come_increment_ref_count((char**)(right_value4=(char**)come_calloc(1, sizeof(char*)*1*128)));
-    strncpy(str_34,"ABC",128);
-    data_35=come_increment_ref_count((struct sData*)(right_value5=(struct sData*)come_calloc(1, sizeof(struct sData)*1)));
-    data_35->a=come_increment_ref_count(str_34);
-    puts(data_35->a);
-    (int*)(right_value6=funHeap(7,7));
-    right_value6 = come_decrement_ref_count(right_value6);
-    xassert("right value test",*(int*)(right_value7=funHeap(3,4))==7);
-    right_value7 = come_decrement_ref_count(right_value7);
-    axyz_36=come_increment_ref_count((int*)(right_value8=funHeap(1,2)));
-    xassert("variable test",*axyz_36==3);
-    xxx_37=come_increment_ref_count((int*)(right_value9=(int*)come_calloc(1, sizeof(int)*1)));
-    *xxx_37=1;
-    yyy_38=come_increment_ref_count((int*)(right_value10=(int*)come_calloc(1, sizeof(int)*1)));
-    *yyy_38=2;
-    xassert("heap",funHeap2(come_increment_ref_count(xxx_37),come_increment_ref_count(yyy_38))==3);
-    zzz_39=(int*)(right_value11=(int*)come_calloc(1, sizeof(int)*1));
-    right_value11 = come_decrement_ref_count(right_value11);
-    (int*)(right_value12=(int*)come_calloc(1, sizeof(int)*1));
-    right_value12 = come_decrement_ref_count(right_value12);
-    bzyz_40=123;
-    azyz_41=&bzyz_40;
-    xassert("impl",intp_fun(azyz_41)==123);
-    n_42=0;
-    __current_stack1__.p_20 = &p_20;
-    __current_stack1__.p2_21 = &p2_21;
-    __current_stack1__.count_22 = &count_22;
-    __current_stack1__.size2_23 = &size2_23;
-    __current_stack1__.mem2_24 = &mem2_24;
-    __current_stack1__.b_25 = &b_25;
-    __current_stack1__.a_26 = &a_26;
-    __current_stack1__.a2_27 = &a2_27;
-    __current_stack1__.ax_30 = &ax_30;
-    __current_stack1__.str_34 = &str_34;
-    __current_stack1__.data_35 = &data_35;
-    __current_stack1__.axyz_36 = &axyz_36;
-    __current_stack1__.xxx_37 = &xxx_37;
-    __current_stack1__.yyy_38 = &yyy_38;
-    __current_stack1__.zzz_39 = &zzz_39;
-    __current_stack1__.bzyz_40 = &bzyz_40;
-    __current_stack1__.azyz_41 = &azyz_41;
-    __current_stack1__.n_42 = &n_42;
+    str_39=come_increment_ref_count((char**)(right_value5=(char**)come_calloc(1, sizeof(char*)*1*128)));
+    strncpy(str_39,"ABC",128);
+    data_40=come_increment_ref_count((struct sData*)(right_value6=(struct sData*)come_calloc(1, sizeof(struct sData)*1)));
+    data_40->a=come_increment_ref_count(str_39);
+    puts(data_40->a);
+    (int*)(right_value7=funHeap(7,7));
+    right_value7 = come_decrement_ref_count(right_value7, 1, 0);
+    xassert("right value test",*(int*)(right_value8=funHeap(3,4))==7);
+    right_value8 = come_decrement_ref_count(right_value8, 1, 0);
+    axyz_41=come_increment_ref_count((int*)(right_value9=funHeap(1,2)));
+    xassert("variable test",*axyz_41==3);
+    xxx_42=come_increment_ref_count((int*)(right_value10=(int*)come_calloc(1, sizeof(int)*1)));
+    *xxx_42=1;
+    yyy_43=come_increment_ref_count((int*)(right_value11=(int*)come_calloc(1, sizeof(int)*1)));
+    *yyy_43=2;
+    xassert("heap",funHeap2(come_increment_ref_count(xxx_42),come_increment_ref_count(yyy_43))==3);
+    zzz_44=(int*)(right_value12=(int*)come_calloc(1, sizeof(int)*1));
+    right_value12 = come_decrement_ref_count(right_value12, 1, 0);
+    (int*)(right_value13=(int*)come_calloc(1, sizeof(int)*1));
+    right_value13 = come_decrement_ref_count(right_value13, 1, 0);
+    bzyz_45=123;
+    azyz_46=&bzyz_45;
+    xassert("impl",int_fun(azyz_46)==123);
+    n_47=0;
+    __current_stack1__.p_25 = &p_25;
+    __current_stack1__.p2_26 = &p2_26;
+    __current_stack1__.count_27 = &count_27;
+    __current_stack1__.size2_28 = &size2_28;
+    __current_stack1__.mem2_29 = &mem2_29;
+    __current_stack1__.b_30 = &b_30;
+    __current_stack1__.a_31 = &a_31;
+    __current_stack1__.a2_32 = &a2_32;
+    __current_stack1__.ax_35 = &ax_35;
+    __current_stack1__.str_39 = &str_39;
+    __current_stack1__.data_40 = &data_40;
+    __current_stack1__.axyz_41 = &axyz_41;
+    __current_stack1__.xxx_42 = &xxx_42;
+    __current_stack1__.yyy_43 = &yyy_43;
+    __current_stack1__.zzz_44 = &zzz_44;
+    __current_stack1__.bzyz_45 = &bzyz_45;
+    __current_stack1__.azyz_46 = &azyz_46;
+    __current_stack1__.n_47 = &n_47;
     int_times(3,&__current_stack1__,method_block1);
-    ax_30 = come_decrement_ref_count(ax_30);
-    str_34 = come_decrement_ref_count(str_34);
-    (data_35->a) = come_decrement_ref_count((data_35->a));
-    data_35 = come_decrement_ref_count(data_35);
-    axyz_36 = come_decrement_ref_count(axyz_36);
-    xxx_37 = come_decrement_ref_count(xxx_37);
-    yyy_38 = come_decrement_ref_count(yyy_38);
+    ax_35 = come_decrement_ref_count(ax_35, 0, 0);
+    str_39 = come_decrement_ref_count(str_39, 0, 0);
+    call_finalizer(sData_finalize,data_40,0, 0, 0);
+    axyz_41 = come_decrement_ref_count(axyz_41, 0, 0);
+    xxx_42 = come_decrement_ref_count(xxx_42, 0, 0);
+    yyy_43 = come_decrement_ref_count(yyy_43, 0, 0);
     return 0;
+}
+
+void sData_finalize(struct sData* self){
+            if(self!=((void*)0)&&self->a!=((void*)0)) {
+                self->a = come_decrement_ref_count(self->a, 0, 0);
+            }
 }
 
 void method_block1(struct __current_stack1__* parent){
         puts("HO!");
-        printf("%d\n",(*((*parent).n_42)));
-        (*((*parent).n_42))++;
+        printf("%d\n",(*((*parent).n_47)));
+        (*((*parent).n_47))++;
 }
 

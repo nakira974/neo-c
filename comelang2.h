@@ -212,7 +212,6 @@ impl list <T>
     }
     void push_back(list<T>* self, T item)
     {
-/*
         if(self.len == 0) {
             list_item<T>* litem = borrow new list_item<T>;
             
@@ -245,7 +244,6 @@ impl list <T>
         }
 
         self.len++;
-*/
     }
 }
 

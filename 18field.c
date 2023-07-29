@@ -204,7 +204,7 @@ exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 18
             
             string field_name = parse_word(info).catch { throw };
             
-            if(*info->p == '=') {
+            if(*info->p == '=' && *(info->p+1) != '=') {
                 info->p++;
                 skip_spaces_and_lf(info);
                 

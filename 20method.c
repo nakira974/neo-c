@@ -165,14 +165,20 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
     
     list<CVALUE*%>*% come_params = new list<CVALUE*%>();
     
+    int i = 0;
     foreach(it, params) {
         if(!it.compile->(info)) {
             return false;
         }
         
         CVALUE*% come_value = get_value_from_stack(-1, info);
+        if(fun.mParamTypes[i].mHeap) {
+            come_value.c_value = xsprintf("come_increment_ref_count(%s)", come_value.c_value);
+        }
         come_params.push_back(come_value);
         dec_stack_ptr(1, info);
+        
+        i++;
     }
     
     if(method_block) {

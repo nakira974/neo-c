@@ -1600,6 +1600,10 @@ string create_method_name(sType* obj_type, bool no_pointer_name, char* fun_name,
 
 bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* generics_type, sInfo* info)
 {
+    sFun* funX = info.funcs[fun_name];
+    if(funX) {
+        return true;
+    }
     sType*% result_type = solve_generics(generics_fun->mResultType, generics_type, info).catch {
         return false;
     }

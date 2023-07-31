@@ -176,7 +176,7 @@ void int::times(int self, void* parent, void (*block)(void* parent))
 
 struct list_item<T>
 {
-    T& item;
+    T item;
     list_item<T>* prev;
     list_item<T>* next;
 };
@@ -275,7 +275,7 @@ impl list <T>
     }
 }
 
-#define foreach(o1, o2) for(var _obj = (o2), var o1 = _obj.begin(); !_obj.end(); o1 = _obj.next())
+#define foreach(o1, o2) for(var o1 = (o2).begin(); !(o2).end(); o1 = (o2).next())
 
 typedef char*% string;
 

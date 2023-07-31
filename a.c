@@ -1,30 +1,26 @@
 #include <comelang2.h>
 
-struct sData
-{
-    char*% a;
-};
-
 int main(int argc, char** argv)
 {
-    char*% a = new char[128];
-    char*% b = a;
-        
-    sData data;
-    data.a = a;
+    list<string>*% li = new list<string>.initialize();
     
-/*
-    list<int>*% li = new list<int>.initialize();
+    li.push_back(string("ABC"));
+    li.push_back(string("DEF"));
+    li.push_back(string("GHI"));
     
-    li.push_back(1);
-    li.push_back(2);
-    li.push_back(3);
+    foreach(it, li) {
+        printf("%s\n", it);
+    }
     
-    for(var it = li.begin(); !li.end(); it = li.next())
-    {
+    list<int>*% li2 = new list<int>.initialize();
+    
+    li2.push_back(1);
+    li2.push_back(2);
+    li2.push_back(3);
+    
+    foreach(it, li2) {
         printf("%d\n", it);
     }
-*/
     
     return 0;
 }

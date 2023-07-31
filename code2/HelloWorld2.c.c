@@ -77,24 +77,28 @@ long* size2_2;
     ref_count_1=(int*)mem_0;
     size2_2=(long*)(mem_0+sizeof(int));
     *size2_2=size*count+sizeof(long)+sizeof(int);
-    return mem_0+sizeof(int)+sizeof(long);
+    char* __result__ = mem_0+sizeof(int)+sizeof(long);
+    return __result__;
 }
 
 static void* come_increment_ref_count(void* mem){
 int* ref_count_3;
     if(mem==((void*)0)) {
-        return mem;
+        void* __result__ = mem;
+        return __result__;
     }
     ref_count_3=(int*)((char*)mem-sizeof(int)-sizeof(long));
     (*ref_count_3)++;
-    return mem;
+    void* __result__ = mem;
+    return __result__;
 }
 
 static void* come_decrement_ref_count(void* mem, _Bool no_decrement, _Bool no_free){
 int* ref_count_4;
 int count_5;
     if(mem==((void*)0)) {
-        return ((void*)0);
+        void* __result__ = ((void*)0);
+        return __result__;
     }
     ref_count_4=(int*)((char*)mem-sizeof(int)-sizeof(long));
     if(!no_decrement) {
@@ -103,9 +107,11 @@ int count_5;
     count_5=*ref_count_4;
     if(!no_free&&count_5<=0) {
         ncfree(ref_count_4);
-        return ((void*)0);
+        void* __result__ = ((void*)0);
+        return __result__;
     }
-    return mem;
+    void* __result__ = mem;
+    return __result__;
 }
 
 static void come_free_object(void* mem){
@@ -152,7 +158,8 @@ void (*finalizer_10)(void*);
 static void* nccalloc(unsigned long nmemb, unsigned long size){
 void* result_11;
     result_11=calloc(nmemb,size);
-    return result_11;
+    void* __result__ = result_11;
+    return __result__;
 }
 
 static void* come_memdup(void* block){
@@ -165,7 +172,8 @@ char* p_17;
 char* p2_18;
 long* size_p2_19;
     if(!block) {
-        return ((void*)0);
+        void* __result__ = ((void*)0);
+        return __result__;
     }
     mem_12=(char*)block-sizeof(int)-sizeof(long);
     size_p_13=(long*)(mem_12+sizeof(int));
@@ -183,7 +191,8 @@ long* size_p2_19;
     }
     size_p2_19=(long*)((char*)ret_15+sizeof(int));
     *size_p2_19=size_14;
-    return (char*)ret_15+sizeof(int)+sizeof(long);
+    char* __result__ = (char*)ret_15+sizeof(int)+sizeof(long);
+    return __result__;
 }
 
 void int_times(int self, void* parent, void (*block)(void*)){
@@ -204,8 +213,9 @@ char* result_22;
     len_21=strlen(str)+1;
     result_22=come_increment_ref_count((char**)(right_value0=(char**)come_calloc(1, sizeof(char*)*1*len_21)));
     strncpy(result_22,str,len_21);
+    char* __result__ = result_22;
     result_22 = come_decrement_ref_count(result_22, 0, 1);
-    return result_22;
+    return __result__;
 }
 
 int* funHeap(int x, int y){
@@ -213,22 +223,21 @@ void* right_value1;
 int* result_23;
     result_23=come_increment_ref_count((int*)(right_value1=(int*)come_calloc(1, sizeof(int)*1)));
     *result_23=x+y;
+    int* __result__ = result_23;
     result_23 = come_decrement_ref_count(result_23, 0, 1);
-    return result_23;
+    return __result__;
 }
 
 int funHeap2(int* x, int* y){
+    int __result__ = *x+*y;
     x = come_decrement_ref_count(x, 0, 0);
     y = come_decrement_ref_count(y, 0, 0);
-    x = come_decrement_ref_count(x, 0, 0);
-    y = come_decrement_ref_count(y, 0, 0);
-    return *x+*y;
-    x = come_decrement_ref_count(x, 0, 0);
-    y = come_decrement_ref_count(y, 0, 0);
+    return __result__;
 }
 
 int int_fun(int* self){
-    return *self;
+    int __result__ = *self;
+    return __result__;
 }
 
 int main(){
@@ -347,13 +356,14 @@ struct __current_stack1__ __current_stack1__;
     __current_stack1__.azyz_46 = &azyz_46;
     __current_stack1__.n_47 = &n_47;
     int_times(3,&__current_stack1__,method_block1);
+    int __result__ = 0;
     ax_35 = come_decrement_ref_count(ax_35, 0, 0);
     str_39 = come_decrement_ref_count(str_39, 0, 0);
     call_finalizer(sData_finalize,data_40,0, 0, 0);
     axyz_41 = come_decrement_ref_count(axyz_41, 0, 0);
     xxx_42 = come_decrement_ref_count(xxx_42, 0, 0);
     yyy_43 = come_decrement_ref_count(yyy_43, 0, 0);
-    return 0;
+    return __result__;
 }
 
 void sData_finalize(struct sData* self){

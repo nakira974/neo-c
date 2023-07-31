@@ -600,6 +600,7 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
         dec_stack_ptr(1, info);
         sFun* come_fun = info.come_fun;
         
+/*
         if(come_value.type->mHeap && come_value.var == null) {
             add_come_code(info, "come_increment_ref_count(%s);\n", come_value.c_value);
             int right_value_id = get_right_value_id_from_obj(come_value.c_value);
@@ -608,7 +609,10 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
                 remove_object_from_right_values(right_value_id, info);
             }
         }
+*/
+        add_come_code(info, "%s __result__ = %s;\n", make_type_name_string(come_value.type, false@in_header, false@array_cast_pointer, info), come_value.c_value);
         
+/*
         if(info.param_types && info.param_names) {
             int i = 0;
             foreach(name, info.param_names) {
@@ -619,12 +623,14 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
                 i++;
             }
         }
+*/
         
         free_objects_on_return(come_fun.mBlock, info, come_value.c_value, false@top_block);
         
-        add_come_code(info, "return %s;\n", come_value.c_value);
+        add_come_code(info, "return __result__;\n");
     }
     else {
+/*
         if(info.param_types && info.param_names) {
             int i = 0;
             foreach(name, info.param_names) {
@@ -635,6 +641,7 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
                 i++;
             }
         }
+*/
         
         sFun* come_fun = info.come_fun;
         free_objects_on_return(come_fun.mBlock, info, null!, false@top_block);
@@ -1478,6 +1485,7 @@ exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<s
         }
     }
     
+/*
     if(param_types && param_names) {
         int i = 0;
         foreach(name, param_names) {
@@ -1488,6 +1496,7 @@ exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<s
             i++;
         }
     }
+*/
 
     if(!info->last_statment_is_return) {
         free_objects(info->lv_table, null!, info);

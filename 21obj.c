@@ -376,9 +376,13 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
             throw
         }
         
+        var type2 = solve_generics(param_type, info->generics_type, info).catch {
+            throw;
+        }
+        
         expected_next_character(')', info).catch { throw }
         
-        return new sNode(new sIsHeap(param_type, info));
+        return new sNode(new sIsHeap(type2, info));
     }
     else if(buf === "using") {
         if(memcmp(info->p.p, "comelang", strlen("comelang")) == 0) {

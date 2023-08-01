@@ -516,8 +516,8 @@ void sData_finalize(struct sData* self){
 
 void method_block1(struct __current_stack1__* parent){
         puts("HO!");
-        printf("%d\n",(*((*parent).n_47)));
-        (*((*parent).n_47))++;
+        printf("%d\n",*((*parent).n_47));
+        *((*parent).n_47)++;
 }
 
 struct list_char* list_char_initialize(struct list_char* self){
@@ -719,7 +719,7 @@ _Bool end_flag_69;
 }
 
 void method_block2(struct __current_stack2__* parent, int it, int it2, _Bool* it3){
-        printf("%d %d\n",it,(*((*parent).aX_66)));
+        printf("%d %d\n",it,*((*parent).aX_66));
         (*((*parent).aX_66))=2;
 }
 

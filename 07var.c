@@ -110,34 +110,38 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         sClass* current_stack_frame_struct = info->current_stack_frame_struct;
         
         if(current_stack_frame_struct) {
-            foreach(it, current_stack_frame_struct.mFields) {
-                var name, type = it;
+            sVar* parent_var = get_variable_from_table(info.lv_table->mParent, self.name);
+            
+            if(parent_var != null) {
+                CVALUE*% come_value = new CVALUE;
                 
-                var name2 = xsprintf("%s_", self.name);
+                sType* type = parent_var->mType;
                 
-                if(memcmp(name, name2, strlen(name2)) == 0) {
-                    CVALUE*% come_value = new CVALUE;
-                    
-                    if(type->mHeap && type->mClass->mStruct) {
-                        come_value.c_value = xsprintf("(*((*parent).%s))=come_increment_ref_count(%s)", name, right_value.c_value);
-                        int right_value_id = get_right_value_id_from_obj(right_value.c_value);
-                        
-                        if(right_value_id != -1) {
-                            remove_object_from_right_values(right_value_id, info);
-                        }
-                    }
-                    else {
-                        come_value.c_value = xsprintf("(*((*parent).%s))=%s", name, right_value.c_value);
-                    }
-                    come_value.type = clone type;
-                    come_value.var = null;
-                    
-                    add_come_last_code(info, "%s;\n", come_value.c_value);
-                    
-                    info.stack.push_back(come_value);
-                    
-                    return true;
+                if(right_type->mHeap && !type->mHeap) {
+                    err_msg(info, "require left type appended %");
+                    return false;
                 }
+                
+                if(right_type->mHeap && type->mHeap) {
+                    come_value.c_value = xsprintf("(*((*parent).%s))=come_increment_ref_count(%s)", self.name, right_value.c_value);
+                    int right_value_id = get_right_value_id_from_obj(right_value.c_value);
+                    
+                    if(right_value_id != -1) {
+                        remove_object_from_right_values(right_value_id, info);
+                    }
+                }
+                else {
+                    come_value.c_value = xsprintf("(*((*parent).%s))=%s", parent_var->mCValueName, right_value.c_value);
+                }
+                
+                come_value.type = clone type;
+                come_value.var = null;
+                
+                add_come_last_code(info, "%s;\n", come_value.c_value);
+                
+                info.stack.push_back(come_value);
+                
+                return true;
             }
         }
         
@@ -216,22 +220,23 @@ bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
     sClass* current_stack_frame_struct = info->current_stack_frame_struct;
     
     if(current_stack_frame_struct) {
-        foreach(it, current_stack_frame_struct.mFields) {
-            var name, type = it;
+        sVar* parent_var = get_variable_from_table(info.lv_table->mParent, self.name);
+        
+        if(parent_var != null) {
+            CVALUE*% come_value = new CVALUE;
             
-            var name2 = xsprintf("%s_", self.name);
+            sType* type = parent_var->mType;
             
-            if(memcmp(name, name2, strlen(name2)) == 0) {
-                CVALUE*% come_value = new CVALUE;
-                
-                come_value.c_value = xsprintf("(*((*parent).%s))", name);
-                come_value.type = clone type;
-                come_value.var = null;
-                
-                info.stack.push_back(come_value);
-                
-                return true;
-            }
+            come_value.c_value = xsprintf("*((*parent).%s)", parent_var->mCValueName);
+            
+            come_value.type = clone type;
+            come_value.var = null;
+            
+            add_come_last_code(info, "%s;\n", come_value.c_value);
+            
+            info.stack.push_back(come_value);
+            
+            return true;
         }
     }
     

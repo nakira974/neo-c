@@ -22,6 +22,14 @@ int main(int argc, char** argv)
         printf("%d\n", it);
     }
     
+    int a = 123;
+    li2.each() {
+        printf("%d %d\n", it, a);
+        a = 2;
+    }
+    
+    printf("a %d\n", a);
+    
     return 0;
 }
 

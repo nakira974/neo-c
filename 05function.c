@@ -135,9 +135,13 @@ exception list<sType*%>*%, list<string>*%, bool parse_params(sInfo* info)
             throw
         }
         
-        param_type->mFunctionParam = true;
+        var param_type2 = solve_generics(param_type, info->generics_type, info).catch {
+            throw;
+        }
         
-        param_types.push_back(clone param_type);
+        param_type2->mFunctionParam = true;
+        
+        param_types.push_back(clone param_type2);
         param_names.push_back(clone param_name);
         
         if(*info->p == ',') {
@@ -396,7 +400,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                 }
             }
             if(type->mClass == null) {
-                err_msg(info, "class not found");
+                err_msg(info, "class not found (2)");
                 throw;
             }
             type = solve_generics(type, info->generics_type, info).catch {
@@ -474,6 +478,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             }
             else {
                 static int num_anonymous_var_name = 0;
+                num_anonymous_var_name++;
                 var_name = xsprintf("anonymous_var_name%d", num_anonymous_var_name);
             }
         }
@@ -1872,6 +1877,7 @@ exception sNode*% parse_function(sInfo* info)
             throw;
         }
     }
+    
     
     var param_types, param_names, var_args = parse_params(info).catch {
         throw

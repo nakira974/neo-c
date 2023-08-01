@@ -273,6 +273,21 @@ impl list <T>
     bool end(list<T>* self) {
         return self.it == null;
     }
+    void each(list<T>* self, void* parent, void (*block)(void*, T&,int,bool*)) 
+    {
+        list_item<T>* it = self.head;
+        int i = 0;
+        while(it != null) {
+            bool end_flag = false;
+            block(parent, it.item, i, &end_flag);
+
+            if(end_flag == true) {
+                break;
+            }
+            it = it.next;
+            i++;
+        }
+    }
 }
 
 #define foreach(o1, o2) for(var o1 = (o2).begin(); !(o2).end(); o1 = (o2).next())

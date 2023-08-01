@@ -163,7 +163,7 @@ sType*% sType*::initialize(sType*% self, char* name, sInfo* info, bool heap=fals
     sClass* klass = info.classes[name2];
     
     if(klass == null) {
-        err_msg(info, "class not found(%s)\n", name2);
+        err_msg(info, "class not found(%s)(1)\n", name2);
     }
     self.mClass = klass;
     
@@ -262,6 +262,7 @@ void init_classes(sInfo* info)
     info.classes.insert(string("long"), new sClass("long", number:true));
     info.classes.insert(string("char"), new sClass("char", number:true));
     info.classes.insert(string("bool"), new sClass("bool", number:true));
+    info.classes.insert(string("_Bool"), new sClass("_Bool", number:true));
     info.classes.insert(string("void"), new sClass("void"));
     info.classes.insert(string("float"), new sClass("float", float_:true));
     info.classes.insert(string("double"), new sClass("double", float_:true));

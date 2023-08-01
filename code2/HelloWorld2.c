@@ -116,6 +116,33 @@ int main()
         printf("%d\n", n);
         n++;
     }
+    list<string>*% li = new list<string>.initialize();
+    
+    li.push_back(string("ABC"));
+    li.push_back(string("DEF"));
+    li.push_back(string("GHI"));
+    
+    foreach(it, li) {
+        printf("%s\n", it);
+    }
+    
+    list<int>*% li2 = new list<int>.initialize();
+    
+    li2.push_back(1);
+    li2.push_back(2);
+    li2.push_back(3);
+    
+    foreach(it, li2) {
+        printf("%d\n", it);
+    }
+    
+    int aX = 123;
+    li2.each() {
+        printf("%d %d\n", it, aX);
+        aX = 2;
+    }
+    
+    xassert("method_block test", aX == 2);
     
     return 0;
 }

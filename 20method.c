@@ -217,12 +217,24 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
         int i = 0;
         foreach(it, param_types) {
             sType* param_type = it;
-            char* param_name = param_names[i];
-            
-            method_block2.append_str(xsprintf("%s", make_define_var(param_type, param_name, info)));
+            if(i == 0) {
+                string param_name = xsprintf("parent");
+                
+                method_block2.append_str(xsprintf("%s", make_define_var(param_type, param_name, info)));
+            }
+            else if(i == 1) {
+                string param_name = xsprintf("it");
+                
+                method_block2.append_str(xsprintf("%s", make_define_var(param_type, param_name, info)));
+            }
+            else {
+                string param_name = xsprintf("it%d", i);
+                
+                method_block2.append_str(xsprintf("%s", make_define_var(param_type, param_name, info)));
+            }
             
             if(i != param_types.length() - 1) {
-                method_block.append_str(",");
+                method_block2.append_str(",");
             }
             
             i++;
@@ -244,6 +256,7 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
         if(!node.compile->(info)) {
             return false;
         }
+        
         char*% method_block_name = xsprintf("method_block%d", info->num_method_block);
         
         CVALUE*% come_value2 = new CVALUE;

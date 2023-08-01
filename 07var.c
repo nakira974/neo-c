@@ -113,7 +113,9 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
             foreach(it, current_stack_frame_struct.mFields) {
                 var name, type = it;
                 
-                if(memcmp(name, self.name, strlen(self.name)) == 0) {
+                var name2 = xsprintf("%s_", self.name);
+                
+                if(memcmp(name, name2, strlen(name2)) == 0) {
                     CVALUE*% come_value = new CVALUE;
                     
                     if(type->mHeap && type->mClass->mStruct) {
@@ -125,7 +127,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                         }
                     }
                     else {
-                        come_value.c_value = xsprintf("(*(*(parent).%s))=%s", name, right_value.c_value);
+                        come_value.c_value = xsprintf("(*((*parent).%s))=%s", name, right_value.c_value);
                     }
                     come_value.type = clone type;
                     come_value.var = null;
@@ -217,7 +219,9 @@ bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
         foreach(it, current_stack_frame_struct.mFields) {
             var name, type = it;
             
-            if(memcmp(name, self.name, strlen(self.name)) == 0) {
+            var name2 = xsprintf("%s_", self.name);
+            
+            if(memcmp(name, name2, strlen(name2)) == 0) {
                 CVALUE*% come_value = new CVALUE;
                 
                 come_value.c_value = xsprintf("(*((*parent).%s))", name);

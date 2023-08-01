@@ -168,8 +168,6 @@ struct sVarTable {
     int mID;
 };
 
-struct sInfo;
-
 struct sBlock
 {
     list<sNode*%>*% mNodes;

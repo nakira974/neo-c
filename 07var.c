@@ -123,7 +123,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                 }
                 
                 if(right_type->mHeap && type->mHeap) {
-                    come_value.c_value = xsprintf("(*((*parent).%s))=come_increment_ref_count(%s)", self.name, right_value.c_value);
+                    come_value.c_value = xsprintf("(*(parent->%s))=come_increment_ref_count(%s)", parent_var->mCValueName, right_value.c_value);
                     int right_value_id = get_right_value_id_from_obj(right_value.c_value);
                     
                     if(right_value_id != -1) {
@@ -131,7 +131,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                     }
                 }
                 else {
-                    come_value.c_value = xsprintf("(*((*parent).%s))=%s", parent_var->mCValueName, right_value.c_value);
+                    come_value.c_value = xsprintf("(*(parent->%s))=%s", parent_var->mCValueName, right_value.c_value);
                 }
                 
                 come_value.type = clone type;
@@ -227,7 +227,7 @@ bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
             
             sType* type = parent_var->mType;
             
-            come_value.c_value = xsprintf("*((*parent).%s)", parent_var->mCValueName);
+            come_value.c_value = xsprintf("(*(parent->%s))", parent_var->mCValueName);
             
             come_value.type = clone type;
             come_value.var = null;

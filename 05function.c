@@ -1168,6 +1168,22 @@ exception sNode*% expression_node(sInfo* info) version 99
         
         return node;
     }
+    else if(*info->p == '-' && xisdigit(*(info->p+1))) {
+        info->p++;
+        
+        int n = 0;
+        while(xisdigit(*info->p)) {
+            n = n * 10 + (*info->p - '0');
+            info->p++;
+            skip_spaces_and_lf(info);
+        }
+        
+        sNode*% node = new sNode(new sIntNode(-n, info));
+        
+        node = post_position_operator(node, info).catch { throw };
+        
+        return node;
+    }
     else if(parsecmp("return", info)) {
         info->p += strlen("return");
         skip_spaces_and_lf(info);

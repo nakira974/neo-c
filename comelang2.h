@@ -288,6 +288,24 @@ impl list <T>
             i++;
         }
     }
+    T& item(list<T>* self, int position, T& default_value) 
+    {
+        if(position < 0) {
+            position += self.len;
+        }
+
+        list_item<T>* it = self.head;
+        var i = 0;
+        while(it != null) {
+            if(position == i) {
+                return it.item;
+            }
+            it = it.next;
+            i++;
+        };
+
+        return default_value;
+    }
 }
 
 #define foreach(o1, o2) for(var o1 = (o2).begin(); !(o2).end(); o1 = (o2).next())

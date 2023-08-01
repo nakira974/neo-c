@@ -30,6 +30,8 @@ int main(int argc, char** argv)
     
     printf("a %d\n", a);
     
+    xassert("list::item", li2.item(0, -1) == 1);
+    
     return 0;
 }
 

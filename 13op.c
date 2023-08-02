@@ -1860,7 +1860,7 @@ exception sNode*% andand_exp(sInfo* info)
             info->p+=2;
             skip_spaces_and_lf(info);
 
-            sNode*% right = or_exp(info).catch {
+            sNode*% right = andand_exp(info).catch {
                 throw;
             }
 
@@ -1891,7 +1891,7 @@ exception sNode*% oror_exp(sInfo* info)
             info->p+=2;
             skip_spaces_and_lf(info);
 
-            sNode*% right = andand_exp(info).catch {
+            sNode*% right = oror_exp(info).catch {
                 throw;
             }
 

@@ -97,6 +97,8 @@ void* realloc(void* ptr, unsigned long size);
 unsigned long strlen(const char* s);
 void* memset(void* s, int c, unsigned long n);
 char* strncpy(char* dest, const char* src, unsigned long n);
+int strcmp(const char* s1, const char* s2);
+int strncmp(const char s1, const char s2, unsigned long n);
 void exit(int status);
 static void xassert(char* msg, _Bool test);
 static void ncfree(void* mem);

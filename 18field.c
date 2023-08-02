@@ -234,5 +234,6 @@ exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 18
         }
     }
     
+    
     return node;
 }

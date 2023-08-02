@@ -32,6 +32,14 @@ int main(int argc, char** argv)
     
     xassert("list::item", li2.item(0, -1) == 1);
     
+    li2.insert(1, 5);
+    
+    xassert("list::insert", li2.item(0, -1) == 1 && li2.item(1, -1) == 5 && li2.item(2, -1) == 2 && li2.item(3, -1) == 3);
+    
+    li.insert(1, string("GGG"));
+    
+    xassert("list::insert", strcmp(li.item(0, -1), "ABC") == 0 && strcmp(li.item(1, -1), "GGG") == 0 && strcmp(li.item(2,-1), "DEF") == 0 && strcmp(li.item(3,-1), "GHI") == 0);
+    
     return 0;
 }
 

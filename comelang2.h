@@ -15,6 +15,9 @@ size_t strlen(const char *s);
 void *memset(void *s, int c, size_t n);
 char *strncpy(char *dest, const char *src, size_t n);
 
+int strcmp(const char *s1, const char *s2);
+int strncmp(const char s1, const char s2, size_t n);
+
 void exit(int status);
 
 #define NULL ((void*)0)
@@ -305,6 +308,72 @@ impl list <T>
         };
 
         return default_value;
+    }
+
+    int length(list<T>* self)
+    {
+        return self.len;
+    }
+    
+    void insert(list<T>* self, int position, T item)
+    {
+        if(position < 0) {
+            position += self.len + 1;
+        }
+        if(position < 0) {
+            position = 0;
+        }
+        if(self.len == 0 || position >= self.len) 
+        {
+            self.push_back(item);
+            return;
+        }
+
+        if(position == 0) {
+            list_item<T>* litem = borrow new list_item<T>;
+
+            litem.prev = null;
+            litem.next = self.head;
+            litem.item = item;
+            
+            self.head.prev = litem;
+            self.head = litem;
+
+            self.len++;
+        }
+        else if(self.len == 1) {
+            var litem = borrow new list_item<T>;
+
+            litem.prev = self.head;
+            litem.next = self.tail;
+            litem.item = item;
+            
+            self.tail.prev = litem;
+            self.head.next = litem;
+
+            self.len++;
+        }
+        else {
+            list_item<T>* it = self.head;
+            int i = 0;
+            while(it != null) {
+                if(position == i) {
+                    list_item<T>* litem = borrow new list_item<T>;
+
+                    litem.prev = it.prev;
+                    litem.next = it;
+                    litem.item = item;
+
+                    it.prev.next = litem;
+                    it.prev = litem;
+
+                    self.len++;
+                }
+
+                it = it.next;
+                i++;
+            }
+        }
     }
 }
 

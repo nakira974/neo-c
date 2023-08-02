@@ -867,7 +867,7 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
         list<CVALUE*%>*% come_params = new list<CVALUE*%>();
         
         if(lambda_type.mParamTypes.length() != params.length() && !lambda_type.mVarArgs) {
-            err_msg(info, "invalid param number. function param number is %d. caller param number is %d", lambda_type.mParamTypes.length(), params.length());
+            err_msg(info, "invalid param number(%s). function param number is %d. caller param number is %d", fun_name, lambda_type.mParamTypes.length(), params.length());
             return false;
         }
         
@@ -938,7 +938,7 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
         list<CVALUE*%>*% come_params = new list<CVALUE*%>();
         
         if(fun.mParamTypes.length() != params.length() && !fun.mVarArgs) {
-            err_msg(info, "invalid param number. function param number is %d. caller param number is %d", fun.mParamTypes.length(), params.length());
+            err_msg(info, "invalid param number(%s). function param number is %d. caller param number is %d", fun_name, fun.mParamTypes.length(), params.length());
             return false;
         }
         
@@ -1107,21 +1107,25 @@ exception sNode*% parse_function_call(char* fun_name, sInfo* info)
     list<sNode*%>*% params = new list<sNode*%>();
     
     while(true) {
+if(strcmp(fun_name, "strcmp") == 0) {printf("1. %s %c%c%c%c%c%c\n", fun_name, *info->p, *(info->p+1), *(info->p+2), *(info->p+3), *(info->p+4), *(info->p+5)); }
         if(*info->p == ')') {
             info->p++;
             skip_spaces_and_lf(info);
             break;
         }
         
+        bool no_comma = info.no_comma;
         info.no_comma = true;
         
         sNode*% node = expression(info).catch {
             throw;
         }
         
-        info.no_comma = false;
+        info.no_comma = no_comma;
         
         params.push_back(node);
+        
+if(strcmp(fun_name, "strcmp") == 0) {printf("2. %s %c%c%c%c%c%c\n", fun_name, *info->p, *(info->p+1), *(info->p+2), *(info->p+3), *(info->p+4), *(info->p+5)); }
         
         if(*info->p == ',') {
             info->p++;

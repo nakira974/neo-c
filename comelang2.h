@@ -375,6 +375,141 @@ impl list <T>
             }
         }
     }
+    void reset(list<T>* self) {
+        list_item<T>* it = self.head;
+        while(it != null) {
+            var prev_it = it;
+            it = it.next;
+            delete borrow prev_it;
+        }
+
+        self.head = null;
+        self.tail = null;
+
+        self.len = 0;
+    }
+    void delete(list<T>* self, int head, int tail)
+    {
+        if(head < 0) {
+            head += self.len;
+        }
+        if(tail < 0) {
+            tail += self.len + 1;
+        }
+
+        if(head > tail) {
+            int tmp = tail;
+            tail = head;
+            head = tmp;
+        }
+
+        if(head < 0) {
+            head = 0;
+        }
+
+        if(tail > self.len) {
+            tail = self.len;
+        }
+
+        if(head == tail) {
+            return;
+        }
+        
+        if(head == 0 && tail == self.len) 
+        {
+            self.reset();
+        }
+        else if(head == 0) {
+            list_item<T>* it = self.head;
+            int i = 0;
+            while(it != null) {
+                if(i < tail) {
+                    list_item<T>* prev_it = it;
+
+                    it = it.next;
+                    i++;
+
+                    delete borrow prev_it;
+
+                    self.len--;
+                }
+                else if(i == tail) {
+                    self.head = it;
+                    self.head.prev = null;
+                    break;
+                }
+                else {
+                    it = it.next;
+                    i++;
+                }
+            }
+        }
+        else if(tail == self.len) {
+            list_item<T>* it = self.head;
+            int i = 0;
+            while(it != null) {
+                if(i == head) {
+                    self.tail = it.prev;
+                    self.tail.next = null;
+                }
+
+                if(i >= head) {
+                    list_item<T>*? prev_it = it;
+
+                    it = it.next;
+                    i++;
+
+                    delete borrow prev_it;
+
+                    self.len--;
+                }
+                else {
+                    it = it.next;
+                    i++;
+                }
+            }
+        }
+        else {
+            list_item<T>* it = self.head;
+
+            list_item<T>* head_prev_it = null;
+            list_item<T>* tail_it = null;
+
+
+            int i = 0;
+            while(it != null) {
+                if(i == head) {
+                    head_prev_it = it.prev;
+                }
+                if(i == tail) {
+                    tail_it = it;
+                }
+
+                if(i >= head && i < tail) 
+                {
+                    list_item<T>* prev_it = it;
+
+                    it = it.next;
+                    i++;
+
+                    delete borrow prev_it;
+
+                    self.len--;
+                }
+                else {
+                    it = it.next;
+                    i++;
+                }
+            }
+
+            if(head_prev_it != null) {
+                head_prev_it.next = tail_it;
+            }
+            if(tail_it != null) {
+                tail_it.prev = head_prev_it;
+            }
+        }
+    }
 }
 
 #define foreach(o1, o2) for(var o1 = (o2).begin(); !(o2).end(); o1 = (o2).next())

@@ -40,6 +40,14 @@ int main(int argc, char** argv)
     
     xassert("list::insert", strcmp(li.item(0, -1), "ABC") == 0 && strcmp(li.item(1, -1), "GGG") == 0 && strcmp(li.item(2,-1), "DEF") == 0 && strcmp(li.item(3,-1), "GHI") == 0);
     
+    li.reset();
+    
+    xassert("list::reset", li.length() == 0);
+    
+    li2.delete(0, 1);
+    
+    xassert("list::delete", li2.item(0, -1) == 5 && li2.item(1, -1) == 2 && li2.item(2, -1) == 3);
+    
     return 0;
 }
 

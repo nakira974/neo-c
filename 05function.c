@@ -1107,7 +1107,6 @@ exception sNode*% parse_function_call(char* fun_name, sInfo* info)
     list<sNode*%>*% params = new list<sNode*%>();
     
     while(true) {
-if(strcmp(fun_name, "strcmp") == 0) {printf("1. %s %c%c%c%c%c%c\n", fun_name, *info->p, *(info->p+1), *(info->p+2), *(info->p+3), *(info->p+4), *(info->p+5)); }
         if(*info->p == ')') {
             info->p++;
             skip_spaces_and_lf(info);
@@ -1124,8 +1123,6 @@ if(strcmp(fun_name, "strcmp") == 0) {printf("1. %s %c%c%c%c%c%c\n", fun_name, *i
         info.no_comma = no_comma;
         
         params.push_back(node);
-        
-if(strcmp(fun_name, "strcmp") == 0) {printf("2. %s %c%c%c%c%c%c\n", fun_name, *info->p, *(info->p+1), *(info->p+2), *(info->p+3), *(info->p+4), *(info->p+5)); }
         
         if(*info->p == ',') {
             info->p++;

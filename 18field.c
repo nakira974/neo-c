@@ -42,6 +42,8 @@ bool sStoreFieldNode*::compile(sStoreFieldNode* self, sInfo* info)
     CVALUE*% right_value = get_value_from_stack(-1, info);
     dec_stack_ptr(1, info);
     
+    sType* right_type = right_value.type;
+    
     sClass* klass = left_value.type->mClass;
     
     sType*% field_type = null;
@@ -64,12 +66,22 @@ bool sStoreFieldNode*::compile(sStoreFieldNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    if(field_type->mHeap) {
+    if(!field_type->mHeap && right_type->mHeap) {
+        err_msg(info, "require field type to append %");
+        return false;
+    }
+    
+    if(field_type->mHeap && right_type->mHeap && field_type->mPointerNum > 0 && right_type->mPointerNum > 0) 
+    {
         if(left_value.type->mPointerNum == 1) {
-            come_value.c_value = xsprintf("%s->%s=come_increment_ref_count(%s)", left_value.c_value, name, right_value.c_value);
+            come_value.c_value = xsprintf("if(%s->%s) { come_decrement_ref_count(%s->%s, 0, 0); }; %s->%s=come_increment_ref_count(%s)", left_value.c_value, name, left_value.c_value, name, left_value.c_value, name, right_value.c_value);
+        }
+        else if(left_value.type->mPointerNum == 0) {
+            come_value.c_value = xsprintf("if(%s.%s) { come_decrement_ref_count(%s.%s, 0, 0); }; %s.%s=come_increment_ref_count(%s)", left_value.c_value, name, left_value.c_value, name, left_value.c_value, name, right_value.c_value);
         }
         else {
-            come_value.c_value = xsprintf("%s.%s=come_increment_ref_count(%s)", left_value.c_value, name, right_value.c_value);
+            err_msg(info, "Invalid left_type. The field name is %s. The pointer num is %d.", name, left_value.type->mPointerNum);
+            return false;
         }
         int right_value_id = get_right_value_id_from_obj(right_value.c_value);
         
@@ -81,8 +93,12 @@ bool sStoreFieldNode*::compile(sStoreFieldNode* self, sInfo* info)
         if(left_value.type->mPointerNum == 1) {
             come_value.c_value = xsprintf("%s->%s=%s", left_value.c_value, name, right_value.c_value);
         }
-        else {
+        else if(left_value.type->mPointerNum == 0) {
             come_value.c_value = xsprintf("%s.%s=%s", left_value.c_value, name, right_value.c_value);
+        }
+        else {
+            err_msg(info, "Invalid left_type. The field name is %s. The pointer num is %d.", name, left_value.type->mPointerNum);
+            return false;
         }
     }
     come_value.type = clone field_type;

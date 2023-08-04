@@ -100,7 +100,7 @@ int main()
     
     xassert("heap", funHeap2(xxx, yyy) == 3);
     
-    int* zzz = new int;
+    int*% zzz = new int;
     new int;
     
     int bzyz = 123;

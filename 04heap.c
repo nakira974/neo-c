@@ -49,7 +49,7 @@ exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
             bool immutable_ = type->mImmutable;
             int pointer_num = type->mPointerNum;
             bool heap = type->mHeap;
-
+            
             bool no_heap = type->mNoHeap;
             
             result = clone generics_type->mGenericsTypes[generics_number];
@@ -93,11 +93,13 @@ exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
             }
             if(!is_contained_generics_class(result, info)) {
                 result->mClass = info.classes[new_name];
+                result->mSolvedGenericsName = true;
             }
         }
         else {
             if(!is_contained_generics_class(result, info)) {
                 result->mClass = info.classes[new_name];
+                result->mSolvedGenericsName = true;
             }
         }
     }

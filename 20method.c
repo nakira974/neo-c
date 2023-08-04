@@ -132,16 +132,14 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
     buffer* method_block = self.method_block;
     int method_block_sline = self.method_block_sline;
     
-    info.no_output_come_code = true;
     if(!obj.compile->(info)) {
         return false;
     }
-    info.no_output_come_code = false;
     
-    CVALUE*% come_value = get_value_from_stack(-1, info);
+    CVALUE*% obj_value = get_value_from_stack(-1, info);
     dec_stack_ptr(1, info);
     
-    sType*% obj_type = clone come_value.type;
+    sType*% obj_type = clone obj_value.type;
     
     string fun_name2 = create_method_name(obj_type, false@no_pointer_name, fun_name, info);
     string fun_name3 = xsprintf("%s_%s", obj_type->mClass->mNoneGenericsName, fun_name);
@@ -161,24 +159,35 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
         return false;
     }
     
-    sType* result_type = fun->mResultType;
+    sType*% result_type = clone fun->mResultType;
     
     list<CVALUE*%>*% come_params = new list<CVALUE*%>();
     
     int i = 0;
     foreach(it, params) {
-        if(!it.compile->(info)) {
-            return false;
+        if(i == 0) {
+            if(fun.mParamTypes[i].mHeap) {
+                obj_value.c_value = xsprintf("come_increment_ref_count(%s)", obj_value.c_value);
+            }
+            come_params.push_back(obj_value);
+            
+            i++;
         }
-        
-        CVALUE*% come_value = get_value_from_stack(-1, info);
-        if(fun.mParamTypes[i].mHeap) {
-            come_value.c_value = xsprintf("come_increment_ref_count(%s)", come_value.c_value);
+        else {
+            if(!it.compile->(info)) {
+                return false;
+            }
+            
+            CVALUE*% come_value = get_value_from_stack(-1, info);
+            
+            if(fun.mParamTypes[i].mHeap) {
+                come_value.c_value = xsprintf("come_increment_ref_count(%s)", come_value.c_value);
+            }
+            come_params.push_back(come_value);
+            dec_stack_ptr(1, info);
+            
+            i++;
         }
-        come_params.push_back(come_value);
-        dec_stack_ptr(1, info);
-        
-        i++;
     }
     
     if(method_block) {
@@ -302,6 +311,11 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
     CVALUE*% come_value2 = new CVALUE;
     
     come_value2.c_value = buf.to_string();
+    
+    if(result_type->mHeap) {
+        come_value2.c_value = append_object_to_right_values(buf.to_string(), result_type, info);
+    }
+    
     come_value2.type = clone result_type;
     come_value2.var = null;
     

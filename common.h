@@ -88,6 +88,7 @@ struct sType
     bool mFunctionParam;
     bool mAllocaValue;
     bool mGenericsStruct;
+    bool mSolvedGenericsName;
 };
 
 struct sVar;

@@ -51,18 +51,6 @@ struct __current_stack1__
     int** azyz_46;
     int* n_47;
 };
-struct list_item_char_char
-{
-    char* item;
-    struct list_item_char_char* prev;
-    struct list_item_char_char* next;
-};
-struct list_item_int_int
-{
-    int item;
-    struct list_item_int_int* prev;
-    struct list_item_int_int* next;
-};
 struct __current_stack2__
 {
     char** p_25;
@@ -111,27 +99,34 @@ static void* nccalloc(unsigned long nmemb, unsigned long size);
 static void* come_memdup(void* block);
 void int_times(int self, void* parent, void (*block)(void*));
 char* __builtin_string(char* str);
+_Bool int_equals(int self, int right);
+_Bool bool_equals(_Bool self, _Bool right);
+_Bool char_equals(char self, char right);
+_Bool short_equals(short short self, short short right);
+_Bool long_equals(long self, long right);
+_Bool stringp_equals(char* self, char* right);
+_Bool charp_equals(char* self, char* right);
 int* funHeap(int x, int y);
 int funHeap2(int* x, int* y);
-int int_fun(int* self);
+int intp_fun(int* self);
 int main();
-void sData_finalize(struct sData* self);
+void sDatap_finalize(struct sData* self);
 void method_block1(struct __current_stack1__* parent);
-struct list_char* list_char_initialize(struct list_char* self);
-void list_char_finalize(struct list_char* self);
-void list_item_char_char_finalize(struct list_item_char_char* self);
-void list_char_push_back(struct list_char* self, char* item);
-char* list_char_begin(struct list_char* self);
-_Bool list_char_end(struct list_char* self);
-char* list_char_next(struct list_char* self);
-struct list_int* list_int_initialize(struct list_int* self);
-void list_int_finalize(struct list_int* self);
-void list_item_int_int_finalize(struct list_item_int_int* self);
-void list_int_push_back(struct list_int* self, int item);
-int list_int_begin(struct list_int* self);
-_Bool list_int_end(struct list_int* self);
-int list_int_next(struct list_int* self);
-void list_int_each(struct list_int* self, void* parent, void (*block)(void*,int,int,_Bool*));
+struct list_char* list_charp_initialize(struct list_char* self);
+void list_charp_finalize(struct list_char* self);
+void list_item_charp_finalize(struct list_item_char* self);
+void list_charp_push_back(struct list_char* self, char* item);
+char* list_charp_begin(struct list_char* self);
+_Bool list_charp_end(struct list_char* self);
+char* list_charp_next(struct list_char* self);
+struct list_int* list_intp_initialize(struct list_int* self);
+void list_intp_finalize(struct list_int* self);
+void list_item_intp_finalize(struct list_item_int* self);
+void list_intp_push_back(struct list_int* self, int item);
+int list_intp_begin(struct list_int* self);
+_Bool list_intp_end(struct list_int* self);
+int list_intp_next(struct list_int* self);
+void list_intp_each(struct list_int* self, void* parent, void (*block)(void*,int,int,_Bool*));
 void method_block2(struct __current_stack2__* parent, int it, int it2, _Bool* it3);
 
 static void xassert(char* msg, _Bool test){
@@ -298,6 +293,41 @@ char* result_22;
     return __result__;
 }
 
+_Bool int_equals(int self, int right){
+    int __result__ = self==right;
+    return __result__;
+}
+
+_Bool bool_equals(_Bool self, _Bool right){
+    _Bool __result__ = self==right;
+    return __result__;
+}
+
+_Bool char_equals(char self, char right){
+    char __result__ = self==right;
+    return __result__;
+}
+
+_Bool short_equals(short short self, short short right){
+    short short __result__ = self==right;
+    return __result__;
+}
+
+_Bool long_equals(long self, long right){
+    long __result__ = self==right;
+    return __result__;
+}
+
+_Bool stringp_equals(char* self, char* right){
+    int __result__ = strcmp(self,right)==0;
+    return __result__;
+}
+
+_Bool charp_equals(char* self, char* right){
+    int __result__ = strcmp(self,right)==0;
+    return __result__;
+}
+
 int* funHeap(int x, int y){
 void* right_value1;
 int* result_23;
@@ -315,7 +345,7 @@ int funHeap2(int* x, int* y){
     return __result__;
 }
 
-int int_fun(int* self){
+int intp_fun(int* self){
     int __result__ = *self;
     return __result__;
 }
@@ -359,12 +389,14 @@ int* azyz_46;
 int n_47;
 struct __current_stack1__ __current_stack1__;
 void* right_value14;
+void* right_value15;
 struct list_char* li_50;
-void* right_value18;
 void* right_value19;
 void* right_value20;
-char* it_55;
 void* right_value21;
+char* it_55;
+void* right_value22;
+void* right_value23;
 struct list_int* li2_59;
 int it_64;
 int aX_66;
@@ -399,15 +431,15 @@ struct __current_stack2__ __current_stack2__;
         a_36=come_increment_ref_count((char**)(right_value4=(char**)come_calloc(1, sizeof(char*)*1*128)));
         b_37=come_increment_ref_count(a_36);
         memset(&data_38, 0, sizeof(struct sData));
-        data_38.a=come_increment_ref_count(a_36);
+        if(data_38.a) { come_decrement_ref_count(data_38.a, 0, 0); }; data_38.a=come_increment_ref_count(a_36);
         a_36 = come_decrement_ref_count(a_36, 0, 0);
         b_37 = come_decrement_ref_count(b_37, 0, 0);
-        call_finalizer(sData_finalize,(&data_38),1, 0, 0);
+        call_finalizer(sDatap_finalize,(&data_38),1, 0, 0);
     }
     str_39=come_increment_ref_count((char**)(right_value5=(char**)come_calloc(1, sizeof(char*)*1*128)));
     strncpy(str_39,"ABC",128);
     data_40=come_increment_ref_count((struct sData*)(right_value6=(struct sData*)come_calloc(1, sizeof(struct sData)*1)));
-    data_40->a=come_increment_ref_count(str_39);
+    if(data_40->a) { come_decrement_ref_count(data_40->a, 0, 0); }; data_40->a=come_increment_ref_count(str_39);
     puts(data_40->a);
     (int*)(right_value7=funHeap(7,7));
     right_value7 = come_decrement_ref_count(right_value7, 1, 0);
@@ -420,13 +452,12 @@ struct __current_stack2__ __current_stack2__;
     yyy_43=come_increment_ref_count((int*)(right_value11=(int*)come_calloc(1, sizeof(int)*1)));
     *yyy_43=2;
     xassert("heap",funHeap2(come_increment_ref_count(xxx_42),come_increment_ref_count(yyy_43))==3);
-    zzz_44=(int*)(right_value12=(int*)come_calloc(1, sizeof(int)*1));
-    right_value12 = come_decrement_ref_count(right_value12, 1, 0);
+    zzz_44=come_increment_ref_count((int*)(right_value12=(int*)come_calloc(1, sizeof(int)*1)));
     (int*)(right_value13=(int*)come_calloc(1, sizeof(int)*1));
     right_value13 = come_decrement_ref_count(right_value13, 1, 0);
     bzyz_45=123;
     azyz_46=&bzyz_45;
-    xassert("impl",int_fun(azyz_46)==123);
+    xassert("impl",intp_fun(azyz_46)==123);
     n_47=0;
     __current_stack1__.p_25 = &p_25;
     __current_stack1__.p2_26 = &p2_26;
@@ -447,30 +478,30 @@ struct __current_stack2__ __current_stack2__;
     __current_stack1__.azyz_46 = &azyz_46;
     __current_stack1__.n_47 = &n_47;
     int_times(3,&__current_stack1__,method_block1);
-    li_50=come_increment_ref_count(list_char_initialize(come_increment_ref_count((struct list_char*)(right_value14=(struct list_char*)come_calloc(1, sizeof(struct list_char)*1)))));
-    call_finalizer(list_char_finalize,right_value14,0, 1, 0);
-    list_char_push_back(li_50,come_increment_ref_count((char*)(right_value18=__builtin_string("ABC"))));
-    right_value18 = come_decrement_ref_count(right_value18, 1, 0);
-    list_char_push_back(li_50,come_increment_ref_count((char*)(right_value19=__builtin_string("DEF"))));
+    li_50=come_increment_ref_count((struct list_char*)(right_value15=list_charp_initialize(come_increment_ref_count((struct list_char*)(right_value14=(struct list_char*)come_calloc(1, sizeof(struct list_char)*1))))));
+    call_finalizer(list_charp_finalize,right_value14,0, 1, 0);
+    list_charp_push_back(li_50,come_increment_ref_count((char*)(right_value19=__builtin_string("ABC"))));
     right_value19 = come_decrement_ref_count(right_value19, 1, 0);
-    list_char_push_back(li_50,come_increment_ref_count((char*)(right_value20=__builtin_string("GHI"))));
+    list_charp_push_back(li_50,come_increment_ref_count((char*)(right_value20=__builtin_string("DEF"))));
     right_value20 = come_decrement_ref_count(right_value20, 1, 0);
+    list_charp_push_back(li_50,come_increment_ref_count((char*)(right_value21=__builtin_string("GHI"))));
+    right_value21 = come_decrement_ref_count(right_value21, 1, 0);
     for(
-    it_55=list_char_begin((li_50));
-    !list_char_end((li_50));
-    it_55=list_char_next((li_50))
+    it_55=list_charp_begin((li_50));
+    !list_charp_end((li_50));
+    it_55=list_charp_next((li_50))
     ){
         printf("%s\n",it_55);
     }
-    li2_59=come_increment_ref_count(list_int_initialize(come_increment_ref_count((struct list_int*)(right_value21=(struct list_int*)come_calloc(1, sizeof(struct list_int)*1)))));
-    call_finalizer(list_int_finalize,right_value21,0, 1, 0);
-    list_int_push_back(li2_59,1);
-    list_int_push_back(li2_59,2);
-    list_int_push_back(li2_59,3);
+    li2_59=come_increment_ref_count((struct list_int*)(right_value23=list_intp_initialize(come_increment_ref_count((struct list_int*)(right_value22=(struct list_int*)come_calloc(1, sizeof(struct list_int)*1))))));
+    call_finalizer(list_intp_finalize,right_value22,0, 1, 0);
+    list_intp_push_back(li2_59,1);
+    list_intp_push_back(li2_59,2);
+    list_intp_push_back(li2_59,3);
     for(
-    it_64=list_int_begin((li2_59));
-    !list_int_end((li2_59));
-    it_64=list_int_next((li2_59))
+    it_64=list_intp_begin((li2_59));
+    !list_intp_end((li2_59));
+    it_64=list_intp_next((li2_59))
     ){
         printf("%d\n",it_64);
     }
@@ -496,21 +527,22 @@ struct __current_stack2__ __current_stack2__;
     __current_stack2__.li_50 = &li_50;
     __current_stack2__.li2_59 = &li2_59;
     __current_stack2__.aX_66 = &aX_66;
-    list_int_each(li2_59,&__current_stack2__,method_block2);
+    list_intp_each(li2_59,&__current_stack2__,method_block2);
     xassert("method_block test",aX_66==2);
     int __result__ = 0;
     ax_35 = come_decrement_ref_count(ax_35, 0, 0);
     str_39 = come_decrement_ref_count(str_39, 0, 0);
-    call_finalizer(sData_finalize,data_40,0, 0, 0);
+    call_finalizer(sDatap_finalize,data_40,0, 0, 0);
     axyz_41 = come_decrement_ref_count(axyz_41, 0, 0);
     xxx_42 = come_decrement_ref_count(xxx_42, 0, 0);
     yyy_43 = come_decrement_ref_count(yyy_43, 0, 0);
-    call_finalizer(list_char_finalize,li_50,0, 0, 0);
-    call_finalizer(list_int_finalize,li2_59,0, 0, 0);
+    zzz_44 = come_decrement_ref_count(zzz_44, 0, 0);
+    call_finalizer(list_charp_finalize,li_50,0, 0, 0);
+    call_finalizer(list_intp_finalize,li2_59,0, 0, 0);
     return __result__;
 }
 
-void sData_finalize(struct sData* self){
+void sDatap_finalize(struct sData* self){
             if(self!=((void*)0)&&self->a!=((void*)0)) {
                 self->a = come_decrement_ref_count(self->a, 0, 0);
             }
@@ -522,18 +554,18 @@ void method_block1(struct __current_stack1__* parent){
         (*(parent->n_47))++;
 }
 
-struct list_char* list_char_initialize(struct list_char* self){
+struct list_char* list_charp_initialize(struct list_char* self){
         self->head=((void*)0);
         self->tail=((void*)0);
         self->len=0;
         struct list_char* __result__ = self;
-        call_finalizer(list_char_finalize,self,0, 0, 1);
+        call_finalizer(list_charp_finalize,self,0, 0, 1);
         return __result__;
 }
 
-void list_char_finalize(struct list_char* self){
-struct list_item_char_char* it_48;
-struct list_item_char_char* prev_it_49;
+void list_charp_finalize(struct list_char* self){
+struct list_item_char* it_48;
+struct list_item_char* prev_it_49;
             it_48=self->head;
             while(it_48!=((void*)0)) {
                 if(1) {
@@ -541,44 +573,44 @@ struct list_item_char_char* prev_it_49;
                 }
                 prev_it_49=it_48;
                 it_48=it_48->next;
-                call_finalizer(list_item_char_char_finalize,prev_it_49,0, 0, 0);
+                call_finalizer(list_item_charp_finalize,prev_it_49,0, 0, 0);
             }
 }
 
-void list_item_char_char_finalize(struct list_item_char_char* self){
+void list_item_charp_finalize(struct list_item_char* self){
                     if(self!=((void*)0)&&self->item!=((void*)0)) {
                         self->item = come_decrement_ref_count(self->item, 0, 0);
                     }
 }
 
-void list_char_push_back(struct list_char* self, char* item){
-void* right_value15;
-struct list_item_char_char* litem_51;
+void list_charp_push_back(struct list_char* self, char* item){
 void* right_value16;
-struct list_item_char_char* litem_52;
+struct list_item_char* litem_51;
 void* right_value17;
-struct list_item_char_char* litem_53;
+struct list_item_char* litem_52;
+void* right_value18;
+struct list_item_char* litem_53;
         if(self->len==0) {
-            litem_51=(struct list_item_char*)(right_value15=(struct list_item_char*)come_calloc(1, sizeof(struct list_item_char)*1));
+            litem_51=(struct list_item_char*)(right_value16=(struct list_item_char*)come_calloc(1, sizeof(struct list_item_char)*1));
             litem_51->prev=((void*)0);
             litem_51->next=((void*)0);
-            litem_51->item=come_increment_ref_count(item);
+            if(litem_51->item) { come_decrement_ref_count(litem_51->item, 0, 0); }; litem_51->item=come_increment_ref_count(item);
             self->tail=litem_51;
             self->head=litem_51;
         }
         else if(self->len==1) {
-            litem_52=(struct list_item_char*)(right_value16=(struct list_item_char*)come_calloc(1, sizeof(struct list_item_char)*1));
+            litem_52=(struct list_item_char*)(right_value17=(struct list_item_char*)come_calloc(1, sizeof(struct list_item_char)*1));
             litem_52->prev=self->head;
             litem_52->next=((void*)0);
-            litem_52->item=come_increment_ref_count(item);
+            if(litem_52->item) { come_decrement_ref_count(litem_52->item, 0, 0); }; litem_52->item=come_increment_ref_count(item);
             self->tail=litem_52;
             self->head->next=litem_52;
         }
         else {
-            litem_53=(struct list_item_char*)(right_value17=(struct list_item_char*)come_calloc(1, sizeof(struct list_item_char)*1));
+            litem_53=(struct list_item_char*)(right_value18=(struct list_item_char*)come_calloc(1, sizeof(struct list_item_char)*1));
             litem_53->prev=self->tail;
             litem_53->next=((void*)0);
-            litem_53->item=come_increment_ref_count(item);
+            if(litem_53->item) { come_decrement_ref_count(litem_53->item, 0, 0); }; litem_53->item=come_increment_ref_count(item);
             self->tail->next=litem_53;
             self->tail=litem_53;
         }
@@ -586,7 +618,7 @@ struct list_item_char_char* litem_53;
         item = come_decrement_ref_count(item, 0, 0);
 }
 
-char* list_char_begin(struct list_char* self){
+char* list_charp_begin(struct list_char* self){
 char* result_54;
         self->it=self->head;
         if(self->it) {
@@ -598,12 +630,12 @@ char* result_54;
         return __result__;
 }
 
-_Bool list_char_end(struct list_char* self){
+_Bool list_charp_end(struct list_char* self){
         struct list_item_char* __result__ = self->it==((void*)0);
         return __result__;
 }
 
-char* list_char_next(struct list_char* self){
+char* list_charp_next(struct list_char* self){
 char* result_56;
         self->it=self->it->next;
         if(self->it) {
@@ -615,40 +647,40 @@ char* result_56;
         return __result__;
 }
 
-struct list_int* list_int_initialize(struct list_int* self){
+struct list_int* list_intp_initialize(struct list_int* self){
         self->head=((void*)0);
         self->tail=((void*)0);
         self->len=0;
         struct list_int* __result__ = self;
-        call_finalizer(list_int_finalize,self,0, 0, 1);
+        call_finalizer(list_intp_finalize,self,0, 0, 1);
         return __result__;
 }
 
-void list_int_finalize(struct list_int* self){
-struct list_item_int_int* it_57;
-struct list_item_int_int* prev_it_58;
+void list_intp_finalize(struct list_int* self){
+struct list_item_int* it_57;
+struct list_item_int* prev_it_58;
             it_57=self->head;
             while(it_57!=((void*)0)) {
                 if(0) {
                 }
                 prev_it_58=it_57;
                 it_57=it_57->next;
-                call_finalizer(list_item_int_int_finalize,prev_it_58,0, 0, 0);
+                call_finalizer(list_item_intp_finalize,prev_it_58,0, 0, 0);
             }
 }
 
-void list_item_int_int_finalize(struct list_item_int_int* self){
+void list_item_intp_finalize(struct list_item_int* self){
 }
 
-void list_int_push_back(struct list_int* self, int item){
-void* right_value22;
-struct list_item_int_int* litem_60;
-void* right_value23;
-struct list_item_int_int* litem_61;
+void list_intp_push_back(struct list_int* self, int item){
 void* right_value24;
-struct list_item_int_int* litem_62;
+struct list_item_int* litem_60;
+void* right_value25;
+struct list_item_int* litem_61;
+void* right_value26;
+struct list_item_int* litem_62;
         if(self->len==0) {
-            litem_60=(struct list_item_int*)(right_value22=(struct list_item_int*)come_calloc(1, sizeof(struct list_item_int)*1));
+            litem_60=(struct list_item_int*)(right_value24=(struct list_item_int*)come_calloc(1, sizeof(struct list_item_int)*1));
             litem_60->prev=((void*)0);
             litem_60->next=((void*)0);
             litem_60->item=item;
@@ -656,7 +688,7 @@ struct list_item_int_int* litem_62;
             self->head=litem_60;
         }
         else if(self->len==1) {
-            litem_61=(struct list_item_int*)(right_value23=(struct list_item_int*)come_calloc(1, sizeof(struct list_item_int)*1));
+            litem_61=(struct list_item_int*)(right_value25=(struct list_item_int*)come_calloc(1, sizeof(struct list_item_int)*1));
             litem_61->prev=self->head;
             litem_61->next=((void*)0);
             litem_61->item=item;
@@ -664,7 +696,7 @@ struct list_item_int_int* litem_62;
             self->head->next=litem_61;
         }
         else {
-            litem_62=(struct list_item_int*)(right_value24=(struct list_item_int*)come_calloc(1, sizeof(struct list_item_int)*1));
+            litem_62=(struct list_item_int*)(right_value26=(struct list_item_int*)come_calloc(1, sizeof(struct list_item_int)*1));
             litem_62->prev=self->tail;
             litem_62->next=((void*)0);
             litem_62->item=item;
@@ -674,7 +706,7 @@ struct list_item_int_int* litem_62;
         self->len++;
 }
 
-int list_int_begin(struct list_int* self){
+int list_intp_begin(struct list_int* self){
 int result_63;
         self->it=self->head;
         if(self->it) {
@@ -686,12 +718,12 @@ int result_63;
         return __result__;
 }
 
-_Bool list_int_end(struct list_int* self){
+_Bool list_intp_end(struct list_int* self){
         struct list_item_int* __result__ = self->it==((void*)0);
         return __result__;
 }
 
-int list_int_next(struct list_int* self){
+int list_intp_next(struct list_int* self){
 int result_65;
         self->it=self->it->next;
         if(self->it) {
@@ -703,8 +735,8 @@ int result_65;
         return __result__;
 }
 
-void list_int_each(struct list_int* self, void* parent, void (*block)(void*,int,int,_Bool*)){
-struct list_item_int_int* it_67;
+void list_intp_each(struct list_int* self, void* parent, void (*block)(void*,int,int,_Bool*)){
+struct list_item_int* it_67;
 int i_68;
 _Bool end_flag_69;
         it_67=self->head;

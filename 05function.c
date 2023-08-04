@@ -300,8 +300,24 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         else if(type_name === "short") {
             short_ = true;
             
-            type_name = parse_word(info).catch {
-                throw;
+            if(xisalnum(*info.p)) {
+                char* p = info.p.p;
+                int sline = info.sline;
+                type_name = parse_word(info).catch {
+                }
+                
+                if(type_name === "int") {
+                    break;
+                }
+                else {
+                    type_name = string("short");
+                    info.p.p = p;
+                    info.sline = sline;
+                    break;
+                }
+            }
+            else {
+                break;
             }
         }
         else {
@@ -361,6 +377,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
     else {
         if(info.types[type_name]) {
             type = clone info.types[type_name];
+            type.mOriginalTypeName = string(type_name);
         }
         else if(info.generics_type_names.contained(type_name)) {
             for(int i=0; i<info.generics_type_names.length(); i++) {
@@ -419,11 +436,13 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                         }
                         if(!is_contained_generics_class(type, info)) {
                             type->mClass = info.classes[new_name];
+                            type->mSolvedGenericsName = true;
                         }
                     }
                     else {
                         if(!is_contained_generics_class(type, info)) {
                             type->mClass = info.classes[new_name];
+                            type->mSolvedGenericsName = true;
                         }
                     }
                 }
@@ -1657,10 +1676,17 @@ bool sLambdaNode*::compile(sLambdaNode* self, sInfo* info)
 
 string create_method_name(sType* obj_type, bool no_pointer_name, char* fun_name, sInfo* info)
 {
-    string struct_name = obj_type->mClass->mName;
-//    string struct_name = create_generics_name(obj_type, no_pointer_name, info)
+    string struct_name;
+    if(obj_type->mOriginalTypeName !== "") {
+        struct_name = string(obj_type->mOriginalTypeName);
+    }
+    else {
+        struct_name = obj_type->mClass->mName;
+    }
     
-    return xsprintf("%s_%s", struct_name, fun_name);
+    string p_name = "p" * obj_type->mPointerNum;
+    
+    return xsprintf("%s%s_%s", struct_name, p_name, fun_name);
 }
 
 bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* generics_type, sInfo* info)

@@ -19,6 +19,10 @@ string create_generics_name(sType* generics_type, bool no_pointer_name, sInfo* i
     
     buf.append_str(class_name);
     
+    if(generics_type->mSolvedGenericsName) {
+        return buf.to_string();
+    }
+    
 
 //    buf.append_str("p" * generics_type->mPointerNum);
 
@@ -98,9 +102,11 @@ string make_type_name_string(sType* type, bool in_header, bool array_cast_pointe
                     buf.append_str("va_list");
                 }
             }
+/*
             else if(type->mOriginalTypeName !== "") {
                 buf.append_str(type->mOriginalTypeName);
             }
+*/
             else {
                 buf.append_str("struct ");
                 buf.append_str(class_name);

@@ -510,6 +510,89 @@ impl list <T>
             }
         }
     }
+    void replace(list<T>* self, int position, T item)
+    {
+        if(position < 0) {
+            position += self.len;
+        }
+
+        list_item<T>* it = self.head;
+        int i = 0;
+        while(it != null) {
+            if(position == i) {
+                it.item = item;
+                break;
+            }
+            it = it.next;
+            i++;
+        }
+    }
+
+    int find(list<T>* self, T& item, int default_value) {
+        int it2 = 0;
+        list_item<T>* it = self.head;
+        while(it != null) {
+            if(it.item.equals(item)) {
+                return it2;
+            }
+            it2++;
+            
+            it = it.next;
+        }
+
+        return default_value;
+    }
+    bool equals(list<T>* left, list<T>* right)
+    {
+        if(left.len != right.len) {
+            return false;
+        }
+
+        list_item<T>* it = left.head;
+        list_item<T>* it2 = right.head;
+
+        while(it != null) {
+            if(!it.item.equals(it2.item)) {
+                return false;
+            }
+
+            it = it.next;
+            it2 = it2.next;
+        }
+
+        return true;
+    }
+    list<T>*% sublist(list<T>* self, int begin, int tail) {
+        list<T>*% result = new list<T>.initialize();
+
+        if(begin < 0) {
+            begin += self.len;
+        }
+
+        if(tail < 0) {
+            tail += self.len + 1;
+        }
+
+        if(begin < 0) {
+            begin = 0;
+        }
+
+        if(tail >= self.len) {
+            tail = self.len;
+        }
+
+        list_item<T>* it = self.head;
+        int i = 0;
+        while(it != null) {
+            if(i >= begin && i < tail) {
+                result.push_back(it.item);
+            }
+            it = it.next;
+            i++;
+        };
+
+        return result;
+    }
 }
 
 #define foreach(o1, o2) for(var o1 = (o2).begin(); !(o2).end(); o1 = (o2).next())
@@ -525,4 +608,40 @@ string __builtin_string(char* str)
     strncpy(result, str, len);
 
     return result;
+}
+
+bool int::equals(int self, int right) 
+{
+    return self == right;
+}
+
+bool bool::equals(bool self, bool right) 
+{
+    return self == right;
+}
+
+
+bool char::equals(char self, char right) 
+{
+    return self == right;
+}
+
+bool short::equals(short self, short right) 
+{
+    return self == right;
+}
+
+bool long::equals(long self, long right) 
+{
+    return self == right;
+}
+
+bool string::equals(char* self, char* right) 
+{
+    return strcmp(self, right) == 0;
+}
+
+bool char*::equals(char* self, char* right) 
+{
+    return strcmp(self, right) == 0;
 }

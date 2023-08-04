@@ -115,15 +115,15 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
             if(parent_var != null) {
                 CVALUE*% come_value = new CVALUE;
                 
-                sType* type = parent_var->mType;
+                sType* left_type = parent_var->mType;
                 
-                if(right_type->mHeap && !type->mHeap) {
+                if(right_type->mHeap && !left_type->mHeap) {
                     err_msg(info, "require left type appended %");
                     return false;
                 }
                 
-                if(right_type->mHeap && type->mHeap) {
-                    come_value.c_value = xsprintf("(*(parent->%s))=come_increment_ref_count(%s)", parent_var->mCValueName, right_value.c_value);
+                if(left_type->mPointerNum > 0 && right_type->mPointerNum > 0 && right_type->mHeap && left_type->mHeap) {
+                    come_value.c_value = xsprintf("if(*(parent->%s)) { come_decrement_ref_count(*(parent->%s), 0, 0); }; (*(parent->%s))=come_increment_ref_count(%s)", parent_var->mCValueName, parent_var->mCValueName, parent_var->mCValueName, right_value.c_value);
                     int right_value_id = get_right_value_id_from_obj(right_value.c_value);
                     
                     if(right_value_id != -1) {
@@ -134,7 +134,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                     come_value.c_value = xsprintf("(*(parent->%s))=%s", parent_var->mCValueName, right_value.c_value);
                 }
                 
-                come_value.type = clone type;
+                come_value.type = clone left_type;
                 come_value.var = null;
                 
                 add_come_last_code(info, "%s;\n", come_value.c_value);
@@ -159,8 +159,19 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         
         CVALUE*% come_value = new CVALUE;
         
-        if(left_type->mHeap && (self.alloc || left_type->mClass->mStruct)) {
-            come_value.c_value = xsprintf("%s=come_increment_ref_count(%s)", var_->mCValueName, right_value.c_value);
+        if(right_type->mHeap && !left_type->mHeap) {
+            err_msg(info, "require left type appended %");
+            return false;
+        }
+        
+        if(right_type->mHeap && left_type->mHeap && left_type->mPointerNum > 0 && right_type->mPointerNum > 0)
+        {
+            if(self.alloc) {
+                come_value.c_value = xsprintf("%s=come_increment_ref_count(%s)", var_->mCValueName, right_value.c_value);
+            }
+            else {
+                come_value.c_value = xsprintf("if(%s) { come_decrement_ref_count(%s, 0, 0); }; %s=come_increment_ref_count(%s)", var_->mCValueName, var_->mCValueName, var_->mCValueName, right_value.c_value);
+            }
             int right_value_id = get_right_value_id_from_obj(right_value.c_value);
             
             if(right_value_id != -1) {

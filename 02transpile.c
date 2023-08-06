@@ -1,4 +1,5 @@
 #include "common.h"
+#include <dirent.h>
 
 bool gComelang;
 bool gGC;
@@ -48,20 +49,39 @@ static bool cpp(sInfo* info)
     string input_file_name = info.sname;
     string output_file_name = xsprintf("%s.i", info.sname);
     
+    buffer*% include_files = new buffer();
+
+    DIR* dir = opendir(".");
+
+    if(dir == null) {
+        return false;
+    }
+    
+    struct dirent* entry;
+    while(entry = readdir(dir)) {
+        string ext = xextname(entry->d_name);
+        
+        if(ext === "ach") {
+            include_files.append_str(xsprintf("-include %s ", entry->d_name));
+        }
+    }
+
+    closedir(dir);
+    
     char cmd[1024];
 #ifdef __DARWIN_ARM__
-    snprintf(cmd, 1024, "/opt/homebrew/opt/llvm/bin/clang-cpp -I. -I/usr/local/include -D__DARWIN_ARM__ -U__GNUC__ %s > %s", input_file_name, output_file_name);
+    snprintf(cmd, 1024, "/opt/homebrew/opt/llvm/bin/clang-cpp -I. -I/usr/local/include -D__DARWIN_ARM__ -U__GNUC__ %s %s > %s", include_files.to_string(), input_file_name, output_file_name);
 #else
-    snprintf(cmd, 1024, "cpp -I. -U__GNUC__ %s > %s", input_file_name, output_file_name);
+    snprintf(cmd, 1024, "cpp -I. -U__GNUC__ %s %s > %s", include_files.to_string(), input_file_name, output_file_name);
 #endif
-    //puts(cmd);
+    puts(cmd);
 
     int rc = system(cmd);
     if(rc != 0) {
         char cmd[1024];
-        snprintf(cmd, 1024, "cpp -I. -C %s > %s", input_file_name, output_file_name);
+        snprintf(cmd, 1024, "cpp %s -I. -C %s > %s", include_files.to_string(), input_file_name, output_file_name);
 
-        //puts(cmd);
+        puts(cmd);
         rc = system(cmd);
 
         if(rc != 0) {
@@ -224,7 +244,7 @@ sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool 
     return self;
 };
 
-sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, bool external, bool var_args, sBlock*% block, sInfo* info)
+sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, bool external, bool var_args, sBlock*% block, bool generics, sInfo* info)
 {
     self.mName = name;
     self.mResultType = result_type;
@@ -232,6 +252,7 @@ sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sTy
     self.mParamNames = param_names;
     self.mExternal = external;
     self.mVarArgs = var_args;
+    self.mGenerics = generics;
     
     self.mLambdaType = new sType("lambda", info);
     
@@ -248,6 +269,7 @@ sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sTy
     
     self.mSource = new buffer();
     self.mSourceHead = new buffer();
+    self.mSourceHead2 = new buffer();
     self.mSourceDefer = new buffer();
     
     self.mBlock = block;
@@ -328,8 +350,10 @@ int come_main(int argc, char** argv) version 2
         info.right_value_objects = new list<sRightValueObject*%>();
         info.stack = new list<CVALUE*%>();
         info.gv_table = new sVarTable(global:true, parent:null);
-        info.lv_table = borrow info.gv_table;
+        sVarTable*% lv_table = new sVarTable(global:false, parent:null);
+        info.lv_table = lv_table;
         info.generics_type_names = new list<string>();
+        info.auto_come_header = new buffer();
         
         init_classes(&info);
         

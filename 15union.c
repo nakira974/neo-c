@@ -37,7 +37,8 @@ bool sUnionNode*::compile(sUnionNode* self, sInfo* info)
     
     buf.append_str(xsprintf("};\n", type.mName));
     
-    add_come_code(info, "%s", buf.to_string());
+    add_come_code_at_source_head(info, "%s", buf.to_string());
+    add_come_code_to_auto_come_header(info, "%s", buf.to_string());
 
     return TRUE;
 }

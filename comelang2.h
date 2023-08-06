@@ -170,7 +170,7 @@ static void* come_memdup(void* block)
     return (char*)ret + sizeof(int) + sizeof(long);
 }
 
-void int::times(int self, void* parent, void (*block)(void* parent))
+static void int::times(int self, void* parent, void (*block)(void* parent))
 {
     for(int i = 0; i < self; i++) {
         block(parent);
@@ -599,7 +599,7 @@ impl list <T>
 
 typedef char*% string;
 
-string __builtin_string(char* str)
+static string __builtin_string(char* str)
 {
     int len = strlen(str) + 1;
     
@@ -610,38 +610,38 @@ string __builtin_string(char* str)
     return result;
 }
 
-bool int::equals(int self, int right) 
+static bool int::equals(int self, int right) 
 {
     return self == right;
 }
 
-bool bool::equals(bool self, bool right) 
+static bool bool::equals(bool self, bool right) 
 {
     return self == right;
 }
 
 
-bool char::equals(char self, char right) 
+static bool char::equals(char self, char right) 
 {
     return self == right;
 }
 
-bool short::equals(short self, short right) 
+static bool short::equals(short self, short right) 
 {
     return self == right;
 }
 
-bool long::equals(long self, long right) 
+static bool long::equals(long self, long right) 
 {
     return self == right;
 }
 
-bool string::equals(char* self, char* right) 
+static bool string::equals(char* self, char* right) 
 {
     return strcmp(self, right) == 0;
 }
 
-bool char*::equals(char* self, char* right) 
+static bool char*::equals(char* self, char* right) 
 {
     return strcmp(self, right) == 0;
 }

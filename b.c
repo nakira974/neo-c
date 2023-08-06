@@ -1,13 +1,7 @@
-#include <comelang.h>
+#include <comelang2.h>
 
-int main(int argc, char** argv)
+int funX(int a, int b)
 {
-    var li = [1,2,3];
-    li.delete(0,1);
-    
-    li.each {
-        printf("%d\n", it);
-    }
-    
-    return 0;
+    return a + b;
 }
+

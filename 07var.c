@@ -48,8 +48,14 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         sVar* var_ = get_variable_from_table(info.lv_table, self.name);
         
         if(var_ == null) {
-            err_msg(info, "var not found(%s) at definition of variable\n", self.name);
-            return false;
+        /*
+            var_ = get_variable_from_table(info.gv_table, self.name);
+            
+            if(var_ == null) {
+        */
+                err_msg(info, "var not found(%s) at definition of variable\n", self.name);
+                return false;
+        //    }
         }
         
         if(var_->mType == null) {
@@ -60,6 +66,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         
         if(self.alloc) {
             add_come_code_at_function_head(info, "%s;\n", make_define_var(left_type, var_->mCValueName, info));
+            add_come_code_at_function_head2(info, "memset(&%s, 0, sizeof(%s));\n", var_->mCValueName, make_type_name_string(left_type, false@in_header, false@array_cast_pointer, info));
         }
         else {
             err_msg(info, "unexpected error. define(%s)\n", self.name);
@@ -75,7 +82,6 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         info.stack.push_back(come_value);
         
         if(self.alloc && left_type->mClass->mStruct) {
-            add_come_code(info, "memset(&%s, 0, sizeof(struct %s));\n", var_->mCValueName, left_type->mClass->mName);
             var_->mType->mAllocaValue = true;
         }
     }
@@ -105,6 +111,10 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                 
                 add_variable_to_table(self.name, type, info);
             }
+            
+            var_ = get_variable_from_table(info.lv_table, self.name);
+            
+            add_come_code_at_function_head2(info, "memset(&%s, 0, sizeof(%s));\n", var_->mCValueName, make_type_name_string(var_->mType, false@in_header, false@array_cast_pointer, info));
         }
         
         sClass* current_stack_frame_struct = info->current_stack_frame_struct;
@@ -123,7 +133,9 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                 }
                 
                 if(left_type->mPointerNum > 0 && right_type->mPointerNum > 0 && right_type->mHeap && left_type->mHeap) {
-                    come_value.c_value = xsprintf("if(*(parent->%s)) { come_decrement_ref_count(*(parent->%s), 0, 0); }; (*(parent->%s))=come_increment_ref_count(%s)", parent_var->mCValueName, parent_var->mCValueName, parent_var->mCValueName, right_value.c_value);
+                    add_come_code(info, "come_decrement_ref_count(*(parent->%s), 0, 0); }\n", parent_var->mCValueName);
+                    come_value.c_value = xsprintf("(*(parent->%s))=come_increment_ref_count(%s)", parent_var->mCValueName, right_value.c_value);
+                    
                     int right_value_id = get_right_value_id_from_obj(right_value.c_value);
                     
                     if(right_value_id != -1) {
@@ -148,8 +160,14 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         sVar* var_ = get_variable_from_table(info.lv_table, self.name);
         
         if(var_ == null) {
-            err_msg(info, "var not found(%s) at storing variable\n", self.name);
-            return false;
+        /*
+            var_ = get_variable_from_table(info.gv_table, self.name);
+            
+            if(var_ == null) {
+        */
+                err_msg(info, "var not found(%s) at storing variable\n", self.name);
+                return false;
+        //    }
         }
         
         if(var_->mType == NULL) {
@@ -170,7 +188,8 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                 come_value.c_value = xsprintf("%s=come_increment_ref_count(%s)", var_->mCValueName, right_value.c_value);
             }
             else {
-                come_value.c_value = xsprintf("if(%s) { come_decrement_ref_count(%s, 0, 0); }; %s=come_increment_ref_count(%s)", var_->mCValueName, var_->mCValueName, var_->mCValueName, right_value.c_value);
+                add_come_code(info, "come_decrement_ref_count(%s, 0, 0);\n", var_->mCValueName);
+                come_value.c_value = xsprintf("%s=come_increment_ref_count(%s)", var_->mCValueName, right_value.c_value);
             }
             int right_value_id = get_right_value_id_from_obj(right_value.c_value);
             
@@ -254,8 +273,14 @@ bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
     sVar* var_ = get_variable_from_table(info.lv_table, self.name);
     
     if(var_ == null) {
-        err_msg(info, "var not found(%s) at loading variable\n", self.name);
-        return false;
+        /*
+        var_ = get_variable_from_table(info.gv_table, self.name);
+        
+        if(var_ == null) {
+        */
+            err_msg(info, "var not found(%s) at loading variable\n", self.name);
+            return false;
+        //}
     }
     
     CVALUE*% come_value = new CVALUE;
@@ -335,14 +360,7 @@ void add_variable_to_table(char* name, sType* type, sInfo* info)
     self->mName = string(name);
     self->mType = clone type;
     
-    bool global = info->block_level == 0;
-    
-    self->mGlobal = global;
-    
-    if(global) {
-        self->mCValueName = string(name);
-    }
-    else if(type->mFunctionParam) {
+    if(type->mFunctionParam) {
         self->mCValueName = string(name);
     }
     else {
@@ -357,6 +375,27 @@ void add_variable_to_table(char* name, sType* type, sInfo* info)
     
     info.lv_table.mVars.insert(string(name), self);
 }
+
+/*
+void add_variable_to_global_table(char* name, sType* type, sInfo* info)
+{
+    sVar*% self = new sVar;
+    
+    self->mName = string(name);
+    self->mType = clone type;
+    
+    self->mGlobal = true;
+    
+    self->mCValueName = string(name);
+    
+    self->mBlockLevel = info->block_level;
+    self->mAllocaValue = false;
+    self->mFunctionParam = false;
+    self->mNoFree = false;
+    
+    info.gv_table.mVars.insert(string(name), self);
+}
+*/
 
 exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 7
 {

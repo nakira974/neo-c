@@ -187,6 +187,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
     bool union_ = false;
     bool enum_ = false;
     bool no_heap = false;
+    bool extern_ = false;
     
     while(true) {
         if(type_name === "struct") {
@@ -219,6 +220,13 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         }
         else if(type_name === "static") {
             static_ = true;
+            
+            type_name = parse_word(info).catch {
+                throw;
+            }
+        }
+        else if(type_name === "extern_") {
+            extern_ = true;
             
             type_name = parse_word(info).catch {
                 throw;
@@ -300,14 +308,27 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         else if(type_name === "short") {
             short_ = true;
             
-            if(xisalnum(*info.p)) {
+printf("%c\n", *info->p);
+            if(*info->p == ':') {
+                break;
+            }
+            else if(xisalnum(*info.p)) {
                 char* p = info.p.p;
                 int sline = info.sline;
                 type_name = parse_word(info).catch {
                 }
                 
+puts(type_name);
                 if(type_name === "int") {
                     break;
+                }
+                else if(type_name === "short") {
+                    short_ = false;
+                    break;
+                }
+                else if(is_type_name(type_name, info)) {
+                    info.p.p = p;
+                    info.sline = sline;
                 }
                 else {
                     type_name = string("short");
@@ -353,6 +374,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         result_type->mUnsigned = result_type->mUnsigned || unsigned_;
         result_type->mVolatile = volatile_;
         result_type->mStatic = result_type->mStatic || static_;
+        result_type->mExtern = result_type->mExtern || extern_;
         result_type->mRestrict = result_type->mRestrict || restrict_;
         result_type->mLongLong = result_type->mLongLong || long_long;
         result_type->mLong = result_type->mLong || long_;
@@ -454,6 +476,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         type->mUnsigned = type->mUnsigned || unsigned_;
         type->mVolatile = volatile_;
         type->mStatic = type->mStatic || static_;
+        type->mExtern = type->mExtern || extern_;
         type->mRestrict = type->mRestrict || restrict_;
         type->mLongLong = type->mLongLong || long_long;
         type->mLong = type->mLong || long_;
@@ -881,7 +904,8 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
     if(var_) {
         sType* lambda_type = var_->mType;
         
-        sType* result_type = lambda_type->mResultType.0;
+        sType*% result_type = clone lambda_type->mResultType.0;
+        result_type->mStatic = false;
         
         list<CVALUE*%>*% come_params = new list<CVALUE*%>();
         
@@ -935,6 +959,7 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
         }
         
         come_value.type = clone result_type;
+        come_value.type->mStatic = false;
         come_value.var = null;
         
         add_come_last_code(info, "%s;\n", come_value.c_value);
@@ -952,7 +977,8 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
             return false;
         }
         
-        sType* result_type = fun->mResultType;
+        sType*% result_type = clone fun->mResultType;
+        result_type->mStatic = false;
         
         list<CVALUE*%>*% come_params = new list<CVALUE*%>();
         
@@ -1002,10 +1028,11 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
         come_value.c_value = buf.to_string();
         
         if(fun->mResultType->mHeap) {
-            come_value.c_value = append_object_to_right_values(come_value.c_value, fun->mResultType, info);
+            come_value.c_value = append_object_to_right_values(come_value.c_value, result_type, info);
         }
         
         come_value.type = clone result_type;
+        come_value.type->mStatic = false;
         come_value.var = null;
         
         add_come_last_code(info, "%s;\n", come_value.c_value);
@@ -1580,6 +1607,101 @@ exception int expected_next_character(char c, sInfo* info)
     return 0;
 }
 
+struct sGlobalVariable {
+    sType*% type;
+    string name;
+    sNode*% right_node;
+    
+    int sline;
+    string sname;
+};
+
+sGlobalVariable*% sGlobalVariable*::initialize(sGlobalVariable*% self, sType* type, string name, sNode*% right_node, sInfo* info)
+{
+    self.sline = info.sline;
+    self.sname = info.sname;
+    
+    self.type = clone type;
+    self.name = string(name);
+    self.right_node = right_node;
+    
+    return self;
+}
+
+int sGlobalVariable*::sline(sGlobalVariable* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sGlobalVariable*::sname(sGlobalVariable* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+bool sGlobalVariable*::compile(sGlobalVariable* self, sInfo* info)
+{
+    sType* type = self.type;
+    string name = self.name;
+    sNode* right_node = self.right_node;
+    
+    //add_variable_to_global_table(name, type, info);
+    
+    if(right_node) {
+        add_come_code_at_source_head(info, "%s;\n", make_define_var(type, name, info));
+        add_come_code_to_auto_come_header(info, "%s;\n", make_define_var(type, name, info));
+        //add_come_code_to_main_head(info, "%s=%s;\n", name, right_node.c_value);
+    }
+    else {
+        add_come_code_at_source_head(info, "%s;\n", make_define_var(type, name, info));
+        add_come_code_to_auto_come_header(info, "%s;\n", make_define_var(type, name, info));
+        //add_come_code_to_main_head(info, "memset(&%s, 0, sizeof(%s);\n", name, make_type_name_string(type, false@in_header, false@array_cast_pointer, info));
+    }
+    
+    return true;
+}
+
+struct sExternalGlobalVariable {
+    sType*% type;
+    string name;
+    
+    int sline;
+    string sname;
+};
+
+sExternalGlobalVariable*% sExternalGlobalVariable*::initialize(sExternalGlobalVariable*% self, sType* type, string name, sInfo* info)
+{
+    self.type = clone type;
+    self.name = string(name);
+
+    self.sline = info.sline;
+    self.sname = info.sname;
+    
+    return self;
+}
+
+int sExternalGlobalVariable*::sline(sExternalGlobalVariable* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sExternalGlobalVariable*::sname(sExternalGlobalVariable* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+bool sExternalGlobalVariable*::compile(sExternalGlobalVariable* self, sInfo* info)
+{
+    sType* type = self.type;
+    string name = self.name;
+    
+    //add_variable_to_global_table(name, type, info);
+    
+    add_come_code_at_source_head(info, "extern %s;\n", make_define_var(type, name, info));
+    add_come_code_to_auto_come_header(info, "extern %s;\n", make_define_var(type, name, info));
+    
+    return true;
+}
+
 struct sFunNode {
     sFun* mFun;
     int sline;
@@ -1732,7 +1854,7 @@ bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* gen
     sFun*% fun = new sFun(fun_name, result_type
                     , param_types
                     , param_names, false@external
-                    , var_args, block, info);
+                    , var_args, block, true@generics, info);
     
     info.funcs.insert(string(fun_name), fun);
     
@@ -1937,7 +2059,7 @@ exception sNode*% parse_function(sInfo* info)
         fun_name = xsprintf("lambda%d", lambda_num);
         
         var fun = new sFun(fun_name, result_type, param_types, param_names
-                                , false@external, var_args, block, info);
+                                , false@external, var_args, block, false@generics, info);
         
         info.funcs.insert(string(fun_name), fun);
         
@@ -1948,7 +2070,7 @@ exception sNode*% parse_function(sInfo* info)
         skip_spaces_and_lf(info);
         
         var fun = new sFun(fun_name, result_type, param_types, param_names
-                                , true@external, var_args, null!@block, info);
+                                , true@external, var_args, null!@block, false@generics, info);
         
         info.funcs.insert(string(fun_name), fun);
         
@@ -1971,7 +2093,7 @@ exception sNode*% parse_function(sInfo* info)
         }
         
         var fun = new sFun(fun_name, result_type, param_types, param_names
-                                , false@external, var_args, block, info);
+                                , false@external, var_args, block, false@generics, info);
         
         info.funcs.insert(string(fun_name), fun);
         
@@ -1980,6 +2102,39 @@ exception sNode*% parse_function(sInfo* info)
     else {
         err_msg(info, "invalid character(%c)(2)\n", *info->p);
         throw;
+    }
+    
+    return (sNode*)null;
+}
+
+exception sNode*% parse_global_variable(sInfo* info)
+{
+    var result_type, var_name = parse_type(info, true@parse_variable_name).catch {
+        throw;
+    }
+    
+    sNode*% right_node = null;
+    
+    if(*info->p == '=') {
+        info->p++;
+        skip_spaces_and_lf(info);
+        
+        parse_sharp(info);
+        right_node = expression(info).catch {
+            throw;
+        }
+        parse_sharp(info);
+    }
+    
+    if(result_type->mExtern) {
+        if(right_node) {
+            err_msg(info, "invalid right value");
+            throw;
+        }
+        return new sNode(new sExternalGlobalVariable(result_type, var_name, info));
+    }
+    else {
+        return new sNode(new sGlobalVariable(result_type, var_name, right_node, info));
     }
     
     return (sNode*)null;
@@ -2016,9 +2171,13 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
         
         info.no_output_err = true;
         parse_type(info).catch {};
-        string word;
+        string word = null;
         if(xisalnum(*info.p) || *info->p == '_') {
             word = parse_word(info).catch {}
+            
+            if(word === "extern") {
+                word = parse_word(info).catch {}
+            }
         }
         else {
             word = null;
@@ -2059,6 +2218,28 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
         info.p.p = p;
         info.sline = sline;
     }
+    /// back trace2 ///
+    bool define_variable = false;
+/*
+    {
+        char* p = info.p.p;
+        info.p.p = head;
+        
+        if(!is_type_name_flag) {
+            define_variable = false;
+        }
+        
+        
+        info.no_output_err = true;
+        parse_type(info).catch {
+            define_variable = false;
+        }
+        info.no_output_err = false;
+        
+        info.p.p = p;
+        info.sline = sline;
+    }
+*/
     
     if(define_function_flag) {
         info.p.p = head;
@@ -2068,6 +2249,17 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
             throw;
         }
     }
+    /*
+    else if(define_variable) {
+        info.p.p = head;
+        info.sline = sline;
+        
+        return parse_global_variable(info).catch {
+            throw;
+        }
+    }
+    */
+    
     info.p.p = head;
     info.sline = sline;
     
@@ -2176,7 +2368,7 @@ exception sFun*,string create_finalizer_automatically(sType* type, char* fun_nam
         self_type->mHeap = false;
         var param_types = [self_type];
         var param_names = [string("self")];
-        sFun*% fun = new sFun(name, result_type, param_types, param_names, false@external, false@var_args, block, info);
+        sFun*% fun = new sFun(name, result_type, param_types, param_names, false@external, false@var_args, block, false@generics, info);
         
         info.funcs.insert(string(name), fun);
         

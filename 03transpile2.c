@@ -58,7 +58,7 @@ string make_type_name_string(sType* type, bool in_header, bool array_cast_pointe
     
     char* class_name = type->mClass->mName;
     
-    if(type->mStatic) {
+    if(type->mStatic && !type->mStruct && !type->mUnion) {
         buf.append_str("static ");
     }
     
@@ -408,6 +408,7 @@ string output_function(sFun* fun, sInfo* info)
     output.append_str("{\n");
     
     output.append_str(fun->mSourceHead.to_string());
+    output.append_str(fun->mSourceHead2.to_string());
     output.append_str(fun->mSource.to_string());
     
     output.append_str("}\n");
@@ -541,6 +542,21 @@ void add_come_code(sInfo* info, const char* msg, ...)
     }
 }
 
+void add_come_code_to_auto_come_header(sInfo* info, const char* msg, ...)
+{
+    if(info->no_output_come_code) {
+        return;
+    }
+    char msg2[COME_CODE_MAX];
+
+    va_list args;
+    va_start(args, msg);
+    vsnprintf(msg2, COME_CODE_MAX, msg, args);
+    va_end(args);
+    
+    info.auto_come_header.append_str(xsprintf("%s", msg2));
+}
+
 void add_come_code_at_source_head(sInfo* info, const char* msg, ...)
 {
     if(info->no_output_come_code) {
@@ -563,7 +579,7 @@ bool transpile(sInfo* info) version 3
     var param_types = [new sType("int", info), new sType("char**", info)];
     var param_names = [string("argc"), string("argv")];
     var main_fun = new sFun(name, result_type, param_types, param_names
-                            , false@external, false@var_args, null!@block, info);
+                            , false@external, false@var_args, null!@block, false@generics, info);
     
     info.funcs.insert(name, main_fun);
     
@@ -585,24 +601,37 @@ bool output_source_file(sInfo* info) version 3
     
     FILE* f = fopen(output_file_name, "w");
     
+    fprintf(f, "/* source head */\n");
     fprintf(f, "%s\n", info.module.mSourceHead.to_string());
     
+    fprintf(f, "/* header function */\n");
     foreach(it, info.funcs) {
         sFun* it2 = info.funcs[it];
         string header = header_function(it2, info);
         
-        fprintf(f, "%s", header);
+        if(it2->mGenerics) {
+            fprintf(f, "static %s", header);
+        }
+        else {
+            fprintf(f, "%s", header);
+        }
     }
     
     fprintf(f, "\n");
     
+    fprintf(f, "/* body function */\n");
     foreach(it, info.funcs) {
         sFun* it2 = info.funcs[it];
         
         if(!it2->mExternal) {
             string output = output_function(it2, info);
             
-            fprintf(f, "%s", output);
+            if(it2->mGenerics) {
+                fprintf(f, "static %s", output);
+            }
+            else {
+                fprintf(f, "%s", output);
+            }
             
             fprintf(f, "\n");
         }
@@ -610,9 +639,26 @@ bool output_source_file(sInfo* info) version 3
     
     fclose(f);
     
+    string output_header = xsprintf("%s.ach", info.sname);
+    
+    FILE* f2 = fopen(output_header, "w");
+    
+    fprintf(f2, "%s\n", info.auto_come_header.to_string());
+    
+    foreach(it, info.funcs) {
+        sFun* it2 = info.funcs[it];
+        string header = header_function(it2, info);
+        
+        if(!it2->mResultType->mStatic) {
+            fprintf(f2, "%s", header);
+        }
+    }
+    fprintf(f2, "\n");
+    
+    fclose(f2);
+    
     return true;
 }
-
 
 void add_come_code_at_function_head(sInfo* info, char* code, ...)
 {
@@ -628,6 +674,23 @@ void add_come_code_at_function_head(sInfo* info, char* code, ...)
     
     if(info.come_fun) {
         info->come_fun->mSourceHead.append_str(msg2);
+    }
+}
+
+void add_come_code_at_function_head2(sInfo* info, char* code, ...)
+{
+    if(info->no_output_come_code) {
+        return;
+    }
+    char msg2[COME_CODE_MAX];
+
+    va_list args;
+    va_start(args, code);
+    vsnprintf(msg2, COME_CODE_MAX, code, args);
+    va_end(args);
+    
+    if(info.come_fun) {
+        info->come_fun->mSourceHead2.append_str(msg2);
     }
 }
 

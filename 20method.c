@@ -160,6 +160,7 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
     }
     
     sType*% result_type = clone fun->mResultType;
+    result_type->mStatic = false;
     
     list<CVALUE*%>*% come_params = new list<CVALUE*%>();
     
@@ -217,7 +218,8 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
             return false;
         }
         
-        sType* result_type = method_block_type->mResultType.0;
+        sType*% result_type = clone method_block_type->mResultType.0;
+        result_type->mStatic = false;
         list<sType*%>* param_types = method_block_type->mParamTypes;
         list<string>* param_names = method_block_type->mParamNames;
         
@@ -317,6 +319,7 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
     }
     
     come_value2.type = clone result_type;
+    come_value2.type->mStatic = false;
     come_value2.var = null;
     
     add_come_last_code(info, "%s;\n", buf.to_string());

@@ -27,7 +27,8 @@ bool sTypedefNode*::compile(sTypedefNode* self, sInfo* info)
     
     info.types.insert(string(type_name), clone type);
     
-    add_come_code(info, "typedef %s;\n", make_define_var(type, type_name, info));
+    add_come_code_at_source_head(info, "typedef %s;\n", make_define_var(type, type_name, info));
+    add_come_code_to_auto_come_header(info, "typedef %s;\n", make_define_var(type, type_name, info));
 
     return TRUE;
 }

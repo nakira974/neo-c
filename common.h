@@ -67,6 +67,7 @@ struct sType
     bool mRegister;
     bool mVolatile;
     bool mStatic;
+    bool mExtern;
     bool mRestrict;
     bool mImmutable;
     bool mLongLong;
@@ -133,7 +134,10 @@ struct sFun
     
     buffer*% mSource;
     buffer*% mSourceHead;
+    buffer*% mSourceHead2;
     buffer*% mSourceDefer;
+    
+    bool mGenerics;
 };
 
 struct sGenericsFun
@@ -229,6 +233,8 @@ struct sInfo
     sClass* current_stack_frame_struct;
     list<sType*%>*? param_types;
     list<string>*? param_names;
+    
+    buffer*% auto_come_header;
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -250,7 +256,7 @@ sType*% sType*::initialize(sType*% self, char* name, sInfo* info, bool heap=fals
 sVarTable*% sVarTable*::initialize(sVarTable*% self, bool global, sVarTable* parent);
 void sVarTable*::finalize(sVarTable* self);
 sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool union_=false, bool generics=false, bool method_generics=false, bool protocol_=false, bool struct_=false, bool float_=false, int generics_num=-1, int method_generics_num=-1, bool enum_=false);
-sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, bool external, bool var_args, sBlock*% block, sInfo* info);
+sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, bool external, bool var_args, sBlock*% block, bool generics, sInfo* info);
 string make_type_name_string(sType* type, bool in_header, bool array_cast_pointer, sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
@@ -259,12 +265,15 @@ string make_type_name_string(sType* type, bool in_header, bool array_cast_pointe
 void come_init() version 3;
 void come_final() version 3;
 
+string header_function(sFun* fun, sInfo* info);
+void add_come_code_to_auto_come_header(sInfo* info, const char* msg, ...);
 bool transpile(sInfo* info) version 3;
 bool output_source_file(sInfo* info) version 3;
 void show_type(sType* type, sInfo* info);
 string create_generics_name(sType* generics_type, bool no_pointer_name, sInfo* info);
 void add_last_code_to_source(sInfo* info);
 void add_come_code_at_function_head(sInfo* info, char* code, ...);
+void add_come_code_at_function_head2(sInfo* info, char* code, ...);
 void add_come_code_at_source_head(sInfo* info, const char* msg, ...);
 void add_come_code(sInfo* info, const char* msg, ...);
 void add_come_last_code(sInfo* info, const char* msg, ...);
@@ -331,6 +340,7 @@ exception sNode*% expression_node(sInfo* info) version 98;
 /////////////////////////////////////////////////////////////////////
 exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 7;
 void add_variable_to_table(char* name, sType* type, sInfo* info);
+void add_variable_to_global_table(char* name, sType* type, sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
 /// 08if.c

@@ -107,6 +107,7 @@ void define_struct(sClass* klass, sInfo* info)
     buf.append_str("};\n");
     
     add_come_code_at_source_head(info, "%s", buf.to_string());
+    add_come_code_to_auto_come_header(info, "%s", buf.to_string());
 }
 
 bool sStructNode*::compile(sStructNode* self, sInfo* info)

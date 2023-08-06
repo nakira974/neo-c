@@ -1,10 +1,11 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#include <comelang.h>
 
 int main()
 {
-    char *str = malloc(1);
+    map<string, int>*% m = new map<string, int>();
+    
+    map.insert(string("funX", 1);
+    map.insert(string("funX", 2);
     
     return 0;
 }

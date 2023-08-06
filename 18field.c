@@ -74,10 +74,12 @@ bool sStoreFieldNode*::compile(sStoreFieldNode* self, sInfo* info)
     if(field_type->mHeap && right_type->mHeap && field_type->mPointerNum > 0 && right_type->mPointerNum > 0) 
     {
         if(left_value.type->mPointerNum == 1) {
-            come_value.c_value = xsprintf("if(%s->%s) { come_decrement_ref_count(%s->%s, 0, 0); }; %s->%s=come_increment_ref_count(%s)", left_value.c_value, name, left_value.c_value, name, left_value.c_value, name, right_value.c_value);
+            add_come_code(info, "come_decrement_ref_count(%s->%s, 0, 0);\n", left_value.c_value, name);
+            come_value.c_value = xsprintf("%s->%s=come_increment_ref_count(%s)", left_value.c_value, name, right_value.c_value);
         }
         else if(left_value.type->mPointerNum == 0) {
-            come_value.c_value = xsprintf("if(%s.%s) { come_decrement_ref_count(%s.%s, 0, 0); }; %s.%s=come_increment_ref_count(%s)", left_value.c_value, name, left_value.c_value, name, left_value.c_value, name, right_value.c_value);
+            add_come_last_code(info, "come_decrement_ref_count(%s.%s, 0, 0)", left_value.c_value, name);
+            come_value.c_value = xsprintf("%s.%s=come_increment_ref_count(%s)", left_value.c_value, name, right_value.c_value);
         }
         else {
             err_msg(info, "Invalid left_type. The field name is %s. The pointer num is %d.", name, left_value.type->mPointerNum);

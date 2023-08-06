@@ -1681,11 +1681,22 @@ impl map <T, T2>
             }
         }
         
+        bool same_key_exist = false;
+        foreach(it2, self.key_list) {
+            if(it2.equals(key)) {
+                same_key_exist = true;
+            }
+        }
+        
         if(isheap(T)) {
-            self.key_list.push_back(clone key);
+            if(!same_key_exist) {
+                self.key_list.push_back(clone key);
+            }
         }
         else {
-            self.key_list.push_back(key);
+            if(!same_key_exist) {
+                self.key_list.push_back(key);
+            }
         }
     }
     
@@ -2029,11 +2040,22 @@ impl map <T, T2>
             }
         }
         
+        bool same_key_exist = false;
+        foreach(it2, self.key_list) {
+            if(it2.equals(key)) {
+                same_key_exist = true;
+            }
+        }
+        
         if(isheap(T)) {
-            self.key_list.push_back(clone key);
+            if(!same_key_exist) {
+                self.key_list.push_back(clone key);
+            }
         }
         else {
-            self.key_list.push_back(key);
+            if(!same_key_exist) {
+                self.key_list.push_back(key);
+            }
         }
     }
 

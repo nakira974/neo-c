@@ -179,6 +179,27 @@ string make_type_name_string(sType* type, bool in_header, bool array_cast_pointe
     return buf.to_string();
 }
 
+string make_come_type_name_string(sType* type, sInfo* info)
+{
+    var buf = new buffer();
+    
+    char* class_name = type->mClass->mName;
+    
+    buf.append_str(class_name);
+    
+    if(type->mNoArrayPointerNum == 0 && class_name !== "lambda") {
+        for(int i=0; i<type->mPointerNum; i++) {
+            buf.append_str("*");
+        }
+    }
+    
+    if(type->mHeap) {
+        buf.append_str("%");
+    }
+    
+    return buf.to_string();
+}
+
 void show_type(sType* type, sInfo* info)
 {
     puts(make_type_name_string(type, false@in_header, false@array_cast_pointer, info));
@@ -275,6 +296,72 @@ string make_define_var(sType* type, char* name, sInfo* info)
     }
     else {
         var type_str = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
+        
+        buf.append_str(type_str);
+        
+        buf.append_str(" ");
+        if(type->mNoArrayPointerNum > 0) {
+            buf.append_str("(*");
+        }
+        buf.append_str(name);
+        if(type->mNoArrayPointerNum > 0) {
+            buf.append_str(")");
+        }
+    }
+    
+    return buf.to_string();
+}
+
+string make_come_define_var(sType* type, char* name, sInfo* info)
+{
+    var buf = new buffer();
+    
+    if(type->mClass->mName === "lambda") {
+        var str = make_lambda_type_name_string(type, name, info);
+        
+        buf.append_str(str);
+    }
+    else if(type->mSizeNum > 0) {
+        buf.append_str("int ");
+        buf.append_str(xsprintf("%s:%d", name, type->mSizeNum));
+    }
+    else if(type->mOmitArrayNum) {
+        var type_str = make_come_type_name_string(type, info);
+        
+        buf.append_str(type_str);
+        
+        buf.append_str(" ");
+        buf.append_str(name);
+        
+        buf.append_str("[]");
+    }
+    else if(type->mArrayNum.length() > 0) {
+        var type_str = make_come_type_name_string(type, info);
+        
+        buf.append_str(type_str);
+        
+        buf.append_str(" ");
+        if(type->mNoArrayPointerNum > 0) {
+            buf.append_str("(*");
+        }
+        buf.append_str(name);
+        if(type->mNoArrayPointerNum > 0) {
+            buf.append_str(")");
+        }
+        
+        foreach(it, type->mArrayNum) {
+            if(!it.compile->(info)) {
+                err_msg(info, "invalid array number");
+                exit(1);
+            }
+            CVALUE*% cvalue = get_value_from_stack(-1, info);
+            dec_stack_ptr(1, info);
+        
+            buf.append_str(xsprintf("[%s]", cvalue.c_value));
+        }
+    }
+    else {
+        var type_str = make_come_type_name_string(type, info);
         
         buf.append_str(type_str);
         
@@ -579,7 +666,9 @@ bool transpile(sInfo* info) version 3
     var param_types = [new sType("int", info), new sType("char**", info)];
     var param_names = [string("argc"), string("argv")];
     var main_fun = new sFun(name, result_type, param_types, param_names
-                            , false@external, false@var_args, null!@block, false@generics, info);
+        , false@external, false@var_args, null!@block, false@static_
+        , string("int main(int argc, char** argv)")
+        , info);
     
     info.funcs.insert(name, main_fun);
     
@@ -609,7 +698,7 @@ bool output_source_file(sInfo* info) version 3
         sFun* it2 = info.funcs[it];
         string header = header_function(it2, info);
         
-        if(it2->mGenerics) {
+        if(it2->mStatic) {
             fprintf(f, "static %s", header);
         }
         else {
@@ -626,7 +715,7 @@ bool output_source_file(sInfo* info) version 3
         if(!it2->mExternal) {
             string output = output_function(it2, info);
             
-            if(it2->mGenerics) {
+            if(it2->mStatic) {
                 fprintf(f, "static %s", output);
             }
             else {
@@ -647,10 +736,10 @@ bool output_source_file(sInfo* info) version 3
     
     foreach(it, info.funcs) {
         sFun* it2 = info.funcs[it];
-        string header = header_function(it2, info);
+        string header = it2.mComeHeader;
         
-        if(!it2->mResultType->mStatic) {
-            fprintf(f2, "%s", header);
+        if(!it2->mStatic) {
+            fprintf(f2, "%s;\n", header);
         }
     }
     fprintf(f2, "\n");

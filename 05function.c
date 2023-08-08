@@ -141,6 +141,7 @@ exception list<sType*%>*%, list<string>*%, bool parse_params(sInfo* info)
         
         param_type2->mFunctionParam = true;
         
+        
         param_types.push_back(clone param_type2);
         param_names.push_back(clone param_name);
         
@@ -308,7 +309,6 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         else if(type_name === "short") {
             short_ = true;
             
-printf("%c\n", *info->p);
             if(*info->p == ':') {
                 break;
             }
@@ -318,7 +318,6 @@ printf("%c\n", *info->p);
                 type_name = parse_word(info).catch {
                 }
                 
-puts(type_name);
                 if(type_name === "int") {
                     break;
                 }
@@ -357,6 +356,7 @@ puts(type_name);
         sType*% result_type;
         if(info.types[type_name]) {
             result_type = clone info.types[type_name];
+            //type.mOriginalTypeName = string(type_name);
         }
         else if(info.generics_type_names.contained(type_name)) {
             for(int i=0; i<info.generics_type_names.length(); i++) {
@@ -1648,12 +1648,12 @@ bool sGlobalVariable*::compile(sGlobalVariable* self, sInfo* info)
     
     if(right_node) {
         add_come_code_at_source_head(info, "%s;\n", make_define_var(type, name, info));
-        add_come_code_to_auto_come_header(info, "%s;\n", make_define_var(type, name, info));
+        //add_come_code_to_auto_come_header(info, "%s;\n", make_define_var(type, name, info));
         //add_come_code_to_main_head(info, "%s=%s;\n", name, right_node.c_value);
     }
     else {
         add_come_code_at_source_head(info, "%s;\n", make_define_var(type, name, info));
-        add_come_code_to_auto_come_header(info, "%s;\n", make_define_var(type, name, info));
+        //add_come_code_to_auto_come_header(info, "%s;\n", make_define_var(type, name, info));
         //add_come_code_to_main_head(info, "memset(&%s, 0, sizeof(%s);\n", name, make_type_name_string(type, false@in_header, false@array_cast_pointer, info));
     }
     
@@ -1697,7 +1697,7 @@ bool sExternalGlobalVariable*::compile(sExternalGlobalVariable* self, sInfo* inf
     //add_variable_to_global_table(name, type, info);
     
     add_come_code_at_source_head(info, "extern %s;\n", make_define_var(type, name, info));
-    add_come_code_to_auto_come_header(info, "extern %s;\n", make_define_var(type, name, info));
+    //add_come_code_to_auto_come_header(info, "extern %s;\n", make_define_var(type, name, info));
     
     return true;
 }
@@ -1854,7 +1854,7 @@ bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* gen
     sFun*% fun = new sFun(fun_name, result_type
                     , param_types
                     , param_names, false@external
-                    , var_args, block, true@generics, info);
+                    , var_args, block, true@static_, string(""), info);
     
     info.funcs.insert(string(fun_name), fun);
     
@@ -1982,6 +1982,7 @@ exception string skip_block(sInfo* info)
 
 exception sNode*% parse_function(sInfo* info)
 {
+    char* header_head = info.p.p;
     var result_type, var_name = parse_type(info).catch {
         throw;
     }
@@ -2043,10 +2044,15 @@ exception sNode*% parse_function(sInfo* info)
         }
     }
     
-    
     var param_types, param_names, var_args = parse_params(info).catch {
         throw
     }
+    char* header_tail = info.p.p;
+    
+    buffer*% header_buf = new buffer();
+    
+    header_buf.append(header_head, header_tail - header_head);
+    header_buf.append_char('\0');
     
     if(fun_name === "lambda") {
         sBlock*% block = parse_block(info).catch {
@@ -2058,8 +2064,11 @@ exception sNode*% parse_function(sInfo* info)
         
         fun_name = xsprintf("lambda%d", lambda_num);
         
+        result_type->mStatic = false;
+        
         var fun = new sFun(fun_name, result_type, param_types, param_names
-                                , false@external, var_args, block, false@generics, info);
+                            , false@external, var_args, block
+                            , true@static_, header_buf.to_string(), info);
         
         info.funcs.insert(string(fun_name), fun);
         
@@ -2069,8 +2078,11 @@ exception sNode*% parse_function(sInfo* info)
         info->p++;
         skip_spaces_and_lf(info);
         
+        result_type->mStatic = false;
+        
         var fun = new sFun(fun_name, result_type, param_types, param_names
-                                , true@external, var_args, null!@block, false@generics, info);
+                            , true@external, var_args, null!@block
+                            , false@static_, header_buf.to_string(), info);
         
         info.funcs.insert(string(fun_name), fun);
         
@@ -2092,8 +2104,17 @@ exception sNode*% parse_function(sInfo* info)
             throw;
         }
         
+        bool static_ = false;
+        if(result_type->mStatic) {
+            result_type->mStatic = false;
+            static_ = true;
+        }
+        
         var fun = new sFun(fun_name, result_type, param_types, param_names
-                                , false@external, var_args, block, false@generics, info);
+                                , false@external, var_args, block
+                                , static_
+                                , header_buf.to_string()
+                                , info);
         
         info.funcs.insert(string(fun_name), fun);
         
@@ -2362,13 +2383,41 @@ exception sFun*,string create_finalizer_automatically(sType* type, char* fun_nam
             throw;
         }
         
-        var name = clone real_fun_name;
         var result_type = new sType("void", info);
+        var name = clone real_fun_name;
         var self_type = clone type;
         self_type->mHeap = false;
         var param_types = [self_type];
         var param_names = [string("self")];
-        sFun*% fun = new sFun(name, result_type, param_types, param_names, false@external, false@var_args, block, false@generics, info);
+        
+        buffer*% header_buf = new buffer();
+        
+        header_buf.append_str(make_come_type_name_string(result_type, info));
+        header_buf.append_str(" ");
+        header_buf.append_str(real_fun_name);
+        header_buf.append_str("(");
+        
+        for(int i=0; i<param_types.length(); i++) {
+            sType* param_type = param_types[i];
+            char* param_name = param_names[i];
+            
+            header_buf.append_str(make_come_type_name_string(param_type, info));
+            header_buf.append_str(" ");
+            header_buf.append_str(param_name);
+            
+            if(i != param_types.length() -1) {
+                header_buf.append_str(",");
+            }
+        }
+        header_buf.append_str(")");
+        
+        result_type->mStatic = false;
+        
+        sFun*% fun = new sFun(name, result_type, param_types, param_names
+                        , false@external, false@var_args, block
+                        , true@static_
+                        , header_buf.to_string()
+                        , info);
         
         info.funcs.insert(string(name), fun);
         

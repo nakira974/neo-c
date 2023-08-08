@@ -3,15 +3,17 @@
 struct sStructNode
 {
     sType*% mType;
+    string mComeHeader;
   
     int sline;
     string sname;
 };
 
-sStructNode*% sStructNode*::initialize(sStructNode*% self, sType*% type, sInfo* info)
+sStructNode*% sStructNode*::initialize(sStructNode*% self, sType*% type, string come_header, sInfo* info)
 {
     self.sline = info.sline;
     self.sname = string(info.sname);
+    self.mComeHeader = string(come_header);
 
     self.mType = clone type;
     
@@ -90,7 +92,7 @@ bool define_generics_struct(sType* type, sInfo* info)
     return true;
 }
 
-void define_struct(sClass* klass, sInfo* info)
+void define_struct(sClass* klass, string? come_header, sInfo* info)
 {
     buffer*% buf = new buffer();
     
@@ -106,16 +108,25 @@ void define_struct(sClass* klass, sInfo* info)
     
     buf.append_str("};\n");
     
-    add_come_code_at_source_head(info, "%s", buf.to_string());
-    add_come_code_to_auto_come_header(info, "%s", buf.to_string());
+    if(!info.enum_typedef_already_output[string(klass->mName)]) {
+        add_come_code_at_source_head(info, "%s", buf.to_string());
+        
+        if(come_header) {
+            add_come_code_to_auto_come_header(info, "%s", come_header);
+        }
+        
+        info.enum_typedef_already_output[string(klass->mName)] = true;
+    }
 }
 
 bool sStructNode*::compile(sStructNode* self, sInfo* info)
 {
     sType* type = self.mType;
+    sClass* klass = type.mClass;
+    string come_header = self.mComeHeader;
     
     if(!type.mGenericsStruct) {
-        define_struct(type.mClass, info);
+        define_struct(type.mClass, come_header, info);
     }
 
     return TRUE;
@@ -134,6 +145,8 @@ string sStructNode*::sname(sStructNode* self, sInfo* info)
 exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 98
 {
     if(buf === "struct") {
+        char* header_head = head;
+        
         string type_name = parse_word(info).catch { throw; };
         
         bool generics_struct = false;
@@ -187,12 +200,18 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
                 break;
             }
         }
+        char* header_tail = info.p.p;
+        
+        buffer*% come_header = new buffer();
+        
+        come_header.append(header_head, header_tail - header_head);
+        come_header.append_char('\0');
         
         info.generics_type_names.reset();
         
         type.mGenericsStruct = generics_struct;
         
-        return new sNode(new sStructNode(type, info));
+        return new sNode(new sStructNode(type, come_header.to_string(), info));
     }
     
     return inherit(buf, head, head_sline, info).catch {

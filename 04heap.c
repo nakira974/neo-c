@@ -466,7 +466,12 @@ void free_objects(sVarTable* table, char* ret_value, sInfo* info)
             p->mCValueName = null;
         }
         else if(type->mHeap && p->mCValueName) {
-            free_object(p->mType, p->mCValueName, false@no_decrement, false@no_free, info);
+            if(type->mFunctionParam) {
+                free_object(p->mType, p->mCValueName, false@no_decrement, true@no_free, info);
+            }
+            else {
+                free_object(p->mType, p->mCValueName, false@no_decrement, false@no_free, info);
+            }
 
             p->mCValueName = null;
         }

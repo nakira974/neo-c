@@ -1,28 +1,14 @@
 /* source head */
-typedef unsigned long size_t;
+typedef long size_t;
 typedef char* string;
-typedef unsigned long long anonymous_var_name1;
-typedef char* string;
-typedef unsigned long long anonymous_var_name1;
-typedef char* string;
-typedef unsigned long long anonymous_var_name2;
-typedef char* string;
-typedef unsigned long long anonymous_var_name1;
-typedef char* string;
-typedef unsigned long long anonymous_var_name1;
-typedef char* string;
-typedef unsigned long long anonymous_var_name1;
-typedef char* string;
-typedef unsigned long long anonymous_var_name2;
-typedef char* string;
-typedef unsigned long long anonymous_var_name1;
-typedef char* string;
-typedef unsigned long long anonymous_var_name1;
-typedef char* string;
-typedef unsigned long long anonymous_var_name2;
-typedef char* string;
-typedef unsigned long long anonymous_var_name2;
-typedef char* string;
+struct sDataXYZ
+{
+    char* a;
+    int b;
+};
+typedef long long anonymous_var_name1;
+typedef long long anonymous_var_name2;
+typedef unsigned long long anonymous_var_name3;
 struct sData
 {
     char* a;
@@ -130,26 +116,28 @@ struct __current_stack3__
 /* header function */
 int puts(const char* str);
 int printf(const char* format, ...);
-void* malloc(unsigned long size);
+void* malloc(long size);
 void free(void* ptr);
-void* calloc(unsigned long nmemb, unsigned long size);
-void* realloc(void* ptr, unsigned long size);
-unsigned long strlen(const char* s);
-void* memset(void* s, int c, unsigned long n);
-char* strncpy(char* dest, const char* src, unsigned long n);
+void* calloc(long nmemb, long size);
+void* realloc(void* ptr, long size);
+long strlen(const char* s);
+void* memset(void* s, int c, long n);
+char* strncpy(char* dest, const char* src, long n);
+char* strncat(char* dst, char* src, long sz);
 int strcmp(const char* s1, const char* s2);
-int strncmp(const char s1, const char s2, unsigned long n);
+int strncmp(const char s1, const char s2, long n);
 void exit(int status);
 int funX(int a, int b);
+char* funX2(char* a, char* b);
 int main();
 static void xassert(char* msg, _Bool test);
 static void ncfree(void* mem);
-static void* come_calloc(unsigned long count, unsigned long size);
+static void* come_calloc(long count, long size);
 static void* come_increment_ref_count(void* mem);
 static void* come_decrement_ref_count(void* mem, _Bool no_decrement, _Bool no_free);
 static void come_free_object(void* mem);
 static void call_finalizer(void* fun, void* mem, int call_finalizer_only, int no_decrement, int no_free);
-static void* nccalloc(unsigned long nmemb, unsigned long size);
+static void* nccalloc(long nmemb, long size);
 static void* come_memdup(void* block);
 static void int_times(int self, void* parent, void (*block)(void*));
 static char* __builtin_string(char* str);
@@ -163,18 +151,18 @@ static _Bool charp_equals(char* self, char* right);
 int* funHeap(int x, int y);
 int funHeap2(int* x, int* y);
 int intp_fun(int* self);
-void sDatap_finalize(struct sData* self);
+static void sDatap_finalize(struct sData* self);
 void method_block1(struct __current_stack1__* parent);
 static struct list_char* list_charp_initialize(struct list_char* self);
 static void list_charp_finalize(struct list_char* self);
-void list_item_charp_finalize(struct list_item_char* self);
+static void list_item_charp_finalize(struct list_item_char* self);
 static void list_charp_push_back(struct list_char* self, char* item);
 static char* list_charp_begin(struct list_char* self);
 static _Bool list_charp_end(struct list_char* self);
 static char* list_charp_next(struct list_char* self);
 static struct list_int* list_intp_initialize(struct list_int* self);
 static void list_intp_finalize(struct list_int* self);
-void list_item_intp_finalize(struct list_item_int* self);
+static void list_item_intp_finalize(struct list_item_int* self);
 static void list_intp_push_back(struct list_int* self, int item);
 static int list_intp_begin(struct list_int* self);
 static _Bool list_intp_end(struct list_int* self);
@@ -584,7 +572,7 @@ static void ncfree(void* mem){
     }
 }
 
-static void* come_calloc(unsigned long count, unsigned long size){
+static void* come_calloc(long count, long size){
 char* mem_0;
 int* ref_count_1;
 long* size2_2;
@@ -681,7 +669,7 @@ memset(&finalizer_10, 0, sizeof(void (*)()));
     }
 }
 
-static void* nccalloc(unsigned long nmemb, unsigned long size){
+static void* nccalloc(long nmemb, long size){
 void* result_11;
 memset(&result_11, 0, sizeof(void*));
     result_11=calloc(nmemb,size);
@@ -692,7 +680,7 @@ memset(&result_11, 0, sizeof(void*));
 static void* come_memdup(void* block){
 char* mem_12;
 long* size_p_13;
-unsigned long size_14;
+long size_14;
 void* ret_15;
 int* ref_count_16;
 char* p_17;
@@ -700,7 +688,7 @@ char* p2_18;
 long* size_p2_19;
 memset(&mem_12, 0, sizeof(char*));
 memset(&size_p_13, 0, sizeof(long*));
-memset(&size_14, 0, sizeof(unsigned long));
+memset(&size_14, 0, sizeof(long));
 memset(&ret_15, 0, sizeof(void*));
 memset(&ref_count_16, 0, sizeof(int*));
 memset(&p_17, 0, sizeof(char*));
@@ -804,8 +792,8 @@ memset(&result_23, 0, sizeof(int*));
 
 int funHeap2(int* x, int* y){
     int __result__ = *x+*y;
-    x = come_decrement_ref_count(x, 0, 0);
-    y = come_decrement_ref_count(y, 0, 0);
+    x = come_decrement_ref_count(x, 0, 1);
+    y = come_decrement_ref_count(y, 0, 1);
     return __result__;
 }
 
@@ -814,7 +802,7 @@ int intp_fun(int* self){
     return __result__;
 }
 
-void sDatap_finalize(struct sData* self){
+static void sDatap_finalize(struct sData* self){
             if(self!=((void*)0)&&self->a!=((void*)0)) {
                 self->a = come_decrement_ref_count(self->a, 0, 0);
             }
@@ -851,7 +839,7 @@ memset(&prev_it_49, 0, sizeof(struct list_item_char*));
             }
 }
 
-void list_item_charp_finalize(struct list_item_char* self){
+static void list_item_charp_finalize(struct list_item_char* self){
                     if(self!=((void*)0)&&self->item!=((void*)0)) {
                         self->item = come_decrement_ref_count(self->item, 0, 0);
                     }
@@ -895,7 +883,7 @@ memset(&litem_53, 0, sizeof(struct list_item_char*));
             self->tail=litem_53;
         }
         self->len++;
-        item = come_decrement_ref_count(item, 0, 0);
+        item = come_decrement_ref_count(item, 0, 1);
 }
 
 static char* list_charp_begin(struct list_char* self){
@@ -953,7 +941,7 @@ memset(&prev_it_58, 0, sizeof(struct list_item_int*));
             }
 }
 
-void list_item_intp_finalize(struct list_item_int* self){
+static void list_item_intp_finalize(struct list_item_int* self){
 }
 
 static void list_intp_push_back(struct list_int* self, int item){
@@ -1199,7 +1187,7 @@ memset(&litem_87, 0, sizeof(struct list_item_char*));
                 i_86++;
             }
         }
-        item = come_decrement_ref_count(item, 0, 0);
+        item = come_decrement_ref_count(item, 0, 1);
 }
 
 static char* list_charp_item(struct list_char* self, int position, char* default_value){
@@ -1404,7 +1392,7 @@ memset(&i_108, 0, sizeof(int));
             it_107=it_107->next;
             i_108++;
         }
-        item = come_decrement_ref_count(item, 0, 0);
+        item = come_decrement_ref_count(item, 0, 1);
 }
 
 static _Bool list_intp_equals(struct list_int* left, struct list_int* right){

@@ -1,151 +1,45 @@
-typedef unsigned long size_t;
-typedef char* string;
-typedef unsigned long long anonymous_var_name1;
-typedef char* string;
-typedef unsigned long long anonymous_var_name1;
-typedef char* string;
-typedef unsigned long long anonymous_var_name2;
-typedef char* string;
-typedef unsigned long long anonymous_var_name1;
-typedef char* string;
-typedef unsigned long long anonymous_var_name1;
-typedef char* string;
-typedef unsigned long long anonymous_var_name1;
-typedef char* string;
-typedef unsigned long long anonymous_var_name2;
-typedef char* string;
-typedef unsigned long long anonymous_var_name1;
-typedef char* string;
-typedef unsigned long long anonymous_var_name1;
-typedef char* string;
-typedef unsigned long long anonymous_var_name2;
-typedef char* string;
-typedef unsigned long long anonymous_var_name2;
-typedef char* string;
+typedef long size_t;
+typedef char*% string;
+struct sDataXYZ
+{
+    char*% a;
+    int b;
+}
+typedef long anonymous_var_name1;
+typedef long anonymous_var_name2;
+typedef long anonymous_var_name3;
 struct sData
 {
-    char* a;
-};
-struct __current_stack1__
-{
-    char** p_25;
-    void** p2_26;
-    int* count_27;
-    int* size2_28;
-    char** mem2_29;
-    int* b_30;
-    int** a_31;
-    int* a2_32;
-    char** ax_35;
-    char** str_39;
-    struct sData** data_40;
-    int** axyz_41;
-    int** xxx_42;
-    int** yyy_43;
-    int** zzz_44;
-    int* bzyz_45;
-    int** azyz_46;
-    int* n_47;
-};
-struct __current_stack2__
-{
-    char** p_25;
-    void** p2_26;
-    int* count_27;
-    int* size2_28;
-    char** mem2_29;
-    int* b_30;
-    int** a_31;
-    int* a2_32;
-    char** ax_35;
-    char** str_39;
-    struct sData** data_40;
-    int** axyz_41;
-    int** xxx_42;
-    int** yyy_43;
-    int** zzz_44;
-    int* bzyz_45;
-    int** azyz_46;
-    int* n_47;
-    struct list_char** liX_50;
-    struct list_int** liX2_59;
-    int* aX_66;
-};
-struct __current_stack3__
-{
-    char** p_25;
-    void** p2_26;
-    int* count_27;
-    int* size2_28;
-    char** mem2_29;
-    int* b_30;
-    int** a_31;
-    int* a2_32;
-    char** ax_35;
-    char** str_39;
-    struct sData** data_40;
-    int** axyz_41;
-    int** xxx_42;
-    int** yyy_43;
-    int** zzz_44;
-    int* bzyz_45;
-    int** azyz_46;
-    int* n_47;
-    struct list_char** liX_50;
-    struct list_int** liX2_59;
-    int* aX_66;
-    int* aXYZY_70;
-    struct list_char** li_71;
-    struct list_int** li2_73;
-    int* aXL_75;
-};
-
+    char*% a;
+}
 int puts(const char* str);
-int printf(const char* format, ...);
-void* malloc(unsigned long size);
-void free(void* ptr);
-void* calloc(unsigned long nmemb, unsigned long size);
-void* realloc(void* ptr, unsigned long size);
-unsigned long strlen(const char* s);
-void* memset(void* s, int c, unsigned long n);
-char* strncpy(char* dest, const char* src, unsigned long n);
-int strcmp(const char* s1, const char* s2);
-int strncmp(const char s1, const char s2, unsigned long n);
+int printf(const char *format, ...);
+void *malloc(size_t size);
+void free(void *ptr);
+void *calloc(size_t nmemb, size_t size);
+void *realloc(void *ptr, size_t size);
+size_t strlen(const char *s);
+void *memset(void *s, int c, size_t n);
+char *strncpy(char *dest, const char *src, size_t n);
+char *strncat(char *dst, char *src, size_t sz);
+int strcmp(const char *s1, const char *s2);
+int strncmp(const char s1, const char s2, size_t n);
 void exit(int status);
-int funX(int a, int b);
-int main();
-int* funHeap(int x, int y);
-int funHeap2(int* x, int* y);
-int intp_fun(int* self);
-void sDatap_finalize(struct sData* self);
-void method_block1(struct __current_stack1__* parent);
-struct list_char* list_charp_initialize(struct list_char* self);
-void list_charp_finalize(struct list_char* self);
-void list_item_charp_finalize(struct list_item_char* self);
-void list_charp_push_back(struct list_char* self, char* item);
-char* list_charp_begin(struct list_char* self);
-_Bool list_charp_end(struct list_char* self);
-char* list_charp_next(struct list_char* self);
-struct list_int* list_intp_initialize(struct list_int* self);
-void list_intp_finalize(struct list_int* self);
-void list_item_intp_finalize(struct list_item_int* self);
-void list_intp_push_back(struct list_int* self, int item);
-int list_intp_begin(struct list_int* self);
-_Bool list_intp_end(struct list_int* self);
-int list_intp_next(struct list_int* self);
-void list_intp_each(struct list_int* self, void* parent, void (*block)(void*,int,int,_Bool*));
-void method_block2(struct __current_stack2__* parent, int it, int it2, _Bool* it3);
-void method_block3(struct __current_stack3__* parent, int it, int it2, _Bool* it3);
-int list_intp_item(struct list_int* self, int position, int default_value);
-void list_intp_insert(struct list_int* self, int position, int item);
-void list_charp_insert(struct list_char* self, int position, char* item);
-char* list_charp_item(struct list_char* self, int position, char* default_value);
-void list_charp_reset(struct list_char* self);
-int list_charp_length(struct list_char* self);
-void list_intp_delete(struct list_int* self, int head, int tail);
-void list_intp_reset(struct list_int* self);
-void list_charp_replace(struct list_char* self, int position, char* item);
-_Bool list_intp_equals(struct list_int* left, struct list_int* right);
-int list_intp_find(struct list_int* self, int item, int default_value);
-struct list_int* list_intp_sublist(struct list_int* self, int begin, int tail);
+int funX(int a, int b)
+;
+char*% funX2(string a, string b)
+;
+int main()
+;
+int*% funHeap(int x, int y)
+;
+int funHeap2(int*% x, int*% y)
+;
+int fun(int* self) ;
+void method_block1(struct __current_stack1__* parent)
+;
+void method_block2(struct __current_stack2__* parent,int it,int it2,_Bool* it3)
+;
+void method_block3(struct __current_stack3__* parent,int it,int it2,_Bool* it3)
+;
 

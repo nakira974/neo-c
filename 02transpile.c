@@ -244,7 +244,7 @@ sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool 
     return self;
 };
 
-sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, bool external, bool var_args, sBlock*% block, bool generics, sInfo* info)
+sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, bool external, bool var_args, sBlock*% block, bool static_, string come_header, sInfo* info)
 {
     self.mName = name;
     self.mResultType = result_type;
@@ -252,7 +252,7 @@ sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sTy
     self.mParamNames = param_names;
     self.mExternal = external;
     self.mVarArgs = var_args;
-    self.mGenerics = generics;
+    self.mStatic = static_;
     
     self.mLambdaType = new sType("lambda", info);
     
@@ -273,6 +273,8 @@ sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sTy
     self.mSourceDefer = new buffer();
     
     self.mBlock = block;
+    
+    self.mComeHeader = come_header;
     
     return self;
 }
@@ -354,6 +356,7 @@ int come_main(int argc, char** argv) version 2
         info.lv_table = lv_table;
         info.generics_type_names = new list<string>();
         info.auto_come_header = new buffer();
+        info.enum_typedef_already_output = new map<string,bool>();
         
         init_classes(&info);
         

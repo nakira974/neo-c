@@ -1,30 +1,33 @@
-typedef unsigned long size_t;
-typedef char* string;
-typedef unsigned long long anonymous_var_name1;
-typedef char* string;
-typedef unsigned long long anonymous_var_name1;
-typedef char* string;
-typedef unsigned long long anonymous_var_name2;
-typedef char* string;
-typedef unsigned long long anonymous_var_name1;
-typedef char* string;
-typedef unsigned long long anonymous_var_name1;
-typedef char* string;
-typedef unsigned long long anonymous_var_name2;
-typedef char* string;
+typedef long size_t;
+typedef char*% string;
+struct sDataXYZ
+{
+    char*% a;
+    int b;
+}
+typedef long anonymous_var_name1;
+typedef long anonymous_var_name2;
+typedef long anonymous_var_name3;
+typedef long anonymous_var_name4;
+typedef long anonymous_var_name5;
 
 int puts(const char* str);
-int printf(const char* format, ...);
-void* malloc(unsigned long size);
-void free(void* ptr);
-void* calloc(unsigned long nmemb, unsigned long size);
-void* realloc(void* ptr, unsigned long size);
-unsigned long strlen(const char* s);
-void* memset(void* s, int c, unsigned long n);
-char* strncpy(char* dest, const char* src, unsigned long n);
-int strcmp(const char* s1, const char* s2);
-int strncmp(const char s1, const char s2, unsigned long n);
+int printf(const char *format, ...);
+void *malloc(size_t size);
+void free(void *ptr);
+void *calloc(size_t nmemb, size_t size);
+void *realloc(void *ptr, size_t size);
+size_t strlen(const char *s);
+void *memset(void *s, int c, size_t n);
+char *strncpy(char *dest, const char *src, size_t n);
+char *strncat(char *dst, char *src, size_t sz);
+int strcmp(const char *s1, const char *s2);
+int strncmp(const char s1, const char s2, size_t n);
 void exit(int status);
-int funX(int a, int b);
-int main(int argc, char** argv);
+int funX(int a, int b)
+;
+char*% funX2(string a, string b)
+;
+int main(int argc, char** argv)
+;
 

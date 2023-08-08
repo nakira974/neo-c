@@ -67,7 +67,7 @@ bool sStoreFieldNode*::compile(sStoreFieldNode* self, sInfo* info)
     CVALUE*% come_value = new CVALUE;
     
     if(!field_type->mHeap && right_type->mHeap) {
-        err_msg(info, "require field type to append %");
+        err_msg(info, "require field type to append %%");
         return false;
     }
     

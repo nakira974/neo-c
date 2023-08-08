@@ -90,6 +90,8 @@ struct sType
     bool mAllocaValue;
     bool mGenericsStruct;
     bool mSolvedGenericsName;
+    
+    string mOriginalTypeName;
 };
 
 struct sVar;
@@ -137,7 +139,9 @@ struct sFun
     buffer*% mSourceHead2;
     buffer*% mSourceDefer;
     
-    bool mGenerics;
+    bool mStatic;
+    
+    string mComeHeader;
 };
 
 struct sGenericsFun
@@ -235,6 +239,8 @@ struct sInfo
     list<string>*? param_names;
     
     buffer*% auto_come_header;
+    
+    map<string, bool>*% enum_typedef_already_output;
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -256,8 +262,9 @@ sType*% sType*::initialize(sType*% self, char* name, sInfo* info, bool heap=fals
 sVarTable*% sVarTable*::initialize(sVarTable*% self, bool global, sVarTable* parent);
 void sVarTable*::finalize(sVarTable* self);
 sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool union_=false, bool generics=false, bool method_generics=false, bool protocol_=false, bool struct_=false, bool float_=false, int generics_num=-1, int method_generics_num=-1, bool enum_=false);
-sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, bool external, bool var_args, sBlock*% block, bool generics, sInfo* info);
+sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, bool external, bool var_args, sBlock*% block, bool static_, string come_header, sInfo* info);
 string make_type_name_string(sType* type, bool in_header, bool array_cast_pointer, sInfo* info);
+string make_come_type_name_string(sType* type, sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
 /// 03transpile2.c ///
@@ -281,6 +288,7 @@ void add_last_code_to_source_without_semicolon(sInfo* info);
 void dec_stack_ptr(int value, sInfo* info);
 CVALUE*% get_value_from_stack(int offset, sInfo* info);
 string make_define_var(sType* type, char* name, sInfo* info);
+string make_come_define_var(sType* type, char* name, sInfo* info);
 void transpiler_clear_last_code(sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
@@ -379,7 +387,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
 /////////////////////////////////////////////////////////////////////
 exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 98;
 bool define_generics_struct(sType* type, sInfo* info);
-void define_struct(sClass* klass, sInfo* info);
+void define_struct(sClass* klass, string? come_header, sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
 /// 15union.c

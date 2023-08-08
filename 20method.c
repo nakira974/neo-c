@@ -48,7 +48,7 @@ bool sCurrentNode*::compile(sCurrentNode* self, sInfo* info)
         vtable = vtable->mParent;
     }
     
-    define_struct(current_stack, info);
+    define_struct(current_stack, null, info);
     
     info.classes.insert(class_name, current_stack);
     

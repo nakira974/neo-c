@@ -1,17 +1,11 @@
 typedef long size_t;
 typedef char*% string;
-struct sDataXYZ
-{
-    char*% a;
-    int b;
-}
-typedef long anonymous_var_name1;
-typedef long anonymous_var_name2;
-typedef long anonymous_var_name3;
 struct sData
 {
     char*% a;
 }
+void __init_code__HelloWorld__c__();
+void __final_code__HelloWorld__c__();
 int puts(const char* str);
 int printf(const char *format, ...);
 void *malloc(size_t size);
@@ -25,17 +19,13 @@ char *strncat(char *dst, char *src, size_t sz);
 int strcmp(const char *s1, const char *s2);
 int strncmp(const char s1, const char s2, size_t n);
 void exit(int status);
-int funX(int a, int b)
-;
-char*% funX2(string a, string b)
-;
-int main()
-;
 int*% funHeap(int x, int y)
 ;
 int funHeap2(int*% x, int*% y)
 ;
 int fun(int* self) ;
+int main()
+;
 void method_block1(struct __current_stack1__* parent)
 ;
 void method_block2(struct __current_stack2__* parent,int it,int it2,_Bool* it3)

@@ -376,7 +376,6 @@ void add_variable_to_table(char* name, sType* type, sInfo* info)
     info.lv_table.mVars.insert(string(name), self);
 }
 
-/*
 void add_variable_to_global_table(char* name, sType* type, sInfo* info)
 {
     sVar*% self = new sVar;
@@ -395,7 +394,6 @@ void add_variable_to_global_table(char* name, sType* type, sInfo* info)
     
     info.gv_table.mVars.insert(string(name), self);
 }
-*/
 
 exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 7
 {

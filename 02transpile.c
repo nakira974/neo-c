@@ -297,6 +297,56 @@ void init_classes(sInfo* info)
     }
 }
 
+void init_module(sInfo* info)
+{
+    char fname[PATH_MAX];
+    char* p = info.sname;
+    char* p2 = fname;
+    while(*p) {
+        if(xisalpha(*p)) {
+            *p2++ = *p++;
+        }
+        else {
+            *p2++ = '_';
+            p++;
+        }
+    }
+    
+    *p2 = '\0';
+    
+    info.module_initializer_name = xsprintf("__init_%s__", fname);
+    
+    {
+        var name = info.module_initializer_name;
+        var result_type = new sType("void", info);
+        var param_types = new list<sType*%>();
+        var param_names = new list<string>();
+        var fun = new sFun(name, result_type
+                            , param_types, param_names
+            , false@external, false@var_args, null!@block, false@static_
+            , xsprintf("void %s()", name)
+            , info);
+        
+        info.funcs.insert(name, fun);
+    }
+    
+    info.module_finalizer_name = xsprintf("__final_%s__", fname);
+    
+    {
+        var name = info.module_finalizer_name;
+        var result_type = new sType("void", info);
+        var param_types = new list<sType*%>();
+        var param_names = new list<string>();
+        var fun = new sFun(name, result_type
+                            , param_types, param_names
+            , false@external, false@var_args, null!@block, false@static_
+            , xsprintf("void %s()", name)
+            , info);
+        
+        info.funcs.insert(name, fun);
+    }
+}
+
 int come_main(int argc, char** argv) version 2
 {
     var clang_option = new buffer();
@@ -336,6 +386,7 @@ int come_main(int argc, char** argv) version 2
     }
     
     come_init();
+    
     foreach(it, files) {
         sInfo info;
         
@@ -357,8 +408,10 @@ int come_main(int argc, char** argv) version 2
         info.generics_type_names = new list<string>();
         info.auto_come_header = new buffer();
         info.enum_typedef_already_output = new map<string,bool>();
+        info.global_variable_initialize_node = new map<string, sNode*%>();
         
         init_classes(&info);
+        init_module(&info);
         
         if(!cpp(&info)) {
             fprintf(stderr, "%s %d: traspile faield\n", info.sname, info.sline);

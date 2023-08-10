@@ -241,6 +241,10 @@ struct sInfo
     buffer*% auto_come_header;
     
     map<string, bool>*% enum_typedef_already_output;
+    
+    string module_initializer_name;
+    string module_finalizer_name;
+    map<string, sNode*%>%* global_variable_initialize_node;
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -274,6 +278,8 @@ void come_final() version 3;
 
 string header_function(sFun* fun, sInfo* info);
 void add_come_code_to_auto_come_header(sInfo* info, const char* msg, ...);
+void add_come_code_to_init_module_fun(sInfo* info, const char* msg, ...);
+void add_come_code_to_final_module_fun(sInfo* info, const char* msg, ...);
 bool transpile(sInfo* info) version 3;
 bool output_source_file(sInfo* info) version 3;
 void show_type(sType* type, sInfo* info);

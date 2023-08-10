@@ -629,6 +629,60 @@ void add_come_code(sInfo* info, const char* msg, ...)
     }
 }
 
+void add_come_code_to_init_module_fun(sInfo* info, const char* msg, ...)
+{
+    if(info->no_output_come_code) {
+        return;
+    }
+    char msg2[COME_CODE_MAX];
+
+    va_list args;
+    va_start(args, msg);
+    vsnprintf(msg2, COME_CODE_MAX, msg, args);
+    va_end(args);
+    
+    sFun* module_initializer = info.funcs[info.module_initializer_name];
+    
+    if(module_initializer) {
+        int i;
+        for(i=0; i<info->block_level; i++) {
+            module_initializer.mSource.append_str("    ");
+        }
+        module_initializer.mSource.append_str(xsprintf("%s", msg2));
+    }
+    else {
+        err_msg(info, "no module initializer");
+        exit(2);
+    }
+}
+
+void add_come_code_to_final_module_fun(sInfo* info, const char* msg, ...)
+{
+    if(info->no_output_come_code) {
+        return;
+    }
+    char msg2[COME_CODE_MAX];
+
+    va_list args;
+    va_start(args, msg);
+    vsnprintf(msg2, COME_CODE_MAX, msg, args);
+    va_end(args);
+    
+    sFun* module_finalizer = info.funcs[info.module_finalizer_name];
+    
+    if(module_finalizer) {
+        int i;
+        for(i=0; i<info->block_level; i++) {
+            module_finalizer.mSource.append_str("    ");
+        }
+        module_finalizer.mSource.append_str(xsprintf("%s", msg2));
+    }
+    else {
+        err_msg(info, "no module initializer");
+        exit(2);
+    }
+}
+
 void add_come_code_to_auto_come_header(sInfo* info, const char* msg, ...)
 {
     if(info->no_output_come_code) {
@@ -686,6 +740,28 @@ bool transpile(sInfo* info) version 3
 
 bool output_source_file(sInfo* info) version 3
 {
+    /// calling module initializer ///
+    sFun* module_initializer = info.funcs[info.module_initializer_name];
+    
+    sFun* fun = info.come_fun;
+    info.come_fun = module_initializer;
+    
+    foreach(var_name, info.global_variable_initialize_node) {
+        var node = info.global_variable_initialize_node[var_name];
+        
+        if(!node.compile->(info)) {
+            return false;
+        }
+        
+        CVALUE*% come_value = get_value_from_stack(-1, info);
+        dec_stack_ptr(1, info);
+        
+        add_come_code_to_init_module_fun(info, "%s=%s;\n", var_name, come_value.c_value);
+    }
+    
+    info.come_fun = fun;
+    
+    /// go ///
     string output_file_name = xsprintf("%s.c", info.sname);
     
     FILE* f = fopen(output_file_name, "w");

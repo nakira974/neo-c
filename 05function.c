@@ -658,6 +658,16 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
         }
 */
         add_come_code(info, "%s __result__ = %s;\n", make_type_name_string(come_value.type, false@in_header, false@array_cast_pointer, info), come_value.c_value);
+    
+        if(info.come_fun.mName === "main") {
+            foreach(it, info.funcs) {
+                sFun* it2 = info.funcs[it];
+                
+                if(memcmp(it, "__final_", strlen("__final_")) == 0) {
+                    add_come_code(info, "%s();\n", it);
+                }
+            }
+        }
         
 /*
         if(info.param_types && info.param_names) {
@@ -689,6 +699,16 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
             }
         }
 */
+    
+        if(info.come_fun.mName === "main") {
+            foreach(it, info.funcs) {
+                sFun* it2 = info.funcs[it];
+                
+                if(memcmp(it, "__final_", strlen("__final_")) == 0) {
+                    add_come_code(info, "%s();\n", it);
+                }
+            }
+        }
         
         sFun* come_fun = info.come_fun;
         free_objects_on_return(come_fun.mBlock, info, null!, false@top_block);
@@ -1521,6 +1541,16 @@ exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<s
     int block_level = info->block_level;
     info->block_level++;
     
+    if(info.come_fun.mName === "main") {
+        foreach(it, info.funcs) {
+            sFun* it2 = info.funcs[it];
+            
+            if(memcmp(it, "__init_", strlen("__init_")) == 0) {
+                add_come_code(info, "%s();\n", it);
+            }
+        }
+    }
+    
     if(block->mNodes.length() == 0) {
     }
     else {
@@ -1565,6 +1595,16 @@ exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<s
         }
     }
 */
+    
+    if(info.come_fun.mName === "main") {
+        foreach(it, info.funcs) {
+            sFun* it2 = info.funcs[it];
+            
+            if(memcmp(it, "__final_", strlen("__final_")) == 0) {
+                add_come_code(info, "%s();\n", it);
+            }
+        }
+    }
 
     if(!info->last_statment_is_return) {
         free_objects(info->lv_table, null!, info);
@@ -1614,9 +1654,11 @@ struct sGlobalVariable {
     
     int sline;
     string sname;
+    
+    string array_initializer;
 };
 
-sGlobalVariable*% sGlobalVariable*::initialize(sGlobalVariable*% self, sType* type, string name, sNode*% right_node, sInfo* info)
+sGlobalVariable*% sGlobalVariable*::initialize(sGlobalVariable*% self, sType* type, string name, sNode*% right_node, string array_initializer, sInfo* info)
 {
     self.sline = info.sline;
     self.sname = info.sname;
@@ -1624,6 +1666,7 @@ sGlobalVariable*% sGlobalVariable*::initialize(sGlobalVariable*% self, sType* ty
     self.type = clone type;
     self.name = string(name);
     self.right_node = right_node;
+    self.array_initializer = array_initializer;
     
     return self;
 }
@@ -1643,18 +1686,23 @@ bool sGlobalVariable*::compile(sGlobalVariable* self, sInfo* info)
     sType* type = self.type;
     string name = self.name;
     sNode* right_node = self.right_node;
+    string array_initializer = self.array_initializer;
     
-    //add_variable_to_global_table(name, type, info);
+    add_variable_to_global_table(name, type, info);
     
-    if(right_node) {
+    if(array_initializer) {
+        add_come_code_at_source_head(info, "%s=%s;\n", make_define_var(type, name, info), array_initializer);
+        add_come_code_to_auto_come_header(info, "extern %s;\n", make_define_var(type, name, info));
+    }
+    else if(right_node) {
         add_come_code_at_source_head(info, "%s;\n", make_define_var(type, name, info));
-        //add_come_code_to_auto_come_header(info, "%s;\n", make_define_var(type, name, info));
-        //add_come_code_to_main_head(info, "%s=%s;\n", name, right_node.c_value);
+        add_come_code_to_auto_come_header(info, "extern %s;\n", make_define_var(type, name, info));
+        info.global_variable_initialize_node.insert(string(name), clone right_node);
     }
     else {
         add_come_code_at_source_head(info, "%s;\n", make_define_var(type, name, info));
-        //add_come_code_to_auto_come_header(info, "%s;\n", make_define_var(type, name, info));
-        //add_come_code_to_main_head(info, "memset(&%s, 0, sizeof(%s);\n", name, make_type_name_string(type, false@in_header, false@array_cast_pointer, info));
+        add_come_code_to_auto_come_header(info, "extern %s;\n", make_define_var(type, name, info));
+        add_come_code_to_init_module_fun(info, "memset(&%s, 0, sizeof(%s));\n", name, make_type_name_string(type, false@in_header, false@array_cast_pointer, info));
     }
     
     return true;
@@ -1694,10 +1742,10 @@ bool sExternalGlobalVariable*::compile(sExternalGlobalVariable* self, sInfo* inf
     sType* type = self.type;
     string name = self.name;
     
-    //add_variable_to_global_table(name, type, info);
+    add_variable_to_global_table(name, type, info);
     
     add_come_code_at_source_head(info, "extern %s;\n", make_define_var(type, name, info));
-    //add_come_code_to_auto_come_header(info, "extern %s;\n", make_define_var(type, name, info));
+    add_come_code_to_auto_come_header(info, "extern %s;\n", make_define_var(type, name, info));
     
     return true;
 }
@@ -2135,16 +2183,75 @@ exception sNode*% parse_global_variable(sInfo* info)
     }
     
     sNode*% right_node = null;
+    string array_initializer = null;
     
     if(*info->p == '=') {
         info->p++;
         skip_spaces_and_lf(info);
         
-        parse_sharp(info);
-        right_node = expression(info).catch {
-            throw;
+        if(*info->p == '{') {
+            buffer*% buf = new buffer();
+            
+            buf.append_char(*info->p);
+            info->p++;
+            
+            bool squort = false;
+            bool dquort = false;
+            int nest = 1;
+            while(1) {
+                if(*info->p == '\0') {
+                    err_msg(info, "unexpected source end in array initiailizer")
+                    throw;
+                }
+                else if(*info->p == '\\') {
+                    buf.append_char(*info->p);
+                    info->p++;
+                    buf.append_char(*info->p);
+                    info->p++;
+                }
+                else if(!squort && *info->p == '"') {
+                    buf.append_char(*info->p);
+                    info->p++;
+                    dquort = !dquort;
+                }
+                else if(!dquort && *info->p == '\'') {
+                    buf.append_char(*info->p);
+                    info->p++;
+                    squort = !squort;
+                }
+                else if(squort || dquort) {
+                    buf.append_char(*info->p);
+                    info->p++;
+                }
+                else if(*info->p == '{') {
+                    nest++;
+                    buf.append_char(*info->p);
+                    info->p++;
+                }
+                else if(*info->p == '}') {
+                    nest--;
+                    buf.append_char(*info->p);
+                    info->p++;
+                    
+                    if(nest == 0) {
+                        skip_spaces_and_lf(info);
+                        break;
+                    }
+                }
+                else {
+                    buf.append_char(*info->p);
+                    info->p++;
+                }
+            }
+            array_initializer = buf.to_string();
         }
-        parse_sharp(info);
+        else {
+            parse_sharp(info);
+            right_node = expression(info).catch {
+                throw;
+            }
+            parse_sharp(info);
+        }
     }
     
     if(result_type->mExtern) {
@@ -2155,7 +2262,7 @@ exception sNode*% parse_global_variable(sInfo* info)
         return new sNode(new sExternalGlobalVariable(result_type, var_name, info));
     }
     else {
-        return new sNode(new sGlobalVariable(result_type, var_name, right_node, info));
+        return new sNode(new sGlobalVariable(result_type, var_name, right_node, array_initializer, info));
     }
     
     return (sNode*)null;
@@ -2240,8 +2347,7 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
         info.sline = sline;
     }
     /// back trace2 ///
-    bool define_variable = false;
-/*
+    bool define_variable = true;
     {
         char* p = info.p.p;
         info.p.p = head;
@@ -2251,16 +2357,32 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
         }
         
         
-        info.no_output_err = true;
-        parse_type(info).catch {
+        if(buf === "struct") {
             define_variable = false;
         }
-        info.no_output_err = false;
+        else {
+            info.no_output_err = true;
+            var type, name = parse_type(parse_variable_name:false, info).catch {
+            };
+            info.no_output_err = false;
+        }
+        
+        if(!xisalpha(*info->p)) {
+            define_variable = false;
+        }
+        
+        while(xisalpha(*info->p) || *info->p == '_') {
+            info->p++;
+        }
+        skip_spaces_and_lf(info);
+        
+        if(*info->p == '(' || *info->p == ':') {
+            define_variable = false;
+        }
         
         info.p.p = p;
         info.sline = sline;
     }
-*/
     
     if(define_function_flag) {
         info.p.p = head;
@@ -2270,7 +2392,6 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
             throw;
         }
     }
-    /*
     else if(define_variable) {
         info.p.p = head;
         info.sline = sline;
@@ -2279,7 +2400,6 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
             throw;
         }
     }
-    */
     
     info.p.p = head;
     info.sline = sline;

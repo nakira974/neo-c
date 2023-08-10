@@ -6,11 +6,14 @@ struct sDataXYZ
     int b;
 }
 typedef long anonymous_var_name1;
-typedef long anonymous_var_name2;
-typedef long anonymous_var_name3;
-typedef long anonymous_var_name4;
-typedef long anonymous_var_name5;
+extern int gA;
+extern struct list_int* gList;
+extern int gB;
 
+void __init_c_c__();
+void __final_c_c__();
+void __init_b_c__();
+void __final_b_c__();
 int puts(const char* str);
 int printf(const char *format, ...);
 void *malloc(size_t size);
@@ -28,6 +31,6 @@ int funX(int a, int b)
 ;
 char*% funX2(string a, string b)
 ;
-int main(int argc, char** argv)
+int main()
 ;
 

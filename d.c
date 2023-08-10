@@ -1,11 +1,14 @@
-#include <comelang.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int gA[3];
 
 int main()
 {
-    map<string, int>*% m = new map<string, int>();
+    gA = { 1, 2, 3 };
     
-    map.insert(string("funX", 1);
-    map.insert(string("funX", 2);
+    printf("gA %d %d %d\n", gA[0], gA[1], gA[2]);
     
     return 0;
 }

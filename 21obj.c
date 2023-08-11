@@ -343,9 +343,7 @@ bool sIsHeap*::compile(sIsHeap* self, sInfo* info)
 exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 21
 {
     if(buf === "new") {
-        var type, name = parse_type(info).catch {
-            throw;
-        }
+        var type, name = parse_type(info) throws;
         
         return new sNode(new sNewNode(type, info));
     }
@@ -356,17 +354,13 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         return new sNode(new sFalseNode(info));
     }
     else if(buf === "delete") {
-         sNode*% node = expression(info).catch {
-             throw;
-         }
+         sNode*% node = expression(info) throws;
          
          return new sNode(new sDeleteNode(node, info));
         
     }
     else if(buf === "borrow") {
-         sNode*% node = expression(info).catch {
-             throw;
-         }
+         sNode*% node = expression(info) throws;
          
          return new sNode(new sBorrowNode(node, info));
     }
@@ -374,15 +368,11 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         info->p++;
         skip_spaces_and_lf(info);
         
-        var param_type, param_name = parse_type(info, parse_variable_name:false).catch {
-            throw
-        }
+        var param_type, param_name = parse_type(info, parse_variable_name:false) throws;
         
-        var type2 = solve_generics(param_type, info->generics_type, info).catch {
-            throw;
-        }
+        var type2 = solve_generics(param_type, info->generics_type, info) throws;
         
-        expected_next_character(')', info).catch { throw }
+        expected_next_character(')', info) throws;
         
         return new sNode(new sIsHeap(type2, info));
     }
@@ -416,7 +406,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         }
     }
     else if(buf === "sizeof") {
-        expected_next_character('(', info).catch { throw }
+        expected_next_character('(', info) throws;
         
         /// backtrace ///
         bool is_type_name_flag = false;
@@ -424,9 +414,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
             char* p = info.p.p;
             int sline = info.sline;
             
-            var word = parse_word(info, true).catch {
-                throw;
-            }
+            var word = parse_word(info, true) throws;
             
             if(is_type_name(word, info)) {
                 is_type_name_flag = true;
@@ -437,21 +425,15 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         }
         
         if(is_type_name_flag) {
-            var type, name = parse_type(info, false).catch {
-                throw;
-            }
+            var type, name = parse_type(info, false) throws;
             
-            expected_next_character(')', info).catch {
-                throw;
-            }
+            expected_next_character(')', info) throws;
             
             return new sNode(new sSizeOfNode(type, info));
         }
     }
     
-    return inherit(buf, head, head_sline, info).catch {
-        throw;
-    }
+    return inherit(buf, head, head_sline, info) throws;
 }
 
 exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 94
@@ -488,7 +470,5 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
         return (sNode*)null;
     }
     
-    return inherit(buf, head, head_sline, info).catch {
-        throw;
-    }
+    return inherit(buf, head, head_sline, info) throws;
 }

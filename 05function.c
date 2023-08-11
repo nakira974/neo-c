@@ -120,9 +120,7 @@ exception list<sType*%>*%, list<string>*%, bool parse_params(sInfo* info)
     var param_names = new list<string>();
     bool var_args = false;
     
-    expected_next_character('(', info).catch {
-        throw;
-    }
+    expected_next_character('(', info) throws;
     
     while(true) {
         if(*info->p == ')') {
@@ -131,13 +129,9 @@ exception list<sType*%>*%, list<string>*%, bool parse_params(sInfo* info)
             break;
         }
         
-        var param_type, param_name = parse_type(info, parse_variable_name:true).catch {
-            throw
-        }
+        var param_type, param_name = parse_type(info, parse_variable_name:true) throws;
         
-        var param_type2 = solve_generics(param_type, info->generics_type, info).catch {
-            throw;
-        }
+        var param_type2 = solve_generics(param_type, info->generics_type, info) throws;
         
         param_type2->mFunctionParam = true;
         
@@ -170,9 +164,7 @@ exception list<sType*%>*%, list<string>*%, bool parse_params(sInfo* info)
 
 exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_name=false)
 {
-    string type_name = parse_word(info).catch {
-        throw;
-    }
+    string type_name = parse_word(info) throws;
     
     bool constant = false;
     bool static_ = false;
@@ -194,51 +186,37 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         if(type_name === "struct") {
             struct_ = true;
             
-            type_name = parse_word(info).catch {
-                throw;
-            }
+            type_name = parse_word(info) throws;
         }
         else if(type_name === "union") {
             union_ = true;
             
-            type_name = parse_word(info).catch {
-                throw;
-            }
+            type_name = parse_word(info) throws;
         }
         else if(type_name === "enum") {
             enum_ = true;
             
-            type_name = parse_word(info).catch {
-                throw;
-            }
+            type_name = parse_word(info) throws;
         }
         else if(type_name === "const") {
             constant = true;
             
-            type_name = parse_word(info).catch {
-                throw;
-            }
+            type_name = parse_word(info) throws;
         }
         else if(type_name === "static") {
             static_ = true;
             
-            type_name = parse_word(info).catch {
-                throw;
-            }
+            type_name = parse_word(info) throws;
         }
         else if(type_name === "extern_") {
             extern_ = true;
             
-            type_name = parse_word(info).catch {
-                throw;
-            }
+            type_name = parse_word(info) throws;
         }
         else if(type_name === "volatile") {
             volatile_ = true;
             
-            type_name = parse_word(info).catch {
-                throw;
-            }
+            type_name = parse_word(info) throws;
         }
         else if(type_name === "long") {
             /// backtrace ///
@@ -254,9 +232,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                     break;
                 }
                 else {
-                    type_name = parse_word(info, true).catch {
-                        throw;
-                    }
+                    type_name = parse_word(info, true) throws;
                     
                     if(is_type_name(type_name, info)) {
                         if(long_) {
@@ -281,30 +257,22 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         else if(type_name === "unsigned") {
             unsigned_ = true;
             
-            type_name = parse_word(info).catch {
-                throw;
-            }
+            type_name = parse_word(info) throws;
         }
         else if(type_name === "register") {
             register_ = true;
             
-            type_name = parse_word(info).catch {
-                throw;
-            }
+            type_name = parse_word(info) throws;
         }
         else if(type_name === "exception") {
             exception_ = true;
             
-            type_name = parse_word(info).catch {
-                throw;
-            }
+            type_name = parse_word(info) throws;
         }
         else if(type_name === "restrict") {
             restrict_ = true;
             
-            type_name = parse_word(info).catch {
-                throw;
-            }
+            type_name = parse_word(info) throws;
         }
         else if(type_name === "short") {
             short_ = true;
@@ -380,14 +348,10 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         result_type->mLong = result_type->mLong || long_;
         result_type->mShort = result_type->mShort || short_;
         
-        var_name = parse_word(info).catch {
-            throw;
-        }
+        var_name = parse_word(info) throws;
         expected_next_character(')', info);
         
-        var param_types, param_names, var_args = parse_params(info).catch {
-            throw;
-        }
+        var param_types, param_names, var_args = parse_params(info) throws;
         
         type = new sType("lambda", info);
         
@@ -417,9 +381,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             skip_spaces_and_lf(info);
             
             while(true) {
-                var generics_type, var_name = parse_type(info).catch {
-                    throw;
-                }
+                var generics_type, var_name = parse_type(info) throws;
                 
                 type->mGenericsTypes.push_back(generics_type);
                 
@@ -442,9 +404,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                 err_msg(info, "class not found (2)");
                 throw;
             }
-            type = solve_generics(type, info->generics_type, info).catch {
-                throw;
-            }
+            type = solve_generics(type, info->generics_type, info) throws;
             
             type->mGenericsName = string(type_name);
 
@@ -514,9 +474,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         
         if(parse_variable_name) {
             if(xisalnum(*info.p) || *info->p == '_') {
-                var_name = parse_word(info).catch {
-                    throw;
-                }
+                var_name = parse_word(info) throws;
             }
             else {
                 static int num_anonymous_var_name = 0;
@@ -530,14 +488,10 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         info->p++;
         skip_spaces_and_lf(info);
         
-        sNode*% node = expression(info).catch {
-            throw;
-        }
+        sNode*% node = expression(info) throws;
         type.mArrayNum.push_back(node);
         
-        expected_next_character(']', info).catch {
-            throw;
-        }
+        expected_next_character(']', info) throws;
     }
     
     return new tuple2<sType*%, string>(type, var_name);
@@ -1166,9 +1120,7 @@ bool sParenNode*::compile(sParenNode* self, sInfo* info)
 
 exception sNode*% parse_function_call(char* fun_name, sInfo* info)
 {
-    expected_next_character('(', info).catch {
-        throw;
-    }
+    expected_next_character('(', info) throws;
     
     list<sNode*%>*% params = new list<sNode*%>();
     
@@ -1182,9 +1134,7 @@ exception sNode*% parse_function_call(char* fun_name, sInfo* info)
         bool no_comma = info.no_comma;
         info.no_comma = true;
         
-        sNode*% node = expression(info).catch {
-            throw;
-        }
+        sNode*% node = expression(info) throws;
         
         info.no_comma = no_comma;
         
@@ -1231,7 +1181,7 @@ exception sNode*% expression_node(sInfo* info) version 99
         
         sNode*% node = new sNode(new sIntNode(n, info));
         
-        node = post_position_operator(node, info).catch { throw };
+        node = post_position_operator(node, info) throws;
         
         return node;
     }
@@ -1247,7 +1197,7 @@ exception sNode*% expression_node(sInfo* info) version 99
         
         sNode*% node = new sNode(new sIntNode(-n, info));
         
-        node = post_position_operator(node, info).catch { throw };
+        node = post_position_operator(node, info) throws;
         
         return node;
     }
@@ -1259,9 +1209,7 @@ exception sNode*% expression_node(sInfo* info) version 99
             return new sNode(new sReturnNode(null!, info));
         }
         else {
-            sNode*% value = expression(info).catch {
-                throw;
-            }
+            sNode*% value = expression(info) throws;
             
             return new sNode(new sReturnNode(value, info));
         }
@@ -1270,9 +1218,7 @@ exception sNode*% expression_node(sInfo* info) version 99
         info->p ++;
         skip_spaces_and_lf(info);
         
-        sNode*% value = expression_node(info).catch {
-            throw;
-        }
+        sNode*% value = expression_node(info) throws;
         
         return new sNode(new sDerefferenceNode(value, info));
     }
@@ -1280,9 +1226,7 @@ exception sNode*% expression_node(sInfo* info) version 99
         info->p ++;
         skip_spaces_and_lf(info);
         
-        sNode*% value = expression_node(info).catch {
-            throw;
-        }
+        sNode*% value = expression_node(info) throws;
         
         return new sNode(new sRefferenceNode(value, info));
     }
@@ -1290,9 +1234,7 @@ exception sNode*% expression_node(sInfo* info) version 99
         info->p ++;
         skip_spaces_and_lf(info);
         
-        sNode*% value = expression_node(info).catch {
-            throw;
-        }
+        sNode*% value = expression_node(info) throws;
         
         return new sNode(new sReverseNode(value, info));
     }
@@ -1344,43 +1286,33 @@ exception sNode*% expression_node(sInfo* info) version 99
             info.sline = head_sline;
         }
         
-        string buf = parse_word(info).catch {
-            throw;
-        }
+        string buf = parse_word(info) throws;
         
         if(lambda_flag) {
             info.p.p = head;
             info.sline = head_sline;
             
-            return parse_function(info).catch {
-                throw;
-            }
+            return parse_function(info) throws;
         }
         else if((buf === "string" || buf === "wstring") && *info->p == '(') {
-            sNode*% node = parse_function_call(buf, info).catch {
-                throw;
-            }
+            sNode*% node = parse_function_call(buf, info) throws;
             
-            node = post_position_operator(node, info).catch { throw };
+            node = post_position_operator(node, info) throws;
             
             return node;
         }
         else if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && *info->p == '(' && *(info->p+1) != '*')
         {
-            sNode*% node = parse_function_call(buf, info).catch {
-                throw;
-            }
+            sNode*% node = parse_function_call(buf, info) throws;
             
-            node = post_position_operator(node, info).catch { throw };
+            node = post_position_operator(node, info) throws;
             
             return node;
         }
         else {
-            sNode*% node = string_node(buf, head, head_sline, info).catch {
-                throw;
-            }
+            sNode*% node = string_node(buf, head, head_sline, info) throws;
             
-            node = post_position_operator(node, info).catch { throw };
+            node = post_position_operator(node, info) throws;
             
             return node;
         }
@@ -1395,9 +1327,7 @@ exception sNode*% expression_node(sInfo* info) version 99
             char* p = info.p.p;
             int sline = info.sline;
             
-            string word = parse_word(info, true).catch {
-                throw;
-            }
+            string word = parse_word(info, true) throws;
             
             if(is_type_name(word, info)) {
                 cast_expression_flag = true;
@@ -1408,38 +1338,30 @@ exception sNode*% expression_node(sInfo* info) version 99
         }
         
         if(cast_expression_flag) {
-            var type, name = parse_type(info).catch {
-                throw;
-            }
+            var type, name = parse_type(info) throws;
             
             expected_next_character(')', info);
             
-            sNode*% node = expression_node(info).catch {
-                throw;
-            }
+            sNode*% node = expression_node(info) throws;
             
             return new sNode(new sCastNode(type, node, info));
         }
         else {
-            sNode*% node = expression(info).catch {
-                throw
-            }
+            sNode*% node = expression(info) throws;
             
             expected_next_character(')', info);
             
             node = new sNode(new sParenNode(node, info));
             
-            node = post_position_operator(node, info).catch { throw };
+            node = post_position_operator(node, info) throws;
             
             return node;
         }
     }
     else {
-        sNode*% node = inherit(info).catch {
-            throw;
-        }
+        sNode*% node = inherit(info) throws;
         
-        node = post_position_operator(node, info).catch { throw };
+        node = post_position_operator(node, info) throws;
         
         return node;
     }
@@ -1451,9 +1373,7 @@ exception sNode*% expression_node(sInfo* info) version 99
 
 exception sNode*% expression(sInfo* info) version 5
 {
-    return expression_node(info).catch {
-        throw
-    }
+    return expression_node(info) throws;
 }
 
 
@@ -1479,9 +1399,7 @@ exception sBlock*% parse_block(sInfo* info)
             
             parse_sharp(info);
             
-            sNode*% node = expression(info).catch {
-                throw;
-            }
+            sNode*% node = expression(info) throws;
             
             result.mNodes.push_back(node);
             
@@ -1502,9 +1420,7 @@ exception sBlock*% parse_block(sInfo* info)
     }
     else {
         parse_sharp(info);
-        sNode*% node = expression(info).catch {
-            throw;
-        }
+        sNode*% node = expression(info) throws;
         parse_sharp(info);
         
         result.mNodes.push_back(node);
@@ -2031,9 +1947,7 @@ exception string skip_block(sInfo* info)
 exception sNode*% parse_function(sInfo* info)
 {
     char* header_head = info.p.p;
-    var result_type, var_name = parse_type(info).catch {
-        throw;
-    }
+    var result_type, var_name = parse_type(info) throws;
     
     /// backtrace ///
     bool method_definition = false;
@@ -2067,34 +1981,24 @@ exception sNode*% parse_function(sInfo* info)
     
     string fun_name;
     if(method_definition) {
-        var obj_type, name = parse_type(info).catch {
-            throw;
-        }
+        var obj_type, name = parse_type(info) throws;
         
-        expected_next_character(':', info).catch { throw; }
-        expected_next_character(':', info).catch { throw; }
+        expected_next_character(':', info) throws;
+        expected_next_character(':', info) throws;
         
-        string fun_name2 = parse_word(info).catch {
-            throw;
-        }
+        string fun_name2 = parse_word(info) throws;
         fun_name = create_method_name(obj_type, false@no_pointer_name, fun_name2, info)
     }
     else if(info->impl_type) {
-        string fun_name2 = parse_word(info).catch {
-            throw;
-        }
+        string fun_name2 = parse_word(info) throws;
     
         fun_name = create_method_name(info->impl_type, false@no_pointer_name, fun_name2, info);
     }
     else {
-        fun_name = parse_word(info).catch {
-            throw;
-        }
+        fun_name = parse_word(info) throws;
     }
     
-    var param_types, param_names, var_args = parse_params(info).catch {
-        throw
-    }
+    var param_types, param_names, var_args = parse_params(info) throws;
     char* header_tail = info.p.p;
     
     buffer*% header_buf = new buffer();
@@ -2103,9 +2007,7 @@ exception sNode*% parse_function(sInfo* info)
     header_buf.append_char('\0');
     
     if(fun_name === "lambda") {
-        sBlock*% block = parse_block(info).catch {
-            throw;
-        }
+        sBlock*% block = parse_block(info) throws;
         
         static int lambda_num = 0;
         lambda_num++;
@@ -2137,9 +2039,7 @@ exception sNode*% parse_function(sInfo* info)
         return new sNode(new sFunNode(fun, info));
     }
     else if(info.impl_type && info.generics_type_names.length() > 0) {
-        string block = skip_block(info).catch {
-            throw;
-        }
+        string block = skip_block(info) throws;
         
         var fun = new sGenericsFun(info.impl_type, info.generics_type_names, fun_name, result_type, param_types, param_names, var_args, block, info);
         
@@ -2148,9 +2048,7 @@ exception sNode*% parse_function(sInfo* info)
         return (sNode*)null;
     }
     else if(*info->p == '{') {
-        sBlock*% block = parse_block(info).catch {
-            throw;
-        }
+        sBlock*% block = parse_block(info) throws;
         
         bool static_ = false;
         if(result_type->mStatic) {
@@ -2178,9 +2076,7 @@ exception sNode*% parse_function(sInfo* info)
 
 exception sNode*% parse_global_variable(sInfo* info)
 {
-    var result_type, var_name = parse_type(info, true@parse_variable_name).catch {
-        throw;
-    }
+    var result_type, var_name = parse_type(info, true@parse_variable_name) throws;
     
     sNode*% right_node = null;
     string array_initializer = null;
@@ -2247,9 +2143,7 @@ exception sNode*% parse_global_variable(sInfo* info)
         }
         else {
             parse_sharp(info);
-            right_node = expression(info).catch {
-                throw;
-            }
+            right_node = expression(info) throws;
             parse_sharp(info);
         }
     }
@@ -2388,29 +2282,21 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
         info.p.p = head;
         info.sline = sline;
         
-        return parse_function(info).catch {
-            throw;
-        }
+        return parse_function(info) throws;
     }
     else if(define_variable) {
         info.p.p = head;
         info.sline = sline;
         
-        return parse_global_variable(info).catch {
-            throw;
-        }
+        return parse_global_variable(info) throws;
     }
     
     info.p.p = head;
     info.sline = sline;
     
-    string buf2 = parse_word(info).catch {
-        throw;
-    }
+    string buf2 = parse_word(info) throws;
  
-    return inherit(buf2, head, head_sline, info).catch {
-        throw;
-    }
+    return inherit(buf2, head, head_sline, info) throws;
 }
 
 exception int transpile(sInfo* info) version 5
@@ -2423,15 +2309,11 @@ exception int transpile(sInfo* info) version 5
         
         char* head = info.p.p;
         int head_sline = info.sline;
-        string buf = parse_word(info).catch {
-            throw;
-        }
+        string buf = parse_word(info) throws;
         
         parse_sharp(info);
         
-        sNode*% node = top_level(buf, head, head_sline, info).catch {
-            throw;
-        }
+        sNode*% node = top_level(buf, head, head_sline, info) throws;
         parse_sharp(info);
         
         while(*info->p == ';') {
@@ -2499,9 +2381,7 @@ exception sFun*,string create_finalizer_automatically(sType* type, char* fun_nam
         
         info.p = source.to_pointer();
         
-        sBlock*% block = parse_block(info).catch {
-            throw;
-        }
+        sBlock*% block = parse_block(info) throws;
         
         var result_type = new sType("void", info);
         var name = clone real_fun_name;

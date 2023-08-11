@@ -67,19 +67,17 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
     if(buf === "union") {
         char* header_head = head;
         
-        string type_name = parse_word(info).catch { throw; };
+        string type_name = parse_word(info) throws;
         
         info.classes.insert(type_name, new sClass(name:type_name, union_:true));
         
         sType*% type = new sType(type_name, info);
         
-        expected_next_character('{', info).catch { throw; }
+        expected_next_character('{', info) throws;
         
         while(true) {
-            var type2, name = parse_type(info, true@parse_variable_name).catch {
-                throw;
-            }
-            expected_next_character(';', info).catch { throw; }
+            var type2, name = parse_type(info, true@parse_variable_name) throws;
+            expected_next_character(';', info) throws;
             
             type.mFields.push_back(new tuple2<string, sType*%>(name, type2));
             
@@ -100,7 +98,5 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
         return new sNode(new sUnionNode(type, header_buf.to_string(), info));
     }
     
-    return inherit(buf, head, head_sline, info).catch {
-        throw;
-    }
+    return inherit(buf, head, head_sline, info) throws;
 }

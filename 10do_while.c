@@ -66,29 +66,23 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         string sname = clone info->sname;
         int sline = info->sline;
     
-        sBlock*% block = parse_block(info).catch { throw; }
+        sBlock*% block = parse_block(info) throws;
         
-        string buf2 = parse_word(info).catch {
-            throw;
-        }
+        string buf2 = parse_word(info) throws;
         
         if(buf2 !== "while") {
             throw;
         }
     
-        expected_next_character('(', info).catch { throw; }
+        expected_next_character('(', info) throws;
     
         /// expression ///
-        sNode*% expression_node = expression(info).catch {
-            throw;
-        }
+        sNode*% expression_node = expression(info) throws;
         
-        expected_next_character(')', info).catch { throw; }
+        expected_next_character(')', info) throws;
     
         return new sNode(new sDoWhileNode(expression_node, block, info));
     }
     
-    return inherit(buf, head,head_sline, info).catch {
-        throw;
-    }
+    return inherit(buf, head,head_sline, info) throws;
 }

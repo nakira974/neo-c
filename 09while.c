@@ -66,21 +66,17 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         string sname = clone info->sname;
         int sline = info->sline;
     
-        expected_next_character('(', info).catch { throw; }
+        expected_next_character('(', info) throws;
     
         /// expression ///
-        sNode*% expression_node = expression(info).catch {
-            throw;
-        }
+        sNode*% expression_node = expression(info) throws;
         
-        expected_next_character(')', info).catch { throw; }
+        expected_next_character(')', info) throws;
     
-        sBlock*% block = parse_block(info).catch { throw; }
+        sBlock*% block = parse_block(info) throws;
     
         return new sNode(new sWhileNode(expression_node, block, info));
     }
     
-    return inherit(buf, head,head_sline, info).catch {
-        throw;
-    }
+    return inherit(buf, head,head_sline, info) throws;
 }

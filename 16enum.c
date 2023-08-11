@@ -94,23 +94,23 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
             type_name = string("");
         }
         else {
-            type_name = parse_word(info).catch { throw; };
+            type_name = parse_word(info) throws;
             
             info.classes.insert(type_name, new sClass(name:type_name, enum_:true));
         }
         
-        expected_next_character('{', info).catch { throw; }
+        expected_next_character('{', info) throws;
         
         list<tuple2<string,sNode*%>*%>*% elements = new list<tuple2<string,sNode*%>*%>();
         
         while(true) {
-            string element_name = parse_word(info).catch { throw; };
+            string element_name = parse_word(info) throws;
             
             if(*info->p == '=') {
                 info->p++;
                 skip_spaces_and_lf(info);
                 
-                sNode*% element_value = expression(info).catch { throw; };
+                sNode*% element_value = expression(info) throws;
                 
                 elements.push_back(new tuple2<string,sNode*%>(element_name, element_value));
             }
@@ -133,7 +133,5 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
         return new sNode(new sEnumNode(type_name, elements, info));
     }
     
-    return inherit(buf, head, head_sline, info).catch {
-        throw;
-    }
+    return inherit(buf, head, head_sline, info) throws;
 }

@@ -119,16 +119,14 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         string sname = clone info->sname;
         int sline = info->sline;
     
-        expected_next_character('(', info).catch { throw; }
+        expected_next_character('(', info) throws;
     
         /// expression ///
-        sNode*% expression_node = expression(info).catch {
-            throw;
-        }
+        sNode*% expression_node = expression(info) throws;
         
-        expected_next_character(')', info).catch { throw; }
+        expected_next_character(')', info) throws;
     
-        sBlock*% if_block = parse_block(info).catch { throw; }
+        sBlock*% if_block = parse_block(info) throws;
         
         list<sNode*%>*% elif_expression_nodes = new list<sNode*%>();
     
@@ -147,33 +145,31 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
                 break;
             }
             
-            string buf = parse_word(info).catch { throw };
+            string buf = parse_word(info) throws;
     
             if(buf === "else") {
                 if(parsecmp("if", info)) {
                     info->p+=strlen("if");
                     skip_spaces_and_lf(info);
     
-                    expected_next_character('(', info).catch { throw };
+                    expected_next_character('(', info) throws;
     
                     /// expression ///
-                    sNode*% expression_node = expression(info).catch {
-                        throw;
-                    }
+                    sNode*% expression_node = expression(info) throws;
                     
                     elif_expression_nodes.push_back(expression_node);
     
-                    expected_next_character(')', info).catch { throw; }
+                    expected_next_character(')', info) throws;
     
                     
-                    sBlock*% elif_block = parse_block(info).catch { throw; }
+                    sBlock*% elif_block = parse_block(info) throws;
                     
                     elif_blocks.push_back(elif_block);
     
                     elif_num++;
                 }
                 else {
-                    else_block = parse_block(info).catch { throw; }
+                    else_block = parse_block(info) throws;
                     break;
                 }
             }
@@ -189,7 +185,5 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         return result;
     }
     
-    return inherit(buf, head,head_sline, info).catch {
-        throw;
-    }
+    return inherit(buf, head,head_sline, info) throws;
 }

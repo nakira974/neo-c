@@ -331,9 +331,7 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
 
 exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) version 20
 {
-    expected_next_character('(', info).catch {
-        throw;
-    }
+    expected_next_character('(', info) throws;
     
     list<sNode*%>*% params = new list<sNode*%>();
     
@@ -349,9 +347,7 @@ exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) v
         bool no_comma = info.no_comma;
         info.no_comma = true;
         
-        sNode*% node = expression(info).catch {
-            throw;
-        }
+        sNode*% node = expression(info) throws;
         
         info.no_comma = no_comma;
         
@@ -374,9 +370,7 @@ exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) v
         char* head = info.p.p;
         method_block_sline = info.sline;
         
-        skip_block(info).catch {
-            throw;
-        }
+        skip_block(info) throws;
         
         char* tail = info.p.p;
         
@@ -400,9 +394,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         return new sNode(new sCurrentNode(info));
     }
     
-    return inherit(buf, head, head_sline, info).catch {
-        throw;
-    }
+    return inherit(buf, head, head_sline, info) throws;
 }
 
 

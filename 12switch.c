@@ -135,10 +135,8 @@ string sBreakNode*::sname(sBreakNode* self, sInfo* info)
 exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 12
 {
     if(buf === "case") {
-        string name = parse_word(info).catch {
-            throw;
-        }
-        expected_next_character(':', info).catch { throw; }
+        string name = parse_word(info) throws;
+        expected_next_character(':', info) throws;
         
         return new sNode(new sCaseNode(name, info));
     }
@@ -146,20 +144,16 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         return new sNode(new sBreakNode(info));
     }
     else if(buf === "switch") {
-        expected_next_character('(', info).catch { throw; }
+        expected_next_character('(', info) throws;
         
         /// expression ///
-        sNode*% expression_node = expression(info).catch {
-            throw;
-        }
-        expected_next_character(')', info).catch { throw; }
+        sNode*% expression_node = expression(info) throws;
+        expected_next_character(')', info) throws;
         
-        sBlock*% block = parse_block(info).catch { throw; }
+        sBlock*% block = parse_block(info) throws;
     
         return new sNode(new sSwitchNode(expression_node, block, info));
     }
     
-    return inherit(buf, head ,head_sline, info).catch {
-        throw;
-    }
+    return inherit(buf, head ,head_sline, info) throws;
 }

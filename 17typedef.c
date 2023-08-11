@@ -50,12 +50,10 @@ string sTypedefNode*::sname(sTypedefNode* self, sInfo* info)
 exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 95
 {
     if(buf === "typedef") {
-        var type, type_name = parse_type(info, true@parse_variable_name).catch { throw }
+        var type, type_name = parse_type(info, true@parse_variable_name) throws;
         
         return new sNode(new sTypedefNode(type_name, type, info));
     }
     
-    return inherit(buf, head, head_sline, info).catch {
-        throw;
-    }
+    return inherit(buf, head, head_sline, info) throws;
 }

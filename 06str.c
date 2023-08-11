@@ -106,9 +106,7 @@ exception sNode*% expression_node(sInfo* info) version 98
         return new sNode(new sStrNode(value.to_string(), sline, info));
     }
     else {
-        inherit(info).catch {
-            throw;
-        }
+        inherit(info) throws;
     }
     
     return (sNode*%)null;

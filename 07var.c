@@ -396,15 +396,13 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
     sFun* fun = info.funcs[buf]
     
     if(buf === "var") {
-        var buf2 = parse_word(info).catch { throw }
+        var buf2 = parse_word(info) throws;
         
         if(*info->p == '=' && *(info->p+1) != '=') {
             info.p++;
             skip_spaces_and_lf(info);
             
-            sNode*% right_value = expression(info).catch {
-                throw;
-            }
+            sNode*% right_value = expression(info) throws;
             
             return new sNode(new sStoreNode(string(buf2)@name, null!, true@alloc, right_value, info));
         }
@@ -417,23 +415,21 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         info.p++;
         skip_spaces_and_lf(info);
         
-        sNode*% right_value = expression(info).catch {
-            throw;
-        }
+        sNode*% right_value = expression(info) throws;
         
         return new sNode(new sStoreNode(string(buf)@name, null!, false@alloc, right_value, info));
     }
     else if(fun) {
         sNode*% node = new sNode(new sFunLoadNode(string(buf)@name, info));
         
-        node = post_position_operator(node, info).catch { throw };
+        node = post_position_operator(node, info) throws;
         
         return node;
     }
     else if(!is_type_name_flag) {
         sNode*% node = new sNode(new sLoadNode(string(buf)@name, info));
         
-        node = post_position_operator(node, info).catch { throw };
+        node = post_position_operator(node, info) throws;
         
         return node;
     }
@@ -442,8 +438,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         info.sline = head_sline;
         
         info.no_output_err = true;
-        string word = parse_word(info).catch {
-        }
+        string word = parse_word(info).catch { }
         info.no_output_err = false;
         
         bool is_type_name_flag = is_type_name(word, info);
@@ -452,17 +447,13 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         info.sline = head_sline;
         
         if(is_type_name_flag) {
-            var type, name = parse_type(info, true@parse_variable_name).catch {
-                throw;
-            }
+            var type, name = parse_type(info, true@parse_variable_name) throws;
             
             if(*info->p == '=') {
                 info.p++;
                 skip_spaces_and_lf(info);
                 
-                sNode*% right_value = expression(info).catch {
-                    throw;
-                }
+                sNode*% right_value = expression(info) throws;
                 
                 return new sNode(new sStoreNode(name, type, true@alloc, right_value, info));
             }
@@ -472,8 +463,6 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         }
     }
     
-    return inherit(buf, head,head_sline, info).catch {
-        throw;
-    }
+    return inherit(buf, head,head_sline, info) throws;
 }
 

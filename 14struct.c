@@ -147,7 +147,7 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
     if(buf === "struct") {
         char* header_head = head;
         
-        string type_name = parse_word(info).catch { throw; };
+        string type_name = parse_word(info) throws;
         
         bool generics_struct = false;
         if(*info->p == '<') {
@@ -159,9 +159,7 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
             skip_spaces_and_lf(info);
             
             while(true) {
-                var T = parse_word(info).catch {
-                    throw;
-                }
+                var T = parse_word(info) throws;
                 info.generics_type_names.push_back(T);
                 
                 if(*info->p == '>') {
@@ -184,13 +182,11 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
         
         sType*% type = new sType(type_name, info);
         
-        expected_next_character('{', info).catch { throw; }
+        expected_next_character('{', info) throws;
         
         while(true) {
-            var type2, name = parse_type(info, true@parse_variable_name).catch {
-                throw;
-            }
-            expected_next_character(';', info).catch { throw; }
+            var type2, name = parse_type(info, true@parse_variable_name) throws;
+            expected_next_character(';', info) throws;
             
             type.mFields.push_back(new tuple2<string, sType*%>(name, type2));
             
@@ -214,7 +210,5 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
         return new sNode(new sStructNode(type, come_header.to_string(), info));
     }
     
-    return inherit(buf, head, head_sline, info).catch {
-        throw;
-    }
+    return inherit(buf, head, head_sline, info) throws;
 }

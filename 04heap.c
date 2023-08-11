@@ -11,19 +11,14 @@ exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
     sClass* klass = type->mClass;
 
     if(klass->mName === "lambda") {
-        var result_type = solve_generics(type->mResultType.0, generics_type, info).catch {
-            throw;
-        }
+        var result_type = solve_generics(type->mResultType.0, generics_type, info) throws;
         
         result->mResultType = new tuple1<sType*%>(result_type);
         
         list<sType*%>*% new_param_types = new list<sType*%>();
 
         foreach(it, type->mParamTypes) {
-            sType*% new_param_type = solve_generics(it, generics_type, info).catch
-            {
-                throw
-            }
+            sType*% new_param_type = solve_generics(it, generics_type, info) throws;
             
             new_param_types.push_back(new_param_type);
         }
@@ -77,11 +72,7 @@ exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
         int i = 0;
         result.mGenericsTypes.reset();
         foreach(it, type->mGenericsTypes) {
-            var type = solve_generics(it, generics_type, info)
-                .catch
-            {
-                throw;
-            }
+            var type = solve_generics(it, generics_type, info) throws;
             result->mGenericsTypes.push_back(clone type);
             i++;
         }
@@ -118,20 +109,14 @@ exception sType*% solve_method_generics(sType* type, list<sType*%>* method_gener
 
     if(klass->mName === "lambda")
     {
-        var result_type = solve_method_generics(type->mResultType.0, method_generics_types, info).catch 
-        {
-            throw
-        }
+        var result_type = solve_method_generics(type->mResultType.0, method_generics_types, info) throws;
         
         result->mResultType = new tuple1<sType*%>(result_type);
 
         list<sType*%>*% new_param_types = new list<sType*%>();
 
         foreach(it, type->mParamTypes) {
-            sType*% new_param_type = solve_method_generics(it, method_generics_types, info).catch
-            {
-                throw
-            }
+            sType*% new_param_type = solve_method_generics(it, method_generics_types, info) throws;
             
             new_param_types.push_back(new_param_type);
         }
@@ -177,11 +162,7 @@ exception sType*% solve_method_generics(sType* type, list<sType*%>* method_gener
     else {
         int i = 0;
         foreach(it, type->mGenericsTypes) {
-            result->mGenericsTypes[i] = solve_method_generics(it, method_generics_types, info)
-                .catch
-            {
-                throw;
-            }
+            result->mGenericsTypes[i] = solve_method_generics(it, method_generics_types, info) throws;
             i++;
         }
     }

@@ -444,9 +444,7 @@ exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 18
                     info->p++;
                     skip_spaces_and_lf(info);
                     
-                    sNode*% node = expression(info).catch {
-                        throw;
-                    }
+                    sNode*% node = expression(info) throws;
                     
                     array_num.push_back(node);
                     
@@ -468,7 +466,7 @@ exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 18
                 info->p++;
                 skip_spaces_and_lf(info);
                 
-                sNode*% right_node = expression(info).catch { throw }
+                sNode*% right_node = expression(info) throws;
                 
                 node = new sNode(new sStoreArrayNode(node, right_node, array_num, info));
             }
@@ -480,29 +478,25 @@ exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 18
             info->p++;
             skip_spaces_and_lf(info);
             
-            string field_name = parse_word(info).catch { throw };
+            string field_name = parse_word(info) throws;
             
             if(*info->p == '=' && *(info->p+1) != '=') {
                 info->p++;
                 skip_spaces_and_lf(info);
                 
-                sNode*% right_node = expression(info).catch { throw }
+                sNode*% right_node = expression(info) throws;
                 
                 node = new sNode(new sStoreFieldNode(node, right_node, field_name, info));
             }
             else if(*info->p == '(') {
-                node = parse_method_call(node, field_name, info).catch {
-                    throw;
-                }
+                node = parse_method_call(node, field_name, info) throws;
             }
             else {
                 node = new sNode(new sLoadFieldNode(node, field_name, info));
             }
         }
         else {
-            sNode*% node2 = post_position_operator2(node, info).catch {
-                throw
-            }
+            sNode*% node2 = post_position_operator2(node, info) throws;
             
             if(node2 == null) {
                 break;

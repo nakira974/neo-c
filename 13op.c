@@ -1501,9 +1501,7 @@ string sConditionalNode*::sname(sConditionalNode* self, sInfo* info)
 
 exception sNode*% mult_exp(sInfo* info)
 {
-    sNode*% node = expression_node(info).catch {
-        throw;
-    }
+    sNode*% node = expression_node(info) throws;
     
     parse_sharp(info)
 
@@ -1512,9 +1510,7 @@ exception sNode*% mult_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% right = mult_exp(info).catch {
-                throw;
-            }
+            sNode*% right = mult_exp(info) throws;
             
             return new sNode(new sMultNode(node, right, info));
         }
@@ -1522,9 +1518,7 @@ exception sNode*% mult_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% right = mult_exp(info).catch {
-                throw;
-            }
+            sNode*% right = mult_exp(info) throws;
             
             return new sNode(new sDivNode(node, right, info));
         }
@@ -1532,9 +1526,7 @@ exception sNode*% mult_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% right = expression_node(info).catch {
-                throw;
-            }
+            sNode*% right = expression_node(info) throws;
             
             return new sNode(new sModNode(node, right, info));
         }
@@ -1550,9 +1542,7 @@ exception sNode*% mult_exp(sInfo* info)
 
 exception sNode*% add_exp(sInfo* info)
 {
-    sNode*% node = mult_exp(info).catch {
-        throw;
-    }
+    sNode*% node = mult_exp(info) throws;
     
     parse_sharp(info)
 
@@ -1562,9 +1552,7 @@ exception sNode*% add_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% right = add_exp(info).catch {
-                throw;
-            }
+            sNode*% right = add_exp(info) throws;
             
             return new sNode(new sAddNode(node, right, info));
         }
@@ -1573,9 +1561,7 @@ exception sNode*% add_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% right = add_exp(info).catch {
-                throw;
-            }
+            sNode*% right = add_exp(info) throws;
             
             return new sNode(new sSubNode(node, right, info));
         }
@@ -1593,9 +1579,7 @@ exception sNode*% shift_exp(sInfo* info)
 {
     parse_sharp(info);
     
-    sNode*% node = add_exp(info).catch {
-        throw;
-    }
+    sNode*% node = add_exp(info) throws;
     
     parse_sharp(info)
 
@@ -1604,9 +1588,7 @@ exception sNode*% shift_exp(sInfo* info)
             info->p+=2;
             skip_spaces_and_lf(info);
 
-            sNode*% right = shift_exp(info).catch {
-                throw;
-            }
+            sNode*% right = shift_exp(info) throws;
             
             return new sNode(new sLShiftNode(node, right, info));
         }
@@ -1614,9 +1596,7 @@ exception sNode*% shift_exp(sInfo* info)
             info->p+=2;
             skip_spaces_and_lf(info);
 
-            sNode*% right = shift_exp(info).catch {
-                throw;
-            }
+            sNode*% right = shift_exp(info) throws;
             
             return new sNode(new sRShiftNode(node, right, info));
         }
@@ -1634,9 +1614,7 @@ exception sNode*% comparison_exp(sInfo* info)
 {
     parse_sharp(info);
     
-    sNode*% node = shift_exp(info).catch {
-        throw;
-    }
+    sNode*% node = shift_exp(info) throws;
     
     parse_sharp(info)
 
@@ -1645,9 +1623,7 @@ exception sNode*% comparison_exp(sInfo* info)
             info->p+=2;
             skip_spaces_and_lf(info);
 
-            sNode*% right = shift_exp(info).catch {
-                throw;
-            }
+            sNode*% right = shift_exp(info) throws;
             
             return new sNode(new sGtEqNode(node, right, info));
         }
@@ -1655,9 +1631,7 @@ exception sNode*% comparison_exp(sInfo* info)
             info->p+=2;
             skip_spaces_and_lf(info);
 
-            sNode*% right = shift_exp(info).catch {
-                throw;
-            }
+            sNode*% right = shift_exp(info) throws;
             
             return new sNode(new sLtEqNode(node, right, info));
         }
@@ -1665,9 +1639,7 @@ exception sNode*% comparison_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% right = shift_exp(info).catch {
-                throw;
-            }
+            sNode*% right = shift_exp(info) throws;
             
             return new sNode(new sGtNode(node, right, info));
         }
@@ -1675,9 +1647,7 @@ exception sNode*% comparison_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% right = shift_exp(info).catch {
-                throw;
-            }
+            sNode*% right = shift_exp(info) throws;
             
             return new sNode(new sLtNode(node, right, info));
         }
@@ -1695,9 +1665,7 @@ exception sNode*% eq_exp(sInfo* info)
 {
     parse_sharp(info);
     
-    sNode*% node = comparison_exp(info).catch {
-        throw;
-    }
+    sNode*% node = comparison_exp(info) throws;
     
     parse_sharp(info)
 
@@ -1706,9 +1674,7 @@ exception sNode*% eq_exp(sInfo* info)
             info->p+=3;
             skip_spaces_and_lf(info);
 
-            sNode*% right = eq_exp(info).catch {
-                throw;
-            }
+            sNode*% right = eq_exp(info) throws;
             
             return new sNode(new sEq2Node(node, right, info));
         }
@@ -1716,9 +1682,7 @@ exception sNode*% eq_exp(sInfo* info)
             info->p+=2;
             skip_spaces_and_lf(info);
 
-            sNode*% right = eq_exp(info).catch {
-                throw;
-            }
+            sNode*% right = eq_exp(info) throws;
             
             return new sNode(new sEqNode(node, right, info));
         }
@@ -1726,9 +1690,7 @@ exception sNode*% eq_exp(sInfo* info)
             info->p+=3;
             skip_spaces_and_lf(info);
 
-            sNode*% right = eq_exp(info).catch {
-                throw;
-            }
+            sNode*% right = eq_exp(info) throws;
             
             return new sNode(new sNotEq2Node(node, right, info));
         }
@@ -1736,9 +1698,7 @@ exception sNode*% eq_exp(sInfo* info)
             info->p+=2;
             skip_spaces_and_lf(info);
 
-            sNode*% right = eq_exp(info).catch {
-                throw;
-            }
+            sNode*% right = eq_exp(info) throws;
             
             return new sNode(new sNotEqNode(node, right, info));
         }
@@ -1756,9 +1716,7 @@ exception sNode*% and_exp(sInfo* info)
 {
     parse_sharp(info);
     
-    sNode*% node = eq_exp(info).catch {
-        throw;
-    }
+    sNode*% node = eq_exp(info) throws;
 
     parse_sharp(info);
 
@@ -1767,9 +1725,7 @@ exception sNode*% and_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% right = eq_exp(info).catch {
-                throw;
-            }
+            sNode*% right = eq_exp(info) throws;
 
             return new sNode(new sAndNode(node, right, info));
         }
@@ -1787,9 +1743,7 @@ exception sNode*% xor_exp(sInfo* info)
 {
     parse_sharp(info);
     
-    sNode*% node = and_exp(info).catch {
-        throw;
-    }
+    sNode*% node = and_exp(info) throws;
 
     parse_sharp(info);
 
@@ -1798,9 +1752,7 @@ exception sNode*% xor_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% right = and_exp(info).catch {
-                throw;
-            }
+            sNode*% right = and_exp(info) throws;
 
             return new sNode(new sXOrNode(node, right, info));
         }
@@ -1818,9 +1770,7 @@ exception sNode*% or_exp(sInfo* info)
 {
     parse_sharp(info);
     
-    sNode*% node = xor_exp(info).catch {
-        throw;
-    }
+    sNode*% node = xor_exp(info) throws;
 
     parse_sharp(info);
 
@@ -1829,9 +1779,7 @@ exception sNode*% or_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% right = xor_exp(info).catch {
-                throw;
-            }
+            sNode*% right = xor_exp(info) throws;
 
             return new sNode(new sOrNode(node, right, info));
         }
@@ -1849,9 +1797,7 @@ exception sNode*% andand_exp(sInfo* info)
 {
     parse_sharp(info);
     
-    sNode*% node = or_exp(info).catch {
-        throw;
-    }
+    sNode*% node = or_exp(info) throws;
 
     parse_sharp(info);
 
@@ -1860,9 +1806,7 @@ exception sNode*% andand_exp(sInfo* info)
             info->p+=2;
             skip_spaces_and_lf(info);
 
-            sNode*% right = andand_exp(info).catch {
-                throw;
-            }
+            sNode*% right = andand_exp(info) throws;
 
             return new sNode(new sAndAndNode(node, right, info));
         }
@@ -1880,9 +1824,7 @@ exception sNode*% oror_exp(sInfo* info)
 {
     parse_sharp(info);
     
-    sNode*% node = andand_exp(info).catch {
-        throw;
-    }
+    sNode*% node = andand_exp(info) throws;
 
     parse_sharp(info);
 
@@ -1891,9 +1833,7 @@ exception sNode*% oror_exp(sInfo* info)
             info->p+=2;
             skip_spaces_and_lf(info);
 
-            sNode*% right = oror_exp(info).catch {
-                throw;
-            }
+            sNode*% right = oror_exp(info) throws;
 
             return new sNode(new sOrOrNode(node, right, info));
         }
@@ -1911,9 +1851,7 @@ exception sNode*% comma_exp(sInfo* info)
 {
     parse_sharp(info);
     
-    sNode*% node = oror_exp(info).catch {
-        throw;
-    }
+    sNode*% node = oror_exp(info) throws;
     
     parse_sharp(info);
 
@@ -1922,9 +1860,7 @@ exception sNode*% comma_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% node2 = oror_exp(info).catch {
-                throw;
-            }
+            sNode*% node2 = oror_exp(info) throws;
             
             return new sNode(new sCommaNode(node, node2, info));
         }
@@ -1942,9 +1878,7 @@ exception sNode*% conditional_exp(sInfo* info)
 {
     parse_sharp(info);
     
-    sNode*% node = comma_exp(info).catch {
-        throw;
-    }
+    sNode*% node = comma_exp(info) throws;
     
     parse_sharp(info);
 
@@ -1960,18 +1894,14 @@ exception sNode*% conditional_exp(sInfo* info)
                 value1 = new sNode(new sNullNode(info));
             }
             else {
-                value1 = comma_exp(info).catch {
-                    throw;
-                }
+                value1 = comma_exp(info) throws;
             }
 
             parse_sharp(info);
 
-            expected_next_character(':', info).catch { throw; }
+            expected_next_character(':', info) throws;
 
-            sNode*% value2 = comma_exp(info).catch {
-                throw;
-            }
+            sNode*% value2 = comma_exp(info) throws;
 
             parse_sharp(info);
 
@@ -1991,9 +1921,7 @@ exception sNode*% expression(sInfo* info) version 13
 {
     parse_sharp(info);
 
-    sNode*% node = conditional_exp(info).catch {
-        throw
-    }
+    sNode*% node = conditional_exp(info) throws;
     
     return node;
 }
@@ -2004,7 +1932,5 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         return new sNode(new sNullNode(info));
     }
     
-    return inherit(buf, head,head_sline, info).catch {
-        throw;
-    }
+    return inherit(buf, head,head_sline, info) throws;
 }

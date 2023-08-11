@@ -60,8 +60,10 @@ static bool cpp(sInfo* info)
     struct dirent* entry;
     while(entry = readdir(dir)) {
         string ext = xextname(entry->d_name);
+        string dname = xdirname(entry->d_name);
         
-        if(ext === "ach") {
+        if(ext === "ach" && entry->d_name !== xsprintf("%s.ach", info.sname) && dname === "")
+        {
             include_files.append_str(xsprintf("-include %s ", entry->d_name));
         }
     }

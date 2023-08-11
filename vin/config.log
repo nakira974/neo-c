@@ -312,6 +312,7 @@ on c423c86503f1
 
 config.status:805: creating Makefile
 config.status:805: creating config.h
+config.status:980: config.h is unchanged
 
 ## ---------------- ##
 ## Cache variables. ##

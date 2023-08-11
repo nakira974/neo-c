@@ -8,7 +8,7 @@ Yet another modern compiler. It has a collection and string library using Boehm 
 もう一つのモダンコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 1.3.5
+version 1.3.6
 
 ``` C
 #include <comelang.h>
@@ -413,6 +413,8 @@ From version 1.3.3 void* operand had occured segmentation fault. Fixed. Multidif
 From version 1.3.4 map expression bug has been fixed.
 
 From version 1.3.5 map foreach bug has been fixed.
+
+From version 1.3.6 fun().catch { throws } ==> fun() throws;
 
 # Language specifications
 
@@ -2154,9 +2156,14 @@ exception int div_op(int left, int right)
 
 exception int test(int left, int right)
 {
+    return div_op(left, right) throws;
+/*
+    <=>
+    
     return div_op(left, right).catch {
         throw;
     }
+*/
 }
 
 int main()

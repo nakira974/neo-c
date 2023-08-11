@@ -210,6 +210,93 @@ BOOL parse_catch(unsigned int* node, sParserInfo* info)
     return TRUE;
 }
 
+BOOL parse_throws(unsigned int* node, sParserInfo* info)
+{
+    gNodes[*node].uValue.sFunctionCall.mParseCatch = TRUE;
+    
+    char sname[PATH_MAX];
+    xstrncpy(sname, info->sname, PATH_MAX);
+    int sline = info->sline;
+    
+    unsigned int nodes[128];
+    int num_nodes = 0;
+
+    /// expression ///
+    static int n = 0;
+    n++;
+    
+    int num_vars = 2;
+    char var_names[2][VAR_NAME_MAX];
+    snprintf(var_names[0], VAR_NAME_MAX, "catcha%d", n);
+    snprintf(var_names[1], VAR_NAME_MAX, "catchb%d", n);
+    
+    check_already_added_variable(info->lv_table, var_names[0], info);
+    if(!add_variable_to_table(info->lv_table, var_names[0], "", NULL, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
+    {
+        fprintf(stderr, "%s %d: overflow variable table\n", gSName, gSLine);
+        exit(2);
+    }
+    
+    check_already_added_variable(info->lv_table, var_names[1], info);
+    if(!add_variable_to_table(info->lv_table, var_names[1], "", NULL, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
+    {
+        fprintf(stderr, "%s %d: overflow variable table\n", gSName, gSLine);
+        exit(2);
+    }
+    
+    BOOL alloc = TRUE;
+    char* var_names2[2] = { var_names[0], var_names[1] };
+    nodes[num_nodes] = sNodeTree_create_store_variable_multiple(num_vars, var_names2, *node, alloc, info);
+    num_nodes++;
+    
+    unsigned int node2 = sNodeTree_create_load_variable(var_names[1], FALSE, info);
+    
+    unsigned int expression_node = sNodeTree_create_logical_denial(node2, 0, 0, info);
+
+    sNodeBlock* if_node_block = NULL;
+    BOOL result_type_is_void = TRUE;
+    
+    sParserInfo pinfo;
+
+    pinfo = *info;
+    pinfo.p = "{ throw; }";
+
+    if(!parse_block_easy(ALLOC &if_node_block, FALSE, result_type_is_void, FALSE, &pinfo))
+    {
+        return FALSE;
+    }
+
+    unsigned int elif_expression_nodes[ELIF_NUM_MAX];
+    memset(elif_expression_nodes, 0, sizeof(unsigned int)*ELIF_NUM_MAX);
+
+    sNodeBlock* elif_node_blocks[ELIF_NUM_MAX];
+    memset(elif_node_blocks, 0, sizeof(sNodeBlock*)*ELIF_NUM_MAX);
+
+    int elif_num = 0;
+
+    sNodeBlock* else_node_block = NULL;
+
+    nodes[num_nodes] = sNodeTree_if_expression(expression_node, MANAGED if_node_block, elif_expression_nodes, elif_node_blocks, elif_num, MANAGED else_node_block, info, sname, sline);
+    num_nodes++;
+    
+    nodes[num_nodes] = sNodeTree_create_load_variable(var_names[0], TRUE, info);
+    num_nodes++;
+    
+    BOOL result_type_is_void2 = FALSE;
+    sNodeBlock* node_block = NULL;
+    if(!create_block(&node_block, num_nodes, nodes, result_type_is_void2, info)) {
+        return FALSE;
+    }
+    
+    *node = sNodeTree_create_normal_block(node_block, info);
+/*
+    BOOL in_macro = FALSE;
+    *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
+*/
+    
+    return TRUE;
+}
+
 BOOL parse_while(unsigned int* node, sParserInfo* info)
 {
     expect_next_character_with_one_forward("(", info);

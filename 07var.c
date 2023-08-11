@@ -48,14 +48,12 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         sVar* var_ = get_variable_from_table(info.lv_table, self.name);
         
         if(var_ == null) {
-        /*
             var_ = get_variable_from_table(info.gv_table, self.name);
             
             if(var_ == null) {
-        */
                 err_msg(info, "var not found(%s) at definition of variable\n", self.name);
                 return false;
-        //    }
+            }
         }
         
         if(var_->mType == null) {
@@ -160,14 +158,12 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         sVar* var_ = get_variable_from_table(info.lv_table, self.name);
         
         if(var_ == null) {
-        /*
             var_ = get_variable_from_table(info.gv_table, self.name);
             
             if(var_ == null) {
-        */
                 err_msg(info, "var not found(%s) at storing variable\n", self.name);
                 return false;
-        //    }
+            }
         }
         
         if(var_->mType == NULL) {
@@ -273,14 +269,12 @@ bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
     sVar* var_ = get_variable_from_table(info.lv_table, self.name);
     
     if(var_ == null) {
-        /*
         var_ = get_variable_from_table(info.gv_table, self.name);
         
         if(var_ == null) {
-        */
             err_msg(info, "var not found(%s) at loading variable\n", self.name);
             return false;
-        //}
+        }
     }
     
     CVALUE*% come_value = new CVALUE;
@@ -482,3 +476,4 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         throw;
     }
 }
+

@@ -593,6 +593,7 @@ BOOL parse_inline_function(unsigned int* node, sParserInfo* info);
 BOOL parse_function_call_params(int* num_params, unsigned int* params, sParserInfo* info);
 BOOL parse_if(unsigned int* node, sParserInfo* info);
 BOOL parse_throw(unsigned int* node, sParserInfo* info);
+BOOL parse_throws(unsigned int* node, sParserInfo* info);
 BOOL parse_catch(unsigned int* node, sParserInfo* info);
 BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserInfo* info);
 BOOL parse_while(unsigned int* node, sParserInfo* info);

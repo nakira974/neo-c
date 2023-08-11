@@ -3196,6 +3196,7 @@ string xbasename(char* path);
 string xextname(char* path);
 string xrealpath(char* path);
 string xnoextname(char* path);
+string xdirname(char* path);
 
 void come_fd_zero(fd_set* fds);
 void come_fd_set(int fd, fd_set* fds);

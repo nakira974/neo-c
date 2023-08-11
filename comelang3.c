@@ -1,4 +1,5 @@
 #include "comelang.h"
+#include <libgen.h>
 
 regex_struct*% regex(char* str, bool ignore_case, bool multiline, bool global, bool extended, bool dotall, bool anchored, bool dollar_endonly, bool ungreedy)
 {
@@ -461,6 +462,13 @@ string xbasename(char* path)
     }
     
     return string("");
+}
+
+string xdirname(char* path)
+{
+    using unsafe;
+    
+    return string(dirname(string(path)));
 }
 
 string xnoextname(char* path)

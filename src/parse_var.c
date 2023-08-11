@@ -15,6 +15,14 @@ BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserIn
             skip_spaces_and_lf(info);
             *node = sNodeTree_create_derefference(*node, TRUE, NULL, FALSE, info);
         }
+        else if(memcmp(info->p, "throws", strlen("throws")) == 0) {
+            info->p += strlen("throws");
+            skip_spaces_and_lf(info);
+            
+            if(!parse_throws(node, info)) {
+                return FALSE;
+            }
+        }
         /// call method or access field ///
         else if(((*info->p == '.' && *(info->p+1) != '.')|| (*info->p == '-' && *(info->p+1) == '>')) && !info->no_method_call)
         {

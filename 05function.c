@@ -220,7 +220,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             
             type_name = parse_word(info) throws;
         }
-        else if(type_name === "extern_") {
+        else if(type_name === "extern") {
             extern_ = true;
             
             type_name = parse_word(info) throws;
@@ -2430,7 +2430,7 @@ bool is_type_name(char* buf, sInfo* info)
     sType* type = info.types[buf];
     bool generics_type_name = info.generics_type_names.contained(string(buf));
     
-    return generics_type_name || klass || type || buf === "const" || buf === "register" || buf === "static" || buf === "volatile" || buf === "unsigned" || buf === "immutable" || buf === "mutable" || buf === "struct" || buf === "enum" || buf === "union";
+    return generics_type_name || klass || type || buf === "const" || buf === "register" || buf === "static" || buf === "volatile" || buf === "unsigned" || buf === "immutable" || buf === "mutable" || buf === "struct" || buf === "enum" || buf === "union" || buf === "extern";
 
 }
 
@@ -2505,7 +2505,6 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
         if(!is_type_name_flag) {
             define_variable = false;
         }
-        
         
         if(buf === "struct") {
             define_variable = false;

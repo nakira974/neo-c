@@ -6,7 +6,7 @@ struct __builtin_va_list
     int v4;
     int v5;
 };
-struct sX;
+extern int gA;
 struct anonymous_type4
 {
     int a;

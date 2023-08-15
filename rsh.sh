@@ -1,5 +1,5 @@
 #rm 0*.o
-make comelang2 && sudo make comelang2-install && make comelang2-test
+make comelang2 && sudo make comelang2-install #&& make comelang2-test
 #comelang2 -g a.c
 #comelang2 -g a.c
 #valgrind ./a

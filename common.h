@@ -391,18 +391,21 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
 /////////////////////////////////////////////////////////////////////
 /// 14struct.c
 /////////////////////////////////////////////////////////////////////
+exception sNode*% parse_struct(string type_name, sInfo* info);
 exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 98;
 bool define_generics_struct(sType* type, sInfo* info);
-void define_struct(sClass* klass, string? come_header, sInfo* info);
+void define_struct(sClass* klass, bool come_header, sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
 /// 15union.c
 /////////////////////////////////////////////////////////////////////
+exception sNode*% parse_union(string type_name, sInfo* info);
 exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 97;
 
 /////////////////////////////////////////////////////////////////////
 /// 16enum.c
 /////////////////////////////////////////////////////////////////////
+exception sNode*% parse_enum(string type_name, sInfo* info);
 exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 96;
 
 /////////////////////////////////////////////////////////////////////

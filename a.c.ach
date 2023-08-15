@@ -1,0 +1,27 @@
+struct __builtin_va_list
+{
+    char* v1;
+    char* v2;
+    char* v3;
+    int v4;
+    int v5;
+};
+struct sX;
+struct anonymous_type4
+{
+    int a;
+    int b;
+    int c;
+};
+enum anonymous_type7 { kA,kB,kC};
+union anonymous_type10
+{
+double a;
+float b;
+};
+
+void __init_a_c__();
+void __final_a_c__();
+int main(int argc, char** argv)
+;
+

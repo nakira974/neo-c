@@ -86,6 +86,44 @@ string sEnumNode*::sname(sEnumNode* self, sInfo* info)
     return string(self.sname);
 }
 
+exception sNode*% parse_enum(string type_name, sInfo* info)
+{
+    info.classes.insert(type_name, new sClass(name:type_name, enum_:true));
+    
+    expected_next_character('{', info) throws;
+    
+    list<tuple2<string,sNode*%>*%>*% elements = new list<tuple2<string,sNode*%>*%>();
+    
+    while(true) {
+        string element_name = parse_word(info) throws;
+        
+        if(*info->p == '=') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            sNode*% element_value = expression(info) throws;
+            
+            elements.push_back(new tuple2<string,sNode*%>(element_name, element_value));
+        }
+        else {
+            elements.push_back(new tuple2<string,sNode*%>(element_name, null!));
+        }
+        
+        if(*info->p == ',') {
+            info->p++;
+            skip_spaces_and_lf(info);
+        }
+        
+        if(*info->p == '}') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            break;
+        }
+    }
+    
+    return new sNode(new sEnumNode(type_name, elements, info));
+}
+
 exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 96
 {
     if(buf === "enum") {

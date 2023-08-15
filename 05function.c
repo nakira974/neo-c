@@ -186,15 +186,27 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         if(type_name === "struct") {
             struct_ = true;
             
+            if(*info->p == '{') {
+                break;
+            }
+            
             type_name = parse_word(info) throws;
         }
         else if(type_name === "union") {
             union_ = true;
             
+            if(*info->p == '{') {
+                break;
+            }
+            
             type_name = parse_word(info) throws;
         }
         else if(type_name === "enum") {
             enum_ = true;
+            
+            if(*info->p == '{') {
+                break;
+            }
             
             type_name = parse_word(info) throws;
         }
@@ -234,7 +246,14 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                 else {
                     type_name = parse_word(info, true) throws;
                     
-                    if(is_type_name(type_name, info)) {
+                    if(type_name === "unsigned") {
+                        type_name = parse_word(info, true) throws;
+                        
+                        if(type_name === "int") {
+                            break;
+                        }
+                    }
+                    else if(is_type_name(type_name, info)) {
                         if(long_) {
                             long_long = true;
                             long_ = false;
@@ -256,6 +275,11 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         }
         else if(type_name === "unsigned") {
             unsigned_ = true;
+            
+            type_name = parse_word(info) throws;
+        }
+        else if(type_name === "signed") {
+            unsigned_ = false;
             
             type_name = parse_word(info) throws;
         }
@@ -315,7 +339,65 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
     
     sType*% type;
     string var_name;
-    if(*info->p == '(') {
+            
+    if(*info->p == '{') {
+        static int anonymous_num = 0;
+        if(struct_) {
+            type_name = xsprintf("anonymous_type%d", ++anonymous_num);
+            
+            sNode*% node = parse_struct(type_name, info) throws;
+            
+            if(!info.no_output_err) {
+                if(!node.compile->(info)) {
+                    throw;
+                }
+            }
+            
+            type = new sType(type_name, info);
+        }
+        else if(enum_) {
+            type_name = xsprintf("anonymous_type%d", ++anonymous_num);
+            
+            sNode*% node = parse_enum(type_name, info) throws;
+            
+            if(!info.no_output_err) {
+                if(!node.compile->(info)) {
+                    throw;
+                }
+            }
+            
+            type = new sType(type_name, info);
+        }
+        else if(union_) {
+            type_name = xsprintf("anonymous_type%d", ++anonymous_num);
+            
+            sNode*% node = parse_union(type_name, info) throws;
+            
+            if(!info.no_output_err) {
+                if(!node.compile->(info)) {
+                    throw;
+                }
+            }
+            
+            type = new sType(type_name, info);
+        }
+        else {
+            err_msg(info, "unexpected { character");
+            throw;
+        }
+        
+        if(parse_variable_name) {
+            if(xisalnum(*info.p) || *info->p == '_') {
+                var_name = parse_word(info) throws;
+            }
+            else {
+                static int num_anonymous_var_name = 0;
+                num_anonymous_var_name++;
+                var_name = xsprintf("anonymous_var_name%d", num_anonymous_var_name);
+            }
+        }
+    }
+    else if(*info->p == '(') {
         info->p++;
         skip_spaces_and_lf(info);
         
@@ -1943,6 +2025,157 @@ exception string skip_block(sInfo* info)
     return string(buf);
 }
 
+exception string parse_attribute(sInfo* info)
+{
+    buffer*% asm_fun_name = new buffer();
+
+    while(true) {
+        if(memcmp(info->p.p, "__attribute_pure__", strlen("__attribute_pure__")) == 0) {
+            info->p += strlen("__attribute_pure__");
+            skip_spaces_and_lf(info);
+        }
+        else if(memcmp(info->p.p, "__wur", strlen("__wur")) == 0) {
+            info->p += strlen("__wur");
+            skip_spaces_and_lf(info);
+        }
+        else if(memcmp(info->p.p, "__noreturn", strlen("__noreturn")) == 0) {
+            info->p += strlen("__noreturn");
+            skip_spaces_and_lf(info);
+        }
+        else if(memcmp(info->p.p, "__attribute__", strlen("__attribute__")) == 0) {
+            info->p += strlen("__attribute__");
+            skip_spaces_and_lf(info);
+
+            int brace_num = 0;
+            while(*info->p) {
+                if(*info->p == '(') {
+                    info->p++;
+                    brace_num++;
+                }
+                else if(*info->p == ')') {
+                    info->p++;
+                    brace_num--;
+
+                    if(brace_num == 0) {
+                        break;
+                    }
+                }
+                else {
+                    info->p++;
+                }
+            }
+
+            skip_spaces_and_lf(info);
+        }
+        else if(memcmp(info->p.p, "__asm__", strlen("__asm__")) == 0) {
+            info->p += strlen("__asm__");
+            skip_spaces_and_lf(info);
+
+            int len = 0;
+
+            bool in_dquort = false;
+            int brace_num = 0;
+            while(*info->p) {
+                if(*info->p == '"') {
+                    info->p++;
+
+                    in_dquort = !in_dquort;
+                }
+                else if(in_dquort) {
+                    asm_fun_name.append_char(*info->p);
+                    info->p++;
+                }
+                else if(*info->p == '(') {
+                    info->p++;
+                    brace_num++;
+                }
+                else if(*info->p == ')') {
+                    info->p++;
+                    brace_num--;
+
+                    if(brace_num == 0) {
+                        break;
+                    }
+                }
+                else {
+                    info->p++;
+                }
+            }
+
+            skip_spaces_and_lf(info);
+        }
+#ifdef __DARWIN__
+        else if(memcmp(info->p.p, "__asm", strlen("__asm")) == 0) {
+            info->p += strlen("__asm");
+            skip_spaces_and_lf(info);
+            int len = 0;
+
+            if(*info->p == '(') {
+                info->p++;
+                skip_spaces_and_lf(info);
+            }
+
+            bool in_dquort = false;
+            bool first_underbar = true;
+            while(*info->p) {
+                if(*info->p == '"') {
+                    info->p++;
+
+                    in_dquort = !in_dquort;
+                }
+                else if(in_dquort) {
+                    if(first_underbar) {
+                        info->p++;
+                        first_underbar = false;
+                    }
+                    else {
+                        asm_fun_name.append_char(*info->p);
+                    }
+                }
+                else if(*info->p == ')') {
+                    info->p++;
+                    skip_spaces_and_lf(info);
+                    break;
+                }
+                else {
+                    info->p++;
+                }
+            }
+        }
+#else
+        else if(memcmp(info->p.p, "__asm", strlen("__asm")) == 0) {
+            info->p += strlen("__asm");
+            skip_spaces_and_lf(info);
+
+            int brace_num = 0;
+            while(*info->p) {
+                if(*info->p == '(') {
+                    info->p++;
+                    brace_num++;
+                }
+                else if(*info->p == ')') {
+                    info->p++;
+                    brace_num--;
+
+                    if(brace_num == 0) {
+                        break;
+                    }
+                }
+                else {
+                    info->p++;
+                }
+            }
+
+            skip_spaces_and_lf(info);
+        }
+#endif
+        else {
+            break;
+        }
+    }
+
+    return asm_fun_name.to_string();
+}
 
 exception sNode*% parse_function(sInfo* info)
 {
@@ -2024,20 +2257,6 @@ exception sNode*% parse_function(sInfo* info)
         
         return new sNode(new sLambdaNode(fun, info));
     }
-    else if(*info->p == ';') {
-        info->p++;
-        skip_spaces_and_lf(info);
-        
-        result_type->mStatic = false;
-        
-        var fun = new sFun(fun_name, result_type, param_types, param_names
-                            , true@external, var_args, null!@block
-                            , false@static_, header_buf.to_string(), info);
-        
-        info.funcs.insert(string(fun_name), fun);
-        
-        return new sNode(new sFunNode(fun, info));
-    }
     else if(info.impl_type && info.generics_type_names.length() > 0) {
         string block = skip_block(info) throws;
         
@@ -2065,6 +2284,41 @@ exception sNode*% parse_function(sInfo* info)
         info.funcs.insert(string(fun_name), fun);
         
         return new sNode(new sFunNode(fun, info));
+    }
+    else if(xisalpha(*info->p) || *info->p == '_' || *info->p == ';') {
+        if(*info->p == ';') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            result_type->mStatic = false;
+            
+            var fun = new sFun(fun_name, result_type, param_types, param_names
+                                , true@external, var_args, null!@block
+                                , false@static_, header_buf.to_string(), info);
+            
+            info.funcs.insert(string(fun_name), fun);
+            
+            return new sNode(new sFunNode(fun, info));
+        }
+        else {
+            string asm_fun = parse_attribute(info) throws;
+            
+            if(asm_fun !== "") {
+                fun_name = asm_fun;
+            }
+            
+            expected_next_character(';', info) throws;
+            
+            result_type->mStatic = false;
+            
+            var fun = new sFun(fun_name, result_type, param_types, param_names
+                                , true@external, var_args, null!@block
+                                , false@static_, header_buf.to_string(), info);
+            
+            info.funcs.insert(string(fun_name), fun);
+            
+            return new sNode(new sFunNode(fun, info));
+        }
     }
     else {
         err_msg(info, "invalid character(%c)(2)\n", *info->p);
@@ -2187,6 +2441,7 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
     
     /// back trace ///
     bool define_function_flag = false;
+    if(is_type_name_flag)
     {
         char* p = info.p.p;
         info.p.p = head;
@@ -2242,6 +2497,7 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
     }
     /// back trace2 ///
     bool define_variable = true;
+    if(is_type_name_flag)
     {
         char* p = info.p.p;
         info.p.p = head;
@@ -2276,6 +2532,9 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
         
         info.p.p = p;
         info.sline = sline;
+    }
+    else {
+        define_variable = false;
     }
     
     if(define_function_flag) {

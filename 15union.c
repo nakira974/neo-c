@@ -3,17 +3,17 @@
 struct sUnionNode
 {
     sType*% mType;
-    string mComeHeader;
+    bool mComeHeader;
   
     int sline;
     string sname;
 };
 
-sUnionNode*% sUnionNode*::initialize(sUnionNode*% self, sType*% type, string come_header, sInfo* info)
+sUnionNode*% sUnionNode*::initialize(sUnionNode*% self, sType*% type, bool come_header, sInfo* info)
 {
     self.sline = info.sline;
     self.sname = string(info.sname);
-    self.mComeHeader = string(come_header);
+    self.mComeHeader = come_header;
 
     self.mType = clone type;
     
@@ -27,7 +27,7 @@ bool sUnionNode*::compile(sUnionNode* self, sInfo* info)
     sType* type = self.mType;
     sClass* klass = type->mClass;
     
-    string come_header = self.mComeHeader;
+    bool come_header = self.mComeHeader;
     
     buffer*% buf = new buffer();
     
@@ -44,7 +44,10 @@ bool sUnionNode*::compile(sUnionNode* self, sInfo* info)
     
     if(!info.enum_typedef_already_output[string(klass->mName)]) {
         add_come_code_at_source_head(info, "%s", buf.to_string());
-        add_come_code_to_auto_come_header(info, "%s", come_header);
+        
+        if(come_header) {
+            add_come_code_to_auto_come_header(info, "%s", buf.to_string());
+        }
         
         info.enum_typedef_already_output[string(klass->mName)] = true;
     }
@@ -62,11 +65,33 @@ string sUnionNode*::sname(sUnionNode* self, sInfo* info)
     return string(self.sname);
 }
 
+exception sNode*% parse_union(string type_name, sInfo* info)
+{
+    info.classes.insert(type_name, new sClass(name:type_name, union_:true));
+    
+    sType*% type = new sType(type_name, info);
+    
+    expected_next_character('{', info) throws;
+    
+    while(true) {
+        var type2, name = parse_type(info, true@parse_variable_name) throws;
+        expected_next_character(';', info) throws;
+        
+        type.mFields.push_back(new tuple2<string, sType*%>(name, type2));
+        
+        if(*info->p == '}') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            break;
+        }
+    }
+    
+    return new sNode(new sUnionNode(type, true@come_header, info));
+}
+
 exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 97
 {
     if(buf === "union") {
-        char* header_head = head;
-        
         string type_name = parse_word(info) throws;
         
         info.classes.insert(type_name, new sClass(name:type_name, union_:true));
@@ -88,15 +113,9 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
             }
         }
         
-        char* header_tail = info.p.p;
-        
-        buffer*% header_buf = new buffer();
-        
-        header_buf.append(header_head, header_tail - header_head);
-        header_buf.append_char('\0');
-        
-        return new sNode(new sUnionNode(type, header_buf.to_string(), info));
+        return new sNode(new sUnionNode(type, true@come_header, info));
     }
     
     return inherit(buf, head, head_sline, info) throws;
 }
+

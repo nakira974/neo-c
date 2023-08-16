@@ -122,40 +122,72 @@ exception list<sType*%>*%, list<string>*%, bool parse_params(sInfo* info)
     
     expected_next_character('(', info) throws;
     
-    while(true) {
-        if(*info->p == ')') {
-            info->p++;
-            skip_spaces_and_lf(info);
-            break;
-        }
+    /// backtrace ///
+    bool void_param = false;
+    {
+        char* p = info.p.p;
+        int sline = info.sline;
         
-        var param_type, param_name = parse_type(info, parse_variable_name:true) throws;
-        
-        var param_type2 = solve_generics(param_type, info->generics_type, info) throws;
-        
-        param_type2->mFunctionParam = true;
-        
-        
-        param_types.push_back(clone param_type2);
-        param_names.push_back(clone param_name);
-        
-        if(*info->p == ',') {
-            info->p++;
+        if(memcmp(info.p.p, "void", strlen("void")) == 0) {
+            info.p += strlen("void");
             skip_spaces_and_lf(info);
             
-            if(parsecmp("...", info)) {
-                info->p += strlen("...");
-                skip_spaces_and_lf(info);
-                var_args = true;
-                
-                expected_next_character(')', info);
-                break;
+            if(*info->p == ')') {
+                void_param = true;
             }
         }
-        else if(*info->p == ')') {
-            info->p++;
+        
+        info.p.p = p;
+        info.sline = sline;
+    }
+    
+    if(void_param) {
+        if(memcmp(info.p.p, "void", strlen("void")) == 0) {
+            info.p += strlen("void");
             skip_spaces_and_lf(info);
-            break;
+            
+            if(*info->p == ')') {
+                info->p++;
+                skip_spaces_and_lf(info);
+            }
+        }
+    }
+    else {
+        while(true) {
+            if(*info->p == ')') {
+                info->p++;
+                skip_spaces_and_lf(info);
+                break;
+            }
+            
+            var param_type, param_name = parse_type(info, parse_variable_name:true) throws;
+            
+            var param_type2 = solve_generics(param_type, info->generics_type, info) throws;
+            
+            param_type2->mFunctionParam = true;
+            
+            
+            param_types.push_back(clone param_type2);
+            param_names.push_back(clone param_name);
+            
+            if(*info->p == ',') {
+                info->p++;
+                skip_spaces_and_lf(info);
+                
+                if(parsecmp("...", info)) {
+                    info->p += strlen("...");
+                    skip_spaces_and_lf(info);
+                    var_args = true;
+                    
+                    expected_next_character(')', info);
+                    break;
+                }
+            }
+            else if(*info->p == ')') {
+                info->p++;
+                skip_spaces_and_lf(info);
+                break;
+            }
         }
     }
     
@@ -181,34 +213,55 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
     bool enum_ = false;
     bool no_heap = false;
     bool extern_ = false;
+    bool inline_ = false;
+    
+    bool anonymous_type = false;
     
     while(true) {
         if(type_name === "struct") {
             struct_ = true;
             
             if(*info->p == '{') {
+                type_name = string("");
+                anonymous_type = true;
                 break;
             }
             
             type_name = parse_word(info) throws;
+            
+            if(*info->p == '{') {
+                anonymous_type = true;
+            }
         }
         else if(type_name === "union") {
             union_ = true;
             
             if(*info->p == '{') {
+                type_name = string("");
+                anonymous_type = true;
                 break;
             }
             
             type_name = parse_word(info) throws;
+            
+            if(*info->p == '{') {
+                anonymous_type = true;
+            }
         }
         else if(type_name === "enum") {
             enum_ = true;
             
             if(*info->p == '{') {
+                type_name = string("");
+                anonymous_type = true;
                 break;
             }
             
             type_name = parse_word(info) throws;
+            
+            if(*info->p == '{') {
+                anonymous_type = true;
+            }
         }
         else if(type_name === "const") {
             constant = true;
@@ -222,6 +275,11 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         }
         else if(type_name === "extern") {
             extern_ = true;
+            
+            type_name = parse_word(info) throws;
+        }
+        else if(type_name === "inline" || type_name === "__inline") {
+            inline_ = true;
             
             type_name = parse_word(info) throws;
         }
@@ -247,6 +305,13 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                     type_name = parse_word(info, true) throws;
                     
                     if(type_name === "unsigned") {
+                        type_name = parse_word(info, true) throws;
+                        
+                        if(type_name === "int") {
+                            break;
+                        }
+                    }
+                    else if(type_name === "long") {
                         type_name = parse_word(info, true) throws;
                         
                         if(type_name === "int") {
@@ -340,10 +405,12 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
     sType*% type;
     string var_name;
             
-    if(*info->p == '{') {
+    if(anonymous_type && *info->p == '{') {
         static int anonymous_num = 0;
         if(struct_) {
-            type_name = xsprintf("anonymous_type%d", ++anonymous_num);
+            if(type_name === "") {
+                type_name = xsprintf("anonymous_typeX%d", ++anonymous_num);
+            }
             
             sNode*% node = parse_struct(type_name, info) throws;
             
@@ -356,7 +423,9 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             type = new sType(type_name, info);
         }
         else if(enum_) {
-            type_name = xsprintf("anonymous_type%d", ++anonymous_num);
+            if(type_name === "") {
+                type_name = xsprintf("anonymous_typeY%d", ++anonymous_num);
+            }
             
             sNode*% node = parse_enum(type_name, info) throws;
             
@@ -369,7 +438,9 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             type = new sType(type_name, info);
         }
         else if(union_) {
-            type_name = xsprintf("anonymous_type%d", ++anonymous_num);
+            if(type_name === "") {
+                type_name = xsprintf("anonymous_typeZ%d", ++anonymous_num);
+            }
             
             sNode*% node = parse_union(type_name, info) throws;
             
@@ -425,6 +496,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         result_type->mVolatile = volatile_;
         result_type->mStatic = result_type->mStatic || static_;
         result_type->mExtern = result_type->mExtern || extern_;
+        result_type->mExtern = result_type->mInline || inline_;
         result_type->mRestrict = result_type->mRestrict || restrict_;
         result_type->mLongLong = result_type->mLongLong || long_long;
         result_type->mLong = result_type->mLong || long_;
@@ -519,6 +591,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         type->mVolatile = volatile_;
         type->mStatic = type->mStatic || static_;
         type->mExtern = type->mExtern || extern_;
+        type->mExtern = type->mInline || inline_;
         type->mRestrict = type->mRestrict || restrict_;
         type->mLongLong = type->mLongLong || long_long;
         type->mLong = type->mLong || long_;
@@ -551,6 +624,15 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         
         if(*info->p == '?') {
             info->p++;
+            skip_spaces_and_lf(info);
+        }
+        
+        if(memcmp(info.p.p, "__restrict", strlen("__restrict")) == 0) {
+            info->p += strlen("__restrict");
+            skip_spaces_and_lf(info);
+        }
+        if(memcmp(info.p.p, "restrict", strlen("restrict")) == 0) {
+            info->p += strlen("restrict");
             skip_spaces_and_lf(info);
         }
         
@@ -642,6 +724,216 @@ int sIntNode*::sline(sIntNode* self, sInfo* info)
 }
 
 string sIntNode*::sname(sIntNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+struct sUIntNode
+{
+    unsigned int value;
+    int sline;
+    string sname;
+};
+
+sUIntNode*% sUIntNode*::initialize(sUIntNode*% self, unsigned int value, sInfo* info)
+{
+    self.value = value;
+    
+    self.sline = info->sline;
+    self.sname = string(info->sname);
+    
+    return self;
+}
+
+bool sUIntNode*::compile(sUIntNode* self, sInfo* info)
+{
+    CVALUE*% come_value = new CVALUE;
+    
+    come_value.c_value = xsprintf("%u", self.value);
+    come_value.type = new sType("int", info);
+    come_value.var = null;
+    
+    info.stack.push_back(come_value);
+    
+    add_come_last_code(info, "%s;\n", come_value.c_value);
+    
+    return true;
+}
+
+int sUIntNode*::sline(sUIntNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sUIntNode*::sname(sUIntNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+struct sLongNode
+{
+    long value;
+    int sline;
+    string sname;
+};
+
+sLongNode*% sLongNode*::initialize(sLongNode*% self, unsigned long value, sInfo* info)
+{
+    self.value = value;
+    
+    self.sline = info->sline;
+    self.sname = string(info->sname);
+    
+    return self;
+}
+
+bool sLongNode*::compile(sLongNode* self, sInfo* info)
+{
+    CVALUE*% come_value = new CVALUE;
+    
+    come_value.c_value = xsprintf("%ld", self.value);
+    come_value.type = new sType("long", info);
+    come_value.var = null;
+    
+    info.stack.push_back(come_value);
+    
+    add_come_last_code(info, "%s;\n", come_value.c_value);
+    
+    return true;
+}
+
+int sLongNode*::sline(sLongNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sLongNode*::sname(sLongNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+struct sULongNode
+{
+    unsigned long value;
+    int sline;
+    string sname;
+};
+
+sULongNode*% sULongNode*::initialize(sULongNode*% self, unsigned long value, sInfo* info)
+{
+    self.value = value;
+    
+    self.sline = info->sline;
+    self.sname = string(info->sname);
+    
+    return self;
+}
+
+bool sULongNode*::compile(sULongNode* self, sInfo* info)
+{
+    CVALUE*% come_value = new CVALUE;
+    
+    come_value.c_value = xsprintf("%lu", self.value);
+    come_value.type = new sType("long", info);
+    come_value.var = null;
+    
+    info.stack.push_back(come_value);
+    
+    add_come_last_code(info, "%s;\n", come_value.c_value);
+    
+    return true;
+}
+
+int sULongNode*::sline(sULongNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sULongNode*::sname(sULongNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+struct sFloatNode
+{
+    float value;
+    int sline;
+    string sname;
+};
+
+sFloatNode*% sFloatNode*::initialize(sFloatNode*% self, float value, sInfo* info)
+{
+    self.value = value;
+    
+    self.sline = info->sline;
+    self.sname = string(info->sname);
+    
+    return self;
+}
+
+bool sFloatNode*::compile(sFloatNode* self, sInfo* info)
+{
+    CVALUE*% come_value = new CVALUE;
+    
+    come_value.c_value = xsprintf("%f", self.value);
+    come_value.type = new sType("float", info);
+    come_value.var = null;
+    
+    info.stack.push_back(come_value);
+    
+    add_come_last_code(info, "%s;\n", come_value.c_value);
+    
+    return true;
+}
+
+int sFloatNode*::sline(sFloatNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sFloatNode*::sname(sFloatNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+struct sDoubleNode
+{
+    double value;
+    int sline;
+    string sname;
+};
+
+sDoubleNode*% sDoubleNode*::initialize(sDoubleNode*% self, double value, sInfo* info)
+{
+    self.value = value;
+    
+    self.sline = info->sline;
+    self.sname = string(info->sname);
+    
+    return self;
+}
+
+bool sDoubleNode*::compile(sDoubleNode* self, sInfo* info)
+{
+    CVALUE*% come_value = new CVALUE;
+    
+    come_value.c_value = xsprintf("%lf", self.value);
+    come_value.type = new sType("double", info);
+    come_value.var = null;
+    
+    info.stack.push_back(come_value);
+    
+    add_come_last_code(info, "%s;\n", come_value.c_value);
+    
+    return true;
+}
+
+int sDoubleNode*::sline(sDoubleNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sDoubleNode*::sname(sDoubleNode* self, sInfo* info)
 {
     return string(self.sname);
 }
@@ -1247,21 +1539,441 @@ exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 5
     return node;
 }
 
+exception sNode*% get_number(bool minus, sInfo* info)
+{
+    const int buf_size = 128;
+    char buf[128+1];
+    char* p2 = buf;
+
+    if(minus) {
+        *p2 = '-';
+        p2++;
+    }
+
+    if(xisdigit(*info->p)) {
+        while(xisdigit(*info->p) || *info->p == '_') {
+            if(*info->p ==  '_') {
+                info->p++;
+            }
+            else {
+                *p2++ = *info->p;
+                info->p++;
+            }
+
+            if(p2 - buf >= buf_size) {
+                err_msg(info, "overflow node of number");
+                throw;
+            }
+        };
+        *p2 = 0;
+        skip_spaces_and_lf(info);
+        
+        char c = *(info->p+1);
+
+        if(*info->p == '.' && xisdigit(c)) {
+            *p2++ = *info->p;
+            
+            if(p2 - buf >= buf_size) {
+                err_msg(info, "overflow node of number");
+                throw;
+            }
+            
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            while(xisdigit(*info->p) || *info->p == '_') {
+                if(*info->p ==  '_') {
+                    info->p++;
+                }
+                else {
+                    *p2++ = *info->p;
+                    info->p++;
+                }
+    
+                if(p2 - buf >= buf_size) {
+                    err_msg(info, "overflow node of number");
+                    throw;
+                }
+            }
+            
+            if(*info->p == 'e') {
+                *p2++ = *info->p;
+                info->p++;
+    
+                if(p2 - buf >= buf_size) {
+                    err_msg(info, "overflow node of number");
+                    throw;
+                }
+                
+                if(*info->p == '+') {
+                    *p2++ = *info->p;
+                    info->p++;
+        
+                    if(p2 - buf >= buf_size) {
+                        err_msg(info, "overflow node of number");
+                        throw
+                    }
+                }
+                else if(*info->p == '-') {
+                    *p2++ = *info->p;
+                    info->p++;
+        
+                    if(p2 - buf >= buf_size) {
+                        err_msg(info, "overflow node of number");
+                        throw;
+                    }
+                }
+                else {
+                    err_msg(info, "invalid float value");
+                    throw;
+                }
+            
+                while(xisdigit(*info->p) || *info->p == '_') {
+                    if(*info->p ==  '_') {
+                        info->p++;
+                    }
+                    else {
+                        *p2++ = *info->p;
+                        info->p++;
+                    }
+        
+                    if(p2 - buf >= buf_size) {
+                        err_msg(info, "overflow node of number");
+                        throw;
+                    }
+                };
+            }
+            *p2 = 0;
+            skip_spaces_and_lf(info);
+            
+            if(*info->p == 'f' || *info->p == 'F') {
+                info->p++;
+                skip_spaces_and_lf(info);
+                
+                return new sNode(new sFloatNode(strtof(buf, NULL), info));
+            }
+            else if(*info->p == 'l' || *info->p == 'L') {
+                info->p++;
+                skip_spaces_and_lf(info);
+                
+                return new sNode(new sDoubleNode(strtod(buf, NULL), info));
+            }
+            else {
+                return new sNode(new sDoubleNode(strtod(buf, NULL), info));
+            }
+        }
+        else if(*info->p == 'u' || *info->p == 'U')
+        {
+            info->p++;
+            skip_spaces_and_lf(info);
+
+            if(*info->p == 'L' || *info->p == 'l')
+            {
+                info->p++;
+                skip_spaces_and_lf(info);
+
+                if(*info->p == 'L' || *info->p == 'l')
+                {
+                    info->p++;
+                    skip_spaces_and_lf(info);
+                    
+                    unsigned long lont int value2 = strtoull(buf, NULL, 0);
+
+                    return new sNode(new sULongNode(value2, info));
+                }
+                else {
+                    unsigned long lont int value = strtoull(buf, NULL, 0);
+                    return new sNode(new sULongNode(value, info));
+                }
+            }
+            else {
+                unsigned int value = strtoul(buf, NULL, 0);
+                return new sNode(new sUIntNode(value, info));
+            }
+        }
+        else if(*info->p == 'L' || *info->p == 'l') {
+            info->p++;
+            skip_spaces_and_lf(info);
+
+            if(*info->p == 'L' || *info->p == 'l')
+            {
+                info->p++;
+                skip_spaces_and_lf(info);
+                
+                unsigned long long int value = strtoull(buf, NULL, 0);
+
+                return new sNode(new sLongNode(value, info));
+            }
+            else if(*info->p == 'U' || *info->p == 'u')
+            {
+                info->p++;
+                skip_spaces_and_lf(info);
+                
+                unsigned long long int value = strtoull(buf, NULL, 0);
+
+                return new sNode(new sULongNode(value, info));
+            }
+            else {
+                unsigned long long int value = strtoull(buf, NULL, 0);
+                return new sNode(new sLongNode(value, info));
+            }
+        }
+        else {
+            unsigned long lont int value = strtoll(buf, NULL, 0);
+            return new sNode(new sIntNode(value, info));
+        }
+    }
+    else {
+        err_msg(info, "require digits after + or -");
+        throw
+    }
+    
+    return (sNode*%)null;
+}
+
+exception sNode*% get_hex_number(bool minus, sInfo* info)
+{
+    int buf_size = 128;
+    char buf[128+1];
+    char* p = buf;
+
+    *p++ = '0';
+    *p++ = 'x';
+
+    while((*info->p >= '0' && *info->p <= '9') || (*info->p >= 'a' && *info->p <= 'f') || (*info->p >= 'A' && *info->p <= 'F') || *info->p == '_') 
+    {
+        if(*info->p == '_') {
+            info->p++;
+        }
+        else {
+            *p++ = *info->p;
+            info->p++;
+        }
+
+        if(p - buf >= buf_size-1) {
+            err_msg(info, "overflow node of number");
+            throw;
+        }
+    };
+    *p = 0;
+    skip_spaces_and_lf(info);
+
+    if(*info->p == 'u' || *info->p == 'U')
+    {
+        info->p++;
+        skip_spaces_and_lf(info);
+
+        if(*info->p == 'L' || *info->p == 'l')
+        {
+            info->p++;
+            skip_spaces_and_lf(info);
+
+            if(*info->p == 'L' || *info->p == 'l')
+            {
+                info->p++;
+                skip_spaces_and_lf(info);
+                
+                unsigned long long int value = strtoull(buf, NULL, 0);
+
+                if(minus) {
+                    return new sNode(new sULongNode(-value, info));
+                }
+                else {
+                    return new sNode(new sULongNode(value, info));
+                }
+            }
+            else {
+                unsigned long long int value = strtoull(buf, NULL, 0);
+
+                if(minus) {
+                    return new sNode(new sULongNode(-value, info));
+                }
+                else {
+                    return new sNode(new sULongNode(value, info));
+                }
+            }
+        }
+        else {
+            unsigned int value = strtoull(buf, NULL, 0);
+
+            if(minus) {
+                return new sNode(new sUIntNode(-value, info));
+            }
+            else {
+                return new sNode(new sUIntNode(value, info));
+            }
+        }
+    }
+    else if(*info->p == 'L' || *info->p == 'l') {
+        info->p++;
+        skip_spaces_and_lf(info);
+
+        if(*info->p == 'L' || *info->p == 'l')
+        {
+            info->p++;
+            skip_spaces_and_lf(info);
+
+            unsigned long long int value = strtoull(buf, NULL, 0);
+            if(minus) {
+                return new sNode(new sLongNode(-value, info));
+            }
+            else {
+                return new sNode(new sLongNode(value, info));
+            }
+        }
+        else if(*info->p == 'U' || *info->p == 'u')
+        {
+            info->p++;
+            skip_spaces_and_lf(info);
+
+            unsigned long long int value = strtoull(buf, NULL, 0);
+            if(minus) {
+                return new sNode(new sULongNode(-value, info));
+            }
+            else {
+                return new sNode(new sULongNode(value, info));
+            }
+        }
+        else {
+            unsigned long long int value = strtoull(buf, NULL, 0);
+            if(minus) {
+                return new sNode(new sLongNode(-value, info));
+            }
+            else {
+                return new sNode(new sLongNode(value, info));
+            }
+        }
+    }
+    else {
+        unsigned long long int value = strtoll(buf, NULL, 0);
+        if(minus) {
+            return new sNode(new sIntNode(-value, info));
+        }
+        else {
+            return new sNode(new sIntNode(value, info));
+        }
+    }
+    
+    return (sNode*%)null;
+}
+
+exception sNode*% get_oct_number(sInfo* info)
+{
+    int buf_size = 128;
+    char buf[128+1];
+    char* p = buf;
+
+    *p++ = '0';
+
+    while((*info->p >= '0' && *info->p <= '7') || *info->p == '_') {
+        if(*info->p == '_') {
+            info->p++;
+        }
+        else {
+            *p = *info->p;
+            p++;
+            info->p++;
+        }
+
+        if(p - buf >= buf_size-1) {
+            err_msg(info, "overflow node of number");
+            throw;
+        }
+    };
+
+    *p = 0;
+    skip_spaces_and_lf(info);
+
+    if(*info->p == 'u' || *info->p == 'U')
+    {
+        info->p++;
+        skip_spaces_and_lf(info);
+
+        if(*info->p == 'L' || *info->p == 'l')
+        {
+            info->p++;
+            skip_spaces_and_lf(info);
+
+            if(*info->p == 'L' || *info->p == 'l')
+            {
+                info->p++;
+                skip_spaces_and_lf(info);
+                
+                unsigned long long int value = strtoull(buf, NULL, 0);
+
+                return new sNode(new sULongNode(value, info));
+            }
+            else {
+                unsigned long long int value = strtoull(buf, NULL, 0);
+                return new sNode(new sULongNode(value, info));
+            }
+        }
+        else {
+            unsigned int value = strtoul(buf, NULL, 0);
+            return new sNode(new sUIntNode(value, info));
+        }
+    }
+    else if(*info->p == 'L' || *info->p == 'l') {
+        info->p++;
+        skip_spaces_and_lf(info);
+
+        if(*info->p == 'L' || *info->p == 'l')
+        {
+            info->p++;
+            skip_spaces_and_lf(info);
+
+            unsigned long long int value = strtoull(buf, NULL, 0);
+            return new sNode(new sLongNode(value, info));
+        }
+        else if(*info->p == 'U' || *info->p == 'u')
+        {
+            info->p++;
+            skip_spaces_and_lf(info);
+
+            unsigned long long int value = strtoull(buf, NULL, 0);
+            return new sNode(new sULongNode(value, info));
+        }
+        else {
+            unsigned long long int value = strtoull(buf, NULL, 0);
+            return new sNode(new sLongNode(value, info));
+        }
+    }
+    else {
+        unsigned long long int value = strtoull(buf, NULL, 0);
+        return new sNode(new sIntNode(value, info));
+    }
+    
+    return (sNode*%)null;
+}
+
 exception sNode*% expression_node(sInfo* info) version 99
 {
     skip_spaces_and_lf(info);
     
     parse_sharp(info);
     
-    if(xisdigit(*info->p)) {
-        int n = 0;
-        while(xisdigit(*info->p)) {
-            n = n * 10 + (*info->p - '0');
-            info->p++;
-            skip_spaces_and_lf(info);
-        }
+    /// hex number ///
+    if(*info->p == '0' && (*(info->p+1) == 'x' || *(info->p+1) == 'X')) {
+        info->p += 2;
+
+        sNode*% node = get_hex_number(false@minus, info) throws;
         
-        sNode*% node = new sNode(new sIntNode(n, info));
+        node = post_position_operator(node, info) throws;
+        
+        return node;
+    }
+    /// oct number ///
+    else if(*info->p == '0' && xisdigit(*(info->p+1))) {
+        info->p++;
+
+        sNode*% node = get_oct_number(info) throws;
+        
+        node = post_position_operator(node, info) throws;
+        
+        return node;
+    }
+    else if(xisdigit(*info->p)) {
+        sNode*% node = get_number(false@minus, info) throws;
         
         node = post_position_operator(node, info) throws;
         
@@ -1270,14 +1982,7 @@ exception sNode*% expression_node(sInfo* info) version 99
     else if(*info->p == '-' && xisdigit(*(info->p+1))) {
         info->p++;
         
-        int n = 0;
-        while(xisdigit(*info->p)) {
-            n = n * 10 + (*info->p - '0');
-            info->p++;
-            skip_spaces_and_lf(info);
-        }
-        
-        sNode*% node = new sNode(new sIntNode(-n, info));
+        sNode*% node = get_number(true@minus, info) throws;
         
         node = post_position_operator(node, info) throws;
         
@@ -2034,6 +2739,14 @@ exception string parse_attribute(sInfo* info)
             info->p += strlen("__attribute_pure__");
             skip_spaces_and_lf(info);
         }
+        else if(memcmp(info->p.p, "__attribute_malloc__", strlen("__attribute_malloc__")) == 0) {
+            info->p += strlen("__attribute_malloc__");
+            skip_spaces_and_lf(info);
+        }
+        else if(memcmp(info->p.p, "__attr_dealloc_fclose", strlen("__attr_dealloc_fclose")) == 0) {
+            info->p += strlen("__attr_dealloc_fclose");
+            skip_spaces_and_lf(info);
+        }
         else if(memcmp(info->p.p, "__wur", strlen("__wur")) == 0) {
             info->p += strlen("__wur");
             skip_spaces_and_lf(info);
@@ -2430,7 +3143,7 @@ bool is_type_name(char* buf, sInfo* info)
     sType* type = info.types[buf];
     bool generics_type_name = info.generics_type_names.contained(string(buf));
     
-    return generics_type_name || klass || type || buf === "const" || buf === "register" || buf === "static" || buf === "volatile" || buf === "unsigned" || buf === "immutable" || buf === "mutable" || buf === "struct" || buf === "enum" || buf === "union" || buf === "extern";
+    return generics_type_name || klass || type || buf === "const" || buf === "register" || buf === "static" || buf === "volatile" || buf === "unsigned" || buf === "immutable" || buf === "mutable" || buf === "struct" || buf === "enum" || buf === "union" || buf === "extern" || buf === "inline" || buf === "__inline";
 
 }
 

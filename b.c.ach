@@ -1,0 +1,11 @@
+struct sData
+{
+    int a;
+    int b;
+};
+
+void __init_b_c__();
+void __final_b_c__();
+int main()
+;
+

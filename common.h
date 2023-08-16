@@ -92,6 +92,7 @@ struct sType
     bool mSolvedGenericsName;
     
     string mOriginalTypeName;
+    bool mInline;
 };
 
 struct sVar;
@@ -293,7 +294,7 @@ void add_come_last_code(sInfo* info, const char* msg, ...);
 void add_last_code_to_source_without_semicolon(sInfo* info);
 void dec_stack_ptr(int value, sInfo* info);
 CVALUE*% get_value_from_stack(int offset, sInfo* info);
-string make_define_var(sType* type, char* name, sInfo* info);
+string make_define_var(sType* type, char* name, sInfo* info, bool in_header=false);
 string make_come_define_var(sType* type, char* name, sInfo* info);
 void transpiler_clear_last_code(sInfo* info);
 

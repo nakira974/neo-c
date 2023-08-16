@@ -16,10 +16,6 @@ sStructNode*% sStructNode*::initialize(sStructNode*% self, sType*% type, bool co
     self.mComeHeader = come_header;
 
     self.mType = clone type;
-    
-    if(!type.mGenericsStruct) {
-        info.types.insert(string(type.mName), clone type);
-    }
 
     return self;
 }
@@ -286,6 +282,10 @@ exception sNode*% parse_struct(string type_name, sInfo* info)
     
     expected_next_character('{', info) throws;
     
+    if(!type.mGenericsStruct) {
+        info.types.insert(string(type.mName), clone type);
+    }
+    
     while(true) {
         var type2, name = parse_type(info, true@parse_variable_name) throws;
         expected_next_character(';', info) throws;
@@ -316,6 +316,10 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
             info.classes.insert(type_name, new sClass(name:type_name, struct_:true));
             
             sType*% type = new sType(type_name, info);
+    
+            if(!type.mGenericsStruct) {
+                info.types.insert(string(type.mName), clone type);
+            }
             
             return new sNode(new sStructNobodyNode(type, info));
         }
@@ -353,6 +357,12 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
             
             sType*% type = new sType(type_name, info);
             
+            type.mGenericsStruct = generics_struct;
+    
+            if(!type.mGenericsStruct) {
+                info.types.insert(string(type.mName), clone type);
+            }
+            
             expected_next_character('{', info) throws;
             
             while(true) {
@@ -370,8 +380,6 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
             char* header_tail = info.p.p;
             
             info.generics_type_names.reset();
-            
-            type.mGenericsStruct = generics_struct;
             
             return new sNode(new sStructNode(type, true@come_header, info));
         }

@@ -246,7 +246,7 @@ string make_lambda_type_name_string(sType* type, char* var_name, sInfo* info)
     return buf.to_string();
 }
 
-string make_define_var(sType* type, char* name, sInfo* info)
+string make_define_var(sType* type, char* name, sInfo* info, bool in_header=false)
 {
     var buf = new buffer();
     
@@ -260,7 +260,7 @@ string make_define_var(sType* type, char* name, sInfo* info)
         buf.append_str(xsprintf("%s:%d", name, type->mSizeNum));
     }
     else if(type->mOmitArrayNum) {
-        var type_str = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
+        var type_str = make_type_name_string(type, in_header, false@array_cast_pointer, info);
         
         buf.append_str(type_str);
         
@@ -270,7 +270,7 @@ string make_define_var(sType* type, char* name, sInfo* info)
         buf.append_str("[]");
     }
     else if(type->mArrayNum.length() > 0) {
-        var type_str = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
+        var type_str = make_type_name_string(type, in_header, false@array_cast_pointer, info);
         
         buf.append_str(type_str);
         
@@ -295,7 +295,7 @@ string make_define_var(sType* type, char* name, sInfo* info)
         }
     }
     else {
-        var type_str = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
+        var type_str = make_type_name_string(type, in_header, false@array_cast_pointer, info);
         
         buf.append_str(type_str);
         
@@ -772,10 +772,15 @@ bool output_source_file(sInfo* info) version 3
     fprintf(f, "/* header function */\n");
     foreach(it, info.funcs) {
         sFun* it2 = info.funcs[it];
+
         string header = header_function(it2, info);
         
         if(it2->mStatic) {
             fprintf(f, "static %s", header);
+        }
+        else if(it2->mResultType->mInline) {
+            string output = output_function(it2, info);
+            fprintf(f, "inline %s", output);
         }
         else {
             fprintf(f, "%s", header);
@@ -793,6 +798,8 @@ bool output_source_file(sInfo* info) version 3
             
             if(it2->mStatic) {
                 fprintf(f, "static %s", output);
+            }
+            else if(it2->mResultType->mInline) {
             }
             else {
                 fprintf(f, "%s", output);

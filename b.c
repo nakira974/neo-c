@@ -1,24 +1,13 @@
-#include <comelang2.h>
+#include <string.h>
+#include <stdlib.h>
 
-struct sDataXYZ
+int main() 
 {
-    char*% a;
-    int b;
-};
-
-int funX(int a, int b)
-{
-    return a + b;
-}
-
-char*% funX2(string a, string b)
-{
-    int len = strlen(a) + strlen(b) + 1;
-    char*% result = new char[len];
+    char a[3] = "123";
+    char* p = a;
+    p++;
     
-    strncpy(result, a, len);
-    strncat(result, b, len);
+    memcmp(p, "12345", strlen("12345")) == 0;
     
-    return result;
+    return 0;
 }
-

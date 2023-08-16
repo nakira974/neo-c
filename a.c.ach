@@ -6,19 +6,7 @@ struct __builtin_va_list
     int v4;
     int v5;
 };
-extern int gA;
-struct anonymous_type4
-{
-    int a;
-    int b;
-    int c;
-};
-enum anonymous_type7 { kA,kB,kC};
-union anonymous_type10
-{
-double a;
-float b;
-};
+typedef __builtin_va_list va_list;
 
 void __init_a_c__();
 void __final_a_c__();

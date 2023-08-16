@@ -30,7 +30,7 @@ bool sTypedefNode*::compile(sTypedefNode* self, sInfo* info)
     if(info.enum_typedef_already_output[string(type_name)] == false) {
         info.enum_typedef_already_output.insert(string(type_name), true);
         
-        add_come_code_at_source_head(info, "typedef %s;\n", make_define_var(type, type_name, info));
+        add_come_code_at_source_head(info, "typedef %s;\n", make_define_var(type, type_name, info, true@in_header));
         add_come_code_to_auto_come_header(info, "typedef %s;\n", make_come_define_var(type, type_name, info));
     }
 

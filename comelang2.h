@@ -9,28 +9,9 @@ struct __builtin_va_list
     int v5;
 };
 
-int puts(const char* str);
-int printf(const char *format, ...);
-
-typedef unsigned long size_t;
-
-void *malloc(size_t size);
-void free(void *ptr);
-void *calloc(size_t nmemb, size_t size);
-void *realloc(void *ptr, size_t size);
-
-size_t strlen(const char *s);
-
-void *memset(void *s, int c, size_t n);
-char *strncpy(char *dest, const char *src, size_t n);
-char *strncat(char *dst, char *src, size_t sz);
-
-int strcmp(const char *s1, const char *s2);
-int strncmp(const char s1, const char s2, size_t n);
-
-void exit(int status);
-
-#define NULL ((void*)0)
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 static void xassert(char* msg, bool test)
 {
@@ -647,6 +628,16 @@ static bool long::equals(long self, long right)
 }
 
 static bool string::equals(char* self, char* right) 
+{
+    return strcmp(self, right) == 0;
+}
+
+static bool string::operator_equals(char* self, char* right) 
+{
+    return strcmp(self, right) == 0;
+}
+
+static bool char*::operator_equals(char* self, char* right) 
 {
     return strcmp(self, right) == 0;
 }

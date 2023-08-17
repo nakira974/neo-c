@@ -809,16 +809,78 @@ bool sEqNode*::compile(sEqNode* self, sInfo* info)
     CVALUE*% right_value = get_value_from_stack(-1, info);
     dec_stack_ptr(1, info);
     
-    CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("%s==%s", left_value.c_value, right_value.c_value);
-    come_value.type = clone left_value.type;
-    come_value.type->mHeap = false;
-    come_value.var = null;
+    sType*% type = left_value.type;
+    sClass* klass = type->mClass;
+    char* class_name = klass->mName;
     
-    add_come_last_code(info, "%s;\n", come_value.c_value);
+    char* fun_name = "operator_equals";
     
-    info.stack.push_back(come_value);
+    sType*% type2 = clone type;
+    type2->mHeap = false;
+    
+    string fun_name2 = create_method_name(type, false@no_pointer_name, fun_name, info);
+    
+    sFun* operator_fun = null;
+    
+    if(type->mGenericsTypes.length() > 0) {
+        operator_fun = info->funcs[fun_name2];
+        
+        if(operator_fun == NULL) {
+            string generics_fun_name = xsprintf("%s_%s", type->mGenericsName, fun_name);
+            sGenericsFun* generics_fun = info->generics_funcs[generics_fun_name];
+            
+            if(generics_fun) {
+                if(!create_generics_fun(fun_name2, generics_fun, type, info))
+                {
+                    fprintf(stderr, "%s %d: can't create generics function\n", info->sname, info->sline);
+                    exit(2);
+                }
+                operator_fun = info->funcs[fun_name2];
+            }
+        }
+    }
+    else {
+        int i;
+        for(i=FUN_VERSION_MAX-1; i>=1; i--) {
+            string new_fun_name = xsprintf("%s_v%d", fun_name2, i);
+            operator_fun = info->funcs[new_fun_name];
+            
+            if(operator_fun) {
+                fun_name2 = string(new_fun_name);
+                break;
+            }
+        }
+        
+        if(operator_fun == NULL) {
+            operator_fun = info->funcs[fun_name2];
+        }
+    }
+    
+    if(operator_fun) {
+        CVALUE*% come_value = new CVALUE;
+        
+        come_value.c_value = xsprintf("%s(%s,%s)", fun_name2, left_value.c_value, right_value.c_value);
+        come_value.type = clone left_value.type;
+        come_value.type->mHeap = false;
+        come_value.var = null;
+        
+        add_come_last_code(info, "%s;\n", come_value.c_value);
+        
+        info.stack.push_back(come_value);
+    }
+    else {
+        CVALUE*% come_value = new CVALUE;
+        
+        come_value.c_value = xsprintf("%s==%s", left_value.c_value, right_value.c_value);
+        come_value.type = clone left_value.type;
+        come_value.type->mHeap = false;
+        come_value.var = null;
+        
+        add_come_last_code(info, "%s;\n", come_value.c_value);
+        
+        info.stack.push_back(come_value);
+    }
 
     return TRUE;
 }
@@ -1725,7 +1787,7 @@ exception sNode*% and_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% right = eq_exp(info) throws;
+            sNode*% right = and_exp(info) throws;
 
             return new sNode(new sAndNode(node, right, info));
         }
@@ -1752,7 +1814,7 @@ exception sNode*% xor_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% right = and_exp(info) throws;
+            sNode*% right = xor_exp(info) throws;
 
             return new sNode(new sXOrNode(node, right, info));
         }
@@ -1779,7 +1841,7 @@ exception sNode*% or_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% right = xor_exp(info) throws;
+            sNode*% right = or_exp(info) throws;
 
             return new sNode(new sOrNode(node, right, info));
         }

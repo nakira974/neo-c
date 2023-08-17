@@ -287,16 +287,20 @@ exception sNode*% parse_struct(string type_name, sInfo* info)
     }
     
     while(true) {
+        parse_sharp(info);
         var type2, name = parse_type(info, true@parse_variable_name) throws;
         expected_next_character(';', info) throws;
         
         type.mFields.push_back(new tuple2<string, sType*%>(name, type2));
+        
+        parse_sharp(info);
         
         if(*info->p == '}') {
             info->p++;
             skip_spaces_and_lf(info);
             break;
         }
+        parse_sharp(info);
     }
     
     return new sNode(new sStructNode(type, true@come_header, info));
@@ -366,16 +370,21 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
             expected_next_character('{', info) throws;
             
             while(true) {
+                parse_sharp(info);
+                
                 var type2, name = parse_type(info, true@parse_variable_name) throws;
                 expected_next_character(';', info) throws;
                 
                 type.mFields.push_back(new tuple2<string, sType*%>(name, type2));
+                
+                parse_sharp(info);
                 
                 if(*info->p == '}') {
                     info->p++;
                     skip_spaces_and_lf(info);
                     break;
                 }
+                parse_sharp(info);
             }
             char* header_tail = info.p.p;
             

@@ -135,6 +135,9 @@ string make_type_name_string(sType* type, bool in_header, bool array_cast_pointe
             else if(class_name === "long") {
                 buf.append_str("long long");
             }
+            else if(class_name === "double") {
+                buf.append_str("long double");
+            }
         }
         else if(class_name === "long") {
             buf.append_str("long");
@@ -771,7 +774,7 @@ bool output_source_file(sInfo* info) version 3
     
     fprintf(f, "/* header function */\n");
     foreach(it, info.funcs) {
-        sFun* it2 = info.funcs[it];
+        sFun* it2 = info.funcs[string(it)];
 
         string header = header_function(it2, info);
         

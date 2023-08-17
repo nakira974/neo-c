@@ -166,7 +166,6 @@ exception list<sType*%>*%, list<string>*%, bool parse_params(sInfo* info)
             
             param_type2->mFunctionParam = true;
             
-            
             param_types.push_back(clone param_type2);
             param_names.push_back(clone param_name);
             
@@ -496,7 +495,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         result_type->mVolatile = volatile_;
         result_type->mStatic = result_type->mStatic || static_;
         result_type->mExtern = result_type->mExtern || extern_;
-        result_type->mExtern = result_type->mInline || inline_;
+        result_type->mInline = result_type->mInline || inline_;
         result_type->mRestrict = result_type->mRestrict || restrict_;
         result_type->mLongLong = result_type->mLongLong || long_long;
         result_type->mLong = result_type->mLong || long_;
@@ -527,8 +526,27 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             }
         }
         else {
+            if(struct_) {
+                sClass* klass = info.classes[type_name];
+                
+                if(klass == null && *info->p != '<') {
+                    info.classes.insert(type_name, new sClass(name:type_name, struct_:true));
+                }
+            }
             type = new sType(type_name, info);
         }
+        
+        type->mConstant = type->mConstant || constant;
+        type->mRegister = register_;
+        type->mUnsigned = type->mUnsigned || unsigned_;
+        type->mVolatile = volatile_;
+        type->mStatic = type->mStatic || static_;
+        type->mExtern = type->mExtern || extern_;
+        type->mInline = type->mInline || inline_;
+        type->mRestrict = type->mRestrict || restrict_;
+        type->mLongLong = type->mLongLong || long_long;
+        type->mLong = type->mLong || long_;
+        type->mShort = type->mShort || short_;
         
         if(*info->p == '<') {
             info->p++;
@@ -591,15 +609,29 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         type->mVolatile = volatile_;
         type->mStatic = type->mStatic || static_;
         type->mExtern = type->mExtern || extern_;
-        type->mExtern = type->mInline || inline_;
+        type->mInline = type->mInline || inline_;
         type->mRestrict = type->mRestrict || restrict_;
         type->mLongLong = type->mLongLong || long_long;
         type->mLong = type->mLong || long_;
         type->mShort = type->mShort || short_;
         
+        if(memcmp(info->p.p, "const", strlen("const")) == 0) {
+            info->p += strlen("const");
+            skip_spaces_and_lf(info);
+            
+            type->mConstant = true;
+        }
+        
         while(*info->p == '*') {
             info->p++;
             skip_spaces_and_lf(info);
+            
+            if(memcmp(info->p.p, "const", strlen("const")) == 0) {
+                info->p += strlen("const");
+                skip_spaces_and_lf(info);
+                
+                type->mConstant = true;
+            }
             
             type->mPointerNum++;
         }
@@ -651,6 +683,14 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
     while(*info->p == '[') {
         info->p++;
         skip_spaces_and_lf(info);
+        
+        if(*info->p == ']') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            type->mPointerNum++;
+            break;
+        }
         
         sNode*% node = expression(info) throws;
         type.mArrayNum.push_back(node);
@@ -2405,7 +2445,9 @@ bool sGlobalVariable*::compile(sGlobalVariable* self, sInfo* info)
     else {
         add_come_code_at_source_head(info, "%s;\n", make_define_var(type, name, info));
         add_come_code_to_auto_come_header(info, "extern %s;\n", make_define_var(type, name, info));
-        add_come_code_to_init_module_fun(info, "memset(&%s, 0, sizeof(%s));\n", name, make_type_name_string(type, false@in_header, false@array_cast_pointer, info));
+        if(!type->mExtern) {
+            add_come_code_to_init_module_fun(info, "memset(&%s, 0, sizeof(%s));\n", name, make_type_name_string(type, false@in_header, false@array_cast_pointer, info));
+        }
     }
     
     return true;
@@ -2987,6 +3029,7 @@ exception sNode*% parse_function(sInfo* info)
             result_type->mStatic = false;
             static_ = true;
         }
+        
         
         var fun = new sFun(fun_name, result_type, param_types, param_names
                                 , false@external, var_args, block

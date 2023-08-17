@@ -329,6 +329,7 @@ void init_module(sInfo* info)
             , xsprintf("void %s()", name)
             , info);
         
+    
         info.funcs.insert(name, fun);
     }
     

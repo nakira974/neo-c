@@ -50,7 +50,7 @@ bool sIfNode*::compile(sIfNode* self, sInfo* info)
     CVALUE*% conditional_value = get_value_from_stack(-1, info);
     dec_stack_ptr(1, info);
 
-    free_right_value_objects(info);
+//    free_right_value_objects(info);
 
     sBlock* if_block = self.mIfBlock;
     
@@ -74,7 +74,7 @@ bool sIfNode*::compile(sIfNode* self, sInfo* info)
             CVALUE*% conditional_value = get_value_from_stack(-1, info);
             dec_stack_ptr(1, info);
 
-            free_right_value_objects(info);
+            //free_right_value_objects(info);
 
             sBlock* elif_node_block = self.mElifBlocks[i];
 

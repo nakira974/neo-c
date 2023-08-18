@@ -191,6 +191,7 @@ struct sRightValueObject
     string mFunName;
     bool mFreed;
     int mID;
+    int mBlockLevel;
 };
 
 struct sInfo

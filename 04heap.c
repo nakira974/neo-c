@@ -239,6 +239,7 @@ string append_object_to_right_values(char* obj, sType*% type, sInfo* info)
     new_value.mID = gRightValueNum;
     new_value.mVarName = xsprintf("right_value%d", gRightValueNum++);
     new_value.mFunName = clone info->come_fun->mName;
+    new_value.mBlockLevel = info->block_level;
     
     info.right_value_objects.push_back(new_value);
     
@@ -387,7 +388,7 @@ void free_right_value_objects(sInfo* info)
     var right_value_objects = info->right_value_objects;
     foreach(it, right_value_objects) {
         if(!it->mFreed) {
-            if(it->mFunName === info->come_fun->mName) {
+            if(it->mFunName === info->come_fun->mName && it->mBlockLevel == info->block_level) {
                 sType*% type = clone it->mType;
                 
                 type = solve_type(type, info->generics_type, info->method_generics_types, info).catch

@@ -2284,7 +2284,7 @@ exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<s
     int block_level = info->block_level;
     info->block_level++;
     
-    if(info.come_fun.mName === "main") {
+    if(info.come_fun.mName === "main" && block_level == 0) {
         foreach(it, info.funcs) {
             sFun* it2 = info.funcs[it];
             
@@ -2339,7 +2339,7 @@ exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<s
     }
 */
     
-    if(info.come_fun.mName === "main") {
+    if(info.come_fun.mName === "main" && block_level == 0) {
         foreach(it, info.funcs) {
             sFun* it2 = info.funcs[it];
             

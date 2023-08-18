@@ -646,3 +646,15 @@ static bool char*::equals(char* self, char* right)
 {
     return strcmp(self, right) == 0;
 }
+
+static string char*::operator_add(char* self, char* right) 
+{
+    int len = strlen(self) + strlen(right);
+   
+    char*% result = new char[len+1];
+    
+    strncpy(result, self, len+1);
+    strncat(result, right, len+1);
+    
+    return result;
+}

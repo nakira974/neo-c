@@ -231,6 +231,14 @@ int main()
     axyzX = new int;
     axyzX = new int;
     
+    xassert("operator equals", string("AAA") === string("AAA"));
+    
+    xassert("operator test", "AAA" + "BBB" === "AAABBB");
+    
+    char* strXYXY = "ABC";
+    
+    xassert("operator test", *(strXYXY + 1) == 'B');
+    
     return 0;
 }
 

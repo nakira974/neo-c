@@ -14,8 +14,10 @@ bool operator_overload_fun(sType* type, char* fun_name, CVALUE* left_value, CVAL
     
     if(type->mGenericsTypes.length() > 0) {
         operator_fun = info->funcs[fun_name2];
+puts(fun_name2);
         
         if(operator_fun == NULL) {
+puts("1");
             string generics_fun_name = xsprintf("%s_%s", type->mGenericsName, fun_name);
             sGenericsFun* generics_fun = info->generics_funcs[generics_fun_name];
             
@@ -48,7 +50,7 @@ bool operator_overload_fun(sType* type, char* fun_name, CVALUE* left_value, CVAL
     
     bool result = false;
     
-    if(operator_fun && left_value.type.mClass.mName === right_value.type.mClass.mName && left_value.type.mPointerNum == right_value.type.mPointerNum) {
+    if(operator_fun && (type->mGenericsTypes.length() > 0 || (left_value.type.mClass.mName === right_value.type.mClass.mName && left_value.type.mPointerNum == right_value.type.mPointerNum))) {
         CVALUE*% come_value = new CVALUE;
         string left_value2;
         if(operator_fun.mParamTypes[0].mHeap) {

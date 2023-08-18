@@ -386,6 +386,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
 /////////////////////////////////////////////////////////////////////
 /// 13op.c
 /////////////////////////////////////////////////////////////////////
+bool operator_overload_fun(sType* type, char* fun_name, CVALUE* left_value, CVALUE* right_value, sInfo* info);
 exception sNode*% expression(sInfo* info) version 13;
 exception sNode*% post_op(sNode*% node, sInfo* info) version 13;
 exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 13;

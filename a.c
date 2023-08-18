@@ -14,15 +14,9 @@ int main(int argc, char** argv)
         printf("%d\n", it);
     }
     
-    if(string("AAA") === string("AAA")) {
-        puts("OK");
-    }
+    li[0] = 777;
     
-    puts("AAA" + "BBB");
-    
-    char* str = "ABC";
-    
-    printf("%c\n", *(str + 1));
+    printf("li[0] %d\n", li[0]);
     
     return 0;
 }

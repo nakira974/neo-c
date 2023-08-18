@@ -1,9 +1,5 @@
 
 list 
 
-
-include stdio.h
-
 xsprintf
 
-operator overload

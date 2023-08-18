@@ -584,6 +584,15 @@ impl list <T>
 
         return result;
     }
+    void operator_store_element(list<T>* self, int position, T item) {
+        self.replace(position, item);
+    }
+    T& operator_load_element(list<T>* self, int index) {
+        T& default_value;
+        memset(&default_value, 0, sizeof(T));
+        
+        return self.item(index, default_value);
+    }
 }
 
 #define foreach(o1, o2) for(var o1 = (o2).begin(); !(o2).end(); o1 = (o2).next())

@@ -23,7 +23,7 @@ sTypedefNode*% sTypedefNode*::initialize(sTypedefNode*% self, string type_name, 
 bool sTypedefNode*::compile(sTypedefNode* self, sInfo* info)
 {
     string type_name = string(self.mTypeName);
-    sType* type = self.mType;
+    sType*% type = clone self.mType;
     
     info.types.insert(string(type_name), clone type);
     
@@ -47,7 +47,7 @@ string sTypedefNode*::sname(sTypedefNode* self, sInfo* info)
     return string(self.sname);
 }
 
-exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 95
+exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 95
 {
     if(buf === "typedef") {
         var type, type_name = parse_type(info, true@parse_variable_name) throws;
@@ -55,5 +55,5 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
         return new sNode(new sTypedefNode(type_name, type, info));
     }
     
-    return inherit(buf, head, head_sline, info) throws;
+    return inherit(string(buf), head, head_sline, info) throws;
 }

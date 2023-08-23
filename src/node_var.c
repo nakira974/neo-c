@@ -426,19 +426,6 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
             LLVMValueRef alloca_value = LLVMBuildArrayAlloca(gBuilder, llvm_type, len_value, var_name);
             var_->mLLVMValue.value = alloca_value;
             var_->mLLVMValue.address = alloca_value;
-            
-            if(gNCTranspile) {
-                if(strcmp(var_->mInlineRealName, "") != 0) {
-                    char* define_str = make_define_var(var_type, var_->mInlineRealName, info);
-                    add_come_code(info, "%s;\n", define_str);
-                    add_come_code(info, "memset(&%s, 0, sizeof(%s));\n", var_->mInlineRealName, make_type_name_string(var_type));
-                }
-                else {
-                    char* define_str = make_define_var(var_type, var_->mCValueName, info);
-                    add_come_code(info, "%s;\n", define_str);
-                    add_come_code(info, "memset(&%s, 0, sizeof(%s));\n", var_->mCValueName, make_type_name_string(var_type));
-                }
-            }
         }
         else {
             LLVMBasicBlockRef this_block = LLVMGetInsertBlock(gBuilder);
@@ -449,17 +436,6 @@ BOOL compile_define_variable(unsigned int node, sCompileInfo* info)
             }
             if(gNCDebug) {
                 setNullCurrentDebugLocation(info->sline, info);
-            }
-            
-            if(strcmp(var_->mInlineRealName, "") != 0) {
-                char* define_str = make_define_var(var_type, var_->mInlineRealName, info);
-                add_come_code(info, "%s;\n", define_str);
-                add_come_code(info, "memset(&%s, 0, sizeof(%s));\n", var_->mInlineRealName, make_type_name_string(var_type));
-            }
-            else {
-                char* define_str = make_define_var(var_type, var_->mCValueName, info);
-                add_come_code(info, "%s;\n", define_str);
-                add_come_code(info, "memset(&%s, 0, sizeof(%s));\n", var_->mCValueName, make_type_name_string(var_type));
             }
 
             LLVMValueRef alloca_value = LLVMBuildAlloca(gBuilder, llvm_type, var_name);
@@ -8361,10 +8337,12 @@ BOOL compile_gc_inc(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
+    
+    sNodeType* type_ = info->type;
 
     LVALUE llvm_value = *get_value_from_stack(-1);
 
-    if(nc_come) {
+    if(nc_come && type_->mPointerNum > 0) {
         LLVMValueRef obj = llvm_value.value;
         char* c_value = llvm_value.c_value;
         increment_ref_count(obj, info->type, c_value, info);

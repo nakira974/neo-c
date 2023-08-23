@@ -205,9 +205,9 @@ bool vm(sInfo* info) version 7
             
             wstring var_name = get_str_from_codes(info);
             
-            ZVALUE* map = gVars.at(var_name, null!);
+            ZVALUE* map_ = gVars.at(var_name, null!);
             
-            if(map == null || (map.kind != kMapValue && map.kind != kListValue)) {
+            if(map_ == null || (map_.kind != kMapValue && map_.kind != kListValue)) {
                 fprintf(stderr, "invalid obj value for array index\n");
                 exit(2);
             }
@@ -216,7 +216,7 @@ bool vm(sInfo* info) version 7
             
             info.stack.delete_back();
             
-            switch(map.kind) {
+            switch(map_.kind) {
                 case kListValue: {
                     int index_value = -1;
                     if(index.kind == kIntValue) {
@@ -227,7 +227,7 @@ bool vm(sInfo* info) version 7
                         exit(2);
                     }
                     
-                    ZVALUE* result = map.listValue[index_value];
+                    ZVALUE* result = map_.listValue[index_value];
                     
                     if(result == null) {
                         fprintf(stderr, "invalid list index\n");
@@ -239,7 +239,7 @@ bool vm(sInfo* info) version 7
                     break;
                     
                 case kMapValue: {
-                    ZVALUE* result = map.mapValue[index];
+                    ZVALUE* result = map_.mapValue[index];
                     
                     if(result == null) {
                         fprintf(stderr, "invalid map index\n");
@@ -262,9 +262,9 @@ bool vm(sInfo* info) version 7
             
             wstring var_name = get_str_from_codes(info);
             
-            ZVALUE* map = gVars.at(var_name, null!);
+            ZVALUE* map_ = gVars.at(var_name, null!);
             
-            if(map == null || (map.kind != kMapValue && map.kind != kListValue)) {
+            if(map_ == null || (map_.kind != kMapValue && map_.kind != kListValue)) {
                 fprintf(stderr, "invalid obj value for array index\n");
                 exit(2);
             }
@@ -275,7 +275,7 @@ bool vm(sInfo* info) version 7
             info.stack.delete_back();
             info.stack.delete_back();
             
-            switch(map.kind) {
+            switch(map_.kind) {
                 case kListValue: {
                     int index_value = -1;
                     if(index.kind == kIntValue) {
@@ -286,19 +286,19 @@ bool vm(sInfo* info) version 7
                         exit(2);
                     }
                     
-                    ZVALUE* item = map.listValue.item(index_value, null!);
+                    ZVALUE* item = map_.listValue.item(index_value, null!);
                     
                     if(item == null) {
                         fprintf(stderr, "invalid list index\n");
                         exit(2);
                     }
                     
-                    map.listValue[index_value] = clone right;
+                    map_.listValue[index_value] = clone right;
                     }
                     break;
                     
                 case kMapValue: 
-                    map.mapValue[clone index] = clone right;
+                    map_.mapValue[clone index] = clone right;
                     break;
                     
                 default:

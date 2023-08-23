@@ -436,7 +436,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
     return inherit(buf, head, head_sline, info) throws;
 }
 
-exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 94
+exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 94
 {
    if(buf === "using") {
         if(memcmp(info->p.p, "comelang", strlen("comelang")) == 0) {
@@ -470,5 +470,5 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
         return (sNode*)null;
     }
     
-    return inherit(buf, head, head_sline, info) throws;
+    return inherit(string(buf), head, head_sline, info) throws;
 }

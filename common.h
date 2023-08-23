@@ -247,6 +247,8 @@ struct sInfo
     string module_initializer_name;
     string module_finalizer_name;
     map<string, sNode*%>%* global_variable_initialize_node;
+    
+    bool define_struct;
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -328,15 +330,15 @@ sBlock*% sBlock*::initialize(sBlock*% self, sInfo* info);
 bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* generics_type, sInfo* info);
 
 exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_name=false);
-exception sBlock*% parse_block(sInfo* info);
-exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<string>*? param_names, sInfo* info);
+exception sBlock*% parse_block(sInfo* info, bool no_block_level=false);
+exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<string>*? param_names, sInfo* info, bool no_var_table=false);
 void arrange_stack(sInfo* info, int top);
 exception int expected_next_character(char c, sInfo* info);
 exception sNode*% parse_function(sInfo* info);
 
 exception sNode*% expression(sInfo* info) version 5;
-exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 1;
-exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 99;
+exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 1;
+exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 99;
 exception sNode*% expression_node(sInfo* info) version 1;
 exception sNode*% expression_node(sInfo* info) version 99;
 
@@ -395,7 +397,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
 /// 14struct.c
 /////////////////////////////////////////////////////////////////////
 exception sNode*% parse_struct(string type_name, sInfo* info);
-exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 98;
+exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 98;
 bool define_generics_struct(sType* type, sInfo* info);
 void define_struct(sClass* klass, bool come_header, sInfo* info);
 
@@ -403,18 +405,18 @@ void define_struct(sClass* klass, bool come_header, sInfo* info);
 /// 15union.c
 /////////////////////////////////////////////////////////////////////
 exception sNode*% parse_union(string type_name, sInfo* info);
-exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 97;
+exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 97;
 
 /////////////////////////////////////////////////////////////////////
 /// 16enum.c
 /////////////////////////////////////////////////////////////////////
 exception sNode*% parse_enum(string type_name, sInfo* info);
-exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 96;
+exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 96;
 
 /////////////////////////////////////////////////////////////////////
 /// 17typedef.c
 /////////////////////////////////////////////////////////////////////
-exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 95;
+exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 95;
 
 /////////////////////////////////////////////////////////////////////
 /// 18field.c
@@ -438,11 +440,11 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
 /// 21obj.c
 /////////////////////////////////////////////////////////////////////
 exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 21;
-exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 94;
+exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 94;
 
 /////////////////////////////////////////////////////////////////////
 /// 22impl.c
 /////////////////////////////////////////////////////////////////////
-exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 93;
+exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 93;
 
 #endif

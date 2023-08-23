@@ -5834,8 +5834,7 @@ BOOL compile_block(sNodeBlock* block, BOOL force_hash_result, sCompileInfo* info
             else if(has_result && i == block->mNumNodes -1 && !(type_identify_with_class_name(info->type, "void") 
                     && info->type->mPointerNum == 0))
             {
-                if(!(type_identify_with_class_name(gComeFunctionResultType, "void") 
-                    && gComeFunctionResultType->mPointerNum == 0 && !gComeFunctionResultType->mMethodGenericsResult)
+                if(!(type_identify_with_class_name(gComeFunctionResultType, "void") && gComeFunctionResultType->mPointerNum == 0 && !gComeFunctionResultType->mMethodGenericsResult)
                     && gNodes[node].mNodeType != kNodeTypeReturn && gNodes[node].mNodeType != kNodeTypeGoto) 
                 {
                     //dec_stack_ptr(1, info);
@@ -5849,6 +5848,7 @@ BOOL compile_block(sNodeBlock* block, BOOL force_hash_result, sCompileInfo* info
                     }
                     
                     LVALUE llvm_value = *get_value_from_stack(-1);
+/*
                     
                     if(!is_generics_type(gComeFunctionResultType) && !is_method_generics_type(gComeFunctionResultType) && !(type_identify_with_class_name(gComeFunctionResultType, "void") && gComeFunctionResultType->mPointerNum == 0))
                     {
@@ -5862,6 +5862,7 @@ BOOL compile_block(sNodeBlock* block, BOOL force_hash_result, sCompileInfo* info
                             return TRUE;
                         }
                     }
+*/
                     
                     last_expression_is_return = TRUE;
                 }

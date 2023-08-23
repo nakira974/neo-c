@@ -242,7 +242,7 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
             info->function_node_block = function_node_block;
             return TRUE;
         }
-
+        
         llvm_param_types[i] = create_llvm_type_from_node_type(params[i].mType);
 
         if(type_identify_with_class_name(param_types[i], "__builtin_va_list") || type_identify_with_class_name(param_types[i], "va_list")) {

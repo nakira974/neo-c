@@ -349,7 +349,7 @@ impl vector<T>
         return self.item(index, default_value!);
     }
     
-    void push_back(vector<T>* self, T` item) mutable {
+    void push_back(vector<T>* self, T item) mutable {
         managed item;
         
         if(self.len == self.size) {
@@ -512,7 +512,7 @@ impl list <T>
 
         return self;
     }
-    list<T>*% initialize_with_values(list<T>*% self, int num_value, T`* values) 
+    list<T>*% initialize_with_values(list<T>*% self, int num_value, T&* values) 
     {
         managed values;
         
@@ -538,7 +538,7 @@ impl list <T>
         }
     }
     
-    void push_back2(list<T>* self, T` item) mutable
+    void push_back2(list<T>* self, T item) mutable
     {
         managed item;
 
@@ -700,7 +700,7 @@ impl list <T>
     {
         return self.len;
     }
-    void push_back(list<T>* self, T` item) mutable
+    void push_back(list<T>* self, T item) mutable
     {
         managed item;
 
@@ -757,7 +757,7 @@ impl list <T>
         return default_value;
     }
 
-    void insert(list<T>* self, int position, T` item) mutable
+    void insert(list<T>* self, int position, T item) mutable
     {
         managed item;
 
@@ -1550,7 +1550,7 @@ struct map<T, T2>
     int size;
     int len;
     
-    list<T>* key_list;
+    list<T&>* key_list;
 
     int it;
 };
@@ -1572,14 +1572,14 @@ impl map <T, T2>
         self.size = MAP_TABLE_DEFAULT_SIZE;
         self.len = 0;
         
-        self.key_list = borrow new list<T>();
+        self.key_list = borrow new list<T&>();
 
         self.it = 0;
 
         return self;
     }
     
-    map<T,T2>*% initialize_with_values(map<T,T2>*% self, int num_keys, T`* keys, T2`* values) 
+    map<T,T2>*% initialize_with_values(map<T,T2>*% self, int num_keys, T&* keys, T2&* values) 
     {
         managed keys;
         managed values;
@@ -1631,11 +1631,8 @@ impl map <T, T2>
         delete borrow self.item_existance;
     }
     
-    void insert2(map<T,T2>* self, T` key, T2` item) mutable
+    void insert2(map<T,T2>* self, T& key, T2& item) mutable
     {
-        managed key;
-        managed item;
-
         if(self.len*2 >= self.size) {
             self.rehash();
         }
@@ -1650,9 +1647,11 @@ impl map <T, T2>
                 {
                     if(isheap(T)) {
                         delete borrow self.keys[it];
+                        gc_inc key;
                     }
                     if(isheap(T2)) {
                         delete borrow self.items[it];
+                        gc_inc item;
                     }
                     self.keys[it] = key;
                     self.items[it] = item;
@@ -1674,6 +1673,13 @@ impl map <T, T2>
                 self.item_existance[it] = true;
                 self.keys[it] = key;
                 self.items[it] = item;
+                
+                if(isheap(T)) {
+                    gc_inc key;
+                }
+                if(isheap(T2)) {
+                    gc_inc item;
+                }
 
                 self.len++;
 
@@ -1688,15 +1694,8 @@ impl map <T, T2>
             }
         }
         
-        if(isheap(T)) {
-            if(!same_key_exist) {
-                self.key_list.push_back(clone key);
-            }
-        }
-        else {
-            if(!same_key_exist) {
-                self.key_list.push_back(key);
-            }
+        if(!same_key_exist) {
+            self.key_list.push_back(key);
         }
     }
     
@@ -1709,33 +1708,9 @@ impl map <T, T2>
 
         for(auto it = self.begin(); !self.end(); it = self.next()) {
             T2& default_value;
-            auto it2 = self.at(it, default_value!);
+            var it2 = self.at(it, default_value!);
 
-            if(is_gc_heap(it) && is_gc_heap(it2)) {
-                result.insert2(clone it, clone it2);
-            }
-            else if(is_gc_heap(it) && !is_gc_heap(it2)) {
-                result.insert2(clone it, dummy_heap it2);
-            }
-            else if(!is_gc_heap(it) && is_gc_heap(it2)) {
-                result.insert2(dummy_heap it, clone it2);
-            }
-            else if(isheap(T)) {
-                if(isheap(T2)) {
-                    result.insert2(clone it, clone it2);
-                }
-                else {
-                    result.insert2(clone it, dummy_heap it2);
-                }
-            }
-            else {
-                if(isheap(T2)) {
-                    result.insert2(dummy_heap it, clone it2);
-                }
-                else {
-                    result.insert2(dummy_heap it, dummy_heap it2);
-                }
-            }
+            result.insert2(it, it2);
         }
 
         return result;
@@ -1905,7 +1880,7 @@ impl map <T, T2>
         return self.at(key, default_value!);
     }
     
-    void operator_store_element(map<T, T2>* self, T key, T2 item) mutable {
+    void operator_store_element(map<T, T2>* self, T& key, T2& item) mutable {
         self.insert(key, item);
     }
     
@@ -1990,11 +1965,8 @@ impl map <T, T2>
         self.len = len;
     }
 
-    void insert(map<T,T2>* self, T` key, T2` item) mutable
+    void insert(map<T,T2>* self, T& key, T2& item) mutable
     {
-        managed key;
-        managed item;
-
         if(self.len*2 >= self.size) {
             self.rehash();
         }
@@ -2009,9 +1981,11 @@ impl map <T, T2>
                 {
                     if(isheap(T)) {
                         delete borrow self.keys[it];
+                        gc_inc key;
                     }
                     if(isheap(T2)) {
                         delete borrow self.items[it];
+                        gc_inc item;
                     }
                     self.keys[it] = key;
                     self.items[it] = item;
@@ -2032,7 +2006,14 @@ impl map <T, T2>
             else {
                 self.item_existance[it] = true;
                 self.keys[it] = key;
+                if(isheap(T)) {
+                    gc_inc key;
+                }
                 self.items[it] = item;
+                
+                if(isheap(T2)) {
+                    gc_inc item;
+                }
 
                 self.len++;
 
@@ -2047,15 +2028,8 @@ impl map <T, T2>
             }
         }
         
-        if(isheap(T)) {
-            if(!same_key_exist) {
-                self.key_list.push_back(clone key);
-            }
-        }
-        else {
-            if(!same_key_exist) {
-                self.key_list.push_back(key);
-            }
+        if(!same_key_exist) {
+            self.key_list.push_back(key);
         }
     }
 

@@ -387,7 +387,7 @@ void free_right_value_objects(sInfo* info)
 {
     var right_value_objects = info->right_value_objects;
     foreach(it, right_value_objects) {
-        if(!it->mFreed) {
+        if(it && !it->mFreed) {
             if(it->mFunName === info->come_fun->mName && it->mBlockLevel == info->block_level) {
                 sType*% type = clone it->mType;
                 

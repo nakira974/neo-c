@@ -1,8 +1,9 @@
-struct sData
+struct X
 {
-    int a;
-    int b;
+    int x;
+    int y;
 };
+extern struct X gData2;
 
 void __init_b_c__();
 void __final_b_c__();

@@ -143,9 +143,9 @@ typedef __builtin_va_list va_list;
 typedef int off_t;
 typedef int ssize_t;
 typedef _G_fpos_t fpos_t;
-extern struct _IO_marker* stdin;
-extern struct _IO_marker* stdout;
-extern struct _IO_marker* stderr;
+extern struct _IO_FILE* stdin;
+extern struct _IO_FILE* stdout;
+extern struct _IO_FILE* stderr;
 typedef double _Float128;
 typedef float _Float32;
 typedef double _Float64;
@@ -862,5 +862,7 @@ void method_block1(struct __current_stack1__* parent)
 void method_block2(struct __current_stack2__* parent,int it,int it2,_Bool* it3)
 ;
 void method_block3(struct __current_stack3__* parent,int it,int it2,_Bool* it3)
+;
+void method_block4(struct __current_stack4__* parent,int it,int it2,_Bool* it3)
 ;
 

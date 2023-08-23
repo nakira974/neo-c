@@ -124,7 +124,7 @@ exception sNode*% parse_enum(string type_name, sInfo* info)
     return new sNode(new sEnumNode(type_name, elements, info));
 }
 
-exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 96
+exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 96
 {
     if(buf === "enum") {
         string type_name = null;
@@ -171,5 +171,5 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
         return new sNode(new sEnumNode(type_name, elements, info));
     }
     
-    return inherit(buf, head, head_sline, info) throws;
+    return inherit(string(buf), head, head_sline, info) throws;
 }

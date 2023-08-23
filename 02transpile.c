@@ -323,14 +323,14 @@ void init_module(sInfo* info)
         var result_type = new sType("void", info);
         var param_types = new list<sType*%>();
         var param_names = new list<string>();
-        var fun = new sFun(name, result_type
-                            , param_types, param_names
+        var fun = new sFun(clone name, clone result_type
+                            , clone param_types, clone param_names
             , false@external, false@var_args, null!@block, false@static_
             , xsprintf("void %s()", name)
             , info);
         
     
-        info.funcs.insert(name, fun);
+        info.funcs.insert(string(name), clone fun);
     }
     
     info.module_finalizer_name = xsprintf("__final_%s__", fname);
@@ -340,13 +340,13 @@ void init_module(sInfo* info)
         var result_type = new sType("void", info);
         var param_types = new list<sType*%>();
         var param_names = new list<string>();
-        var fun = new sFun(name, result_type
-                            , param_types, param_names
+        var fun = new sFun(clone name, clone result_type
+                            , clone param_types, clone param_names
             , false@external, false@var_args, null!@block, false@static_
             , xsprintf("void %s()", name)
             , info);
         
-        info.funcs.insert(name, fun);
+        info.funcs.insert(string(name), clone fun);
     }
 }
 

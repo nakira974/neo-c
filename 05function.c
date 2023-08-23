@@ -195,6 +195,10 @@ exception list<sType*%>*%, list<string>*%, bool parse_params(sInfo* info)
 
 exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_name=false)
 {
+    char* head = info.p.p;
+    int head_sline = info.sline;
+    info.define_struct = false;
+    
     string type_name = parse_word(info) throws;
     
     bool constant = false;
@@ -221,45 +225,138 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             struct_ = true;
             
             if(*info->p == '{') {
-                type_name = string("");
-                anonymous_type = true;
-                break;
+                char* p = info.p.p;
+                int sline = info.sline;
+                
+                skip_block(info) throws;
+                
+                if(*info->p == ';') {
+                    info.p.p = head;
+                    info.sline = head_sline;
+                    info.define_struct = true;
+                    throw;
+                } 
+                else {
+                    anonymous_type = true;
+                    type_name = string("");
+                    info.p.p = p;
+                    info.sline = sline;
+                    break;
+                }
             }
             
             type_name = parse_word(info) throws;
             
             if(*info->p == '{') {
-                anonymous_type = true;
+                char* p = info.p.p;
+                int sline = info.sline;
+                
+                skip_block(info) throws;
+                
+                if(*info->p == ';') {
+                    info.p.p = head;
+                    info.sline = head_sline;
+                    info.define_struct = true;
+                    throw;
+                }
+                else {
+                    anonymous_type = true;
+                    info.p.p = p;
+                    info.sline = sline;
+                    break;
+                }
             }
         }
         else if(type_name === "union") {
             union_ = true;
             
             if(*info->p == '{') {
-                type_name = string("");
-                anonymous_type = true;
-                break;
+                char* p = info.p.p;
+                int sline = info.sline;
+                
+                skip_block(info) throws;
+                
+                if(*info->p == ';') {
+                    info.p.p = head;
+                    info.sline = head_sline;
+                    info.define_struct = true;
+                    throw;
+                }
+                else {
+                    anonymous_type = true;
+                    type_name = string("");
+                    info.p.p = p;
+                    info.sline = sline;
+                    break;
+                }
             }
             
             type_name = parse_word(info) throws;
             
             if(*info->p == '{') {
-                anonymous_type = true;
+                char* p = info.p.p;
+                int sline = info.sline;
+                
+                skip_block(info) throws;
+                
+                if(*info->p == ';') {
+                    info.p.p = head;
+                    info.sline = head_sline;
+                    info.define_struct = true;
+                    throw;
+                } 
+                else {
+                    anonymous_type = true;
+                    info.p.p = p;
+                    info.sline = sline;
+                    break;
+                }
             }
         }
         else if(type_name === "enum") {
             enum_ = true;
             
             if(*info->p == '{') {
-                type_name = string("");
-                anonymous_type = true;
-                break;
+                char* p = info.p.p;
+                int sline = info.sline;
+                
+                skip_block(info) throws;
+                
+                if(*info->p == ';') {
+                    info.p.p = head;
+                    info.sline = head_sline;
+                    info.define_struct = true;
+                    throw;
+                }
+                else {
+                    anonymous_type = true;
+                    type_name = string("");
+                    info.p.p = p;
+                    info.sline = sline;
+                    break;
+                }
             }
             
             type_name = parse_word(info) throws;
             
             if(*info->p == '{') {
-                anonymous_type = true;
+                char* p = info.p.p;
+                int sline = info.sline;
+                
+                skip_block(info) throws;
+                
+                if(*info->p == ';') {
+                    info.p.p = head;
+                    info.sline = head_sline;
+                    info.define_struct = true;
+                    throw;
+                }
+                else {
+                    anonymous_type = true;
+                    info.p.p = p;
+                    info.sline = sline;
+                    break;
+                }
             }
         }
         else if(type_name === "const") {
@@ -2204,14 +2301,14 @@ exception sNode*% expression(sInfo* info) version 5
 }
 
 
-exception sBlock*% parse_block(sInfo* info)
+exception sBlock*% parse_block(sInfo* info, bool no_block_level=false)
 {
-    sVarTable* lv_table = info->lv_table;
-    
     var result = new sBlock(info);
     
     int block_level = info->block_level;
-    info->block_level++;
+    if(!no_block_level) {
+        info->block_level++;
+    }
     
     if(*info->p == '{') {
         info->p++;
@@ -2258,11 +2355,13 @@ exception sBlock*% parse_block(sInfo* info)
     return result;
 }
 
-exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<string>*? param_names, sInfo* info)
+exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<string>*? param_names, sInfo* info, bool no_var_table=false)
 {
     sVarTable* old_table = info->lv_table;
-    block->mVarTable = new sVarTable(false@global, old_table);
-    info->lv_table = block->mVarTable;
+    if(!no_var_table) {
+        block->mVarTable = new sVarTable(false@global, old_table);
+        info->lv_table = block->mVarTable;
+    }
     
     list<sType*%>*? param_types_ = info.param_types;
     list<string>*? param_names_ = info.param_names;
@@ -2282,9 +2381,11 @@ exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<s
     }
     
     int block_level = info->block_level;
-    info->block_level++;
+    if(!no_var_table) {
+        info->block_level++;
+    }
     
-    if(info.come_fun.mName === "main" && block_level == 0) {
+    if(info.come_fun.mName === "main" && block_level == 0 && !no_var_table) {
         foreach(it, info.funcs) {
             sFun* it2 = info.funcs[it];
             
@@ -2326,20 +2427,7 @@ exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<s
         }
     }
     
-/*
-    if(param_types && param_names) {
-        int i = 0;
-        foreach(name, param_names) {
-            sType* type = param_types[i];
-            if(type->mHeap) {
-                free_object(type, name, false@no_decrement, false@no_free, info);
-            }
-            i++;
-        }
-    }
-*/
-    
-    if(info.come_fun.mName === "main" && block_level == 0) {
+    if(info.come_fun.mName === "main" && block_level == 0 && !no_var_table) {
         foreach(it, info.funcs) {
             sFun* it2 = info.funcs[it];
             
@@ -2349,7 +2437,7 @@ exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<s
         }
     }
 
-    if(!info->last_statment_is_return) {
+    if(!info->last_statment_is_return && !no_var_table) {
         free_objects(info->lv_table, null!, info);
     }
     
@@ -2440,7 +2528,8 @@ bool sGlobalVariable*::compile(sGlobalVariable* self, sInfo* info)
     else if(right_node) {
         add_come_code_at_source_head(info, "%s;\n", make_define_var(type, name, info));
         add_come_code_to_auto_come_header(info, "extern %s;\n", make_define_var(type, name, info));
-        info.global_variable_initialize_node.insert(string(name), clone right_node);
+        var name2 = borrow string(name);
+        info.global_variable_initialize_node.insert(dummy_heap name2, clone right_node);
     }
     else {
         add_come_code_at_source_head(info, "%s;\n", make_define_var(type, name, info));
@@ -2596,10 +2685,13 @@ string create_method_name(sType* obj_type, bool no_pointer_name, char* fun_name,
         struct_name = string(obj_type->mOriginalTypeName);
     }
     else {
-        struct_name = obj_type->mClass->mName;
+        struct_name = string(obj_type->mClass->mName);
     }
     
-    string p_name = "p" * obj_type->mPointerNum;
+    char p_name[128];
+    for(int i=0; i<obj_type->mPointerNum; i++) {
+        strncat(p_name, "p", 128);
+    }
     
     return xsprintf("%s%s_%s", struct_name, p_name, fun_name);
 }
@@ -2644,12 +2736,13 @@ bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* gen
     info.sline = sline;
     
     bool var_args = generics_fun.mVarArgs;
-    sFun*% fun = new sFun(fun_name, result_type
+    var fun = borrow new sFun(fun_name, result_type
                     , param_types
                     , param_names, false@external
                     , var_args, block, true@static_, string(""), info);
     
-    info.funcs.insert(string(fun_name), fun);
+    var fun_name2 = borrow string(fun_name);
+    info.funcs.insert(dummy_heap fun_name2, dummy_heap fun);
     
     sNode*% node = new sNode(new sFunNode(fun, info));
     
@@ -3004,20 +3097,25 @@ exception sNode*% parse_function(sInfo* info)
         
         result_type->mStatic = false;
         
-        var fun = new sFun(fun_name, result_type, param_types, param_names
+        var fun = borrow new sFun(fun_name, result_type, param_types, param_names
                             , false@external, var_args, block
                             , true@static_, header_buf.to_string(), info);
         
-        info.funcs.insert(string(fun_name), fun);
+        var fun2 = info.funcs[string(fun_name)];
+        if(fun2 == null || fun2.mExternal) {
+            var fun_name2 = borrow string(fun_name);
+            info.funcs.insert(dummy_heap fun_name2, dummy_heap fun);
+        }
         
         return new sNode(new sLambdaNode(fun, info));
     }
     else if(info.impl_type && info.generics_type_names.length() > 0) {
         string block = skip_block(info) throws;
         
-        var fun = new sGenericsFun(info.impl_type, info.generics_type_names, fun_name, result_type, param_types, param_names, var_args, block, info);
+        var fun = borrow new sGenericsFun(info.impl_type, info.generics_type_names, fun_name, result_type, param_types, param_names, var_args, block, info);
+        var fun_name2 = borrow string(fun_name);
         
-        info.generics_funcs.insert(string(fun_name), fun);
+        info.generics_funcs.insert(dummy_heap fun_name2, dummy_heap fun);
         
         return (sNode*)null;
     }
@@ -3031,13 +3129,18 @@ exception sNode*% parse_function(sInfo* info)
         }
         
         
-        var fun = new sFun(fun_name, result_type, param_types, param_names
+        var fun = borrow new sFun(fun_name, result_type, param_types
+                                , param_names
                                 , false@external, var_args, block
                                 , static_
                                 , header_buf.to_string()
                                 , info);
         
-        info.funcs.insert(string(fun_name), fun);
+        var fun2 = info.funcs[string(fun_name)];
+        if(fun2 == null || fun2.mExternal) {
+            var fun_name2 = borrow string(fun_name);
+            info.funcs.insert(dummy_heap fun_name2, dummy_heap fun);
+        }
         
         return new sNode(new sFunNode(fun, info));
     }
@@ -3048,11 +3151,15 @@ exception sNode*% parse_function(sInfo* info)
             
             result_type->mStatic = false;
             
-            var fun = new sFun(fun_name, result_type, param_types, param_names
+            var fun = borrow new sFun(fun_name, result_type, param_types, param_names
                                 , true@external, var_args, null!@block
                                 , false@static_, header_buf.to_string(), info);
             
-            info.funcs.insert(string(fun_name), fun);
+            var fun2 = info.funcs[string(fun_name)];
+            if(fun2 == null || fun2.mExternal) {
+                var fun_name2 = borrow string(fun_name);
+                info.funcs.insert(dummy_heap fun_name2, dummy_heap fun);
+            }
             
             return new sNode(new sFunNode(fun, info));
         }
@@ -3067,11 +3174,15 @@ exception sNode*% parse_function(sInfo* info)
             
             result_type->mStatic = false;
             
-            var fun = new sFun(fun_name, result_type, param_types, param_names
+            var fun = borrow new sFun(fun_name, result_type, param_types, param_names
                                 , true@external, var_args, null!@block
                                 , false@static_, header_buf.to_string(), info);
             
-            info.funcs.insert(string(fun_name), fun);
+            var fun2 = info.funcs[string(fun_name)];
+            if(fun2 == null || fun2.mExternal) {
+                var fun_name2 = string(fun_name);
+                info.funcs.insert(dummy_heap fun_name2, dummy_heap fun);
+            }
             
             return new sNode(new sFunNode(fun, info));
         }
@@ -3172,7 +3283,7 @@ exception sNode*% parse_global_variable(sInfo* info)
     return (sNode*)null;
 }
 
-exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 1
+exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 1
 {
     err_msg(info, "unexpected word(%s)(2)\n", buf);
     throw;
@@ -3190,60 +3301,66 @@ bool is_type_name(char* buf, sInfo* info)
 
 }
 
-exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 99
+exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 99
 {
     bool is_type_name_flag = is_type_name(buf, info);
     int sline = info.sline;
     
-    /// back trace ///
+    /// backtrace ///
     bool define_function_flag = false;
     if(is_type_name_flag)
     {
         char* p = info.p.p;
         info.p.p = head;
         
+        bool invalid_type = false;
         info.no_output_err = true;
         parse_type(info).catch {};
-        string word = null;
-        if(xisalnum(*info.p) || *info->p == '_') {
-            word = parse_word(info).catch {}
-            
-            if(word === "extern") {
-                word = parse_word(info).catch {}
-            }
-        }
-        else {
-            word = null;
-        }
         info.no_output_err = false;
         
-        if(word) {
-            if(is_type_name(word, info)) {
-                while(*info->p == '*') {
-                    info->p++;
-                    skip_spaces_and_lf(info);
-                }
-                if(*info->p == '%') {
-                    info->p++;
-                    skip_spaces_and_lf(info);
-                }
-                if(*info->p == ':') {
-                    info->p++;
-                    skip_spaces_and_lf(info);
-                }
-                if(*info->p == ':') {
-                    info->p++;
-                    skip_spaces_and_lf(info);
-                }
-                if(xisalnum(*info.p) || *info->p == '_') {
+        if(!info.define_struct) {
+            info.define_struct = false;
+            string word = null;
+            if(xisalnum(*info.p) || *info->p == '_') {
+                word = parse_word(info).catch {}
+                
+                if(word === "extern") {
                     word = parse_word(info).catch {}
                 }
             }
+            else {
+                word = null;
+            }
+            info.no_output_err = false;
             
-            /// fun name ///
-            if(strlen(word) > 0 && (*info->p == '(' || (*info->p == ':' && *(info->p+1) == ':'))) {
-                if(is_type_name_flag) {
-                    define_function_flag = true;
+            if(word) {
+                if(is_type_name(word, info)) {
+                    while(*info->p == '*') {
+                        info->p++;
+                        skip_spaces_and_lf(info);
+                    }
+                    if(*info->p == '%') {
+                        info->p++;
+                        skip_spaces_and_lf(info);
+                    }
+                    if(*info->p == ':') {
+                        info->p++;
+                        skip_spaces_and_lf(info);
+                    }
+                    if(*info->p == ':') {
+                        info->p++;
+                        skip_spaces_and_lf(info);
+                    }
+                    if(xisalnum(*info.p) || *info->p == '_') {
+                        word = parse_word(info).catch {}
+                    }
+                }
+                
+                /// fun name ///
+                if(strlen(word) > 0 && (*info->p == '(' || (*info->p == ':' && *(info->p+1) == ':'))) {
+                    if(is_type_name_flag) {
+                        define_function_flag = true;
+                    }
                 }
             }
         }
@@ -3251,7 +3368,7 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
         info.p.p = p;
         info.sline = sline;
     }
-    /// back trace2 ///
+    /// backtrace2 ///
     bool define_variable = true;
     if(is_type_name_flag)
     {
@@ -3262,27 +3379,27 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
             define_variable = false;
         }
         
-        if(buf === "struct") {
+        info.no_output_err = true;
+        parse_type(parse_variable_name:false, info).catch {};
+        info.no_output_err = false;
+        
+        if(info.define_struct) {
+            info.define_struct = false;
             define_variable = false;
         }
         else {
-            info.no_output_err = true;
-            var type, name = parse_type(parse_variable_name:false, info).catch {
-            };
-            info.no_output_err = false;
-        }
-        
-        if(!xisalpha(*info->p)) {
-            define_variable = false;
-        }
-        
-        while(xisalpha(*info->p) || *info->p == '_') {
-            info->p++;
-        }
-        skip_spaces_and_lf(info);
-        
-        if(*info->p == '(' || *info->p == ':') {
-            define_variable = false;
+            if(!xisalpha(*info->p)) {
+                define_variable = false;
+            }
+            
+            while(xisalpha(*info->p) || *info->p == '_') {
+                info->p++;
+            }
+            skip_spaces_and_lf(info);
+            
+            if(*info->p == '(' || *info->p == ':') {
+                define_variable = false;
+            }
         }
         
         info.p.p = p;
@@ -3427,13 +3544,17 @@ exception sFun*,string create_finalizer_automatically(sType* type, char* fun_nam
         
         result_type->mStatic = false;
         
-        sFun*% fun = new sFun(name, result_type, param_types, param_names
+        var fun = borrow new sFun(name, result_type, param_types, param_names
                         , false@external, false@var_args, block
                         , true@static_
                         , header_buf.to_string()
                         , info);
         
-        info.funcs.insert(string(name), fun);
+        var fun2 = info.funcs[string(fun_name)];
+        if(fun2 == null || fun2.mExternal) {
+            var name2 = borrow string(name);
+            info.funcs.insert(name2, dummy_heap fun);
+        }
         
         finalizer = fun;
         

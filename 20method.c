@@ -331,36 +331,37 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
 
 exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) version 20
 {
-    expected_next_character('(', info) throws;
-    
     list<sNode*%>*% params = new list<sNode*%>();
-    
     params.push_back(obj);
     
-    while(true) {
-        if(*info->p == ')') {
-            info->p++;
-            skip_spaces_and_lf(info);
-            break;
-        }
+    if(*info->p != '{') {
+        expected_next_character('(', info) throws;
         
-        bool no_comma = info.no_comma;
-        info.no_comma = true;
-        
-        sNode*% node = expression(info) throws;
-        
-        info.no_comma = no_comma;
-        
-        params.push_back(node);
-        
-        if(*info->p == ',') {
-            info->p++;
-            skip_spaces_and_lf(info);
-        }
-        else if(*info->p == ')') {
-            info->p++;
-            skip_spaces_and_lf(info);
-            break;
+        while(true) {
+            if(*info->p == ')') {
+                info->p++;
+                skip_spaces_and_lf(info);
+                break;
+            }
+            
+            bool no_comma = info.no_comma;
+            info.no_comma = true;
+            
+            sNode*% node = expression(info) throws;
+            
+            info.no_comma = no_comma;
+            
+            params.push_back(node);
+            
+            if(*info->p == ',') {
+                info->p++;
+                skip_spaces_and_lf(info);
+            }
+            else if(*info->p == ')') {
+                info->p++;
+                skip_spaces_and_lf(info);
+                break;
+            }
         }
     }
     

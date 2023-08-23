@@ -457,7 +457,7 @@ void free_objects(sVarTable* table, sCompileInfo* info)
                         p->mLLVMValue.value = NULL;
                     }
                 }
-                else if(p->mAllocaValue && (klass->mFlags & CLASS_FLAGS_STRUCT) && gNCCome) {
+                else if(p->mAllocaValue && (klass->mFlags & CLASS_FLAGS_STRUCT) && gNCCome && !p->mFunctionParam) {
                     LLVMValueRef obj = p->mLLVMValue.value;
                     
                     sNodeType* node_type = clone_node_type(p->mType);
@@ -524,7 +524,7 @@ static void free_block_variables(sVarTable* table, LLVMValueRef ret_value, sComp
                         //p->mLLVMValue = NULL;
                     }
                 }
-                else if(p->mAllocaValue && (klass->mFlags & CLASS_FLAGS_STRUCT) && gNCCome) {
+                else if(p->mAllocaValue && (klass->mFlags & CLASS_FLAGS_STRUCT) && gNCCome && !p->mFunctionParam) {
                     LLVMValueRef obj = p->mLLVMValue.value;
                     
                     sNodeType* node_type = clone_node_type(p->mType);

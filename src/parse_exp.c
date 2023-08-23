@@ -695,17 +695,30 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
     if(*info->p == '(') {
         info->p++;
         skip_spaces_and_lf(info);
+        
+/*
+        BOOL paren_ = FALSE;
+        if(*info->p == '(') {
+            paren_ = TRUE;
+            info->p++;
+            skip_spaces_and_lf(info);
+        }
+*/
 
         char* p = info->p;
         int sline = info->sline;
         
         char buf[VAR_NAME_MAX+1];
-        if(!parse_word(buf, VAR_NAME_MAX, info, FALSE, FALSE))
-        {
-            return FALSE;
+        buf[0] = '\0';
+        if(xisalpha(*info->p) || *info->p == '_') {
+            if(!parse_word(buf, VAR_NAME_MAX, info, FALSE, FALSE))
+            {
+                return FALSE;
+            }
         }
-
-        if(is_type_name(buf, info) && !(strcmp(buf, "string") == 0 && *info->p == '(' || strcmp(buf, "wstring") == 0 && *info->p == '(') && !get_variable_from_table(info->lv_table, buf) || (*info->p == '(' && *(info->p+1) == '*') && *info->p != '(') 
+        
+        
+        if(is_type_name(buf, info) && !(strcmp(buf, "string") == 0 && *info->p == '(' || strcmp(buf, "wstring") == 0 && *info->p == '(') && !get_variable_from_table(info->lv_table, buf))
         {
             info->p = p;
             info->sline = sline;
@@ -717,6 +730,12 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
             }
 
             expect_next_character_with_one_forward(")", info);
+            
+/*
+            if(paren_) {
+                expect_next_character_with_one_forward(")", info);
+            }
+*/
             
             if(!expression_node(node, TRUE, info)) 
             {
@@ -747,11 +766,11 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 }
             }
             skip_spaces_and_lf(info);
-
+            
             if(*node == 0) {
                 parser_err_msg(info, "require expression as ( operand");
             }
-            
+
             /// tuple ///
             if(*info->p == ',' && gNCCome) {
                 info->p = p2;
@@ -762,10 +781,13 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 }
             }
             else {
-                if(gNCTranspile) {
-                    *node = sNodeTree_create_paren(*node, info);
-                }
                 expect_next_character_with_one_forward(")", info);
+                
+/*
+                if(paren_) {
+                    expect_next_character_with_one_forward(")", info);
+                }
+*/
             }
         }
     }
@@ -2864,7 +2886,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
             }
         }
         /// local variable ///
-        else if(get_variable_from_table(info->lv_table, buf))
+        else if(get_variable_from_table(info->lv_table, buf) && get_class(buf) == NULL)
         {
             char* p = info->p;
             int sline = info->sline;
@@ -2918,12 +2940,6 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 if(!expression_node_variable(node, enable_assginment, num_bufs, bufs2, info)) {
                     return FALSE;
                 }
-            }
-        }
-        /// load method block parent ///
-        else if(info->lv_table_method_block_parent && get_variable_from_table(info->lv_table_method_block_parent, buf)) {
-            if(!expression_node_variable_method_block_parent(node, enable_assginment, buf, info)) {
-                return FALSE;
             }
         }
         else if(is_type_name(buf, info) || strcmp(buf, "typeof") == 0) 
@@ -3115,6 +3131,12 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
                 }
             }
         }
+        /// load method block parent ///
+        else if(info->lv_table_method_block_parent && get_variable_from_table(info->lv_table_method_block_parent, buf)) {
+            if(!expression_node_variable_method_block_parent(node, enable_assginment, buf, info)) {
+                return FALSE;
+            }
+        }
 /*
         else if(get_function_from_table(buf) && *info->p == '(') {
             char* fun_name = buf;
@@ -3204,7 +3226,7 @@ BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* in
         char msg[1024];
         snprintf(msg, 1024, "invalid character (character code %d) (%c)", *info->p, *info->p);
         parser_err_msg(info, msg);
-
+        
         if(*info->p == '\n') info->sline++;
         info->p++;
         skip_spaces_and_lf(info);

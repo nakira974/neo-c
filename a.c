@@ -1,22 +1,29 @@
-#include <comelang2.h>
+
+int gA;
+
+extern int fun2(int a, int b);
+
+
+int fun()
+{
+    return 1;
+}
+
+struct sData
+{
+    int a;
+    int b;
+};
+
+typedef struct { int b; int c; } MAX;
 
 int main(int argc, char** argv)
 {
-    puts("HELLO COMELANG2");
+    MAX data;
     
-    list<int>*% li = new list<int>.initialize();
+    sData* x;
     
-    li.push_back(1);
-    li.push_back(2);
-    li.push_back(3);
-    
-    li.each() {
-        printf("%d\n", it);
-    }
-    
-    li[0] = 777;
-    
-    printf("li[0] %d\n", li[0]);
+    fun();
     
     return 0;
 }

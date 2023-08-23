@@ -14,10 +14,8 @@ bool operator_overload_fun(sType* type, char* fun_name, CVALUE* left_value, CVAL
     
     if(type->mGenericsTypes.length() > 0) {
         operator_fun = info->funcs[fun_name2];
-puts(fun_name2);
         
         if(operator_fun == NULL) {
-puts("1");
             string generics_fun_name = xsprintf("%s_%s", type->mGenericsName, fun_name);
             sGenericsFun* generics_fun = info->generics_funcs[generics_fun_name];
             

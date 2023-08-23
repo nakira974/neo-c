@@ -595,7 +595,7 @@ exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 18
                 
                 node = new sNode(new sStoreFieldNode(node, right_node, field_name, info));
             }
-            else if(*info->p == '(') {
+            else if(*info->p == '(' || *info->p == '{') {
                 node = parse_method_call(node, field_name, info) throws;
             }
             else {

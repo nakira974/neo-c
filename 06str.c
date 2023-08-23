@@ -169,6 +169,99 @@ string sWStringNode*::sname(sWStringNode* self, sInfo* info)
     return string(self.sname);
 }
 
+struct sListNode
+{
+    list<sNode*%>*% list_elements;
+    list<string>*% list_elements_source;
+    int sline;
+    string sname;
+};
+
+sListNode*% sListNode*::initialize(sListNode*% self, list<sNode*%>*% list_elements, list<string>*% list_elements_source, sInfo* info)
+{
+    self.list_elements = list_elements;
+    self.list_elements_source = list_elements_source;
+    
+    self.sline = info.sline;
+    self.sname = string(info->sname);
+    
+    return self;
+}
+
+bool sListNode*::compile(sListNode* self, sInfo* info)
+{
+    list<sNode*%>* list_elements = self.list_elements;
+    list<string>* list_elements_source = self.list_elements_source;
+    
+    info->no_output_come_code = true;
+    if(!list_elements[0].compile->(info)) {
+        return false;
+    }
+    info->no_output_come_code = false;
+    
+    CVALUE*% first_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
+    
+    sType*% element_type = first_value.type;
+    
+    static int list_value_num = 0;
+    string var_name = xsprintf("__list_value%d__", ++list_value_num);
+    
+    buffer*% list_value_source = new buffer();
+    
+    list_value_source.append_char('{');
+    list_value_source.append_str(xsprintf("list<%s>*%% %s = new list<%s>.initialize();\n", make_type_name_string(element_type, false@in_header, false@array_cast_pointer, info), var_name, make_type_name_string(element_type, false@in_header, false@array_cast_pointer, info)));
+    
+    foreach(element_source, list_elements_source) {
+        list_value_source.append_str(xsprintf("%s.push_back(%s);\n", var_name, element_source));
+    }
+    list_value_source.append_char('}');
+    
+    char* p = info.p.p;
+    char* head = info.head;
+    int sline = info.sline;
+    
+    info.p = list_value_source.to_pointer();
+    info.head = info.p.p;
+    
+    sBlock*% block = parse_block(info, true@no_block_level).catch { return false; }
+    
+    transpile_block(block, null, null, info, true@no_var_table);
+    
+    info.p.p = p;
+    info.head = head;
+    info.sline = sline;
+    
+    sVar* var_ = get_variable_from_table(info.lv_table, var_name);
+    
+    if(var_ == null) {
+        err_msg(info, "unexpected error, var not found");
+        return false;
+    }
+    
+    CVALUE*% come_value = new CVALUE;
+    
+    come_value.c_value = xsprintf("%s", var_->mCValueName);
+    come_value.type = clone var_->mType;
+    come_value.var = null;
+    
+    info.stack.push_back(come_value);
+    
+    add_come_last_code(info, "%s;\n", come_value.c_value);
+    
+    return true;
+}
+
+int sListNode*::sline(sListNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sListNode*::sname(sListNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
 exception sNode*% expression_node(sInfo* info) version 98
 {
     if(*info->p == '"') 
@@ -626,6 +719,96 @@ exception sNode*% expression_node(sInfo* info) version 98
         wstr[len] = '\0';
 
         return new sNode(new sWStringNode(wstr, sline, info));
+    }
+    else if(*info->p == '[') {
+        info->p++;
+        skip_spaces_and_lf(info);
+        
+        char* p = info.p.p;
+        
+        bool no_comma = info.no_comma;
+        info.no_comma = true;
+        
+        sNode*% node = expression(info) throws;
+        
+        info.no_comma = no_comma;
+        
+        char* p2 = info.p.p;
+        
+        buffer*% first_element_source = new buffer();
+        
+        first_element_source.append(p, p2 - p);
+        first_element_source.append_char('\0');
+        
+        list<sNode*%>*% list_elements = new list<sNode*%>();
+        list<string>*% list_elements_source = new list<string>();
+        
+        //// map ///
+        if(*info->p == ':') {
+        }
+        /// list ///
+        else if(*info->p == ']') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            list_elements.push_back(node);
+            list_elements_source.push_back(first_element_source.to_string());
+        }
+        else if(*info->p == ',') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            list_elements.push_back(node);
+            list_elements_source.push_back(first_element_source.to_string());
+            
+            while(true) {
+                bool no_comma = info.no_comma;
+                info.no_comma = true;
+                
+                char* p = info.p.p;
+                
+                sNode*% node2 = expression(info) throws;
+                
+                info.no_comma = no_comma;
+                
+                char* p2 = info.p.p;
+                
+                buffer*% element_source = new buffer();
+                element_source.append(p, p2 - p);
+                element_source.append_char('\0');
+                
+                list_elements.push_back(node2);
+                list_elements_source.push_back(element_source.to_string());
+                
+                if(*info->p == '\0') {
+                    err_msg(info, "invalid source end");
+                    throw;
+                }
+                else if(*info->p == ',') {
+                    info->p++;
+                    skip_spaces_and_lf(info);
+                }
+                else if(*info->p == ']') {
+                    info->p++;
+                    skip_spaces_and_lf(info);
+                    break;
+                }
+                else {
+                    err_msg(info, "invalid character(%c)", *info->p);
+                    throw;
+                }
+            }
+        }
+        else {
+            err_msg(info, "invalid character(%c)", *info->p);
+            throw;
+        }
+        
+        if(list_elements.length() > 0) {
+            return new sNode(new sListNode(list_elements, list_elements_source, info));
+        }
+        else {
+        }
     }
     else {
         inherit(info) throws;

@@ -1219,6 +1219,7 @@ BOOL compile_return(unsigned int node, sCompileInfo* info)
                 cast_right_type_to_left_type(result_type, &right_type, &llvm_value, info);
             }
             
+/*
             if(!result_type->mMethodGenericsResult && !(type_identify_with_class_name(result_type, "void") && result_type->mPointerNum == 0)) {
                 if(!substitution_posibility(result_type, right_type, llvm_value.value, info)) {
                     compile_err_msg(info, "invalid result type");
@@ -1227,6 +1228,7 @@ BOOL compile_return(unsigned int node, sCompileInfo* info)
                     return FALSE;
                 }
             }
+*/
     
             if(result_type->mHeap) {
                 remove_object_from_right_values(llvm_value.value, info);

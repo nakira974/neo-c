@@ -73,6 +73,8 @@ exception sNode*% parse_union(string type_name, sInfo* info)
     
     expected_next_character('{', info) throws;
     
+    type.mFields.reset();
+    
     while(true) {
         var type2, name = parse_type(info, true@parse_variable_name) throws;
         expected_next_character(';', info) throws;
@@ -89,7 +91,7 @@ exception sNode*% parse_union(string type_name, sInfo* info)
     return new sNode(new sUnionNode(type, true@come_header, info));
 }
 
-exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 97
+exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 97
 {
     if(buf === "union") {
         string type_name = parse_word(info) throws;
@@ -99,6 +101,8 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
         sType*% type = new sType(type_name, info);
         
         expected_next_character('{', info) throws;
+        
+        type.mFields.reset();
         
         while(true) {
             var type2, name = parse_type(info, true@parse_variable_name) throws;
@@ -116,6 +120,6 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
         return new sNode(new sUnionNode(type, true@come_header, info));
     }
     
-    return inherit(buf, head, head_sline, info) throws;
+    return inherit(string(buf), head, head_sline, info) throws;
 }
 

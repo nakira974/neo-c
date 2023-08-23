@@ -56,6 +56,8 @@ bool define_generics_struct(sType* type, sInfo* info)
         
         buf.append_str(xsprintf("struct %s\n{\n", new_name));
         
+        new_class.mFields.reset();
+        
         int i = 0;
         bool no_solve_generics_type = false;
         foreach(it, generics_class.mFields) {
@@ -111,7 +113,7 @@ void define_struct(sClass* klass, bool come_header, sInfo* info)
             add_come_code_to_auto_come_header(info, "%s", buf.to_string());
         }
         
-        info.enum_typedef_already_output[string(klass->mName)] = true;
+        info.enum_typedef_already_output.insert(string(klass->mName), true);
     }
 }
 
@@ -193,6 +195,8 @@ bool define_generics_struct(sType* type, sInfo* info)
         buffer*% buf = new buffer();
         
         buf.append_str(xsprintf("struct %s\n{\n", new_name));
+        
+        new_class.mFields.reset();
         
         int i = 0;
         bool no_solve_generics_type = false;
@@ -276,7 +280,9 @@ string sStructNobodyNode*::sname(sStructNobodyNode* self, sInfo* info)
 
 exception sNode*% parse_struct(string type_name, sInfo* info)
 {
-    info.classes.insert(type_name, new sClass(name:type_name, struct_:true));
+    if(info.classes.at(type_name, null) == null) {
+        info.classes.insert(type_name, new sClass(name:type_name, struct_:true));
+    }
     
     sType*% type = new sType(type_name, info);
     
@@ -285,6 +291,8 @@ exception sNode*% parse_struct(string type_name, sInfo* info)
     if(!type.mGenericsStruct) {
         info.types.insert(string(type.mName), clone type);
     }
+    
+    type.mFields.reset();
     
     while(true) {
         parse_sharp(info);
@@ -306,7 +314,7 @@ exception sNode*% parse_struct(string type_name, sInfo* info)
     return new sNode(new sStructNode(type, true@come_header, info));
 }
 
-exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) version 98
+exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 98
 {
     if(buf === "struct") {
         char* header_head = head;
@@ -317,7 +325,9 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
             info->p++;
             skip_spaces_and_lf(info);
             
-            info.classes.insert(type_name, new sClass(name:type_name, struct_:true));
+            if(info.classes.at(type_name, null) == null) {
+                info.classes.insert(type_name, new sClass(name:type_name, struct_:true));
+            }
             
             sType*% type = new sType(type_name, info);
     
@@ -357,7 +367,9 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
                 }
             }
             
-            info.classes.insert(type_name, new sClass(name:type_name, struct_:true));
+            if(info.classes.at(type_name, null) == null) {
+                info.classes.insert(type_name, new sClass(name:type_name, struct_:true));
+            }
             
             sType*% type = new sType(type_name, info);
             
@@ -369,13 +381,15 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
             
             expected_next_character('{', info) throws;
             
+            type.mClass.mFields.reset();
+            
             while(true) {
                 parse_sharp(info);
                 
                 var type2, name = parse_type(info, true@parse_variable_name) throws;
                 expected_next_character(';', info) throws;
                 
-                type.mFields.push_back(new tuple2<string, sType*%>(name, type2));
+                type.mClass.mFields.push_back(new tuple2<string, sType*%>(name, type2));
                 
                 parse_sharp(info);
                 
@@ -394,5 +408,5 @@ exception sNode*% top_level(char* buf, char* head, int head_sline, sInfo* info) 
         }
     }
     
-    return inherit(buf, head, head_sline, info) throws;
+    return inherit(string(buf), head, head_sline, info) throws;
 }

@@ -13,7 +13,7 @@ struct __builtin_va_list
 #include <string.h>
 #include <stdlib.h>
 
-static void xassert(char* msg, bool test)
+static inline void xassert(char* msg, bool test)
 {
     printf("%s...", msg);
     if(!test) {
@@ -161,7 +161,7 @@ static void* come_memdup(void* block)
     return (char*)ret + sizeof(int) + sizeof(long);
 }
 
-static void int::times(int self, void* parent, void (*block)(void* parent))
+static inline void int::times(int self, void* parent, void (*block)(void* parent))
 {
     for(int i = 0; i < self; i++) {
         block(parent);
@@ -593,13 +593,17 @@ impl list <T>
         
         return self.item(index, default_value);
     }
+    bool operator_equals(list<T>* self, list<T>* right) 
+    {
+        return self.equals(right);
+    }
 }
 
 #define foreach(o1, o2) for(var o1 = (o2).begin(); !(o2).end(); o1 = (o2).next())
 
 typedef char*% string;
 
-static string __builtin_string(char* str)
+static inline string __builtin_string(char* str)
 {
     int len = strlen(str) + 1;
     
@@ -610,53 +614,53 @@ static string __builtin_string(char* str)
     return result;
 }
 
-static bool int::equals(int self, int right) 
+static inline bool int::equals(int self, int right) 
 {
     return self == right;
 }
 
-static bool bool::equals(bool self, bool right) 
+static inline bool bool::equals(bool self, bool right) 
 {
     return self == right;
 }
 
 
-static bool char::equals(char self, char right) 
+static inline bool char::equals(char self, char right) 
 {
     return self == right;
 }
 
-static bool short::equals(short self, short right) 
+static inline bool short::equals(short self, short right) 
 {
     return self == right;
 }
 
-static bool long::equals(long self, long right) 
+static inline bool long::equals(long self, long right) 
 {
     return self == right;
 }
 
-static bool string::equals(char* self, char* right) 
+static inline bool string::equals(char* self, char* right) 
 {
     return strcmp(self, right) == 0;
 }
 
-static bool string::operator_equals(char* self, char* right) 
+static inline bool string::operator_equals(char* self, char* right) 
 {
     return strcmp(self, right) == 0;
 }
 
-static bool char*::operator_equals(char* self, char* right) 
+static inline bool char*::operator_equals(char* self, char* right) 
 {
     return strcmp(self, right) == 0;
 }
 
-static bool char*::equals(char* self, char* right) 
+static inline bool char*::equals(char* self, char* right) 
 {
     return strcmp(self, right) == 0;
 }
 
-static string char*::operator_add(char* self, char* right) 
+static inline string char*::operator_add(char* self, char* right) 
 {
     int len = strlen(self) + strlen(right);
    

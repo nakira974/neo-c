@@ -850,10 +850,10 @@ BOOL parse_function(unsigned int* node, sNodeType* result_type, char* fun_name, 
         info->lv_table = init_block_vtable(old_table, FALSE);
 
         sVarTable* block_var_table = info->lv_table;
-
+        
         for(i=0; i<num_params; i++) {
             sParserParam* param = params + i;
-
+            
             if(!add_variable_to_table(info->lv_table, param->mName, "", param->mType, gNullLVALUE, -1, FALSE, FALSE, TRUE))
             {
                 return FALSE;

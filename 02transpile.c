@@ -330,7 +330,7 @@ void init_module(sInfo* info)
             , info);
         
     
-        info.funcs.insert(string(name), clone fun);
+        info.funcs.insert(string(name), fun);
     }
     
     info.module_finalizer_name = xsprintf("__final_%s__", fname);
@@ -346,7 +346,7 @@ void init_module(sInfo* info)
             , xsprintf("void %s()", name)
             , info);
         
-        info.funcs.insert(string(name), clone fun);
+        info.funcs.insert(string(name), fun);
     }
 }
 

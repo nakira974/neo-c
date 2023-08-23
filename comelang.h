@@ -1631,8 +1631,11 @@ impl map <T, T2>
         delete borrow self.item_existance;
     }
     
-    void insert2(map<T,T2>* self, T& key, T2& item) mutable
+    void insert2(map<T,T2>* self, T key, T2 item) mutable
     {
+        managed key;
+        managed item;
+        
         if(self.len*2 >= self.size) {
             self.rehash();
         }
@@ -1965,8 +1968,11 @@ impl map <T, T2>
         self.len = len;
     }
 
-    void insert(map<T,T2>* self, T& key, T2& item) mutable
+    void insert(map<T,T2>* self, T key, T2 item) mutable
     {
+        managed key;
+        managed item;
+        
         if(self.len*2 >= self.size) {
             self.rehash();
         }

@@ -155,7 +155,7 @@ sStructNobodyNode*% sStructNobodyNode*::initialize(sStructNobodyNode*% self, sTy
 
     self.mType = clone type;
     
-    info.types.insert(string(type.mName), clone type);
+    info.types.insert(string(type.mName), type);
 
     return self;
 }

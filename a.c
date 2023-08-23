@@ -1,3 +1,4 @@
+#include <comelang2.h>
 
 int gA;
 

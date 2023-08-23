@@ -2529,7 +2529,7 @@ bool sGlobalVariable*::compile(sGlobalVariable* self, sInfo* info)
         add_come_code_at_source_head(info, "%s;\n", make_define_var(type, name, info));
         add_come_code_to_auto_come_header(info, "extern %s;\n", make_define_var(type, name, info));
         var name2 = borrow string(name);
-        info.global_variable_initialize_node.insert(dummy_heap name2, clone right_node);
+        info.global_variable_initialize_node.insert(string(name), clone right_node);
     }
     else {
         add_come_code_at_source_head(info, "%s;\n", make_define_var(type, name, info));
@@ -2736,13 +2736,12 @@ bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* gen
     info.sline = sline;
     
     bool var_args = generics_fun.mVarArgs;
-    var fun = borrow new sFun(fun_name, result_type
+    var fun = new sFun(fun_name, result_type
                     , param_types
                     , param_names, false@external
                     , var_args, block, true@static_, string(""), info);
     
-    var fun_name2 = borrow string(fun_name);
-    info.funcs.insert(dummy_heap fun_name2, dummy_heap fun);
+    info.funcs.insert(string(fun_name), fun);
     
     sNode*% node = new sNode(new sFunNode(fun, info));
     
@@ -3097,14 +3096,13 @@ exception sNode*% parse_function(sInfo* info)
         
         result_type->mStatic = false;
         
-        var fun = borrow new sFun(fun_name, result_type, param_types, param_names
+        var fun = new sFun(fun_name, result_type, param_types, param_names
                             , false@external, var_args, block
                             , true@static_, header_buf.to_string(), info);
         
         var fun2 = info.funcs[string(fun_name)];
         if(fun2 == null || fun2.mExternal) {
-            var fun_name2 = borrow string(fun_name);
-            info.funcs.insert(dummy_heap fun_name2, dummy_heap fun);
+            info.funcs.insert(string(fun_name), fun);
         }
         
         return new sNode(new sLambdaNode(fun, info));
@@ -3112,10 +3110,9 @@ exception sNode*% parse_function(sInfo* info)
     else if(info.impl_type && info.generics_type_names.length() > 0) {
         string block = skip_block(info) throws;
         
-        var fun = borrow new sGenericsFun(info.impl_type, info.generics_type_names, fun_name, result_type, param_types, param_names, var_args, block, info);
-        var fun_name2 = borrow string(fun_name);
+        var fun = new sGenericsFun(info.impl_type, info.generics_type_names, fun_name, result_type, param_types, param_names, var_args, block, info);
         
-        info.generics_funcs.insert(dummy_heap fun_name2, dummy_heap fun);
+        info.generics_funcs.insert(string(fun_name), fun);
         
         return (sNode*)null;
     }
@@ -3129,7 +3126,7 @@ exception sNode*% parse_function(sInfo* info)
         }
         
         
-        var fun = borrow new sFun(fun_name, result_type, param_types
+        var fun = new sFun(fun_name, result_type, param_types
                                 , param_names
                                 , false@external, var_args, block
                                 , static_
@@ -3138,8 +3135,7 @@ exception sNode*% parse_function(sInfo* info)
         
         var fun2 = info.funcs[string(fun_name)];
         if(fun2 == null || fun2.mExternal) {
-            var fun_name2 = borrow string(fun_name);
-            info.funcs.insert(dummy_heap fun_name2, dummy_heap fun);
+            info.funcs.insert(string(fun_name), fun);
         }
         
         return new sNode(new sFunNode(fun, info));
@@ -3151,14 +3147,13 @@ exception sNode*% parse_function(sInfo* info)
             
             result_type->mStatic = false;
             
-            var fun = borrow new sFun(fun_name, result_type, param_types, param_names
+            var fun = new sFun(fun_name, result_type, param_types, param_names
                                 , true@external, var_args, null!@block
                                 , false@static_, header_buf.to_string(), info);
             
             var fun2 = info.funcs[string(fun_name)];
             if(fun2 == null || fun2.mExternal) {
-                var fun_name2 = borrow string(fun_name);
-                info.funcs.insert(dummy_heap fun_name2, dummy_heap fun);
+                info.funcs.insert(string(fun_name), fun);
             }
             
             return new sNode(new sFunNode(fun, info));
@@ -3174,14 +3169,14 @@ exception sNode*% parse_function(sInfo* info)
             
             result_type->mStatic = false;
             
-            var fun = borrow new sFun(fun_name, result_type, param_types, param_names
+            var fun = new sFun(fun_name, result_type, param_types
+                                , param_names
                                 , true@external, var_args, null!@block
                                 , false@static_, header_buf.to_string(), info);
             
             var fun2 = info.funcs[string(fun_name)];
             if(fun2 == null || fun2.mExternal) {
-                var fun_name2 = string(fun_name);
-                info.funcs.insert(dummy_heap fun_name2, dummy_heap fun);
+                info.funcs.insert(string(fun_name), fun);
             }
             
             return new sNode(new sFunNode(fun, info));
@@ -3544,7 +3539,7 @@ exception sFun*,string create_finalizer_automatically(sType* type, char* fun_nam
         
         result_type->mStatic = false;
         
-        var fun = borrow new sFun(name, result_type, param_types, param_names
+        var fun = new sFun(name, result_type, param_types, param_names
                         , false@external, false@var_args, block
                         , true@static_
                         , header_buf.to_string()
@@ -3552,8 +3547,7 @@ exception sFun*,string create_finalizer_automatically(sType* type, char* fun_nam
         
         var fun2 = info.funcs[string(fun_name)];
         if(fun2 == null || fun2.mExternal) {
-            var name2 = borrow string(name);
-            info.funcs.insert(name2, dummy_heap fun);
+            info.funcs.insert(string(name), fun);
         }
         
         finalizer = fun;

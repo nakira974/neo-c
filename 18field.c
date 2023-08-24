@@ -22,7 +22,7 @@ bool operator_overload_fun2(sType* type, char* fun_name, CVALUE* left_value, CVA
             if(generics_fun) {
                 if(!create_generics_fun(fun_name2, generics_fun, type, info))
                 {
-                    fprintf(stderr, "%s %d: can't create generics function\n", info->sname, info->sline);
+                    fprintf(stderr, "%s %d: can't create generics function(%s)\n", info->sname, info->sline, generics_fun_name);
                     exit(2);
                 }
                 operator_fun = info->funcs[fun_name2];
@@ -65,7 +65,7 @@ bool operator_overload_fun2(sType* type, char* fun_name, CVALUE* left_value, CVA
             middle_value2 = clone middle_value.c_value;
         }
         string right_value2;
-        if(operator_fun.mParamTypes[1].mHeap) {
+        if(operator_fun.mParamTypes[2].mHeap) {
             right_value2 = xsprintf("come_increment_ref_count(%s)", right_value.c_value);
         }
         else {
@@ -380,7 +380,7 @@ bool sStoreArrayNode*::compile(sStoreArrayNode* self, sInfo* info)
         
         if(left_type->mHeap && right_type->mHeap && left_type->mPointerNum > 0 && right_type->mPointerNum > 0) 
         {
-            if(left_value.type->mPointerNum == 1) {
+            if(left_value.type->mPointerNum >= 1) {
                 add_come_code(info, "come_decrement_ref_count(%s, 0, 0);\n", left_value_code);
                 come_value.c_value = xsprintf("%s=come_increment_ref_count(%s)", left_value_code, right_value.c_value);
             }
@@ -389,7 +389,7 @@ bool sStoreArrayNode*::compile(sStoreArrayNode* self, sInfo* info)
                 come_value.c_value = xsprintf("%s=come_increment_ref_count(%s)", left_value_code, right_value.c_value);
             }
             else {
-                err_msg(info, "Invalid left_type. The name is %s. The pointer num is %d.", left_value_code, left_value.type->mPointerNum);
+                err_msg(info, "Invalid left_type. The name is %s. The pointer num is %d.(1)", left_value_code, left_value.type->mPointerNum);
                 return false;
             }
             int right_value_id = get_right_value_id_from_obj(right_value.c_value);
@@ -399,14 +399,14 @@ bool sStoreArrayNode*::compile(sStoreArrayNode* self, sInfo* info)
             }
         }
         else {
-            if(left_value.type->mPointerNum == 1) {
+            if(left_value.type->mPointerNum >= 1) {
                 come_value.c_value = xsprintf("%s=%s", left_value_code, right_value.c_value);
             }
             else if(left_value.type->mPointerNum == 0) {
                 come_value.c_value = xsprintf("%s=%s", left_value_code, right_value.c_value);
             }
             else {
-                err_msg(info, "Invalid left_type. The name is %s. The pointer num is %d.", left_value_code, left_value.type->mPointerNum);
+                err_msg(info, "Invalid left_type. The name is %s. The pointer num is %d.(2)", left_value_code, left_value.type->mPointerNum);
                 return false;
             }
         }
@@ -504,8 +504,14 @@ bool sLoadArrayNode*::compile(sLoadArrayNode* self, sInfo* info)
         sType*% result_type = clone left_type;
         
         result_type.mArrayNum = new list<sNode*%>();
-        for(int i=0; i<array_num.length(); i++) {
-            result_type.mArrayNum.delete(-1, -1);
+        
+        if(result_type.mArrayNum.length() > 0) {
+            for(int i=0; i<array_num.length(); i++) {
+                result_type.mArrayNum.delete(-1, -1);
+            }
+        }
+        else if(result_type->mPointerNum > 0) {
+            result_type->mPointerNum -= array_num.length();
         }
         
         come_value.type = result_type;

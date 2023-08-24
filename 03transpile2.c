@@ -716,7 +716,7 @@ void add_come_code_at_source_head(sInfo* info, const char* msg, ...)
     info.module.mSourceHead.append_str(xsprintf("%s", msg2));
 }
 
-bool transpile(sInfo* info) version 3
+exception int transpile(sInfo* info) version 3
 {
     var name = string("main");
     var result_type = new sType("int", info);
@@ -738,7 +738,7 @@ bool transpile(sInfo* info) version 3
     add_come_code(info, "return 0;\n");
     info.block_level--;
     
-    return true;
+    return 0;
 }
 
 bool output_source_file(sInfo* info) version 3

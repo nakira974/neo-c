@@ -47,15 +47,19 @@ bool sNewNode*::compile(sNewNode* self, sInfo* info)
         num_string.append_str(xsprintf("*%s", cvalue.c_value));
     }
     
-    string type_name = make_type_name_string(type, false@in_header, true@array_cast_pointer, info);
+    sType*% type2 = solve_generics(type, info->generics_type, info).catch {
+        return false;
+    }
+    
+    string type_name = make_type_name_string(type2, false@in_header, true@array_cast_pointer, info);
     
     come_value.c_value = xsprintf("(%s*)come_calloc(1, sizeof(%s)*%s)", type_name, type_name, num_string.to_string());
-    sType*% type2 = clone type;
-    type2->mPointerNum++;
+    sType*% type3 = clone type2;
+    type3->mPointerNum++;
+    type3->mHeap = true;
     type2->mHeap = true;
-    type->mHeap = true;
-    come_value.type = clone type;
-    come_value.c_value = append_object_to_right_values(come_value.c_value, type2 ,info);
+    come_value.type = clone type2;
+    come_value.c_value = append_object_to_right_values(come_value.c_value, type3 ,info);
     come_value.type->mPointerNum ++;
     come_value.var = null;
     
@@ -284,6 +288,144 @@ bool sBorrowNode*::compile(sBorrowNode* self, sInfo* info)
     return true;
 }
 
+struct sDummyHeapNode {
+    sNode*% node;
+    int sline;
+    string sname;
+};
+
+sDummyHeapNode*% sDummyHeapNode*::initialize(sDummyHeapNode*% self, sNode*% node, sInfo* info)
+{
+    self.node = clone node;
+    
+    self.sline = info.sline;
+    self.sname = string(info.sname);
+    
+    return self;
+}
+
+int sDummyHeapNode*::sline(sDummyHeapNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sDummyHeapNode*::sname(sDummyHeapNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+bool sDummyHeapNode*::compile(sDummyHeapNode* self, sInfo* info)
+{
+    sNode* node = self.node;
+    
+    if(!node.compile->(info)) {
+        return false;
+    }
+    
+    CVALUE*% come_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
+    
+    come_value.type.mHeap = true;
+    
+    info.stack.push_back(come_value);
+    
+    return true;
+}
+
+struct sGCIncNode {
+    sNode*% node;
+    int sline;
+    string sname;
+};
+
+sGCIncNode*% sGCIncNode*::initialize(sGCIncNode*% self, sNode*% node, sInfo* info)
+{
+    self.node = clone node;
+    
+    self.sline = info.sline;
+    self.sname = string(info.sname);
+    
+    return self;
+}
+
+int sGCIncNode*::sline(sGCIncNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sGCIncNode*::sname(sGCIncNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+bool sGCIncNode*::compile(sGCIncNode* self, sInfo* info)
+{
+    sNode* node = self.node;
+    
+    if(!node.compile->(info)) {
+        return false;
+    }
+    
+    CVALUE*% come_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
+    
+    sType* type = come_value.type;
+    
+    string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
+    come_value.c_value = xsprintf("(%s)come_increment_ref_count(%s)", type_name, come_value.c_value);
+    
+    info.stack.push_back(come_value);
+    
+    return true;
+}
+
+struct sGCDecNode {
+    sNode*% node;
+    int sline;
+    string sname;
+};
+
+sGCDecNode*% sGCDecNode*::initialize(sGCDecNode*% self, sNode*% node, sInfo* info)
+{
+    self.node = clone node;
+    
+    self.sline = info.sline;
+    self.sname = string(info.sname);
+    
+    return self;
+}
+
+int sGCDecNode*::sline(sGCDecNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sGCDecNode*::sname(sGCDecNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+bool sGCDecNode*::compile(sGCDecNode* self, sInfo* info)
+{
+    sNode* node = self.node;
+    
+    if(!node.compile->(info)) {
+        return false;
+    }
+    
+    CVALUE*% come_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
+    
+    sType* type = come_value.type;
+    
+    string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
+    come_value.c_value = xsprintf("(%s)come_decrement_ref_count(%s,0,0)", type_name, come_value.c_value);
+    
+    info.stack.push_back(come_value);
+    
+    return true;
+}
+
 struct sIsHeap {
     sType*% type;
     int sline;
@@ -363,6 +505,31 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
          sNode*% node = expression(info) throws;
          
          return new sNode(new sBorrowNode(node, info));
+    }
+    else if(buf === "dummy_heap") {
+         sNode*% node = expression(info) throws;
+         
+         return new sNode(new sDummyHeapNode(node, info));
+    }
+    else if(buf === "gc_inc" && *info->p == '(') {
+         info->p++;
+         skip_spaces_and_lf(info);
+         
+         sNode*% node = expression(info) throws;
+         
+         expected_next_character(')', info) throws;
+         
+         return new sNode(new sGCIncNode(node, info));
+    }
+    else if(buf === "gc_dec" && *info->p == '(') {
+         info->p++;
+         skip_spaces_and_lf(info);
+         
+         sNode*% node = expression(info) throws;
+         
+         expected_next_character(')', info) throws;
+         
+         return new sNode(new sGCDecNode(node, info));
     }
     else if(buf === "isheap" && *info->p == '(') {
         info->p++;

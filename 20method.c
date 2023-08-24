@@ -139,7 +139,9 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
     CVALUE*% obj_value = get_value_from_stack(-1, info);
     dec_stack_ptr(1, info);
     
-    sType*% obj_type = clone obj_value.type;
+    sType*% obj_type = solve_generics(obj_value.type, info.generics_type, info).catch {
+        return false;
+    }
     
     string fun_name2 = create_method_name(obj_type, false@no_pointer_name, fun_name, info);
     string fun_name3 = xsprintf("%s_%s", obj_type->mClass->mNoneGenericsName, fun_name);

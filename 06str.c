@@ -262,6 +262,129 @@ string sListNode*::sname(sListNode* self, sInfo* info)
     return string(self.sname);
 }
 
+struct sMapNode
+{
+    list<sNode*%>*% map_key_elements;
+    list<string>*% map_key_elements_source;
+    list<sNode*%>*% map_elements;
+    list<string>*% map_elements_source;
+    int sline;
+    string sname;
+};
+
+sMapNode*% sMapNode*::initialize(sMapNode*% self, list<sNode*%>*% map_key_elements, list<string>*% map_key_elements_source, list<sNode*%>*% map_elements, list<string>*% map_elements_source, sInfo* info)
+{
+    self.map_key_elements = map_key_elements;
+    self.map_key_elements_source = map_key_elements_source;
+    self.map_elements = map_elements;
+    self.map_elements_source = map_elements_source;
+    
+    self.sline = info.sline;
+    self.sname = string(info->sname);
+    
+    return self;
+}
+
+bool sMapNode*::compile(sMapNode* self, sInfo* info)
+{
+    list<sNode*%>* map_key_elements = self.map_key_elements;
+    list<string>* map_key_elements_source = self.map_key_elements_source;
+    list<sNode*%>* map_elements = self.map_elements;
+    list<string>* map_elements_source = self.map_elements_source;
+    
+    info->no_output_come_code = true;
+    if(!map_key_elements[0].compile->(info)) {
+        return false;
+    }
+    info->no_output_come_code = false;
+    
+    CVALUE*% first_key_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
+    
+    sType*% key_type = first_key_value.type;
+    
+    info->no_output_come_code = true;
+    if(!map_elements[0].compile->(info)) {
+        return false;
+    }
+    info->no_output_come_code = false;
+    
+    CVALUE*% first_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
+    
+    sType*% element_type = first_value.type;
+    
+    static int map_value_num = 0;
+    string var_name = xsprintf("__map_value%d__", ++map_value_num);
+    
+    buffer*% map_value_source = new buffer();
+    
+    map_value_source.append_char('{');
+    map_value_source.append_str(xsprintf("map<%s,%s>*%% %s = new map<%s,%s>.initialize();\n"
+        , make_type_name_string(key_type, false@in_header, false@array_cast_pointer, info)
+        , make_type_name_string(element_type, false@in_header, false@array_cast_pointer, info)
+        , var_name
+        , make_type_name_string(key_type, false@in_header, false@array_cast_pointer, info)
+        , make_type_name_string(element_type, false@in_header, false@array_cast_pointer, info)
+        ));
+    
+    var key_source = map_key_elements_source.begin();
+    foreach(element_source, map_elements_source) {
+        map_value_source.append_str(xsprintf("%s.insert(%s, %s);\n"
+            , var_name
+            , key_source
+            , element_source
+        ));
+        
+        key_source = map_key_elements_source.next();
+    }
+    map_value_source.append_char('}');
+    
+    char* p = info.p.p;
+    char* head = info.head;
+    int sline = info.sline;
+    
+    info.p = map_value_source.to_pointer();
+    info.head = info.p.p;
+    
+    sBlock*% block = parse_block(info, true@no_block_level).catch { return false; }
+    
+    transpile_block(block, null, null, info, true@no_var_table);
+    
+    info.p.p = p;
+    info.head = head;
+    info.sline = sline;
+    
+    sVar* var_ = get_variable_from_table(info.lv_table, var_name);
+    
+    if(var_ == null) {
+        err_msg(info, "unexpected error, var not found");
+        return false;
+    }
+    
+    CVALUE*% come_value = new CVALUE;
+    
+    come_value.c_value = xsprintf("%s", var_->mCValueName);
+    come_value.type = clone var_->mType;
+    come_value.var = null;
+    
+    info.stack.push_back(come_value);
+    
+    add_come_last_code(info, "%s;\n", come_value.c_value);
+    
+    return true;
+}
+
+int sMapNode*::sline(sMapNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sMapNode*::sname(sMapNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
 exception sNode*% expression_node(sInfo* info) version 98
 {
     if(*info->p == '"') 
@@ -321,7 +444,7 @@ exception sNode*% expression_node(sInfo* info) version 98
         }
 
         skip_spaces_and_lf(info);
-
+        
         return new sNode(new sStrNode(value.to_string(), sline, info));
     }
     else if(*info->p == '\'') {
@@ -743,8 +866,106 @@ exception sNode*% expression_node(sInfo* info) version 98
         list<sNode*%>*% list_elements = new list<sNode*%>();
         list<string>*% list_elements_source = new list<string>();
         
+        list<sNode*%>*% map_keys = new list<sNode*%>();
+        list<string>*% map_keys_source = new list<string>();
+        list<sNode*%>*% map_elements = new list<sNode*%>();
+        list<string>*% map_elements_source = new list<string>();
+        
         //// map ///
         if(*info->p == ':') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            map_keys.push_back(node);
+            map_keys_source.push_back(first_element_source.to_string());
+            
+            bool no_comma = info.no_comma;
+            info.no_comma = true;
+            
+            char* p = info.p.p;
+            
+            sNode*% node2 = expression(info) throws;
+            
+            info.no_comma = no_comma;
+            
+            char* p2 = info.p.p;
+            
+            buffer*% map_element_source = new buffer();
+            map_element_source.append(p, p2 - p);
+            map_element_source.append_char('\0');
+            
+            map_elements.push_back(node2);
+            map_elements_source.push_back(map_element_source.to_string());
+            
+            if(*info->p == ']') {
+                info->p++;
+                skip_spaces_and_lf(info);
+                
+                return new sNode(new sMapNode(map_keys, map_keys_source, map_elements, map_elements_source, info));
+            }
+            else {
+                expected_next_character(',', info) throws;
+                
+                while(true) {
+                    bool no_comma = info.no_comma;
+                    info.no_comma = true;
+                    
+                    char* p = info.p.p;
+                    
+                    sNode*% node2 = expression(info) throws;
+                    
+                    info.no_comma = no_comma;
+                    
+                    char* p2 = info.p.p;
+                    
+                    buffer*% key_source = new buffer();
+                    key_source.append(p, p2 - p);
+                    key_source.append_char('\0');
+                    
+                    map_keys.push_back(node2);
+                    map_keys_source.push_back(key_source.to_string());
+                    
+                    expected_next_character(':', info) throws;
+                    
+                    no_comma = info.no_comma;
+                    info.no_comma = true;
+                    
+                    p = info.p.p;
+                    
+                    sNode*% node3 = expression(info) throws;
+                    
+                    info.no_comma = no_comma;
+                    
+                    p2 = info.p.p;
+                    
+                    buffer*% element_source = new buffer();
+                    element_source.append(p, p2 - p);
+                    element_source.append_char('\0');
+                    
+                    map_elements.push_back(node3);
+                    map_elements_source.push_back(element_source.to_string());
+                    
+                    if(*info->p == '\0') {
+                        err_msg(info, "invalid source end");
+                        throw;
+                    }
+                    else if(*info->p == ',') {
+                        info->p++;
+                        skip_spaces_and_lf(info);
+                    }
+                    else if(*info->p == ']') {
+                        info->p++;
+                        skip_spaces_and_lf(info);
+                        break;
+                    }
+                    else {
+                        err_msg(info, "invalid character(%c)(3)", *info->p);
+                        throw;
+                    }
+                }
+                
+                return new sNode(new sMapNode(map_keys, map_keys_source, map_elements, map_elements_source, info));
+            }
         }
         /// list ///
         else if(*info->p == ']') {
@@ -794,13 +1015,13 @@ exception sNode*% expression_node(sInfo* info) version 98
                     break;
                 }
                 else {
-                    err_msg(info, "invalid character(%c)", *info->p);
+                    err_msg(info, "invalid character(%c)(4)", *info->p);
                     throw;
                 }
             }
         }
         else {
-            err_msg(info, "invalid character(%c)", *info->p);
+            err_msg(info, "invalid character(%c)(5)", *info->p);
             throw;
         }
         

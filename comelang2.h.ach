@@ -386,10 +386,6 @@ struct drand48_data
 };
 typedef int (*__compar_fn_t)(const void*,const void*);
 typedef char*% string;
-struct sData
-{
-    char _unused2[15*sizeof(int)-4*sizeof(void*)-sizeof(int)];
-};
 
 void __init_a_c__();
 void __final_a_c__();

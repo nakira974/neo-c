@@ -219,7 +219,6 @@ int main()
     xassert("list::equals", li4.equals(li5));
     xassert("list::find", li4.find(5,-1) == 2);
     
-/*
     var li6 = new list<int>.initialize();
     
     li6.push_back(3);
@@ -239,7 +238,6 @@ int main()
     char* strXYXY = "ABC";
     
     xassert("operator test", *(strXYXY + 1) == 'B');
-*/
     
     list<int>*% liZ = new list<int>.initialize();
     
@@ -251,7 +249,6 @@ int main()
         printf("%d\n", it);
     }
     
-/*
     liZ[0] = 777;
     
     printf("liZ[0] %d\n", liZ[0]);
@@ -263,7 +260,6 @@ int main()
     liZ2.push_back(3);
     
     xassert("list equals", liZ === liZ2);
-*/
     
     return 0;
 }

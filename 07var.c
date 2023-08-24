@@ -126,7 +126,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                 sType* left_type = parent_var->mType;
                 
                 if(right_type->mHeap && !left_type->mHeap) {
-                    err_msg(info, "require left type appended %");
+                    err_msg(info, "require left type appended %%(1)(%s)", self.name);
                     return false;
                 }
                 
@@ -174,7 +174,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         CVALUE*% come_value = new CVALUE;
         
         if(right_type->mHeap && !left_type->mHeap) {
-            err_msg(info, "require left type appended %");
+            err_msg(info, "require left type appended %%(2) %s", self.name);
             return false;
         }
         

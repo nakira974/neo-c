@@ -597,6 +597,9 @@ impl list <T>
     {
         return self.equals(right);
     }
+    bool operator_not_equals(list<T>* left, list<T>* right) {
+        return !left.equals(right);
+    }
 }
 
 #define foreach(o1, o2) for(var o1 = (o2).begin(); !(o2).end(); o1 = (o2).next())
@@ -670,4 +673,329 @@ static inline string char*::operator_add(char* self, char* right)
     strncat(result, right, len+1);
     
     return result;
+}
+
+struct map<T, T2>
+{
+    T*& keys;
+    bool* item_existance;
+    T2*& items;
+    int size;
+    int len;
+    
+    list<T&>*% key_list;
+
+    int it;
+};
+
+#define MAP_TABLE_DEFAULT_SIZE 128
+
+impl map <T, T2>
+{
+    map<T,T2>*% initialize(map<T,T2>*% self) {
+        self.keys = borrow new T[MAP_TABLE_DEFAULT_SIZE];
+        self.items = borrow new T2[MAP_TABLE_DEFAULT_SIZE];
+        self.item_existance = borrow new bool[MAP_TABLE_DEFAULT_SIZE];
+
+        for(int i=0; i<MAP_TABLE_DEFAULT_SIZE; i++)
+        {
+            self.item_existance[i] = false;
+        }
+
+        self.size = MAP_TABLE_DEFAULT_SIZE;
+        self.len = 0;
+        
+        self.key_list = new list<T&>.initialize();
+
+        self.it = 0;
+
+        return self;
+    }
+    void finalize(map<T,T2>* self) {
+        for(int i=0; i<self.size; i++) {
+            if(self.item_existance[i]) {
+                if(isheap(T2)) {
+                    delete borrow self.items[i];
+                }
+            }
+        }
+        come_free_object((char*)self.items);
+
+        for(int i=0; i<self.size; i++) {
+            if(self.item_existance[i]) {
+                if(isheap(T)) {
+                    delete borrow self.keys[i];
+                }
+            }
+        }
+        come_free_object((char*)self.keys);
+        
+        delete borrow self.key_list;
+
+        delete borrow self.item_existance;
+    }
+    
+    T2& at(map<T, T2>* self, T& key, T2& default_value) {
+        int hash = ((T)key).get_hash_key() % self.size;
+        int it = hash;
+        
+        while(true) {
+            if(self.item_existance[it])
+            {
+                if(self.keys[it].equals(key))
+                {
+                    return self.items[it];
+                }
+
+                it++;
+
+                if(it >= self.size) {
+                    it = 0;
+                }
+                else if(it == hash) {
+                    return default_value;
+                }
+            }
+            else {
+                return default_value;
+            }
+        }
+
+        return default_value;
+    }
+    
+    T& begin(map<T, T2>* self) {
+        self.key_list.it = self.key_list.head;
+
+        if(self.key_list.it) {
+            return self.key_list.it.item;
+        }
+        
+        T& result;
+        memset(&result, 0, sizeof(T));
+        return result;
+    }
+
+    T& next(map<T, T2>* self) {
+        self.key_list.it = self.key_list.it.next;
+
+        if(self.key_list.it) {
+            return self.key_list.it.item;
+        }
+        
+        T& result;
+        memset(&result, 0, sizeof(T));
+        return result;
+    }
+
+    bool end(map<T, T2>* self) {
+        return self.key_list.it == null;
+    }
+    
+    void rehash(map<T,T2>* self) {
+        int size = self.size * 3;
+        T&* keys = borrow new T[size];
+        T2&* items = borrow new T2[size];
+        bool* item_existance = borrow new bool[size];
+
+        int len = 0;
+
+        for(var it = self.begin(); !self.end(); it = self.next()) {
+            T2& default_value;
+            T2& it2 = self.at(it, default_value);
+            int hash = it.get_hash_key() % size;
+            int n = hash;
+
+            while(true) {
+                if(item_existance[n])
+                {
+                    n++;
+
+                    if(n >= size) {
+                        n = 0;
+                    }
+                    else if(n == hash) {
+                        fprintf(stderr, "unexpected error in map.rehash(1)\n");
+                        exit(2);
+                    }
+                }
+                else {
+                    item_existance[n] = true;
+                    keys[n] = it;
+                    T2& default_value;
+                    items[n] = self.at(it, default_value);
+
+                    len++;
+                    break;
+                }
+            }
+        }
+
+        come_free_object((char*)self.items);
+        delete borrow self.item_existance;
+        come_free_object((char*)self.keys);
+
+        self.keys = keys;
+        self.items = items;
+        self.item_existance = item_existance;
+
+        self.size = size;
+        self.len = len;
+    }
+    
+    void insert(map<T,T2>* self, T key, T2 item) {
+        if(self.len*2 >= self.size) {
+            self.rehash();
+        }
+
+        int hash = key.get_hash_key() % self.size;
+        int it = hash;
+
+        while(true) {
+            if(self.item_existance[it])
+            {
+                if(self.keys[it].equals(key)) 
+                {
+                    if(isheap(T)) {
+                        delete borrow self.keys[it];
+                        self.keys[it] = borrow gc_inc(key);
+                    }
+                    else {
+                        self.keys[it] = borrow key;
+                    }
+                    if(isheap(T2)) {
+                        delete borrow self.items[it];
+                        self.items[it] = borrow gc_inc(item);
+                    }
+                    else {
+                        self.items[it] = borrow item;
+                    }
+                    break;
+                }
+
+                it++;
+
+                if(it >= self.size) {
+                    it = 0;
+                }
+                else if(it == hash) {
+                    fprintf(stderr, "unexpected error in map.insert\n");
+                    exit(2);
+                }
+            }
+            else {
+                self.item_existance[it] = true;
+                if(isheap(T)) {
+                    delete borrow self.keys[it];
+                    self.keys[it] = borrow gc_inc(key);
+                }
+                else {
+                    self.keys[it] = borrow key;
+                }
+                if(isheap(T2)) {
+                    delete borrow self.items[it];
+                    self.items[it] = borrow gc_inc(item);
+                }
+                else {
+                    self.items[it] = item;
+                }
+
+                self.len++;
+
+                break;
+            }
+        }
+        
+        bool same_key_exist = false;
+        foreach(it2, self.key_list) {
+            if(it2.equals(key)) {
+                same_key_exist = true;
+            }
+        }
+        
+        if(!same_key_exist) {
+            self.key_list.push_back(key);
+        }
+    }
+    
+    T2& operator_load_element(map<T, T2>* self, T& key) {
+        T2& default_value;
+        memset(&default_value, 0, sizeof(T2));
+        
+        return self.at(key, default_value);
+    }
+    
+    void operator_store_element(map<T, T2>* self, T key, T2 item) {
+        self.insert(key, item);
+    }
+    
+    bool equals(map<T, T2>* left, map<T, T2>* right)
+    {
+        if(left.len != right.len) {
+            return false;
+        }
+
+        int n = 0;
+        bool result = true;
+        foreach(it, left.key_list) {
+            T default_value;
+            T& it2 = right.key_list.item(n, default_value);
+            
+            if(it.equals(it2)) {
+                T2 default_value2;
+                T2& item = left.at(it, default_value2);
+                T2& item2 = left.at(it2, default_value2);
+                
+                if(!item.equals(item2)) {
+                    result = false;
+                }
+            }
+            else {
+                result = false;
+            }
+            
+            n++;
+        }
+
+        return result;
+    }
+    
+    bool operator_equals(map<T, T2>* left, map<T,T2>* right) {
+        return left.equals(right);
+    }
+    
+    bool operator_not_equals(map<T, T2>* left, map<T,T2>* right) {
+        return !left.equals(right);
+    }
+}
+
+static inline unsigned int int::get_hash_key(int value)
+{
+    return value;
+}
+
+static inline unsigned int bool::get_hash_key(bool value)
+{
+    return (((int)value).get_hash_key());
+}
+
+static inline unsigned int string::get_hash_key(char* value)
+{
+    int result = 0;
+    char* p = value;
+    while(*p) {
+        result += (*p);
+        p++;
+    }
+    return result;
+}
+
+static inline unsigned int char*::get_hash_key(char* value)
+{
+    return string(value).get_hash_key();
+}
+
+static inline unsigned int bool::get_hash_key(bool value)
+{
+    return (((int)value).get_hash_key());
 }

@@ -1,30 +1,14 @@
 #include <comelang2.h>
 
-int gA;
-
-extern int fun2(int a, int b);
-
-
-int fun()
-{
-    return 1;
-}
-
-struct sData
-{
-    int a;
-    int b;
-};
-
-typedef struct { int b; int c; } MAX;
-
 int main(int argc, char** argv)
 {
-    MAX data;
+    [1,2,3,4,5].each {
+        printf("%d\n", it);
+    }
     
-    sData* x;
+    xassert("list equals test", [1,2,3] === [1,2,3]);
     
-    fun();
+    xassert("map equals test", ["AAA":1, "BBB":2] === ["AAA":1, "BBB":2]);
     
     return 0;
 }

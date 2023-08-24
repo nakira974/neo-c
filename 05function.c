@@ -630,6 +630,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                     info.classes.insert(type_name, new sClass(name:type_name, struct_:true));
                 }
             }
+            
             type = new sType(type_name, info);
         }
         
@@ -676,7 +677,6 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             type = solve_generics(type, info->generics_type, info) throws;
             
             type->mGenericsName = string(type_name);
-
 
             string new_name = create_generics_name(type, false@no_pointer_name, info);
             if(type->mClass->mName === type->mGenericsName) {
@@ -756,6 +756,20 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             skip_spaces_and_lf(info);
         }
         
+        while(*info->p == '*') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            if(memcmp(info->p.p, "const", strlen("const")) == 0) {
+                info->p += strlen("const");
+                skip_spaces_and_lf(info);
+                
+                type->mConstant = true;
+            }
+            
+            type->mPointerNum++;
+        }
+        
         if(memcmp(info.p.p, "__restrict", strlen("__restrict")) == 0) {
             info->p += strlen("__restrict");
             skip_spaces_and_lf(info);
@@ -764,7 +778,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             info->p += strlen("restrict");
             skip_spaces_and_lf(info);
         }
-        
+
         if(parse_variable_name) {
             if(xisalnum(*info.p) || *info->p == '_') {
                 var_name = parse_word(info) throws;
@@ -1567,9 +1581,13 @@ bool sCastNode*::compile(sCastNode* self, sInfo* info)
     CVALUE*% left_value = get_value_from_stack(-1, info);
     dec_stack_ptr(1, info);
     
+    sType*% type2 = solve_generics(type, info.generics_type, info).catch {
+        return false;
+    }
+    
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("(%s)%s", make_type_name_string(type, false@in_header, false@array_cast_pointer, info), left_value.c_value);
+    come_value.c_value = xsprintf("(%s)%s", make_type_name_string(type2, false@in_header, false@array_cast_pointer, info), left_value.c_value);
     come_value.type = clone type;
     come_value.var = null;
     
@@ -2083,14 +2101,74 @@ exception sNode*% get_oct_number(sInfo* info)
     return (sNode*%)null;
 }
 
+struct sLogicalDenial
+{
+    sNode*% value;
+    int sline;
+    string sname;
+};
+
+sLogicalDenial*% sLogicalDenial*::initialize(sLogicalDenial*% self, sNode*% value, sInfo* info)
+{
+    self.value = value;
+    
+    self.sline = info->sline;
+    self.sname = string(info->sname);
+    
+    return self;
+}
+
+bool sLogicalDenial*::compile(sLogicalDenial* self, sInfo* info)
+{
+    if(!self.value.compile->(info)) {
+        return false;
+    }
+    
+    CVALUE*% come_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
+    
+    CVALUE*% come_value2 = new CVALUE;
+    
+    come_value2.c_value = xsprintf("!%s", come_value.c_value);
+    come_value2.type = clone come_value.type;
+    come_value2.var = null;
+    
+    info.stack.push_back(come_value2);
+    
+    add_come_last_code(info, "%s;\n", come_value2.c_value);
+    
+    return true;
+}
+
+int sLogicalDenial*::sline(sLogicalDenial* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sLogicalDenial*::sname(sLogicalDenial* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
 exception sNode*% expression_node(sInfo* info) version 99
 {
     skip_spaces_and_lf(info);
     
     parse_sharp(info);
     
+    
+    /// logical denial ///
+    if(*info->p == '!') {
+        info->p++;
+        skip_spaces_and_lf(info);
+
+        sNode*% node = expression_node(info) throws;
+
+        return new sNode(new sLogicalDenial(node, info));
+    }
+    
     /// hex number ///
-    if(*info->p == '0' && (*(info->p+1) == 'x' || *(info->p+1) == 'X')) {
+    else if(*info->p == '0' && (*(info->p+1) == 'x' || *(info->p+1) == 'X')) {
         info->p += 2;
 
         sNode*% node = get_hex_number(false@minus, info) throws;
@@ -2199,12 +2277,14 @@ exception sNode*% expression_node(sInfo* info) version 99
             
             (void)parse_type(info);
             
-            var word2 = parse_word(info).catch {}
-            info.no_output_err = false;
-            
-            if(word2 != null && word2 === "lambda") {
-                lambda_flag = true;
+            if(xisalpha(*info.p) || *info.p == '_') {
+                var word2 = parse_word(info).catch {}
+                
+                if(word2 != null && word2 === "lambda") {
+                    lambda_flag = true;
+                }
             }
+            info.no_output_err = false;
             
             info.p.p = head;
             info.sline = head_sline;
@@ -2225,7 +2305,7 @@ exception sNode*% expression_node(sInfo* info) version 99
             
             return node;
         }
-        else if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && *info->p == '(' && *(info->p+1) != '*')
+        else if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && buf !== "gc_inc" && buf !== "gc_dec" && *info->p == '(' && *(info->p+1) != '*')
         {
             sNode*% node = parse_function_call(buf, info) throws;
             
@@ -2614,16 +2694,15 @@ bool sFunNode*::compile(sFunNode* self, sInfo* info)
     sFun* come_fun = info.come_fun;
     info.come_fun = self.mFun;
     
-    bool result = true;
     if(self.mFun.mBlock) {
         transpile_block(self.mFun.mBlock, self.mParamTypes, self.mParamNames, info).catch {
-            result = false;
+            return false;
         }
     }
     
     info.come_fun = come_fun;
     
-    return result;
+    return true;
 }
 
 struct sLambdaNode {

@@ -22,7 +22,7 @@ bool operator_overload_fun(sType* type, char* fun_name, CVALUE* left_value, CVAL
             if(generics_fun) {
                 if(!create_generics_fun(fun_name2, generics_fun, type, info))
                 {
-                    fprintf(stderr, "%s %d: can't create generics function\n", info->sname, info->sline);
+                    fprintf(stderr, "%s %d: can't create generics function(%s)\n", info->sname, info->sline, generics_fun_name);
                     exit(2);
                 }
                 operator_fun = info->funcs[fun_name2];

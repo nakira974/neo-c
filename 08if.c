@@ -138,7 +138,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         sBlock*% else_block = null;
     
         while(1) {
-            char* saved_p = info->p.p;
+            char* saved_p = info->p;
             int saved_sline = info->sline;
     
             /// else ///
@@ -175,7 +175,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
                 }
             }
             else {
-                info->p.p = saved_p;
+                info->p = saved_p;
                 info->sline = saved_sline;
                 break;
             }

@@ -217,18 +217,21 @@ bool sListNode*::compile(sListNode* self, sInfo* info)
     }
     list_value_source.append_char('}');
     
-    char* p = info.p.p;
+    char* p = info.p;
     char* head = info.head;
     int sline = info.sline;
+    buffer*% source3 = info.source;
     
-    info.p = list_value_source.to_pointer();
-    info.head = info.p.p;
+    info.source = list_value_source;
+    info.p = info.source.buf;
+    info.head = info.source.buf;
     
     sBlock*% block = parse_block(info, true@no_block_level).catch { return false; }
     
     transpile_block(block, null, null, info, true@no_var_table);
     
-    info.p.p = p;
+    info.source = source3;
+    info.p = p;
     info.head = head;
     info.sline = sline;
     
@@ -340,18 +343,21 @@ bool sMapNode*::compile(sMapNode* self, sInfo* info)
     }
     map_value_source.append_char('}');
     
-    char* p = info.p.p;
+    buffer*% source3 = info.source;
+    char* p = info.p;
     char* head = info.head;
     int sline = info.sline;
     
-    info.p = map_value_source.to_pointer();
-    info.head = info.p.p;
+    info.source = map_value_source
+    info.p = info.source.buf;
+    info.head = info.source.buf;
     
     sBlock*% block = parse_block(info, true@no_block_level).catch { return false; }
     
     transpile_block(block, null, null, info, true@no_var_table);
     
-    info.p.p = p;
+    info.source = source3;
+    info.p = p;
     info.head = head;
     info.sline = sline;
     
@@ -399,7 +405,7 @@ exception sNode*% expression_node(sInfo* info) version 98
             if(*info->p == '"') {
                 info->p++;
                 
-                char* p = info->p.p;
+                char* p = info->p;
                 int sline = info->sline;
                 
                 skip_spaces_and_lf(info);
@@ -410,7 +416,7 @@ exception sNode*% expression_node(sInfo* info) version 98
                     info->p++;
                 }
                 else {
-                    info->p.p = p;
+                    info->p = p;
                     info->sline = sline;
                     break;
                 }
@@ -713,7 +719,7 @@ exception sNode*% expression_node(sInfo* info) version 98
             if(*info->p == '"') {
                 info->p++;
                 
-                char* p = info->p.p;
+                char* p = info->p;
                 int sline = info->sline;
                 
                 skip_spaces_and_lf(info);
@@ -722,7 +728,7 @@ exception sNode*% expression_node(sInfo* info) version 98
                     info->p++;
                 }
                 else {
-                    info->p.p = p;
+                    info->p = p;
                     info->sline = sline;
                     break;
                 }
@@ -847,7 +853,7 @@ exception sNode*% expression_node(sInfo* info) version 98
         info->p++;
         skip_spaces_and_lf(info);
         
-        char* p = info.p.p;
+        char* p = info.p;
         
         bool no_comma = info.no_comma;
         info.no_comma = true;
@@ -856,7 +862,7 @@ exception sNode*% expression_node(sInfo* info) version 98
         
         info.no_comma = no_comma;
         
-        char* p2 = info.p.p;
+        char* p2 = info.p;
         
         buffer*% first_element_source = new buffer();
         
@@ -882,13 +888,13 @@ exception sNode*% expression_node(sInfo* info) version 98
             bool no_comma = info.no_comma;
             info.no_comma = true;
             
-            char* p = info.p.p;
+            char* p = info.p;
             
             sNode*% node2 = expression(info) throws;
             
             info.no_comma = no_comma;
             
-            char* p2 = info.p.p;
+            char* p2 = info.p;
             
             buffer*% map_element_source = new buffer();
             map_element_source.append(p, p2 - p);
@@ -910,13 +916,13 @@ exception sNode*% expression_node(sInfo* info) version 98
                     bool no_comma = info.no_comma;
                     info.no_comma = true;
                     
-                    char* p = info.p.p;
+                    char* p = info.p;
                     
                     sNode*% node2 = expression(info) throws;
                     
                     info.no_comma = no_comma;
                     
-                    char* p2 = info.p.p;
+                    char* p2 = info.p;
                     
                     buffer*% key_source = new buffer();
                     key_source.append(p, p2 - p);
@@ -930,13 +936,13 @@ exception sNode*% expression_node(sInfo* info) version 98
                     no_comma = info.no_comma;
                     info.no_comma = true;
                     
-                    p = info.p.p;
+                    p = info.p;
                     
                     sNode*% node3 = expression(info) throws;
                     
                     info.no_comma = no_comma;
                     
-                    p2 = info.p.p;
+                    p2 = info.p;
                     
                     buffer*% element_source = new buffer();
                     element_source.append(p, p2 - p);
@@ -986,13 +992,13 @@ exception sNode*% expression_node(sInfo* info) version 98
                 bool no_comma = info.no_comma;
                 info.no_comma = true;
                 
-                char* p = info.p.p;
+                char* p = info.p;
                 
                 sNode*% node2 = expression(info) throws;
                 
                 info.no_comma = no_comma;
                 
-                char* p2 = info.p.p;
+                char* p2 = info.p;
                 
                 buffer*% element_source = new buffer();
                 element_source.append(p, p2 - p);

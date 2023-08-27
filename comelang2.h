@@ -204,7 +204,57 @@ impl list <T>
             delete borrow prev_it;
         }
     }
+    list<T>*% clone(list<T>* self) {
+        if(self == null) {
+            return null;
+        }
+        var result = new list<T>.initialize();
+
+        list_item<T>*? it = self.head;
+        while(it != null) {
+            result.push_back2(clone it.item);
+
+            it = it.next;
+        }
+
+        return result;
+    }
     void push_back(list<T>* self, T item)
+    {
+        if(self.len == 0) {
+            list_item<T>* litem = borrow new list_item<T>;
+            
+            litem.prev = null;
+            litem.next = null;
+            litem.item = item;
+            
+            self.tail = litem;
+            self.head = litem;
+        }
+        else if(self.len == 1) {
+            list_item<T>* litem = borrow new list_item<T>;
+
+            litem.prev = self.head;
+            litem.next = null;
+            litem.item = item;
+            
+            self.tail = litem;
+            self.head.next = litem;
+        }
+        else {
+            list_item<T>* litem = borrow new list_item<T>;
+
+            litem.prev = self.tail;
+            litem.next = null;
+            litem.item = item;
+            
+            self.tail.next = litem;
+            self.tail = litem;
+        }
+
+        self.len++;
+    }
+    void push_back2(list<T>* self, T item)
     {
         if(self.len == 0) {
             list_item<T>* litem = borrow new list_item<T>;
@@ -734,6 +784,22 @@ impl map <T, T2>
 
         delete borrow self.item_existance;
     }
+    map<T, T2>*% clone(map<T, T2>* self)
+    {
+        if(self == null) {
+            return null;
+        }
+        var result = new map<T,T2>.initialize();
+
+        for(var it = self.begin(); !self.end(); it = self.next()) {
+            T2& default_value;
+            var it2 = self.at(it, default_value);
+
+            result.insert2(clone it, clone it2);
+        }
+
+        return result;
+    }
     
     T2& at(map<T, T2>* self, T& key, T2& default_value) {
         int hash = ((T)key).get_hash_key() % self.size;
@@ -917,6 +983,80 @@ impl map <T, T2>
             self.key_list.push_back(key);
         }
     }
+    void insert2(map<T,T2>* self, T key, T2 item) {
+        if(self.len*2 >= self.size) {
+            self.rehash();
+        }
+
+        int hash = key.get_hash_key() % self.size;
+        int it = hash;
+
+        while(true) {
+            if(self.item_existance[it])
+            {
+                if(self.keys[it].equals(key)) 
+                {
+                    if(isheap(T)) {
+                        delete borrow self.keys[it];
+                        self.keys[it] = borrow gc_inc(key);
+                    }
+                    else {
+                        self.keys[it] = borrow key;
+                    }
+                    if(isheap(T2)) {
+                        delete borrow self.items[it];
+                        self.items[it] = borrow gc_inc(item);
+                    }
+                    else {
+                        self.items[it] = borrow item;
+                    }
+                    break;
+                }
+
+                it++;
+
+                if(it >= self.size) {
+                    it = 0;
+                }
+                else if(it == hash) {
+                    fprintf(stderr, "unexpected error in map.insert\n");
+                    exit(2);
+                }
+            }
+            else {
+                self.item_existance[it] = true;
+                if(isheap(T)) {
+                    delete borrow self.keys[it];
+                    self.keys[it] = borrow gc_inc(key);
+                }
+                else {
+                    self.keys[it] = borrow key;
+                }
+                if(isheap(T2)) {
+                    delete borrow self.items[it];
+                    self.items[it] = borrow gc_inc(item);
+                }
+                else {
+                    self.items[it] = item;
+                }
+
+                self.len++;
+
+                break;
+            }
+        }
+        
+        bool same_key_exist = false;
+        foreach(it2, self.key_list) {
+            if(it2.equals(key)) {
+                same_key_exist = true;
+            }
+        }
+        
+        if(!same_key_exist) {
+            self.key_list.push_back(key);
+        }
+    }
     
     T2& operator_load_element(map<T, T2>* self, T& key) {
         T2& default_value;
@@ -998,4 +1138,59 @@ static inline unsigned int char*::get_hash_key(char* value)
 static inline unsigned int bool::get_hash_key(bool value)
 {
     return (((int)value).get_hash_key());
+}
+
+struct tuple1<T>
+{
+    T v1;
+};
+
+impl tuple1 <T>
+{
+    tuple1<T>*% initialize(tuple1<T>*% self, T v1)
+    {
+        self.v1 = v1;
+        
+        return self;
+    }
+}
+
+static inline int int::clone(int self)
+{
+    return self;
+}
+
+static inline char* char*::clone(char* self)
+{
+    return self;
+}
+
+static inline string string::clone(string self)
+{
+    return string(self);
+}
+
+static inline long long int long::clone(long self)
+{
+    return self;
+}
+
+static inline short int short::clone(short self)
+{
+    return self;
+}
+
+static inline char char::clone(char self)
+{
+    return self;
+}
+
+static inline double double::clone(double self)
+{
+    return self;
+}
+
+static inline float float::clone(float self)
+{
+    return self;
 }

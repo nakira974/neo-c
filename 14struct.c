@@ -400,7 +400,7 @@ exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info)
                 }
                 parse_sharp(info);
             }
-            char* header_tail = info.p.p;
+            char* header_tail = info.p;
             
             info.generics_type_names.reset();
             

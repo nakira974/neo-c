@@ -388,7 +388,8 @@ typedef int (*__compar_fn_t)(const void*,const void*);
 typedef char*% string;
 struct sData
 {
-    char _unused2[15*sizeof(int)-4*sizeof(void*)-sizeof(int)];
+    int a;
+    int b;
 };
 
 void __init_a_c__();
@@ -850,6 +851,8 @@ extern int getsubopt (char **restrict __optionp,
      ;
 extern int getloadavg (double __loadavg[], int __nelem)
      ;
+int fun(int a, int b)
+;
 int main(int argc, char** argv)
 ;
 void method_block1(struct __current_stack1__* parent,int it,int it2,_Bool* it3)

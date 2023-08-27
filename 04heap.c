@@ -383,6 +383,82 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
     info.stack = stack_saved;
 }
 
+string clone_object(sType* type, char* obj, sInfo* info)
+{
+    string result = null
+    var stack_saved = info.stack;
+    var right_value_objects = info->right_value_objects;
+    
+    string c_value = string(obj);
+    
+    sClass* klass = type->mClass;
+    
+    char* class_name = klass->mName;
+
+    char* fun_name = "clone";
+    
+    sType*% type2 = clone type;
+    type2->mHeap = false;
+    
+    string fun_name2 = create_method_name(type2, false@no_pointer_name, fun_name, info);
+    
+    sFun* cloner = NULL;
+    if(type->mGenericsTypes.length() > 0) {
+        cloner = info->funcs[fun_name2];
+        
+        if(cloner == NULL) {
+            string generics_fun_name = xsprintf("%s_%s", type->mGenericsName, fun_name);
+            sGenericsFun* generics_fun = info->generics_funcs[generics_fun_name];
+            
+            if(generics_fun) {
+                if(!create_generics_fun(fun_name2, generics_fun, type, info))
+                {
+                    fprintf(stderr, "%s %d: can't create generics cloner\n", info->sname, info->sline);
+                    exit(2);
+                }
+                cloner = info->funcs[fun_name2];
+            }
+        }
+    }
+    else {
+        int i;
+        for(i=FUN_VERSION_MAX-1; i>=1; i--) {
+            string new_fun_name = xsprintf("%s_v%d", fun_name2, i);
+            cloner = info->funcs[new_fun_name];
+            
+            if(cloner) {
+                fun_name2 = string(new_fun_name);
+                break;
+            }
+        }
+        
+        if(cloner == NULL) {
+            cloner = info->funcs[fun_name2];
+        }
+    }
+    
+    if(cloner == NULL && !type->mProtocol && !type->mNumber 
+        && gComelang)
+    {
+        var fun,new_fun_name = create_cloner_automatically(type, fun_name, info).catch { exit(1); }
+        
+        fun_name2 = new_fun_name;
+        cloner = fun;
+    }
+
+    /// call cloner ///
+    if(cloner != null) {
+        result = xsprintf("%s(%s)", fun_name2, c_value);
+    }
+    else {
+    }
+    
+    info.right_value_objects = right_value_objects;
+    info.stack = stack_saved;
+    
+    return result;
+}
+
 void free_right_value_objects(sInfo* info)
 {
     var right_value_objects = info->right_value_objects;

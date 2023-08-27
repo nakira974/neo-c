@@ -45,7 +45,7 @@ exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info)
         while(*info->p != '}') {
             parse_sharp(info);
             
-            char* head = info.p.p;
+            char* head = info.p;
             string buf = parse_word(info) throws;
             
             parse_sharp(info);

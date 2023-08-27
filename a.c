@@ -1,14 +1,45 @@
 #include <comelang2.h>
+int fun(int a, int b)
+{
+    return a + b;
+}
+
+struct sData
+{
+    int a;
+    int b;
+};
+
+struct sData2<T>
+{
+    T a;
+    T b;
+};
+
+impl sData2<T>
+{
+    void fun(sData2<T>* self, T a, T b)
+    {
+        self.a = a;
+        self.b = b;
+    }
+}
 
 int main(int argc, char** argv)
 {
-    [1,2,3,4,5].each {
+    sData2<int> data2;
+    
+    (&data2).fun(1,2);
+    
+    list<int>*% li = new list<int>.initialize();
+    
+    li.push_back(1);
+    li.push_back(2);
+    li.push_back(3);
+    
+    li.each {
         printf("%d\n", it);
     }
-    
-    xassert("list equals test", [1,2,3] === [1,2,3]);
-    
-    xassert("map equals test", ["AAA":1, "BBB":2] === ["AAA":1, "BBB":2]);
     
     return 0;
 }

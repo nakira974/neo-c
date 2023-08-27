@@ -288,6 +288,55 @@ bool sBorrowNode*::compile(sBorrowNode* self, sInfo* info)
     return true;
 }
 
+struct sCloneNode {
+    sNode*% node;
+    int sline;
+    string sname;
+};
+
+sCloneNode*% sCloneNode*::initialize(sCloneNode*% self, sNode*% node, sInfo* info)
+{
+    self.node = clone node;
+    
+    self.sline = info.sline;
+    self.sname = string(info.sname);
+    
+    return self;
+}
+
+int sCloneNode*::sline(sCloneNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sCloneNode*::sname(sCloneNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+bool sCloneNode*::compile(sCloneNode* self, sInfo* info)
+{
+    sNode* node = self.node;
+    
+    if(!node.compile->(info)) {
+        return false;
+    }
+    
+    CVALUE*% left_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
+    
+    sType*% left_type = clone left_value.type;
+    
+    CVALUE*% come_value = new CVALUE;
+    come_value.c_value = clone_object(left_type, left_value.c_value, info);
+    come_value.type = clone left_value.type;
+    come_value.var = null;
+    
+    info.stack.push_back(come_value);
+    
+    return true;
+}
+
 struct sDummyHeapNode {
     sNode*% node;
     int sline;
@@ -506,6 +555,11 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
          
          return new sNode(new sBorrowNode(node, info));
     }
+    else if(buf === "clone") {
+         sNode*% node = expression(info) throws;
+         
+         return new sNode(new sCloneNode(node, info));
+    }
     else if(buf === "dummy_heap") {
          sNode*% node = expression(info) throws;
          
@@ -544,24 +598,24 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         return new sNode(new sIsHeap(type2, info));
     }
     else if(buf === "using") {
-        if(memcmp(info->p.p, "comelang", strlen("comelang")) == 0) {
+        if(memcmp(info->p, "comelang", strlen("comelang")) == 0) {
             info->p += strlen("comelang");
             skip_spaces_and_lf(info);
             gComelang = true;
         }
-        else if(memcmp(info->p.p, "c", strlen("c")) == 0) {
+        else if(memcmp(info->p, "c", strlen("c")) == 0) {
             info->p += strlen("c");
             skip_spaces_and_lf(info);
             
             gComelang = false;
         }
-        else if(memcmp(info->p.p, "gc", strlen("gc")) == 0) {
+        else if(memcmp(info->p, "gc", strlen("gc")) == 0) {
             info->p += strlen("gc");
             skip_spaces_and_lf(info);
             
             gGC = true;
         }
-        else if(memcmp(info->p.p, "no-gc", strlen("no-gc")) == 0) {
+        else if(memcmp(info->p, "no-gc", strlen("no-gc")) == 0) {
             info->p += strlen("no-gc");
             skip_spaces_and_lf(info);
             
@@ -578,7 +632,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         /// backtrace ///
         bool is_type_name_flag = false;
         {
-            char* p = info.p.p;
+            char* p = info.p;
             int sline = info.sline;
             
             var word = parse_word(info, true) throws;
@@ -587,7 +641,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
                 is_type_name_flag = true;
             }
             
-            info.p.p = p;
+            info.p = p;
             info.sline = sline;
         }
         
@@ -606,24 +660,24 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
 exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 94
 {
    if(buf === "using") {
-        if(memcmp(info->p.p, "comelang", strlen("comelang")) == 0) {
+        if(memcmp(info->p, "comelang", strlen("comelang")) == 0) {
             info->p += strlen("comelang");
             skip_spaces_and_lf(info);
             gComelang = true;
         }
-        else if(memcmp(info->p.p, "c", strlen("c")) == 0) {
+        else if(memcmp(info->p, "c", strlen("c")) == 0) {
             info->p += strlen("c");
             skip_spaces_and_lf(info);
             
             gComelang = false;
         }
-        else if(memcmp(info->p.p, "gc", strlen("gc")) == 0) {
+        else if(memcmp(info->p, "gc", strlen("gc")) == 0) {
             info->p += strlen("gc");
             skip_spaces_and_lf(info);
             
             gGC = true;
         }
-        else if(memcmp(info->p.p, "no-gc", strlen("no-gc")) == 0) {
+        else if(memcmp(info->p, "no-gc", strlen("no-gc")) == 0) {
             info->p += strlen("no-gc");
             skip_spaces_and_lf(info);
             

@@ -261,6 +261,12 @@ int main()
     
     xassert("list equals", liZ === liZ2);
     
+    xassert("list equals test", [1,2,3] === [1,2,3]);
+    
+    [1,2,3,4,5].each {
+        printf("%d\n", it);
+    }
+    
     return 0;
 }
 

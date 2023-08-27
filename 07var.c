@@ -434,7 +434,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         return node;
     }
     else {
-        info.p.p = head;
+        info.p = head;
         info.sline = head_sline;
         
         info.no_output_err = true;
@@ -443,7 +443,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         
         bool is_type_name_flag = is_type_name(word, info);
         
-        info.p.p = head;
+        info.p = head;
         info.sline = head_sline;
         
         if(is_type_name_flag) {

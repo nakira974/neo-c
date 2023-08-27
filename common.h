@@ -196,8 +196,9 @@ struct sRightValueObject
 
 struct sInfo
 {
-    smart_pointer<char>*% p;
+    char* p;
     char* head;
+    buffer*% source;
     string sname;
     int sline;
     int err_num;
@@ -308,6 +309,7 @@ exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
 sVar* get_variable_from_table(sVarTable* table, char* name);
 void free_objects_on_return(sBlock* current_block, sInfo* info, char* ret_value, bool top_block);
 void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo* info);
+string clone_object(sType* type, char* obj, sInfo* info);
 void free_right_value_objects(sInfo* info);
 void free_objects(sVarTable* table, char* ret_value, sInfo* info);
 string append_object_to_right_values(char* obj, sType*% type, sInfo* info);
@@ -319,6 +321,7 @@ void remove_object_from_right_values(int right_value_num, sInfo* info);
 /// 05function.c ///
 /////////////////////////////////////////////////////////////////////
 exception sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sInfo* info);
+exception sFun*,string create_cloner_automatically(sType* type, char* fun_name, sInfo* info);
 exception string skip_block(sInfo* info);
 bool is_contained_generics_class(sType* type, sInfo* info);
 bool is_type_name(char* buf, sInfo* info);

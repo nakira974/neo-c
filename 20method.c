@@ -256,10 +256,14 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
         
         method_block2.append_str(method_block.to_string());
         
-        var p = info.p;
+        buffer*% source3 = info.source;
+        char* p = info.p;
+        char* head = info.head;
         int sline = info.sline;
         
-        info.p = method_block2.to_pointer();
+        info.source = method_block2;
+        info.p = info.source.buf;
+        info.head = info.source.buf;
         info.sline = method_block_sline;
         
         sNode*% node = parse_function(info).catch {
@@ -289,7 +293,9 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
         
         come_params.push_back(come_value2);
         
+        info.source = source3;
         info.p = p;
+        info.head = head;
         info.sline = sline;
         
         info->current_stack_frame_struct = current_stack_frame_struct;
@@ -370,12 +376,12 @@ exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) v
     buffer*% method_block = null;
     int method_block_sline = 0;
     if(*info->p == '{') {
-        char* head = info.p.p;
+        char* head = info.p;
         method_block_sline = info.sline;
         
         skip_block(info) throws;
         
-        char* tail = info.p.p;
+        char* tail = info.p;
         
         method_block = new buffer();
         

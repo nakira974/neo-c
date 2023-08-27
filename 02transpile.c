@@ -352,7 +352,7 @@ void init_module(sInfo* info)
                 
 void output_err_source_code(sInfo* info)
 {
-    char* p = info.p.p;
+    char* p = info.p;
     while(*p != '\n' && p >= info.head) {
         p--;
     }
@@ -364,7 +364,7 @@ void output_err_source_code(sInfo* info)
         head = p;
     }
     
-    p = info.p.p;
+    p = info.p;
     while(*p != '\0' && *p != '\n') {
         p++;
     }
@@ -454,8 +454,9 @@ int come_main(int argc, char** argv) version 2
             exit(2);
         }
         
-        info.p = xsprintf("%s.i", it).read().to_buffer().to_pointer();
-        info.head = info.p.p;
+        info.source = xsprintf("%s.i", it).read().to_buffer();
+        info.p = info.source.buf;
+        info.head = info.source.buf;
         
         if(!output_cpp_file) {
             transpile(&info).catch {

@@ -71,6 +71,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         string buf2 = parse_word(info) throws;
         
         if(buf2 !== "while") {
+            err_msg(info, "require while");
             throw;
         }
     

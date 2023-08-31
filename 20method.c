@@ -48,7 +48,7 @@ bool sCurrentNode*::compile(sCurrentNode* self, sInfo* info)
         vtable = vtable->mParent;
     }
     
-    define_struct(current_stack, false@come_header, info);
+    output_struct(current_stack, info);
     
     info.classes.insert(class_name, current_stack);
     
@@ -124,6 +124,30 @@ string sMethodCallNode*::sname(sMethodCallNode* self, sInfo* info)
     return string(self.sname);
 }
 
+string make_generics_function(sType* type, string fun_name, sInfo* info)
+{
+    string none_generics_name = get_none_generics_name(type.mClass.mName);
+    
+    sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
+        err_msg(info, "solve generics error");
+        return string("");
+    }
+    
+    string fun_name2 = create_method_name(obj_type, false@no_pointer_name, fun_name, info);
+    string fun_name3 = xsprintf("%s_%s", none_generics_name, fun_name);
+    
+    sGenericsFun* generics_fun = info.generics_funcs.at(fun_name3, null!);
+    
+    if(generics_fun) {
+        if(!create_generics_fun(string(fun_name2), generics_fun, obj_type, info)) {
+            err_msg(info, "%s not found", fun_name3);
+            return string("");
+        }
+    }
+    
+    return fun_name2;
+}
+
 bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
 {
     char* fun_name = self.fun_name;
@@ -139,25 +163,12 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
     CVALUE*% obj_value = get_value_from_stack(-1, info);
     dec_stack_ptr(1, info);
     
-    sType*% obj_type = solve_generics(obj_value.type, info.generics_type, info).catch {
-        return false;
-    }
+    string generics_fun_name = make_generics_function(obj_value.type, string(fun_name), info).to_string();
     
-    string fun_name2 = create_method_name(obj_type, false@no_pointer_name, fun_name, info);
-    string fun_name3 = xsprintf("%s_%s", obj_type->mClass->mNoneGenericsName, fun_name);
-    
-    sGenericsFun* generics_fun = info.generics_funcs.at(fun_name3, null!);
-    
-    if(generics_fun) {
-        if(!create_generics_fun(fun_name2, generics_fun, obj_type, info)) {
-            return false;
-        }
-    }
-    
-    sFun* fun = info.funcs.at(fun_name2, null!);
+    sFun* fun = info.funcs.at(generics_fun_name, null!);
     
     if(fun == null) {
-        err_msg(info, "function not found(%s) at method\n", fun_name2);
+        err_msg(info, "function not found(%s) at method\n", generics_fun_name);
         return false;
     }
     
@@ -169,7 +180,7 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
     int i = 0;
     foreach(it, params) {
         if(i == 0) {
-            if(fun.mParamTypes[i].mHeap) {
+            if(fun.mParamTypes[i].mHeap && obj_value.type.mHeap) {
                 obj_value.c_value = xsprintf("come_increment_ref_count(%s)", obj_value.c_value);
             }
             come_params.push_back(obj_value);
@@ -183,8 +194,8 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
             
             CVALUE*% come_value = get_value_from_stack(-1, info);
             
-            if(fun.mParamTypes[i].mHeap) {
-                come_value.c_value = xsprintf("come_increment_ref_count(%s)", come_value.c_value);
+            if(fun.mParamTypes[i].mHeap && come_value.type.mHeap) {
+                come_value.c_value = xsprintf("come_increment_ref_count(%s) /* aaa */", come_value.c_value);
             }
             come_params.push_back(come_value);
             dec_stack_ptr(1, info);
@@ -303,7 +314,7 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
     
     buffer*% buf = new buffer();
     
-    buf.append_str(fun_name2);
+    buf.append_str(generics_fun_name);
     buf.append_str("(");
     
     int j = 0;

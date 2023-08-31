@@ -60,18 +60,7 @@ bool sEnumNode*::compile(sEnumNode* self, sInfo* info)
     }
     buf.append_str(xsprintf("};\n", type_name));
     
-    if(type_name === "") {
-        add_come_code_at_source_head(info, "%s", buf.to_string());
-        add_come_code_to_auto_come_header(info, "%s", buf.to_string());
-    }
-    else {
-        if(info.enum_typedef_already_output[string(type_name)] == false) {
-            info.enum_typedef_already_output.insert(string(type_name), true);
-            
-            add_come_code_at_source_head(info, "%s", buf.to_string());
-            add_come_code_to_auto_come_header(info, "%s", buf.to_string());
-        }
-    }
+    add_come_code_at_source_head(info, "%s", buf.to_string());
 
     return TRUE;
 }

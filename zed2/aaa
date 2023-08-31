@@ -1,20 +1,20 @@
-==50535== Memcheck, a memory error detector
-==50535== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
-==50535== Using Valgrind-3.19.0 and LibVEX; rerun with -h for copyright info
-==50535== Command: zed2 "AAA".sub_block(/A/g)\ {\ it.lower_case()\ }
-==50535== 
-==50535== 
-==50535== HEAP SUMMARY:
-==50535==     in use at exit: 1,176 bytes in 30 blocks
-==50535==   total heap usage: 348 allocs, 318 frees, 19,941 bytes allocated
-==50535== 
-==50535== LEAK SUMMARY:
-==50535==    definitely lost: 1,176 bytes in 30 blocks
-==50535==    indirectly lost: 0 bytes in 0 blocks
-==50535==      possibly lost: 0 bytes in 0 blocks
-==50535==    still reachable: 0 bytes in 0 blocks
-==50535==         suppressed: 0 bytes in 0 blocks
-==50535== Rerun with --leak-check=full to see details of leaked memory
-==50535== 
-==50535== For lists of detected and suppressed errors, rerun with: -s
-==50535== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==59067== Memcheck, a memory error detector
+==59067== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==59067== Using Valgrind-3.19.0 and LibVEX; rerun with -h for copyright info
+==59067== Command: zed2 "AAA".sub_block(/A/g)\ {\ it.lower_case()\ }
+==59067== 
+==59067== 
+==59067== HEAP SUMMARY:
+==59067==     in use at exit: 1,176 bytes in 30 blocks
+==59067==   total heap usage: 348 allocs, 318 frees, 19,941 bytes allocated
+==59067== 
+==59067== LEAK SUMMARY:
+==59067==    definitely lost: 1,176 bytes in 30 blocks
+==59067==    indirectly lost: 0 bytes in 0 blocks
+==59067==      possibly lost: 0 bytes in 0 blocks
+==59067==    still reachable: 0 bytes in 0 blocks
+==59067==         suppressed: 0 bytes in 0 blocks
+==59067== Rerun with --leak-check=full to see details of leaked memory
+==59067== 
+==59067== For lists of detected and suppressed errors, rerun with: -s
+==59067== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

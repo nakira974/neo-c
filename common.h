@@ -27,12 +27,13 @@ struct sClass {
     bool mEnum;
     
     string mName;
-    string mNoneGenericsName;
     
     int mGenericsNum;
     int mMethodGenericsNum;
     
     list<tuple2<string, sType*%>*%>*% mFields;
+    
+    bool mOutputed;
 };
 
 struct sInfo;
@@ -213,6 +214,7 @@ struct sInfo
     map<string, sGenericsFun*%>*% generics_funcs;
     map<string, sClass*%>*% classes;
     map<string, sType*%>*% types;
+    map<string, sClass*%>*% generics_classes;
     sModule*% module;
     
     sType*% type;
@@ -241,14 +243,6 @@ struct sInfo
     list<sType*%>*? param_types;
     list<string>*? param_names;
     
-    buffer*% auto_come_header;
-    
-    map<string, bool>*% enum_typedef_already_output;
-    
-    string module_initializer_name;
-    string module_finalizer_name;
-    map<string, sNode*%>%* global_variable_initialize_node;
-    
     bool define_struct;
 };
 
@@ -272,7 +266,7 @@ sVarTable*% sVarTable*::initialize(sVarTable*% self, bool global, sVarTable* par
 void sVarTable*::finalize(sVarTable* self);
 sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool union_=false, bool generics=false, bool method_generics=false, bool protocol_=false, bool struct_=false, bool float_=false, int generics_num=-1, int method_generics_num=-1, bool enum_=false);
 sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, bool external, bool var_args, sBlock*% block, bool static_, string come_header, sInfo* info);
-string make_type_name_string(sType* type, bool in_header, bool array_cast_pointer, sInfo* info);
+string make_type_name_string(sType* type, bool in_header, bool array_cast_pointer, sInfo* info, bool no_pointer=false);
 string make_come_type_name_string(sType* type, sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
@@ -282,13 +276,10 @@ void come_init() version 3;
 void come_final() version 3;
 
 string header_function(sFun* fun, sInfo* info);
-void add_come_code_to_auto_come_header(sInfo* info, const char* msg, ...);
-void add_come_code_to_init_module_fun(sInfo* info, const char* msg, ...);
-void add_come_code_to_final_module_fun(sInfo* info, const char* msg, ...);
 exception int transpile(sInfo* info) version 3;
 bool output_source_file(sInfo* info) version 3;
 void show_type(sType* type, sInfo* info);
-string create_generics_name(sType* generics_type, bool no_pointer_name, sInfo* info);
+string create_generics_name(sType* generics_type, sInfo* info);
 void add_last_code_to_source(sInfo* info);
 void add_come_code_at_function_head(sInfo* info, char* code, ...);
 void add_come_code_at_function_head2(sInfo* info, char* code, ...);
@@ -305,6 +296,8 @@ void transpiler_clear_last_code(sInfo* info);
 /////////////////////////////////////////////////////////////////////
 /// 04heap.c ///
 /////////////////////////////////////////////////////////////////////
+bool create_equals_method(sType* type, sInfo* info);
+bool create_operator_equals_method(sType* type, sInfo* info);
 exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info);
 sVar* get_variable_from_table(sVarTable* table, char* name);
 void free_objects_on_return(sBlock* current_block, sInfo* info, char* ret_value, bool top_block);
@@ -322,6 +315,8 @@ void remove_object_from_right_values(int right_value_num, sInfo* info);
 /////////////////////////////////////////////////////////////////////
 exception sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sInfo* info);
 exception sFun*,string create_cloner_automatically(sType* type, char* fun_name, sInfo* info);
+exception sFun*,string create_equals_automatically(sType* type, char* fun_name, sInfo* info);
+exception sFun*,string create_operator_equals_automatically(sType* type, char* fun_name, sInfo* info);
 exception string skip_block(sInfo* info);
 bool is_contained_generics_class(sType* type, sInfo* info);
 bool is_type_name(char* buf, sInfo* info);
@@ -355,6 +350,7 @@ string create_method_name(sType* obj_type, bool no_pointer_name, char* fun_name,
 /// 06str.c ///
 /////////////////////////////////////////////////////////////////////
 exception sNode*% expression_node(sInfo* info) version 98;
+exception sNode*% parse_tuple(sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
 /// 07var.c
@@ -400,9 +396,10 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
 /// 14struct.c
 /////////////////////////////////////////////////////////////////////
 exception sNode*% parse_struct(string type_name, sInfo* info);
+string get_none_generics_name(char* class_name);
 exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 98;
-bool define_generics_struct(sType* type, sInfo* info);
-void define_struct(sClass* klass, bool come_header, sInfo* info);
+bool output_generics_struct(sType* type, sInfo* info);
+void output_struct(sClass* klass, sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
 /// 15union.c

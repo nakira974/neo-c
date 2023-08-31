@@ -386,11 +386,6 @@ struct drand48_data
 };
 typedef int (*__compar_fn_t)(const void*,const void*);
 typedef char*% string;
-struct sData
-{
-    int a;
-    int b;
-};
 
 void __init_a_c__();
 void __final_a_c__();
@@ -851,10 +846,6 @@ extern int getsubopt (char **restrict __optionp,
      ;
 extern int getloadavg (double __loadavg[], int __nelem)
      ;
-int fun(int a, int b)
-;
-int main(int argc, char** argv)
-;
-void method_block1(struct __current_stack1__* parent,int it,int it2,_Bool* it3)
+int main()
 ;
 

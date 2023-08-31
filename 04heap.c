@@ -77,20 +77,28 @@ exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
             i++;
         }
         
-        string new_name = create_generics_name(result, false@no_pointer_name, info);
-        if(info.classes[new_name] == null) {
-            if(!define_generics_struct(result, info)) {
-                throw;
-            }
+        string none_generics_name = get_none_generics_name(type->mClass->mName);
+    
+        string new_name = create_generics_name(result, info);
+        
+        if(info.generics_classes[none_generics_name] && info.classes[new_name] == null) {
             if(!is_contained_generics_class(result, info)) {
-                result->mClass = info.classes[new_name];
-                result->mSolvedGenericsName = true;
+                if(!type->mSolvedGenericsName) {
+                    if(!output_generics_struct(result, info)) {
+                        err_msg(info, "output_generics_struct is failed");
+                        throw;
+                    }
+                    
+                    result->mClass = info.classes[new_name];
+                    result->mSolvedGenericsName = true;
+                }
             }
         }
-        else {
+        else if(info.classes[none_generics_name] == null) {
             if(!is_contained_generics_class(result, info)) {
-                result->mClass = info.classes[new_name];
-                result->mSolvedGenericsName = true;
+                if(!type->mSolvedGenericsName) {
+                    result->mClass = info.classes[new_name];
+                }
             }
         }
     }
@@ -156,7 +164,8 @@ exception sType*% solve_method_generics(sType* type, list<sType*%>* method_gener
             }
         }
         else {
-            throw
+            err_msg(info, "method generics is failed");
+            throw;
         }
     }
     else {
@@ -305,7 +314,9 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
             finalizer = info->funcs[fun_name2];
             
             if(finalizer == NULL) {
-                string generics_fun_name = xsprintf("%s_%s", type->mGenericsName, fun_name);
+                string none_generics_name = get_none_generics_name(type2.mClass.mName);
+                
+                string generics_fun_name = xsprintf("%s_%s", none_generics_name, fun_name);
                 sGenericsFun* generics_fun = info->generics_funcs[generics_fun_name];
                 
                 if(generics_fun) {
@@ -356,6 +367,7 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
             if(klass->mStruct && type->mPointerNum == 0) {
                 foreach(it, klass->mFields) {
                     var name, field_type = it;
+                    
                     if(field_type->mHeap && field_type->mPointerNum > 0) {
                         string obj = xsprintf("(%s.%s)", c_value, name);
                         free_object(field_type, obj, no_decrement, no_free, info);
@@ -365,6 +377,7 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
             else if(klass->mStruct && type->mPointerNum == 1) {
                 foreach(it, klass->mFields) {
                     var name, field_type = it;
+                    
                     if(field_type->mHeap && field_type->mPointerNum > 0) {
                         string obj = xsprintf("(%s->%s)", c_value, name);
                         free_object(field_type, obj, no_decrement, no_free, info);
@@ -400,27 +413,32 @@ string clone_object(sType* type, char* obj, sInfo* info)
     sType*% type2 = clone type;
     type2->mHeap = false;
     
-    string fun_name2 = create_method_name(type2, false@no_pointer_name, fun_name, info);
-    
     sFun* cloner = NULL;
+    string fun_name2;
     if(type->mGenericsTypes.length() > 0) {
-        cloner = info->funcs[fun_name2];
+        string none_generics_name = get_none_generics_name(type.mClass.mName);
         
-        if(cloner == NULL) {
-            string generics_fun_name = xsprintf("%s_%s", type->mGenericsName, fun_name);
-            sGenericsFun* generics_fun = info->generics_funcs[generics_fun_name];
-            
-            if(generics_fun) {
-                if(!create_generics_fun(fun_name2, generics_fun, type, info))
-                {
-                    fprintf(stderr, "%s %d: can't create generics cloner\n", info->sname, info->sline);
-                    exit(2);
-                }
-                cloner = info->funcs[fun_name2];
+        sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
+            err_msg(info, "solve generics error");
+            return string("");
+        }
+        
+        fun_name2 = create_method_name(obj_type, false@no_pointer_name, fun_name, info);
+        string fun_name3 = xsprintf("%s_%s", none_generics_name, fun_name);
+        
+        sGenericsFun* generics_fun = info.generics_funcs.at(fun_name3, null!);
+        
+        if(generics_fun) {
+            if(!create_generics_fun(string(fun_name2), generics_fun, obj_type, info)) {
+                return string("");
             }
         }
+        
+        cloner = info->funcs[fun_name2];
     }
     else {
+        fun_name2 = create_method_name(type, false@no_pointer_name, fun_name, info);
+        
         int i;
         for(i=FUN_VERSION_MAX-1; i>=1; i--) {
             string new_fun_name = xsprintf("%s_v%d", fun_name2, i);
@@ -457,6 +475,150 @@ string clone_object(sType* type, char* obj, sInfo* info)
     info.stack = stack_saved;
     
     return result;
+}
+
+bool create_equals_method(sType* type, sInfo* info)
+{
+    string result = null
+    var stack_saved = info.stack;
+    var right_value_objects = info->right_value_objects;
+    
+    sClass* klass = type->mClass;
+    
+    char* class_name = klass->mName;
+
+    char* fun_name = "equals";
+    
+    sType*% type2 = clone type;
+    type2->mHeap = false;
+    
+    sFun* cloner = NULL;
+    string fun_name2;
+    if(type->mGenericsTypes.length() > 0) {
+        string none_generics_name = get_none_generics_name(type.mClass.mName);
+        
+        sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
+            err_msg(info, "solve generics error");
+            return false;
+        }
+        
+        fun_name2 = create_method_name(obj_type, false@no_pointer_name, fun_name, info);
+        string fun_name3 = xsprintf("%s_%s", none_generics_name, fun_name);
+        
+        sGenericsFun* generics_fun = info.generics_funcs.at(fun_name3, null!);
+        
+        if(generics_fun) {
+            if(!create_generics_fun(string(fun_name2), generics_fun, obj_type, info)) {
+                return false;
+            }
+        }
+        
+        cloner = info->funcs[fun_name2];
+    }
+    else {
+        fun_name2 = create_method_name(type, false@no_pointer_name, fun_name, info);
+        
+        int i;
+        for(i=FUN_VERSION_MAX-1; i>=1; i--) {
+            string new_fun_name = xsprintf("%s_v%d", fun_name2, i);
+            cloner = info->funcs[new_fun_name];
+            
+            if(cloner) {
+                fun_name2 = string(new_fun_name);
+                break;
+            }
+        }
+        
+        if(cloner == NULL) {
+            cloner = info->funcs[fun_name2];
+        }
+    }
+    
+    if(cloner == NULL && !type->mProtocol && !type->mNumber 
+        && gComelang)
+    {
+        var fun,new_fun_name = create_equals_automatically(type, fun_name, info).catch { exit(1); }
+        
+        fun_name2 = new_fun_name;
+        cloner = fun;
+    }
+
+    info.right_value_objects = right_value_objects;
+    info.stack = stack_saved;
+    
+    return true;
+}
+
+bool create_operator_equals_method(sType* type, sInfo* info)
+{
+    string result = null
+    var stack_saved = info.stack;
+    var right_value_objects = info->right_value_objects;
+    
+    sClass* klass = type->mClass;
+    
+    char* class_name = klass->mName;
+
+    char* fun_name = "operator_equals";
+    
+    sType*% type2 = clone type;
+    type2->mHeap = false;
+    
+    sFun* cloner = NULL;
+    string fun_name2;
+    if(type->mGenericsTypes.length() > 0) {
+        string none_generics_name = get_none_generics_name(type.mClass.mName);
+        
+        sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
+            err_msg(info, "solve generics error");
+            return false;
+        }
+        
+        fun_name2 = create_method_name(obj_type, false@no_pointer_name, fun_name, info);
+        string fun_name3 = xsprintf("%s_%s", none_generics_name, fun_name);
+        
+        sGenericsFun* generics_fun = info.generics_funcs.at(fun_name3, null!);
+        
+        if(generics_fun) {
+            if(!create_generics_fun(string(fun_name2), generics_fun, obj_type, info)) {
+                return false;
+            }
+        }
+        
+        cloner = info->funcs[fun_name2];
+    }
+    else {
+        fun_name2 = create_method_name(type, false@no_pointer_name, fun_name, info);
+        
+        int i;
+        for(i=FUN_VERSION_MAX-1; i>=1; i--) {
+            string new_fun_name = xsprintf("%s_v%d", fun_name2, i);
+            cloner = info->funcs[new_fun_name];
+            
+            if(cloner) {
+                fun_name2 = string(new_fun_name);
+                break;
+            }
+        }
+        
+        if(cloner == NULL) {
+            cloner = info->funcs[fun_name2];
+        }
+    }
+    
+    if(cloner == NULL && !type->mProtocol && !type->mNumber 
+        && gComelang)
+    {
+        var fun,new_fun_name = create_operator_equals_automatically(type, fun_name, info).catch { exit(1); }
+        
+        fun_name2 = new_fun_name;
+        cloner = fun;
+    }
+
+    info.right_value_objects = right_value_objects;
+    info.stack = stack_saved;
+    
+    return true;
 }
 
 void free_right_value_objects(sInfo* info)
@@ -518,7 +680,8 @@ void free_objects(sVarTable* table, char* ret_value, sInfo* info)
         sType* type = p->mType;
         sClass* klass = type->mClass;
         
-        if(type->mHeap && ret_value != null && p->mCValueName === ret_value) {
+        if(type->mHeap && ret_value != null && p->mCValueName === ret_value) 
+        {
             free_object(p->mType, p->mCValueName, false@no_decrement, true@no_free, info);
 
             p->mCValueName = null;

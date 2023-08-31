@@ -116,6 +116,7 @@ int main()
         printf("%d\n", n);
         n++;
     }
+    
     list<string>*% liX = new list<string>.initialize();
     
     liX.push_back(string("ABC"));
@@ -201,7 +202,6 @@ int main()
     li3.push_back(string("CCC"));
     
     li3.replace(0, string("ABC"));
-    
     xassert("list::replace", strcmp(li3.item(0, null), "ABC") == 0 && strcmp(li3.item(1, null), "BBB") == 0 && strcmp(li3.item(2, null), "CCC") == 0);
     
     var li4 = new list<int>.initialize();
@@ -266,6 +266,56 @@ int main()
     [1,2,3,4,5].each {
         printf("%d\n", it);
     }
+    xassert("map equals", ["AAA":1, "BBB":2] === ["AAA":1, "BBB":2]);
+    
+    var m1 = ["AAA":1, "BBB":2];
+    
+    printf("%d %d\n", m1["AAA"], m1["BBB"]);
+    
+    var m2 = clone m1;
+    
+    printf("%d %d\n", m2["AAA"], m2["BBB"]);
+    
+    xassert("map clone", m1 === m2);
+
+    tuple1<int>*% tt1 = new tuple1<int>.initialize(1);
+    
+    tt1.v1 = 111;
+    
+    printf("%d\n", tt1.v1);
+    
+    tuple1<string>*% tt2 = new tuple1<string>.initialize(string("ABC"));
+    
+    tt2.v1 = string("DEF");
+    
+    printf("%s\n", tt2.v1);
+    
+    tuple1<string>*% tt3 = clone tt2;
+    
+    printf("(%s)\n", tt3.v1);
+
+    tuple1<int>*% ttt1 = new tuple1<int>.initialize(1);
+    
+    ttt1.v1 = 111;
+    
+    printf("%d\n", ttt1.v1);
+    
+    tuple1<string>*% ttt2 = new tuple1<string>.initialize(string("ABC"));
+    
+    ttt2.v1 = string("DEF");
+    
+    printf("%s\n", ttt2.v1);
+    
+    tuple1<string>*% ttt3 = clone ttt2;
+    
+    printf("(%s)\n", ttt3.v1);
+    
+    xassert("tuple test", ttt2 === ttt3);
+    
+    tuple2<string, int>*% t4 = (string("ABC"), 5);
+    
+    xassert("tuple test", t4.v1 === string("ABC") && t4.v2 === 5);
+    xassert("tuple testX", ("AAA", 7) === ("AAA", 7));
     
     return 0;
 }

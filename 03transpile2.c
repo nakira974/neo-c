@@ -9,50 +9,8 @@ void come_final() version 3
 }
 
 
-string create_generics_name(sType* generics_type, bool no_pointer_name, sInfo* info)
-{
-    var buf = new buffer();
-    
-    sClass* klass = generics_type->mClass;
-    
-    char* class_name = klass->mName;
-    
-    buf.append_str(class_name);
-    
-    if(generics_type->mSolvedGenericsName) {
-        return buf.to_string();
-    }
-    
 
-//    buf.append_str("p" * generics_type->mPointerNum);
-
-/*
-    if(generics_type->mHeap) {
-        buf.append_str("h");
-    }
-*/
-    
-    if(generics_type->mGenericsTypes.length() > 0) {
-        buf.append_str("_");
-        
-        int i = 0;
-        foreach(it, generics_type->mGenericsTypes) {
-            string type_name = create_generics_name(it, no_pointer_name, info);
-            
-            buf.append_str(type_name);
-    
-            if(i != generics_type->mGenericsTypes.length() -1) {
-                buf.append_str("_");
-            }
-            
-            i++;
-        }
-    }
-    
-    return buf.to_string();
-}
-
-string make_type_name_string(sType* type, bool in_header, bool array_cast_pointer, sInfo* info)
+string make_type_name_string(sType* type, bool in_header, bool array_cast_pointer, sInfo* info, bool no_pointer=false)
 {
     var buf = new buffer();
     
@@ -84,94 +42,80 @@ string make_type_name_string(sType* type, bool in_header, bool array_cast_pointe
         buf.append_str("short ");
     }
     
-/*
-    if(type->mGenericsTypes.length() > 0) {
-        string struct_name = create_generics_name(type, info);
-        
-        buf.append_str("struct ");
-        buf.append_str(struct_name);
-    }
-    else {
-*/
-        if(type->mStruct) {
-            if(class_name === "__builtin_va_list") {
-                if(in_header) {
-                    buf.append_str(class_name);
-                }
-                else {
-                    buf.append_str("va_list");
-                }
-            }
-/*
-            else if(type->mOriginalTypeName !== "") {
-                buf.append_str(type->mOriginalTypeName);
-            }
-*/
-            else {
-                buf.append_str("struct ");
+    if(type->mStruct) {
+        if(class_name === "__builtin_va_list") {
+            if(in_header) {
                 buf.append_str(class_name);
             }
-        }
-        else if(type->mUnion) {
-            buf.append_str("union ");
-            buf.append_str(class_name);
-        }
-        else if(type->mEnum) {
-            buf.append_str("enum ");
-            buf.append_str(class_name);
-        }
-        else if(type->mLongLong) {
-            if(class_name === "int") {
-                buf.append_str("long long int");
+            else {
+                buf.append_str("va_list");
             }
-            else if(class_name === "long") {
-                buf.append_str("long long");
-            }
-        }
-        else if(type->mLong) {
-            if(class_name === "int") {
-                buf.append_str("long int");
-            }
-            else if(class_name === "long") {
-                buf.append_str("long long");
-            }
-            else if(class_name === "double") {
-                buf.append_str("long double");
-            }
-        }
-        else if(class_name === "long") {
-            buf.append_str("long");
-        }
-        else if(class_name === "bool") {
-            buf.append_str("_Bool");
-        }
-        else if(class_name === "lambda") {
-            string result_type_str = make_type_name_string(type->mResultType.0, in_header, false@array_cast_pointer, info);
-            buf.append_str(result_type_str);
-            buf.append_str(" (*)(");
-            
-            int j = 0;
-            foreach(it, type->mParamTypes) {
-                string param_type_str = make_type_name_string(it, in_header, false@array_cast_pointer, info);
-                
-                if(j != type->mParamTypes.length()-1) {
-                    buf.append_str(",");
-                }
-                j++;
-            }
-            buf.append_str(")");
         }
         else {
+            buf.append_str("struct ");
             buf.append_str(class_name);
         }
+    }
+    else if(type->mUnion) {
+        buf.append_str("union ");
+        buf.append_str(class_name);
+    }
+    else if(type->mEnum) {
+        buf.append_str("enum ");
+        buf.append_str(class_name);
+    }
+    else if(type->mLongLong) {
+        if(class_name === "int") {
+            buf.append_str("long long int");
+        }
+        else if(class_name === "long") {
+            buf.append_str("long long");
+        }
+    }
+    else if(type->mLong) {
+        if(class_name === "int") {
+            buf.append_str("long int");
+        }
+        else if(class_name === "long") {
+            buf.append_str("long long");
+        }
+        else if(class_name === "double") {
+            buf.append_str("long double");
+        }
+    }
+    else if(class_name === "long") {
+        buf.append_str("long");
+    }
+    else if(class_name === "bool") {
+        buf.append_str("_Bool");
+    }
+    else if(class_name === "lambda") {
+        string result_type_str = make_type_name_string(type->mResultType.0, in_header, false@array_cast_pointer, info);
+        buf.append_str(result_type_str);
+        buf.append_str(" (*)(");
+        
+        int j = 0;
+        foreach(it, type->mParamTypes) {
+            string param_type_str = make_type_name_string(it, in_header, false@array_cast_pointer, info);
+            
+            if(j != type->mParamTypes.length()-1) {
+                buf.append_str(",");
+            }
+            j++;
+        }
+        buf.append_str(")");
+    }
+    else {
+        buf.append_str(class_name);
+    }
     
-    if(type->mNoArrayPointerNum == 0 && class_name !== "lambda") {
+    if(type->mNoArrayPointerNum == 0 && class_name !== "lambda" && !no_pointer) {
         for(int i=0; i<type->mPointerNum; i++) {
             buf.append_str("*");
         }
     }
     
-    if(array_cast_pointer && type->mArrayNum.length() > 0) {
+    if(array_cast_pointer && type->mArrayNum.length() > 0 && !no_pointer) {
         buf.append_str("*");
     }
     
@@ -632,75 +576,6 @@ void add_come_code(sInfo* info, const char* msg, ...)
     }
 }
 
-void add_come_code_to_init_module_fun(sInfo* info, const char* msg, ...)
-{
-    if(info->no_output_come_code) {
-        return;
-    }
-    char msg2[COME_CODE_MAX];
-
-    va_list args;
-    va_start(args, msg);
-    vsnprintf(msg2, COME_CODE_MAX, msg, args);
-    va_end(args);
-    
-    sFun* module_initializer = info.funcs[info.module_initializer_name];
-    
-    if(module_initializer) {
-        int i;
-        for(i=0; i<info->block_level; i++) {
-            module_initializer.mSource.append_str("    ");
-        }
-        module_initializer.mSource.append_str(xsprintf("%s", msg2));
-    }
-    else {
-        err_msg(info, "no module initializer");
-        exit(2);
-    }
-}
-
-void add_come_code_to_final_module_fun(sInfo* info, const char* msg, ...)
-{
-    if(info->no_output_come_code) {
-        return;
-    }
-    char msg2[COME_CODE_MAX];
-
-    va_list args;
-    va_start(args, msg);
-    vsnprintf(msg2, COME_CODE_MAX, msg, args);
-    va_end(args);
-    
-    sFun* module_finalizer = info.funcs[info.module_finalizer_name];
-    
-    if(module_finalizer) {
-        int i;
-        for(i=0; i<info->block_level; i++) {
-            module_finalizer.mSource.append_str("    ");
-        }
-        module_finalizer.mSource.append_str(xsprintf("%s", msg2));
-    }
-    else {
-        err_msg(info, "no module initializer");
-        exit(2);
-    }
-}
-
-void add_come_code_to_auto_come_header(sInfo* info, const char* msg, ...)
-{
-    if(info->no_output_come_code) {
-        return;
-    }
-    char msg2[COME_CODE_MAX];
-
-    va_list args;
-    va_start(args, msg);
-    vsnprintf(msg2, COME_CODE_MAX, msg, args);
-    va_end(args);
-    
-    info.auto_come_header.append_str(xsprintf("%s", msg2));
-}
-
 void add_come_code_at_source_head(sInfo* info, const char* msg, ...)
 {
     if(info->no_output_come_code) {
@@ -743,27 +618,6 @@ exception int transpile(sInfo* info) version 3
 
 bool output_source_file(sInfo* info) version 3
 {
-    /// calling module initializer ///
-    sFun* module_initializer = info.funcs[info.module_initializer_name];
-    
-    sFun* fun = info.come_fun;
-    info.come_fun = module_initializer;
-    
-    foreach(var_name, info.global_variable_initialize_node) {
-        var node = info.global_variable_initialize_node[var_name];
-        
-        if(!node.compile->(info)) {
-            return false;
-        }
-        
-        CVALUE*% come_value = get_value_from_stack(-1, info);
-        dec_stack_ptr(1, info);
-        
-        add_come_code_to_init_module_fun(info, "%s=%s;\n", var_name, come_value.c_value);
-    }
-    
-    info.come_fun = fun;
-    
     /// go ///
     string output_file_name = xsprintf("%s.c", info.sname);
     
@@ -819,24 +673,6 @@ bool output_source_file(sInfo* info) version 3
     }
     
     fclose(f);
-    
-    string output_header = xsprintf("%s.ach", info.sname);
-    
-    FILE* f2 = fopen(output_header, "w");
-    
-    fprintf(f2, "%s\n", info.auto_come_header.to_string());
-    
-    foreach(it, info.funcs) {
-        sFun* it2 = info.funcs[it];
-        string header = it2.mComeHeader;
-        
-        if(!it2->mStatic) {
-            fprintf(f2, "%s;\n", header);
-        }
-    }
-    fprintf(f2, "\n");
-    
-    fclose(f2);
     
     return true;
 }

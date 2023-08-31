@@ -1,8 +1,10 @@
 #rm 0*.o
 make comelang2 && sudo make comelang2-install #&& make comelang2-test
+#comelang2 -g -s a.c
+#valgrind ./a
 #comelang2 -g a.c
 #comelang2 -g a.c
-#comelang2 -g a.c
+#comelang2 -g -s a.c
 #valgrind ./a
 #leaks -quiet --atExit -- ./a
 #MallocStackLogging=1 leaks -quiet --atExit -- ./a

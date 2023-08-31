@@ -8,28 +8,32 @@ bool operator_overload_fun2(sType* type, char* fun_name, CVALUE* left_value, CVA
     sType*% type2 = clone type;
     type2->mHeap = false;
     
-    string fun_name2 = create_method_name(type, false@no_pointer_name, fun_name, info);
-    
+    string fun_name2;
     sFun* operator_fun = null;
-    
     if(type->mGenericsTypes.length() > 0) {
-        operator_fun = info->funcs[fun_name2];
+        string none_generics_name = get_none_generics_name(type.mClass.mName);
         
-        if(operator_fun == NULL) {
-            string generics_fun_name = xsprintf("%s_%s", type->mGenericsName, fun_name);
-            sGenericsFun* generics_fun = info->generics_funcs[generics_fun_name];
-            
-            if(generics_fun) {
-                if(!create_generics_fun(fun_name2, generics_fun, type, info))
-                {
-                    fprintf(stderr, "%s %d: can't create generics function(%s)\n", info->sname, info->sline, generics_fun_name);
-                    exit(2);
-                }
-                operator_fun = info->funcs[fun_name2];
+        sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
+            err_msg(info, "solve generics error");
+            return false;
+        }
+        
+        fun_name2 = create_method_name(obj_type, false@no_pointer_name, fun_name, info);
+        string fun_name3 = xsprintf("%s_%s", none_generics_name, fun_name);
+        
+        sGenericsFun* generics_fun = info.generics_funcs.at(fun_name3, null!);
+        
+        if(generics_fun) {
+            if(!create_generics_fun(string(fun_name2), generics_fun, obj_type, info)) {
+                return false;
             }
         }
+        
+        operator_fun = info->funcs[fun_name2];
     }
     else {
+        fun_name2 = create_method_name(type, false@no_pointer_name, fun_name, info);
+        
         int i;
         for(i=FUN_VERSION_MAX-1; i>=1; i--) {
             string new_fun_name = xsprintf("%s_v%d", fun_name2, i);
@@ -51,21 +55,21 @@ bool operator_overload_fun2(sType* type, char* fun_name, CVALUE* left_value, CVA
     if(operator_fun && (type->mGenericsTypes.length() > 0 || (left_value.type.mClass.mName === right_value.type.mClass.mName && left_value.type.mPointerNum == right_value.type.mPointerNum))) {
         CVALUE*% come_value = new CVALUE;
         string left_value2;
-        if(operator_fun.mParamTypes[0].mHeap) {
+        if(operator_fun.mParamTypes[0].mHeap && left_value.type.mHeap) {
             left_value2 = xsprintf("come_increment_ref_count(%s)", left_value.c_value);
         }
         else {
             left_value2 = clone left_value.c_value;
         }
         string middle_value2;
-        if(operator_fun.mParamTypes[1].mHeap) {
+        if(operator_fun.mParamTypes[1].mHeap && middle_value.type.mHeap) {
             middle_value2 = xsprintf("come_increment_ref_count(%s)", middle_value.c_value);
         }
         else {
             middle_value2 = clone middle_value.c_value;
         }
         string right_value2;
-        if(operator_fun.mParamTypes[2].mHeap) {
+        if(operator_fun.mParamTypes[2].mHeap && right_value.type.mHeap) {
             right_value2 = xsprintf("come_increment_ref_count(%s)", right_value.c_value);
         }
         else {
@@ -542,6 +546,7 @@ exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 18
 
 exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) version 18
 {
+    err_msg(info, "parse_method_call is failed");
     throw;
     
     return (sNode*)null;

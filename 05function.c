@@ -68,7 +68,7 @@ exception string parse_word(sInfo* info, bool no_check_err=false)
 {
     var buf = new buffer();
     
-    while((*info->p >= 'a' && *info->p <= 'z') || (*info->p >= 'A' && *info->p <= 'Z') || *info->p == '_' || (*info->p >= '0' && *info->p <= '9'))
+    while((*info->p >= 'a' && *info->p <= 'z') || (*info->p >= 'A' && *info->p <= 'Z') || *info->p == '_' || (*info->p >= '0' && *info->p <= '9') || (*info->p == '$'))
     {
         buf.append_char(*info->p);
         info->p++;
@@ -102,7 +102,7 @@ void skip_spaces_and_lf(sInfo* info)
 bool is_contained_generics_class(sType* type, sInfo* info)
 {
     foreach(it, type->mGenericsTypes) {
-        if(it->mClass->mGenerics) {
+        if(is_contained_generics_class(it, info)) {
             return true;
         }
     }
@@ -246,6 +246,25 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             }
             
             type_name = parse_word(info) throws;
+            
+            if(*info->p == '<') {
+                info->p++;
+                skip_spaces_and_lf(info);
+                
+                while(true) {
+                    if(*info->p == '>') {
+                        info->p++;
+                        skip_spaces_and_lf(info);
+                    }
+                    else if(*info->p == '\0') {
+                        err_msg(info, "invalid struct definition");
+                        throw;
+                    }
+                    else {
+                        info->p++;
+                    }
+                }
+            }
             
             if(*info->p == '{') {
                 char* p = info.p;
@@ -512,6 +531,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             
             if(!info.no_output_err) {
                 if(!node.compile->(info)) {
+                    err_msg(info, "parse_struct is failed");
                     throw;
                 }
             }
@@ -527,6 +547,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             
             if(!info.no_output_err) {
                 if(!node.compile->(info)) {
+                    err_msg(info, "enum compiling is faied");
                     throw;
                 }
             }
@@ -542,6 +563,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             
             if(!info.no_output_err) {
                 if(!node.compile->(info)) {
+                    err_msg(info, "union compiling is failed");
                     throw;
                 }
             }
@@ -614,6 +636,18 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         if(info.types[type_name]) {
             type = clone info.types[type_name];
             type.mOriginalTypeName = string(type_name);
+            
+            type->mConstant = type->mConstant || constant;
+            type->mRegister = register_;
+            type->mUnsigned = type->mUnsigned || unsigned_;
+            type->mVolatile = volatile_;
+            type->mStatic = type->mStatic || static_;
+            type->mExtern = type->mExtern || extern_;
+            type->mInline = type->mInline || inline_;
+            type->mRestrict = type->mRestrict || restrict_;
+            type->mLongLong = type->mLongLong || long_long;
+            type->mLong = type->mLong || long_;
+            type->mShort = type->mShort || short_;
         }
         else if(info.generics_type_names.contained(type_name)) {
             for(int i=0; i<info.generics_type_names.length(); i++) {
@@ -621,34 +655,29 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                     type = new sType(xsprintf("generics_type%d", i), info);
                 }
             }
+            
+            type->mConstant = type->mConstant || constant;
+            type->mRegister = register_;
+            type->mUnsigned = type->mUnsigned || unsigned_;
+            type->mVolatile = volatile_;
+            type->mStatic = type->mStatic || static_;
+            type->mExtern = type->mExtern || extern_;
+            type->mInline = type->mInline || inline_;
+            type->mRestrict = type->mRestrict || restrict_;
+            type->mLongLong = type->mLongLong || long_long;
+            type->mLong = type->mLong || long_;
+            type->mShort = type->mShort || short_;
         }
-        else {
-            if(struct_) {
-                sClass* klass = info.classes[type_name];
-                
-                if(klass == null && *info->p != '<') {
-                    info.classes.insert(type_name, new sClass(name:type_name, struct_:true));
-                }
+        else if(*info->p == '<') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            if(info.generics_classes[type_name] == null && info.classes[type_name] == null)
+            {
+                throw;
             }
             
             type = new sType(type_name, info);
-        }
-        
-        type->mConstant = type->mConstant || constant;
-        type->mRegister = register_;
-        type->mUnsigned = type->mUnsigned || unsigned_;
-        type->mVolatile = volatile_;
-        type->mStatic = type->mStatic || static_;
-        type->mExtern = type->mExtern || extern_;
-        type->mInline = type->mInline || inline_;
-        type->mRestrict = type->mRestrict || restrict_;
-        type->mLongLong = type->mLongLong || long_long;
-        type->mLong = type->mLong || long_;
-        type->mShort = type->mShort || short_;
-        
-        if(*info->p == '<') {
-            info->p++;
-            skip_spaces_and_lf(info);
             
             while(true) {
                 var generics_type, var_name = parse_type(info) throws;
@@ -670,47 +699,72 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                     throw;
                 }
             }
-            if(type->mClass == null) {
-                err_msg(info, "class not found (2)");
-                throw;
-            }
+            
             type = solve_generics(type, info->generics_type, info) throws;
             
-            type->mGenericsName = string(type_name);
-
-            string new_name = create_generics_name(type, false@no_pointer_name, info);
-            if(type->mClass->mName === type->mGenericsName) {
-                if(!info.no_output_err) {
-                    if(info.classes[new_name] == null) {
-                        if(!define_generics_struct(type, info)) {
+            string class_name = create_generics_name(type, info);
+            
+            if(info.classes[class_name] == null) {
+                if(!is_contained_generics_class(type, info)) {
+                    if(!type->mSolvedGenericsName) {
+                        if(!output_generics_struct(type, info)) {
+                            err_msg(info, "output generics struct is failed");
                             throw;
                         }
-                        if(!is_contained_generics_class(type, info)) {
-                            type->mClass = info.classes[new_name];
-                            type->mSolvedGenericsName = true;
-                        }
-                    }
-                    else {
-                        if(!is_contained_generics_class(type, info)) {
-                            type->mClass = info.classes[new_name];
+                        
+                        if(info.classes[class_name]) {
+                            type->mClass = info.classes[class_name];
                             type->mSolvedGenericsName = true;
                         }
                     }
                 }
             }
+            else {
+                if(!is_contained_generics_class(type, info)) {
+                    if(!type->mSolvedGenericsName) {
+                        if(info.classes[class_name]) {
+                            type->mClass = info.classes[class_name];
+                            type->mSolvedGenericsName = true;
+                        }
+                    }
+                }
+            }
+            
+            type->mConstant = type->mConstant || constant;
+            type->mRegister = register_;
+            type->mUnsigned = type->mUnsigned || unsigned_;
+            type->mVolatile = volatile_;
+            type->mStatic = type->mStatic || static_;
+            type->mExtern = type->mExtern || extern_;
+            type->mInline = type->mInline || inline_;
+            type->mRestrict = type->mRestrict || restrict_;
+            type->mLongLong = type->mLongLong || long_long;
+            type->mLong = type->mLong || long_;
+            type->mShort = type->mShort || short_;
         }
-        
-        type->mConstant = type->mConstant || constant;
-        type->mRegister = register_;
-        type->mUnsigned = type->mUnsigned || unsigned_;
-        type->mVolatile = volatile_;
-        type->mStatic = type->mStatic || static_;
-        type->mExtern = type->mExtern || extern_;
-        type->mInline = type->mInline || inline_;
-        type->mRestrict = type->mRestrict || restrict_;
-        type->mLongLong = type->mLongLong || long_long;
-        type->mLong = type->mLong || long_;
-        type->mShort = type->mShort || short_;
+        else {
+            if(struct_) {
+                sClass* klass = info.classes[type_name];
+                
+                if(klass == null && *info->p != '<') {
+                    info.classes.insert(type_name, new sClass(name:type_name, struct_:true));
+                }
+            }
+            
+            type = new sType(type_name, info);
+            
+            type->mConstant = type->mConstant || constant;
+            type->mRegister = register_;
+            type->mUnsigned = type->mUnsigned || unsigned_;
+            type->mVolatile = volatile_;
+            type->mStatic = type->mStatic || static_;
+            type->mExtern = type->mExtern || extern_;
+            type->mInline = type->mInline || inline_;
+            type->mRestrict = type->mRestrict || restrict_;
+            type->mLongLong = type->mLongLong || long_long;
+            type->mLong = type->mLong || long_;
+            type->mShort = type->mShort || short_;
+        }
         
         if(memcmp(info->p, "const", strlen("const")) == 0) {
             info->p += strlen("const");
@@ -1126,16 +1180,14 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
         dec_stack_ptr(1, info);
         sFun* come_fun = info.come_fun;
         
-/*
         if(come_value.type->mHeap && come_value.var == null) {
-            add_come_code(info, "come_increment_ref_count(%s);\n", come_value.c_value);
             int right_value_id = get_right_value_id_from_obj(come_value.c_value);
             
             if(right_value_id != -1) {
                 remove_object_from_right_values(right_value_id, info);
             }
         }
-*/
+        
         add_come_code(info, "%s __result__ = %s;\n", make_type_name_string(come_value.type, false@in_header, false@array_cast_pointer, info), come_value.c_value);
     
         if(info.come_fun.mName === "main") {
@@ -1148,37 +1200,12 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
             }
         }
         
-/*
-        if(info.param_types && info.param_names) {
-            int i = 0;
-            foreach(name, info.param_names) {
-                sType* type = info.param_types[i];
-                if(type->mHeap) {
-                    free_object(type, name, false@no_decrement, false@no_free, info);
-                }
-                i++;
-            }
-        }
-*/
-        
         free_objects_on_return(come_fun.mBlock, info, come_value.c_value, false@top_block);
+        free_right_value_objects(info);
         
         add_come_code(info, "return __result__;\n");
     }
     else {
-/*
-        if(info.param_types && info.param_names) {
-            int i = 0;
-            foreach(name, info.param_names) {
-                sType* type = info.param_types[i];
-                if(type->mHeap) {
-                    free_object(type, name, false@no_decrement, false@no_free, info);
-                }
-                i++;
-            }
-        }
-*/
-    
         if(info.come_fun.mName === "main") {
             foreach(it, info.funcs) {
                 sFun* it2 = info.funcs[it];
@@ -1191,6 +1218,7 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
         
         sFun* come_fun = info.come_fun;
         free_objects_on_return(come_fun.mBlock, info, null!, false@top_block);
+        free_right_value_objects(info);
         add_come_code(info, "return;\n");
     }
     
@@ -1423,7 +1451,7 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
             if(lambda_type.mVarArgs && lambda_type.mParamTypes[i] == null) {
             }
             else {
-                if(lambda_type.mParamTypes[i].mHeap) {
+                if(lambda_type.mParamTypes[i].mHeap && come_value.type.mHeap) {
                     come_value.c_value = xsprintf("come_increment_ref_count(%s)", come_value.c_value);
                 }
             }
@@ -1496,7 +1524,7 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
             if(fun.mVarArgs && fun.mParamTypes[i] == null) {
             }
             else {
-                if(fun.mParamTypes[i].mHeap) {
+                if(fun.mParamTypes[i].mHeap && come_value.type.mHeap) {
                     come_value.c_value = xsprintf("come_increment_ref_count(%s)", come_value.c_value);
                 }
             }
@@ -2156,7 +2184,6 @@ exception sNode*% expression_node(sInfo* info) version 99
     
     parse_sharp(info);
     
-    
     /// logical denial ///
     if(*info->p == '!') {
         info->p++;
@@ -2244,8 +2271,25 @@ exception sNode*% expression_node(sInfo* info) version 99
         char* head = info.p;
         int head_sline = info.sline;
         
+        string buf;
+        {
+            char* p = info.p;
+            int sline = info.sline;
+            
+            if(xisalpha(*info->p) || *info->p == '_') {
+                buf = parse_word(info) throws;
+            }
+            else {
+                buf = string("");
+            }
+            
+            info.p = p;
+            info.sline = sline;
+        }
+        
         /// backtrace ///
         bool define_function_pointer_flag = false;
+        if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && buf !== "gc_inc" && buf !== "gc_dec" && *info->p == '(' && *(info->p+1) != '*')
         {
             info.no_output_err = true;
             parse_type(info).catch {}
@@ -2269,6 +2313,7 @@ exception sNode*% expression_node(sInfo* info) version 99
         
         /// backtrace2 ///
         bool lambda_flag = false;
+        if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && buf !== "gc_inc" && buf !== "gc_dec" && *info->p == '(' && *(info->p+1) != '*')
         {
             info.p = head;
             info.sline = head_sline;
@@ -2290,7 +2335,8 @@ exception sNode*% expression_node(sInfo* info) version 99
             info.sline = head_sline;
         }
         
-        string buf = parse_word(info) throws;
+        buf = parse_word(info) throws;
+        
         
         if(lambda_flag) {
             info.p = head;
@@ -2341,7 +2387,37 @@ exception sNode*% expression_node(sInfo* info) version 99
             info.sline = sline;
         }
         
-        if(cast_expression_flag) {
+        /// backtrace ///
+        bool tuple_expression_flag = false;
+        {
+            char* p = info.p;
+            int sline = info.sline;
+            
+            bool no_comma = info.no_comma;
+            info.no_comma = true;
+            bool no_output_err = info.no_output_err;
+            info.no_output_err = true;
+            bool no_output_come_code = info.no_output_come_code;
+            info.no_output_come_code = true;
+            
+            sNode*% node = expression(info) throws;
+            
+            info.no_comma = no_comma;
+            info.no_output_err = no_output_err;
+            info.no_output_come_code = no_output_come_code;
+            
+            if(*info->p == ',') {
+                tuple_expression_flag = true;
+            }
+            
+            info.p = p;
+            info.sline = sline;
+        }
+        
+        if(tuple_expression_flag) {
+            return parse_tuple(info) throws;
+        }
+        else if(cast_expression_flag) {
             var type, name = parse_type(info) throws;
             
             expected_next_character(')', info);
@@ -2460,6 +2536,9 @@ exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<s
         }
     }
     
+    var right_value_objects = info.right_value_objects;
+    info.right_value_objects = new list<sRightValueObject*%>();
+    
     int block_level = info->block_level;
     if(!no_var_table) {
         info->block_level++;
@@ -2493,6 +2572,7 @@ exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<s
             info.sname = node.sname->();
             
             if(!node.compile->(info)) {
+                err_msg(info, "compiling is failed(5)");
                 throw;
             }
             
@@ -2526,6 +2606,8 @@ exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<s
     
     info.param_types = param_types_;
     info.param_names = param_names_;
+    
+    info.right_value_objects = right_value_objects;
     
     return 0;
 }
@@ -2603,20 +2685,19 @@ bool sGlobalVariable*::compile(sGlobalVariable* self, sInfo* info)
     
     if(array_initializer) {
         add_come_code_at_source_head(info, "%s=%s;\n", make_define_var(type, name, info), array_initializer);
-        add_come_code_to_auto_come_header(info, "extern %s;\n", make_define_var(type, name, info));
     }
     else if(right_node) {
         add_come_code_at_source_head(info, "%s;\n", make_define_var(type, name, info));
-        add_come_code_to_auto_come_header(info, "extern %s;\n", make_define_var(type, name, info));
         var name2 = borrow string(name);
-        info.global_variable_initialize_node.insert(string(name), clone right_node);
+//        info.global_variable_initialize_node.insert(string(name), clone right_node);
     }
     else {
         add_come_code_at_source_head(info, "%s;\n", make_define_var(type, name, info));
-        add_come_code_to_auto_come_header(info, "extern %s;\n", make_define_var(type, name, info));
+/*
         if(!type->mExtern) {
             add_come_code_to_init_module_fun(info, "memset(&%s, 0, sizeof(%s));\n", name, make_type_name_string(type, false@in_header, false@array_cast_pointer, info));
         }
+*/
     }
     
     return true;
@@ -2659,7 +2740,6 @@ bool sExternalGlobalVariable*::compile(sExternalGlobalVariable* self, sInfo* inf
     add_variable_to_global_table(name, type, info);
     
     add_come_code_at_source_head(info, "extern %s;\n", make_define_var(type, name, info));
-    add_come_code_to_auto_come_header(info, "extern %s;\n", make_define_var(type, name, info));
     
     return true;
 }
@@ -2760,19 +2840,34 @@ bool sLambdaNode*::compile(sLambdaNode* self, sInfo* info)
 string create_method_name(sType* obj_type, bool no_pointer_name, char* fun_name, sInfo* info)
 {
     string struct_name;
+    buffer*% p_name = new buffer();
     if(obj_type->mOriginalTypeName !== "") {
         struct_name = string(obj_type->mOriginalTypeName);
     }
     else {
         struct_name = string(obj_type->mClass->mName);
+        
+        for(int i=0; i<obj_type->mPointerNum; i++) {
+            p_name.append_char('p');
+        }
+        if(obj_type->mHeap) {
+            p_name.append_char('h');
+        }
     }
     
-    char p_name[128];
-    for(int i=0; i<obj_type->mPointerNum; i++) {
-        strncat(p_name, "p", 128);
+    foreach(it, obj_type.mGenericsTypes)
+    {
+        p_name.append_str(it->mClass->mName);
+        
+        for(int i=0; i<it->mPointerNum; i++) {
+            p_name.append_char('p');
+        }
+        if(it->mHeap) {
+            p_name.append_char('h');
+        }
     }
     
-    return xsprintf("%s%s_%s", struct_name, p_name, fun_name);
+    return xsprintf("%s%s_%s", struct_name, p_name.to_string(), fun_name);
 }
 
 bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* generics_type, sInfo* info)
@@ -2781,6 +2876,7 @@ bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* gen
     if(funX) {
         return true;
     }
+
     sType*% result_type = solve_generics(generics_fun->mResultType, generics_type, info).catch {
         return false;
     }
@@ -3375,9 +3471,10 @@ bool is_type_name(char* buf, sInfo* info)
 {
     sClass* klass = info.classes[buf];
     sType* type = info.types[buf];
+    sClass* generics_class = info.generics_classes[buf];
     bool generics_type_name = info.generics_type_names.contained(string(buf));
     
-    return generics_type_name || klass || type || buf === "const" || buf === "register" || buf === "static" || buf === "volatile" || buf === "unsigned" || buf === "immutable" || buf === "mutable" || buf === "struct" || buf === "enum" || buf === "union" || buf === "extern" || buf === "inline" || buf === "__inline";
+    return generics_class || generics_type_name || klass || type || buf === "const" || buf === "register" || buf === "static" || buf === "volatile" || buf === "unsigned" || buf === "immutable" || buf === "mutable" || buf === "struct" || buf === "enum" || buf === "union" || buf === "extern" || buf === "inline" || buf === "__inline";
 
 }
 
@@ -3535,6 +3632,7 @@ exception int transpile(sInfo* info) version 5
         
         if(node != null) {
             if(!node.compile->(info)) {
+                err_msg(info, "compiling is faield(X)");
                 throw;
             }
         }
@@ -3644,6 +3742,7 @@ exception sFun*,string create_finalizer_automatically(sType* type, char* fun_nam
         sNode*% node = new sNode(new sFunNode(fun, info));
         
         if(!node.compile->(info)) {
+            err_msg(info, "compiling is failed(X)");
             throw;
         }
         
@@ -3656,9 +3755,232 @@ exception sFun*,string create_finalizer_automatically(sType* type, char* fun_nam
     return (finalizer, real_fun_name);
 }
 
+exception sFun*,string create_equals_automatically(sType* type, char* fun_name, sInfo* info)
+{
+    sFun* equaler = null;
+    
+    string real_fun_name = create_method_name(type, false@no_pointer_name, fun_name, info);
+    
+    sClass* klass = type->mClass;
+    
+    if(type->mPointerNum > 0 && klass->mStruct) {
+        var source = new buffer();
+        
+        source.append_char('{');
+        
+        if(klass->mProtocol) {
+            char* name = "_protocol_obj";
+            char source2[1024];
+            snprintf(source2, 1024, "if(self != ((void*)0) && self.%s != ((void*)0) && self.finalize) { void (*finalizer)(void*) = self.finalize; finalizer(self._protocol_obj); self.%s = come_decrement_ref_count(self.%s); }\n", name, name);
+            
+            source.append_str(source2);
+        }
+        else {
+            foreach(it, klass->mFields) {
+                var name, field_type = it;
+                
+                if(type->mClass->mName === field_type->mClass->mName && type->mPointerNum == field_type->mPointerNum && field_type->mHeap)
+                {
+                    err_msg(info, "Define recusively the equals. I recommanded tuple1<%s>*%.\n", type->mClass->mName);
+                    throw;
+                }
+                
+                char source2[1024];
+                snprintf(source2, 1024, "if(!left.%s.equals(right.%s)) { return false; }\n", name, name);
+                
+                source.append_str(source2);
+            }
+        }
+        
+        source.append_str("return true;");
+        source.append_char('}');
+        
+        char* p = info.p;
+        int sline = info.sline;
+        char* head = info.head;
+        buffer*% source3 = info.source;
+        
+        info.source = source;
+        info.p = source.buf;
+        info.head = source.buf;
+        
+        sBlock*% block = parse_block(info) throws;
+        
+        var result_type = new sType("bool", info);
+        var name = clone real_fun_name;
+        var left_type = clone type;
+        left_type->mHeap = false;
+        var right_type = clone type;
+        right_type->mHeap = false;
+        var param_types = [left_type, right_type];
+        var param_names = [string("left"), string("right")];
+        
+        buffer*% header_buf = new buffer();
+        
+        header_buf.append_str(make_come_type_name_string(result_type, info));
+        header_buf.append_str(" ");
+        header_buf.append_str(real_fun_name);
+        header_buf.append_str("(");
+        
+        for(int i=0; i<param_types.length(); i++) {
+            sType* param_type = param_types[i];
+            char* param_name = param_names[i];
+            
+            header_buf.append_str(make_come_type_name_string(param_type, info));
+            header_buf.append_str(" ");
+            header_buf.append_str(param_name);
+            
+            if(i != param_types.length() -1) {
+                header_buf.append_str(",");
+            }
+        }
+        header_buf.append_str(")");
+        
+        result_type->mStatic = false;
+        
+        var fun = new sFun(name, result_type, param_types, param_names
+                        , false@external, false@var_args, block
+                        , true@static_
+                        , header_buf.to_string()
+                        , info);
+        
+        var fun2 = info.funcs[string(fun_name)];
+        if(fun2 == null || fun2.mExternal) {
+            info.funcs.insert(string(name), fun);
+        }
+        
+        equaler = fun;
+        
+        sNode*% node = new sNode(new sFunNode(fun, info));
+        
+        if(!node.compile->(info)) {
+            err_msg(info, "compiling error");
+            throw;
+        }
+        
+        info.source = source3;
+        info.p = p;
+        info.head = head;
+        info.sline = sline;
+    }
+    
+    return (equaler, real_fun_name);
+}
+
+exception sFun*,string create_operator_equals_automatically(sType* type, char* fun_name, sInfo* info)
+{
+    sFun* equaler = null;
+    
+    string real_fun_name = create_method_name(type, false@no_pointer_name, fun_name, info);
+    
+    sClass* klass = type->mClass;
+    
+    if(type->mPointerNum > 0 && klass->mStruct) {
+        var source = new buffer();
+        
+        source.append_char('{');
+        
+        if(klass->mProtocol) {
+            char* name = "_protocol_obj";
+            char source2[1024];
+            snprintf(source2, 1024, "if(self != ((void*)0) && self.%s != ((void*)0) && self.finalize) { void (*finalizer)(void*) = self.finalize; finalizer(self._protocol_obj); self.%s = come_decrement_ref_count(self.%s); }\n", name, name);
+            
+            source.append_str(source2);
+        }
+        else {
+            foreach(it, klass->mFields) {
+                var name, field_type = it;
+                
+                if(type->mClass->mName === field_type->mClass->mName && type->mPointerNum == field_type->mPointerNum && field_type->mHeap)
+                {
+                    err_msg(info, "Define recusively the equals. I recommanded tuple1<%s>*%.\n", type->mClass->mName);
+                    throw;
+                }
+                
+                char source2[1024];
+                snprintf(source2, 1024, "if(!left.%s.equals(right.%s)) { return false; }\n", name, name);
+                
+                source.append_str(source2);
+            }
+        }
+        
+        source.append_str("return true;\n");
+        source.append_char('}');
+        
+        char* p = info.p;
+        int sline = info.sline;
+        char* head = info.head;
+        buffer*% source3 = info.source;
+        
+        info.source = source;
+        info.p = source.buf;
+        info.head = source.buf;
+        
+        sBlock*% block = parse_block(info) throws;
+        
+        var result_type = new sType("bool", info);
+        var name = clone real_fun_name;
+        var left_type = clone type;
+        left_type->mHeap = false;
+        var right_type = clone type;
+        right_type->mHeap = false;
+        var param_types = [left_type, right_type];
+        var param_names = [string("left"), string("right")];
+        
+        buffer*% header_buf = new buffer();
+        
+        header_buf.append_str(make_come_type_name_string(result_type, info));
+        header_buf.append_str(" ");
+        header_buf.append_str(real_fun_name);
+        header_buf.append_str("(");
+        
+        for(int i=0; i<param_types.length(); i++) {
+            sType* param_type = param_types[i];
+            char* param_name = param_names[i];
+            
+            header_buf.append_str(make_come_type_name_string(param_type, info));
+            header_buf.append_str(" ");
+            header_buf.append_str(param_name);
+            
+            if(i != param_types.length() -1) {
+                header_buf.append_str(",");
+            }
+        }
+        header_buf.append_str(")");
+        
+        result_type->mStatic = false;
+        
+        var fun = new sFun(name, result_type, param_types, param_names
+                        , false@external, false@var_args, block
+                        , true@static_
+                        , header_buf.to_string()
+                        , info);
+        
+        var fun2 = info.funcs[string(fun_name)];
+        if(fun2 == null || fun2.mExternal) {
+            info.funcs.insert(string(name), fun);
+        }
+        
+        equaler = fun;
+        
+        sNode*% node = new sNode(new sFunNode(fun, info));
+        
+        if(!node.compile->(info)) {
+            err_msg(info, "compiling error(X)");
+            throw;
+        }
+        
+        info.source = source3;
+        info.p = p;
+        info.head = head;
+        info.sline = sline;
+    }
+    
+    return (equaler, real_fun_name);
+}
+
 exception sFun*,string create_cloner_automatically(sType* type, char* fun_name, sInfo* info)
 {
-puts("create_cloner_automatically");
     sFun* cloner = null;
     
     string real_fun_name = create_method_name(type, false@no_pointer_name, fun_name, info);
@@ -3669,6 +3991,7 @@ puts("create_cloner_automatically");
         var source = new buffer();
         
         source.append_char('{');
+        source.append_str(xsprintf("var result = new %s;\n", make_type_name_string(type, false@in_header, false@array_cast_pointer, info, true)));
         
         if(klass->mProtocol) {
             char* name = "_protocol_obj";
@@ -3689,13 +4012,14 @@ puts("create_cloner_automatically");
                 
                 if(field_type->mHeap) {
                     char source2[1024];
-                    snprintf(source2, 1024, "if(self != ((void*)0) && self.%s != ((void*)0)) { self.%s = clone self.%s; }\n", name, name, name);
+                    snprintf(source2, 1024, "if(self != ((void*)0) && self.%s != ((void*)0)) { result.%s = clone self.%s; }\n", name, name, name);
                     
                     source.append_str(source2);
                 }
             }
         }
         
+        source.append_str(xsprintf("return result;"));
         source.append_char('}');
         
         char* p = info.p;
@@ -3709,7 +4033,7 @@ puts("create_cloner_automatically");
         
         sBlock*% block = parse_block(info) throws;
         
-        var result_type = new sType("void", info);
+        var result_type = clone type;
         var name = clone real_fun_name;
         var self_type = clone type;
         self_type->mHeap = false;
@@ -3755,6 +4079,7 @@ puts("create_cloner_automatically");
         sNode*% node = new sNode(new sFunNode(fun, info));
         
         if(!node.compile->(info)) {
+            err_msg(info, "compiling error(Y)");
             throw;
         }
         
@@ -3766,3 +4091,5 @@ puts("create_cloner_automatically");
     
     return (cloner, real_fun_name);
 }
+
+

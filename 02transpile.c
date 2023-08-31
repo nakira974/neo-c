@@ -183,11 +183,17 @@ sType*% sType*::initialize(sType*% self, char* name, sInfo* info, bool heap=fals
     }
     string name2 = string(name).substring(0, -pointer_num-1);
     sClass* klass = info.classes[name2];
+    sClass* generics_class = info.generics_classes[name2]
     
-    if(klass == null) {
+    if(klass == null && generics_class == null) {
         err_msg(info, "class not found(%s)(1)\n", name2);
     }
-    self.mClass = klass;
+    if(klass) {
+        self.mClass = klass;
+    }
+    else {
+        self.mClass = borrow clone generics_class;
+    }
     
     self.mGenericsTypes = new list<sType*%>();
     self.mArrayNum = new list<sNode*%>();
@@ -315,39 +321,6 @@ void init_module(sInfo* info)
     }
     
     *p2 = '\0';
-    
-    info.module_initializer_name = xsprintf("__init_%s__", fname);
-    
-    {
-        var name = info.module_initializer_name;
-        var result_type = new sType("void", info);
-        var param_types = new list<sType*%>();
-        var param_names = new list<string>();
-        var fun = new sFun(clone name, clone result_type
-                            , clone param_types, clone param_names
-            , false@external, false@var_args, null!@block, false@static_
-            , xsprintf("void %s()", name)
-            , info);
-        
-    
-        info.funcs.insert(string(name), fun);
-    }
-    
-    info.module_finalizer_name = xsprintf("__final_%s__", fname);
-    
-    {
-        var name = info.module_finalizer_name;
-        var result_type = new sType("void", info);
-        var param_types = new list<sType*%>();
-        var param_names = new list<string>();
-        var fun = new sFun(clone name, clone result_type
-                            , clone param_types, clone param_names
-            , false@external, false@var_args, null!@block, false@static_
-            , xsprintf("void %s()", name)
-            , info);
-        
-        info.funcs.insert(string(name), fun);
-    }
 }
                 
 void output_err_source_code(sInfo* info)
@@ -442,9 +415,7 @@ int come_main(int argc, char** argv) version 2
         sVarTable*% lv_table = new sVarTable(global:false, parent:null);
         info.lv_table = lv_table;
         info.generics_type_names = new list<string>();
-        info.auto_come_header = new buffer();
-        info.enum_typedef_already_output = new map<string,bool>();
-        info.global_variable_initialize_node = new map<string, sNode*%>();
+        info.generics_classes = new map<string, sClass*%>();
         
         init_classes(&info);
         init_module(&info);

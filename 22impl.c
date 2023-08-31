@@ -61,6 +61,7 @@ exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info)
             
             if(node != null) {
                 if(!node.compile->(info)) {
+                    err_msg(info, "compiling is faield(Y)");
                     throw;
                 }
             }

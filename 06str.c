@@ -210,7 +210,10 @@ bool sListNode*::compile(sListNode* self, sInfo* info)
     buffer*% list_value_source = new buffer();
     
     list_value_source.append_char('{');
-    list_value_source.append_str(xsprintf("list<%s>*%% %s = new list<%s>.initialize();\n", make_type_name_string(element_type, false@in_header, false@array_cast_pointer, info), var_name, make_type_name_string(element_type, false@in_header, false@array_cast_pointer, info)));
+    list_value_source.append_str(xsprintf("list<%s>*%% %s = new list<%s>.initialize();\n"
+        , make_come_type_name_string(element_type, info)
+        , var_name
+        , make_come_type_name_string(element_type, info)));
     
     foreach(element_source, list_elements_source) {
         list_value_source.append_str(xsprintf("%s.push_back(%s);\n", var_name, element_source));
@@ -261,6 +264,128 @@ int sListNode*::sline(sListNode* self, sInfo* info)
 }
 
 string sListNode*::sname(sListNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+struct sTupleNode
+{
+    list<sNode*%>*% tuple_elements;
+    list<string>*% tuple_elements_source;
+    int sline;
+    string sname;
+};
+
+sTupleNode*% sTupleNode*::initialize(sTupleNode*% self, list<sNode*%>*% tuple_elements, list<string>*% tuple_elements_source, sInfo* info)
+{
+    self.tuple_elements = tuple_elements;
+    self.tuple_elements_source = tuple_elements_source;
+    
+    self.sline = info.sline;
+    self.sname = string(info->sname);
+    
+    return self;
+}
+
+bool sTupleNode*::compile(sTupleNode* self, sInfo* info)
+{
+    list<sNode*%>* tuple_elements = self.tuple_elements;
+    list<string>* tuple_elements_source = self.tuple_elements_source;
+    
+    list<sType*%>*% tuple_types = new list<sType*%>();
+    
+    foreach(it, tuple_elements) {
+        info->no_output_come_code = true;
+        if(!it.compile->(info)) {
+            return false;
+        }
+        info->no_output_come_code = false;
+        
+        CVALUE*% come_value = get_value_from_stack(-1, info);
+        dec_stack_ptr(1, info);
+        
+        tuple_types.push_back(clone come_value.type);
+    }
+    
+    static int tuple_value_num = 0;
+    string var_name = xsprintf("__tuple_value%d__", ++tuple_value_num);
+    
+    buffer*% tuple_value_source = new buffer();
+    
+    tuple_value_source.append_char('{');
+    tuple_value_source.append_str(xsprintf("var %s = new tuple%d<"
+        , var_name
+        , tuple_types.length()));
+    
+    int i = 0;
+    foreach(it, tuple_types) {
+        tuple_value_source.append_str(xsprintf("%s"
+            , make_come_type_name_string(it, info)));
+        
+        if(i != tuple_types.length() -1) {
+            tuple_value_source.append_str(",");
+        }
+        
+        i++;
+    }
+    tuple_value_source.append_str(">.initialize(");
+    i=0;
+    foreach(it, tuple_elements_source) {
+        tuple_value_source.append_str(xsprintf("%s", it));
+        
+        if(i != tuple_types.length() -1) {
+            tuple_value_source.append_str(",");
+        }
+        
+        i++;
+    }
+    tuple_value_source.append_str(");\n");
+    tuple_value_source.append_char('}');
+    
+    char* p = info.p;
+    char* head = info.head;
+    int sline = info.sline;
+    buffer*% source3 = info.source;
+    
+    info.source = tuple_value_source;
+    info.p = info.source.buf;
+    info.head = info.source.buf;
+    
+    sBlock*% block = parse_block(info, true@no_block_level).catch { return false; }
+    
+    transpile_block(block, null, null, info, true@no_var_table);
+    
+    info.source = source3;
+    info.p = p;
+    info.head = head;
+    info.sline = sline;
+    
+    sVar* var_ = get_variable_from_table(info.lv_table, var_name);
+    
+    if(var_ == null) {
+        err_msg(info, "unexpected error, var not found");
+        return false;
+    }
+    
+    CVALUE*% come_value = new CVALUE;
+    
+    come_value.c_value = xsprintf("%s", var_->mCValueName);
+    come_value.type = clone var_->mType;
+    come_value.var = null;
+    
+    info.stack.push_back(come_value);
+    
+    add_come_last_code(info, "%s;\n", come_value.c_value);
+    
+    return true;
+}
+
+int sTupleNode*::sline(sTupleNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sTupleNode*::sname(sTupleNode* self, sInfo* info)
 {
     return string(self.sname);
 }
@@ -324,11 +449,11 @@ bool sMapNode*::compile(sMapNode* self, sInfo* info)
     
     map_value_source.append_char('{');
     map_value_source.append_str(xsprintf("map<%s,%s>*%% %s = new map<%s,%s>.initialize();\n"
-        , make_type_name_string(key_type, false@in_header, false@array_cast_pointer, info)
-        , make_type_name_string(element_type, false@in_header, false@array_cast_pointer, info)
+        , make_come_type_name_string(key_type, info)
+        , make_come_type_name_string(element_type, info)
         , var_name
-        , make_type_name_string(key_type, false@in_header, false@array_cast_pointer, info)
-        , make_type_name_string(element_type, false@in_header, false@array_cast_pointer, info)
+        , make_come_type_name_string(key_type, info)
+        , make_come_type_name_string(element_type, info)
         ));
     
     var key_source = map_key_elements_source.begin();
@@ -1042,4 +1167,47 @@ exception sNode*% expression_node(sInfo* info) version 98
     }
     
     return (sNode*%)null;
+}
+
+exception sNode*% parse_tuple(sInfo* info)
+{
+    list<sNode*%>*% tuple_elements = new list<sNode*%>();
+    list<string>*% tuple_elements_source = new list<string>();
+    while(true) {
+        char* p = info.p;
+        
+        bool no_comma = info.no_comma;
+        info.no_comma = true;
+        
+        sNode*% node = expression(info) throws;
+        
+        info.no_comma = no_comma;
+        
+        char* p2 = info.p;
+        
+        tuple_elements.push_back(node);
+        
+        buffer*% elements_source = new buffer();
+        
+        elements_source.append(p, p2 - p);
+        elements_source.append_char('\0');
+        
+        tuple_elements_source.push_back(elements_source.to_string());
+        
+        if(*info->p == ',') {
+            info->p++;
+            skip_spaces_and_lf(info);
+        }
+        else if(*info->p == ')') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            break;
+        }
+        else {
+            err_msg(info, "invalid character(%c) in tuple expression", *info->p);
+            throw;
+        }
+    }
+    
+    return new sNode(new sTupleNode(tuple_elements, tuple_elements_source, info));
 }

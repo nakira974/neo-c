@@ -201,7 +201,7 @@ impl list <T>
             }
             var prev_it = it;
             it = it.next;
-            delete borrow prev_it;
+            come_free_object(prev_it);
         }
     }
     list<T>*% clone(list<T>* self) {
@@ -1140,21 +1140,6 @@ static inline unsigned int bool::get_hash_key(bool value)
     return (((int)value).get_hash_key());
 }
 
-struct tuple1<T>
-{
-    T v1;
-};
-
-impl tuple1 <T>
-{
-    tuple1<T>*% initialize(tuple1<T>*% self, T v1)
-    {
-        self.v1 = v1;
-        
-        return self;
-    }
-}
-
 static inline int int::clone(int self)
 {
     return self;
@@ -1165,7 +1150,7 @@ static inline char* char*::clone(char* self)
     return self;
 }
 
-static inline string string::clone(string self)
+static inline string string::clone(char* self)
 {
     return string(self);
 }
@@ -1194,3 +1179,37 @@ static inline float float::clone(float self)
 {
     return self;
 }
+
+struct tuple1<T>
+{
+    T v1;
+};
+
+impl tuple1 <T>
+{
+    tuple1<T>*% initialize(tuple1<T>*% self, T v1)
+    {
+        self.v1 = v1;
+        
+        return self;
+    }
+}
+
+
+struct tuple2<T, T2>
+{
+    T v1;
+    T2 v2;
+};
+
+impl tuple2 <T, T2>
+{
+    tuple2<T, T2>*% initialize(tuple2<T, T2>*% self, T v1, T2 v2)
+    {
+        self.v1 = v1;
+        self.v2 = v2;
+        
+        return self;
+    }
+}
+

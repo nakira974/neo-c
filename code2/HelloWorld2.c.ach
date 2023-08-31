@@ -865,4 +865,6 @@ void method_block3(struct __current_stack3__* parent,int it,int it2,_Bool* it3)
 ;
 void method_block4(struct __current_stack4__* parent,int it,int it2,_Bool* it3)
 ;
+void method_block5(struct __current_stack5__* parent,int it,int it2,_Bool* it3)
+;
 

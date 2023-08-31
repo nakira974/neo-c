@@ -420,8 +420,10 @@ bool sGCIncNode*::compile(sGCIncNode* self, sInfo* info)
     
     sType* type = come_value.type;
     
-    string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
-    come_value.c_value = xsprintf("(%s)come_increment_ref_count(%s)", type_name, come_value.c_value);
+    if(come_value.type.mHeap) {
+        string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
+        come_value.c_value = xsprintf("(%s)come_increment_ref_count(%s)", type_name, come_value.c_value);
+    }
     
     info.stack.push_back(come_value);
     

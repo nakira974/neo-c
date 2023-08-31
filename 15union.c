@@ -3,17 +3,15 @@
 struct sUnionNode
 {
     sType*% mType;
-    bool mComeHeader;
   
     int sline;
     string sname;
 };
 
-sUnionNode*% sUnionNode*::initialize(sUnionNode*% self, sType*% type, bool come_header, sInfo* info)
+sUnionNode*% sUnionNode*::initialize(sUnionNode*% self, sType*% type, sInfo* info)
 {
     self.sline = info.sline;
     self.sname = string(info.sname);
-    self.mComeHeader = come_header;
 
     self.mType = clone type;
     
@@ -27,29 +25,23 @@ bool sUnionNode*::compile(sUnionNode* self, sInfo* info)
     sType* type = self.mType;
     sClass* klass = type->mClass;
     
-    bool come_header = self.mComeHeader;
-    
-    buffer*% buf = new buffer();
-    
-    buf.append_str(xsprintf("union %s\n{\n", type.mName));
-    
-    foreach(it, type.mFields) {
-        var name, type = it;
+    if(!klass->mOutputed) {
+        klass->mOutputed = true;
         
-        buf.append_str(make_define_var(type, name, info));
-        buf.append_str(";\n");
-    }
-    
-    buf.append_str(xsprintf("};\n", type.mName));
-    
-    if(!info.enum_typedef_already_output[string(klass->mName)]) {
-        add_come_code_at_source_head(info, "%s", buf.to_string());
+        buffer*% buf = new buffer();
         
-        if(come_header) {
-            add_come_code_to_auto_come_header(info, "%s", buf.to_string());
+        buf.append_str(xsprintf("union %s\n{\n", type.mName));
+        
+        foreach(it, type.mFields) {
+            var name, type = it;
+            
+            buf.append_str(make_define_var(type, name, info));
+            buf.append_str(";\n");
         }
         
-        info.enum_typedef_already_output[string(klass->mName)] = true;
+        buf.append_str(xsprintf("};\n", type.mName));
+        
+        add_come_code_at_source_head(info, "%s", buf.to_string());
     }
 
     return TRUE;
@@ -88,7 +80,7 @@ exception sNode*% parse_union(string type_name, sInfo* info)
         }
     }
     
-    return new sNode(new sUnionNode(type, true@come_header, info));
+    return new sNode(new sUnionNode(type, info));
 }
 
 exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 97
@@ -117,7 +109,7 @@ exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info)
             }
         }
         
-        return new sNode(new sUnionNode(type, true@come_header, info));
+        return new sNode(new sUnionNode(type, info));
     }
     
     return inherit(string(buf), head, head_sline, info) throws;

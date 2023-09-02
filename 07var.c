@@ -131,8 +131,11 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                 }
                 
                 if(left_type->mPointerNum > 0 && right_type->mPointerNum > 0 && right_type->mHeap && left_type->mHeap) {
-                    add_come_code(info, "come_decrement_ref_count(*(parent->%s), 0, 0); }\n", parent_var->mCValueName);
-                    come_value.c_value = xsprintf("(*(parent->%s))=come_increment_ref_count(%s)", parent_var->mCValueName, right_value.c_value);
+                    string c_value = xsprintf("*(parent->%s)", parent_var->mCValueName);
+                    decrement_ref_count_object(parent_var->mType, c_value, info);
+                    
+                    right_value.c_value = increment_ref_count_object(right_value.type, right_value.c_value, info);
+                    come_value.c_value = xsprintf("(*(parent->%s))=%s", parent_var->mCValueName, right_value.c_value);
                     
                     int right_value_id = get_right_value_id_from_obj(right_value.c_value);
                     
@@ -181,11 +184,13 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         if(right_type->mHeap && left_type->mHeap && left_type->mPointerNum > 0 && right_type->mPointerNum > 0)
         {
             if(self.alloc) {
-                come_value.c_value = xsprintf("%s=come_increment_ref_count(%s)", var_->mCValueName, right_value.c_value);
+                right_value.c_value = increment_ref_count_object(right_value.type, right_value.c_value, info);
+                come_value.c_value = xsprintf("%s=%s", var_->mCValueName, right_value.c_value);
             }
             else {
-                add_come_code(info, "come_decrement_ref_count(%s, 0, 0);\n", var_->mCValueName);
-                come_value.c_value = xsprintf("%s=come_increment_ref_count(%s)", var_->mCValueName, right_value.c_value);
+                decrement_ref_count_object(left_type, var_->mCValueName, info);
+                right_value.c_value = increment_ref_count_object(right_value.type, right_value.c_value, info);
+                come_value.c_value = xsprintf("%s=%s", var_->mCValueName, right_value.c_value);
             }
             int right_value_id = get_right_value_id_from_obj(right_value.c_value);
             
@@ -404,6 +409,8 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
             
             sNode*% right_value = expression(info) throws;
             
+            right_value = post_position_operator3(right_value, info) throws;
+            
             return new sNode(new sStoreNode(string(buf2)@name, null!, true@alloc, right_value, info));
         }
         else {
@@ -416,6 +423,8 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         skip_spaces_and_lf(info);
         
         sNode*% right_value = expression(info) throws;
+        
+        right_value = post_position_operator3(right_value, info) throws;
         
         return new sNode(new sStoreNode(string(buf)@name, null!, false@alloc, right_value, info));
     }
@@ -430,6 +439,8 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         sNode*% node = new sNode(new sLoadNode(string(buf)@name, info));
         
         node = post_position_operator(node, info) throws;
+        
+        node = post_position_operator3(node, info) throws;
         
         return node;
     }
@@ -454,6 +465,8 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
                 skip_spaces_and_lf(info);
                 
                 sNode*% right_value = expression(info) throws;
+                
+                right_value = post_position_operator3(right_value, info) throws;
                 
                 return new sNode(new sStoreNode(name, type, true@alloc, right_value, info));
             }

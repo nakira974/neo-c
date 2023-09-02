@@ -2,6 +2,7 @@
 
 struct sNewNode {
     sType*% type
+    
     int sline;
     string sname;
 };
@@ -66,6 +67,102 @@ bool sNewNode*::compile(sNewNode* self, sInfo* info)
     add_come_last_code(info, "%s;\n", come_value.c_value);
     
     info.stack.push_back(come_value);
+    
+    return true;
+}
+
+struct sImplementsNode {
+    sNode*% obj_exp;
+    sType*% inf_type;
+    
+    int sline;
+    string sname;
+};
+
+sImplementsNode*% sImplementsNode*::initialize(sImplementsNode*% self, sNode*% obj_exp, sType*% inf_type, sInfo* info)
+{
+    self.obj_exp = clone obj_exp;
+    self.inf_type = clone inf_type;
+    
+    self.sline = info.sline;
+    self.sname = string(info.sname);
+    
+    return self;
+}
+
+int sImplementsNode*::sline(sImplementsNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sImplementsNode*::sname(sImplementsNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+bool sImplementsNode*::compile(sImplementsNode* self, sInfo* info)
+{
+    sNode*% obj_exp = clone self.obj_exp;
+    sType*% inf_type = clone self.inf_type;
+    
+    if(!obj_exp.compile->(info)) {
+        return false;
+    }
+    
+    CVALUE*% come_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
+    
+    sType*% type = clone come_value.type;
+    type->mPointerNum--;
+    type->mHeap = false;
+    
+    sClass* klass = inf_type->mClass;
+    
+    CVALUE*% come_value2 = new CVALUE;
+    
+    sType*% type2 = clone inf_type;
+    
+    string type_name = make_type_name_string(inf_type, false@in_header, true@array_cast_pointer, info);
+    string type_name2 = make_type_name_string(type, false@in_header, true@array_cast_pointer, info);
+    
+    static int inf_num = 0;
+    
+    string buf = xsprintf("%s* _inf_value%d;\n", type_name, ++inf_num);
+    add_come_code_at_function_head(info, buf);
+    string buf2 = xsprintf("%s* _inf_obj_value%d;\n", type_name2, inf_num);
+    add_come_code_at_function_head(info, buf2);
+    
+    add_come_code(info, "_inf_value%d=(%s*)come_calloc(1, sizeof(%s));\n", inf_num, type_name, type_name);
+    add_come_code(info, "_inf_obj_value%d=%s;\n", inf_num, come_value.c_value);
+    add_come_code(info, "_inf_value%d->_protocol_obj=_inf_obj_value%d;\n", inf_num, inf_num);
+    
+    sType*% typeX = clone type;
+    typeX->mPointerNum++;
+    
+    create_finalizer_automatically(typeX, "finalize", info);
+    create_cloner_automatically(typeX, "clone", info);
+    
+    for(int i=1; i<klass->mFields.length(); i++) {
+        var name, field_type = klass->mFields[i];
+        
+        string method_name = create_method_name(type, false@no_pointer_name, name, info);
+        
+        add_come_code(info, "_inf_value%d->%s=%s;\n", inf_num, name, method_name);
+    }
+    
+    come_value2.c_value = xsprintf("_inf_value%d", inf_num);
+    sType*% type3 = clone inf_type;
+    type3->mPointerNum++;
+    type3->mHeap = true;
+    type2->mHeap = true;
+    come_value2.type = clone type2;
+    come_value2.c_value = append_object_to_right_values(come_value2.c_value, type3 ,info);
+    come_value2.type->mPointerNum ++;
+    come_value2.var = null;
+    
+    add_come_last_code(info, "%s;\n", come_value2.c_value);
+    
+    info.stack.push_back(come_value2);
     
     return true;
 }
@@ -233,6 +330,7 @@ bool sDeleteNode*::compile(sDeleteNode* self, sInfo* info)
     CVALUE*% come_value = get_value_from_stack(-1, info);
     dec_stack_ptr(1, info);
     
+puts(come_value.type.mClass.mName);
     free_object(come_value.type, come_value.c_value, false@no_decrement, false@no_free, info);
     
     return true;
@@ -422,7 +520,7 @@ bool sGCIncNode*::compile(sGCIncNode* self, sInfo* info)
     
     if(come_value.type.mHeap) {
         string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
-        come_value.c_value = xsprintf("(%s)come_increment_ref_count(%s)", type_name, come_value.c_value);
+        come_value.c_value = increment_ref_count_object(come_value.type, come_value.c_value, info);
     }
     
     info.stack.push_back(come_value);
@@ -469,8 +567,7 @@ bool sGCDecNode*::compile(sGCDecNode* self, sInfo* info)
     
     sType* type = come_value.type;
     
-    string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
-    come_value.c_value = xsprintf("(%s)come_decrement_ref_count(%s,0,0)", type_name, come_value.c_value);
+    decrement_ref_count_object(type, come_value.c_value, info);
     
     info.stack.push_back(come_value);
     
@@ -695,3 +792,37 @@ exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info)
     
     return inherit(string(buf), head, head_sline, info) throws;
 }
+
+exception sNode*% post_position_operator3(sNode*% node, sInfo* info)
+{
+    if(memcmp(info->p, "implements", strlen("implements")) == 0) {
+        info->p += strlen("implements");
+        skip_spaces_and_lf(info);
+        
+        var type3, name2 = parse_type(info) throws;
+        
+        sType*% inf_type = clone type3;
+        
+        return new sNode(new sImplementsNode(node, inf_type, info));
+    }
+    
+    return node;
+}
+
+/*
+exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 21
+{
+    if(memcmp(info->p, "implements", strlen("implements")) == 0) {
+        info->p += strlen("implements");
+        skip_spaces_and_lf(info);
+        
+        var type3, name2 = parse_type(info) throws;
+        
+        sType*% inf_type = clone type3;
+        
+        return new sNode(new sImplementsNode(node, inf_type, info));
+    }
+    
+    return inherit(node, info) throws;
+}
+*/

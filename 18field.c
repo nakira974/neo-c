@@ -56,21 +56,24 @@ bool operator_overload_fun2(sType* type, char* fun_name, CVALUE* left_value, CVA
         CVALUE*% come_value = new CVALUE;
         string left_value2;
         if(operator_fun.mParamTypes[0].mHeap && left_value.type.mHeap) {
-            left_value2 = xsprintf("come_increment_ref_count(%s)", left_value.c_value);
+            left_value.c_value = increment_ref_count_object(left_value.type, left_value.c_value, info);
+            left_value2 = xsprintf("%s", left_value.c_value);
         }
         else {
             left_value2 = clone left_value.c_value;
         }
         string middle_value2;
         if(operator_fun.mParamTypes[1].mHeap && middle_value.type.mHeap) {
-            middle_value2 = xsprintf("come_increment_ref_count(%s)", middle_value.c_value);
+            middle_value.c_value = increment_ref_count_object(middle_value.type, middle_value.c_value, info);
+            middle_value2 = xsprintf("%s", middle_value.c_value);
         }
         else {
             middle_value2 = clone middle_value.c_value;
         }
         string right_value2;
         if(operator_fun.mParamTypes[2].mHeap && right_value.type.mHeap) {
-            right_value2 = xsprintf("come_increment_ref_count(%s)", right_value.c_value);
+            right_value.c_value = increment_ref_count_object(right_value.type, right_value.c_value, info);
+            right_value2 = xsprintf("%s", right_value.c_value);
         }
         else {
             right_value2 = clone right_value.c_value;
@@ -171,12 +174,16 @@ bool sStoreFieldNode*::compile(sStoreFieldNode* self, sInfo* info)
     if(field_type->mHeap && right_type->mHeap && field_type->mPointerNum > 0 && right_type->mPointerNum > 0) 
     {
         if(left_value.type->mPointerNum == 1) {
-            add_come_code(info, "come_decrement_ref_count(%s->%s, 0, 0);\n", left_value.c_value, name);
-            come_value.c_value = xsprintf("%s->%s=come_increment_ref_count(%s)", left_value.c_value, name, right_value.c_value);
+            string c_value = xsprintf("%s->%s", left_value.c_value, name);
+            decrement_ref_count_object(field_type, c_value, info);
+            right_value.c_value = increment_ref_count_object(right_value.type, right_value.c_value, info);
+            come_value.c_value = xsprintf("%s->%s=%s", left_value.c_value, name, right_value.c_value);
         }
         else if(left_value.type->mPointerNum == 0) {
-            add_come_last_code(info, "come_decrement_ref_count(%s.%s, 0, 0)", left_value.c_value, name);
-            come_value.c_value = xsprintf("%s.%s=come_increment_ref_count(%s)", left_value.c_value, name, right_value.c_value);
+            string c_value = xsprintf("%s.%s", left_value.c_value, name);
+            decrement_ref_count_object(field_type, c_value, info);
+            right_value.c_value = increment_ref_count_object(right_value.type, right_value.c_value, info);
+            come_value.c_value = xsprintf("%s.%s=%s", left_value.c_value, name, right_value.c_value);
         }
         else {
             err_msg(info, "Invalid left_type. The field name is %s. The pointer num is %d.", name, left_value.type->mPointerNum);
@@ -385,12 +392,14 @@ bool sStoreArrayNode*::compile(sStoreArrayNode* self, sInfo* info)
         if(left_type->mHeap && right_type->mHeap && left_type->mPointerNum > 0 && right_type->mPointerNum > 0) 
         {
             if(left_value.type->mPointerNum >= 1) {
-                add_come_code(info, "come_decrement_ref_count(%s, 0, 0);\n", left_value_code);
-                come_value.c_value = xsprintf("%s=come_increment_ref_count(%s)", left_value_code, right_value.c_value);
+                decrement_ref_count_object(left_type,left_value_code, info);
+                right_value.c_value = increment_ref_count_object(right_value.type, right_value.c_value, info);
+                come_value.c_value = xsprintf("%s=%s", left_value_code, right_value.c_value);
             }
             else if(left_value.type->mPointerNum == 0) {
-                add_come_last_code(info, "come_decrement_ref_count(%s, 0, 0)", left_value.c_value);
-                come_value.c_value = xsprintf("%s=come_increment_ref_count(%s)", left_value_code, right_value.c_value);
+                decrement_ref_count_object(left_type,left_value_code, info);
+                right_value.c_value = increment_ref_count_object(right_value.type, right_value.c_value, info);
+                come_value.c_value = xsprintf("%s=%s", left_value_code, right_value.c_value);
             }
             else {
                 err_msg(info, "Invalid left_type. The name is %s. The pointer num is %d.(1)", left_value_code, left_value.type->mPointerNum);
@@ -623,7 +632,6 @@ exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 18
             node = node2;
         }
     }
-    
     
     return node;
 }

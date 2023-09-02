@@ -1452,7 +1452,7 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
             }
             else {
                 if(lambda_type.mParamTypes[i].mHeap && come_value.type.mHeap) {
-                    come_value.c_value = xsprintf("come_increment_ref_count(%s)", come_value.c_value);
+                    come_value.c_value = increment_ref_count_object(come_value.type, come_value.c_value, info);
                 }
             }
             come_params.push_back(come_value);
@@ -1525,7 +1525,7 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
             }
             else {
                 if(fun.mParamTypes[i].mHeap && come_value.type.mHeap) {
-                    come_value.c_value = xsprintf("come_increment_ref_count(%s)", come_value.c_value);
+                    come_value.c_value = increment_ref_count_object(come_value.type, come_value.c_value, info);
                 }
             }
             come_params.push_back(come_value);
@@ -1692,6 +1692,8 @@ exception sNode*% parse_function_call(char* fun_name, sInfo* info)
         info.no_comma = true;
         
         sNode*% node = expression(info) throws;
+        
+        node = post_position_operator3(node, info) throws;
         
         info.no_comma = no_comma;
         
@@ -3771,8 +3773,7 @@ exception sFun*,string create_equals_automatically(sType* type, char* fun_name, 
         if(klass->mProtocol) {
             char* name = "_protocol_obj";
             char source2[1024];
-            snprintf(source2, 1024, "if(self != ((void*)0) && self.%s != ((void*)0) && self.finalize) { void (*finalizer)(void*) = self.finalize; finalizer(self._protocol_obj); self.%s = come_decrement_ref_count(self.%s); }\n", name, name);
-            
+            snprintf(source2, 1024, "return left.%s.equals(right.%s);\n", name, name);
             source.append_str(source2);
         }
         else {
@@ -3867,6 +3868,134 @@ exception sFun*,string create_equals_automatically(sType* type, char* fun_name, 
     return (equaler, real_fun_name);
 }
 
+exception sFun*,string create_operator_not_equals_automatically(sType* type, char* fun_name, sInfo* info)
+{
+    sFun* equaler = null;
+    
+    string real_fun_name = create_method_name(type, false@no_pointer_name, fun_name, info);
+    
+    sClass* klass = type->mClass;
+    
+    if(type->mPointerNum > 0 && klass->mStruct) {
+        var source = new buffer();
+        
+        source.append_char('{');
+        
+        if(klass->mProtocol) {
+            char* name = "_protocol_obj";
+            char source2[1024];
+            snprintf(source2, 1024, "return !left.%s.equals(right.%s);\n", name, name);
+            source.append_str(source2);
+        }
+        else {
+            char source2[1024];
+            snprintf(source2, 1024, "return !(");
+            
+            source.append_str(source2);
+            
+            int i = 0;
+            foreach(it, klass->mFields) {
+                var name, field_type = it;
+                
+                if(type->mClass->mName === field_type->mClass->mName && type->mPointerNum == field_type->mPointerNum && field_type->mHeap)
+                {
+                    err_msg(info, "Define recusively the equals. I recommanded tuple1<%s>*%.\n", type->mClass->mName);
+                    throw;
+                }
+                
+                char source2[1024];
+                snprintf(source2, 1024, "left.%s.equals(right.%s)", name, name);
+                source.append_str(source2);
+                
+                if(i == klass->mFields.length()-1) {
+                    char source2[1024];
+                    snprintf(source2, 1024, ");");
+                    source.append_str(source2);
+                }
+                else {
+                    char source2[1024];
+                    snprintf(source2, 1024, " && ");
+                    source.append_str(source2);
+                }
+                
+                i++;
+            }
+        }
+        
+        source.append_char('}');
+        
+        char* p = info.p;
+        int sline = info.sline;
+        char* head = info.head;
+        buffer*% source3 = info.source;
+        
+        info.source = source;
+        info.p = source.buf;
+        info.head = source.buf;
+        
+        sBlock*% block = parse_block(info) throws;
+        
+        var result_type = new sType("bool", info);
+        var name = clone real_fun_name;
+        var left_type = clone type;
+        left_type->mHeap = false;
+        var right_type = clone type;
+        right_type->mHeap = false;
+        var param_types = [left_type, right_type];
+        var param_names = [string("left"), string("right")];
+        
+        buffer*% header_buf = new buffer();
+        
+        header_buf.append_str(make_come_type_name_string(result_type, info));
+        header_buf.append_str(" ");
+        header_buf.append_str(real_fun_name);
+        header_buf.append_str("(");
+        
+        for(int i=0; i<param_types.length(); i++) {
+            sType* param_type = param_types[i];
+            char* param_name = param_names[i];
+            
+            header_buf.append_str(make_come_type_name_string(param_type, info));
+            header_buf.append_str(" ");
+            header_buf.append_str(param_name);
+            
+            if(i != param_types.length() -1) {
+                header_buf.append_str(",");
+            }
+        }
+        header_buf.append_str(")");
+        
+        result_type->mStatic = false;
+        
+        var fun = new sFun(name, result_type, param_types, param_names
+                        , false@external, false@var_args, block
+                        , true@static_
+                        , header_buf.to_string()
+                        , info);
+        
+        var fun2 = info.funcs[string(fun_name)];
+        if(fun2 == null || fun2.mExternal) {
+            info.funcs.insert(string(name), fun);
+        }
+        
+        equaler = fun;
+        
+        sNode*% node = new sNode(new sFunNode(fun, info));
+        
+        if(!node.compile->(info)) {
+            err_msg(info, "compiling error");
+            throw;
+        }
+        
+        info.source = source3;
+        info.p = p;
+        info.head = head;
+        info.sline = sline;
+    }
+    
+    return (equaler, real_fun_name);
+}
+
 exception sFun*,string create_operator_equals_automatically(sType* type, char* fun_name, sInfo* info)
 {
     sFun* equaler = null;
@@ -3883,8 +4012,7 @@ exception sFun*,string create_operator_equals_automatically(sType* type, char* f
         if(klass->mProtocol) {
             char* name = "_protocol_obj";
             char source2[1024];
-            snprintf(source2, 1024, "if(self != ((void*)0) && self.%s != ((void*)0) && self.finalize) { void (*finalizer)(void*) = self.finalize; finalizer(self._protocol_obj); self.%s = come_decrement_ref_count(self.%s); }\n", name, name);
-            
+            snprintf(source2, 1024, "return left.%s.equals(right.%s);\n", name, name);
             source.append_str(source2);
         }
         else {

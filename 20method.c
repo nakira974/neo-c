@@ -163,187 +163,272 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
     CVALUE*% obj_value = get_value_from_stack(-1, info);
     dec_stack_ptr(1, info);
     
-    string generics_fun_name = make_generics_function(obj_value.type, string(fun_name), info).to_string();
+    sType* obj_type = obj_value.type;
     
-    sFun* fun = info.funcs.at(generics_fun_name, null!);
+    sClass* klass = obj_type.mClass;
     
-    if(fun == null) {
-        err_msg(info, "function not found(%s) at method\n", generics_fun_name);
-        return false;
+    bool calling_dynamic_method = false;
+    sType* lambda_type = null;
+    foreach(it, klass.mFields) {
+        var field_name, field_type = it;
+        
+        if(field_name === fun_name && field_type.mClass.mName === "lambda") {
+            calling_dynamic_method = true;
+            lambda_type = field_type;
+            break;
+        }
     }
     
-    sType*% result_type = clone fun->mResultType;
-    result_type->mStatic = false;
-    
-    list<CVALUE*%>*% come_params = new list<CVALUE*%>();
-    
-    int i = 0;
-    foreach(it, params) {
-        if(i == 0) {
-            if(fun.mParamTypes[i].mHeap && obj_value.type.mHeap) {
-                obj_value.c_value = xsprintf("come_increment_ref_count(%s)", obj_value.c_value);
+    if(calling_dynamic_method) {
+        sType*% result_type = clone lambda_type->mResultType.v1;
+        result_type->mStatic = false;
+        
+        list<CVALUE*%>*% come_params = new list<CVALUE*%>();
+        
+        int i = 0;
+        foreach(it, params) {
+            if(i == 0) {
+                come_params.push_back(obj_value);
+                i++;
             }
-            come_params.push_back(obj_value);
-            
-            i++;
+            else {
+                if(!it.compile->(info)) {
+                    return false;
+                }
+                
+                CVALUE*% come_value = get_value_from_stack(-1, info);
+                
+                if(lambda_type.mParamTypes[i-1].mHeap 
+                    && come_value.type.mHeap) 
+                {
+                    come_value.c_value = increment_ref_count_object(come_value.type, come_value.c_value, info);
+                }
+                come_params.push_back(come_value);
+                dec_stack_ptr(1, info);
+                
+                i++;
+            }
         }
-        else {
-            if(!it.compile->(info)) {
+        
+        buffer*% buf = new buffer();
+        
+        buf.append_str(xsprintf("%s->%s", obj_value.c_value, fun_name));
+        buf.append_str("(");
+        
+        int j = 0;
+        foreach(it, come_params) {
+            if(j == 0) {
+                it.c_value = xsprintf("%s->_protocol_obj", it.c_value);
+            }
+            buf.append_str(it.c_value);
+            
+            if(j != come_params.length()-1) {
+                buf.append_str(",");
+            }
+            
+            j++;
+        }
+        buf.append_str(")");
+        
+        CVALUE*% come_value2 = new CVALUE;
+        
+        come_value2.c_value = buf.to_string();
+        
+        if(result_type->mHeap) {
+            come_value2.c_value = append_object_to_right_values(buf.to_string(), result_type, info);
+        }
+        
+        come_value2.type = clone result_type;
+        come_value2.type->mStatic = false;
+        come_value2.var = null;
+        
+        add_come_last_code(info, "%s;\n", buf.to_string());
+        
+        info.stack.push_back(come_value2);
+    }
+    else {
+        string generics_fun_name = make_generics_function(obj_value.type, string(fun_name), info).to_string();
+        
+        sFun* fun = info.funcs.at(generics_fun_name, null!);
+        
+        if(fun == null) {
+            err_msg(info, "function not found(%s) at method\n", generics_fun_name);
+            return false;
+        }
+        
+        sType*% result_type = clone fun->mResultType;
+        result_type->mStatic = false;
+        
+        list<CVALUE*%>*% come_params = new list<CVALUE*%>();
+        
+        int i = 0;
+        foreach(it, params) {
+            if(i == 0) {
+                if(fun.mParamTypes[i].mHeap && obj_value.type.mHeap) {
+                    obj_value.c_value = increment_ref_count_object(obj_value.type, obj_value.c_value, info);
+                }
+                come_params.push_back(obj_value);
+                
+                i++;
+            }
+            else {
+                if(!it.compile->(info)) {
+                    return false;
+                }
+                
+                CVALUE*% come_value = get_value_from_stack(-1, info);
+                
+                if(fun.mParamTypes[i].mHeap && come_value.type.mHeap) {
+                    come_value.c_value = increment_ref_count_object(come_value.type, come_value.c_value, info);
+                }
+                come_params.push_back(come_value);
+                dec_stack_ptr(1, info);
+                
+                i++;
+            }
+        }
+        
+        if(method_block) {
+            sNode*% current_stack_frame_node = new sNode(new sCurrentNode(info));
+            
+            if(!current_stack_frame_node.compile->(info)) {
                 return false;
             }
             
             CVALUE*% come_value = get_value_from_stack(-1, info);
-            
-            if(fun.mParamTypes[i].mHeap && come_value.type.mHeap) {
-                come_value.c_value = xsprintf("come_increment_ref_count(%s) /* aaa */", come_value.c_value);
-            }
             come_params.push_back(come_value);
             dec_stack_ptr(1, info);
             
-            i++;
-        }
-    }
-    
-    if(method_block) {
-        sNode*% current_stack_frame_node = new sNode(new sCurrentNode(info));
-        
-        if(!current_stack_frame_node.compile->(info)) {
-            return false;
-        }
-        
-        CVALUE*% come_value = get_value_from_stack(-1, info);
-        come_params.push_back(come_value);
-        dec_stack_ptr(1, info);
-        
-        buffer*% method_block2 = new buffer();
-        sType*% method_block_type = clone fun.mParamTypes[-1];
-        
-        string class_name = xsprintf("__current_stack%d__", info->current_stack_num);
-        
-        method_block_type.mParamTypes[0].mClass = info.classes[class_name];
-        sClass* current_stack_frame_struct = info.current_stack_frame_struct;
-        info->current_stack_frame_struct = info.classes[class_name];
-        
-        info->num_method_block++;
-        
-        if(method_block_type.mName !== "lambda") {
-            err_msg(info, "This function does not have method block(%s)", fun_name);
-            return false;
-        }
-        
-        sType*% result_type = clone method_block_type->mResultType.0;
-        result_type->mStatic = false;
-        list<sType*%>* param_types = method_block_type->mParamTypes;
-        list<string>* param_names = method_block_type->mParamNames;
-        
-        method_block2.append_str(xsprintf("%s method_block%d(", make_type_name_string(result_type, false@in_header, false@array_cast_pointer, info), info->num_method_block));
-        
-        int i = 0;
-        foreach(it, param_types) {
-            sType* param_type = it;
-            if(i == 0) {
-                string param_name = xsprintf("parent");
-                
-                method_block2.append_str(xsprintf("%s", make_define_var(param_type, param_name, info)));
-            }
-            else if(i == 1) {
-                string param_name = xsprintf("it");
-                
-                method_block2.append_str(xsprintf("%s", make_define_var(param_type, param_name, info)));
-            }
-            else {
-                string param_name = xsprintf("it%d", i);
-                
-                method_block2.append_str(xsprintf("%s", make_define_var(param_type, param_name, info)));
+            buffer*% method_block2 = new buffer();
+            sType*% method_block_type = clone fun.mParamTypes[-1];
+            
+            string class_name = xsprintf("__current_stack%d__", info->current_stack_num);
+            
+            method_block_type.mParamTypes[0].mClass = info.classes[class_name];
+            sClass* current_stack_frame_struct = info.current_stack_frame_struct;
+            info->current_stack_frame_struct = info.classes[class_name];
+            
+            info->num_method_block++;
+            
+            if(method_block_type.mName !== "lambda") {
+                err_msg(info, "This function does not have method block(%s)", fun_name);
+                return false;
             }
             
-            if(i != param_types.length() - 1) {
-                method_block2.append_str(",");
+            sType*% result_type = clone method_block_type->mResultType.0;
+            result_type->mStatic = false;
+            list<sType*%>* param_types = method_block_type->mParamTypes;
+            list<string>* param_names = method_block_type->mParamNames;
+            
+            method_block2.append_str(xsprintf("%s method_block%d(", make_type_name_string(result_type, false@in_header, false@array_cast_pointer, info), info->num_method_block));
+            
+            int i = 0;
+            foreach(it, param_types) {
+                sType* param_type = it;
+                if(i == 0) {
+                    string param_name = xsprintf("parent");
+                    
+                    method_block2.append_str(xsprintf("%s", make_define_var(param_type, param_name, info)));
+                }
+                else if(i == 1) {
+                    string param_name = xsprintf("it");
+                    
+                    method_block2.append_str(xsprintf("%s", make_define_var(param_type, param_name, info)));
+                }
+                else {
+                    string param_name = xsprintf("it%d", i);
+                    
+                    method_block2.append_str(xsprintf("%s", make_define_var(param_type, param_name, info)));
+                }
+                
+                if(i != param_types.length() - 1) {
+                    method_block2.append_str(",");
+                }
+                
+                i++;
+            }
+            method_block2.append_str(")\n");
+            
+            method_block2.append_str(method_block.to_string());
+            
+            buffer*% source3 = info.source;
+            char* p = info.p;
+            char* head = info.head;
+            int sline = info.sline;
+            
+            info.source = method_block2;
+            info.p = info.source.buf;
+            info.head = info.source.buf;
+            info.sline = method_block_sline;
+            
+            sNode*% node = parse_function(info).catch {
+                return false;
             }
             
-            i++;
+            if(!node.compile->(info)) {
+                return false;
+            }
+            
+            char*% method_block_name = xsprintf("method_block%d", info->num_method_block);
+            
+            CVALUE*% come_value2 = new CVALUE;
+            
+            sFun* fun2 = info.funcs.at(method_block_name, null);
+            
+            if(fun2 == null) {
+                err_msg(info, "method block function not found(%s)", method_block_name);
+                return false;
+            }
+            
+            sType* method_block_type2 = fun2.mLambdaType;
+            
+            come_value2.c_value = xsprintf("%s", method_block_name);
+            come_value2.type = clone method_block_type2;
+            come_value2.var = null;
+            
+            come_params.push_back(come_value2);
+            
+            info.source = source3;
+            info.p = p;
+            info.head = head;
+            info.sline = sline;
+            
+            info->current_stack_frame_struct = current_stack_frame_struct;
         }
-        method_block2.append_str(")\n");
         
-        method_block2.append_str(method_block.to_string());
+        buffer*% buf = new buffer();
         
-        buffer*% source3 = info.source;
-        char* p = info.p;
-        char* head = info.head;
-        int sline = info.sline;
+        buf.append_str(generics_fun_name);
+        buf.append_str("(");
         
-        info.source = method_block2;
-        info.p = info.source.buf;
-        info.head = info.source.buf;
-        info.sline = method_block_sline;
-        
-        sNode*% node = parse_function(info).catch {
-            return false;
+        int j = 0;
+        foreach(it, come_params) {
+            buf.append_str(it.c_value);
+            
+            if(j != come_params.length()-1) {
+                buf.append_str(",");
+            }
+            
+            j++;
         }
-        
-        if(!node.compile->(info)) {
-            return false;
-        }
-        
-        char*% method_block_name = xsprintf("method_block%d", info->num_method_block);
+        buf.append_str(")");
         
         CVALUE*% come_value2 = new CVALUE;
         
-        sFun* fun2 = info.funcs.at(method_block_name, null);
+        come_value2.c_value = buf.to_string();
         
-        if(fun2 == null) {
-            err_msg(info, "method block function not found(%s)", method_block_name);
-            return false;
+        if(result_type->mHeap) {
+            come_value2.c_value = append_object_to_right_values(buf.to_string(), result_type, info);
         }
         
-        sType* method_block_type2 = fun2.mLambdaType;
-        
-        come_value2.c_value = xsprintf("%s", method_block_name);
-        come_value2.type = clone method_block_type2;
+        come_value2.type = clone result_type;
+        come_value2.type->mStatic = false;
         come_value2.var = null;
         
-        come_params.push_back(come_value2);
+        add_come_last_code(info, "%s;\n", buf.to_string());
         
-        info.source = source3;
-        info.p = p;
-        info.head = head;
-        info.sline = sline;
-        
-        info->current_stack_frame_struct = current_stack_frame_struct;
+        info.stack.push_back(come_value2);
     }
-    
-    buffer*% buf = new buffer();
-    
-    buf.append_str(generics_fun_name);
-    buf.append_str("(");
-    
-    int j = 0;
-    foreach(it, come_params) {
-        buf.append_str(it.c_value);
-        
-        if(j != come_params.length()-1) {
-            buf.append_str(",");
-        }
-        
-        j++;
-    }
-    buf.append_str(")");
-    
-    CVALUE*% come_value2 = new CVALUE;
-    
-    come_value2.c_value = buf.to_string();
-    
-    if(result_type->mHeap) {
-        come_value2.c_value = append_object_to_right_values(buf.to_string(), result_type, info);
-    }
-    
-    come_value2.type = clone result_type;
-    come_value2.type->mStatic = false;
-    come_value2.var = null;
-    
-    add_come_last_code(info, "%s;\n", buf.to_string());
-    
-    info.stack.push_back(come_value2);
     
     return true;
 }
@@ -367,6 +452,8 @@ exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) v
             info.no_comma = true;
             
             sNode*% node = expression(info) throws;
+            
+            node = post_position_operator3(node, info) throws;
             
             info.no_comma = no_comma;
             

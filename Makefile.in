@@ -42,8 +42,8 @@ comelang2-install:
 	mkdir -p $(DESTDIR)/include
 	$(INSTALL) -m 644 ./comelang2.h $(DESTDIR)/include
 
-comelang2: common.h 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 06str.o 07var.o 08if.o 09while.o 10do_while.o 11for.o 12switch.o 13op.o 14struct.o 15union.o 16enum.o 17typedef.o 18field.o 19eq.o 20method.o 21obj.o 22impl.o
-	./comelang -no-gc -g -o comelang2 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 06str.o 07var.o 08if.o 09while.o 10do_while.o 11for.o 12switch.o 13op.o 14struct.o 15union.o 16enum.o 17typedef.o 18field.o 19eq.o 20method.o 21obj.o 22impl.o
+comelang2: common.h 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 06str.o 07var.o 08if.o 09while.o 10do_while.o 11for.o 12switch.o 13op.o 14struct.o 15union.o 16enum.o 17typedef.o 18field.o 19eq.o 20method.o 21obj.o 22impl.o 23interface.o
+	./comelang -no-gc -g -o comelang2 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 06str.o 07var.o 08if.o 09while.o 10do_while.o 11for.o 12switch.o 13op.o 14struct.o 15union.o 16enum.o 17typedef.o 18field.o 19eq.o 20method.o 21obj.o 22impl.o 23interface.o
 	mkdir -p "$(DESTDIR)/bin"
 
 01main.o: 01main.c common.h
@@ -111,6 +111,9 @@ comelang2: common.h 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 
 
 22impl.o: 22impl.c common.h
 	./comelang -no-gc -g -c 22impl.c
+
+23interface.o: 23interface.c common.h
+	./comelang -no-gc -g -c 23interface.c
 
 comelang2-clean:
 	rm -f 0*.o 1*.o 2*.o

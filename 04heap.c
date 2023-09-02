@@ -271,6 +271,36 @@ void remove_object_from_right_values(int right_value_num, sInfo* info)
     info->right_value_objects.delete(i, i+1);
 }
 
+string increment_ref_count_object(sType* type, char* obj, sInfo* info)
+{
+    sClass* klass = type->mClass;
+    
+    string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
+    if(klass->mProtocol && type->mPointerNum == 1) {
+        static int inf_num = 0;
+        string buf = xsprintf("%s* _inf_valueX%d;\n", type_name, ++inf_num);
+        add_come_code_at_function_head(info, buf);
+        string inf_c_value = xsprintf("_inf_valueX%d", inf_num);
+        add_come_code(info, xsprintf("%s=(%s)come_increment_ref_count(%s);\n", inf_c_value, type_name, obj));
+        add_come_code(info, xsprintf("come_increment_ref_count(((%s)%s)->_protocol_obj);\n", type_name, obj));
+        return xsprintf("%s", inf_c_value);
+    }
+    
+    return xsprintf("(%s)come_increment_ref_count(%s)", type_name, obj);
+}
+
+string decrement_ref_count_object(sType* type, char* obj, sInfo* info)
+{
+    sClass* klass = type->mClass;
+    
+    string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
+    if(klass->mProtocol && type->mPointerNum == 1) {
+        return xsprintf("(%s)come_decrement_ref_count(%s,0,0), come_decrement_ref_count(((%s)%s)->_protocol_obj,0,0)", type_name, obj, type_name, obj);
+    }
+    
+    return xsprintf("(%s)come_decrement_ref_count(%s,0,0)", type_name, obj);
+}
+
 static void free_protocol_object(sType* protocol_type, char* protocol_value_c_source, bool no_decrement, bool no_free, sInfo* info)
 {
     char* fun_name = "call_finalizer";
@@ -281,13 +311,11 @@ static void free_protocol_object(sType* protocol_type, char* protocol_value_c_so
             add_come_code(info, "%s._protocol_obj = come_decrement_ref_count(%s._porotocol_obj, %d, %d);\n", protocol_value_c_source, no_decrement, no_free);
         }
         else {
-            add_come_code(info, "call_finalizer(%s->finalize, %s->_protocol_obj,0, %d, %d);\n", protocol_value_c_source, protocol_value_c_source, no_decrement, no_free);
+            string type_name = make_type_name_string(protocol_type, false@in_header, false@array_cast_pointer, info);
+            add_come_code(info, "call_finalizer(((%s)%s)->finalize, ((%s)%s)->_protocol_obj,0, %d, %d);\n", type_name, protocol_value_c_source, type_name, protocol_value_c_source, no_decrement, no_free);
+//            add_come_code(info, "((%s)%s)->_protocol_obj = come_decrement_ref_count(((%s)%s)->_protocol_obj, %d, %d);\n", type_name, protocol_value_c_source, type_name, protocol_value_c_source, no_decrement, no_free);
         }
     }
-}
-
-static void decrement_ref_count_protocol_object(sType* protocol_type, char* protocol_value_c_source, sInfo* info)
-{
 }
 
 void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo* info)
@@ -357,6 +385,9 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
 
         /// call finalizer ///
         if(finalizer != null) {
+            if(klass->mProtocol && type->mPointerNum == 1) {
+                free_protocol_object(type, c_value, no_decrement, no_free, info);
+            }
             if(c_value) add_come_code(info, xsprintf("call_finalizer(%s,%s,%d, %d, %d);\n", fun_name2, c_value, type->mAllocaValue, no_decrement, no_free));
         }
         else {
@@ -610,6 +641,78 @@ bool create_operator_equals_method(sType* type, sInfo* info)
         && gComelang)
     {
         var fun,new_fun_name = create_operator_equals_automatically(type, fun_name, info).catch { exit(1); }
+        
+        fun_name2 = new_fun_name;
+        cloner = fun;
+    }
+
+    info.right_value_objects = right_value_objects;
+    info.stack = stack_saved;
+    
+    return true;
+}
+
+bool create_operator_not_equals_method(sType* type, sInfo* info)
+{
+    string result = null
+    var stack_saved = info.stack;
+    var right_value_objects = info->right_value_objects;
+    
+    sClass* klass = type->mClass;
+    
+    char* class_name = klass->mName;
+
+    char* fun_name = "operator_not_equals";
+    
+    sType*% type2 = clone type;
+    type2->mHeap = false;
+    
+    sFun* cloner = NULL;
+    string fun_name2;
+    if(type->mGenericsTypes.length() > 0) {
+        string none_generics_name = get_none_generics_name(type.mClass.mName);
+        
+        sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
+            err_msg(info, "solve generics error");
+            return false;
+        }
+        
+        fun_name2 = create_method_name(obj_type, false@no_pointer_name, fun_name, info);
+        string fun_name3 = xsprintf("%s_%s", none_generics_name, fun_name);
+        
+        sGenericsFun* generics_fun = info.generics_funcs.at(fun_name3, null!);
+        
+        if(generics_fun) {
+            if(!create_generics_fun(string(fun_name2), generics_fun, obj_type, info)) {
+                return false;
+            }
+        }
+        
+        cloner = info->funcs[fun_name2];
+    }
+    else {
+        fun_name2 = create_method_name(type, false@no_pointer_name, fun_name, info);
+        
+        int i;
+        for(i=FUN_VERSION_MAX-1; i>=1; i--) {
+            string new_fun_name = xsprintf("%s_v%d", fun_name2, i);
+            cloner = info->funcs[new_fun_name];
+            
+            if(cloner) {
+                fun_name2 = string(new_fun_name);
+                break;
+            }
+        }
+        
+        if(cloner == NULL) {
+            cloner = info->funcs[fun_name2];
+        }
+    }
+    
+    if(cloner == NULL && !type->mProtocol && !type->mNumber 
+        && gComelang)
+    {
+        var fun,new_fun_name = create_operator_not_equals_automatically(type, fun_name, info).catch { exit(1); }
         
         fun_name2 = new_fun_name;
         cloner = fun;

@@ -298,6 +298,7 @@ void transpiler_clear_last_code(sInfo* info);
 /////////////////////////////////////////////////////////////////////
 bool create_equals_method(sType* type, sInfo* info);
 bool create_operator_equals_method(sType* type, sInfo* info);
+bool create_operator_not_equals_method(sType* type, sInfo* info);
 exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info);
 sVar* get_variable_from_table(sVarTable* table, char* name);
 void free_objects_on_return(sBlock* current_block, sInfo* info, char* ret_value, bool top_block);
@@ -309,14 +310,18 @@ string append_object_to_right_values(char* obj, sType*% type, sInfo* info);
 bool is_right_values(int right_value_num, sInfo* info);
 int get_right_value_id_from_obj(string obj);
 void remove_object_from_right_values(int right_value_num, sInfo* info);
+string increment_ref_count_object(sType* type, char* obj, sInfo* info);
+string decrement_ref_count_object(sType* type, char* obj, sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
 /// 05function.c ///
 /////////////////////////////////////////////////////////////////////
+exception list<sType*%>*%, list<string>*%, bool parse_params(sInfo* info);
 exception sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sInfo* info);
 exception sFun*,string create_cloner_automatically(sType* type, char* fun_name, sInfo* info);
 exception sFun*,string create_equals_automatically(sType* type, char* fun_name, sInfo* info);
 exception sFun*,string create_operator_equals_automatically(sType* type, char* fun_name, sInfo* info);
+exception sFun*,string create_operator_not_equals_automatically(sType* type, char* fun_name, sInfo* info);
 exception string skip_block(sInfo* info);
 bool is_contained_generics_class(sType* type, sInfo* info);
 bool is_type_name(char* buf, sInfo* info);
@@ -441,10 +446,17 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
 /////////////////////////////////////////////////////////////////////
 exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 21;
 exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 94;
+exception sNode*% post_position_operator3(sNode*% node, sInfo* info);
+//exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 21;
 
 /////////////////////////////////////////////////////////////////////
 /// 22impl.c
 /////////////////////////////////////////////////////////////////////
 exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 93;
+
+/////////////////////////////////////////////////////////////////////
+/// 23interface.c
+/////////////////////////////////////////////////////////////////////
+exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 92;
 
 #endif

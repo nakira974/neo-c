@@ -48,6 +48,22 @@ bool operator_overload_fun(sType* type, char* fun_name, CVALUE* left_value, CVAL
                     }
                 }
             }
+            else if(fun_name === "operator_not_equals") {
+                if(!create_equals_method(obj_type, info)) {
+                    return false;
+                }
+                if(!create_operator_not_equals_method(obj_type, info)) {
+                    return false;
+                }
+           
+                sGenericsFun* generics_fun = info.generics_funcs.at(fun_name3, null!);
+                
+                if(generics_fun) {
+                    if(!create_generics_fun(string(fun_name2), generics_fun, obj_type, info)) {
+                        return false;
+                    }
+                }
+            }
             
             operator_fun = info->funcs[fun_name2];
         }
@@ -77,14 +93,16 @@ bool operator_overload_fun(sType* type, char* fun_name, CVALUE* left_value, CVAL
         CVALUE*% come_value = new CVALUE;
         string left_value2;
         if(operator_fun.mParamTypes[0].mHeap && left_value.type.mHeap) {
-            left_value2 = xsprintf("come_increment_ref_count(%s)", left_value.c_value);
+            left_value.c_value = increment_ref_count_object(left_value.type, left_value.c_value, info);
+            left_value2 = xsprintf("%s", left_value.c_value);
         }
         else {
             left_value2 = clone left_value.c_value;
         }
         string right_value2;
         if(operator_fun.mParamTypes[1].mHeap && right_value.type.mHeap) {
-            right_value2 = xsprintf("come_increment_ref_count(%s)", right_value.c_value);
+            right_value.c_value = increment_ref_count_object(right_value.type, right_value.c_value, info);
+            right_value2 = xsprintf("%s", right_value.c_value);
         }
         else {
             right_value2 = clone right_value.c_value;

@@ -316,6 +316,7 @@ int main()
     
     xassert("tuple test", t4.v1 === string("ABC") && t4.v2 === 5);
     xassert("tuple testX", ("AAA", 7) === ("AAA", 7));
+    xassert("tuple testX", ("AAA", 8) !== ("AAA", 7));
     
     return 0;
 }

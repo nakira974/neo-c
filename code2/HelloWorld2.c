@@ -26,6 +26,30 @@ impl int*
     }
 }
 
+interface IA
+{
+    int fun(int a, int b);
+};
+
+struct sDataA
+{
+    int a;
+    int b;
+};
+
+sDataA*% sDataA*::initialize(sDataA*% self, int a, int b)
+{
+    self.a = a;
+    self.b = b;
+    
+    return self;
+}
+
+int sDataA*::fun(sDataA* self, int a, int b)
+{
+    return self.a + self.b + a + b;
+}
+
 int main()
 {
     if(1) {
@@ -317,6 +341,20 @@ int main()
     xassert("tuple test", t4.v1 === string("ABC") && t4.v2 === 5);
     xassert("tuple testX", ("AAA", 7) === ("AAA", 7));
     xassert("tuple testX", ("AAA", 8) !== ("AAA", 7));
+    
+    IA*% ia = new sDataA.initialize(111,222) implements IA;
+    
+    printf("%d\n", ia.fun(0, 0));
+    
+    list<IA*%>*% liIA = new list<IA*%>.initialize();
+    
+    liIA.push_back(new sDataA.initialize(1, 1) implements IA);
+    liIA.push_back(new sDataA.initialize(2, 2) implements IA);
+    liIA.push_back(new sDataA.initialize(3, 3) implements IA);
+    
+    foreach(it, liIA) {
+        printf("%d\n", it.fun(0, 0));
+    }
     
     return 0;
 }

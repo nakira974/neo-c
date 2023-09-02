@@ -289,16 +289,17 @@ string increment_ref_count_object(sType* type, char* obj, sInfo* info)
     return xsprintf("(%s)come_increment_ref_count(%s)", type_name, obj);
 }
 
-string decrement_ref_count_object(sType* type, char* obj, sInfo* info)
+void decrement_ref_count_object(sType* type, char* obj, sInfo* info)
 {
     sClass* klass = type->mClass;
     
     string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
     if(klass->mProtocol && type->mPointerNum == 1) {
-        return xsprintf("(%s)come_decrement_ref_count(%s,0,0), come_decrement_ref_count(((%s)%s)->_protocol_obj,0,0)", type_name, obj, type_name, obj);
+        add_come_code(info, xsprintf("if(%s) {(%s)come_decrement_ref_count(%s,0,0), come_decrement_ref_count(((%s)%s)->_protocol_obj,0,0); }\n", obj, type_name, obj, type_name, obj));
+        return;
     }
     
-    return xsprintf("(%s)come_decrement_ref_count(%s,0,0)", type_name, obj);
+    add_come_code(info, xsprintf("if(%s) {(%s)come_decrement_ref_count(%s,0,0); }\n", obj, type_name, obj));
 }
 
 static void free_protocol_object(sType* protocol_type, char* protocol_value_c_source, bool no_decrement, bool no_free, sInfo* info)

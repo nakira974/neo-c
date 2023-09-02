@@ -311,7 +311,7 @@ bool is_right_values(int right_value_num, sInfo* info);
 int get_right_value_id_from_obj(string obj);
 void remove_object_from_right_values(int right_value_num, sInfo* info);
 string increment_ref_count_object(sType* type, char* obj, sInfo* info);
-string decrement_ref_count_object(sType* type, char* obj, sInfo* info);
+void decrement_ref_count_object(sType* type, char* obj, sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
 /// 05function.c ///

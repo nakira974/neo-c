@@ -728,6 +728,14 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
             
             gGC = false;
         }
+        else if(memcmp(info->p, "unsafe", strlen("unsafe")) == 0) {
+            info->p += strlen("unsafe");
+            skip_spaces_and_lf(info);
+        }
+        else if(memcmp(info->p, "no-null-check", strlen("no-null-check")) == 0) {
+            info->p += strlen("no-null-check");
+            skip_spaces_and_lf(info);
+        }
         else {
             err_msg(info, "invalid using");
             throw;

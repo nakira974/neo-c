@@ -1324,3 +1324,145 @@ impl tuple5 <T, T2, T3, T4, T5>
     }
 }
 
+struct buffer {
+    char*% buf;
+    int len;
+    int size;
+};
+
+static inline buffer*% buffer*::initialize(buffer*% self) 
+{
+    self.size = 128;
+    self.buf = new char[self.size];
+    self.buf[0] = '\0';
+    self.len = 0;
+
+    return self;
+}
+
+static inline void buffer*::finalize(buffer* self)
+{
+    if(self && self.buf) delete borrow self.buf;
+}
+
+static inline buffer*% buffer*::clone(buffer* self)
+{
+    if(self == null) {
+        return null;
+    }
+    
+    var result = new buffer;
+    
+    result.size = self.size;
+    result.buf = new char[self.size];
+    result.len = self.len;
+    memcpy(result.buf, self.buf, self.len);
+    
+    return result;
+}
+
+static inline int buffer*::length(buffer* self) 
+{
+    return self.len;
+}
+
+static inline void buffer*::reset(buffer* self)
+{
+    self.buf[0] = '\0';
+    self.len = 0;
+}
+
+static inline void buffer*::append(buffer* self, char* mem, size_t size)
+{
+    if(self.len + size + 1 + 1 >= self.size) {
+        char*% old_buf = clone self.buf;
+        int old_len = self.len;
+        int new_size = (self.size + size + 1) * 2;
+        self.buf = new char[new_size];
+        memcpy(self.buf, old_buf, old_len);
+        self.buf[old_len] = '\0';
+        self.size = new_size;
+    }
+
+    memcpy(self.buf + self.len, mem, size);
+    self.len += size;
+    self.buf[self.len] = '\0';
+}
+
+static inline void buffer*::append_char(buffer* self, char c)
+{
+    if(self.len + 1 + 1 + 1 >= self.size) {
+        int new_size = (self.size + 10 + 1) * 2;
+        self.buf = new char[new_size];
+        self.size = new_size;
+    }
+
+    self.buf[self.len] = c;
+    self.len++;
+
+    self.buf[self.len] = '\0';
+}
+
+static inline void buffer*::append_str(buffer* self, char* str)
+{
+    self.append(str, strlen(str));
+}
+
+static inline void buffer*::append_nullterminated_str(buffer* self, char* str)
+{
+    self.append(str, strlen(str));
+    self.append_char('\0');
+}
+
+static inline string buffer*::to_string(buffer* self)
+{
+    return string(self.buf);
+}
+
+static inline void buffer*::append_int(buffer* self, int value) 
+{
+    self.append((char*)&value, sizeof(int));
+}
+
+static inline void buffer*::append_long(buffer* self, long value) 
+{
+    self.append((char*)&value, sizeof(long));
+}
+
+static inline void buffer*::append_short(buffer* self, short value) 
+{
+    self.append((char*)&value, sizeof(short));
+}
+
+static inline void buffer*::alignment(buffer* self) 
+{
+    int len = self.len;
+    len = (len + 3) & ~3;
+    
+    if(len >= self.size) {
+        int new_size = (self.size + 1 + 1) * 2;
+        self.buf = new char[new_size];
+        self.size = new_size;
+    }
+
+    for(int i=self.len; i<len; i++) {
+        self.buf[i] = '\0';
+    }
+    
+    self.len = len;
+}
+
+static inline int buffer*::compare(buffer* left, buffer* right) 
+{
+    return strcmp(left.buf, right.buf);
+}
+
+static inline buffer*% string::to_buffer(char* self) 
+{
+    var result = new buffer.initialize();
+
+    result.append_str(self);
+
+    return result;
+}
+

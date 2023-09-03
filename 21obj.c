@@ -635,7 +635,15 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
     if(buf === "new") {
         var type, name = parse_type(info) throws;
         
-        return new sNode(new sNewNode(type, info));
+        if(*info->p == '(') {
+            sNode*% obj = new sNode(new sNewNode(type, info));
+            string fun_name = string("initialize");
+            
+            return parse_method_call(obj, fun_name, info) throws;
+        }
+        else {
+            return new sNode(new sNewNode(type, info));
+        }
     }
     else if(buf === "true") {
         return new sNode(new sTrueNode(info));

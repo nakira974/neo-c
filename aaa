@@ -1,195 +1,67 @@
-a.c.c:124:20: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
-    unsigned short short _cur_column;
-                   ^~~~~~
-a.c.c:463:5: warning: incompatible redeclaration of library function 'snprintf' [-Wincompatible-library-redeclaration]
-int snprintf(char* __s, int __maxlen, const char* __format, ...);
-    ^
-a.c.c:463:5: note: 'snprintf' is a builtin with type 'int (char *, unsigned long, const char *, ...)'
-a.c.c:464:5: warning: incompatible redeclaration of library function 'vsnprintf' [-Wincompatible-library-redeclaration]
-int vsnprintf(char* __s, int __maxlen, const char* __format, va_list __arg);
-    ^
-a.c.c:464:5: note: 'vsnprintf' is a builtin with type 'int (char *, unsigned long, const char *, __builtin_va_list)'
-a.c.c:500:5: warning: incompatible redeclaration of library function 'fread' [-Wincompatible-library-redeclaration]
-int fread(void* __ptr, int __size, int __n, struct _IO_FILE* __stream);
-    ^
-a.c.c:500:5: note: 'fread' is a builtin with type 'unsigned long (void *, unsigned long, unsigned long, FILE *)' (aka 'unsigned long (void *, unsigned long, unsigned long, struct _IO_FILE *)')
-a.c.c:501:5: warning: incompatible redeclaration of library function 'fwrite' [-Wincompatible-library-redeclaration]
-int fwrite(const void* __ptr, int __size, int __n, struct _IO_FILE* __s);
-    ^
-a.c.c:501:5: note: 'fwrite' is a builtin with type 'unsigned long (const void *, unsigned long, unsigned long, FILE *)' (aka 'unsigned long (const void *, unsigned long, unsigned long, struct _IO_FILE *)')
-a.c.c:528:7: warning: incompatible redeclaration of library function 'memcpy' [-Wincompatible-library-redeclaration]
-void* memcpy(void* __dest, const void* __src, int __n);
-      ^
-a.c.c:528:7: note: 'memcpy' is a builtin with type 'void *(void *, const void *, unsigned long)'
-a.c.c:529:7: warning: incompatible redeclaration of library function 'memmove' [-Wincompatible-library-redeclaration]
-void* memmove(void* __dest, const void* __src, int __n);
-      ^
-a.c.c:529:7: note: 'memmove' is a builtin with type 'void *(void *, const void *, unsigned long)'
-a.c.c:530:7: warning: incompatible redeclaration of library function 'memccpy' [-Wincompatible-library-redeclaration]
-void* memccpy(void* __dest, const void* __src, int __c, int __n);
-      ^
-a.c.c:530:7: note: 'memccpy' is a builtin with type 'void *(void *, const void *, int, unsigned long)'
-a.c.c:531:7: warning: incompatible redeclaration of library function 'memset' [-Wincompatible-library-redeclaration]
-void* memset(void* __s, int __c, int __n);
-      ^
-a.c.c:531:7: note: 'memset' is a builtin with type 'void *(void *, int, unsigned long)'
-a.c.c:532:5: warning: incompatible redeclaration of library function 'memcmp' [-Wincompatible-library-redeclaration]
-int memcmp(const void* __s1, const void* __s2, int __n);
-    ^
-a.c.c:532:5: note: 'memcmp' is a builtin with type 'int (const void *, const void *, unsigned long)'
-a.c.c:534:7: warning: incompatible redeclaration of library function 'memchr' [-Wincompatible-library-redeclaration]
-void* memchr(const void* __s, int __c, int __n);
-      ^
-a.c.c:534:7: note: 'memchr' is a builtin with type 'void *(const void *, int, unsigned long)'
-a.c.c:536:7: warning: incompatible redeclaration of library function 'strncpy' [-Wincompatible-library-redeclaration]
-char* strncpy(char* __dest, const char* __src, int __n);
-      ^
-a.c.c:536:7: note: 'strncpy' is a builtin with type 'char *(char *, const char *, unsigned long)'
-a.c.c:538:7: warning: incompatible redeclaration of library function 'strncat' [-Wincompatible-library-redeclaration]
-char* strncat(char* __dest, const char* __src, int __n);
-      ^
-a.c.c:538:7: note: 'strncat' is a builtin with type 'char *(char *, const char *, unsigned long)'
-a.c.c:540:5: warning: incompatible redeclaration of library function 'strncmp' [-Wincompatible-library-redeclaration]
-int strncmp(const char* __s1, const char* __s2, int __n);
-    ^
-a.c.c:540:5: note: 'strncmp' is a builtin with type 'int (const char *, const char *, unsigned long)'
-a.c.c:542:5: warning: incompatible redeclaration of library function 'strxfrm' [-Wincompatible-library-redeclaration]
-int strxfrm(char* __dest, const char* __src, int __n);
-    ^
-a.c.c:542:5: note: 'strxfrm' is a builtin with type 'unsigned long (char *, const char *, unsigned long)'
-a.c.c:546:7: warning: incompatible redeclaration of library function 'strndup' [-Wincompatible-library-redeclaration]
-char* strndup(const char* __string, int __n);
-      ^
-a.c.c:546:7: note: 'strndup' is a builtin with type 'char *(const char *, unsigned long)'
-a.c.c:549:5: warning: incompatible redeclaration of library function 'strcspn' [-Wincompatible-library-redeclaration]
-int strcspn(const char* __s, const char* __reject);
-    ^
-a.c.c:549:5: note: 'strcspn' is a builtin with type 'unsigned long (const char *, const char *)'
-a.c.c:550:5: warning: incompatible redeclaration of library function 'strspn' [-Wincompatible-library-redeclaration]
-int strspn(const char* __s, const char* __accept);
-    ^
-a.c.c:550:5: note: 'strspn' is a builtin with type 'unsigned long (const char *, const char *)'
-a.c.c:556:5: warning: incompatible redeclaration of library function 'strlen' [-Wincompatible-library-redeclaration]
-int strlen(const char* __s);
-    ^
-a.c.c:556:5: note: 'strlen' is a builtin with type 'unsigned long (const char *)'
-a.c.c:561:5: warning: incompatible redeclaration of library function 'bcmp' [-Wincompatible-library-redeclaration]
-int bcmp(const void* __s1, const void* __s2, int __n);
-    ^
-a.c.c:561:5: note: 'bcmp' is a builtin with type 'int (const void *, const void *, unsigned long)'
-a.c.c:563:6: warning: incompatible redeclaration of library function 'bzero' [-Wincompatible-library-redeclaration]
-void bzero(void* __s, int __n);
-     ^
-a.c.c:563:6: note: 'bzero' is a builtin with type 'void (void *, unsigned long)'
-a.c.c:570:5: warning: incompatible redeclaration of library function 'strncasecmp' [-Wincompatible-library-redeclaration]
-int strncasecmp(const char* __s1, const char* __s2, int __n);
-    ^
-a.c.c:570:5: note: 'strncasecmp' is a builtin with type 'int (const char *, const char *, unsigned long)'
-a.c.c:579:7: warning: incompatible redeclaration of library function 'stpncpy' [-Wincompatible-library-redeclaration]
-char* stpncpy(char* __dest, const char* __src, int __n);
-      ^
-a.c.c:579:7: note: 'stpncpy' is a builtin with type 'char *(char *, const char *, unsigned long)'
-a.c.c:592:5: warning: incompatible redeclaration of library function 'strtoll' [-Wincompatible-library-redeclaration]
-int strtoll(const char* __nptr, char** __endptr, int __base);
-    ^
-a.c.c:592:5: note: 'strtoll' is a builtin with type 'long long (const char *, char **, int)'
-a.c.c:593:14: warning: incompatible redeclaration of library function 'strtoull' [-Wincompatible-library-redeclaration]
-unsigned int strtoull(const char* __nptr, char** __endptr, int __base);
-             ^
-a.c.c:593:14: note: 'strtoull' is a builtin with type 'unsigned long long (const char *, char **, int)'
-a.c.c:605:47: warning: integer literal is too large to be represented in a signed integer type, interpreting as unsigned [-Wimplicitly-unsigned-literal]
-    unsigned long int __result__ = ((((__bsx)&18374686479671623680)>>56)|(((__bsx)&71776119061217280)>>40)|(((__bsx)&280375465082880)>>24)|(((__bsx)&1095216660480)>>8)|(((__bsx)&4278190080)<<8)|(((__bsx)&16711680)<<24)|(((__bsx)&65280)<<40)|(((__bsx)&255)<<56));
-                                              ^
-a.c.c:654:7: warning: incompatible redeclaration of library function 'malloc' [-Wincompatible-library-redeclaration]
-void* malloc(int __size);
-      ^
-a.c.c:654:7: note: 'malloc' is a builtin with type 'void *(unsigned long)'
-a.c.c:655:7: warning: incompatible redeclaration of library function 'calloc' [-Wincompatible-library-redeclaration]
-void* calloc(int __nmemb, int __size);
-      ^
-a.c.c:655:7: note: 'calloc' is a builtin with type 'void *(unsigned long, unsigned long)'
-a.c.c:656:7: warning: incompatible redeclaration of library function 'realloc' [-Wincompatible-library-redeclaration]
-void* realloc(void* __ptr, int __size);
-      ^
-a.c.c:656:7: note: 'realloc' is a builtin with type 'void *(void *, unsigned long)'
-a.c.c:659:7: warning: incompatible redeclaration of library function 'alloca' [-Wincompatible-library-redeclaration]
-void* alloca(int __size);
-      ^
-a.c.c:659:7: note: 'alloca' is a builtin with type 'void *(unsigned long)'
-a.c.c:662:7: warning: incompatible redeclaration of library function 'aligned_alloc' [-Wincompatible-library-redeclaration]
-void* aligned_alloc(int __alignment, int __size);
-      ^
-a.c.c:662:7: note: 'aligned_alloc' is a builtin with type 'void *(unsigned long, unsigned long)'
-a.c.c:685:5: warning: incompatible redeclaration of library function 'llabs' [-Wincompatible-library-redeclaration]
-int llabs(int __x);
-    ^
-a.c.c:685:5: note: 'llabs' is a builtin with type 'long long (long long)'
-a.c.c:759:40: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
-static inline _Bool short_equals(short short self, short short right){
-                                       ^~~~~~
-a.c.c:759:58: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
-static inline _Bool short_equals(short short self, short short right){
-                                                         ^~~~~~
-a.c.c:760:11: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
-    short short __result__ = self==right;
-          ^~~~~~
-a.c.c:842:43: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
-static inline short int short_clone(short short self){
-                                          ^~~~~~
-a.c.c:843:11: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
-    short short __result__ = self;
-          ^~~~~~
-a.c.c:1081:26: warning: incompatible function pointer types assigning to 'void (*)(void *)' from 'void (struct sData *)' [-Wincompatible-function-pointer-types]
-    _inf_value1->finalize=sData_finalize;
-                         ^~~~~~~~~~~~~~~
-a.c.c:1082:23: warning: incompatible function pointer types assigning to 'void *(*)(void *)' from 'struct sData *(struct sData *)' [-Wincompatible-function-pointer-types]
-    _inf_value1->clone=sData_clone;
-                      ^~~~~~~~~~~~
-a.c.c:1083:21: warning: incompatible function pointer types assigning to 'int (*)(void *, int, int)' from 'int (struct sData *, int, int)' [-Wincompatible-function-pointer-types]
-    _inf_value1->fun=sData_fun;
-                    ^~~~~~~~~~
-a.c.c:1084:33: warning: incompatible pointer types passing 'struct list$_IA$ph *' to parameter of type 'struct list$p_IA$ph *' [-Wincompatible-pointer-types]
-    list$_IA$phphIAph_push_back(li_29,come_increment_ref_count((struct IA*)(right_value12=_inf_value1)) /* aaa */);
-                                ^~~~~
-a.c.c:865:62: note: passing argument to parameter 'self' here
-static void list$_IA$phphIAph_push_back(struct list$p_IA$ph* self, struct IA* item);
-                                                             ^
-a.c.c:1087:33: error: member reference base type 'void' is not a structure or union
-    call_finalizer(right_value12->finalize, right_value12->_protocol_obj,0, 1, 0);
-                   ~~~~~~~~~~~~~^ ~~~~~~~~
-a.c.c:1087:58: error: member reference base type 'void' is not a structure or union
-    call_finalizer(right_value12->finalize, right_value12->_protocol_obj,0, 1, 0);
-                                            ~~~~~~~~~~~~~^ ~~~~~~~~~~~~~
-a.c.c:1108:18: warning: incompatible pointer types assigning to 'struct list_item$_IA$ph *' from 'struct list_item$p_IA$ph *' [-Wincompatible-pointer-types]
-            it_27=self->head;
-                 ^~~~~~~~~~~
-a.c.c:1115:22: warning: incompatible pointer types assigning to 'struct list_item$_IA$ph *' from 'struct list_item$p_IA$ph *' [-Wincompatible-pointer-types]
-                it_27=it_27->next;
-                     ^~~~~~~~~~~~
-a.c.c:1125:14: warning: incompatible pointer types assigning to 'struct list_item$_IA$ph$_IA$ph *' from 'struct list_item$p_IA$ph *' [-Wincompatible-pointer-types]
-        it_30=self->head;
-             ^~~~~~~~~~~
-a.c.c:1132:18: warning: incompatible pointer types assigning to 'struct list_item$_IA$ph$_IA$ph *' from 'struct list_item$p_IA$ph *' [-Wincompatible-pointer-types]
-            it_30=it_30->next;
-                 ^~~~~~~~~~~~
-a.c.c:1153:23: warning: incompatible pointer types assigning to 'struct list_item$p_IA$ph *' from 'struct list_item$_IA$ph$_IA$ph *' [-Wincompatible-pointer-types]
-            self->tail=litem_32;
-                      ^~~~~~~~~
-a.c.c:1154:23: warning: incompatible pointer types assigning to 'struct list_item$p_IA$ph *' from 'struct list_item$_IA$ph$_IA$ph *' [-Wincompatible-pointer-types]
-            self->head=litem_32;
-                      ^~~~~~~~~
-a.c.c:1162:23: warning: incompatible pointer types assigning to 'struct list_item$p_IA$ph *' from 'struct list_item$_IA$ph$_IA$ph *' [-Wincompatible-pointer-types]
-            self->tail=litem_33;
-                      ^~~~~~~~~
-a.c.c:1163:29: warning: incompatible pointer types assigning to 'struct list_item$p_IA$ph *' from 'struct list_item$_IA$ph$_IA$ph *' [-Wincompatible-pointer-types]
-            self->head->next=litem_33;
-                            ^~~~~~~~~
-a.c.c:1171:29: warning: incompatible pointer types assigning to 'struct list_item$p_IA$ph *' from 'struct list_item$_IA$ph$_IA$ph *' [-Wincompatible-pointer-types]
-            self->tail->next=litem_34;
-                            ^~~~~~~~~
-a.c.c:1172:23: warning: incompatible pointer types assigning to 'struct list_item$p_IA$ph *' from 'struct list_item$_IA$ph$_IA$ph *' [-Wincompatible-pointer-types]
-            self->tail=litem_34;
-                      ^~~~~~~~~
-51 warnings and 2 errors generated.
-a.c 207: clang is faield
-a.c 207: compile faield
+02transpile.c:    info.classes.insert(string("int"), new sClass("int", number:true));
+02transpile.c:    info.classes.insert(string("short"), new sClass("short", number:true));
+02transpile.c:    info.classes.insert(string("long"), new sClass("long", number:true));
+02transpile.c:    info.classes.insert(string("char"), new sClass("char", number:true));
+02transpile.c:    info.classes.insert(string("bool"), new sClass("bool", number:true));
+02transpile.c:    info.classes.insert(string("_Bool"), new sClass("_Bool", number:true));
+02transpile.c:        info.classes.insert(generics_type, new sClass(generics_type, generics:true, generics_num:i));
+02transpile.c:        info.gv_table = new sVarTable(global:true, parent:null);
+02transpile.c:        sVarTable*% lv_table = new sVarTable(global:false, parent:null);
+05function.c:            var param_type, param_name = parse_type(info, parse_variable_name:true) throws;
+05function.c:                    info.classes.insert(type_name, new sClass(name:type_name, struct_:true));
+05function.c:        parse_type(parse_variable_name:false, info).catch {};
+06str.c:                    default:
+06str.c:                    default:
+06str.c:                        default:
+11for.c:    sVarTable*% for_var_table = new sVarTable(global:false, parent:lv_table);
+14struct.c:        sClass*% new_class = new sClass(name:new_name, struct_:true);
+14struct.c:        klass = new sClass(name:type_name, struct_:true);
+14struct.c:                struct_class = new sClass(name:type_name, struct_:true);
+14struct.c:                    generics_class = new sClass(name:type_name, struct_:true);
+14struct.c:                    struct_class = new sClass(name:type_name, struct_:true);
+15union.c:    info.classes.insert(type_name, new sClass(name:type_name, union_:true));
+15union.c:        info.classes.insert(type_name, new sClass(name:type_name, union_:true));
+16enum.c:    info.classes.insert(type_name, new sClass(name:type_name, enum_:true));
+16enum.c:            info.classes.insert(type_name, new sClass(name:type_name, enum_:true));
+20method.c:    sClass*% current_stack = new sClass(name: class_name, struct_:true);
+21obj.c:        var param_type, param_name = parse_type(info, parse_variable_name:false) throws;
+23interface.c:            klass = new sClass(name:type_name, struct_:true, protocol_:true);
+comelang3.c:    int options = PCRE_UTF8 | (ignore_case ? PCRE_CASELESS:0) | (multiline ? PCRE_MULTILINE : 0) | (extended ? PCRE_EXTENDED :0) | (dotall ? PCRE_DOTALL :0) | (dollar_endonly ? PCRE_DOLLAR_ENDONLY:0) | (ungreedy ? PCRE_UNGREEDY:0);
+comelang3.c:void nregex::finalize(regex_struct* reg)
+comelang3.c:nregex nregex::clone(regex_struct* reg)
+comelang3.c:string string::reverse(char* str) 
+comelang3.c:string string::chomp(char* str)
+comelang3.c:string string::substring(char* str, int head, int tail)
+comelang3.c:int string::length(char* str)
+comelang3.c:unsigned int int::get_hash_key(int value)
+comelang3.c:unsigned int string::get_hash_key(char* value)
+comelang3.c:bool string::equals(char* left, char* right)
+comelang3.c:int char::compare(char left, char right) 
+comelang3.c:int short::compare(short left, short right) 
+comelang3.c:int long::compare(long left, long right) 
+comelang3.c:buffer*% string::to_buffer(char* self) 
+comelang3.c:int int::except(int self, void* parent, void (*block)(void* parent))
+comelang3.c:bool bool::except(bool self, void* parent, void (*block)(void* parent))
+comelang3.c:bool bool::if(bool self, void* parent, void (*block)(void* parent))
+comelang3.c:void int::times(int self, void* parent, void (*block)(void* parent))
+comelang3.c:unsigned int bool::get_hash_key(bool value)
+comelang3.c:bool bool::equals(bool left, bool right)
+comelang3.c:string string::lower_case(char* str)
+comelang3.c:string string::upper_case(char* str)
+comelang4.c:list<string>*% string::scan_block(char* self, regex_struct* reg, void* parent, string (*block)(void* parent, char* match_string, list<string>* group_strings))
+comelang4.c:list<string>*% FILE::readlines(FILE* f)
+comelang4.c:string FILE::read(FILE* f)
+comelang4.c:FILE* FILE::fprintf(FILE* f, const char* msg, ...)
+comelang4.c:void FILE::fclose(FILE* f)
+comelang5.c:int int::printf(int self, const char* msg)
+comelang5.c:char char::putc(char self)
+comelang5.c:int int::compare(int left, int right) 
+comelang5.c:string string::operator_mult(char* str, int n)
+comelang5.c:wstring wstring::operator_mult(wchar_t* str, int n)
+comelang5.c:bool string::operator_equals(char* left, char* right)
+comelang5.c:bool wstring::operator_equals(wchar_t* left, wchar_t* right)
+comelang5.c:bool string::operator_not_equals(char* left, char* right)
+comelang5.c:bool wstring::operator_not_equals(wchar_t* left, wchar_t* right)
+comelang5.c:string string::operator_add(char* left, char* right)
+comelang5.c:wstring wstring::operator_add(wchar_t* left, wchar_t* right)
+comelang7.c:void bool::expect(bool self, void* parent, void (*block_)(void* parent))

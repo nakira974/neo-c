@@ -1548,8 +1548,9 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
             memcpy(real_fun_name, info.come_fun.mName, p - info.come_fun.mName);
             real_fun_name[p-info.come_fun.mName] = '\0';
             
+            int i;
             for(i=version-1; i>=1; i--) {
-                string new_fun_name = xsnprintf("%s_v%d", real_fun_name, i);
+                string new_fun_name = xsprintf("%s_v%d", real_fun_name, i);
                 
                 if(info.funcs[new_fun_name]) {
                     fun_name = string(new_fun_name);
@@ -1571,7 +1572,7 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
             }
         }
         else {
-            for(int i=FUNCTION_VERSION_MAX; i>=1; i--) {
+            for(int i=FUN_VERSION_MAX; i>=1; i--) {
                 string new_fun_name = xsprintf("%s_v%d", fun_name, i);
             
                 if(info.funcs[new_fun_name]) {
@@ -3458,7 +3459,7 @@ exception sNode*% parse_function(sInfo* info)
         skip_spaces_and_lf(info);
         
         int n = 0;
-        while(xisdigit(*info->p) {
+        while(xisdigit(*info->p)) {
             n = n * 10 + (*info->p - '0');
             info->p++;
         }
@@ -3509,7 +3510,7 @@ exception sNode*% parse_function(sInfo* info)
         
         if(version > 0) {
             string new_fun_name = xsprintf("%s_v%d", fun_name, version);
-            fun_anme = string(new_fun_name);
+            fun_name = string(new_fun_name);
         }
         
         var fun = new sFun(fun_name, result_type, param_types
@@ -3530,7 +3531,7 @@ exception sNode*% parse_function(sInfo* info)
     else if(xisalpha(*info->p) || *info->p == '_' || *info->p == ';') {
         if(version > 0) {
             string new_fun_name = xsprintf("%s_v%d", fun_name, version);
-            fun_anme = string(new_fun_name);
+            fun_name = string(new_fun_name);
         }
         
         if(*info->p == ';') {

@@ -1198,7 +1198,6 @@ impl tuple1 <T>
     {
         if(!self.v1) {
             block(parent);
-            exit(2);
         }
     }
 }
@@ -1223,7 +1222,6 @@ impl tuple2 <T, T2>
     {
         if(!self.v2) {
             block(parent);
-            exit(2);
         }
         
         return self.v1;
@@ -1252,7 +1250,6 @@ impl tuple3 <T, T2, T3>
     {
         if(!self.v3) {
             block(parent);
-            exit(2);
         }
         
         return new tuple2<T, T2>.initialize(self.v1, self.v2);
@@ -1283,7 +1280,6 @@ impl tuple4 <T, T2, T3, T4>
     {
         if(!self.v4) {
             block(parent);
-            exit(2);
         }
         
         return new tuple3<T, T2, T3>.initialize(self.v1, self.v2, self.v3);
@@ -1317,7 +1313,6 @@ impl tuple5 <T, T2, T3, T4, T5>
     {
         if(!self.v5) {
             block(parent);
-            exit(2);
         }
         
         return new tuple4<T, T2, T3, T4>.initialize(self.v1, self.v2, self.v3, self.v4);

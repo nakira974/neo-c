@@ -1219,14 +1219,14 @@ impl tuple2 <T, T2>
         return self;
     }
     
-    tuple1<T>*% catch(tuple2<T, T2>* self, void* parent, void (*block)(void* parent))
+    T catch(tuple2<T, T2>* self, void* parent, void (*block)(void* parent))
     {
         if(!self.v2) {
             block(parent);
             exit(2);
         }
         
-        return new tuple1<T>.initialize(self.v1);
+        return self.v1;
     }
 }
 
@@ -1330,6 +1330,11 @@ struct buffer {
     int size;
 };
 
+static inline void buffer*::finalize(buffer* self)
+{
+    if(self && self.buf) delete borrow self.buf;
+}
+
 static inline buffer*% buffer*::initialize(buffer*% self) 
 {
     self.size = 128;
@@ -1338,11 +1343,6 @@ static inline buffer*% buffer*::initialize(buffer*% self)
     self.len = 0;
 
     return self;
-}
-
-static inline void buffer*::finalize(buffer* self)
-{
-    if(self && self.buf) delete borrow self.buf;
 }
 
 static inline buffer*% buffer*::clone(buffer* self)

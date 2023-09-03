@@ -1,67 +1,50 @@
-02transpile.c:    info.classes.insert(string("int"), new sClass("int", number:true));
-02transpile.c:    info.classes.insert(string("short"), new sClass("short", number:true));
-02transpile.c:    info.classes.insert(string("long"), new sClass("long", number:true));
-02transpile.c:    info.classes.insert(string("char"), new sClass("char", number:true));
-02transpile.c:    info.classes.insert(string("bool"), new sClass("bool", number:true));
-02transpile.c:    info.classes.insert(string("_Bool"), new sClass("_Bool", number:true));
-02transpile.c:        info.classes.insert(generics_type, new sClass(generics_type, generics:true, generics_num:i));
-02transpile.c:        info.gv_table = new sVarTable(global:true, parent:null);
-02transpile.c:        sVarTable*% lv_table = new sVarTable(global:false, parent:null);
-05function.c:            var param_type, param_name = parse_type(info, parse_variable_name:true) throws;
-05function.c:                    info.classes.insert(type_name, new sClass(name:type_name, struct_:true));
+02transpile.c:            transpile(&info).catch {
+04heap.c:        result = solve_method_generics(result, method_generics_types,info).catch
+04heap.c:        result = solve_generics(result, generics_type, info).catch {
+04heap.c:            var fun,new_fun_name = create_finalizer_automatically(type, fun_name, info).catch { exit(1); }
+04heap.c:        sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
+04heap.c:        var fun,new_fun_name = create_cloner_automatically(type, fun_name, info).catch { exit(1); }
+04heap.c:        sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
+04heap.c:        var fun,new_fun_name = create_equals_automatically(type, fun_name, info).catch { exit(1); }
+04heap.c:        sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
+04heap.c:        var fun,new_fun_name = create_operator_equals_automatically(type, fun_name, info).catch { exit(1); }
+04heap.c:        sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
+04heap.c:        var fun,new_fun_name = create_operator_not_equals_automatically(type, fun_name, info).catch { exit(1); }
+04heap.c:                type = solve_type(type, info->generics_type, info->method_generics_types, info).catch
+05function.c:                type_name = parse_word(info).catch {
+05function.c:                    sNode*% node = expression(info).catch {
+05function.c:    sType*% type2 = solve_generics(type, info.generics_type, info).catch {
+05function.c:            parse_type(info).catch {}
+05function.c:                var word2 = parse_word(info).catch {}
+05function.c:        transpile_block(self.mFun.mBlock, self.mParamTypes, self.mParamNames, info).catch {
+05function.c:        transpile_block(self.mFun.mBlock, self.mParamTypes, self.mParamNames, info).catch {
+05function.c:    sType*% result_type = solve_generics(generics_fun->mResultType, generics_type, info).catch {
+05function.c:        var param_type = solve_generics(it, generics_type, info).catch {
+05function.c:    sBlock*% block = parse_block(info).catch {
+05function.c:        parse_type(info).catch {};
+05function.c:                word = parse_word(info).catch {}
+05function.c:                    word = parse_word(info).catch {}
+05function.c:                        word = parse_word(info).catch {}
 05function.c:        parse_type(parse_variable_name:false, info).catch {};
-06str.c:                    default:
-06str.c:                    default:
-06str.c:                        default:
-11for.c:    sVarTable*% for_var_table = new sVarTable(global:false, parent:lv_table);
-14struct.c:        sClass*% new_class = new sClass(name:new_name, struct_:true);
-14struct.c:        klass = new sClass(name:type_name, struct_:true);
-14struct.c:                struct_class = new sClass(name:type_name, struct_:true);
-14struct.c:                    generics_class = new sClass(name:type_name, struct_:true);
-14struct.c:                    struct_class = new sClass(name:type_name, struct_:true);
-15union.c:    info.classes.insert(type_name, new sClass(name:type_name, union_:true));
-15union.c:        info.classes.insert(type_name, new sClass(name:type_name, union_:true));
-16enum.c:    info.classes.insert(type_name, new sClass(name:type_name, enum_:true));
-16enum.c:            info.classes.insert(type_name, new sClass(name:type_name, enum_:true));
-20method.c:    sClass*% current_stack = new sClass(name: class_name, struct_:true);
-21obj.c:        var param_type, param_name = parse_type(info, parse_variable_name:false) throws;
-23interface.c:            klass = new sClass(name:type_name, struct_:true, protocol_:true);
-comelang3.c:    int options = PCRE_UTF8 | (ignore_case ? PCRE_CASELESS:0) | (multiline ? PCRE_MULTILINE : 0) | (extended ? PCRE_EXTENDED :0) | (dotall ? PCRE_DOTALL :0) | (dollar_endonly ? PCRE_DOLLAR_ENDONLY:0) | (ungreedy ? PCRE_UNGREEDY:0);
-comelang3.c:void nregex::finalize(regex_struct* reg)
-comelang3.c:nregex nregex::clone(regex_struct* reg)
-comelang3.c:string string::reverse(char* str) 
-comelang3.c:string string::chomp(char* str)
-comelang3.c:string string::substring(char* str, int head, int tail)
-comelang3.c:int string::length(char* str)
-comelang3.c:unsigned int int::get_hash_key(int value)
-comelang3.c:unsigned int string::get_hash_key(char* value)
-comelang3.c:bool string::equals(char* left, char* right)
-comelang3.c:int char::compare(char left, char right) 
-comelang3.c:int short::compare(short left, short right) 
-comelang3.c:int long::compare(long left, long right) 
-comelang3.c:buffer*% string::to_buffer(char* self) 
-comelang3.c:int int::except(int self, void* parent, void (*block)(void* parent))
-comelang3.c:bool bool::except(bool self, void* parent, void (*block)(void* parent))
-comelang3.c:bool bool::if(bool self, void* parent, void (*block)(void* parent))
-comelang3.c:void int::times(int self, void* parent, void (*block)(void* parent))
-comelang3.c:unsigned int bool::get_hash_key(bool value)
-comelang3.c:bool bool::equals(bool left, bool right)
-comelang3.c:string string::lower_case(char* str)
-comelang3.c:string string::upper_case(char* str)
-comelang4.c:list<string>*% string::scan_block(char* self, regex_struct* reg, void* parent, string (*block)(void* parent, char* match_string, list<string>* group_strings))
-comelang4.c:list<string>*% FILE::readlines(FILE* f)
-comelang4.c:string FILE::read(FILE* f)
-comelang4.c:FILE* FILE::fprintf(FILE* f, const char* msg, ...)
-comelang4.c:void FILE::fclose(FILE* f)
-comelang5.c:int int::printf(int self, const char* msg)
-comelang5.c:char char::putc(char self)
-comelang5.c:int int::compare(int left, int right) 
-comelang5.c:string string::operator_mult(char* str, int n)
-comelang5.c:wstring wstring::operator_mult(wchar_t* str, int n)
-comelang5.c:bool string::operator_equals(char* left, char* right)
-comelang5.c:bool wstring::operator_equals(wchar_t* left, wchar_t* right)
-comelang5.c:bool string::operator_not_equals(char* left, char* right)
-comelang5.c:bool wstring::operator_not_equals(wchar_t* left, wchar_t* right)
-comelang5.c:string string::operator_add(char* left, char* right)
-comelang5.c:wstring wstring::operator_add(wchar_t* left, wchar_t* right)
-comelang7.c:void bool::expect(bool self, void* parent, void (*block_)(void* parent))
+06str.c:    sBlock*% block = parse_block(info, true@no_block_level).catch { return false; }
+06str.c:    sBlock*% block = parse_block(info, true@no_block_level).catch { return false; }
+06str.c:    sBlock*% block = parse_block(info, true@no_block_level).catch { return false; }
+07var.c:            var type = solve_generics(self.type, info->generics_type, info).catch {
+07var.c:                    var type = solve_generics(self.type, info->generics_type, info).catch {
+07var.c:        string word = parse_word(info).catch { }
+08if.c:    transpile_block(if_block, null!, null!, info).catch {
+08if.c:            transpile_block(elif_node_block, null!, null!, info).catch {
+08if.c:        transpile_block(else_block, null!, null!, info).catch {
+09while.c:    transpile_block(block, null!, null!, info).catch {
+10do_while.c:    transpile_block(block, null!, null!, info).catch {
+11for.c:    transpile_block(block, null!, null!, info).catch {
+12switch.c:    transpile_block(block, null!, null!, info).catch {
+13op.c:        sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
+14struct.c:            sType*% new_type = solve_generics(type, generics_type, info).catch {
+18field.c:        sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
+20method.c:    sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
+20method.c:            sNode*% node = parse_function(info).catch {
+21obj.c:    sType*% type2 = solve_generics(type, info->generics_type, info).catch {
+21obj.c:    var type2 = solve_generics(type, info->generics_type, info).catch {
+a.c:    int x = fun(1, 2).catch { };
+e.c:    fun2().catch {

@@ -501,6 +501,7 @@ string clone_object(sType* type, char* obj, sInfo* info)
         result = xsprintf("%s(%s)", fun_name2, c_value);
     }
     else {
+        result = xsprintf("come_memdup(%s)", c_value);
     }
     
     info.right_value_objects = right_value_objects;

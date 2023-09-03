@@ -161,7 +161,7 @@ exception list<sType*%>*%, list<string>*%, list<string>*%, bool parse_params(sIn
                 break;
             }
             
-            var param_type, param_name = parse_type(info, parse_variable_name:true) throws;
+            var param_type, param_name = parse_type(info, true@parse_variable_name, false@parse_multiple_type) throws;
             
             var param_type2 = solve_generics(param_type, info->generics_type, info) throws;
             
@@ -221,7 +221,7 @@ exception list<sType*%>*%, list<string>*%, list<string>*%, bool parse_params(sIn
     return new tuple4<list<sType*%>*%, list<string>*%, list<string>*%, bool>(param_types, param_names, param_default_parametors, var_args);
 }
 
-exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_name=false)
+exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_name=false, bool parse_multiple_type=true)
 {
     char* head = info.p;
     int head_sline = info.sline;
@@ -708,7 +708,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             type = new sType(type_name, info);
             
             while(true) {
-                var generics_type, var_name = parse_type(info) throws;
+                var generics_type, var_name = parse_type(info, false@parse_variable_name, false@parse_multiple_type) throws;
                 
                 type->mGenericsTypes.push_back(generics_type);
                 
@@ -860,6 +860,68 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             info->p += strlen("restrict");
             skip_spaces_and_lf(info);
         }
+        
+        if(parse_multiple_type && (*info->p == ',' || exception_)) {
+            list<sType*%>*% types = new list<sType*%>();
+            
+            types.push_back(clone type);
+            
+            while(*info->p == ',') {
+                info->p++;
+                skip_spaces_and_lf(info);
+                
+                var type2, name = parse_type(info
+                    , false@parse_variable_name, false@parse_multiple_type) throws;
+                    
+                types.push_back(clone type2);
+            }
+            
+            int num_tuples = types.length();
+            
+            if(exception_) {
+                num_tuples++;
+            }
+            
+            type = new sType(xsprintf("tuple%d", num_tuples), info);
+            type->mPointerNum++;
+            type->mHeap = true;
+            
+            foreach(it, types) {
+                type->mGenericsTypes.push_back(clone it);
+            }
+            
+            if(exception_) {
+                type->mGenericsTypes.push_back(new sType("bool", info));
+            }
+            
+            string class_name = create_generics_name(type, info);
+            
+            if(info.classes[class_name] == null) {
+                if(!is_contained_generics_class(type, info)) {
+                    if(!type->mSolvedGenericsName) {
+                        if(!output_generics_struct(type, info)) {
+                            err_msg(info, "output generics struct is failed");
+                            throw;
+                        }
+                        
+                        if(info.classes[class_name]) {
+                            type->mClass = info.classes[class_name];
+                            type->mSolvedGenericsName = true;
+                        }
+                    }
+                }
+            }
+            else {
+                if(!is_contained_generics_class(type, info)) {
+                    if(!type->mSolvedGenericsName) {
+                        if(info.classes[class_name]) {
+                            type->mClass = info.classes[class_name];
+                            type->mSolvedGenericsName = true;
+                        }
+                    }
+                }
+            }
+        }
 
         if(parse_variable_name) {
             if(xisalnum(*info.p) || *info->p == '_') {
@@ -890,6 +952,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         
         expected_next_character(']', info) throws;
     }
+    
     
     return new tuple2<sType*%, string>(type, var_name);
 }
@@ -3689,7 +3752,7 @@ bool is_type_name(char* buf, sInfo* info)
     sClass* generics_class = info.generics_classes[buf];
     bool generics_type_name = info.generics_type_names.contained(string(buf));
     
-    return generics_class || generics_type_name || klass || type || buf === "const" || buf === "register" || buf === "static" || buf === "volatile" || buf === "unsigned" || buf === "immutable" || buf === "mutable" || buf === "struct" || buf === "enum" || buf === "union" || buf === "extern" || buf === "inline" || buf === "__inline";
+    return generics_class || generics_type_name || klass || type || buf === "const" || buf === "register" || buf === "static" || buf === "volatile" || buf === "unsigned" || buf === "immutable" || buf === "mutable" || buf === "struct" || buf === "enum" || buf === "union" || buf === "extern" || buf === "inline" || buf === "__inline" || buf === "exception";
 
 }
 

@@ -1,5 +1,10 @@
 #include <comelang2.h>
 
+exception int fun(int x, int y)
+{
+    return (x+y, true);
+}
+
 int main()
 {
     list<string>*% li_str = new list<string>();
@@ -11,6 +16,10 @@ int main()
     foreach(it, li_str) {
         puts(it);
     }
+    
+    int x = fun(1, 2).catch { fprintf(stderr, "exception\n"); };
+    
+    printf("x %d\n", x);
     
     return 0;
 }

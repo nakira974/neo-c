@@ -1,5 +1,5 @@
 #rm 0*.o
-make comelang2-self-host
+make comelang2-dummy
 #comelang2 -g -s a.c
 #valgrind ./a
 #comelang2 -g a.c

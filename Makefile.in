@@ -352,9 +352,9 @@ distclean: clean
 test: gc-debug-test debug-test #ts-test
 
 comelang2-test:
-#	./comelang2 code2/HelloWorld.c
+#	./comelang2-dummy code2/HelloWorld.c
 #	./HelloWorld
-	./comelang2 code2/HelloWorld2.c
+	./comelang2-dummy code2/HelloWorld2.c
 	./HelloWorld2
 
 no-gc-test:

@@ -1,25 +1,32 @@
-#include <comelang2.h>
+//#include <comelang2.h>
 
-exception int fun(int x, int y)
+struct __builtin_va_list
 {
-    return (x+y, true);
+    char* v1;
+    char* v2;
+    char* v3;
+    int v4;
+    int v5;
+};
+
+void __builtin_va_start(char* list);
+void __builtin_va_end(char* list);
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void fun(char* msg, ...)
+{
+    char msg2[128];
+    va_list args;
+    va_start(args, msg);
+    vsnprintf(msg2, 128, msg, args);
+    va_end(args);
 }
 
 int main()
 {
-    list<string>*% li_str = new list<string>();
-    
-    li_str.push_back(string("AAA"));
-    li_str.push_back(string("BBB"));
-    li_str.push_back(string("CCC"));
-    
-    foreach(it, li_str) {
-        puts(it);
-    }
-    
-    int x = fun(1, 2).catch { fprintf(stderr, "exception\n"); };
-    
-    printf("x %d\n", x);
     
     return 0;
 }

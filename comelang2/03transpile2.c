@@ -645,7 +645,7 @@ bool output_source_file(sInfo* info) version 3
             string output = output_function(it2, info);
             fprintf(f, "inline %s", output);
         }
-        else if(it !== "__builtin_va_start" && it !== "__builtin_va_end") {
+        else {
             fprintf(f, "%s", header);
         }
     }

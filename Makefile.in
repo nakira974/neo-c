@@ -37,14 +37,18 @@ all: comelang no-self-host
 
 no-self-host: comelang lib lib-gc #lib-ts
 
-comelang2-self-host: comelang2-dummy common.h comelang2/01main.o
-	cd comelang2 && ./comelang2-dummy -Icomelang2/ -g -o comelang2/comelang2 comelang2/01main.o
+comelang2-self-host: comelang2-dummy comelang2/common.h comelang2/01main.o comelang2/02transpile.o
+	cd comelang2 && ../comelang2-dummy -o comelang2 -g 01main.o 02transpile.o
 
-comelang2/01main.o: common.h comelang2/01main.c
-	./comelang2-dummy -g -o comelang2/01main.o comelang2/01main.c
+comelang2/01main.o: comelang2/common.h comelang2/01main.c
+	cd comelang2 && ../comelang2-dummy -g -c 01main.c
+
+comelang2/02transpile.o: comelang2/common.h comelang2/02transpile.c
+	cd comelang2 && ../comelang2-dummy -g -c 02transpile.c
 
 comelang2-install: 
-	$(INSTALL) -m 755 ./comelang2/comelang2 "$(DESTDIR)/bin"
+	mkdir -p $(DESTDIR)/bin
+	$(INSTALL) -m 755 ./comelang2-dummy "$(DESTDIR)/bin"
 	mkdir -p $(DESTDIR)/include
 	$(INSTALL) -m 644 ./comelang2.h $(DESTDIR)/include
 

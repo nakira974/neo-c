@@ -21,7 +21,6 @@ struct sClass {
     bool mEnum;
     bool mProtocol;
     bool mNumber;
-    bool mEnum;
     
     string mName;
     
@@ -68,7 +67,6 @@ struct sType
     bool mExtern;
     bool mRestrict;
     bool mImmutable;
-    bool mLongLong;
     bool mHeap;
     bool mDummyHeap;
     bool mNoHeap;
@@ -89,7 +87,6 @@ struct sType
     bool mGenericsStruct;
     bool mSolvedGenericsName;
     
-    string mOriginalTypeName;
     bool mInline;
 };
 
@@ -330,7 +327,7 @@ exception int expected_next_character(char c, sInfo* info);
 sBlock*% sBlock*::initialize(sBlock*% self, sInfo* info);
 bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* generics_type, sInfo* info);
 
-exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_name=false);
+exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_name=false, bool parse_multiple_type=true);
 exception sBlock*% parse_block(sInfo* info, bool no_block_level=false);
 exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<string>*? param_names, sInfo* info, bool no_var_table=false);
 void arrange_stack(sInfo* info, int top);

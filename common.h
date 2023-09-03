@@ -24,7 +24,6 @@ struct sClass {
     bool mEnum;
     bool mProtocol;
     bool mNumber;
-    bool mEnum;
     
     string mName;
     
@@ -71,7 +70,6 @@ struct sType
     bool mExtern;
     bool mRestrict;
     bool mImmutable;
-    bool mLongLong;
     bool mHeap;
     bool mDummyHeap;
     bool mNoHeap;
@@ -92,7 +90,6 @@ struct sType
     bool mGenericsStruct;
     bool mSolvedGenericsName;
     
-    string mOriginalTypeName;
     bool mInline;
 };
 

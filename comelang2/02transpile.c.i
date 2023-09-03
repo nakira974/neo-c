@@ -1,14 +1,16 @@
-# 0 "comelang2/01main.c"
+# 0 "02transpile.c"
 # 0 "<built-in>"
 # 0 "<command-line>"
 # 1 "/usr/include/stdc-predef.h" 1 3 4
 # 0 "<command-line>" 2
-# 1 "comelang2/01main.c"
-# 1 "comelang2/common.h" 1
+# 1 "02transpile.c"
+# 1 "common.h" 1
 
 
 
-# 1 "./comelang2.h" 1
+# 1 "/usr/local/include/comelang2.h" 1 3
+
+# 1 "/usr/local/include/comelang2.h" 3
 using comelang;
 
 struct __builtin_va_list
@@ -19,6 +21,9 @@ struct __builtin_va_list
     int v4;
     int v5;
 };
+
+void __builtin_va_start(char*);
+void __builtin_va_end(char*);
 
 # 1 "/usr/include/stdio.h" 1 3 4
 # 27 "/usr/include/stdio.h" 3 4
@@ -62,8 +67,6 @@ struct __builtin_va_list
 
 
 # 1 "/usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h" 1 3 4
-# 214 "/usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h" 3 4
-
 # 214 "/usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h" 3 4
 typedef long unsigned int size_t;
 # 34 "/usr/include/stdio.h" 2 3 4
@@ -758,7 +761,7 @@ extern int __uflow (FILE *);
 extern int __overflow (FILE *, int);
 # 909 "/usr/include/stdio.h" 3 4
 
-# 13 "./comelang2.h" 2
+# 16 "/usr/local/include/comelang2.h" 2 3
 # 1 "/usr/include/string.h" 1 3 4
 # 26 "/usr/include/string.h" 3 4
 # 1 "/usr/include/aarch64-linux-gnu/bits/libc-header-start.h" 1 3 4
@@ -1041,7 +1044,7 @@ extern char *stpncpy (char *restrict __dest,
      ;
 # 539 "/usr/include/string.h" 3 4
 
-# 14 "./comelang2.h" 2
+# 17 "/usr/local/include/comelang2.h" 2 3
 # 1 "/usr/include/stdlib.h" 1 3 4
 # 26 "/usr/include/stdlib.h" 3 4
 # 1 "/usr/include/aarch64-linux-gnu/bits/libc-header-start.h" 1 3 4
@@ -2132,10 +2135,8 @@ extern int getloadavg (double __loadavg[], int __nelem)
 # 1037 "/usr/include/stdlib.h" 2 3 4
 # 1048 "/usr/include/stdlib.h" 3 4
 
-# 15 "./comelang2.h" 2
+# 18 "/usr/local/include/comelang2.h" 2 3
 
-
-# 16 "./comelang2.h"
 static inline void xassert(char* msg, bool test)
 {
     printf("%s...", msg);
@@ -2170,11 +2171,7 @@ static void* come_calloc(size_t count, size_t size)
 
 static void* come_increment_ref_count(void* mem)
 {
-    if(mem == 
-# 50 "./comelang2.h" 3 4
-             ((void *)0)
-# 50 "./comelang2.h"
-                 ) {
+    if(mem == ((void *)0)) {
         return mem;
     }
 
@@ -2187,16 +2184,8 @@ static void* come_increment_ref_count(void* mem)
 
 static void* come_decrement_ref_count(void* mem, bool no_decrement, bool no_free)
 {
-    if(mem == 
-# 63 "./comelang2.h" 3 4
-             ((void *)0)
-# 63 "./comelang2.h"
-                 ) {
-        return 
-# 64 "./comelang2.h" 3 4
-              ((void *)0)
-# 64 "./comelang2.h"
-                  ;
+    if(mem == ((void *)0)) {
+        return ((void *)0);
     }
 
     int* ref_count = (int*)((char*)mem - sizeof(int) - sizeof(long));
@@ -2208,11 +2197,7 @@ static void* come_decrement_ref_count(void* mem, bool no_decrement, bool no_free
     int count = *ref_count;
     if(!no_free && count <= 0) {
         ncfree(ref_count);
-        return 
-# 76 "./comelang2.h" 3 4
-              ((void *)0)
-# 76 "./comelang2.h"
-                  ;
+        return ((void *)0);
     }
 
     return mem;
@@ -2220,11 +2205,7 @@ static void* come_decrement_ref_count(void* mem, bool no_decrement, bool no_free
 
 static void come_free_object(void* mem)
 {
-    if(mem == 
-# 84 "./comelang2.h" 3 4
-             ((void *)0)
-# 84 "./comelang2.h"
-                 ) {
+    if(mem == ((void *)0)) {
         return;
     }
 
@@ -2235,11 +2216,7 @@ static void come_free_object(void* mem)
 
 static void call_finalizer(void* fun, void* mem, int call_finalizer_only, int no_decrement, int no_free)
 {
-    if(mem == 
-# 95 "./comelang2.h" 3 4
-             ((void *)0)
-# 95 "./comelang2.h"
-                 ) {
+    if(mem == ((void *)0)) {
         return;
     }
 
@@ -3028,11 +3005,7 @@ impl map <T, T2>
                         n = 0;
                     }
                     else if(n == hash) {
-                        fprintf(
-# 884 "./comelang2.h" 3 4
-                               stderr
-# 884 "./comelang2.h"
-                                     , "unexpected error in map.rehash(1)\n");
+                        fprintf(stderr, "unexpected error in map.rehash(1)\n");
                         exit(2);
                     }
                 }
@@ -3096,11 +3069,7 @@ impl map <T, T2>
                     it = 0;
                 }
                 else if(it == hash) {
-                    fprintf(
-# 948 "./comelang2.h" 3 4
-                           stderr
-# 948 "./comelang2.h"
-                                 , "unexpected error in map.insert\n");
+                    fprintf(stderr, "unexpected error in map.insert\n");
                     exit(2);
                 }
             }
@@ -3174,11 +3143,7 @@ impl map <T, T2>
                     it = 0;
                 }
                 else if(it == hash) {
-                    fprintf(
-# 1022 "./comelang2.h" 3 4
-                           stderr
-# 1022 "./comelang2.h"
-                                 , "unexpected error in map.insert\n");
+                    fprintf(stderr, "unexpected error in map.insert\n");
                     exit(2);
                 }
             }
@@ -3357,7 +3322,6 @@ impl tuple1 <T>
     {
         if(!self.v1) {
             block(parent);
-            exit(2);
         }
     }
 }
@@ -3378,14 +3342,13 @@ impl tuple2 <T, T2>
         return self;
     }
 
-    tuple1<T>*% catch(tuple2<T, T2>* self, void* parent, void (*block)(void* parent))
+    T catch(tuple2<T, T2>* self, void* parent, void (*block)(void* parent))
     {
         if(!self.v2) {
             block(parent);
-            exit(2);
         }
 
-        return new tuple1<T>.initialize(self.v1);
+        return self.v1;
     }
 }
 
@@ -3411,7 +3374,6 @@ impl tuple3 <T, T2, T3>
     {
         if(!self.v3) {
             block(parent);
-            exit(2);
         }
 
         return new tuple2<T, T2>.initialize(self.v1, self.v2);
@@ -3442,7 +3404,6 @@ impl tuple4 <T, T2, T3, T4>
     {
         if(!self.v4) {
             block(parent);
-            exit(2);
         }
 
         return new tuple3<T, T2, T3>.initialize(self.v1, self.v2, self.v3);
@@ -3476,7 +3437,6 @@ impl tuple5 <T, T2, T3, T4, T5>
     {
         if(!self.v5) {
             block(parent);
-            exit(2);
         }
 
         return new tuple4<T, T2, T3, T4>.initialize(self.v1, self.v2, self.v3, self.v4);
@@ -3489,6 +3449,11 @@ struct buffer {
     int size;
 };
 
+static inline void buffer*::finalize(buffer* self)
+{
+    if(self && self.buf) delete borrow self.buf;
+}
+
 static inline buffer*% buffer*::initialize(buffer*% self)
 {
     self.size = 128;
@@ -3497,11 +3462,6 @@ static inline buffer*% buffer*::initialize(buffer*% self)
     self.len = 0;
 
     return self;
-}
-
-static inline void buffer*::finalize(buffer* self)
-{
-    if(self && self.buf) delete borrow self.buf;
 }
 
 static inline buffer*% buffer*::clone(buffer* self)
@@ -3624,12 +3584,14 @@ static inline buffer*% string::to_buffer(char* self)
 
     return result;
 }
-# 5 "comelang2/common.h" 2
+# 5 "common.h" 2
 
 
 
 
 
+
+# 10 "common.h"
 extern bool gComelang;
 extern bool gGC;
 
@@ -3644,7 +3606,6 @@ struct sClass {
     bool mEnum;
     bool mProtocol;
     bool mNumber;
-    bool mEnum;
 
     string mName;
 
@@ -3691,7 +3652,6 @@ struct sType
     bool mExtern;
     bool mRestrict;
     bool mImmutable;
-    bool mLongLong;
     bool mHeap;
     bool mDummyHeap;
     bool mNoHeap;
@@ -3712,7 +3672,6 @@ struct sType
     bool mGenericsStruct;
     bool mSolvedGenericsName;
 
-    string mOriginalTypeName;
     bool mInline;
 };
 
@@ -3953,7 +3912,7 @@ exception int expected_next_character(char c, sInfo* info);
 sBlock*% sBlock*::initialize(sBlock*% self, sInfo* info);
 bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* generics_type, sInfo* info);
 
-exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_name=false);
+exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_name=false, bool parse_multiple_type=true);
 exception sBlock*% parse_block(sInfo* info, bool no_block_level=false);
 exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<string>*? param_names, sInfo* info, bool no_var_table=false);
 void arrange_stack(sInfo* info, int top);
@@ -4079,16 +4038,795 @@ exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info)
 
 
 exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 92;
-# 2 "comelang2/01main.c" 2
+# 2 "02transpile.c" 2
+# 1 "/usr/include/dirent.h" 1 3 4
+# 27 "/usr/include/dirent.h" 3 4
 
-int come_main(int argc, char** argv) version 1
+# 61 "/usr/include/dirent.h" 3 4
+# 1 "/usr/include/aarch64-linux-gnu/bits/dirent.h" 1 3 4
+# 22 "/usr/include/aarch64-linux-gnu/bits/dirent.h" 3 4
+
+# 22 "/usr/include/aarch64-linux-gnu/bits/dirent.h" 3 4
+struct dirent
+  {
+
+    __ino_t d_ino;
+    __off_t d_off;
+
+
+
+
+    unsigned short int d_reclen;
+    unsigned char d_type;
+    char d_name[256];
+  };
+# 62 "/usr/include/dirent.h" 2 3 4
+# 97 "/usr/include/dirent.h" 3 4
+enum
+  {
+    DT_UNKNOWN = 0,
+
+    DT_FIFO = 1,
+
+    DT_CHR = 2,
+
+    DT_DIR = 4,
+
+    DT_BLK = 6,
+
+    DT_REG = 8,
+
+    DT_LNK = 10,
+
+    DT_SOCK = 12,
+
+    DT_WHT = 14
+
+  };
+# 127 "/usr/include/dirent.h" 3 4
+typedef struct __dirstream DIR;
+
+
+
+
+
+
+extern int closedir (DIR *__dirp) ;
+
+
+
+
+
+
+extern DIR *opendir (const char *__name)
+ ;
+
+
+
+
+
+
+extern DIR *fdopendir (int __fd)
+ ;
+# 164 "/usr/include/dirent.h" 3 4
+extern struct dirent *readdir (DIR *__dirp) ;
+# 185 "/usr/include/dirent.h" 3 4
+extern int readdir_r (DIR *restrict __dirp,
+        struct dirent *restrict __entry,
+        struct dirent **restrict __result)
+     ;
+# 211 "/usr/include/dirent.h" 3 4
+extern void rewinddir (DIR *__dirp) ;
+
+
+
+
+
+extern void seekdir (DIR *__dirp, long int __pos) ;
+
+
+extern long int telldir (DIR *__dirp) ;
+
+
+
+
+
+extern int dirfd (DIR *__dirp) ;
+# 235 "/usr/include/dirent.h" 3 4
+# 1 "/usr/include/aarch64-linux-gnu/bits/posix1_lim.h" 1 3 4
+# 27 "/usr/include/aarch64-linux-gnu/bits/posix1_lim.h" 3 4
+# 1 "/usr/include/aarch64-linux-gnu/bits/wordsize.h" 1 3 4
+# 28 "/usr/include/aarch64-linux-gnu/bits/posix1_lim.h" 2 3 4
+# 161 "/usr/include/aarch64-linux-gnu/bits/posix1_lim.h" 3 4
+# 1 "/usr/include/aarch64-linux-gnu/bits/local_lim.h" 1 3 4
+# 38 "/usr/include/aarch64-linux-gnu/bits/local_lim.h" 3 4
+# 1 "/usr/include/linux/limits.h" 1 3 4
+# 39 "/usr/include/aarch64-linux-gnu/bits/local_lim.h" 2 3 4
+# 81 "/usr/include/aarch64-linux-gnu/bits/local_lim.h" 3 4
+# 1 "/usr/include/aarch64-linux-gnu/bits/pthread_stack_min-dynamic.h" 1 3 4
+# 29 "/usr/include/aarch64-linux-gnu/bits/pthread_stack_min-dynamic.h" 3 4
+# 1 "/usr/include/aarch64-linux-gnu/bits/pthread_stack_min.h" 1 3 4
+# 30 "/usr/include/aarch64-linux-gnu/bits/pthread_stack_min-dynamic.h" 2 3 4
+# 82 "/usr/include/aarch64-linux-gnu/bits/local_lim.h" 2 3 4
+# 162 "/usr/include/aarch64-linux-gnu/bits/posix1_lim.h" 2 3 4
+# 236 "/usr/include/dirent.h" 2 3 4
+# 247 "/usr/include/dirent.h" 3 4
+# 1 "/usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h" 1 3 4
+# 248 "/usr/include/dirent.h" 2 3 4
+# 257 "/usr/include/dirent.h" 3 4
+extern int scandir (const char *restrict __dir,
+      struct dirent ***restrict __namelist,
+      int (*__selector) (const struct dirent *),
+      int (*__cmp) (const struct dirent **,
+      const struct dirent **))
+     ;
+# 327 "/usr/include/dirent.h" 3 4
+extern int alphasort (const struct dirent **__e1,
+        const struct dirent **__e2)
+     ;
+# 355 "/usr/include/dirent.h" 3 4
+extern __ssize_t getdirentries (int __fd, char *restrict __buf,
+    size_t __nbytes,
+    __off_t *restrict __basep)
+     ;
+# 404 "/usr/include/dirent.h" 3 4
+
+
+# 1 "/usr/include/aarch64-linux-gnu/bits/dirent_ext.h" 1 3 4
+# 23 "/usr/include/aarch64-linux-gnu/bits/dirent_ext.h" 3 4
+
+# 33 "/usr/include/aarch64-linux-gnu/bits/dirent_ext.h" 3 4
+
+# 407 "/usr/include/dirent.h" 2 3 4
+# 3 "02transpile.c" 2
+
+
+# 4 "02transpile.c"
+bool gComelang;
+bool gGC;
+
+void come_init() version 2
 {
-    puts("HELLO COMELANG");
+    gComelang = false;
+    gGC = false;
+}
 
+void come_final() version 2
+{
+}
+
+void err_msg(sInfo* info, char* msg, ...)
+{
+    if(!info.no_output_err) {
+        char msg2[2048];
+
+        va_list args;
+        
+# 23 "02transpile.c" 3 4
+       __builtin_va_start(
+# 23 "02transpile.c"
+       args
+# 23 "02transpile.c" 3 4
+       ,
+# 23 "02transpile.c"
+       msg
+# 23 "02transpile.c" 3 4
+       )
+# 23 "02transpile.c"
+                          ;
+        vsnprintf(msg2, 2048, msg, args);
+        
+# 25 "02transpile.c" 3 4
+       __builtin_va_end(
+# 25 "02transpile.c"
+       args
+# 25 "02transpile.c" 3 4
+       )
+# 25 "02transpile.c"
+                   ;
+
+        fprintf(
+# 27 "02transpile.c" 3 4
+               stderr
+# 27 "02transpile.c"
+                     , "%s %d: %s\n", info.sname, info.sline, msg2);
+        info.err_num++;
+    }
+}
+
+exception int transpile(sInfo* info) version 2
+{
     return 0;
 }
 
-int main(int argc, char** argv)
+bool output_source_file(sInfo* info) version 2
 {
-    return come_main(argc, argv);
+    string output_file_name = xsprintf("%s.c", info.sname);
+
+
+    string("int main(int argc, char** argv) { return 0; }\n").write(output_file_name);
+
+    return true;
+}
+
+static bool cpp(sInfo* info)
+{
+    string input_file_name = info.sname;
+    string output_file_name = xsprintf("%s.i", info.sname);
+
+    buffer*% include_files = new buffer();
+
+    DIR* dir = opendir(".");
+
+    if(dir == null) {
+        return false;
+    }
+
+    struct dirent* entry;
+    while(entry = readdir(dir)) {
+        string ext = xextname(entry->d_name);
+        string dname = xdirname(entry->d_name);
+
+        if(ext === "ach" && entry->d_name !== xsprintf("%s.ach", info.sname) && dname === "")
+        {
+            include_files.append_str(xsprintf("-include %s ", entry->d_name));
+        }
+    }
+
+    closedir(dir);
+
+    char cmd[1024];
+
+
+
+    snprintf(cmd, 1024, "cpp -I. -U__GNUC__ %s %s > %s", include_files.to_string(), input_file_name, output_file_name);
+
+    puts(cmd);
+
+    int rc = system(cmd);
+    if(rc != 0) {
+        char cmd[1024];
+        snprintf(cmd, 1024, "cpp %s -I. -C %s > %s", include_files.to_string(), input_file_name, output_file_name);
+
+        puts(cmd);
+        rc = system(cmd);
+
+        if(rc != 0) {
+            fprintf(
+# 90 "02transpile.c" 3 4
+                   stderr
+# 90 "02transpile.c"
+                         , "failed to cpp(2) (%s)\n", cmd);
+            exit(5);
+        }
+    }
+
+    return true;
+}
+
+static bool compile(sInfo* info, bool output_object_file, list<string>* object_files)
+{
+    string noextname = xnoextname(info.sname);
+    string output_file_name = noextname + ".o";
+
+    string input_file_name = xsprintf("%s.c", info.sname);
+
+    var command = xsprintf("clang -o %s -c %s %s", output_file_name, input_file_name, info.clang_option);
+
+    puts(command);
+    int rc = system(command);
+
+    if(rc != 0) {
+        err_msg(info, "clang is faield");
+        return false;
+    }
+
+    if(!output_object_file) {
+        object_files.push_back(string(output_file_name));
+    }
+
+    return true;
+}
+
+static bool linker(sInfo* info, list<string>* object_files)
+{
+    string output_file_name = xnoextname(info.sname);
+
+    var command = new buffer();
+
+    command.append_str(xsprintf("clang -o %s %s ", output_file_name, info.clang_option));
+
+    
+# 130 "02transpile.c" 3
+   for(var 
+# 130 "02transpile.c"
+   it 
+# 130 "02transpile.c" 3
+   = (
+# 130 "02transpile.c"
+   object_files
+# 130 "02transpile.c" 3
+   ).begin(); !(
+# 130 "02transpile.c"
+   object_files
+# 130 "02transpile.c" 3
+   ).end(); 
+# 130 "02transpile.c"
+   it 
+# 130 "02transpile.c" 3
+   = (
+# 130 "02transpile.c"
+   object_files
+# 130 "02transpile.c" 3
+   ).next()) 
+# 130 "02transpile.c"
+                             {
+        command.append_str(xsprintf("%s ", it));
+    }
+
+    int rc = system(command.to_string());
+
+    if(rc != 0) {
+        err_msg(info, "clang is faield");
+        return false;
+    }
+
+    return true;
+}
+
+sModule*% sModule*::initialize(sModule*% self)
+{
+    self.mSourceHead = new buffer();
+    self.mSource = new buffer();
+    self.mLastCode = null;
+
+    return self;
+}
+
+sVarTable*% sVarTable*::initialize(sVarTable*% self, bool global, sVarTable* parent)
+{
+    self.mVars = new map<string, sVar*%>();
+    self.mGlobal = global;
+    self.mParent = parent;
+    static int id = 0;
+    self.mID = ++id;
+
+    return self;
+}
+
+void sVarTable*::finalize(sVarTable* self)
+{
+    delete borrow self.mVars;
+}
+
+sType*% sType*::initialize(sType*% self, char* name, sInfo* info, bool heap=false)
+{
+    int pointer_num = 0;
+    char* p = name;
+    while(*p) {
+        if(xisalpha(*p)) {
+            p++;
+        }
+        else {
+            break;
+        }
+    }
+    while(*p == '*') {
+        pointer_num++;
+        p++;
+    }
+    string name2 = string(name).substring(0, -pointer_num-1);
+    sClass* klass = info.classes[name2];
+    sClass* generics_class = info.generics_classes[name2]
+
+    if(klass == null && generics_class == null) {
+        err_msg(info, "class not found(%s)(1)\n", name2);
+    }
+    if(klass) {
+        self.mClass = klass;
+    }
+    else {
+        self.mClass = borrow clone generics_class;
+    }
+
+    self.mGenericsTypes = new list<sType*%>();
+    self.mArrayNum = new list<sNode*%>();
+    self.mOmitArrayNum = false;
+    self.mParamTypes = new list<sType*%>();
+    self.mParamNames = new list<string>();
+    self.mVarArgs = false;
+    self.mResultType = null;
+    self.mUnsigned = false;
+    self.mConstant = false;
+    self.mRegister = false;
+    self.mVolatile = false;
+    self.mStatic = false;
+    self.mRestrict = false;
+    self.mImmutable = false;
+    self.mLongLong = false;
+    self.mHeap = heap;
+    self.mDummyHeap = false;
+    self.mNoHeap = false;
+    self.mRefference = false;
+
+    self.mPointerNum = pointer_num;
+    self.mNoArrayPointerNum = 0;
+    self.mSizeNum = 0;
+
+    self.mDynamicArrayNum = 0;
+    self.mTypeOfExpression = 0;
+
+    self.mOriginalTypeName = string("");
+    self.mOriginalPointerNum = 0;
+
+    self.mFunctionParam = false;
+
+    return self;
+}
+
+sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool union_=false, bool generics=false, bool method_generics=false, bool protocol_=false, bool struct_=false, bool float_=false, int generics_num=-1, int method_generics_num=-1, bool enum_=false)
+{
+    self.mNumber = number;
+    self.mStruct = struct_;
+    self.mUnion = union_;
+    self.mGenerics = generics;
+    self.mMethodGenerics = method_generics;
+    self.mEnum = false;
+    self.mProtocol = protocol_;
+    self.mFloat = float_;
+    self.mEnum = enum_;
+
+    self.mName = string(name);
+
+    self.mGenericsNum = generics_num;
+    self.mMethodGenericsNum = method_generics_num;
+
+    self.mFields = new list<tuple2<string, sType*%>*%>();
+
+    return self;
+};
+
+sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, list<string>%* param_default_parametors, bool external, bool var_args, sBlock*% block, bool static_, string come_header, sInfo* info)
+{
+    self.mName = name;
+    self.mResultType = result_type;
+    self.mParamTypes = param_types;
+    self.mParamNames = param_names;
+    self.mParamDefaultParametors = param_default_parametors;
+    self.mExternal = external;
+    self.mVarArgs = var_args;
+    self.mStatic = static_;
+
+    self.mLambdaType = new sType("lambda", info);
+
+    
+# 269 "02transpile.c" 3
+   for(var 
+# 269 "02transpile.c"
+   it 
+# 269 "02transpile.c" 3
+   = (
+# 269 "02transpile.c"
+   param_types
+# 269 "02transpile.c" 3
+   ).begin(); !(
+# 269 "02transpile.c"
+   param_types
+# 269 "02transpile.c" 3
+   ).end(); 
+# 269 "02transpile.c"
+   it 
+# 269 "02transpile.c" 3
+   = (
+# 269 "02transpile.c"
+   param_types
+# 269 "02transpile.c" 3
+   ).next()) 
+# 269 "02transpile.c"
+                            {
+        self.mLambdaType.mParamTypes.push_back(clone it);
+    }
+
+    
+# 273 "02transpile.c" 3
+   for(var 
+# 273 "02transpile.c"
+   it 
+# 273 "02transpile.c" 3
+   = (
+# 273 "02transpile.c"
+   param_names
+# 273 "02transpile.c" 3
+   ).begin(); !(
+# 273 "02transpile.c"
+   param_names
+# 273 "02transpile.c" 3
+   ).end(); 
+# 273 "02transpile.c"
+   it 
+# 273 "02transpile.c" 3
+   = (
+# 273 "02transpile.c"
+   param_names
+# 273 "02transpile.c" 3
+   ).next()) 
+# 273 "02transpile.c"
+                            {
+        self.mLambdaType.mParamNames.push_back(clone it);
+    }
+
+    self.mLambdaType.mResultType = new tuple1<sType*%>(result_type);
+    self.mLambdaType.mVarArgs = var_args;
+
+    self.mSource = new buffer();
+    self.mSourceHead = new buffer();
+    self.mSourceHead2 = new buffer();
+    self.mSourceDefer = new buffer();
+
+    self.mBlock = block;
+
+    self.mComeHeader = come_header;
+
+    return self;
+}
+
+void init_classes(sInfo* info)
+{
+    info.classes.insert(string("int"), new sClass("int", number:true));
+    info.classes.insert(string("short"), new sClass("short", number:true));
+    info.classes.insert(string("long"), new sClass("long", number:true));
+    info.classes.insert(string("char"), new sClass("char", number:true));
+    info.classes.insert(string("bool"), new sClass("bool", number:true));
+    info.classes.insert(string("_Bool"), new sClass("_Bool", number:true));
+    info.classes.insert(string("void"), new sClass("void"));
+    info.classes.insert(string("float"), new sClass("float", float_:true));
+    info.classes.insert(string("double"), new sClass("double", float_:true));
+    info.classes.insert(string("lambda"), new sClass("lambda"));
+    for(int i=0; i<12; i++) {
+        string generics_type = xsprintf("generics_type%d", i);
+        info.classes.insert(generics_type, new sClass(generics_type, generics:true, generics_num:i));
+    }
+}
+
+void init_module(sInfo* info)
+{
+    char fname[
+# 312 "02transpile.c" 3 4
+              4096
+# 312 "02transpile.c"
+                      ];
+    char* p = info.sname;
+    char* p2 = fname;
+    while(*p) {
+        if(xisalpha(*p)) {
+            *p2++ = *p++;
+        }
+        else {
+            *p2++ = '_';
+            p++;
+        }
+    }
+
+    *p2 = '\0';
+}
+
+void output_err_source_code(sInfo* info)
+{
+    char* p = info.p;
+    while(*p != '\n' && p >= info.head) {
+        p--;
+    }
+    char* head;
+    if(*p == '\n') {
+        head = p + 1;
+    }
+    else {
+        head = p;
+    }
+
+    p = info.p;
+    while(*p != '\0' && *p != '\n') {
+        p++;
+    }
+
+    char* tail = p;
+
+    char*% buf = new char[tail-head+1];
+    memcpy(buf, head, tail-head);
+    buf[tail-head] = '\0';
+    if(info.come_fun) {
+        fprintf(
+# 353 "02transpile.c" 3 4
+               stderr
+# 353 "02transpile.c"
+                     , "-+- %s function -+-\n", info.come_fun.mName);
+        fprintf(
+# 354 "02transpile.c" 3 4
+               stderr
+# 354 "02transpile.c"
+                     , "%s\n", buf);
+    }
+    else {
+        fprintf(
+# 357 "02transpile.c" 3 4
+               stderr
+# 357 "02transpile.c"
+                     , "%s\n", buf);
+    }
+}
+
+int come_main(int argc, char** argv) version 2
+{
+    var clang_option = new buffer();
+    var files = new list<string>();
+    var object_files = new list<string>();
+    bool output_object_file = false;
+    bool output_cpp_file = false;
+    bool output_source_file_flag = false;
+    for(int i=1; i<argc; i++) {
+        if(argv[i] === "-g") {
+            clang_option.append_str("-g ");
+        }
+        else if(argv[i] === "-s" || argv[i] === "-S") {
+            output_source_file_flag = true;
+        }
+        else if(argv[i] === "-c") {
+            output_object_file = true;
+        }
+        else if(argv[i] === "-E") {
+            output_cpp_file = true;
+        }
+        else if(argv[i] === "-no-gc") {
+            gGC = false;
+        }
+        else if(argv[i] === "-gc") {
+            gGC = true;
+        }
+        else if(argv[i][0] == '-') {
+            clang_option.append_str(argv[i] + " ");
+        }
+        else if(memcmp(argv[i] + strlen(argv[i]) -2, ".o", 2) == 0) {
+            object_files.push_back(string(argv[i]));
+        }
+        else {
+            files.push_back(string(argv[i]));
+        }
+    }
+
+    come_init();
+
+    
+# 401 "02transpile.c" 3
+   for(var 
+# 401 "02transpile.c"
+   it 
+# 401 "02transpile.c" 3
+   = (
+# 401 "02transpile.c"
+   files
+# 401 "02transpile.c" 3
+   ).begin(); !(
+# 401 "02transpile.c"
+   files
+# 401 "02transpile.c" 3
+   ).end(); 
+# 401 "02transpile.c"
+   it 
+# 401 "02transpile.c" 3
+   = (
+# 401 "02transpile.c"
+   files
+# 401 "02transpile.c" 3
+   ).next()) 
+# 401 "02transpile.c"
+                      {
+        sInfo info;
+
+        info.sname = clone it;
+        info.sline = 1;
+        info.err_num = 0;
+        info.clang_option = clang_option.to_string();
+        info.no_output_err = false;
+        info.funcs = new map<string, sFun*%>();
+        info.generics_funcs = new map<string, sGenericsFun*%>();
+        info.classes = new map<string, sClass*%>();
+        info.types = new map<string, sType*%>();
+        info.module = new sModule();
+        info.right_value_objects = new list<sRightValueObject*%>();
+        info.stack = new list<CVALUE*%>();
+        info.gv_table = new sVarTable(global:true, parent:null);
+        sVarTable*% lv_table = new sVarTable(global:false, parent:null);
+        info.lv_table = lv_table;
+        info.generics_type_names = new list<string>();
+        info.generics_classes = new map<string, sClass*%>();
+
+        init_classes(&info);
+        init_module(&info);
+
+        if(!cpp(&info)) {
+            fprintf(
+# 426 "02transpile.c" 3 4
+                   stderr
+# 426 "02transpile.c"
+                         , "%s %d: traspile faield\n", info.sname, info.sline);
+            exit(2);
+        }
+
+        info.source = xsprintf("%s.i", it).read().to_buffer();
+        info.p = info.source.buf;
+        info.head = info.source.buf;
+
+        if(!output_cpp_file) {
+            transpile(&info).catch {
+                fprintf(
+# 436 "02transpile.c" 3 4
+                       stderr
+# 436 "02transpile.c"
+                             , "%s %d: traspile faield\n", info.sname, info.sline);
+                output_err_source_code(&info);
+                exit(2);
+            }
+
+            if(!output_source_file(&info)) {
+                fprintf(
+# 442 "02transpile.c" 3 4
+                       stderr
+# 442 "02transpile.c"
+                             , "%s %d: output source file faield\n", info->sname, info->sline);
+                output_err_source_code(&info);
+                exit(2);
+            }
+
+            (void)system(xsprintf("rm -f %s.i", info.sname));
+
+            if(info.err_num > 0) {
+                fprintf(
+# 450 "02transpile.c" 3 4
+                       stderr
+# 450 "02transpile.c"
+                             , "transpile error. err num %d\n", info->err_num);
+                output_err_source_code(&info);
+
+                exit(2);
+            }
+            else {
+                if(!compile(&info, output_object_file, object_files)) {
+                    fprintf(
+# 457 "02transpile.c" 3 4
+                           stderr
+# 457 "02transpile.c"
+                                 , "%s %d: compile faield\n", info.sname, info.sline);
+                    exit(1);
+                }
+
+
+
+
+
+
+            }
+        }
+    }
+
+    if(!output_object_file && !output_cpp_file && files.length() > 0) {
+        sInfo info;
+
+        info.sname = clone files[0];
+        info.clang_option = clang_option.to_string();
+
+        linker(&info, object_files).expect {
+            fprintf(
+# 477 "02transpile.c" 3 4
+                   stderr
+# 477 "02transpile.c"
+                         , "%s %d: linker faield\n", info.sname, info.sline);
+            exit(1);
+        }
+
+        (void)system(xsprintf("rm -f %s.o", xnoextname(info.sname)));
+    }
+
+    come_final();
+
+    return 0;
 }

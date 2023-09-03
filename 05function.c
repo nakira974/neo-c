@@ -1667,7 +1667,7 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
             if(fun.mVarArgs && fun.mParamTypes[i] == null) {
             }
             else {
-                if(fun.mParamTypes[i].mHeap && come_value.type.mHeap) {
+                if(i < fun.mParamTypes.length() && fun.mParamTypes[i].mHeap && come_value.type.mHeap) {
                     come_value.c_value = increment_ref_count_object(come_value.type, come_value.c_value, info);
                 }
             }
@@ -1718,7 +1718,7 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
             }
         }
         
-        if(fun.mParamTypes.length() != come_params.length() && !fun.mVarArgs) 
+        if(fun.mParamTypes.length() != come_params.length() && !fun.mVarArgs && fun_name !== "__builtin_va_start" && fun_name !== "__builtin_va_end") 
         {
             err_msg(info, "invalid param number(%s). function param number is %d. caller param number is %d", fun_name, fun.mParamTypes.length(), params.length());
             return false;

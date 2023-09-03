@@ -55,6 +55,11 @@ void fun_default_parametor(int x=1, int y=2)
     xassert("default parametor", x == 1 && y == 2);
 }
 
+exception int fun_exception(int x, int y)
+{
+    return (x+y, true);
+}
+
 int main()
 {
     if(1) {
@@ -366,6 +371,18 @@ int main()
     xassert("tuple test", aZZZ == 1 && bZZZ == 2);
     
     fun_default_parametor();
+    int xZZZZZZZZ = fun_exception(1,2).catch { fprintf(stderr, "exception\n"); }
+    
+    xassert("exception test", xZZZZZZZZ == 3);
+    
+    list<string>*% li_str = new list<string>();
+    
+    li_str.push_back(string("AAA"));
+    li_str.push_back(string("BBB"));
+    li_str.push_back(string("CCC"));
+    
+    xassert("list test", li_str === [string("AAA"), string("BBB"), string("CCC")]);
+    
     
     return 0;
 }

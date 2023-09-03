@@ -9,6 +9,9 @@ struct __builtin_va_list
     int v5;
 };
 
+void __builtin_va_start(char*);
+void __builtin_va_end(char*);
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

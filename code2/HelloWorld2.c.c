@@ -848,6 +848,18 @@ struct list_item$_IA$ph$_IA$ph
     struct list_item$p_IA$ph* prev;
     struct list_item$p_IA$ph* next;
 };
+struct tuple3$_int$_int$_bool$
+{
+    int v1;
+    int v2;
+    _Bool v3;
+};
+struct tuple3$ph_int$_int$_bool$
+{
+    int v1;
+    int v2;
+    _Bool v3;
+};
 
 /* header function */
 int remove(const char* __filename);
@@ -1278,6 +1290,7 @@ int intp_fun(int* self);
 struct sDataA* sDataA_initialize(struct sDataA* self, int a, int b);
 static void sDataA_finalize(struct sDataA* self);
 int sDataA_fun(struct sDataA* self, int a, int b);
+void fun_default_parametor(int x, int y);
 int main();
 static void sData_finalize(struct sData* self);
 void method_block1(struct __current_stack1__* parent);
@@ -1385,6 +1398,9 @@ static void list$_IA$phphIAph_push_back(struct list$p_IA$ph* self, struct IA* it
 static struct IA* list$_IA$phphIAph_begin(struct list$p_IA$ph* self);
 static _Bool list$_IA$phphIAph_end(struct list$p_IA$ph* self);
 static struct IA* list$_IA$phphIAph_next(struct list$p_IA$ph* self);
+static struct tuple3$ph_int$_int$_bool$* tuple3$_int$_int$_bool$phintintbool_initialize(struct tuple3$ph_int$_int$_bool$* self, int v1, int v2, _Bool v3);
+static void tuple3$ph_int$_int$_bool$phintintbool_finalize(struct tuple3$ph_int$_int$_bool$* self);
+static void tuple3$_int$_int$_bool$phintintbool_finalize(struct tuple3$_int$_int$_bool$* self);
 
 /* body function */
 
@@ -1610,6 +1626,10 @@ int sDataA_fun(struct sDataA* self, int a, int b){
     return __result__;
 }
 
+void fun_default_parametor(int x, int y){
+    xassert("default parametor",x==1&&y==2);
+}
+
 int main(){
 void* right_value5;
 char* a_28;
@@ -1793,6 +1813,11 @@ struct sDataA* _inf_obj_value4;
 void* right_value158;
 struct IA** _inf_valueX7;
 struct IA* it_257;
+void* right_value159;
+void* right_value160;
+struct tuple3$ph_int$_int$_bool$* __tuple_value6___259;
+int aZZZ_260;
+int bZZZ_261;
 memset(&a_28, 0, sizeof(char*));
 memset(&p_29, 0, sizeof(char*));
 memset(&p2_30, 0, sizeof(void*));
@@ -1859,6 +1884,11 @@ memset(&__tuple_value5___242, 0, sizeof(struct tuple2$ph_char$p_int$*));
 memset(&ia_244, 0, sizeof(struct IA*));
 memset(&liIA_247, 0, sizeof(struct list$_IA$ph*));
 memset(&it_257, 0, sizeof(struct IA*));
+memset(&__tuple_value6___259, 0, sizeof(struct tuple3$ph_int$_int$_bool$*));
+memset(&aZZZ_260, 0, sizeof(int));
+memset(&aZZZ_260, 0, sizeof(int));
+memset(&aZZZ_260, 0, sizeof(int));
+memset(&bZZZ_261, 0, sizeof(int));
     if(1) {
         a_28=(char*)come_increment_ref_count((char**)(right_value5=(char**)come_calloc(1, sizeof(char*)*1*128)));
         right_value5 = come_decrement_ref_count(right_value5, 1, 0);
@@ -2355,6 +2385,13 @@ memset(&it_257, 0, sizeof(struct IA*));
     ){
         printf("%d\n",it_257->fun(it_257->_protocol_obj,0,0));
     }
+    __tuple_value6___259=(struct tuple3$ph_int$_int$_bool$*)come_increment_ref_count((struct tuple3$ph_int$_int$_bool$*)(right_value160=tuple3$_int$_int$_bool$phintintbool_initialize((struct tuple3$_int$_int$_bool$*)come_increment_ref_count((struct tuple3$_int$_int$_bool$*)(right_value159=(struct tuple3$_int$_int$_bool$*)come_calloc(1, sizeof(struct tuple3$_int$_int$_bool$)*1))),1,2,(_Bool)0)));
+    call_finalizer(tuple3$_int$_int$_bool$phintintbool_finalize,right_value159,0, 1, 0);
+    call_finalizer(tuple3$ph_int$_int$_bool$phintintbool_finalize,right_value160,0, 1, 0);
+    aZZZ_260=__tuple_value6___259->v1;
+    bZZZ_261=__tuple_value6___259->v2;
+    xassert("tuple test",aZZZ_260==1&&bZZZ_261==2);
+    fun_default_parametor(1,2);
     int __result__ = 0;
     ax_39 = come_decrement_ref_count(ax_39, 0, 0);
     str_43 = come_decrement_ref_count(str_43, 0, 0);
@@ -2397,6 +2434,7 @@ memset(&it_257, 0, sizeof(struct IA*));
     call_finalizer(((struct IA*)ia_244)->finalize, ((struct IA*)ia_244)->_protocol_obj,0, 0, 0);
     ia_244 = come_decrement_ref_count(ia_244, 0, 0);
     call_finalizer(list$_IA$phphIAph_finalize,liIA_247,0, 0, 0);
+    call_finalizer(tuple3$ph_int$_int$_bool$phintintbool_finalize,__tuple_value6___259,0, 0, 0);
     return __result__;
 }
 
@@ -4468,5 +4506,20 @@ memset(&result_258, 0, sizeof(struct IA*));
         memset(&result_258,0,sizeof(struct IA*));
         struct IA* __result__ = result_258;
         return __result__;
+}
+
+static struct tuple3$ph_int$_int$_bool$* tuple3$_int$_int$_bool$phintintbool_initialize(struct tuple3$ph_int$_int$_bool$* self, int v1, int v2, _Bool v3){
+        self->v1=v1;
+        self->v2=v2;
+        self->v3=v3;
+        struct tuple3$ph_int$_int$_bool$* __result__ = self;
+        call_finalizer(tuple3$ph_int$_int$_bool$phintintbool_finalize,self,0, 0, 1);
+        return __result__;
+}
+
+static void tuple3$ph_int$_int$_bool$phintintbool_finalize(struct tuple3$ph_int$_int$_bool$* self){
+}
+
+static void tuple3$_int$_int$_bool$phintintbool_finalize(struct tuple3$_int$_int$_bool$* self){
 }
 

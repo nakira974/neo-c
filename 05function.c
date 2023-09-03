@@ -114,10 +114,11 @@ bool is_contained_generics_class(sType* type, sInfo* info)
     return false;
 }
 
-exception list<sType*%>*%, list<string>*%, bool parse_params(sInfo* info)
+exception list<sType*%>*%, list<string>*%, list<string>*%, bool parse_params(sInfo* info)
 {
     var param_types = new list<sType*%>();
     var param_names = new list<string>();
+    var param_default_parametors = new list<string>();
     bool var_args = false;
     
     expected_next_character('(', info) throws;
@@ -169,6 +170,33 @@ exception list<sType*%>*%, list<string>*%, bool parse_params(sInfo* info)
             param_types.push_back(clone param_type2);
             param_names.push_back(clone param_name);
             
+            if(*info->p == '=') {
+                info->p++;
+                skip_spaces_and_lf(info);
+                
+                parse_sharp(info);
+                
+                char* p = info->p;
+                
+                bool no_comma = info.no_comma;
+                info.no_comma = true;
+                
+                sNode*% node = expression(info) throws;
+                
+                info.no_comma = no_comma;
+                
+                char* p2 = info->p;
+                
+                char buf[p2 -p +1];
+                memcpy(buf, p, p2 -p);
+                buf[p2-p] = '\0';
+                
+                param_default_parametors.push_back(string(buf));
+            }
+            else {
+                param_default_parametors.push_back(null);
+            }
+            
             if(*info->p == ',') {
                 info->p++;
                 skip_spaces_and_lf(info);
@@ -190,7 +218,7 @@ exception list<sType*%>*%, list<string>*%, bool parse_params(sInfo* info)
         }
     }
     
-    return new tuple3<list<sType*%>*%, list<string>*%, bool>(param_types, param_names, var_args);
+    return new tuple4<list<sType*%>*%, list<string>*%, list<string>*%, bool>(param_types, param_names, param_default_parametors, var_args);
 }
 
 exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_name=false)
@@ -623,7 +651,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         var_name = parse_word(info) throws;
         expected_next_character(')', info);
         
-        var param_types, param_names, var_args = parse_params(info) throws;
+        var param_types, param_names, param_default_parametors, var_args = parse_params(info) throws;
         
         type = new sType("lambda", info);
         
@@ -1509,11 +1537,6 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
         
         list<CVALUE*%>*% come_params = new list<CVALUE*%>();
         
-        if(fun.mParamTypes.length() != params.length() && !fun.mVarArgs) {
-            err_msg(info, "invalid param number(%s). function param number is %d. caller param number is %d", fun_name, fun.mParamTypes.length(), params.length());
-            return false;
-        }
-        
         int i = 0;
         foreach(it, params) {
             if(!it.compile->(info)) {
@@ -1532,6 +1555,53 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
             dec_stack_ptr(1, info);
             
             i++;
+        }
+        
+        if(params.length() < fun.mParamTypes.length()) {
+            for(; i<fun.mParamTypes.length(); i++) {
+                string default_param = clone fun.mParamDefaultParametors[i];
+                
+                if(default_param && default_param !== "") {
+                    buffer*% source = info.source;
+                    char* p = info.p;
+                    char* head = info.head;
+                    int sline = info.sline;
+                    
+                    info.source = default_param.to_buffer();
+                    info.p = info.source.buf;
+                    info.head = info.source.buf;
+                    
+                    sNode*% node = expression(info).catch {
+                        return false;
+                    }
+                    
+                    if(!node.compile->(info)) {
+                        return false;
+                    }
+                    
+                    info.source = source;
+                    info.p = p;
+                    info.head = head;
+                    info.sline = sline;
+            
+                    CVALUE*% come_value = get_value_from_stack(-1, info);
+                    if(fun.mParamTypes[i].mHeap && come_value.type.mHeap) {
+                        come_value.c_value = increment_ref_count_object(come_value.type, come_value.c_value, info);
+                    }
+                    come_params.push_back(come_value);
+                    dec_stack_ptr(1, info);
+                }
+                else {
+                    err_msg(info, "require parametor");
+                    return false;
+                }
+            }
+        }
+        
+        if(fun.mParamTypes.length() != come_params.length() && !fun.mVarArgs) 
+        {
+            err_msg(info, "invalid param number(%s). function param number is %d. caller param number is %d", fun_name, fun.mParamTypes.length(), params.length());
+            return false;
         }
         
         buffer*% buf = new buffer();
@@ -2921,7 +2991,7 @@ bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* gen
     bool var_args = generics_fun.mVarArgs;
     var fun = new sFun(fun_name, result_type
                     , param_types
-                    , param_names, false@external
+                    , param_names, new list<string>(), false@external
                     , var_args, block, true@static_, string(""), info);
     
     info.funcs.insert(string(fun_name), fun);
@@ -3261,7 +3331,7 @@ exception sNode*% parse_function(sInfo* info)
         fun_name = parse_word(info) throws;
     }
     
-    var param_types, param_names, var_args = parse_params(info) throws;
+    var param_types, param_names, param_default_parametors, var_args = parse_params(info) throws;
     char* header_tail = info.p;
     
     buffer*% header_buf = new buffer();
@@ -3280,6 +3350,7 @@ exception sNode*% parse_function(sInfo* info)
         result_type->mStatic = false;
         
         var fun = new sFun(fun_name, result_type, param_types, param_names
+                            , param_default_parametors
                             , false@external, var_args, block
                             , true@static_, header_buf.to_string(), info);
         
@@ -3311,6 +3382,7 @@ exception sNode*% parse_function(sInfo* info)
         
         var fun = new sFun(fun_name, result_type, param_types
                                 , param_names
+                                , param_default_parametors
                                 , false@external, var_args, clone block
                                 , static_
                                 , header_buf.to_string()
@@ -3330,7 +3402,9 @@ exception sNode*% parse_function(sInfo* info)
             
             result_type->mStatic = false;
             
-            var fun = new sFun(fun_name, result_type, param_types, param_names
+            var fun = new sFun(fun_name, result_type
+                                , param_types, param_names
+                                , param_default_parametors
                                 , true@external, var_args, null!@block
                                 , false@static_, header_buf.to_string(), info);
             
@@ -3354,6 +3428,7 @@ exception sNode*% parse_function(sInfo* info)
             
             var fun = new sFun(fun_name, result_type, param_types
                                 , param_names
+                                , param_default_parametors
                                 , true@external, var_args, null!@block
                                 , false@static_, header_buf.to_string(), info);
             
@@ -3704,6 +3779,7 @@ exception sFun*,string create_finalizer_automatically(sType* type, char* fun_nam
         self_type->mHeap = false;
         var param_types = [self_type];
         var param_names = [string("self")];
+        var param_default_parametors = new list<string>();
         
         buffer*% header_buf = new buffer();
         
@@ -3729,6 +3805,7 @@ exception sFun*,string create_finalizer_automatically(sType* type, char* fun_nam
         result_type->mStatic = false;
         
         var fun = new sFun(name, result_type, param_types, param_names
+                        , param_default_parametors
                         , false@external, false@var_args, block
                         , true@static_
                         , header_buf.to_string()
@@ -3815,6 +3892,7 @@ exception sFun*,string create_equals_automatically(sType* type, char* fun_name, 
         right_type->mHeap = false;
         var param_types = [left_type, right_type];
         var param_names = [string("left"), string("right")];
+        var param_default_parametors = new list<string>();
         
         buffer*% header_buf = new buffer();
         
@@ -3840,6 +3918,7 @@ exception sFun*,string create_equals_automatically(sType* type, char* fun_name, 
         result_type->mStatic = false;
         
         var fun = new sFun(name, result_type, param_types, param_names
+                        , param_default_parametors
                         , false@external, false@var_args, block
                         , true@static_
                         , header_buf.to_string()
@@ -3943,6 +4022,7 @@ exception sFun*,string create_operator_not_equals_automatically(sType* type, cha
         right_type->mHeap = false;
         var param_types = [left_type, right_type];
         var param_names = [string("left"), string("right")];
+        var param_default_parametors = new list<string>();
         
         buffer*% header_buf = new buffer();
         
@@ -3968,6 +4048,7 @@ exception sFun*,string create_operator_not_equals_automatically(sType* type, cha
         result_type->mStatic = false;
         
         var fun = new sFun(name, result_type, param_types, param_names
+                        , param_default_parametors
                         , false@external, false@var_args, block
                         , true@static_
                         , header_buf.to_string()
@@ -4054,6 +4135,7 @@ exception sFun*,string create_operator_equals_automatically(sType* type, char* f
         right_type->mHeap = false;
         var param_types = [left_type, right_type];
         var param_names = [string("left"), string("right")];
+        var param_default_parametors = new list<string>();
         
         buffer*% header_buf = new buffer();
         
@@ -4079,6 +4161,7 @@ exception sFun*,string create_operator_equals_automatically(sType* type, char* f
         result_type->mStatic = false;
         
         var fun = new sFun(name, result_type, param_types, param_names
+                        , param_default_parametors
                         , false@external, false@var_args, block
                         , true@static_
                         , header_buf.to_string()
@@ -4167,6 +4250,7 @@ exception sFun*,string create_cloner_automatically(sType* type, char* fun_name, 
         self_type->mHeap = false;
         var param_types = [self_type];
         var param_names = [string("self")];
+        var param_default_parametors = new list<string>();
         
         buffer*% header_buf = new buffer();
         
@@ -4192,6 +4276,7 @@ exception sFun*,string create_cloner_automatically(sType* type, char* fun_name, 
         result_type->mStatic = false;
         
         var fun = new sFun(name, result_type, param_types, param_names
+                        , param_default_parametors
                         , false@external, false@var_args, block
                         , true@static_
                         , header_buf.to_string()

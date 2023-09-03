@@ -62,7 +62,7 @@ exception tuple2<sType*%, string>*% parse_interface_function(sInfo* info)
     
     string fun_name = parse_word(info) throws;
     
-    var param_types, param_names, var_args = parse_params(info) throws;
+    var param_types, param_names, param_default_parametors, var_args = parse_params(info) throws;
     
     param_types.insert(0, new sType("void*", info));
     param_names.insert(0, string("self"));

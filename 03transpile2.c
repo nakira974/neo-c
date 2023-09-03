@@ -597,8 +597,10 @@ exception int transpile(sInfo* info) version 3
     var result_type = new sType("int", info);
     var param_types = [new sType("int", info), new sType("char**", info)];
     var param_names = [string("argc"), string("argv")];
+    var param_default_parametors = new list<string>();
     var main_fun = new sFun(name, result_type, param_types, param_names
-        , false@external, false@var_args, null!@block, false@static_
+        , param_default_parametors, false@external, false@var_args
+        , null!@block, false@static_
         , string("int main(int argc, char** argv)")
         , info);
     

@@ -1193,8 +1193,15 @@ impl tuple1 <T>
         
         return self;
     }
+    
+    void catch(tuple1<T>* self, void* parent, void (*block)(void* parent))
+    {
+        if(!self.v1) {
+            block(parent);
+            exit(2);
+        }
+    }
 }
-
 
 struct tuple2<T, T2>
 {
@@ -1210,6 +1217,110 @@ impl tuple2 <T, T2>
         self.v2 = v2;
         
         return self;
+    }
+    
+    tuple1<T>*% catch(tuple2<T, T2>* self, void* parent, void (*block)(void* parent))
+    {
+        if(!self.v2) {
+            block(parent);
+            exit(2);
+        }
+        
+        return new tuple1<T>.initialize(self.v1);
+    }
+}
+
+struct tuple3<T, T2, T3>
+{
+    T v1;
+    T2 v2;
+    T3 v3;
+};
+
+impl tuple3 <T, T2, T3>
+{
+    tuple3<T, T2, T3>*% initialize(tuple3<T, T2, T3>*% self, T v1, T2 v2, T3 v3)
+    {
+        self.v1 = v1;
+        self.v2 = v2;
+        self.v3 = v3;
+        
+        return self;
+    }
+    
+    tuple2<T,T2>*% catch(tuple3<T, T2, T3>* self, void* parent, void (*block)(void* parent))
+    {
+        if(!self.v3) {
+            block(parent);
+            exit(2);
+        }
+        
+        return new tuple2<T, T2>.initialize(self.v1, self.v2);
+    }
+}
+
+struct tuple4<T, T2, T3, T4>
+{
+    T v1;
+    T2 v2;
+    T3 v3;
+    T4 v4;
+};
+
+impl tuple4 <T, T2, T3, T4>
+{
+    tuple4<T, T2, T3, T4>*% initialize(tuple4<T, T2, T3, T4>*% self, T v1, T2 v2, T3 v3, T4 v4)
+    {
+        self.v1 = v1;
+        self.v2 = v2;
+        self.v3 = v3;
+        self.v4 = v4;
+        
+        return self;
+    }
+    
+    tuple3<T,T2,T3>*% catch(tuple4<T, T2, T3, T4>* self, void* parent, void (*block)(void* parent))
+    {
+        if(!self.v4) {
+            block(parent);
+            exit(2);
+        }
+        
+        return new tuple3<T, T2, T3>.initialize(self.v1, self.v2, self.v3);
+    }
+}
+
+
+struct tuple5<T, T2, T3, T4, T5>
+{
+    T v1;
+    T2 v2;
+    T3 v3;
+    T4 v4;
+    T5 v5;
+};
+
+impl tuple5 <T, T2, T3, T4, T5>
+{
+    tuple5<T, T2, T3, T4, T5>*% initialize(tuple5<T, T2, T3, T4, T5>*% self, T v1, T2 v2, T3 v3, T4 v4, T5 v5)
+    {
+        self.v1 = v1;
+        self.v2 = v2;
+        self.v3 = v3;
+        self.v4 = v4;
+        self.v5 = v5;
+        
+        return self;
+    }
+    
+    tuple4<T,T2,T3,T4>*% catch(tuple5<T, T2, T3, T4, T5>* self, void* parent, void (*block)(void* parent))
+    {
+        if(!self.v5) {
+            block(parent);
+            exit(2);
+        }
+        
+        return new tuple4<T, T2, T3, T4>.initialize(self.v1, self.v2, self.v3, self.v4);
     }
 }
 

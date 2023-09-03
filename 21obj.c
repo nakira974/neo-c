@@ -167,6 +167,7 @@ bool sImplementsNode*::compile(sImplementsNode* self, sInfo* info)
     return true;
 }
 
+
 struct sTrueNode {
     int sline;
     string sname;
@@ -804,24 +805,15 @@ exception sNode*% post_position_operator3(sNode*% node, sInfo* info)
         
         return new sNode(new sImplementsNode(node, inf_type, info));
     }
+    else if(*info->p == '@') {
+        info->p++;
+        while(xisalnum(*info->p) || *info->p == '_') {
+            info->p++;
+        }
+        skip_spaces_and_lf(info);
+    }
     
     return node;
 }
 
-/*
-exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 21
-{
-    if(memcmp(info->p, "implements", strlen("implements")) == 0) {
-        info->p += strlen("implements");
-        skip_spaces_and_lf(info);
-        
-        var type3, name2 = parse_type(info) throws;
-        
-        sType*% inf_type = clone type3;
-        
-        return new sNode(new sImplementsNode(node, inf_type, info));
-    }
-    
-    return inherit(node, info) throws;
-}
-*/
+

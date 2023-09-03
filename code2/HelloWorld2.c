@@ -50,6 +50,11 @@ int sDataA*::fun(sDataA* self, int a, int b)
     return self.a + self.b + a + b;
 }
 
+void fun_default_parametor(int x=1, int y=2)
+{
+    xassert("default parametor", x == 1 && y == 2);
+}
+
 int main()
 {
     if(1) {
@@ -355,6 +360,12 @@ int main()
     foreach(it, liIA) {
         printf("%d\n", it.fun(0, 0));
     }
+    
+    var aZZZ, bZZZ = (1,2, false);
+    
+    xassert("tuple test", aZZZ == 1 && bZZZ == 2);
+    
+    fun_default_parametor();
     
     return 0;
 }

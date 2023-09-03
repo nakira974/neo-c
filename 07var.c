@@ -3,6 +3,7 @@
 struct sStoreNode
 {
     string name;
+    list<string>*% multiple_assign;
     sNode*% right_value;
     sType*% type;
     bool alloc;
@@ -10,7 +11,7 @@ struct sStoreNode
     string sname;
 };
 
-sStoreNode*% sStoreNode*::initialize(sStoreNode*% self, string name, sType*% type, bool alloc, sNode*%? right_value, sInfo* info)
+sStoreNode*% sStoreNode*::initialize(sStoreNode*% self, string name, list<string>*%? multiple_assign, sType*% type, bool alloc, sNode*%? right_value, sInfo* info)
 {
     self.name = string(name);
     self.alloc = alloc;
@@ -21,6 +22,12 @@ sStoreNode*% sStoreNode*::initialize(sStoreNode*% self, string name, sType*% typ
         self.type = null;
     }
     self.right_value = right_value;
+    if(multiple_assign) {
+        self.multiple_assign = clone multiple_assign;
+    }
+    else {
+        self.multiple_assign = null;
+    }
     
     self.sline = info->sline;
     self.sname = string(info->sname);
@@ -99,20 +106,38 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                 return false;
             }
             
-            if(self.type == null) {
-                add_variable_to_table(self.name, right_type, info);
+            if(self.multiple_assign) {
+                int i = 0;
+                foreach(it, self.multiple_assign) {
+                    if(i < right_type.mGenericsTypes.length()) {
+                        sType* right_type2 = right_type.mGenericsTypes[i];
+                        
+                        add_variable_to_table(it, right_type2, info);
+                        
+                        var_ = get_variable_from_table(info.lv_table, self.name);
+                        
+                        add_come_code_at_function_head2(info, "memset(&%s, 0, sizeof(%s));\n", var_->mCValueName, make_type_name_string(var_->mType, false@in_header, false@array_cast_pointer, info));
+                    }
+                    
+                    i++;
+                }
             }
             else {
-                var type = solve_generics(self.type, info->generics_type, info).catch {
-                    return false;
+                if(self.type == null) {
+                    add_variable_to_table(self.name, right_type, info);
+                }
+                else {
+                    var type = solve_generics(self.type, info->generics_type, info).catch {
+                        return false;
+                    }
+                    
+                    add_variable_to_table(self.name, type, info);
                 }
                 
-                add_variable_to_table(self.name, type, info);
+                var_ = get_variable_from_table(info.lv_table, self.name);
+                
+                add_come_code_at_function_head2(info, "memset(&%s, 0, sizeof(%s));\n", var_->mCValueName, make_type_name_string(var_->mType, false@in_header, false@array_cast_pointer, info));
             }
-            
-            var_ = get_variable_from_table(info.lv_table, self.name);
-            
-            add_come_code_at_function_head2(info, "memset(&%s, 0, sizeof(%s));\n", var_->mCValueName, make_type_name_string(var_->mType, false@in_header, false@array_cast_pointer, info));
         }
         
         sClass* current_stack_frame_struct = info->current_stack_frame_struct;
@@ -158,61 +183,119 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
             }
         }
         
-        sVar* var_ = get_variable_from_table(info.lv_table, self.name);
-        
-        if(var_ == null) {
-            var_ = get_variable_from_table(info.gv_table, self.name);
+        if(self.multiple_assign) {
+            int i = 0;
+            foreach(it, self.multiple_assign) {
+                if(i < right_type.mGenericsTypes.length()) {
+                    sType*% right_type2 = clone right_type.mGenericsTypes[i];
+                    
+                    sVar* var_ = get_variable_from_table(info.lv_table, it);
+                    
+                    add_come_code_at_function_head2(info, "memset(&%s, 0, sizeof(%s));\n", var_->mCValueName, make_type_name_string(var_->mType, false@in_header, false@array_cast_pointer, info));
+                    
+                    sType*% left_type = clone var_->mType;
+                    
+                    CVALUE*% right_value2 = new CVALUE;
+                    
+                    right_value2.c_value = xsprintf("%s->v%d", right_value.c_value, i+1);
+                    right_value2.type = clone right_type2;
+                    right_value2.var = null;
+                    
+                    CVALUE*% come_value = new CVALUE;
+                    
+                    if(right_type2->mHeap && !left_type->mHeap) {
+                        err_msg(info, "require left type appended %%(2) %s", self.name);
+                        return false;
+                    }
+                    
+                    if(right_type2->mHeap && left_type->mHeap && left_type->mPointerNum > 0 && right_type2->mPointerNum > 0)
+                    {
+                        if(self.alloc) {
+                            right_value2.c_value = increment_ref_count_object(right_value2.type, right_value2.c_value, info);
+                            come_value.c_value = xsprintf("%s=%s", var_->mCValueName, right_value2.c_value);
+                        }
+                        
+                        int right_value_id = get_right_value_id_from_obj(right_value2.c_value);
+                        
+                        if(right_value_id != -1) {
+                            remove_object_from_right_values(right_value_id, info);
+                        }
+                    }
+                    else {
+                        come_value.c_value = xsprintf("%s=%s", var_->mCValueName, right_value2.c_value);
+                    }
+                    come_value.type = clone left_type;
+                    come_value.var = var_;
+                    
+                    if(self.alloc) {
+                        add_come_code_at_function_head(info, "%s;\n", make_define_var(left_type, var_->mCValueName, info));
+                        add_come_code(info, "%s;\n", come_value.c_value);
+                    }
+                    else {
+                        add_come_code(info, "%s;\n", come_value.c_value);
+                    }
+                }
+                
+                i++;
+            }
+        }
+        else {
+            sVar* var_ = get_variable_from_table(info.lv_table, self.name);
             
             if(var_ == null) {
-                err_msg(info, "var not found(%s) at storing variable\n", self.name);
+                var_ = get_variable_from_table(info.gv_table, self.name);
+                
+                if(var_ == null) {
+                    err_msg(info, "var not found(%s) at storing variable\n", self.name);
+                    return false;
+                }
+            }
+            
+            if(var_->mType == NULL) {
+                var_->mType = clone right_type;
+            }
+            sType*% left_type = clone var_->mType;
+            
+            CVALUE*% come_value = new CVALUE;
+            
+            if(right_type->mHeap && !left_type->mHeap) {
+                err_msg(info, "require left type appended %%(2) %s", self.name);
                 return false;
             }
-        }
-        
-        if(var_->mType == NULL) {
-            var_->mType = clone right_type;
-        }
-        sType*% left_type = clone var_->mType;
-        
-        CVALUE*% come_value = new CVALUE;
-        
-        if(right_type->mHeap && !left_type->mHeap) {
-            err_msg(info, "require left type appended %%(2) %s", self.name);
-            return false;
-        }
-        
-        if(right_type->mHeap && left_type->mHeap && left_type->mPointerNum > 0 && right_type->mPointerNum > 0)
-        {
-            if(self.alloc) {
-                right_value.c_value = increment_ref_count_object(right_value.type, right_value.c_value, info);
-                come_value.c_value = xsprintf("%s=%s", var_->mCValueName, right_value.c_value);
+            
+            if(right_type->mHeap && left_type->mHeap && left_type->mPointerNum > 0 && right_type->mPointerNum > 0)
+            {
+                if(self.alloc) {
+                    right_value.c_value = increment_ref_count_object(right_value.type, right_value.c_value, info);
+                    come_value.c_value = xsprintf("%s=%s", var_->mCValueName, right_value.c_value);
+                }
+                else {
+                    decrement_ref_count_object(left_type, var_->mCValueName, info);
+                    right_value.c_value = increment_ref_count_object(right_value.type, right_value.c_value, info);
+                    come_value.c_value = xsprintf("%s=%s", var_->mCValueName, right_value.c_value);
+                }
+                int right_value_id = get_right_value_id_from_obj(right_value.c_value);
+                
+                if(right_value_id != -1) {
+                    remove_object_from_right_values(right_value_id, info);
+                }
             }
             else {
-                decrement_ref_count_object(left_type, var_->mCValueName, info);
-                right_value.c_value = increment_ref_count_object(right_value.type, right_value.c_value, info);
                 come_value.c_value = xsprintf("%s=%s", var_->mCValueName, right_value.c_value);
             }
-            int right_value_id = get_right_value_id_from_obj(right_value.c_value);
+            come_value.type = clone left_type;
+            come_value.var = var_;
             
-            if(right_value_id != -1) {
-                remove_object_from_right_values(right_value_id, info);
+            if(self.alloc) {
+                add_come_code_at_function_head(info, "%s;\n", make_define_var(left_type, var_->mCValueName, info));
+                add_come_last_code(info, "%s;\n", come_value.c_value);
             }
+            else {
+                add_come_last_code(info, "%s;\n", come_value.c_value);
+            }
+            
+            info.stack.push_back(come_value);
         }
-        else {
-            come_value.c_value = xsprintf("%s=%s", var_->mCValueName, right_value.c_value);
-        }
-        come_value.type = clone left_type;
-        come_value.var = var_;
-        
-        if(self.alloc) {
-            add_come_code_at_function_head(info, "%s;\n", make_define_var(left_type, var_->mCValueName, info));
-            add_come_last_code(info, "%s;\n", come_value.c_value);
-        }
-        else {
-            add_come_last_code(info, "%s;\n", come_value.c_value);
-        }
-        
-        info.stack.push_back(come_value);
     }
     
     return true;
@@ -403,6 +486,22 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
     if(buf === "var") {
         var buf2 = parse_word(info) throws;
         
+        list<string>*% multiple_assign = null;
+        
+        if(*info->p == ',' ) {
+            multiple_assign = new list<string>();
+            multiple_assign.push_back(clone buf2);
+            
+            while(*info->p == ',') {
+                info->p++;
+                skip_spaces_and_lf(info);
+                
+                var buf3 = parse_word(info) throws;
+                
+                multiple_assign.push_back(clone buf3);
+            }
+        }
+        
         if(*info->p == '=' && *(info->p+1) != '=') {
             info.p++;
             skip_spaces_and_lf(info);
@@ -411,10 +510,10 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
             
             right_value = post_position_operator3(right_value, info) throws;
             
-            return new sNode(new sStoreNode(string(buf2)@name, null!, true@alloc, right_value, info));
+            return new sNode(new sStoreNode(string(buf2)@name, multiple_assign, null!, true@alloc, right_value, info));
         }
         else {
-            err_msg(info, "var requires a right value");
+            err_msg(info, "var requires a right value(%c)", *info->p);
             throw;
         }
     }
@@ -426,7 +525,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         
         right_value = post_position_operator3(right_value, info) throws;
         
-        return new sNode(new sStoreNode(string(buf)@name, null!, false@alloc, right_value, info));
+        return new sNode(new sStoreNode(string(buf)@name, null!, null!, false@alloc, right_value, info));
     }
     else if(fun) {
         sNode*% node = new sNode(new sFunLoadNode(string(buf)@name, info));
@@ -468,10 +567,10 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
                 
                 right_value = post_position_operator3(right_value, info) throws;
                 
-                return new sNode(new sStoreNode(name, type, true@alloc, right_value, info));
+                return new sNode(new sStoreNode(name, null!, type, true@alloc, right_value, info));
             }
             else {
-                return new sNode(new sStoreNode(name, type, true@alloc, null!, info));
+                return new sNode(new sStoreNode(name, null!, type, true@alloc, null!, info));
             }
         }
     }

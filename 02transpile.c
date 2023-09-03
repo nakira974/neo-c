@@ -252,12 +252,13 @@ sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool 
     return self;
 };
 
-sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, bool external, bool var_args, sBlock*% block, bool static_, string come_header, sInfo* info)
+sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, list<string>%* param_default_parametors, bool external, bool var_args, sBlock*% block, bool static_, string come_header, sInfo* info)
 {
     self.mName = name;
     self.mResultType = result_type;
     self.mParamTypes = param_types;
     self.mParamNames = param_names;
+    self.mParamDefaultParametors = param_default_parametors;
     self.mExternal = external;
     self.mVarArgs = var_args;
     self.mStatic = static_;

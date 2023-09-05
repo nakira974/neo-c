@@ -25,6 +25,8 @@ struct __builtin_va_list
 void __builtin_va_start(char*);
 void __builtin_va_end(char*);
 
+
+
 # 1 "/usr/include/stdio.h" 1 3 4
 # 27 "/usr/include/stdio.h" 3 4
 # 1 "/usr/include/aarch64-linux-gnu/bits/libc-header-start.h" 1 3 4
@@ -326,6 +328,46 @@ struct _IO_FILE
   char _unused2[15 * sizeof (int) - 4 * sizeof (void *) - sizeof (size_t)];
 };
 # 44 "/usr/include/stdio.h" 2 3 4
+
+
+# 1 "/usr/include/aarch64-linux-gnu/bits/types/cookie_io_functions_t.h" 1 3 4
+# 27 "/usr/include/aarch64-linux-gnu/bits/types/cookie_io_functions_t.h" 3 4
+typedef __ssize_t cookie_read_function_t (void *__cookie, char *__buf,
+                                          size_t __nbytes);
+
+
+
+
+
+
+
+typedef __ssize_t cookie_write_function_t (void *__cookie, const char *__buf,
+                                           size_t __nbytes);
+
+
+
+
+
+
+
+typedef int cookie_seek_function_t (void *__cookie, __off64_t *__pos, int __w);
+
+
+typedef int cookie_close_function_t (void *__cookie);
+
+
+
+
+
+
+typedef struct _IO_cookie_io_functions_t
+{
+  cookie_read_function_t *read;
+  cookie_write_function_t *write;
+  cookie_seek_function_t *seek;
+  cookie_close_function_t *close;
+} cookie_io_functions_t;
+# 47 "/usr/include/stdio.h" 2 3 4
 # 56 "/usr/include/stdio.h" 3 4
 # 1 "/usr/lib/gcc/aarch64-linux-gnu/12/include/stdarg.h" 1 3 4
 # 99 "/usr/lib/gcc/aarch64-linux-gnu/12/include/stdarg.h" 3 4
@@ -338,7 +380,19 @@ typedef __gnuc_va_list va_list;
 
 
 typedef __off_t off_t;
-# 77 "/usr/include/stdio.h" 3 4
+
+
+
+
+
+
+typedef __off64_t off64_t;
+
+
+
+
+
+
 typedef __ssize_t ssize_t;
 
 
@@ -347,6 +401,11 @@ typedef __ssize_t ssize_t;
 
 
 typedef __fpos_t fpos_t;
+
+
+
+
+typedef __fpos64_t fpos64_t;
 # 133 "/usr/include/stdio.h" 3 4
 # 1 "/usr/include/aarch64-linux-gnu/bits/stdio_lim.h" 1 3 4
 # 134 "/usr/include/stdio.h" 2 3 4
@@ -368,12 +427,25 @@ extern int rename (const char *__old, const char *__new) ;
 
 extern int renameat (int __oldfd, const char *__old, int __newfd,
        const char *__new) ;
-# 178 "/usr/include/stdio.h" 3 4
+# 170 "/usr/include/stdio.h" 3 4
+extern int renameat2 (int __oldfd, const char *__old, int __newfd,
+        const char *__new, unsigned int __flags) ;
+
+
+
+
+
+
 extern int fclose (FILE *__stream);
 # 188 "/usr/include/stdio.h" 3 4
 extern FILE *tmpfile (void)
   ;
-# 205 "/usr/include/stdio.h" 3 4
+# 200 "/usr/include/stdio.h" 3 4
+extern FILE *tmpfile64 (void)
+   ;
+
+
+
 extern char *tmpnam (char[20]) ;
 
 
@@ -392,6 +464,8 @@ extern char *tempnam (const char *__dir, const char *__pfx)
 extern int fflush (FILE *__stream);
 # 239 "/usr/include/stdio.h" 3 4
 extern int fflush_unlocked (FILE *__stream);
+# 249 "/usr/include/stdio.h" 3 4
+extern int fcloseall (void);
 # 258 "/usr/include/stdio.h" 3 4
 extern FILE *fopen (const char *restrict __filename,
       const char *restrict __modes)
@@ -403,10 +477,32 @@ extern FILE *fopen (const char *restrict __filename,
 extern FILE *freopen (const char *restrict __filename,
         const char *restrict __modes,
         FILE *restrict __stream) ;
-# 293 "/usr/include/stdio.h" 3 4
+# 283 "/usr/include/stdio.h" 3 4
+extern FILE *fopen64 (const char *restrict __filename,
+        const char *restrict __modes)
+  ;
+extern FILE *freopen64 (const char *restrict __filename,
+   const char *restrict __modes,
+   FILE *restrict __stream) ;
+
+
+
+
 extern FILE *fdopen (int __fd, const char *__modes)
   ;
-# 308 "/usr/include/stdio.h" 3 4
+
+
+
+
+
+extern FILE *fopencookie (void *restrict __magic_cookie,
+     const char *restrict __modes,
+     cookie_io_functions_t __io_funcs)
+  ;
+
+
+
+
 extern FILE *fmemopen (void *__s, size_t __len, const char *__modes)
   ;
 
@@ -473,7 +569,24 @@ extern int snprintf (char *restrict __s, size_t __maxlen,
 extern int vsnprintf (char *restrict __s, size_t __maxlen,
         const char *restrict __format, __gnuc_va_list __arg)
      ;
-# 403 "/usr/include/stdio.h" 3 4
+
+
+
+
+
+extern int vasprintf (char **restrict __ptr, const char *restrict __f,
+        __gnuc_va_list __arg)
+     ;
+extern int __asprintf (char **restrict __ptr,
+         const char *restrict __fmt, ...)
+     ;
+extern int asprintf (char **restrict __ptr,
+       const char *restrict __fmt, ...)
+     ;
+
+
+
+
 extern int vdprintf (int __fd, const char *restrict __fmt,
        __gnuc_va_list __arg)
      ;
@@ -611,6 +724,10 @@ extern int putw (int __w, FILE *__stream);
 
 extern char *fgets (char *restrict __s, int __n, FILE *restrict __stream)
      ;
+# 615 "/usr/include/stdio.h" 3 4
+extern char *fgets_unlocked (char *restrict __s, int __n,
+        FILE *restrict __stream)
+    ;
 # 632 "/usr/include/stdio.h" 3 4
 extern __ssize_t __getdelim (char **restrict __lineptr,
                              size_t *restrict __n, int __delimiter,
@@ -663,6 +780,9 @@ extern size_t fread (void *restrict __ptr, size_t __size,
 
 extern size_t fwrite (const void *restrict __ptr, size_t __size,
         size_t __n, FILE *restrict __s);
+# 691 "/usr/include/stdio.h" 3 4
+extern int fputs_unlocked (const char *restrict __s,
+      FILE *restrict __stream);
 # 702 "/usr/include/stdio.h" 3 4
 extern size_t fread_unlocked (void *restrict __ptr, size_t __size,
          size_t __n, FILE *restrict __stream) ;
@@ -700,7 +820,14 @@ extern int fgetpos (FILE *restrict __stream, fpos_t *restrict __pos);
 
 
 extern int fsetpos (FILE *__stream, const fpos_t *__pos);
-# 786 "/usr/include/stdio.h" 3 4
+# 779 "/usr/include/stdio.h" 3 4
+extern int fseeko64 (FILE *__stream, __off64_t __off, int __whence);
+extern __off64_t ftello64 (FILE *__stream) ;
+extern int fgetpos64 (FILE *restrict __stream, fpos64_t *restrict __pos);
+extern int fsetpos64 (FILE *__stream, const fpos64_t *__pos);
+
+
+
 extern void clearerr (FILE *__stream) ;
 
 extern int feof (FILE *__stream) ;
@@ -747,7 +874,34 @@ extern FILE *popen (const char *__command, const char *__modes)
 
 extern char *ctermid (char *__s)
   ;
-# 867 "/usr/include/stdio.h" 3 4
+
+
+
+
+
+extern char *cuserid (char *__s)
+  ;
+
+
+
+
+struct obstack;
+
+
+extern int obstack_printf (struct obstack *restrict __obstack,
+      const char *restrict __format, ...)
+     ;
+extern int obstack_vprintf (struct obstack *restrict __obstack,
+       const char *restrict __format,
+       __gnuc_va_list __args)
+     ;
+
+
+
+
+
+
+
 extern void flockfile (FILE *__stream) ;
 
 
@@ -761,7 +915,7 @@ extern int __uflow (FILE *);
 extern int __overflow (FILE *, int);
 # 909 "/usr/include/stdio.h" 3 4
 
-# 16 "/usr/local/include/comelang2.h" 2 3
+# 18 "/usr/local/include/comelang2.h" 2 3
 # 1 "/usr/include/string.h" 1 3 4
 # 26 "/usr/include/string.h" 3 4
 # 1 "/usr/include/aarch64-linux-gnu/bits/libc-header-start.h" 1 3 4
@@ -804,7 +958,18 @@ extern int __memcmpeq (const void *__s1, const void *__s2, size_t __n)
 # 107 "/usr/include/string.h" 3 4
 extern void *memchr (const void *__s, int __c, size_t __n)
       ;
-# 141 "/usr/include/string.h" 3 4
+# 120 "/usr/include/string.h" 3 4
+extern void *rawmemchr (const void *__s, int __c)
+     ;
+# 133 "/usr/include/string.h" 3 4
+extern void *memrchr (const void *__s, int __c, size_t __n)
+     
+      ;
+
+
+
+
+
 extern char *strcpy (char *restrict __dest, const char *restrict __src)
      ;
 
@@ -889,7 +1054,14 @@ extern char *strchr (const char *__s, int __c)
 # 273 "/usr/include/string.h" 3 4
 extern char *strrchr (const char *__s, int __c)
      ;
-# 293 "/usr/include/string.h" 3 4
+# 286 "/usr/include/string.h" 3 4
+extern char *strchrnul (const char *__s, int __c)
+     ;
+
+
+
+
+
 extern size_t strcspn (const char *__s, const char *__reject)
      ;
 
@@ -919,7 +1091,34 @@ extern char *__strtok_r (char *restrict __s,
 extern char *strtok_r (char *restrict __s, const char *restrict __delim,
          char **restrict __save_ptr)
      ;
-# 407 "/usr/include/string.h" 3 4
+# 380 "/usr/include/string.h" 3 4
+extern char *strcasestr (const char *__haystack, const char *__needle)
+     ;
+
+
+
+
+
+
+
+extern void *memmem (const void *__haystack, size_t __haystacklen,
+       const void *__needle, size_t __needlelen)
+    
+   
+    ;
+
+
+
+extern void *__mempcpy (void *restrict __dest,
+   const void *restrict __src, size_t __n)
+     ;
+extern void *mempcpy (void *restrict __dest,
+        const void *restrict __src, size_t __n)
+     ;
+
+
+
+
 extern size_t strlen (const char *__s)
      ;
 
@@ -933,10 +1132,21 @@ extern size_t strnlen (const char *__string, size_t __maxlen)
 
 
 extern char *strerror (int __errnum) ;
-# 437 "/usr/include/string.h" 3 4
-extern int __xpg_strerror_r (int __errnum, char *__buf, size_t __buflen)
+# 444 "/usr/include/string.h" 3 4
+extern char *strerror_r (int __errnum, char *__buf, size_t __buflen)
      ;
-# 458 "/usr/include/string.h" 3 4
+
+
+
+
+extern const char *strerrordesc_np (int __err) ;
+
+extern const char *strerrorname_np (int __err) ;
+
+
+
+
+
 extern char *strerror_l (int __errnum, locale_t __l) ;
 
 
@@ -1028,7 +1238,16 @@ extern char *strsep (char **restrict __stringp,
 
 
 extern char *strsignal (int __sig) ;
-# 489 "/usr/include/string.h" 3 4
+
+
+
+extern const char *sigabbrev_np (int __sig) ;
+
+
+extern const char *sigdescr_np (int __sig) ;
+
+
+
 extern char *__stpcpy (char *restrict __dest, const char *restrict __src)
      ;
 extern char *stpcpy (char *restrict __dest, const char *restrict __src)
@@ -1042,9 +1261,24 @@ extern char *__stpncpy (char *restrict __dest,
 extern char *stpncpy (char *restrict __dest,
         const char *restrict __src, size_t __n)
      ;
+
+
+
+
+extern int strverscmp (const char *__s1, const char *__s2)
+     ;
+
+
+extern char *strfry (char *__string) ;
+
+
+extern void *memfrob (void *__s, size_t __n)
+    ;
+# 527 "/usr/include/string.h" 3 4
+extern char *basename (const char *__filename) ;
 # 539 "/usr/include/string.h" 3 4
 
-# 17 "/usr/local/include/comelang2.h" 2 3
+# 19 "/usr/local/include/comelang2.h" 2 3
 # 1 "/usr/include/stdlib.h" 1 3 4
 # 26 "/usr/include/stdlib.h" 3 4
 # 1 "/usr/include/aarch64-linux-gnu/bits/libc-header-start.h" 1 3 4
@@ -1126,6 +1360,34 @@ extern float strtof (const char *restrict __nptr,
 extern long double strtold (const char *restrict __nptr,
        char **restrict __endptr)
      ;
+# 141 "/usr/include/stdlib.h" 3 4
+extern _Float32 strtof32 (const char *restrict __nptr,
+     char **restrict __endptr)
+     ;
+
+
+
+extern _Float64 strtof64 (const char *restrict __nptr,
+     char **restrict __endptr)
+     ;
+
+
+
+extern _Float128 strtof128 (const char *restrict __nptr,
+       char **restrict __endptr)
+     ;
+
+
+
+extern _Float32x strtof32x (const char *restrict __nptr,
+       char **restrict __endptr)
+     ;
+
+
+
+extern _Float64x strtof64x (const char *restrict __nptr,
+       char **restrict __endptr)
+     ;
 # 177 "/usr/include/stdlib.h" 3 4
 extern long int strtol (const char *restrict __nptr,
    char **restrict __endptr, int __base)
@@ -1158,6 +1420,116 @@ extern long long int strtoll (const char *restrict __nptr,
 
 extern unsigned long long int strtoull (const char *restrict __nptr,
      char **restrict __endptr, int __base)
+     ;
+
+
+
+
+extern int strfromd (char *__dest, size_t __size, const char *__format,
+       double __f)
+     ;
+
+extern int strfromf (char *__dest, size_t __size, const char *__format,
+       float __f)
+     ;
+
+extern int strfroml (char *__dest, size_t __size, const char *__format,
+       long double __f)
+     ;
+# 233 "/usr/include/stdlib.h" 3 4
+extern int strfromf32 (char *__dest, size_t __size, const char * __format,
+         _Float32 __f)
+     ;
+
+
+
+extern int strfromf64 (char *__dest, size_t __size, const char * __format,
+         _Float64 __f)
+     ;
+
+
+
+extern int strfromf128 (char *__dest, size_t __size, const char * __format,
+   _Float128 __f)
+     ;
+
+
+
+extern int strfromf32x (char *__dest, size_t __size, const char * __format,
+   _Float32x __f)
+     ;
+
+
+
+extern int strfromf64x (char *__dest, size_t __size, const char * __format,
+   _Float64x __f)
+     ;
+# 275 "/usr/include/stdlib.h" 3 4
+extern long int strtol_l (const char *restrict __nptr,
+     char **restrict __endptr, int __base,
+     locale_t __loc) ;
+
+extern unsigned long int strtoul_l (const char *restrict __nptr,
+        char **restrict __endptr,
+        int __base, locale_t __loc)
+     ;
+
+
+extern long long int strtoll_l (const char *restrict __nptr,
+    char **restrict __endptr, int __base,
+    locale_t __loc)
+     ;
+
+
+extern unsigned long long int strtoull_l (const char *restrict __nptr,
+       char **restrict __endptr,
+       int __base, locale_t __loc)
+     ;
+
+extern double strtod_l (const char *restrict __nptr,
+   char **restrict __endptr, locale_t __loc)
+     ;
+
+extern float strtof_l (const char *restrict __nptr,
+         char **restrict __endptr, locale_t __loc)
+     ;
+
+extern long double strtold_l (const char *restrict __nptr,
+         char **restrict __endptr,
+         locale_t __loc)
+     ;
+# 317 "/usr/include/stdlib.h" 3 4
+extern _Float32 strtof32_l (const char *restrict __nptr,
+       char **restrict __endptr,
+       locale_t __loc)
+     ;
+
+
+
+extern _Float64 strtof64_l (const char *restrict __nptr,
+       char **restrict __endptr,
+       locale_t __loc)
+     ;
+
+
+
+extern _Float128 strtof128_l (const char *restrict __nptr,
+         char **restrict __endptr,
+         locale_t __loc)
+     ;
+
+
+
+extern _Float32x strtof32x_l (const char *restrict __nptr,
+         char **restrict __endptr,
+         locale_t __loc)
+     ;
+
+
+
+extern _Float64x strtof64x_l (const char *restrict __nptr,
+         char **restrict __endptr,
+         locale_t __loc)
      ;
 # 386 "/usr/include/stdlib.h" 3 4
 extern char *l64a (long int __n) ;
@@ -1192,7 +1564,17 @@ typedef __loff_t loff_t;
 
 
 typedef __ino_t ino_t;
-# 59 "/usr/include/aarch64-linux-gnu/sys/types.h" 3 4
+
+
+
+
+
+
+typedef __ino64_t ino64_t;
+
+
+
+
 typedef __dev_t dev_t;
 
 
@@ -1267,7 +1649,19 @@ typedef __time_t time_t;
 
 typedef __timer_t timer_t;
 # 131 "/usr/include/aarch64-linux-gnu/sys/types.h" 2 3 4
-# 144 "/usr/include/aarch64-linux-gnu/sys/types.h" 3 4
+
+
+
+typedef __useconds_t useconds_t;
+
+
+
+typedef __suseconds_t suseconds_t;
+
+
+
+
+
 # 1 "/usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h" 1 3 4
 # 145 "/usr/include/aarch64-linux-gnu/sys/types.h" 2 3 4
 
@@ -1430,15 +1824,7 @@ struct timespec
 # 31 "/usr/include/aarch64-linux-gnu/bits/types/struct_timespec.h" 3 4
 };
 # 40 "/usr/include/aarch64-linux-gnu/sys/select.h" 2 3 4
-
-
-
-typedef __suseconds_t suseconds_t;
-
-
-
-
-
+# 49 "/usr/include/aarch64-linux-gnu/sys/select.h" 3 4
 typedef long int __fd_mask;
 # 59 "/usr/include/aarch64-linux-gnu/sys/select.h" 3 4
 typedef struct
@@ -1446,10 +1832,10 @@ typedef struct
 
 
 
+    __fd_mask fds_bits[1024 / (8 * (int) sizeof (__fd_mask))];
 
 
 
-    __fd_mask __fds_bits[1024 / (8 * (int) sizeof (__fd_mask))];
 
 
   } fd_set;
@@ -1497,7 +1883,15 @@ typedef __fsblkcnt_t fsblkcnt_t;
 
 
 typedef __fsfilcnt_t fsfilcnt_t;
-# 227 "/usr/include/aarch64-linux-gnu/sys/types.h" 3 4
+# 219 "/usr/include/aarch64-linux-gnu/sys/types.h" 3 4
+typedef __blkcnt64_t blkcnt64_t;
+typedef __fsblkcnt64_t fsblkcnt64_t;
+typedef __fsfilcnt64_t fsfilcnt64_t;
+
+
+
+
+
 # 1 "/usr/include/aarch64-linux-gnu/bits/pthreadtypes.h" 1 3 4
 # 23 "/usr/include/aarch64-linux-gnu/bits/pthreadtypes.h" 3 4
 # 1 "/usr/include/aarch64-linux-gnu/bits/thread-shared-types.h" 1 3 4
@@ -1970,7 +2364,18 @@ extern void _Exit (int __status) ;
 
 
 extern char *getenv (const char *__name) ;
-# 667 "/usr/include/stdlib.h" 3 4
+
+
+
+
+extern char *secure_getenv (const char *__name)
+     ;
+
+
+
+
+
+
 extern int putenv (char *__string) ;
 
 
@@ -1993,12 +2398,35 @@ extern int clearenv (void) ;
 extern char *mktemp (char *__template) ;
 # 708 "/usr/include/stdlib.h" 3 4
 extern int mkstemp (char *__template) ;
+# 718 "/usr/include/stdlib.h" 3 4
+extern int mkstemp64 (char *__template) ;
 # 730 "/usr/include/stdlib.h" 3 4
 extern int mkstemps (char *__template, int __suffixlen) ;
+# 740 "/usr/include/stdlib.h" 3 4
+extern int mkstemps64 (char *__template, int __suffixlen)
+     ;
 # 751 "/usr/include/stdlib.h" 3 4
 extern char *mkdtemp (char *__template) ;
+# 762 "/usr/include/stdlib.h" 3 4
+extern int mkostemp (char *__template, int __flags) ;
+# 772 "/usr/include/stdlib.h" 3 4
+extern int mkostemp64 (char *__template, int __flags) ;
+# 782 "/usr/include/stdlib.h" 3 4
+extern int mkostemps (char *__template, int __suffixlen, int __flags)
+     ;
+# 794 "/usr/include/stdlib.h" 3 4
+extern int mkostemps64 (char *__template, int __suffixlen, int __flags)
+     ;
 # 804 "/usr/include/stdlib.h" 3 4
 extern int system (const char *__command) ;
+
+
+
+
+
+extern char *canonicalize_file_name (const char *__name)
+    
+     ;
 # 821 "/usr/include/stdlib.h" 3 4
 extern char *realpath (const char *restrict __name,
          char *restrict __resolved) ;
@@ -2009,7 +2437,17 @@ extern char *realpath (const char *restrict __name,
 
 
 typedef int (*__compar_fn_t) (const void *, const void *);
-# 841 "/usr/include/stdlib.h" 3 4
+
+
+typedef __compar_fn_t comparison_fn_t;
+
+
+
+typedef int (*__compar_d_fn_t) (const void *, const void *, void *);
+
+
+
+
 extern void *bsearch (const void *__key, const void *__base,
         size_t __nmemb, size_t __size, __compar_fn_t __compar)
      ;
@@ -2022,7 +2460,14 @@ extern void *bsearch (const void *__key, const void *__base,
 
 extern void qsort (void *__base, size_t __nmemb, size_t __size,
      __compar_fn_t __compar) ;
-# 861 "/usr/include/stdlib.h" 3 4
+
+extern void qsort_r (void *__base, size_t __nmemb, size_t __size,
+       __compar_d_fn_t __compar, void *__arg)
+  ;
+
+
+
+
 extern int abs (int __x) ;
 extern long int labs (long int __x) ;
 
@@ -2127,7 +2572,48 @@ extern int getsubopt (char **restrict __optionp,
         char *const *restrict __tokens,
         char **restrict __valuep)
      ;
-# 1026 "/usr/include/stdlib.h" 3 4
+
+
+
+
+
+
+
+extern int posix_openpt (int __oflag) ;
+
+
+
+
+
+
+
+extern int grantpt (int __fd) ;
+
+
+
+extern int unlockpt (int __fd) ;
+
+
+
+
+extern char *ptsname (int __fd) ;
+
+
+
+
+
+
+extern int ptsname_r (int __fd, char *__buf, size_t __buflen)
+     ;
+
+
+extern int getpt (void);
+
+
+
+
+
+
 extern int getloadavg (double __loadavg[], int __nelem)
      ;
 # 1036 "/usr/include/stdlib.h" 3 4
@@ -2135,7 +2621,7 @@ extern int getloadavg (double __loadavg[], int __nelem)
 # 1037 "/usr/include/stdlib.h" 2 3 4
 # 1048 "/usr/include/stdlib.h" 3 4
 
-# 18 "/usr/local/include/comelang2.h" 2 3
+# 20 "/usr/local/include/comelang2.h" 2 3
 
 static inline void xassert(char* msg, bool test)
 {
@@ -3584,14 +4070,37 @@ static inline buffer*% string::to_buffer(char* self)
 
     return result;
 }
+
+static inline string xsprintf(char* msg, ...)
+{
+    va_list args;
+    __builtin_va_start(args,msg);
+    char* result;
+    int len = vasprintf(&result, msg, args);
+    __builtin_va_end(args);
+
+    if(len < 0) {
+        fprintf(stderr, "vasprintf can't get heap memory.(msg %s)\n", msg);
+        exit(2);
+    }
+
+    string result2 = string(result);
+
+    free(result);
+
+    return result2;
+}
 # 5 "common.h" 2
 
 
+# 6 "common.h"
+using unsafe;
+using no-null-check;
 
 
 
 
-# 10 "common.h"
+
 extern bool gComelang;
 extern bool gGC;
 
@@ -3824,6 +4333,7 @@ struct sInfo
     list<string>*? param_names;
 
     bool define_struct;
+    bool in_typedef;
 };
 
 
@@ -4060,6 +4570,16 @@ struct dirent
     unsigned char d_type;
     char d_name[256];
   };
+
+
+struct dirent64
+  {
+    __ino64_t d_ino;
+    __off64_t d_off;
+    unsigned short int d_reclen;
+    unsigned char d_type;
+    char d_name[256];
+  };
 # 62 "/usr/include/dirent.h" 2 3 4
 # 97 "/usr/include/dirent.h" 3 4
 enum
@@ -4110,12 +4630,22 @@ extern DIR *fdopendir (int __fd)
  ;
 # 164 "/usr/include/dirent.h" 3 4
 extern struct dirent *readdir (DIR *__dirp) ;
+# 175 "/usr/include/dirent.h" 3 4
+extern struct dirent64 *readdir64 (DIR *__dirp) ;
 # 185 "/usr/include/dirent.h" 3 4
 extern int readdir_r (DIR *restrict __dirp,
         struct dirent *restrict __entry,
         struct dirent **restrict __result)
      ;
-# 211 "/usr/include/dirent.h" 3 4
+# 203 "/usr/include/dirent.h" 3 4
+extern int readdir64_r (DIR *restrict __dirp,
+   struct dirent64 *restrict __entry,
+   struct dirent64 **restrict __result)
+  ;
+
+
+
+
 extern void rewinddir (DIR *__dirp) ;
 
 
@@ -4144,9 +4674,10 @@ extern int dirfd (DIR *__dirp) ;
 # 39 "/usr/include/aarch64-linux-gnu/bits/local_lim.h" 2 3 4
 # 81 "/usr/include/aarch64-linux-gnu/bits/local_lim.h" 3 4
 # 1 "/usr/include/aarch64-linux-gnu/bits/pthread_stack_min-dynamic.h" 1 3 4
-# 29 "/usr/include/aarch64-linux-gnu/bits/pthread_stack_min-dynamic.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/pthread_stack_min.h" 1 3 4
-# 30 "/usr/include/aarch64-linux-gnu/bits/pthread_stack_min-dynamic.h" 2 3 4
+# 23 "/usr/include/aarch64-linux-gnu/bits/pthread_stack_min-dynamic.h" 3 4
+
+extern long int __sysconf (int __name) ;
+
 # 82 "/usr/include/aarch64-linux-gnu/bits/local_lim.h" 2 3 4
 # 162 "/usr/include/aarch64-linux-gnu/bits/posix1_lim.h" 2 3 4
 # 236 "/usr/include/dirent.h" 2 3 4
@@ -4160,22 +4691,78 @@ extern int scandir (const char *restrict __dir,
       int (*__cmp) (const struct dirent **,
       const struct dirent **))
      ;
-# 327 "/usr/include/dirent.h" 3 4
+# 280 "/usr/include/dirent.h" 3 4
+extern int scandir64 (const char *restrict __dir,
+        struct dirent64 ***restrict __namelist,
+        int (*__selector) (const struct dirent64 *),
+        int (*__cmp) (const struct dirent64 **,
+        const struct dirent64 **))
+     ;
+# 295 "/usr/include/dirent.h" 3 4
+extern int scandirat (int __dfd, const char *restrict __dir,
+        struct dirent ***restrict __namelist,
+        int (*__selector) (const struct dirent *),
+        int (*__cmp) (const struct dirent **,
+        const struct dirent **))
+     ;
+# 317 "/usr/include/dirent.h" 3 4
+extern int scandirat64 (int __dfd, const char *restrict __dir,
+   struct dirent64 ***restrict __namelist,
+   int (*__selector) (const struct dirent64 *),
+   int (*__cmp) (const struct dirent64 **,
+          const struct dirent64 **))
+     ;
+
+
+
+
 extern int alphasort (const struct dirent **__e1,
         const struct dirent **__e2)
+     ;
+# 342 "/usr/include/dirent.h" 3 4
+extern int alphasort64 (const struct dirent64 **__e1,
+   const struct dirent64 **__e2)
      ;
 # 355 "/usr/include/dirent.h" 3 4
 extern __ssize_t getdirentries (int __fd, char *restrict __buf,
     size_t __nbytes,
     __off_t *restrict __basep)
      ;
-# 404 "/usr/include/dirent.h" 3 4
+# 372 "/usr/include/dirent.h" 3 4
+extern __ssize_t getdirentries64 (int __fd, char *restrict __buf,
+      size_t __nbytes,
+      __off64_t *restrict __basep)
+     ;
+
+
+
+
+
+
+extern int versionsort (const struct dirent **__e1,
+   const struct dirent **__e2)
+     ;
+# 398 "/usr/include/dirent.h" 3 4
+extern int versionsort64 (const struct dirent64 **__e1,
+     const struct dirent64 **__e2)
+     ;
+
+
+
 
 
 # 1 "/usr/include/aarch64-linux-gnu/bits/dirent_ext.h" 1 3 4
 # 23 "/usr/include/aarch64-linux-gnu/bits/dirent_ext.h" 3 4
 
-# 33 "/usr/include/aarch64-linux-gnu/bits/dirent_ext.h" 3 4
+
+
+
+
+
+extern __ssize_t getdents64 (int __fd, void *__buffer, size_t __length)
+  ;
+
+
 
 # 407 "/usr/include/dirent.h" 2 3 4
 # 3 "02transpile.c" 2

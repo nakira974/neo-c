@@ -134,10 +134,24 @@ struct _IO_FILE
     int _mode;
     char _unused2[15*sizeof(int)-4*sizeof(void*)-sizeof(int)];
 };
+typedef long int (*cookie_read_function_t)(void*,char*,int);
+typedef long int (*cookie_write_function_t)(void*,const char*,int);
+typedef int (*cookie_seek_function_t)(void*,long int*,int);
+typedef int (*cookie_close_function_t)(void*);
+struct _IO_cookie_io_functions_t
+{
+    long int (*read)(void*,char*,int);
+    long int (*write)(void*,const char*,int);
+    int (*seek)(void*,long int*,int);
+    int (*close)(void*);
+};
+typedef struct _IO_cookie_io_functions_t cookie_io_functions_t;
 typedef __builtin_va_list va_list;
 typedef long int off_t;
+typedef long int off64_t;
 typedef long int ssize_t;
 typedef struct _G_fpos_t fpos_t;
+typedef struct _G_fpos64_t fpos64_t;
 extern struct _IO_FILE* stdin;
 extern struct _IO_FILE* stdout;
 extern struct _IO_FILE* stderr;
@@ -146,7 +160,7 @@ typedef float _Float32;
 typedef double _Float64;
 typedef double _Float32x;
 typedef long double _Float64x;
-struct __locale_struct
+struct obstack;struct __locale_struct
 {
     struct __locale_data* __locales[13];
     const unsigned short int* __ctype_b;
@@ -184,6 +198,7 @@ typedef unsigned long int u_quad_t;
 typedef struct anonymous_typeX1 fsid_t;
 typedef long int loff_t;
 typedef unsigned long int ino_t;
+typedef unsigned long int ino64_t;
 typedef unsigned long int dev_t;
 typedef unsigned int gid_t;
 typedef unsigned int mode_t;
@@ -198,6 +213,8 @@ typedef long int clock_t;
 typedef int clockid_t;
 typedef long int time_t;
 typedef void* timer_t;
+typedef unsigned int useconds_t;
+typedef long int suseconds_t;
 typedef unsigned long int ulong;
 typedef unsigned short int ushort;
 typedef unsigned int uint;
@@ -226,11 +243,10 @@ struct timespec
     long int tv_sec;
     long int tv_nsec;
 };
-typedef long int suseconds_t;
 typedef long int __fd_mask;
 struct anonymous_typeX8
 {
-    long int __fds_bits[1024/(8*(int)sizeof(long int))];
+    long int fds_bits[1024/(8*(int)sizeof(long int))];
 };
 typedef struct anonymous_typeX8 fd_set;
 typedef long int fd_mask;
@@ -238,6 +254,9 @@ typedef int blksize_t;
 typedef long int blkcnt_t;
 typedef unsigned long int fsblkcnt_t;
 typedef unsigned long int fsfilcnt_t;
+typedef long int blkcnt64_t;
+typedef unsigned long int fsblkcnt64_t;
+typedef unsigned long int fsfilcnt64_t;
 struct anonymous_typeX10
 {
     unsigned int __low;
@@ -381,6 +400,8 @@ struct drand48_data
     unsigned int __a;
 };
 typedef int (*__compar_fn_t)(const void*,const void*);
+typedef int (*comparison_fn_t)(const void*,const void*);
+typedef int (*__compar_d_fn_t)(const void*,const void*,void*);
 typedef char* string;
 struct buffer
 {
@@ -715,6 +736,7 @@ struct sInfo
     struct list$_sType$ph* param_types;
     struct list$_char$ph* param_names;
     _Bool define_struct;
+    _Bool in_typedef;
 };
 struct tuple2$ph_int$_bool$
 {
@@ -770,16 +792,22 @@ struct tuple2$ph_sNode$ph_bool$
 int remove(const char* __filename);
 int rename(const char* __old, const char* __new);
 int renameat(int __oldfd, const char* __old, int __newfd, const char* __new);
+int renameat2(int __oldfd, const char* __old, int __newfd, const char* __new, unsigned int __flags);
 int fclose(struct _IO_FILE* __stream);
 struct _IO_FILE* tmpfile();
-char* tmpnam(char anonymous_var_name1[20]);
+struct _IO_FILE* tmpfile64();
+char* tmpnam(char anonymous_var_name3[20]);
 char* tmpnam_r(char __s[20]);
 char* tempnam(const char* __dir, const char* __pfx);
 int fflush(struct _IO_FILE* __stream);
 int fflush_unlocked(struct _IO_FILE* __stream);
+int fcloseall();
 struct _IO_FILE* fopen(const char* __filename, const char* __modes);
 struct _IO_FILE* freopen(const char* __filename, const char* __modes, struct _IO_FILE* __stream);
+struct _IO_FILE* fopen64(const char* __filename, const char* __modes);
+struct _IO_FILE* freopen64(const char* __filename, const char* __modes, struct _IO_FILE* __stream);
 struct _IO_FILE* fdopen(int __fd, const char* __modes);
+struct _IO_FILE* fopencookie(void* __magic_cookie, const char* __modes, struct _IO_cookie_io_functions_t __io_funcs);
 struct _IO_FILE* fmemopen(void* __s, int __len, const char* __modes);
 struct _IO_FILE* open_memstream(char** __bufloc, int* __sizeloc);
 void setbuf(struct _IO_FILE* __stream, char* __buf);
@@ -794,6 +822,9 @@ int vprintf(const char* __format, va_list __arg);
 int vsprintf(char* __s, const char* __format, va_list __arg);
 int snprintf(char* __s, int __maxlen, const char* __format, ...);
 int vsnprintf(char* __s, int __maxlen, const char* __format, va_list __arg);
+int vasprintf(char** __ptr, const char* __f, va_list __arg);
+int __asprintf(char** __ptr, const char* __fmt, ...);
+int asprintf(char** __ptr, const char* __fmt, ...);
 int vdprintf(int __fd, const char* __fmt, va_list __arg);
 int dprintf(int __fd, const char* __fmt, ...);
 int fscanf(struct _IO_FILE* __stream, const char* __format, ...);
@@ -823,6 +854,7 @@ int putchar_unlocked(int __c);
 int getw(struct _IO_FILE* __stream);
 int putw(int __w, struct _IO_FILE* __stream);
 char* fgets(char* __s, int __n, struct _IO_FILE* __stream);
+char* fgets_unlocked(char* __s, int __n, struct _IO_FILE* __stream);
 long int __getdelim(char** __lineptr, int* __n, int __delimiter, struct _IO_FILE* __stream);
 long int getdelim(char** __lineptr, int* __n, int __delimiter, struct _IO_FILE* __stream);
 long int getline(char** __lineptr, int* __n, struct _IO_FILE* __stream);
@@ -831,6 +863,7 @@ int puts(const char* __s);
 int ungetc(int __c, struct _IO_FILE* __stream);
 int fread(void* __ptr, int __size, int __n, struct _IO_FILE* __stream);
 int fwrite(const void* __ptr, int __size, int __n, struct _IO_FILE* __s);
+int fputs_unlocked(const char* __s, struct _IO_FILE* __stream);
 int fread_unlocked(void* __ptr, int __size, int __n, struct _IO_FILE* __stream);
 int fwrite_unlocked(const void* __ptr, int __size, int __n, struct _IO_FILE* __stream);
 int fseek(struct _IO_FILE* __stream, long int __off, int __whence);
@@ -840,6 +873,10 @@ int fseeko(struct _IO_FILE* __stream, long int __off, int __whence);
 long int ftello(struct _IO_FILE* __stream);
 int fgetpos(struct _IO_FILE* __stream, struct _G_fpos_t* __pos);
 int fsetpos(struct _IO_FILE* __stream, const struct _G_fpos_t* __pos);
+int fseeko64(struct _IO_FILE* __stream, long int __off, int __whence);
+long int ftello64(struct _IO_FILE* __stream);
+int fgetpos64(struct _IO_FILE* __stream, struct _G_fpos64_t* __pos);
+int fsetpos64(struct _IO_FILE* __stream, const struct _G_fpos64_t* __pos);
 void clearerr(struct _IO_FILE* __stream);
 int feof(struct _IO_FILE* __stream);
 int ferror(struct _IO_FILE* __stream);
@@ -852,11 +889,14 @@ int fileno_unlocked(struct _IO_FILE* __stream);
 int pclose(struct _IO_FILE* __stream);
 struct _IO_FILE* popen(const char* __command, const char* __modes);
 char* ctermid(char* __s);
+char* cuserid(char* __s);
+int obstack_printf(struct obstack* __obstack, const char* __format, ...);
+int obstack_vprintf(struct obstack* __obstack, const char* __format, va_list __args);
 void flockfile(struct _IO_FILE* __stream);
 int ftrylockfile(struct _IO_FILE* __stream);
 void funlockfile(struct _IO_FILE* __stream);
-int __uflow(struct _IO_FILE* anonymous_var_name2);
-int __overflow(struct _IO_FILE* anonymous_var_name3, int anonymous_var_name4);
+int __uflow(struct _IO_FILE* anonymous_var_name4);
+int __overflow(struct _IO_FILE* anonymous_var_name5, int anonymous_var_name6);
 void* memcpy(void* __dest, const void* __src, int __n);
 void* memmove(void* __dest, const void* __src, int __n);
 void* memccpy(void* __dest, const void* __src, int __c, int __n);
@@ -864,6 +904,8 @@ void* memset(void* __s, int __c, int __n);
 int memcmp(const void* __s1, const void* __s2, int __n);
 int __memcmpeq(const void* __s1, const void* __s2, int __n);
 void* memchr(const void* __s, int __c, int __n);
+void* rawmemchr(const void* __s, int __c);
+void* memrchr(const void* __s, int __c, int __n);
 char* strcpy(char* __dest, const char* __src);
 char* strncpy(char* __dest, const char* __src, int __n);
 char* strcat(char* __dest, const char* __src);
@@ -878,6 +920,7 @@ char* strdup(const char* __s);
 char* strndup(const char* __string, int __n);
 char* strchr(const char* __s, int __c);
 char* strrchr(const char* __s, int __c);
+char* strchrnul(const char* __s, int __c);
 int strcspn(const char* __s, const char* __reject);
 int strspn(const char* __s, const char* __accept);
 char* strpbrk(const char* __s, const char* __accept);
@@ -885,10 +928,16 @@ char* strstr(const char* __haystack, const char* __needle);
 char* strtok(char* __s, const char* __delim);
 char* __strtok_r(char* __s, const char* __delim, char** __save_ptr);
 char* strtok_r(char* __s, const char* __delim, char** __save_ptr);
+char* strcasestr(const char* __haystack, const char* __needle);
+void* memmem(const void* __haystack, int __haystacklen, const void* __needle, int __needlelen);
+void* __mempcpy(void* __dest, const void* __src, int __n);
+void* mempcpy(void* __dest, const void* __src, int __n);
 int strlen(const char* __s);
 int strnlen(const char* __string, int __maxlen);
 char* strerror(int __errnum);
-int __xpg_strerror_r(int __errnum, char* __buf, int __buflen);
+char* strerror_r(int __errnum, char* __buf, int __buflen);
+const char* strerrordesc_np(int __err);
+const char* strerrorname_np(int __err);
 char* strerror_l(int __errnum, struct __locale_struct* __l);
 int bcmp(const void* __s1, const void* __s2, int __n);
 void bcopy(const void* __src, void* __dest, int __n);
@@ -905,10 +954,16 @@ int strncasecmp_l(const char* __s1, const char* __s2, int __n, struct __locale_s
 void explicit_bzero(void* __s, int __n);
 char* strsep(char** __stringp, const char* __delim);
 char* strsignal(int __sig);
+const char* sigabbrev_np(int __sig);
+const char* sigdescr_np(int __sig);
 char* __stpcpy(char* __dest, const char* __src);
 char* stpcpy(char* __dest, const char* __src);
 char* __stpncpy(char* __dest, const char* __src, int __n);
 char* stpncpy(char* __dest, const char* __src, int __n);
+int strverscmp(const char* __s1, const char* __s2);
+char* strfry(char* __string);
+void* memfrob(void* __s, int __n);
+char* basename(const char* __filename);
 int __ctype_get_mb_cur_max();
 double atof(const char* __nptr);
 int atoi(const char* __nptr);
@@ -917,38 +972,39 @@ int atoll(const char* __nptr);
 double strtod(const char* __nptr, char** __endptr);
 float strtof(const char* __nptr, char** __endptr);
 long double strtold(const char* __nptr, char** __endptr);
+float strtof32(const char* __nptr, char** __endptr);
+double strtof64(const char* __nptr, char** __endptr);
+long double strtof128(const char* __nptr, char** __endptr);
+double strtof32x(const char* __nptr, char** __endptr);
+long double strtof64x(const char* __nptr, char** __endptr);
 long int strtol(const char* __nptr, char** __endptr, int __base);
 unsigned long int strtoul(const char* __nptr, char** __endptr, int __base);
 int strtoq(const char* __nptr, char** __endptr, int __base);
 unsigned int strtouq(const char* __nptr, char** __endptr, int __base);
 int strtoll(const char* __nptr, char** __endptr, int __base);
 unsigned int strtoull(const char* __nptr, char** __endptr, int __base);
+int strfromd(char* __dest, int __size, const char* __format, double __f);
+int strfromf(char* __dest, int __size, const char* __format, float __f);
+int strfroml(char* __dest, int __size, const char* __format, long double __f);
+int strfromf32(char* __dest, int __size, const char* __format, float __f);
+int strfromf64(char* __dest, int __size, const char* __format, double __f);
+int strfromf128(char* __dest, int __size, const char* __format, long double __f);
+int strfromf32x(char* __dest, int __size, const char* __format, double __f);
+int strfromf64x(char* __dest, int __size, const char* __format, long double __f);
+long int strtol_l(const char* __nptr, char** __endptr, int __base, struct __locale_struct* __loc);
+unsigned long int strtoul_l(const char* __nptr, char** __endptr, int __base, struct __locale_struct* __loc);
+int strtoll_l(const char* __nptr, char** __endptr, int __base, struct __locale_struct* __loc);
+unsigned int strtoull_l(const char* __nptr, char** __endptr, int __base, struct __locale_struct* __loc);
+double strtod_l(const char* __nptr, char** __endptr, struct __locale_struct* __loc);
+float strtof_l(const char* __nptr, char** __endptr, struct __locale_struct* __loc);
+long double strtold_l(const char* __nptr, char** __endptr, struct __locale_struct* __loc);
+float strtof32_l(const char* __nptr, char** __endptr, struct __locale_struct* __loc);
+double strtof64_l(const char* __nptr, char** __endptr, struct __locale_struct* __loc);
+long double strtof128_l(const char* __nptr, char** __endptr, struct __locale_struct* __loc);
+double strtof32x_l(const char* __nptr, char** __endptr, struct __locale_struct* __loc);
+long double strtof64x_l(const char* __nptr, char** __endptr, struct __locale_struct* __loc);
 char* l64a(long int __n);
 long int a64l(const char* __s);
-static inline unsigned short int __bswap_16(unsigned short int __bsx){
-    unsigned short int __result__ = ((unsigned short int)((((__bsx)>>8)&255)|(((__bsx)&255)<<8)));
-    return __result__;
-}
-static inline unsigned int __bswap_32(unsigned int __bsx){
-    unsigned int __result__ = ((((__bsx)&4278190080)>>24)|(((__bsx)&16711680)>>8)|(((__bsx)&65280)<<8)|(((__bsx)&255)<<24));
-    return __result__;
-}
-static inline unsigned long int __bswap_64(unsigned long int __bsx){
-    unsigned long int __result__ = ((((__bsx)&18374686479671623680)>>56)|(((__bsx)&71776119061217280)>>40)|(((__bsx)&280375465082880)>>24)|(((__bsx)&1095216660480)>>8)|(((__bsx)&4278190080)<<8)|(((__bsx)&16711680)<<24)|(((__bsx)&65280)<<40)|(((__bsx)&255)<<56));
-    return __result__;
-}
-static inline unsigned short int __uint16_identity(unsigned short int __x){
-    unsigned short int __result__ = __x;
-    return __result__;
-}
-static inline unsigned int __uint32_identity(unsigned int __x){
-    unsigned int __result__ = __x;
-    return __result__;
-}
-static inline unsigned long int __uint64_identity(unsigned long int __x){
-    unsigned long int __result__ = __x;
-    return __result__;
-}
 int select(int __nfds, struct anonymous_typeX8* __readfds, struct anonymous_typeX8* __writefds, struct anonymous_typeX8* __exceptfds, struct timeval* __timeout);
 int pselect(int __nfds, struct anonymous_typeX8* __readfds, struct anonymous_typeX8* __writefds, struct anonymous_typeX8* __exceptfds, const struct timespec* __timeout, const struct anonymous_typeX7* __sigmask);
 long int random();
@@ -1000,18 +1056,27 @@ void exit(int __status);
 void quick_exit(int __status);
 void _Exit(int __status);
 char* getenv(const char* __name);
+char* secure_getenv(const char* __name);
 int putenv(char* __string);
 int setenv(const char* __name, const char* __value, int __replace);
 int unsetenv(const char* __name);
 int clearenv();
 char* mktemp(char* __template);
 int mkstemp(char* __template);
+int mkstemp64(char* __template);
 int mkstemps(char* __template, int __suffixlen);
+int mkstemps64(char* __template, int __suffixlen);
 char* mkdtemp(char* __template);
+int mkostemp(char* __template, int __flags);
+int mkostemp64(char* __template, int __flags);
+int mkostemps(char* __template, int __suffixlen, int __flags);
+int mkostemps64(char* __template, int __suffixlen, int __flags);
 int system(const char* __command);
+char* canonicalize_file_name(const char* __name);
 char* realpath(const char* __name, char* __resolved);
 void* bsearch(const void* __key, const void* __base, int __nmemb, int __size, int (*__compar)(const void*,const void*));
 void qsort(void* __base, int __nmemb, int __size, int (*__compar)(const void*,const void*));
+void qsort_r(void* __base, int __nmemb, int __size, int (*__compar)(const void*,const void*,void*), void* __arg);
 int abs(int __x);
 long int labs(long int __x);
 int llabs(int __x);
@@ -1035,15 +1100,13 @@ int mbstowcs(unsigned int* __pwcs, const char* __s, int __n);
 int wcstombs(char* __s, const unsigned int* __pwcs, int __n);
 int rpmatch(const char* __response);
 int getsubopt(char** __optionp, const char** __tokens, char** __valuep);
+int posix_openpt(int __oflag);
+int grantpt(int __fd);
+int unlockpt(int __fd);
+char* ptsname(int __fd);
+int ptsname_r(int __fd, char* __buf, int __buflen);
+int getpt();
 int getloadavg(double* __loadavg, int __nelem);
-static inline void xassert(char* msg, _Bool test){
-    printf("%s...",msg);
-    if(!test) {
-        puts("false");
-        exit(2);
-    }
-    puts("ok");
-}
 static void ncfree(void* mem);
 static void* come_calloc(int count, int size);
 static void* come_increment_ref_count(void* mem);
@@ -1052,6 +1115,156 @@ static void come_free_object(void* mem);
 static void call_finalizer(void* fun, void* mem, int call_finalizer_only, int no_decrement, int no_free);
 static void* nccalloc(int nmemb, int size);
 static void* come_memdup(void* block);
+static void va_list_finalize(va_list* self);
+int come_main_v1(int argc, char** argv);
+int come_main_v2(int argc, char** argv);
+void come_init_v2();
+void come_final_v2();
+void err_msg(struct sInfo* info, char* msg, ...);
+struct tuple2$ph_int$_bool$* transpile_v2(struct sInfo* info);
+_Bool output_source_file_v2(struct sInfo* info);
+struct sModule* sModule_initialize(struct sModule* self);
+struct sType* sType_initialize(struct sType* self, char* name, struct sInfo* info, _Bool heap);
+struct sVarTable* sVarTable_initialize(struct sVarTable* self, _Bool global, struct sVarTable* parent);
+void sVarTable_finalize(struct sVarTable* self);
+struct sClass* sClass_initialize(struct sClass* self, char* name, _Bool number, _Bool union_, _Bool generics, _Bool method_generics, _Bool protocol_, _Bool struct_, _Bool float_, int generics_num, int method_generics_num, _Bool enum_);
+struct sFun* sFun_initialize(struct sFun* self, char* name, struct sType* result_type, struct list$_sType$ph* param_types, struct list$_char$ph* param_names, struct list$_char$ph* param_default_parametors, _Bool external, _Bool var_args, struct sBlock* block, _Bool static_, char* come_header, struct sInfo* info);
+char* make_type_name_string(struct sType* type, _Bool in_header, _Bool array_cast_pointer, struct sInfo* info, _Bool no_pointer);
+char* make_come_type_name_string(struct sType* type, struct sInfo* info);
+void come_init_v3();
+void come_final_v3();
+char* header_function(struct sFun* fun, struct sInfo* info);
+struct tuple2$ph_int$_bool$* transpile_v3(struct sInfo* info);
+_Bool output_source_file_v3(struct sInfo* info);
+void show_type(struct sType* type, struct sInfo* info);
+char* create_generics_name(struct sType* generics_type, struct sInfo* info);
+void add_last_code_to_source(struct sInfo* info);
+void add_come_code_at_function_head(struct sInfo* info, char* code, ...);
+void add_come_code_at_function_head2(struct sInfo* info, char* code, ...);
+void add_come_code_at_source_head(struct sInfo* info, const char* msg, ...);
+void add_come_code(struct sInfo* info, const char* msg, ...);
+void add_come_last_code(struct sInfo* info, const char* msg, ...);
+void add_last_code_to_source_without_semicolon(struct sInfo* info);
+void dec_stack_ptr(int value, struct sInfo* info);
+struct CVALUE* get_value_from_stack(int offset, struct sInfo* info);
+char* make_define_var(struct sType* type, char* name, struct sInfo* info, _Bool in_header);
+char* make_come_define_var(struct sType* type, char* name, struct sInfo* info);
+void transpiler_clear_last_code(struct sInfo* info);
+_Bool create_equals_method(struct sType* type, struct sInfo* info);
+_Bool create_operator_equals_method(struct sType* type, struct sInfo* info);
+_Bool create_operator_not_equals_method(struct sType* type, struct sInfo* info);
+struct tuple2$ph_sType$ph_bool$* solve_generics(struct sType* type, struct sType* generics_type, struct sInfo* info);
+struct sVar* get_variable_from_table(struct sVarTable* table, char* name);
+void free_objects_on_return(struct sBlock* current_block, struct sInfo* info, char* ret_value, _Bool top_block);
+void free_object(struct sType* type, char* obj, _Bool no_decrement, _Bool no_free, struct sInfo* info);
+char* clone_object(struct sType* type, char* obj, struct sInfo* info);
+void free_right_value_objects(struct sInfo* info);
+void free_objects(struct sVarTable* table, char* ret_value, struct sInfo* info);
+char* append_object_to_right_values(char* obj, struct sType* type, struct sInfo* info);
+_Bool is_right_values(int right_value_num, struct sInfo* info);
+int get_right_value_id_from_obj(char* obj);
+void remove_object_from_right_values(int right_value_num, struct sInfo* info);
+char* increment_ref_count_object(struct sType* type, char* obj, struct sInfo* info);
+void decrement_ref_count_object(struct sType* type, char* obj, struct sInfo* info);
+struct tuple5$ph_list$_sType$ph_list$_char$ph_list$_char$ph_bool$_bool$* parse_params(struct sInfo* info);
+struct tuple3$ph_sFun$p_char$ph_bool$* create_finalizer_automatically(struct sType* type, char* fun_name, struct sInfo* info);
+struct tuple3$ph_sFun$p_char$ph_bool$* create_cloner_automatically(struct sType* type, char* fun_name, struct sInfo* info);
+struct tuple3$ph_sFun$p_char$ph_bool$* create_equals_automatically(struct sType* type, char* fun_name, struct sInfo* info);
+struct tuple3$ph_sFun$p_char$ph_bool$* create_operator_equals_automatically(struct sType* type, char* fun_name, struct sInfo* info);
+struct tuple3$ph_sFun$p_char$ph_bool$* create_operator_not_equals_automatically(struct sType* type, char* fun_name, struct sInfo* info);
+struct tuple2$ph_char$ph_bool$* skip_block(struct sInfo* info);
+_Bool is_contained_generics_class(struct sType* type, struct sInfo* info);
+_Bool is_type_name(char* buf, struct sInfo* info);
+_Bool parsecmp(char* str, struct sInfo* info);
+struct tuple2$ph_char$ph_bool$* parse_word(struct sInfo* info, _Bool no_check_err);
+void skip_spaces_and_lf(struct sInfo* info);
+struct tuple2$ph_int$_bool$* expected_next_character(char c, struct sInfo* info);
+struct sBlock* sBlock_initialize(struct sBlock* self, struct sInfo* info);
+_Bool create_generics_fun(char* fun_name, struct sGenericsFun* generics_fun, struct sType* generics_type, struct sInfo* info);
+struct tuple2$ph_tuple2$_sType$ph_char$ph_bool$* parse_type(struct sInfo* info, _Bool parse_variable_name, _Bool parse_multiple_type);
+struct tuple2$ph_sBlock$ph_bool$* parse_block(struct sInfo* info, _Bool no_block_level);
+struct tuple2$ph_int$_bool$* transpile_block(struct sBlock* block, struct list$_sType$ph* param_types, struct list$_char$ph* param_names, struct sInfo* info, _Bool no_var_table);
+void arrange_stack(struct sInfo* info, int top);
+struct tuple2$ph_sNode$ph_bool$* parse_function(struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* expression_v5(struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* top_level_v1(char* buf, char* head, int head_sline, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* top_level_v99(char* buf, char* head, int head_sline, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* expression_node_v1(struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* expression_node_v99(struct sInfo* info);
+struct tuple2$ph_int$_bool$* transpile_v5(struct sInfo* info);
+void parse_sharp_v5(struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* string_node_v5(char* buf, char* head, int head_sline, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* post_position_operator_v5(struct sNode* node, struct sInfo* info);
+char* create_method_name(struct sType* obj_type, _Bool no_pointer_name, char* fun_name, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* expression_node_v98(struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* parse_tuple(struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* string_node_v7(char* buf, char* head, int head_sline, struct sInfo* info);
+void add_variable_to_table(char* name, struct sType* type, struct sInfo* info);
+void add_variable_to_global_table(char* name, struct sType* type, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* string_node_v8(char* buf, char* head, int head_sline, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* string_node_v9(char* buf, char* head, int head_sline, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* string_node_v10(char* buf, char* head, int head_sline, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* string_node_v11(char* buf, char* head, int head_sline, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* string_node_v12(char* buf, char* head, int head_sline, struct sInfo* info);
+_Bool operator_overload_fun(struct sType* type, char* fun_name, struct CVALUE* left_value, struct CVALUE* right_value, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* expression_v13(struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* post_op_v13(struct sNode* node, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* string_node_v13(char* buf, char* head, int head_sline, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* parse_struct(char* type_name, struct sInfo* info);
+char* get_none_generics_name(char* class_name);
+struct tuple2$ph_sNode$ph_bool$* top_level_v98(char* buf, char* head, int head_sline, struct sInfo* info);
+_Bool output_generics_struct(struct sType* type, struct sInfo* info);
+void output_struct(struct sClass* klass, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* parse_union(char* type_name, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* top_level_v97(char* buf, char* head, int head_sline, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* parse_enum(char* type_name, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* top_level_v96(char* buf, char* head, int head_sline, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* top_level_v95(char* buf, char* head, int head_sline, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* post_position_operator_v18(struct sNode* node, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* post_position_operator2_v18(struct sNode* node, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* parse_method_call_v18(struct sNode* obj, char* fun_name, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* post_position_operator2_v19(struct sNode* node, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* parse_method_call_v20(struct sNode* obj, char* fun_name, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* string_node_v20(char* buf, char* head, int head_sline, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* string_node_v21(char* buf, char* head, int head_sline, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* top_level_v94(char* buf, char* head, int head_sline, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* post_position_operator3(struct sNode* node, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* top_level_v93(char* buf, char* head, int head_sline, struct sInfo* info);
+struct tuple2$ph_sNode$ph_bool$* top_level_v92(char* buf, char* head, int head_sline, struct sInfo* info);
+int main(int argc, char** argv);
+/* inline function */
+static inline unsigned short int __bswap_16(unsigned short int __bsx){
+    unsigned short int __result__ = ((unsigned short int)((((__bsx)>>8)&255)|(((__bsx)&255)<<8)));
+    return __result__;
+}
+static inline unsigned int __bswap_32(unsigned int __bsx){
+    unsigned int __result__ = ((((__bsx)&4278190080)>>24)|(((__bsx)&16711680)>>8)|(((__bsx)&65280)<<8)|(((__bsx)&255)<<24));
+    return __result__;
+}
+static inline unsigned long int __bswap_64(unsigned long int __bsx){
+    unsigned long int __result__ = ((((__bsx)&18374686479671623680)>>56)|(((__bsx)&71776119061217280)>>40)|(((__bsx)&280375465082880)>>24)|(((__bsx)&1095216660480)>>8)|(((__bsx)&4278190080)<<8)|(((__bsx)&16711680)<<24)|(((__bsx)&65280)<<40)|(((__bsx)&255)<<56));
+    return __result__;
+}
+static inline unsigned short int __uint16_identity(unsigned short int __x){
+    unsigned short int __result__ = __x;
+    return __result__;
+}
+static inline unsigned int __uint32_identity(unsigned int __x){
+    unsigned int __result__ = __x;
+    return __result__;
+}
+static inline unsigned long int __uint64_identity(unsigned long int __x){
+    unsigned long int __result__ = __x;
+    return __result__;
+}
+static inline void xassert(char* msg, _Bool test){
+    printf("%s...",msg);
+    if(!test) {
+        puts("false");
+        exit(2);
+    }
+    puts("ok");
+}
 static inline void int_times(int self, void* parent, void (*block)(void*)){
 int i_20;
 memset(&i_20, 0, sizeof(int));
@@ -1338,122 +1551,31 @@ memset(&result_35, 0, sizeof(struct buffer*));
     call_finalizer(buffer_finalize,result_35,0, 0, 1);
     return __result__;
 }
-int come_main_v1(int argc, char** argv);
-int come_main_v2(int argc, char** argv);
-void come_init_v2();
-void come_final_v2();
-void err_msg(struct sInfo* info, char* msg, ...);
-struct tuple2$ph_int$_bool$* transpile_v2(struct sInfo* info);
-_Bool output_source_file_v2(struct sInfo* info);
-struct sModule* sModule_initialize(struct sModule* self);
-struct sType* sType_initialize(struct sType* self, char* name, struct sInfo* info, _Bool heap);
-struct sVarTable* sVarTable_initialize(struct sVarTable* self, _Bool global, struct sVarTable* parent);
-void sVarTable_finalize(struct sVarTable* self);
-struct sClass* sClass_initialize(struct sClass* self, char* name, _Bool number, _Bool union_, _Bool generics, _Bool method_generics, _Bool protocol_, _Bool struct_, _Bool float_, int generics_num, int method_generics_num, _Bool enum_);
-struct sFun* sFun_initialize(struct sFun* self, char* name, struct sType* result_type, struct list$_sType$ph* param_types, struct list$_char$ph* param_names, struct list$_char$ph* param_default_parametors, _Bool external, _Bool var_args, struct sBlock* block, _Bool static_, char* come_header, struct sInfo* info);
-char* make_type_name_string(struct sType* type, _Bool in_header, _Bool array_cast_pointer, struct sInfo* info, _Bool no_pointer);
-char* make_come_type_name_string(struct sType* type, struct sInfo* info);
-void come_init_v3();
-void come_final_v3();
-char* header_function(struct sFun* fun, struct sInfo* info);
-struct tuple2$ph_int$_bool$* transpile_v3(struct sInfo* info);
-_Bool output_source_file_v3(struct sInfo* info);
-void show_type(struct sType* type, struct sInfo* info);
-char* create_generics_name(struct sType* generics_type, struct sInfo* info);
-void add_last_code_to_source(struct sInfo* info);
-void add_come_code_at_function_head(struct sInfo* info, char* code, ...);
-void add_come_code_at_function_head2(struct sInfo* info, char* code, ...);
-void add_come_code_at_source_head(struct sInfo* info, const char* msg, ...);
-void add_come_code(struct sInfo* info, const char* msg, ...);
-void add_come_last_code(struct sInfo* info, const char* msg, ...);
-void add_last_code_to_source_without_semicolon(struct sInfo* info);
-void dec_stack_ptr(int value, struct sInfo* info);
-struct CVALUE* get_value_from_stack(int offset, struct sInfo* info);
-char* make_define_var(struct sType* type, char* name, struct sInfo* info, _Bool in_header);
-char* make_come_define_var(struct sType* type, char* name, struct sInfo* info);
-void transpiler_clear_last_code(struct sInfo* info);
-_Bool create_equals_method(struct sType* type, struct sInfo* info);
-_Bool create_operator_equals_method(struct sType* type, struct sInfo* info);
-_Bool create_operator_not_equals_method(struct sType* type, struct sInfo* info);
-struct tuple2$ph_sType$ph_bool$* solve_generics(struct sType* type, struct sType* generics_type, struct sInfo* info);
-struct sVar* get_variable_from_table(struct sVarTable* table, char* name);
-void free_objects_on_return(struct sBlock* current_block, struct sInfo* info, char* ret_value, _Bool top_block);
-void free_object(struct sType* type, char* obj, _Bool no_decrement, _Bool no_free, struct sInfo* info);
-char* clone_object(struct sType* type, char* obj, struct sInfo* info);
-void free_right_value_objects(struct sInfo* info);
-void free_objects(struct sVarTable* table, char* ret_value, struct sInfo* info);
-char* append_object_to_right_values(char* obj, struct sType* type, struct sInfo* info);
-_Bool is_right_values(int right_value_num, struct sInfo* info);
-int get_right_value_id_from_obj(char* obj);
-void remove_object_from_right_values(int right_value_num, struct sInfo* info);
-char* increment_ref_count_object(struct sType* type, char* obj, struct sInfo* info);
-void decrement_ref_count_object(struct sType* type, char* obj, struct sInfo* info);
-struct tuple5$ph_list$_sType$ph_list$_char$ph_list$_char$ph_bool$_bool$* parse_params(struct sInfo* info);
-struct tuple3$ph_sFun$p_char$ph_bool$* create_finalizer_automatically(struct sType* type, char* fun_name, struct sInfo* info);
-struct tuple3$ph_sFun$p_char$ph_bool$* create_cloner_automatically(struct sType* type, char* fun_name, struct sInfo* info);
-struct tuple3$ph_sFun$p_char$ph_bool$* create_equals_automatically(struct sType* type, char* fun_name, struct sInfo* info);
-struct tuple3$ph_sFun$p_char$ph_bool$* create_operator_equals_automatically(struct sType* type, char* fun_name, struct sInfo* info);
-struct tuple3$ph_sFun$p_char$ph_bool$* create_operator_not_equals_automatically(struct sType* type, char* fun_name, struct sInfo* info);
-struct tuple2$ph_char$ph_bool$* skip_block(struct sInfo* info);
-_Bool is_contained_generics_class(struct sType* type, struct sInfo* info);
-_Bool is_type_name(char* buf, struct sInfo* info);
-_Bool parsecmp(char* str, struct sInfo* info);
-struct tuple2$ph_char$ph_bool$* parse_word(struct sInfo* info, _Bool no_check_err);
-void skip_spaces_and_lf(struct sInfo* info);
-struct tuple2$ph_int$_bool$* expected_next_character(char c, struct sInfo* info);
-struct sBlock* sBlock_initialize(struct sBlock* self, struct sInfo* info);
-_Bool create_generics_fun(char* fun_name, struct sGenericsFun* generics_fun, struct sType* generics_type, struct sInfo* info);
-struct tuple2$ph_tuple2$_sType$ph_char$ph_bool$* parse_type(struct sInfo* info, _Bool parse_variable_name, _Bool parse_multiple_type);
-struct tuple2$ph_sBlock$ph_bool$* parse_block(struct sInfo* info, _Bool no_block_level);
-struct tuple2$ph_int$_bool$* transpile_block(struct sBlock* block, struct list$_sType$ph* param_types, struct list$_char$ph* param_names, struct sInfo* info, _Bool no_var_table);
-void arrange_stack(struct sInfo* info, int top);
-struct tuple2$ph_sNode$ph_bool$* parse_function(struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* expression_v5(struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* top_level_v1(char* buf, char* head, int head_sline, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* top_level_v99(char* buf, char* head, int head_sline, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* expression_node_v1(struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* expression_node_v99(struct sInfo* info);
-struct tuple2$ph_int$_bool$* transpile_v5(struct sInfo* info);
-void parse_sharp_v5(struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* string_node_v5(char* buf, char* head, int head_sline, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* post_position_operator_v5(struct sNode* node, struct sInfo* info);
-char* create_method_name(struct sType* obj_type, _Bool no_pointer_name, char* fun_name, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* expression_node_v98(struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* parse_tuple(struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* string_node_v7(char* buf, char* head, int head_sline, struct sInfo* info);
-void add_variable_to_table(char* name, struct sType* type, struct sInfo* info);
-void add_variable_to_global_table(char* name, struct sType* type, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* string_node_v8(char* buf, char* head, int head_sline, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* string_node_v9(char* buf, char* head, int head_sline, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* string_node_v10(char* buf, char* head, int head_sline, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* string_node_v11(char* buf, char* head, int head_sline, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* string_node_v12(char* buf, char* head, int head_sline, struct sInfo* info);
-_Bool operator_overload_fun(struct sType* type, char* fun_name, struct CVALUE* left_value, struct CVALUE* right_value, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* expression_v13(struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* post_op_v13(struct sNode* node, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* string_node_v13(char* buf, char* head, int head_sline, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* parse_struct(char* type_name, struct sInfo* info);
-char* get_none_generics_name(char* class_name);
-struct tuple2$ph_sNode$ph_bool$* top_level_v98(char* buf, char* head, int head_sline, struct sInfo* info);
-_Bool output_generics_struct(struct sType* type, struct sInfo* info);
-void output_struct(struct sClass* klass, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* parse_union(char* type_name, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* top_level_v97(char* buf, char* head, int head_sline, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* parse_enum(char* type_name, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* top_level_v96(char* buf, char* head, int head_sline, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* top_level_v95(char* buf, char* head, int head_sline, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* post_position_operator_v18(struct sNode* node, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* post_position_operator2_v18(struct sNode* node, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* parse_method_call_v18(struct sNode* obj, char* fun_name, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* post_position_operator2_v19(struct sNode* node, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* parse_method_call_v20(struct sNode* obj, char* fun_name, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* string_node_v20(char* buf, char* head, int head_sline, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* string_node_v21(char* buf, char* head, int head_sline, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* top_level_v94(char* buf, char* head, int head_sline, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* post_position_operator3(struct sNode* node, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* top_level_v93(char* buf, char* head, int head_sline, struct sInfo* info);
-struct tuple2$ph_sNode$ph_bool$* top_level_v92(char* buf, char* head, int head_sline, struct sInfo* info);
-int main(int argc, char** argv);
+static inline char* xsprintf(char* msg, ...){
+va_list args_36;
+char* result_37;
+int len_38;
+void* right_value13;
+char* result2_39;
+memset(&args_36, 0, sizeof(va_list));
+memset(&result_37, 0, sizeof(char*));
+memset(&len_38, 0, sizeof(int));
+memset(&result2_39, 0, sizeof(char*));
+    __builtin_va_start(args_36,msg);
+    len_38=vasprintf(&result_37,msg,args_36);
+    __builtin_va_end(args_36);
+    if(len_38<0) {
+        fprintf(stderr,"vasprintf can't get heap memory.(msg %s)\n",msg);
+        exit(2);
+    }
+    result2_39=(char*)come_increment_ref_count((char*)(right_value13=__builtin_string(result_37)));
+    right_value13 = come_decrement_ref_count(right_value13, 1, 0);
+    free(result_37);
+    char* __result__ = result2_39;
+    call_finalizer(va_list_finalize,(&args_36),1, 0, 0);
+    result2_39 = come_decrement_ref_count(result2_39, 0, 1);
+    return __result__;
+}
 
 /* body function */
 
@@ -1654,6 +1776,10 @@ memset(&size_p2_19, 0, sizeof(long*));
 
 
 
+
+
+static void va_list_finalize(va_list* self){
+}
 
 int come_main_v1(int argc, char** argv){
     puts("HELLO COMELANG");

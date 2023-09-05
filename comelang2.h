@@ -12,6 +12,8 @@ struct __builtin_va_list
 void __builtin_va_start(char*);
 void __builtin_va_end(char*);
 
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -1464,3 +1466,22 @@ static inline buffer*% string::to_buffer(char* self)
     return result;
 }
 
+static inline string xsprintf(char* msg, ...)
+{
+    va_list args;
+    va_start(args, msg);
+    char* result;
+    int len = vasprintf(&result, msg, args);
+    va_end(args);
+
+    if(len < 0) {
+        fprintf(stderr, "vasprintf can't get heap memory.(msg %s)\n", msg);
+        exit(2);
+    }
+    
+    string result2 = string(result);
+    
+    free(result);
+    
+    return result2;
+}

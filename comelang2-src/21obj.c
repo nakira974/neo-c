@@ -636,10 +636,40 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         var type, name = parse_type(info) throws;
         
         if(*info->p == '(') {
-            sNode*% obj = new sNode(new sNewNode(type, info));
-            string fun_name = string("initialize");
+            bool interface_ = false;
+            {
+                char* p = info.p;
+                int sline = info.sline;
+                
+                info->p++;
+                skip_spaces_and_lf(info);
+                
+                var word = parse_word(info, true) throws;
+                
+                if(word === "new") {
+                    interface_ = true;
+                }
+                
+                info.p = p;
+                info.sline = sline;
+            }
             
-            return parse_method_call(obj, fun_name, info) throws;
+            if(interface_) {
+                info->p++;
+                skip_spaces_and_lf(info);
+                
+                sNode*% node = expression(info) throws;
+                
+                expected_next_character(')', info) throws;
+                
+                return new sNode(new sImplementsNode(node, type, info));
+            }
+            else {
+                sNode*% obj = new sNode(new sNewNode(type, info));
+                string fun_name = string("initialize");
+                
+                return parse_method_call(obj, fun_name, info) throws;
+            }
         }
         else {
             return new sNode(new sNewNode(type, info));

@@ -3,6 +3,9 @@
 
 #include <comelang2.h>
 
+using unsafe;
+using no-null-check;
+
 #define COME_CODE_MAX 2048
 #define FUN_VERSION_MAX 128
 #define GENERICS_TYPE_MAX 12
@@ -239,6 +242,7 @@ struct sInfo
     list<string>*? param_names;
     
     bool define_struct;
+    bool in_typedef;
 };
 
 /////////////////////////////////////////////////////////////////////

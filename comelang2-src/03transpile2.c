@@ -635,18 +635,34 @@ bool output_source_file(sInfo* info) version 3
         string header = header_function(it2, info);
         
         if(it2->mStatic && it2->mResultType->mInline) {
-            string output = output_function(it2, info);
-            fprintf(f, "static inline %s", output);
         }
         else if(it2->mStatic) {
             fprintf(f, "static %s", header);
         }
         else if(it2->mResultType->mInline) {
+        }
+        else if(it !== "__builtin_va_start" && it !== "__builtin_va_end") {
+            fprintf(f, "%s", header);
+        }
+    }
+    
+    fprintf(f, "/* inline function */\n");
+    foreach(it, info.funcs) {
+        sFun* it2 = info.funcs[string(it)];
+
+        string header = header_function(it2, info);
+        
+        if(it2->mStatic && it2->mResultType->mInline) {
+            string output = output_function(it2, info);
+            fprintf(f, "static inline %s", output);
+        }
+        else if(it2->mStatic) {
+        }
+        else if(it2->mResultType->mInline) {
             string output = output_function(it2, info);
             fprintf(f, "inline %s", output);
         }
-        else {
-            fprintf(f, "%s", header);
+        else if(it !== "__builtin_va_start" && it !== "__builtin_va_end") {
         }
     }
     

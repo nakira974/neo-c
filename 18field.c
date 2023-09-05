@@ -601,9 +601,16 @@ exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 18
                 node = new sNode(new sLoadArrayNode(node, array_num, info));
             }
         }
-        else if(*info->p == '.') {
-            info->p++;
-            skip_spaces_and_lf(info);
+        else if(*info->p == '.' || (*info->p == '-' && *(info->p+1) == '>')) 
+        {
+            if(*info->p == '.') {
+                info->p++;
+                skip_spaces_and_lf(info);
+            }
+            else {
+                info->p+=2;
+                skip_spaces_and_lf(info);
+            }
             
             string field_name = parse_word(info) throws;
             
@@ -615,7 +622,7 @@ exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 18
                 
                 node = new sNode(new sStoreFieldNode(node, right_node, field_name, info));
             }
-            else if(*info->p == '(' || *info->p == '{') {
+            else if(*info->p == '(' || *info->p == '{' || (*info->p == '-' && *(info->p+1) == '>')) {
                 node = parse_method_call(node, field_name, info) throws;
             }
             else {

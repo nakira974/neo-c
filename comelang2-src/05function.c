@@ -545,6 +545,23 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         }
     }
     
+    bool lambda_flag = false;
+    {
+        char* pX = info.p;
+        int slineX = info.sline;
+        
+        if(isalpha(*info->p)) {
+            (void)parse_word(info).catch {}
+            
+            if(*info->p == '(' && info.in_typedef) {
+                lambda_flag = true;
+            }
+        }
+        
+        info.p = pX;
+        info.sline = slineX;
+    }
+    
     sType*% type;
     string var_name;
             
@@ -614,10 +631,47 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             }
         }
     }
-    else if(*info->p == '(') {
-        info->p++;
-        skip_spaces_and_lf(info);
+    else if(lambda_flag) {
+        sType*% result_type;
+        if(info.types[type_name]) {
+            result_type = clone info.types[type_name];
+        }
+        else if(info.generics_type_names.contained(type_name)) {
+            for(int i=0; i<info.generics_type_names.length(); i++) {
+                if(info.generics_type_names[i] === type_name) {
+                    result_type = new sType(xsprintf("generics_type%d", i), info);
+                }
+            }
+        }
+        else {
+            result_type = new sType(type_name, info);
+        }
         
+        result_type->mConstant = result_type->mConstant || constant;
+        result_type->mRegister = register_;
+        result_type->mUnsigned = result_type->mUnsigned || unsigned_;
+        result_type->mVolatile = volatile_;
+        result_type->mStatic = result_type->mStatic || static_;
+        result_type->mExtern = result_type->mExtern || extern_;
+        result_type->mInline = result_type->mInline || inline_;
+        result_type->mRestrict = result_type->mRestrict || restrict_;
+        result_type->mLongLong = result_type->mLongLong || long_long;
+        result_type->mLong = result_type->mLong || long_;
+        result_type->mShort = result_type->mShort || short_;
+        
+        var_name = parse_word(info) throws;
+        
+        var param_types, param_names, param_default_parametors, var_args = parse_params(info) throws;
+        
+        type = new sType("lambda", info);
+        
+        type->mResultType = new tuple1<sType*%>(result_type);
+        type->mParamTypes = param_types;
+        type->mParamNames = param_names;
+        type->mVarArgs = var_args;
+    }
+    else if(*info->p == '(' && *(info->p+1) == '*') {
+        info->p++;
         expected_next_character('*', info);
         
         sType*% result_type;
@@ -1588,12 +1642,6 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
         if(fun_name === "string") {
             fun_name = string("__builtin_string");
         }
-        else if(fun_name === "__builtin_va_start") {
-            fun_name = string("va_start");
-        }
-        else if(fun_name === "__builtin_va_end") {
-            fun_name = string("va_end");
-        }
         else if(fun_name === "inherit") {
             char* p = info.come_fun.mName;
     
@@ -1673,7 +1721,7 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
             if(fun.mVarArgs && fun.mParamTypes[i] == null) {
             }
             else {
-                if(fun.mParamTypes[i].mHeap && come_value.type.mHeap) {
+                if(i < fun.mParamTypes.length() && fun.mParamTypes[i].mHeap && come_value.type.mHeap) {
                     come_value.c_value = increment_ref_count_object(come_value.type, come_value.c_value, info);
                 }
             }
@@ -1724,7 +1772,7 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
             }
         }
         
-        if(fun.mParamTypes.length() != come_params.length() && !fun.mVarArgs) 
+        if(fun.mParamTypes.length() != come_params.length() && !fun.mVarArgs && fun_name !== "__builtin_va_start" && fun_name !== "__builtin_va_end") 
         {
             err_msg(info, "invalid param number(%s). function param number is %d. caller param number is %d", fun_name, fun.mParamTypes.length(), params.length());
             return false;

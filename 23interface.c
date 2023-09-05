@@ -79,7 +79,7 @@ exception tuple2<sType*%, string>*% parse_interface_function(sInfo* info)
 
 exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 92
 {
-    if(buf === "interface") {
+    if(buf === "interface" || buf === "protocol") {
         var type_name = parse_word(info) throws;
         
         sClass*% klass;

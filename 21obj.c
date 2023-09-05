@@ -1,5 +1,36 @@
 #include "common.h"
 
+struct sNullNodeX
+{
+  int sline;
+  string sname;
+};
+
+
+sNullNodeX*% sNullNodeX*::initialize(sNullNodeX*% self, sInfo* info)
+{
+    self.sline = info.sline;
+    self.sname = string(info.sname);
+
+    return self;
+}
+
+bool sNullNodeX*::compile(sNullNodeX* self, sInfo* info)
+{
+
+    return TRUE;
+}
+
+int sNullNodeX*::sline(sNullNodeX* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sNullNodeX*::sname(sNullNodeX* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
 struct sNewNode {
     sType*% type
     
@@ -636,10 +667,40 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         var type, name = parse_type(info) throws;
         
         if(*info->p == '(') {
-            sNode*% obj = new sNode(new sNewNode(type, info));
-            string fun_name = string("initialize");
+            bool interface_ = false;
+            {
+                char* p = info.p;
+                int sline = info.sline;
+                
+                info->p++;
+                skip_spaces_and_lf(info);
+                
+                var word = parse_word(info, true) throws;
+                
+                if(word === "new") {
+                    interface_ = true;
+                }
+                
+                info.p = p;
+                info.sline = sline;
+            }
             
-            return parse_method_call(obj, fun_name, info) throws;
+            if(interface_) {
+                info->p++;
+                skip_spaces_and_lf(info);
+                
+                sNode*% node = expression(info) throws;
+                
+                expected_next_character(')', info) throws;
+                
+                return new sNode(new sImplementsNode(node, type, info));
+            }
+            else {
+                sNode*% obj = new sNode(new sNewNode(type, info));
+                string fun_name = string("initialize");
+                
+                return parse_method_call(obj, fun_name, info) throws;
+            }
         }
         else {
             return new sNode(new sNewNode(type, info));
@@ -798,18 +859,26 @@ exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info)
             
             gGC = false;
         }
+        else if(memcmp(info->p, "unsafe", strlen("unsafe")) == 0) {
+            info->p += strlen("unsafe");
+            skip_spaces_and_lf(info);
+        }
+        else if(memcmp(info->p, "no-null-check", strlen("no-null-check")) == 0) {
+            info->p += strlen("no-null-check");
+            skip_spaces_and_lf(info);
+        }
         else {
             err_msg(info, "invalid using");
             throw;
         }
         
-        return (sNode*)null;
+        return new sNode(new sNullNodeX(info));
     }
     
     return inherit(string(buf), head, head_sline, info) throws;
 }
 
-exception sNode*% post_position_operator3(sNode*% node, sInfo* info)
+exception sNode*% post_position_operator3(sNode*% node, sInfo* info) version 21
 {
     if(memcmp(info->p, "implements", strlen("implements")) == 0) {
         info->p += strlen("implements");
@@ -829,7 +898,7 @@ exception sNode*% post_position_operator3(sNode*% node, sInfo* info)
         skip_spaces_and_lf(info);
     }
     
-    return node;
+    return inherit(node, info) throws;
 }
 
 

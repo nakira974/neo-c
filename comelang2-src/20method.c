@@ -438,6 +438,11 @@ exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) v
     list<sNode*%>*% params = new list<sNode*%>();
     params.push_back(obj);
     
+    if(*info->p == '-' && *(info->p+1) == '>') {
+        info->p +=2;
+        skip_spaces_and_lf(info);
+    }
+    
     if(*info->p != '{') {
         expected_next_character('(', info) throws;
         

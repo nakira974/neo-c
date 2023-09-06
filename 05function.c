@@ -2878,6 +2878,8 @@ exception sNode*% expression_node(sInfo* info) version 99
             info.sline = sline;
         }
         
+        bool is_type_name_ = is_type_name(buf, info);
+        
         /// backtrace ///
         bool define_function_pointer_flag = false;
         if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && buf !== "gc_inc" && buf !== "gc_dec" && *info->p == '(' && *(info->p+1) != '*')
@@ -2928,7 +2930,6 @@ exception sNode*% expression_node(sInfo* info) version 99
         
         buf = parse_word(info) throws;
         
-        
         if(lambda_flag) {
             info.p = head;
             info.sline = head_sline;
@@ -2942,7 +2943,7 @@ exception sNode*% expression_node(sInfo* info) version 99
             
             return node;
         }
-        else if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && buf !== "gc_inc" && buf !== "gc_dec" && *info->p == '(' && *(info->p+1) != '*')
+        else if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && buf !== "gc_inc" && buf !== "gc_dec" && *info->p == '(' && !(*(info->p+1) == '*' && is_type_name_))
         {
             sNode*% node = parse_function_call(buf, info) throws;
             

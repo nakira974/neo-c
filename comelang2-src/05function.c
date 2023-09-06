@@ -67,6 +67,7 @@ bool parsecmp(char* str, sInfo* info)
 exception string parse_word(sInfo* info, bool no_check_err=false)
 {
     var buf = new buffer();
+    parse_sharp(info);
     
     while((*info->p >= 'a' && *info->p <= 'z') || (*info->p >= 'A' && *info->p <= 'Z') || *info->p == '_' || (*info->p >= '0' && *info->p <= '9') || (*info->p == '$'))
     {
@@ -77,6 +78,8 @@ exception string parse_word(sInfo* info, bool no_check_err=false)
     
     if(!no_check_err && buf.length() == 0) {
         err_msg(info, "unexpected character(%c)\n", *info->p);
+int* a = (void*)0;
+*a =0;
         throw;
     }
     
@@ -2646,6 +2649,55 @@ string sLogicalDenial*::sname(sLogicalDenial* self, sInfo* info)
     return string(self.sname);
 }
 
+struct sPlusPlusNode2
+{
+    sNode*% value;
+    int sline;
+    string sname;
+};
+
+sPlusPlusNode2*% sPlusPlusNode2*::initialize(sPlusPlusNode2*% self, sNode*% value, sInfo* info)
+{
+    self.value = value;
+    
+    self.sline = info->sline;
+    self.sname = string(info->sname);
+    
+    return self;
+}
+
+bool sPlusPlusNode2*::compile(sPlusPlusNode2* self, sInfo* info)
+{
+    if(!self.value.compile->(info)) {
+        return false;
+    }
+    
+    CVALUE*% come_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
+    
+    CVALUE*% come_value2 = new CVALUE;
+    
+    come_value2.c_value = xsprintf("++%s", come_value.c_value);
+    come_value2.type = clone come_value.type;
+    come_value2.var = null;
+    
+    info.stack.push_back(come_value2);
+    
+    add_come_last_code(info, "%s;\n", come_value2.c_value);
+    
+    return true;
+}
+
+int sPlusPlusNode2*::sline(sPlusPlusNode2* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sPlusPlusNode2*::sname(sPlusPlusNode2* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
 struct sComplement
 {
     sNode*% value;
@@ -2709,6 +2761,14 @@ exception sNode*% expression_node(sInfo* info) version 99
         sNode*% node = expression_node(info) throws;
 
         return new sNode(new sLogicalDenial(node, info));
+    }
+    else if(*info->p == '+' && *(info->p+1) == '+') {
+        info->p+=2;
+        skip_spaces_and_lf(info);
+
+        sNode*% node = expression_node(info) throws;
+
+        return new sNode(new sPlusPlusNode2(node, info));
     }
     else if(*info->p == '~') {
         info->p++;
@@ -2818,6 +2878,8 @@ exception sNode*% expression_node(sInfo* info) version 99
             info.sline = sline;
         }
         
+        bool is_type_name_ = is_type_name(buf, info);
+        
         /// backtrace ///
         bool define_function_pointer_flag = false;
         if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && buf !== "gc_inc" && buf !== "gc_dec" && *info->p == '(' && *(info->p+1) != '*')
@@ -2868,7 +2930,6 @@ exception sNode*% expression_node(sInfo* info) version 99
         
         buf = parse_word(info) throws;
         
-        
         if(lambda_flag) {
             info.p = head;
             info.sline = head_sline;
@@ -2882,7 +2943,7 @@ exception sNode*% expression_node(sInfo* info) version 99
             
             return node;
         }
-        else if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && buf !== "gc_inc" && buf !== "gc_dec" && *info->p == '(' && *(info->p+1) != '*')
+        else if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && buf !== "gc_inc" && buf !== "gc_dec" && *info->p == '(' && !(*(info->p+1) == '*' && is_type_name_))
         {
             sNode*% node = parse_function_call(buf, info) throws;
             
@@ -2949,8 +3010,10 @@ exception sNode*% expression_node(sInfo* info) version 99
             return parse_tuple(info) throws;
         }
         else if(cast_expression_flag) {
+            parse_sharp(info);
             var type, name = parse_type(info) throws;
             
+            parse_sharp(info);
             expected_next_character(')', info);
             
             sNode*% node = expression_node(info) throws;
@@ -2958,9 +3021,12 @@ exception sNode*% expression_node(sInfo* info) version 99
             return new sNode(new sCastNode(type, node, info));
         }
         else {
+            parse_sharp(info);
             sNode*% node = expression(info) throws;
+            parse_sharp(info);
             
             expected_next_character(')', info);
+            parse_sharp(info);
             
             node = new sNode(new sParenNode(node, info));
             
@@ -3160,8 +3226,11 @@ void arrange_stack(sInfo* info, int top)
 
 exception int expected_next_character(char c, sInfo* info)
 {
+    parse_sharp(info);
     if(*info->p != c) {
         err_msg(info, "expected next charaster is %c, but %c\n", c, *info->p);
+int* a = (void*)0;
+*a = 0;
         throw;
     }
     

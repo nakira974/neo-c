@@ -2649,6 +2649,55 @@ string sLogicalDenial*::sname(sLogicalDenial* self, sInfo* info)
     return string(self.sname);
 }
 
+struct sMinusNode2
+{
+    sNode*% value;
+    int sline;
+    string sname;
+};
+
+sMinusNode2*% sMinusNode2*::initialize(sMinusNode2*% self, sNode*% value, sInfo* info)
+{
+    self.value = value;
+    
+    self.sline = info->sline;
+    self.sname = string(info->sname);
+    
+    return self;
+}
+
+bool sMinusNode2*::compile(sMinusNode2* self, sInfo* info)
+{
+    if(!self.value.compile->(info)) {
+        return false;
+    }
+    
+    CVALUE*% come_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
+    
+    CVALUE*% come_value2 = new CVALUE;
+    
+    come_value2.c_value = xsprintf("-%s", come_value.c_value);
+    come_value2.type = clone come_value.type;
+    come_value2.var = null;
+    
+    info.stack.push_back(come_value2);
+    
+    add_come_last_code(info, "%s;\n", come_value2.c_value);
+    
+    return true;
+}
+
+int sMinusNode2*::sline(sMinusNode2* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sMinusNode2*::sname(sMinusNode2* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
 struct sPlusPlusNode2
 {
     sNode*% value;
@@ -2694,6 +2743,55 @@ int sPlusPlusNode2*::sline(sPlusPlusNode2* self, sInfo* info)
 }
 
 string sPlusPlusNode2*::sname(sPlusPlusNode2* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+struct sMinusMinusNode2
+{
+    sNode*% value;
+    int sline;
+    string sname;
+};
+
+sMinusMinusNode2*% sMinusMinusNode2*::initialize(sMinusMinusNode2*% self, sNode*% value, sInfo* info)
+{
+    self.value = value;
+    
+    self.sline = info->sline;
+    self.sname = string(info->sname);
+    
+    return self;
+}
+
+bool sMinusMinusNode2*::compile(sMinusMinusNode2* self, sInfo* info)
+{
+    if(!self.value.compile->(info)) {
+        return false;
+    }
+    
+    CVALUE*% come_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
+    
+    CVALUE*% come_value2 = new CVALUE;
+    
+    come_value2.c_value = xsprintf("--%s", come_value.c_value);
+    come_value2.type = clone come_value.type;
+    come_value2.var = null;
+    
+    info.stack.push_back(come_value2);
+    
+    add_come_last_code(info, "%s;\n", come_value2.c_value);
+    
+    return true;
+}
+
+int sMinusMinusNode2*::sline(sMinusMinusNode2* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sMinusMinusNode2*::sname(sMinusMinusNode2* self, sInfo* info)
 {
     return string(self.sname);
 }
@@ -2761,6 +2859,22 @@ exception sNode*% expression_node(sInfo* info) version 99
         sNode*% node = expression_node(info) throws;
 
         return new sNode(new sLogicalDenial(node, info));
+    }
+    else if(*info->p == '-' && *(info->p+1) == '-') {
+        info->p+=2;
+        skip_spaces_and_lf(info);
+
+        sNode*% node = expression_node(info) throws;
+
+        return new sNode(new sMinusMinusNode2(node, info));
+    }
+    else if(*info->p == '-') {
+        info->p++;
+        skip_spaces_and_lf(info);
+
+        sNode*% node = expression_node(info) throws;
+
+        return new sNode(new sMinusNode2(node, info));
     }
     else if(*info->p == '+' && *(info->p+1) == '+') {
         info->p+=2;

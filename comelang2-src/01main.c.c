@@ -1976,6 +1976,58 @@ memset(&result2_78, 0, sizeof(char*));
     result2_78 = come_decrement_ref_count(result2_78, 0, 1);
     return __result__;
 }
+static inline _Bool xiswalpha(unsigned int c){
+_Bool result_79;
+memset(&result_79, 0, sizeof(_Bool));
+    result_79=(c>=97&&c<=122)||(c>=65&&c<=90);
+    _Bool __result__ = result_79;
+    return __result__;
+}
+static inline _Bool xiswblank(unsigned int c){
+    unsigned int __result__ = c==32||c==9;
+    return __result__;
+}
+static inline _Bool xiswdigit(unsigned int c){
+    unsigned int __result__ = (c>=48&&c<=57);
+    return __result__;
+}
+static inline _Bool xiswalnum(unsigned int c){
+    _Bool __result__ = xiswalpha(c)||xiswdigit(c);
+    return __result__;
+}
+static inline _Bool xisalpha(char c){
+_Bool result_80;
+memset(&result_80, 0, sizeof(_Bool));
+    result_80=(c>=97&&c<=122)||(c>=65&&c<=90);
+    _Bool __result__ = result_80;
+    return __result__;
+}
+static inline _Bool xisblank(char c){
+    char __result__ = c==32||c==9;
+    return __result__;
+}
+static inline _Bool xisdigit(char c){
+    char __result__ = (c>=48&&c<=57);
+    return __result__;
+}
+static inline _Bool xisalnum(char c){
+    _Bool __result__ = xisalpha(c)||xisdigit(c);
+    return __result__;
+}
+static inline _Bool xisascii(char c){
+_Bool result_81;
+memset(&result_81, 0, sizeof(_Bool));
+    result_81=(c>=32&&c<=126);
+    _Bool __result__ = result_81;
+    return __result__;
+}
+static inline _Bool xiswascii(unsigned int c){
+_Bool result_82;
+memset(&result_82, 0, sizeof(_Bool));
+    result_82=(c>=32&&c<=126);
+    _Bool __result__ = result_82;
+    return __result__;
+}
 
 /* body function */
 
@@ -2270,6 +2322,16 @@ memset(&litem_48, 0, sizeof(struct list_item$_char$ph$_char$ph*));
 
 static void FILE_finalize(struct _IO_FILE** self){
 }
+
+
+
+
+
+
+
+
+
+
 
 
 

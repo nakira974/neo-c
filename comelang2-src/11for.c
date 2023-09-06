@@ -106,12 +106,19 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         expected_next_character('(', info) throws;
         
         /// expression ///
+        parse_sharp(info);
         sNode*% expression_node = expression(info) throws;
+        parse_sharp(info);
         expected_next_character(';', info) throws;
+        parse_sharp(info);
         sNode*% expression_node2 = expression(info) throws;
+        parse_sharp(info);
         expected_next_character(';', info) throws;
+        parse_sharp(info);
         sNode*% expression_node3 = expression(info) throws;
+        parse_sharp(info);
         expected_next_character(')', info) throws;
+        parse_sharp(info);
         
         sBlock*% block = parse_block(info) throws;
         

@@ -4473,6 +4473,62 @@ static inline string xrealpath(char* path)
 
     return result2;
 }
+
+
+
+static inline bool xiswalpha(wchar_t c)
+{
+    bool result = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+    return result;
+}
+
+static inline bool xiswblank(wchar_t c)
+{
+    return c == ' ' || c == '\t';
+}
+
+static inline bool xiswdigit(wchar_t c)
+{
+    return (c >= '0' && c <= '9');
+}
+
+static inline bool xiswalnum(wchar_t c)
+{
+    return xiswalpha(c) || xiswdigit(c);
+}
+
+static inline bool xisalpha(char c)
+{
+    bool result = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+    return result;
+}
+
+static inline bool xisblank(char c)
+{
+    return c == ' ' || c == '\t';
+}
+
+static inline bool xisdigit(char c)
+{
+    return (c >= '0' && c <= '9');
+}
+
+static inline bool xisalnum(char c)
+{
+    return xisalpha(c) || xisdigit(c);
+}
+
+static inline bool xisascii(char c)
+{
+    bool result = (c >= ' ' && c <= '~');
+    return result;
+}
+
+static inline bool xiswascii(wchar_t c)
+{
+    bool result = (c >= ' ' && c <= '~');
+    return result;
+}
 # 5 "common.h" 2
 
 

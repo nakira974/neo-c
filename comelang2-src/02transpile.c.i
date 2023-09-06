@@ -2622,6 +2622,24 @@ extern int getloadavg (double __loadavg[], int __nelem)
 # 1048 "/usr/include/stdlib.h" 3 4
 
 # 20 "/usr/local/include/comelang2.h" 2 3
+# 1 "/usr/include/libgen.h" 1 3 4
+# 23 "/usr/include/libgen.h" 3 4
+
+
+
+extern char *dirname (char *__path) ;
+
+
+
+
+
+
+
+extern char *__xpg_basename (char *__path) ;
+
+
+
+# 21 "/usr/local/include/comelang2.h" 2 3
 
 static inline void xassert(char* msg, bool test)
 {
@@ -4090,6 +4108,371 @@ static inline string xsprintf(char* msg, ...)
 
     return result2;
 }
+
+list<string>*% FILE::readlines(FILE* f);
+inline list<string>*% FILE*::readlines(FILE* f) {
+    return FILE_readlines(f);
+}
+
+static inline void FILE*::fclose(FILE* f)
+{
+    FILE_fclose(f);
+}
+
+static inline list<string>*% FILE::readlines(FILE* f)
+{
+    list<string>*% result = new list<string>.initialize();
+
+    while(1) {
+        char buf[8192];
+
+        if(fgets(buf, 8192, f) == ((void *)0)) {
+            break;
+        }
+
+        result.push_back(string(buf));
+    }
+
+    return result;
+}
+
+static inline string FILE::read(FILE* f)
+{
+    buffer*% buf = new buffer.initialize();
+
+    while(1) {
+        char buf2[8192];
+
+        int size = fread(buf2, 1, 8192, f);
+
+        buf.append(buf2, size);
+
+        if(size < 8192) {
+            break;
+        }
+    }
+
+    return buf.to_string();
+}
+
+static inline string FILE*::read(FILE* f)
+{
+    buffer*% buf = new buffer.initialize();
+
+    while(1) {
+        char buf2[8192];
+
+        int size = fread(buf2, 1, 8192, f);
+
+        buf.append(buf2, size);
+
+        if(size < 8192) {
+            break;
+        }
+    }
+
+    return buf.to_string();
+}
+
+static inline FILE* FILE::fprintf(FILE* f, const char* msg, ...)
+{
+    char msg2[1024];
+
+    va_list args;
+    __builtin_va_start(args,msg);
+    vsnprintf(msg2, 1024, msg, args);
+    __builtin_va_end(args);
+
+    (void)fprintf(f, "%s", msg2);
+
+    return f;
+}
+
+static inline FILE* FILE*::fprintf(FILE* f, const char* msg, ...)
+{
+    char msg2[1024];
+
+    va_list args;
+    __builtin_va_start(args,msg);
+    vsnprintf(msg2, 1024, msg, args);
+    __builtin_va_end(args);
+
+    (void)fprintf(f, "%s", msg2);
+
+    return f;
+}
+
+static inline void FILE::fclose(FILE* f)
+{
+    fclose(f);
+}
+
+inline string string::write(char* self, char* file_name, bool append=false)
+{
+    FILE* f;
+    if(append) {
+       f = fopen(file_name, "a");
+    }
+    else {
+       f = fopen(file_name, "w");
+    }
+
+    f.fprintf("%s", self);
+
+    f.fclose()
+
+    return string(self);
+}
+
+inline string char*::write(char* self, char* file_name, bool append=false)
+{
+    FILE* f;
+    if(append) {
+       f = fopen(file_name, "a");
+    }
+    else {
+       f = fopen(file_name, "w");
+    }
+
+    f.fprintf("%s", self);
+
+    f.fclose()
+
+    return string(self);
+}
+
+static inline int string::length(char* str)
+{
+    return strlen(str);
+}
+
+static inline int char*::length(char* str)
+{
+    return strlen(str);
+}
+
+static inline string string::reverse(char* str)
+{
+    int len = strlen(str);
+    char*% result = new char[len + 1];
+
+    for(int i=0; i<len; i++) {
+        result[i] = str[len-i-1];
+    }
+
+    result[len] = '\0';
+
+    return result;
+}
+
+static inline string char*::reverse(char* str)
+{
+    int len = strlen(str);
+    char*% result = new char[len + 1];
+
+    for(int i=0; i<len; i++) {
+        result[i] = str[len-i-1];
+    }
+
+    result[len] = '\0';
+
+    return result;
+}
+
+static inline string char*::substring(char* str, int head, int tail)
+{
+    if(str == null) {
+        return string("");
+    }
+
+    int len = strlen(str);
+
+    if(head < 0) {
+        head += len;
+    }
+    if(tail < 0) {
+        tail += len + 1;
+    }
+
+    if(head > tail) {
+        return str.substring(tail, head).reverse();
+    }
+
+    if(head < 0) {
+        head = 0;
+    }
+
+    if(tail >= len) {
+        tail = len;
+    }
+
+    if(head == tail) {
+        return string("");
+    }
+
+    if(tail-head+1 < 1) {
+        return string("");
+    }
+
+    string result = new char[tail-head+1];
+
+    memcpy(result, str + head, tail-head);
+    result[tail-head] = '\0';
+
+    return result;
+}
+
+static inline string string::substring(char* str, int head, int tail)
+{
+    if(str == null) {
+        return string("");
+    }
+
+    int len = strlen(str);
+
+    if(head < 0) {
+        head += len;
+    }
+    if(tail < 0) {
+        tail += len + 1;
+    }
+
+    if(head > tail) {
+        return str.substring(tail, head).reverse();
+    }
+
+    if(head < 0) {
+        head = 0;
+    }
+
+    if(tail >= len) {
+        tail = len;
+    }
+
+    if(head == tail) {
+        return string("");
+    }
+
+    if(tail-head+1 < 1) {
+        return string("");
+    }
+
+    string result = new char[tail-head+1];
+
+    memcpy(result, str + head, tail-head);
+    result[tail-head] = '\0';
+
+    return result;
+}
+
+static inline string string::chomp(char* str)
+{
+    string result = string(str);
+
+    if(result[result.length()-1] == '\n') {
+        return result.substring(0, -2);
+    }
+
+    return result;
+}
+
+static inline string char*::chomp(char* str)
+{
+    string result = string(str);
+
+    if(result[result.length()-1] == '\n') {
+        return result.substring(0, -2);
+    }
+
+    return result;
+}
+
+static inline string xbasename(char* path)
+{
+    char* p = path + strlen(path);
+
+    while(p >= path) {
+        if(*p == '/') {
+            break;
+        }
+        else {
+            p--;
+        }
+    }
+
+    if(p < path) {
+        return string(path);
+    }
+    else {
+        return string(p+1);
+    }
+
+    return string("");
+}
+
+static inline string xdirname(char* path)
+{
+    return string(dirname(string(path)));
+}
+
+static inline string xnoextname(char* path)
+{
+    string path2 = xbasename(path);
+
+    char* p = path2 + strlen(path2);
+
+    while(p >= path2) {
+        if(*p == '.') {
+            break;
+        }
+        else {
+            p--;
+        }
+    }
+
+    if(p < path2) {
+        return string(path2);
+    }
+    else {
+        return path2.substring(0, p - path2);
+    }
+
+    return string("");
+}
+
+static inline string xextname(char* path)
+{
+    char* p = path + strlen(path);
+
+    while(p >= path) {
+        if(*p == '.') {
+            break;
+        }
+        else {
+            p--;
+        }
+    }
+
+    if(p < path) {
+        return string(path);
+    }
+    else {
+        return string(p+1);
+    }
+
+    return string("");
+}
+
+static inline string xrealpath(char* path)
+{
+    char* result = realpath(path, null);
+
+    string result2 = string(result);
+
+    free(result);
+
+    return result2;
+}
 # 5 "common.h" 2
 
 
@@ -4165,6 +4548,7 @@ struct sType
     bool mDummyHeap;
     bool mNoHeap;
     bool mRefference;
+    bool mException;
 
     int mPointerNum;
     int mNoArrayPointerNum;
@@ -4406,6 +4790,7 @@ void decrement_ref_count_object(sType* type, char* obj, sInfo* info);
 
 
 
+exception sNode*% post_position_operator3(sNode*% node, sInfo* info) version 5;
 exception list<sType*%>*%, list<string>*%, list<string>*%, bool parse_params(sInfo* info);
 exception sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sInfo* info);
 exception sFun*,string create_cloner_automatically(sType* type, char* fun_name, sInfo* info);
@@ -4530,13 +4915,14 @@ exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 19;
 
 exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) version 20;
 exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 20;
+exception sNode*% post_position_operator3(sNode*% node, sInfo* info) version 20;
 
 
 
 
 exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 21;
 exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 94;
-exception sNode*% post_position_operator3(sNode*% node, sInfo* info);
+exception sNode*% post_position_operator3(sNode*% node, sInfo* info) version 21;
 
 
 

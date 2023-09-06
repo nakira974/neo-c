@@ -67,6 +67,7 @@ bool parsecmp(char* str, sInfo* info)
 exception string parse_word(sInfo* info, bool no_check_err=false)
 {
     var buf = new buffer();
+    parse_sharp(info);
     
     while((*info->p >= 'a' && *info->p <= 'z') || (*info->p >= 'A' && *info->p <= 'Z') || *info->p == '_' || (*info->p >= '0' && *info->p <= '9') || (*info->p == '$'))
     {
@@ -77,6 +78,8 @@ exception string parse_word(sInfo* info, bool no_check_err=false)
     
     if(!no_check_err && buf.length() == 0) {
         err_msg(info, "unexpected character(%c)\n", *info->p);
+int* a = (void*)0;
+*a =0;
         throw;
     }
     
@@ -2949,8 +2952,10 @@ exception sNode*% expression_node(sInfo* info) version 99
             return parse_tuple(info) throws;
         }
         else if(cast_expression_flag) {
+            parse_sharp(info);
             var type, name = parse_type(info) throws;
             
+            parse_sharp(info);
             expected_next_character(')', info);
             
             sNode*% node = expression_node(info) throws;
@@ -2958,9 +2963,12 @@ exception sNode*% expression_node(sInfo* info) version 99
             return new sNode(new sCastNode(type, node, info));
         }
         else {
+            parse_sharp(info);
             sNode*% node = expression(info) throws;
+            parse_sharp(info);
             
             expected_next_character(')', info);
+            parse_sharp(info);
             
             node = new sNode(new sParenNode(node, info));
             
@@ -3160,8 +3168,11 @@ void arrange_stack(sInfo* info, int top)
 
 exception int expected_next_character(char c, sInfo* info)
 {
+    parse_sharp(info);
     if(*info->p != c) {
         err_msg(info, "expected next charaster is %c, but %c\n", c, *info->p);
+int* a = (void*)0;
+*a = 0;
         throw;
     }
     

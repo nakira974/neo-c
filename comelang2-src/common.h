@@ -74,6 +74,7 @@ struct sType
     bool mDummyHeap;
     bool mNoHeap;
     bool mRefference;
+    bool mException;
     
     int mPointerNum;
     int mNoArrayPointerNum;
@@ -315,6 +316,7 @@ void decrement_ref_count_object(sType* type, char* obj, sInfo* info);
 /////////////////////////////////////////////////////////////////////
 /// 05function.c ///
 /////////////////////////////////////////////////////////////////////
+exception sNode*% post_position_operator3(sNode*% node, sInfo* info) version 5;
 exception list<sType*%>*%, list<string>*%, list<string>*%, bool parse_params(sInfo* info);
 exception sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sInfo* info);
 exception sFun*,string create_cloner_automatically(sType* type, char* fun_name, sInfo* info);
@@ -439,13 +441,14 @@ exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 19;
 /////////////////////////////////////////////////////////////////////
 exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) version 20;
 exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 20;
+exception sNode*% post_position_operator3(sNode*% node, sInfo* info) version 20;
 
 /////////////////////////////////////////////////////////////////////
 /// 21obj.c
 /////////////////////////////////////////////////////////////////////
 exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 21;
 exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 94;
-exception sNode*% post_position_operator3(sNode*% node, sInfo* info);
+exception sNode*% post_position_operator3(sNode*% node, sInfo* info) version 21;
 //exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 21;
 
 /////////////////////////////////////////////////////////////////////

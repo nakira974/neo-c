@@ -939,6 +939,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             type = new sType(xsprintf("tuple%d", num_tuples), info);
             type->mPointerNum++;
             type->mHeap = true;
+            type->mException = true;
             
             foreach(it, types) {
                 type->mGenericsTypes.push_back(clone it);
@@ -1006,7 +1007,6 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         
         expected_next_character(']', info) throws;
     }
-    
     
     return new tuple2<sType*%, string>(type, var_name);
 }
@@ -1317,38 +1317,105 @@ string sReturnNode*::sname(sReturnNode* self, sInfo* info)
 bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
 {
     if(self.value) {
-        if(!self.value->compile->(info)) {
-            return false;
-        }
-        
-        CVALUE*% come_value = get_value_from_stack(-1, info);
-        dec_stack_ptr(1, info);
         sFun* come_fun = info.come_fun;
         
-        if(come_value.type->mHeap && come_value.var == null) {
-            int right_value_id = get_right_value_id_from_obj(come_value.c_value);
-            
-            if(right_value_id != -1) {
-                remove_object_from_right_values(right_value_id, info);
-            }
-        }
+        sType* result_type = come_fun.mResultType;
         
-        add_come_code(info, "%s __result__ = %s;\n", make_type_name_string(come_value.type, false@in_header, false@array_cast_pointer, info), come_value.c_value);
-    
-        if(info.come_fun.mName === "main") {
-            foreach(it, info.funcs) {
-                sFun* it2 = info.funcs[it];
+        if(result_type->mException) {
+            if(!self.value->compile->(info)) {
+                return false;
+            }
+            
+            CVALUE*% come_value = get_value_from_stack(-1, info);
+            dec_stack_ptr(1, info);
+            
+            buffer*% result_tuple = new buffer();
+            
+            result_tuple.append_str(xsprintf("("));
+            result_tuple.append_str(xsprintf("%s,", come_value.c_value));
+            result_tuple.append_str(xsprintf("true)"));
+            
+            char* p = info.p;
+            char* head = info.head;
+            int sline = info.sline;
+            buffer*% source = info.source;
+            
+            info.source = result_tuple;
+            info.p = info.source.buf;
+            info.head = info.source.buf;
+        
+            sNode*% value = expression(info).catch { return false }
+            
+            info.p = p;
+            info.head = head;
+            info.sline = sline;
+            info.source = source;
+            
+            if(!value->compile->(info)) {
+                return false;
+            }
+            
+            CVALUE*% come_value2 = get_value_from_stack(-1, info);
+            dec_stack_ptr(1, info);
+            
+            if(come_value2.type->mHeap && come_value2.var == null) {
+                int right_value_id = get_right_value_id_from_obj(come_value2.c_value);
                 
-                if(memcmp(it, "__final_", strlen("__final_")) == 0) {
-                    add_come_code(info, "%s();\n", it);
+                if(right_value_id != -1) {
+                    remove_object_from_right_values(right_value_id, info);
                 }
             }
+            
+            add_come_code(info, "%s __result__ = %s;\n", make_type_name_string(come_value2.type, false@in_header, false@array_cast_pointer, info), come_value2.c_value);
+        
+            if(info.come_fun.mName === "main") {
+                foreach(it, info.funcs) {
+                    sFun* it2 = info.funcs[it];
+                    
+                    if(memcmp(it, "__final_", strlen("__final_")) == 0) {
+                        add_come_code(info, "%s();\n", it);
+                    }
+                }
+            }
+            
+            free_objects_on_return(come_fun.mBlock, info, come_value2.c_value, false@top_block);
+            free_right_value_objects(info);
+            
+            add_come_code(info, "return __result__;\n");
         }
+        else {
+            if(!self.value->compile->(info)) {
+                return false;
+            }
+            
+            CVALUE*% come_value = get_value_from_stack(-1, info);
+            dec_stack_ptr(1, info);
+            
+            if(come_value.type->mHeap && come_value.var == null) {
+                int right_value_id = get_right_value_id_from_obj(come_value.c_value);
+                
+                if(right_value_id != -1) {
+                    remove_object_from_right_values(right_value_id, info);
+                }
+            }
+            
+            add_come_code(info, "%s __result__ = %s;\n", make_type_name_string(come_value.type, false@in_header, false@array_cast_pointer, info), come_value.c_value);
         
-        free_objects_on_return(come_fun.mBlock, info, come_value.c_value, false@top_block);
-        free_right_value_objects(info);
-        
-        add_come_code(info, "return __result__;\n");
+            if(info.come_fun.mName === "main") {
+                foreach(it, info.funcs) {
+                    sFun* it2 = info.funcs[it];
+                    
+                    if(memcmp(it, "__final_", strlen("__final_")) == 0) {
+                        add_come_code(info, "%s();\n", it);
+                    }
+                }
+            }
+            
+            free_objects_on_return(come_fun.mBlock, info, come_value.c_value, false@top_block);
+            free_right_value_objects(info);
+            
+            add_come_code(info, "return __result__;\n");
+        }
     }
     else {
         if(info.come_fun.mName === "main") {
@@ -1368,6 +1435,121 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
     }
     
     info->last_statment_is_return = true;
+    
+    return true;
+}
+
+struct sThrowNode
+{
+    int sline;
+    string sname;
+};
+
+sThrowNode*% sThrowNode*::initialize(sThrowNode*% self, sInfo* info)
+{
+    self.sline = info.sline;
+    self.sname = string(info.sname);
+    
+    return self;
+}
+
+int sThrowNode*::sline(sThrowNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sThrowNode*::sname(sThrowNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+bool sThrowNode*::compile(sThrowNode* self, sInfo* info)
+{
+    sFun* come_fun = info.come_fun;
+    sType* result_type = come_fun.mResultType;
+    
+    buffer*% result_tuple = new buffer();
+    
+    result_tuple.append_str(xsprintf("("));
+    
+    int i = 0;
+    foreach(it, result_type->mGenericsTypes) {
+        if(i == 0) {
+            if(it->mPointerNum > 0) {
+                result_tuple.append_str(xsprintf("null"));
+            }
+            else {
+                result_tuple.append_str(xsprintf("0"));
+            }
+        }
+        else if(i == result_type->mGenericsTypes.length() -1) {
+        
+            result_tuple.append_str(xsprintf(", false"));
+        }
+        else {
+            if(it->mPointerNum > 0) {
+                result_tuple.append_str(xsprintf(", null"));
+            }
+            else {
+                result_tuple.append_str(xsprintf(", 0"));
+            }
+        }
+        
+        i++;
+    }
+    
+    result_tuple.append_str(xsprintf(")"));
+    
+    char* p = info.p;
+    char* head = info.head;
+    int sline = info.sline;
+    buffer*% source = info.source;
+    
+    info.source = result_tuple;
+    info.p = info.source.buf;
+    info.head = info.source.buf;
+
+    sNode*% value = expression(info).catch { return false }
+    
+    info.p = p;
+    info.head = head;
+    info.sline = sline;
+    info.source = source;
+    
+    if(!value->compile->(info)) {
+        return false;
+    }
+    
+    CVALUE*% come_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
+    
+    if(come_value.type->mHeap && come_value.var == null) {
+        int right_value_id = get_right_value_id_from_obj(come_value.c_value);
+        
+        if(right_value_id != -1) {
+            remove_object_from_right_values(right_value_id, info);
+        }
+    }
+    
+    string come_value2 = xsprintf("%s", come_value.c_value);
+    //string come_value2 = xsprintf("%s", increment_ref_count_object(come_value.type, come_value.c_value, info));
+    
+    add_come_code(info, "%s __result__ = %s;\n", make_type_name_string(come_value.type, false@in_header, false@array_cast_pointer, info), come_value2);
+
+    if(info.come_fun.mName === "main") {
+        foreach(it, info.funcs) {
+            sFun* it2 = info.funcs[it];
+            
+            if(memcmp(it, "__final_", strlen("__final_")) == 0) {
+                add_come_code(info, "%s();\n", it);
+            }
+        }
+    }
+    
+    free_objects_on_return(come_fun.mBlock, info, come_value.c_value, false@top_block);
+    free_right_value_objects(info);
+    
+    add_come_code(info, "return __result__;\n");
     
     return true;
 }
@@ -1541,12 +1723,12 @@ exception sNode*% expression_node(sInfo* info) version 1
 struct sFunCallNode 
 {
     string fun_name;
-    list<sNode*%>*% params
+    list<tuple2<string,sNode*%>*%>*% params
     int sline;
     string sname;
 };
 
-sFunCallNode*% sFunCallNode*::initialize(sFunCallNode*% self, char* fun_name, list<sNode*%>* params, sInfo* info)
+sFunCallNode*% sFunCallNode*::initialize(sFunCallNode*% self, char* fun_name, list<tuple2<string,sNode*%>*%>* params, sInfo* info)
 {
     self.fun_name = string(fun_name);
     self.params = clone params;
@@ -1569,7 +1751,7 @@ string sFunCallNode*::sname(sFunCallNode* self, sInfo* info)
 bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
 {
     string fun_name = self.fun_name;
-    list<sNode*%>* params = self.params;
+    list<tuple2<string,sNode*%>*%>* params = self.params;
     
     sVar* var_ = get_variable_from_table(info.lv_table, fun_name);
     
@@ -1588,7 +1770,9 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
         
         int i = 0;
         foreach(it, params) {
-            if(!it.compile->(info)) {
+            var label, node = it;
+            
+            if(!node.compile->(info)) {
                 return false;
             }
             
@@ -1711,9 +1895,13 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
         
         list<CVALUE*%>*% come_params = new list<CVALUE*%>();
         
+        map<string,CVALUE*%>*% label_params = new map<string,CVALUE*%>();
+        
         int i = 0;
         foreach(it, params) {
-            if(!it.compile->(info)) {
+            var label, node = it;
+            
+            if(!node.compile->(info)) {
                 return false;
             }
             
@@ -1725,10 +1913,16 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
                     come_value.c_value = increment_ref_count_object(come_value.type, come_value.c_value, info);
                 }
             }
-            come_params.push_back(come_value);
-            dec_stack_ptr(1, info);
             
-            i++;
+            if(label == null) {
+                come_params.push_back(come_value);
+                
+                i++;
+            }
+            else {
+                label_params.insert(string(label), come_value);
+            }
+            dec_stack_ptr(1, info);
         }
         
         if(params.length() < fun.mParamTypes.length()) {
@@ -1766,8 +1960,19 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
                     dec_stack_ptr(1, info);
                 }
                 else {
-                    err_msg(info, "require parametor");
+                    err_msg(info, "require parametor(%s)", fun.mName);
                     return false;
+                }
+            }
+        }
+        if(label_params.length() > 0) {
+            for(i=0; i<fun.mParamNames.length(); i++) {
+                char* param_name = fun.mParamNames[i];
+                
+                CVALUE* come_value = label_params[param_name];
+                
+                if(come_value) {
+                    come_params.replace(i, clone come_value);
                 }
             }
         }
@@ -1923,13 +2128,30 @@ exception sNode*% parse_function_call(char* fun_name, sInfo* info)
 {
     expected_next_character('(', info) throws;
     
-    list<sNode*%>*% params = new list<sNode*%>();
+    list<tuple2<string,sNode*%>*%>*% params = new list<tuple2<string,sNode*%>*%>();
     
     while(true) {
         if(*info->p == ')') {
             info->p++;
             skip_spaces_and_lf(info);
             break;
+        }
+        
+        char* p = info.p;
+        int sline = info.sline;
+        
+        bool err_flag = false;
+        string label = parse_word(info, true@no_check_err).catch { err_flag = true };
+        
+        if(err_flag == false && *info->p == ':') {
+            info->p++;
+            skip_spaces_and_lf(info);
+        }
+        else {
+            label = null;
+            
+            info->p = p;
+            info->sline = sline;
         }
         
         bool no_comma = info.no_comma;
@@ -1941,7 +2163,7 @@ exception sNode*% parse_function_call(char* fun_name, sInfo* info)
         
         info.no_comma = no_comma;
         
-        params.push_back(node);
+        params.push_back(new tuple2<string,sNode*%>(label, node));
         
         if(*info->p == ',') {
             info->p++;
@@ -2545,6 +2767,12 @@ exception sNode*% expression_node(sInfo* info) version 99
             
             return new sNode(new sReturnNode(value, info));
         }
+    }
+    else if(parsecmp("throw", info)) {
+        info->p += strlen("throw");
+        skip_spaces_and_lf(info);
+        
+        return new sNode(new sThrowNode(info));
     }
     else if(*info->p == '*') {
         info->p ++;
@@ -4560,4 +4788,8 @@ exception sFun*,string create_cloner_automatically(sType* type, char* fun_name, 
     return (cloner, real_fun_name);
 }
 
-
+exception sNode*% post_position_operator3(sNode*% node, sInfo* info) version 5
+{
+    
+    return node;
+}

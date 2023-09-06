@@ -57,7 +57,7 @@ void fun_default_parametor(int x=1, int y=2)
 
 exception int fun_exception(int x, int y)
 {
-    return (x+y, true);
+    return x+y;
 }
 
 int main()
@@ -382,7 +382,6 @@ int main()
     li_str.push_back(string("CCC"));
     
     xassert("list test", li_str === [string("AAA"), string("BBB"), string("CCC")]);
-    
     
     return 0;
 }

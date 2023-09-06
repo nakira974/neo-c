@@ -82,7 +82,7 @@ bool is_no_solve_generics_type(sType* type, sInfo* info)
 
 void output_struct(sClass* klass, sInfo* info)
 {
-    if(!klass->mOutputed && klass->mFields.length() > 0) {
+    if(!klass->mOutputed) {
         klass->mOutputed = true;
         
         buffer*% buf = new buffer();

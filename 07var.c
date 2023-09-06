@@ -484,7 +484,9 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
     sFun* fun = info.funcs[buf]
     
     if(buf === "var") {
+        parse_sharp(info);
         var buf2 = parse_word(info) throws;
+        parse_sharp(info);
         
         list<string>*% multiple_assign = null;
         
@@ -496,19 +498,25 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
                 info->p++;
                 skip_spaces_and_lf(info);
                 
+                parse_sharp(info);
                 var buf3 = parse_word(info) throws;
+                parse_sharp(info);
                 
                 multiple_assign.push_back(clone buf3);
             }
         }
+        parse_sharp(info);
         
         if(*info->p == '=' && *(info->p+1) != '=') {
             info.p++;
             skip_spaces_and_lf(info);
             
+            parse_sharp(info);
             sNode*% right_value = expression(info) throws;
+            parse_sharp(info);
             
             right_value = post_position_operator3(right_value, info) throws;
+            parse_sharp(info);
             
             return new sNode(new sStoreNode(string(buf2)@name, multiple_assign, null!, true@alloc, right_value, info));
         }
@@ -521,10 +529,13 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         info.p++;
         skip_spaces_and_lf(info);
         
+        parse_sharp(info);
         sNode*% right_value = expression(info) throws;
+        parse_sharp(info);
         
         right_value = post_position_operator3(right_value, info) throws;
         
+        parse_sharp(info);
         return new sNode(new sStoreNode(string(buf)@name, null!, null!, false@alloc, right_value, info));
     }
     else if(fun) {
@@ -557,13 +568,17 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         info.sline = head_sline;
         
         if(is_type_name_flag) {
+            parse_sharp(info);
             var type, name = parse_type(info, true@parse_variable_name) throws;
+            parse_sharp(info);
             
             if(*info->p == '=') {
                 info.p++;
                 skip_spaces_and_lf(info);
                 
+                parse_sharp(info);
                 sNode*% right_value = expression(info) throws;
+                parse_sharp(info);
                 
                 right_value = post_position_operator3(right_value, info) throws;
                 

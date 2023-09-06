@@ -1,5 +1,36 @@
 #include "common.h"
 
+struct sNullNodeX
+{
+  int sline;
+  string sname;
+};
+
+
+sNullNodeX*% sNullNodeX*::initialize(sNullNodeX*% self, sInfo* info)
+{
+    self.sline = info.sline;
+    self.sname = string(info.sname);
+
+    return self;
+}
+
+bool sNullNodeX*::compile(sNullNodeX* self, sInfo* info)
+{
+
+    return TRUE;
+}
+
+int sNullNodeX*::sline(sNullNodeX* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sNullNodeX*::sname(sNullNodeX* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
 struct sNewNode {
     sType*% type
     
@@ -828,18 +859,26 @@ exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info)
             
             gGC = false;
         }
+        else if(memcmp(info->p, "unsafe", strlen("unsafe")) == 0) {
+            info->p += strlen("unsafe");
+            skip_spaces_and_lf(info);
+        }
+        else if(memcmp(info->p, "no-null-check", strlen("no-null-check")) == 0) {
+            info->p += strlen("no-null-check");
+            skip_spaces_and_lf(info);
+        }
         else {
             err_msg(info, "invalid using");
             throw;
         }
         
-        return (sNode*)null;
+        return new sNode(new sNullNodeX(info));
     }
     
     return inherit(string(buf), head, head_sline, info) throws;
 }
 
-exception sNode*% post_position_operator3(sNode*% node, sInfo* info)
+exception sNode*% post_position_operator3(sNode*% node, sInfo* info) version 21
 {
     if(memcmp(info->p, "implements", strlen("implements")) == 0) {
         info->p += strlen("implements");
@@ -859,7 +898,7 @@ exception sNode*% post_position_operator3(sNode*% node, sInfo* info)
         skip_spaces_and_lf(info);
     }
     
-    return node;
+    return inherit(node, info) throws;
 }
 
 

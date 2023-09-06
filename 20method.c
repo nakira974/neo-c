@@ -285,7 +285,7 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
                 
                 CVALUE*% come_value = get_value_from_stack(-1, info);
                 
-                if(fun.mParamTypes[i].mHeap && come_value.type.mHeap) {
+                if(fun.mParamTypes[i] && fun.mParamTypes[i].mHeap && come_value.type.mHeap) {
                     come_value.c_value = increment_ref_count_object(come_value.type, come_value.c_value, info);
                 }
                 if(label == null) {

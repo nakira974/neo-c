@@ -481,6 +481,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
 {
     bool is_type_name_flag = is_type_name(buf, info);
     
+    parse_sharp(info);
     sFun* fun = info.funcs[buf]
     
     if(buf === "var") {

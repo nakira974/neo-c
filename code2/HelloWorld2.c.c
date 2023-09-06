@@ -2209,10 +2209,10 @@ void (*finalizer_7)(void*);
 int* ref_count_8;
 int count_9;
 void (*finalizer_10)(void*);
-memset(&finalizer_7, 0, sizeof(void (*)()));
+memset(&finalizer_7, 0, sizeof(void (*)(void*)));
 memset(&ref_count_8, 0, sizeof(int*));
 memset(&count_9, 0, sizeof(int));
-memset(&finalizer_10, 0, sizeof(void (*)()));
+memset(&finalizer_10, 0, sizeof(void (*)(void*)));
     if(mem==((void*)0)) {
         return;
     }

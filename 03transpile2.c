@@ -98,6 +98,8 @@ string make_type_name_string(sType* type, bool in_header, bool array_cast_pointe
         foreach(it, type->mParamTypes) {
             string param_type_str = make_type_name_string(it, in_header, false@array_cast_pointer, info);
             
+            buf.append_str(param_type_str);
+            
             if(j != type->mParamTypes.length()-1) {
                 buf.append_str(",");
             }

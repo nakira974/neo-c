@@ -2649,6 +2649,55 @@ string sLogicalDenial*::sname(sLogicalDenial* self, sInfo* info)
     return string(self.sname);
 }
 
+struct sPlusPlusNode2
+{
+    sNode*% value;
+    int sline;
+    string sname;
+};
+
+sPlusPlusNode2*% sPlusPlusNode2*::initialize(sPlusPlusNode2*% self, sNode*% value, sInfo* info)
+{
+    self.value = value;
+    
+    self.sline = info->sline;
+    self.sname = string(info->sname);
+    
+    return self;
+}
+
+bool sPlusPlusNode2*::compile(sPlusPlusNode2* self, sInfo* info)
+{
+    if(!self.value.compile->(info)) {
+        return false;
+    }
+    
+    CVALUE*% come_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
+    
+    CVALUE*% come_value2 = new CVALUE;
+    
+    come_value2.c_value = xsprintf("++%s", come_value.c_value);
+    come_value2.type = clone come_value.type;
+    come_value2.var = null;
+    
+    info.stack.push_back(come_value2);
+    
+    add_come_last_code(info, "%s;\n", come_value2.c_value);
+    
+    return true;
+}
+
+int sPlusPlusNode2*::sline(sPlusPlusNode2* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sPlusPlusNode2*::sname(sPlusPlusNode2* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
 struct sComplement
 {
     sNode*% value;
@@ -2712,6 +2761,14 @@ exception sNode*% expression_node(sInfo* info) version 99
         sNode*% node = expression_node(info) throws;
 
         return new sNode(new sLogicalDenial(node, info));
+    }
+    else if(*info->p == '+' && *(info->p+1) == '+') {
+        info->p+=2;
+        skip_spaces_and_lf(info);
+
+        sNode*% node = expression_node(info) throws;
+
+        return new sNode(new sPlusPlusNode2(node, info));
     }
     else if(*info->p == '~') {
         info->p++;

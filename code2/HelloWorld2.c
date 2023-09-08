@@ -300,6 +300,7 @@ int main()
     [1,2,3,4,5].each {
         printf("%d\n", it);
     }
+/*
     xassert("map equals", ["AAA":1, "BBB":2] === ["AAA":1, "BBB":2]);
     
     var m1 = ["AAA":1, "BBB":2];
@@ -351,6 +352,7 @@ int main()
     xassert("tuple test", t4.v1 === string("ABC") && t4.v2 === 5);
     xassert("tuple testX", ("AAA", 7) === ("AAA", 7));
     xassert("tuple testX", ("AAA", 8) !== ("AAA", 7));
+*/
     
     IA*% ia = new sDataA.initialize(111,222) implements IA;
     

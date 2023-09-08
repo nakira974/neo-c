@@ -17,6 +17,11 @@ sStrNode*% sStrNode*::initialize(sStrNode*% self, string value, int sline, sInfo
     return self;
 }
 
+bool sStrNode*::terminated()
+{
+    return false;
+}
+
 bool sStrNode*::compile(sStrNode* self, sInfo* info)
 {
     CVALUE*% come_value = new CVALUE;
@@ -58,6 +63,11 @@ sCharNode*% sCharNode*::initialize(sCharNode*% self, int value, sInfo* info)
     self.sname = string(info->sname);
     
     return self;
+}
+
+bool sCharNode*::terminated()
+{
+    return false;
 }
 
 bool sCharNode*::compile(sCharNode* self, sInfo* info)
@@ -102,6 +112,11 @@ sWCharNode*% sWCharNode*::initialize(sWCharNode*% self, wchar_t value, sInfo* in
     return self;
 }
 
+bool sWCharNode*::terminated()
+{
+    return false;
+}
+
 bool sWCharNode*::compile(sWCharNode* self, sInfo* info)
 {
     CVALUE*% come_value = new CVALUE;
@@ -142,6 +157,11 @@ sWStringNode*% sWStringNode*::initialize(sWStringNode*% self, wchar_t*% value, i
     self.sname = string(info->sname);
     
     return self;
+}
+
+bool sWStringNode*::terminated()
+{
+    return false;
 }
 
 bool sWStringNode*::compile(sWStringNode* self, sInfo* info)
@@ -186,6 +206,11 @@ sListNode*% sListNode*::initialize(sListNode*% self, list<sNode*%>*% list_elemen
     self.sname = string(info->sname);
     
     return self;
+}
+
+bool sListNode*::terminated()
+{
+    return false;
 }
 
 bool sListNode*::compile(sListNode* self, sInfo* info)
@@ -285,6 +310,11 @@ sTupleNode*% sTupleNode*::initialize(sTupleNode*% self, list<sNode*%>*% tuple_el
     self.sname = string(info->sname);
     
     return self;
+}
+
+bool sTupleNode*::terminated()
+{
+    return false;
 }
 
 bool sTupleNode*::compile(sTupleNode* self, sInfo* info)
@@ -411,6 +441,11 @@ sMapNode*% sMapNode*::initialize(sMapNode*% self, list<sNode*%>*% map_key_elemen
     self.sname = string(info->sname);
     
     return self;
+}
+
+bool sMapNode*::terminated()
+{
+    return false;
 }
 
 bool sMapNode*::compile(sMapNode* self, sInfo* info)

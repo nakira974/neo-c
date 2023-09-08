@@ -20,6 +20,11 @@ sEnumNode*% sEnumNode*::initialize(sEnumNode*% self, string type_name, list<tupl
     return self;
 }
 
+bool sEnumNode*::terminated()
+{
+    return true;
+}
+
 bool sEnumNode*::compile(sEnumNode* self, sInfo* info)
 {
     string type_name = self.mTypeName;

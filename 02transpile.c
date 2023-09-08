@@ -72,9 +72,9 @@ static bool cpp(sInfo* info)
     
     char cmd[1024];
 #ifdef __DARWIN_ARM__
-    snprintf(cmd, 1024, "/opt/homebrew/opt/llvm/bin/clang-cpp -I. -I/usr/local/include -D__DARWIN_ARM__ -U__GNUC__ %s %s > %s", include_files.to_string(), input_file_name, output_file_name);
+    snprintf(cmd, 1024, "/opt/homebrew/opt/llvm/bin/clang-cpp -lang-c -I. -I/usr/local/include -D__DARWIN_ARM__ -U__GNUC__ %s %s > %s", include_files.to_string(), input_file_name, output_file_name);
 #else
-    snprintf(cmd, 1024, "cpp -I. -U__GNUC__ %s %s > %s", include_files.to_string(), input_file_name, output_file_name);
+    snprintf(cmd, 1024, "cpp -lang-c -I. -U__GNUC__ %s %s > %s", include_files.to_string(), input_file_name, output_file_name);
 #endif
     puts(cmd);
 

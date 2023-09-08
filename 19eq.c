@@ -18,6 +18,11 @@ sPlusPlusNode*% sPlusPlusNode*::initialize(sPlusPlusNode*% self, sNode*% left, s
     return self;
 }
 
+bool sPlusPlusNode*::terminated()
+{
+    return false;
+}
+
 bool sPlusPlusNode*::compile(sPlusPlusNode* self, sInfo* info)
 {
     sNode* left = self.mLeft;
@@ -68,6 +73,11 @@ sMinusMinusNode*% sMinusMinusNode*::initialize(sMinusMinusNode*% self, sNode*% l
     self.mLeft = clone left;
 
     return self;
+}
+
+bool sMinusMinusNode*::terminated()
+{
+    return false;
 }
 
 bool sMinusMinusNode*::compile(sMinusMinusNode* self, sInfo* info)
@@ -122,6 +132,11 @@ sPlusEqualNode*% sPlusEqualNode*::initialize(sPlusEqualNode*% self, sNode*% left
     self.mRight = clone right;
 
     return self;
+}
+
+bool sPlusEqualNode*::terminated()
+{
+    return false;
 }
 
 bool sPlusEqualNode*::compile(sPlusEqualNode* self, sInfo* info)
@@ -187,6 +202,11 @@ sMinusEqualNode*% sMinusEqualNode*::initialize(sMinusEqualNode*% self, sNode*% l
     return self;
 }
 
+bool sMinusEqualNode*::terminated()
+{
+    return false;
+}
+
 bool sMinusEqualNode*::compile(sMinusEqualNode* self, sInfo* info)
 {
     sNode* left = self.mLeft;
@@ -248,6 +268,11 @@ sMultEqualNode*% sMultEqualNode*::initialize(sMultEqualNode*% self, sNode*% left
     self.mRight = clone right;
 
     return self;
+}
+
+bool sMultEqualNode*::terminated()
+{
+    return false;
 }
 
 bool sMultEqualNode*::compile(sMultEqualNode* self, sInfo* info)
@@ -313,6 +338,11 @@ sDivEqualNode*% sDivEqualNode*::initialize(sDivEqualNode*% self, sNode*% left, s
     return self;
 }
 
+bool sDivEqualNode*::terminated()
+{
+    return false;
+}
+
 bool sDivEqualNode*::compile(sDivEqualNode* self, sInfo* info)
 {
     sNode* left = self.mLeft;
@@ -374,6 +404,11 @@ sModEqualNode*% sModEqualNode*::initialize(sModEqualNode*% self, sNode*% left, s
     self.mRight = clone right;
 
     return self;
+}
+
+bool sModEqualNode*::terminated()
+{
+    return false;
 }
 
 bool sModEqualNode*::compile(sModEqualNode* self, sInfo* info)
@@ -439,6 +474,12 @@ sLShifEqualNode*% sLShifEqualNode*::initialize(sLShifEqualNode*% self, sNode*% l
     return self;
 }
 
+bool sLShifEqualNode*::terminated()
+{
+    return false;
+}
+
+
 bool sLShifEqualNode*::compile(sLShifEqualNode* self, sInfo* info)
 {
     sNode* left = self.mLeft;
@@ -500,6 +541,11 @@ sRShiftEqualNode*% sRShiftEqualNode*::initialize(sRShiftEqualNode*% self, sNode*
     self.mRight = clone right;
 
     return self;
+}
+
+bool sRShiftEqualNode*::terminated()
+{
+    return false;
 }
 
 bool sRShiftEqualNode*::compile(sRShiftEqualNode* self, sInfo* info)
@@ -565,6 +611,11 @@ sXorEqualNode*% sXorEqualNode*::initialize(sXorEqualNode*% self, sNode*% left, s
     return self;
 }
 
+bool sXorEqualNode*::terminated()
+{
+    return false;
+}
+
 bool sXorEqualNode*::compile(sXorEqualNode* self, sInfo* info)
 {
     sNode* left = self.mLeft;
@@ -626,6 +677,11 @@ sOrEqualNode*% sOrEqualNode*::initialize(sOrEqualNode*% self, sNode*% left, sNod
     self.mRight = clone right;
 
     return self;
+}
+
+bool sOrEqualNode*::terminated()
+{
+    return false;
 }
 
 bool sOrEqualNode*::compile(sOrEqualNode* self, sInfo* info)
@@ -691,6 +747,11 @@ sAndEqualNode*% sAndEqualNode*::initialize(sAndEqualNode*% self, sNode*% left, s
     return self;
 }
 
+bool sAndEqualNode*::terminated()
+{
+    return false;
+}
+
 bool sAndEqualNode*::compile(sAndEqualNode* self, sInfo* info)
 {
     sNode* left = self.mLeft;
@@ -752,6 +813,11 @@ sExpEqualNode*% sExpEqualNode*::initialize(sExpEqualNode*% self, sNode*% left, s
     self.mRight = clone right;
 
     return self;
+}
+
+bool sExpEqualNode*::terminated()
+{
+    return false;
 }
 
 bool sExpEqualNode*::compile(sExpEqualNode* self, sInfo* info)

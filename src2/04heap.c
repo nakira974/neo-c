@@ -7,6 +7,9 @@ exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
     if(generics_type == null) {
         return result;
     }
+    if(generics_type.mGenericsTypes.length() == 0) {
+        return result;
+    }
 
     sClass* klass = type->mClass;
 

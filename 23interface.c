@@ -29,6 +29,11 @@ string sInterfaceNode*::sname(sInterfaceNode* self, sInfo* info)
     return string(self.sname);
 }
 
+bool sInterfaceNode*::terminated()
+{
+    return false;
+}
+
 bool sInterfaceNode*::compile(sInterfaceNode* self, sInfo* info)
 {
     string name = string(self.name);

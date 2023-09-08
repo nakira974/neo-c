@@ -25,6 +25,11 @@ sForNode*% sForNode*::initialize(sForNode*% self, sNode*% expression_node, sNode
     return self;
 }
 
+bool sForNode*::terminated()
+{
+    return true;
+}
+
 bool sForNode*::compile(sForNode* self, sInfo* info)
 {
     sBlock* block = self.mBlock;

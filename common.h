@@ -41,6 +41,7 @@ interface sNode {
     bool compile(sInfo* info);
     int sline();
     string sname();
+    bool terminated();
 };
 
 struct sType

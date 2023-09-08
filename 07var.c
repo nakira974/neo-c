@@ -35,8 +35,14 @@ sStoreNode*% sStoreNode*::initialize(sStoreNode*% self, string name, list<string
     return self;
 }
 
+bool sStoreNode*::terminated()
+{
+    return false;
+}
+
 bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
 {
+sClass* klasSs = info.classes["sType"];
     if(self.right_value == null) {
         if(self.alloc) {
             sVar* var_ = info.lv_table.mVars[self.name];
@@ -71,7 +77,9 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         
         if(self.alloc) {
             add_come_code_at_function_head(info, "%s;\n", make_define_var(left_type, var_->mCValueName, info));
-            add_come_code_at_function_head2(info, "memset(&%s, 0, sizeof(%s));\n", var_->mCValueName, make_type_name_string(left_type, false@in_header, false@array_cast_pointer, info));
+            sType*% left_type2 = clone left_type;
+            left_type2->mStatic = false;
+            add_come_code_at_function_head2(info, "memset(&%s, 0, sizeof(%s));\n", var_->mCValueName, make_type_name_string(left_type2, false@in_header, false@array_cast_pointer, info));
         }
         else {
             err_msg(info, "unexpected error. define(%s)\n", self.name);
@@ -116,7 +124,10 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                         
                         var_ = get_variable_from_table(info.lv_table, self.name);
                         
-                        add_come_code_at_function_head2(info, "memset(&%s, 0, sizeof(%s));\n", var_->mCValueName, make_type_name_string(var_->mType, false@in_header, false@array_cast_pointer, info));
+                        sType*% var_type = clone var_->mType;
+                        var_type->mStatic = false;
+                        
+                        add_come_code_at_function_head2(info, "memset(&%s, 0, sizeof(%s));\n", var_->mCValueName, make_type_name_string(var_type, false@in_header, false@array_cast_pointer, info));
                     }
                     
                     i++;
@@ -136,7 +147,10 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                 
                 var_ = get_variable_from_table(info.lv_table, self.name);
                 
-                add_come_code_at_function_head2(info, "memset(&%s, 0, sizeof(%s));\n", var_->mCValueName, make_type_name_string(var_->mType, false@in_header, false@array_cast_pointer, info));
+                sType*% var_type = clone var_->mType;
+                var_type->mStatic = false;
+                
+                add_come_code_at_function_head2(info, "memset(&%s, 0, sizeof(%s));\n", var_->mCValueName, make_type_name_string(var_type, false@in_header, false@array_cast_pointer, info));
             }
         }
         
@@ -149,11 +163,6 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                 CVALUE*% come_value = new CVALUE;
                 
                 sType* left_type = parent_var->mType;
-                
-                if(right_type->mHeap && !left_type->mHeap) {
-                    err_msg(info, "require left type appended %%(1)(%s)", self.name);
-                    return false;
-                }
                 
                 if(left_type->mPointerNum > 0 && right_type->mPointerNum > 0 && right_type->mHeap && left_type->mHeap) {
                     string c_value = xsprintf("*(parent->%s)", parent_var->mCValueName);
@@ -191,7 +200,10 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                     
                     sVar* var_ = get_variable_from_table(info.lv_table, it);
                     
-                    add_come_code_at_function_head2(info, "memset(&%s, 0, sizeof(%s));\n", var_->mCValueName, make_type_name_string(var_->mType, false@in_header, false@array_cast_pointer, info));
+                    sType*% var_type = clone var_->mType;
+                    var_type->mStatic = false;
+                    
+                    add_come_code_at_function_head2(info, "memset(&%s, 0, sizeof(%s));\n", var_->mCValueName, make_type_name_string(var_type, false@in_header, false@array_cast_pointer, info));
                     
                     sType*% left_type = clone var_->mType;
                     
@@ -202,11 +214,6 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                     right_value2.var = null;
                     
                     CVALUE*% come_value = new CVALUE;
-                    
-                    if(right_type2->mHeap && !left_type->mHeap) {
-                        err_msg(info, "require left type appended %%(2) %s", self.name);
-                        return false;
-                    }
                     
                     if(right_type2->mHeap && left_type->mHeap && left_type->mPointerNum > 0 && right_type2->mPointerNum > 0)
                     {
@@ -257,11 +264,6 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
             sType*% left_type = clone var_->mType;
             
             CVALUE*% come_value = new CVALUE;
-            
-            if(right_type->mHeap && !left_type->mHeap) {
-                err_msg(info, "require left type appended %%(2) %s", self.name);
-                return false;
-            }
             
             if(right_type->mHeap && left_type->mHeap && left_type->mPointerNum > 0 && right_type->mPointerNum > 0)
             {
@@ -329,6 +331,11 @@ sLoadNode*% sLoadNode*::initialize(sLoadNode*% self, string name, sInfo* info)
     return self;
 }
 
+bool sLoadNode*::terminated()
+{
+    return false;
+}
+
 bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
 {
     sClass* current_stack_frame_struct = info->current_stack_frame_struct;
@@ -361,6 +368,8 @@ bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
         
         if(var_ == null) {
             err_msg(info, "var not found(%s)(Z) at loading variable\n", self.name);
+int* a = (void*)0;
+*a = 0;
             return false;
         }
     }
@@ -401,6 +410,11 @@ sFunLoadNode*% sFunLoadNode*::initialize(sFunLoadNode*% self, string name, sInfo
     self.sname = string(info->sname);
     
     return self;
+}
+
+bool sFunLoadNode*::terminated()
+{
+    return false;
 }
 
 bool sFunLoadNode*::compile(sFunLoadNode* self, sInfo* info)

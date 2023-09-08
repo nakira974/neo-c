@@ -21,6 +21,11 @@ sSwitchNode*% sSwitchNode*::initialize(sSwitchNode*% self, sNode*% expression_no
     return self;
 }
 
+bool sSwitchNode*::terminated()
+{
+    return true;
+}
+
 bool sSwitchNode*::compile(sSwitchNode* self, sInfo* info)
 {
     sBlock* block = self.mBlock;
@@ -79,6 +84,11 @@ sCaseNode*% sCaseNode*::initialize(sCaseNode*% self, string name, sInfo* info)
     return self;
 }
 
+bool sCaseNode*::terminated()
+{
+    return false;
+}
+
 bool sCaseNode*::compile(sCaseNode* self, sInfo* info)
 {
     add_come_code(info, "case %s:\n", self.mName);
@@ -111,6 +121,11 @@ sBreakNode*% sBreakNode*::initialize(sBreakNode*% self, sInfo* info)
     self.sname = string(info.sname);
 
     return self;
+}
+
+bool sBreakNode*::terminated()
+{
+    return false;
 }
 
 bool sBreakNode*::compile(sBreakNode* self, sInfo* info)

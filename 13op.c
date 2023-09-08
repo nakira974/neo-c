@@ -144,6 +144,11 @@ sNullNode*% sNullNode*::initialize(sNullNode*% self, sInfo* info)
     return self;
 }
 
+bool sNullNode*::terminated()
+{
+    return false;
+}
+
 bool sNullNode*::compile(sNullNode* self, sInfo* info)
 {
     CVALUE*% come_value = new CVALUE;
@@ -189,6 +194,11 @@ sAddNode*% sAddNode*::initialize(sAddNode*% self, sNode*% left, sNode*% right, s
     self.mRight = clone right;
 
     return self;
+}
+
+bool sAddNode*::terminated()
+{
+    return false;
 }
 
 bool sAddNode*::compile(sAddNode* self, sInfo* info)
@@ -264,6 +274,11 @@ sSubNode*% sSubNode*::initialize(sSubNode*% self, sNode*% left, sNode*% right, s
     return self;
 }
 
+bool sSubNode*::terminated()
+{
+    return false;
+}
+
 bool sSubNode*::compile(sSubNode* self, sInfo* info)
 {
     /// compile expression ///
@@ -335,6 +350,11 @@ sMultNode*% sMultNode*::initialize(sMultNode*% self, sNode*% left, sNode*% right
     self.mRight = clone right;
 
     return self;
+}
+
+bool sMultNode*::terminated()
+{
+    return false;
 }
 
 bool sMultNode*::compile(sMultNode* self, sInfo* info)
@@ -410,6 +430,11 @@ sDivNode*% sDivNode*::initialize(sDivNode*% self, sNode*% left, sNode*% right, s
     return self;
 }
 
+bool sDivNode*::terminated()
+{
+    return false;
+}
+
 bool sDivNode*::compile(sDivNode* self, sInfo* info)
 {
     /// compile expression ///
@@ -481,6 +506,11 @@ sModNode*% sModNode*::initialize(sModNode*% self, sNode*% left, sNode*% right, s
     self.mRight = clone right;
 
     return self;
+}
+
+bool sModNode*::terminated()
+{
+    return false;
 }
 
 bool sModNode*::compile(sModNode* self, sInfo* info)
@@ -556,6 +586,11 @@ sLShiftNode*% sLShiftNode*::initialize(sLShiftNode*% self, sNode*% left, sNode*%
     return self;
 }
 
+bool sLShiftNode*::terminated()
+{
+    return false;
+}
+
 bool sLShiftNode*::compile(sLShiftNode* self, sInfo* info)
 {
     /// compile expression ///
@@ -627,6 +662,11 @@ sRShiftNode*% sRShiftNode*::initialize(sRShiftNode*% self, sNode*% left, sNode*%
     self.mRight = clone right;
 
     return self;
+}
+
+bool sRShiftNode*::terminated()
+{
+    return false;
 }
 
 bool sRShiftNode*::compile(sRShiftNode* self, sInfo* info)
@@ -702,6 +742,11 @@ sGtEqNode*% sGtEqNode*::initialize(sGtEqNode*% self, sNode*% left, sNode*% right
     return self;
 }
 
+bool sGtEqNode*::terminated()
+{
+    return false;
+}
+
 bool sGtEqNode*::compile(sGtEqNode* self, sInfo* info)
 {
     /// compile expression ///
@@ -773,6 +818,11 @@ sLtEqNode*% sLtEqNode*::initialize(sLtEqNode*% self, sNode*% left, sNode*% right
     self.mRight = clone right;
 
     return self;
+}
+
+bool sLtEqNode*::terminated()
+{
+    return false;
 }
 
 bool sLtEqNode*::compile(sLtEqNode* self, sInfo* info)
@@ -848,6 +898,11 @@ sLtNode*% sLtNode*::initialize(sLtNode*% self, sNode*% left, sNode*% right, sInf
     return self;
 }
 
+bool sLtNode*::terminated()
+{
+    return false;
+}
+
 bool sLtNode*::compile(sLtNode* self, sInfo* info)
 {
     /// compile expression ///
@@ -919,6 +974,11 @@ sGtNode*% sGtNode*::initialize(sGtNode*% self, sNode*% left, sNode*% right, sInf
     self.mRight = clone right;
 
     return self;
+}
+
+bool sGtNode*::terminated()
+{
+    return false;
 }
 
 bool sGtNode*::compile(sGtNode* self, sInfo* info)
@@ -1004,6 +1064,11 @@ string sEqNode*::sname(sEqNode* self, sInfo* info)
     return string(self.sname);
 }
 
+bool sEqNode*::terminated()
+{
+    return false;
+}
+
 bool sEqNode*::compile(sEqNode* self, sInfo* info)
 {
     /// compile expression ///
@@ -1058,6 +1123,11 @@ sNotEqNode*% sNotEqNode*::initialize(sNotEqNode*% self, sNode*% left, sNode*% ri
     self.mRight = clone right;
 
     return self;
+}
+
+bool sNotEqNode*::terminated()
+{
+    return false;
 }
 
 bool sNotEqNode*::compile(sNotEqNode* self, sInfo* info)
@@ -1126,6 +1196,11 @@ sEq2Node*% sEq2Node*::initialize(sEq2Node*% self, sNode*% left, sNode*% right, s
     return self;
 }
 
+
+bool sEq2Node*::terminated()
+{
+    return false;
+}
 
 bool sEq2Node*::compile(sEqNode* self, sInfo* info)
 {
@@ -1198,6 +1273,11 @@ sNotEq2Node*% sNotEq2Node*::initialize(sNotEq2Node*% self, sNode*% left, sNode*%
     self.mRight = clone right;
 
     return self;
+}
+
+bool sNotEq2Node*::terminated()
+{
+    return false;
 }
 
 bool sNotEq2Node*::compile(sNotEq2Node* self, sInfo* info)
@@ -1273,6 +1353,11 @@ sAndNode*% sAndNode*::initialize(sAndNode*% self, sNode*% left, sNode*% right, s
     return self;
 }
 
+bool sAndNode*::terminated()
+{
+    return false;
+}
+
 bool sAndNode*::compile(sAndNode* self, sInfo* info)
 {
     /// compile expression ///
@@ -1344,6 +1429,11 @@ sXOrNode*% sXOrNode*::initialize(sXOrNode*% self, sNode*% left, sNode*% right, s
     self.mRight = clone right;
 
     return self;
+}
+
+bool sXOrNode*::terminated()
+{
+    return false;
 }
 
 bool sXOrNode*::compile(sXOrNode* self, sInfo* info)
@@ -1418,6 +1508,11 @@ sOrNode*% sOrNode*::initialize(sOrNode*% self, sNode*% left, sNode*% right, sInf
     return self;
 }
 
+bool sOrNode*::terminated()
+{
+    return false;
+}
+
 bool sOrNode*::compile(sOrNode* self, sInfo* info)
 {
     /// compile expression ///
@@ -1490,6 +1585,11 @@ sAndAndNode*% sAndAndNode*::initialize(sAndAndNode*% self, sNode*% left, sNode*%
     return self;
 }
 
+bool sAndAndNode*::terminated()
+{
+    return false;
+}
+
 bool sAndAndNode*::compile(sAndAndNode* self, sInfo* info)
 {
     /// compile expression ///
@@ -1560,6 +1660,11 @@ sOrOrNode*% sOrOrNode*::initialize(sOrOrNode*% self, sNode*% left, sNode*% right
     self.mRight = clone right;
 
     return self;
+}
+
+bool sOrOrNode*::terminated()
+{
+    return false;
 }
 
 bool sOrOrNode*::compile(sOrOrNode* self, sInfo* info)
@@ -1635,6 +1740,11 @@ sCommaNode*% sCommaNode*::initialize(sCommaNode*% self, sNode*% left, sNode*% ri
     return self;
 }
 
+bool sCommaNode*::terminated()
+{
+    return false;
+}
+
 bool sCommaNode*::compile(sCommaNode* self, sInfo* info)
 {
     /// compile expression ///
@@ -1702,6 +1812,11 @@ sConditionalNode*% sConditionalNode*::initialize(sConditionalNode*% self, sNode*
     return self;
 }
 
+bool sConditionalNode*::terminated()
+{
+    return false;
+}
+
 bool sConditionalNode*::compile(sConditionalNode* self, sInfo* info)
 {
     /// compile expression ///
@@ -1762,7 +1877,7 @@ exception sNode*% mult_exp(sInfo* info)
     parse_sharp(info)
 
     while(*info->p) {
-        if(*info->p == '*' && *(info->p+1) != '=') {
+        if(!node.terminated->() && *info->p == '*' && *(info->p+1) != '=') {
             info->p++;
             skip_spaces_and_lf(info);
 

@@ -18,6 +18,7 @@ void __builtin_va_end(char*);
 #include <string.h>
 #include <stdlib.h>
 #include <libgen.h>
+#include <limits.h>
 
 static inline void xassert(char* msg, bool test)
 {
@@ -720,6 +721,18 @@ static inline bool char*::equals(char* self, char* right)
 }
 
 static inline string char*::operator_add(char* self, char* right) 
+{
+    int len = strlen(self) + strlen(right);
+   
+    char*% result = new char[len+1];
+    
+    strncpy(result, self, len+1);
+    strncat(result, right, len+1);
+    
+    return result;
+}
+
+static inline string string::operator_add(char* self, char* right) 
 {
     int len = strlen(self) + strlen(right);
    
@@ -1906,4 +1919,41 @@ static inline bool xiswascii(wchar_t c)
 {
     bool result = (c >= ' ' && c <= '~');
     return result;
+}
+
+static inline string string::read(char* file_name) 
+{
+    FILE* f = fopen(file_name, "r");
+    
+    if(f == NULL) {
+        return string("");
+    }
+    
+    string result = f.read();
+    
+    f.fclose()
+    
+    return result;
+}
+
+static inline string char*::read(char* file_name) 
+{
+    FILE* f = fopen(file_name, "r");
+    
+    if(f == NULL) {
+        return string("");
+    }
+    
+    string result = f.read();
+    
+    f.fclose()
+    
+    return result;
+}
+
+static inline void bool::expect(bool self, void* parent, void (*block)(void* parent))
+{
+    if(!self) {
+        block(parent);
+    }
 }

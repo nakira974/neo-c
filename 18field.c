@@ -122,6 +122,11 @@ sStoreFieldNode*% sStoreFieldNode*::initialize(sStoreFieldNode*% self, sNode* le
     return self;
 }
 
+bool sStoreFieldNode*::terminated()
+{
+    return false;
+}
+
 bool sStoreFieldNode*::compile(sStoreFieldNode* self, sInfo* info)
 {
     sNode* left = self.mLeft;
@@ -144,7 +149,7 @@ bool sStoreFieldNode*::compile(sStoreFieldNode* self, sInfo* info)
     
     sType* right_type = right_value.type;
     
-    sClass* klass = left_value.type->mClass;
+    sClass* klass = info.classes[left_value.type->mClass->mName];
     
     sType*% field_type = null;
     int index = 0;
@@ -160,16 +165,18 @@ bool sStoreFieldNode*::compile(sStoreFieldNode* self, sInfo* info)
     }
     
     if(index == klass->mFields.length()) {
-        err_msg(info, "field not found(%s) in %s", name, klass->mName);
+        err_msg(info, "field not found(%s) in %s(1)", name, klass->mName);
         return false;
     }
     
     CVALUE*% come_value = new CVALUE;
     
+/*
     if(!field_type->mHeap && right_type->mHeap) {
-        err_msg(info, "require field type to append %%");
+        err_msg(info, "require field type to append %% (%s)", klass->mName);
         return false;
     }
+*/
     
     if(field_type->mHeap && right_type->mHeap && field_type->mPointerNum > 0 && right_type->mPointerNum > 0) 
     {
@@ -247,6 +254,11 @@ sLoadFieldNode*% sLoadFieldNode*::initialize(sLoadFieldNode*% self, sNode* left,
     return self;
 }
 
+bool sLoadFieldNode*::terminated()
+{
+    return false;
+}
+
 bool sLoadFieldNode*::compile(sLoadFieldNode* self, sInfo* info)
 {
     sNode* left = self.mLeft;
@@ -259,8 +271,12 @@ bool sLoadFieldNode*::compile(sLoadFieldNode* self, sInfo* info)
     CVALUE*% left_value = get_value_from_stack(-1, info);
     dec_stack_ptr(1, info);
     
-    sClass* klass = left_value.type->mClass;
+    sClass* klass = info.classes[left_value.type->mClass.mName];
     
+    if(klass->mFields.length() == 0) {
+        klass = left_value.type->mClass;
+    }
+
     sType*% field_type = null;
     int index = 0;
     foreach(field, klass->mFields) {
@@ -275,7 +291,9 @@ bool sLoadFieldNode*::compile(sLoadFieldNode* self, sInfo* info)
     }
     
     if(index == klass->mFields.length()) {
-        err_msg(info, "field not found(%s) in %s", name, klass->mName);
+        err_msg(info, "field not found(%s) in %s(2)", name, klass->mName);
+int* a = (int*)0;
+*a = 0;
         return false;
     }
     
@@ -327,6 +345,11 @@ sStoreArrayNode*% sStoreArrayNode*::initialize(sStoreArrayNode*% self, sNode* le
     return self;
 }
 
+bool sStoreArrayNode*::terminated()
+{
+    return false;
+}
+
 bool sStoreArrayNode*::compile(sStoreArrayNode* self, sInfo* info)
 {
     sNode* left = self.mLeft;
@@ -374,10 +397,12 @@ bool sStoreArrayNode*::compile(sStoreArrayNode* self, sInfo* info)
     if(!calling_fun) {
         CVALUE*% come_value = new CVALUE;
         
+/*
         if(!left_type->mHeap && right_type->mHeap) {
-            err_msg(info, "require field type to append %%");
+            err_msg(info, "require field type to append %% (%s)", klass->mName);
             return false;
         }
+*/
         
         buffer*% buf = new buffer();
         
@@ -465,6 +490,11 @@ sLoadArrayNode*% sLoadArrayNode*::initialize(sLoadArrayNode*% self, sNode* left,
     self.mLeft = clone left;
 
     return self;
+}
+
+bool sLoadArrayNode*::terminated()
+{
+    return false;
 }
 
 bool sLoadArrayNode*::compile(sLoadArrayNode* self, sInfo* info)
@@ -601,6 +631,10 @@ exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 18
                 node = new sNode(new sLoadArrayNode(node, array_num, info));
             }
         }
+        else if(*info->p == '!' && *(info->p+1) != '=') {
+            info->p++;
+            skip_spaces_and_lf(info);
+        }
         else if(*info->p == '.' || (*info->p == '-' && *(info->p+1) == '>')) 
         {
             if(*info->p == '.') {
@@ -622,7 +656,7 @@ exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 18
                 
                 node = new sNode(new sStoreFieldNode(node, right_node, field_name, info));
             }
-            else if(*info->p == '(' || *info->p == '{' || (*info->p == '-' && *(info->p+1) == '>')) {
+            else if(*info->p == '(' || *info->p == '{' || (*info->p == '-' && *(info->p+1) == '>' && *(info->p+2) == '(')) {
                 node = parse_method_call(node, field_name, info) throws;
             }
             else {

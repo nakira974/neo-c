@@ -1071,6 +1071,11 @@ bool sIntNode*::compile(sIntNode* self, sInfo* info)
     return true;
 }
 
+bool sIntNode*::terminated()
+{
+    return false;
+}
+
 int sIntNode*::sline(sIntNode* self, sInfo* info)
 {
     return self.sline;
@@ -1096,6 +1101,11 @@ sUIntNode*% sUIntNode*::initialize(sUIntNode*% self, unsigned int value, sInfo* 
     self.sname = string(info->sname);
     
     return self;
+}
+
+bool sUIntNode*::terminated()
+{
+    return false;
 }
 
 bool sUIntNode*::compile(sUIntNode* self, sInfo* info)
@@ -1155,6 +1165,11 @@ bool sLongNode*::compile(sLongNode* self, sInfo* info)
     return true;
 }
 
+bool sLongNode*::terminated()
+{
+    return false;
+}
+
 int sLongNode*::sline(sLongNode* self, sInfo* info)
 {
     return self.sline;
@@ -1195,6 +1210,11 @@ bool sULongNode*::compile(sULongNode* self, sInfo* info)
     add_come_last_code(info, "%s;\n", come_value.c_value);
     
     return true;
+}
+
+bool sULongNode*::terminated()
+{
+    return false;
 }
 
 int sULongNode*::sline(sULongNode* self, sInfo* info)
@@ -1239,6 +1259,11 @@ bool sFloatNode*::compile(sFloatNode* self, sInfo* info)
     return true;
 }
 
+bool sFloatNode*::terminated()
+{
+    return false;
+}
+
 int sFloatNode*::sline(sFloatNode* self, sInfo* info)
 {
     return self.sline;
@@ -1281,6 +1306,11 @@ bool sDoubleNode*::compile(sDoubleNode* self, sInfo* info)
     return true;
 }
 
+bool sDoubleNode*::terminated()
+{
+    return false;
+}
+
 int sDoubleNode*::sline(sDoubleNode* self, sInfo* info)
 {
     return self.sline;
@@ -1294,13 +1324,16 @@ string sDoubleNode*::sname(sDoubleNode* self, sInfo* info)
 struct sReturnNode
 {
     sNode*%? value;
+    string value_source;
     int sline;
     string sname;
 };
 
-sReturnNode*% sReturnNode*::initialize(sReturnNode*% self, sNode*% value, sInfo* info)
+sReturnNode*% sReturnNode*::initialize(sReturnNode*% self, sNode*% value, string value_source, sInfo* info)
 {
     self.value = value;
+    self.value_source = clone value_source;
+    
     self.sline = info.sline;
     self.sname = string(info.sname);
     
@@ -1315,6 +1348,11 @@ int sReturnNode*::sline(sReturnNode* self, sInfo* info)
 string sReturnNode*::sname(sReturnNode* self, sInfo* info)
 {
     return string(self.sname);
+}
+
+bool sReturnNode*::terminated()
+{
+    return false;
 }
 
 bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
@@ -1334,8 +1372,8 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
             
             buffer*% result_tuple = new buffer();
             
-            result_tuple.append_str(xsprintf("("));
-            result_tuple.append_str(xsprintf("%s,", come_value.c_value));
+            result_tuple.append_str(xsprintf("new tuple2<%s,bool>(", make_type_name_string(come_value.type, false@in_header, false@array_cast_pointer, info)));
+            result_tuple.append_str(xsprintf("%s,", self.value_source));
             result_tuple.append_str(xsprintf("true)"));
             
             char* p = info.p;
@@ -1347,7 +1385,7 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
             info.p = info.source.buf;
             info.head = info.source.buf;
         
-            sNode*% value = expression(info).catch { return false }
+            sNode*% value = expression(info).catch { exit(1); }
             
             info.p = p;
             info.head = head;
@@ -1369,22 +1407,10 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
                 }
             }
             
-            add_come_code(info, "%s __result__ = %s;\n", make_type_name_string(come_value2.type, false@in_header, false@array_cast_pointer, info), come_value2.c_value);
-        
-            if(info.come_fun.mName === "main") {
-                foreach(it, info.funcs) {
-                    sFun* it2 = info.funcs[it];
-                    
-                    if(memcmp(it, "__final_", strlen("__final_")) == 0) {
-                        add_come_code(info, "%s();\n", it);
-                    }
-                }
-            }
-            
             free_objects_on_return(come_fun.mBlock, info, come_value2.c_value, false@top_block);
             free_right_value_objects(info);
             
-            add_come_code(info, "return __result__;\n");
+            add_come_code(info, "return %s;\n", come_value2.c_value);
         }
         else {
             if(!self.value->compile->(info)) {
@@ -1402,35 +1428,13 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
                 }
             }
             
-            add_come_code(info, "%s __result__ = %s;\n", make_type_name_string(come_value.type, false@in_header, false@array_cast_pointer, info), come_value.c_value);
-        
-            if(info.come_fun.mName === "main") {
-                foreach(it, info.funcs) {
-                    sFun* it2 = info.funcs[it];
-                    
-                    if(memcmp(it, "__final_", strlen("__final_")) == 0) {
-                        add_come_code(info, "%s();\n", it);
-                    }
-                }
-            }
-            
             free_objects_on_return(come_fun.mBlock, info, come_value.c_value, false@top_block);
             free_right_value_objects(info);
             
-            add_come_code(info, "return __result__;\n");
+            add_come_code(info, "return %s;\n", come_value.c_value);
         }
     }
     else {
-        if(info.come_fun.mName === "main") {
-            foreach(it, info.funcs) {
-                sFun* it2 = info.funcs[it];
-                
-                if(memcmp(it, "__final_", strlen("__final_")) == 0) {
-                    add_come_code(info, "%s();\n", it);
-                }
-            }
-        }
-        
         sFun* come_fun = info.come_fun;
         free_objects_on_return(come_fun.mBlock, info, null!, false@top_block);
         free_right_value_objects(info);
@@ -1464,6 +1468,11 @@ int sThrowNode*::sline(sThrowNode* self, sInfo* info)
 string sThrowNode*::sname(sThrowNode* self, sInfo* info)
 {
     return string(self.sname);
+}
+
+bool sThrowNode*::terminated()
+{
+    return false;
 }
 
 bool sThrowNode*::compile(sThrowNode* self, sInfo* info)
@@ -1583,6 +1592,11 @@ string sDerefferenceNode*::sname(sDerefferenceNode* self, sInfo* info)
     return string(self.sname);
 }
 
+bool sDerefferenceNode*::terminated()
+{
+    return false;
+}
+
 bool sDerefferenceNode*::compile(sDerefferenceNode* self, sInfo* info)
 {
     sNode* value = self.value;
@@ -1636,6 +1650,11 @@ string sRefferenceNode*::sname(sRefferenceNode* self, sInfo* info)
     return string(self.sname);
 }
 
+bool sRefferenceNode*::terminated()
+{
+    return false;
+}
+
 bool sRefferenceNode*::compile(sRefferenceNode* self, sInfo* info)
 {
     sNode* value = self.value;
@@ -1687,6 +1706,11 @@ int sReverseNode*::sline(sReverseNode* self, sInfo* info)
 string sReverseNode*::sname(sReverseNode* self, sInfo* info)
 {
     return string(self.sname);
+}
+
+bool sReverseNode*::terminated()
+{
+    return false;
 }
 
 bool sReverseNode*::compile(sReverseNode* self, sInfo* info)
@@ -1749,6 +1773,11 @@ int sFunCallNode*::sline(sFunCallNode* self, sInfo* info)
 string sFunCallNode*::sname(sFunCallNode* self, sInfo* info)
 {
     return string(self.sname);
+}
+
+bool sFunCallNode*::terminated()
+{
+    return false;
 }
 
 bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
@@ -2049,6 +2078,11 @@ string sCastNode*::sname(sCastNode* self, sInfo* info)
     return string(self.sname);
 }
 
+bool sCastNode*::terminated()
+{
+    return false;
+}
+
 bool sCastNode*::compile(sCastNode* self, sInfo* info)
 {
     sType* type = self.mType;
@@ -2101,6 +2135,11 @@ int sParenNode*::sline(sParenNode* self, sInfo* info)
 string sParenNode*::sname(sParenNode* self, sInfo* info)
 {
     return string(self.sname);
+}
+
+bool sParenNode*::terminated()
+{
+    return false;
 }
 
 bool sParenNode*::compile(sParenNode* self, sInfo* info)
@@ -2175,6 +2214,7 @@ exception sNode*% parse_function_call(char* fun_name, sInfo* info)
         else if(*info->p == ')') {
             info->p++;
             skip_spaces_and_lf(info);
+            
             break;
         }
     }
@@ -2617,6 +2657,11 @@ sLogicalDenial*% sLogicalDenial*::initialize(sLogicalDenial*% self, sNode*% valu
     return self;
 }
 
+bool sLogicalDenial*::terminated()
+{
+    return false;
+}
+
 bool sLogicalDenial*::compile(sLogicalDenial* self, sInfo* info)
 {
     if(!self.value.compile->(info)) {
@@ -2664,6 +2709,11 @@ sMinusNode2*% sMinusNode2*::initialize(sMinusNode2*% self, sNode*% value, sInfo*
     self.sname = string(info->sname);
     
     return self;
+}
+
+bool sMinusNode2*::terminated()
+{
+    return false;
 }
 
 bool sMinusNode2*::compile(sMinusNode2* self, sInfo* info)
@@ -2715,6 +2765,11 @@ sPlusPlusNode2*% sPlusPlusNode2*::initialize(sPlusPlusNode2*% self, sNode*% valu
     return self;
 }
 
+bool sPlusPlusNode2*::terminated()
+{
+    return false;
+}
+
 bool sPlusPlusNode2*::compile(sPlusPlusNode2* self, sInfo* info)
 {
     if(!self.value.compile->(info)) {
@@ -2762,6 +2817,11 @@ sMinusMinusNode2*% sMinusMinusNode2*::initialize(sMinusMinusNode2*% self, sNode*
     self.sname = string(info->sname);
     
     return self;
+}
+
+bool sMinusMinusNode2*::terminated()
+{
+    return false;
 }
 
 bool sMinusMinusNode2*::compile(sMinusMinusNode2* self, sInfo* info)
@@ -2813,6 +2873,11 @@ sComplement*% sComplement*::initialize(sComplement*% self, sNode*% value, sInfo*
     return self;
 }
 
+bool sComplement*::terminated()
+{
+    return false;
+}
+
 bool sComplement*::compile(sComplement* self, sInfo* info)
 {
     if(!self.value.compile->(info)) {
@@ -2845,6 +2910,57 @@ string sComplement*::sname(sComplement* self, sInfo* info)
     return string(self.sname);
 }
 
+struct sNormalBlock
+{
+  sBlock*% mBlock;
+  
+  int sline;
+  string sname;
+};
+
+
+sNormalBlock*% sNormalBlock*::initialize(sNormalBlock*% self, sBlock* block, sInfo* info)
+{
+    self.sline = info.sline;
+    self.sname = string(info.sname);
+
+    self.mBlock = clone block;
+
+    return self;
+}
+
+bool sNormalBlock*::terminated()
+{
+    return true;
+}
+
+bool sNormalBlock*::compile(sNormalBlock* self, sInfo* info)
+{
+    sBlock* block = self.mBlock;
+    
+    add_come_code(info, "{\n");
+
+    transpile_block(block, null!, null!, info).catch {
+        exit(1);
+    }
+    
+    add_come_code(info, "}\n");
+    
+    transpiler_clear_last_code(info);
+
+    return true;
+}
+
+int sNormalBlock*::sline(sNormalBlock* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sNormalBlock*::sname(sNormalBlock* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
 exception sNode*% expression_node(sInfo* info) version 99
 {
     skip_spaces_and_lf(info);
@@ -2852,7 +2968,12 @@ exception sNode*% expression_node(sInfo* info) version 99
     parse_sharp(info);
     
     /// logical denial ///
-    if(*info->p == '!') {
+    if(*info->p == '{') {
+        sBlock*% block = parse_block(info) throws;
+        
+        return new sNode(new sNormalBlock(block, info));
+    }
+    else if(*info->p == '!') {
         info->p++;
         skip_spaces_and_lf(info);
 
@@ -2934,15 +3055,21 @@ exception sNode*% expression_node(sInfo* info) version 99
         skip_spaces_and_lf(info);
         
         if(*info->p == ';') {
-            return new sNode(new sReturnNode(null!, info));
+            return new sNode(new sReturnNode(null!, string("0"), info));
         }
         else {
+            char* head = info.p;
             sNode*% value = expression(info) throws;
+            char* tail = info.p;
             
-            return new sNode(new sReturnNode(value, info));
+            char buf[tail-head+1];
+            memcpy(buf, head, tail-head);
+            buf[tail-head] = '\0';
+            
+            return new sNode(new sReturnNode(value, string(buf), info));
         }
     }
-    else if(parsecmp("throw", info)) {
+    else if(parsecmp("throw", info) && !parsecmp("throws", info)) {
         info->p += strlen("throw");
         skip_spaces_and_lf(info);
         
@@ -3054,6 +3181,7 @@ exception sNode*% expression_node(sInfo* info) version 99
             sNode*% node = parse_function_call(buf, info) throws;
             
             node = post_position_operator(node, info) throws;
+            node = post_position_operator3(node, info) throws;
             
             return node;
         }
@@ -3062,6 +3190,7 @@ exception sNode*% expression_node(sInfo* info) version 99
             sNode*% node = parse_function_call(buf, info) throws;
             
             node = post_position_operator(node, info) throws;
+            node = post_position_operator3(node, info) throws;
             
             return node;
         }
@@ -3190,11 +3319,20 @@ exception sBlock*% parse_block(sInfo* info, bool no_block_level=false)
             
             parse_sharp(info);
             
+            int sline = info.sline;
+            char* sname = info.sname;
+            
+//            add_come_code(info, xsprintf("# %d \"%s\"\n", info->sline, info->sname));
+            
             sNode*% node = expression(info) throws;
             
             result.mNodes.push_back(node);
             
             parse_sharp(info);
+            
+            if(node.terminated->()) {
+                skip_spaces_and_lf(info);
+            }
             
             while(*info->p == ';') {
                 info->p++;
@@ -3388,6 +3526,11 @@ string sGlobalVariable*::sname(sGlobalVariable* self, sInfo* info)
     return string(self.sname);
 }
 
+bool sGlobalVariable*::terminated()
+{
+    return false;
+}
+
 bool sGlobalVariable*::compile(sGlobalVariable* self, sInfo* info)
 {
     sType* type = self.type;
@@ -3403,15 +3546,9 @@ bool sGlobalVariable*::compile(sGlobalVariable* self, sInfo* info)
     else if(right_node) {
         add_come_code_at_source_head(info, "%s;\n", make_define_var(type, name, info));
         var name2 = borrow string(name);
-//        info.global_variable_initialize_node.insert(string(name), clone right_node);
     }
     else {
         add_come_code_at_source_head(info, "%s;\n", make_define_var(type, name, info));
-/*
-        if(!type->mExtern) {
-            add_come_code_to_init_module_fun(info, "memset(&%s, 0, sizeof(%s));\n", name, make_type_name_string(type, false@in_header, false@array_cast_pointer, info));
-        }
-*/
     }
     
     return true;
@@ -3444,6 +3581,11 @@ int sExternalGlobalVariable*::sline(sExternalGlobalVariable* self, sInfo* info)
 string sExternalGlobalVariable*::sname(sExternalGlobalVariable* self, sInfo* info)
 {
     return string(self.sname);
+}
+
+bool sExternalGlobalVariable*::terminated()
+{
+    return false;
 }
 
 bool sExternalGlobalVariable*::compile(sExternalGlobalVariable* self, sInfo* info)
@@ -3481,6 +3623,11 @@ int sFunNode*::sline(sFunNode* self, sInfo* info)
 string sFunNode*::sname(sFunNode* self, sInfo* info)
 {
     return string(self.sname);
+}
+
+bool sFunNode*::terminated()
+{
+    return false;
 }
 
 bool sFunNode*::compile(sFunNode* self, sInfo* info)
@@ -3522,6 +3669,11 @@ int sLambdaNode*::sline(sLambdaNode* self, sInfo* info)
 string sLambdaNode*::sname(sLambdaNode* self, sInfo* info)
 {
     return string(self.sname);
+}
+
+bool sLambdaNode*::terminated()
+{
+    return false;
 }
 
 bool sLambdaNode*::compile(sLambdaNode* self, sInfo* info)
@@ -4443,6 +4595,9 @@ exception sFun*,string create_finalizer_automatically(sType* type, char* fun_nam
         var name = clone real_fun_name;
         var self_type = clone type;
         self_type->mHeap = false;
+        if(self_type->mPointerNum > 1) {
+            self_type->mPointerNum = 1;
+        }
         var param_types = [self_type];
         var param_names = [string("self")];
         var param_default_parametors = new list<string>();

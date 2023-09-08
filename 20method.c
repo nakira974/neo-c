@@ -23,6 +23,11 @@ string sCurrentNode*::sname(sCurrentNode* self, sInfo* info)
     return string(self.sname);
 }
 
+bool sCurrentNode*::terminated()
+{
+    return false;
+}
+
 bool sCurrentNode*::compile(sCurrentNode* self, sInfo* info)
 {
     info->current_stack_num++;
@@ -146,6 +151,11 @@ string make_generics_function(sType* type, string fun_name, sInfo* info)
     }
     
     return fun_name2;
+}
+
+bool sMethodCallNode*::terminated()
+{
+    return false;
 }
 
 bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)

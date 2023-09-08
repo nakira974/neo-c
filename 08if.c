@@ -35,11 +35,16 @@ sIfNode*% sIfNode*::initialize(sIfNode*% self, sNode*% expression_node, sBlock* 
     return self;
 }
 
+bool sIfNode*::terminated()
+{
+    return true;
+}
+
 bool sIfNode*::compile(sIfNode* self, sInfo* info)
 {
     sBlock* else_block = self.mElseBlock;
     int elif_num = self.mElifNum;
-
+    
     /// compile expression ///
     sNode* expression_node = self.mExpressionNode;
 

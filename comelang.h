@@ -987,17 +987,23 @@ impl list <T>
 
         list_item<T>*? it = self.head;
         auto i = 0;
+        bool replaced = false;
         while(it != null) {
             if(position == i) {
                 if(isheap(T)) {
                     delete borrow it.item;
                 }
+                replaced = true;
 
                 it.item = item;
                 break;
             }
             it = it.next;
             i++;
+        }
+        
+        if(!replaced) {
+            self.push_back(item);
         }
     }
 

@@ -21,6 +21,11 @@ sWhileNode*% sWhileNode*::initialize(sWhileNode*% self, sNode*% expression_node,
     return self;
 }
 
+bool sWhileNode*::terminated()
+{
+    return true;
+}
+
 bool sWhileNode*::compile(sWhileNode* self, sInfo* info)
 {
     /// compile expression ///

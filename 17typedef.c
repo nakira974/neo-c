@@ -20,6 +20,11 @@ sTypedefNode*% sTypedefNode*::initialize(sTypedefNode*% self, string type_name, 
     return self;
 }
 
+bool sTypedefNode*::terminated()
+{
+    return true;
+}
+
 bool sTypedefNode*::compile(sTypedefNode* self, sInfo* info)
 {
     string type_name = string(self.mTypeName);

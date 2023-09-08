@@ -20,6 +20,11 @@ sUnionNode*% sUnionNode*::initialize(sUnionNode*% self, sType*% type, sInfo* inf
     return self;
 }
 
+bool sUnionNode*::terminated()
+{
+    return true;
+}
+
 bool sUnionNode*::compile(sUnionNode* self, sInfo* info)
 {
     sType* type = self.mType;

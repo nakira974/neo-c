@@ -1,50 +1,1469 @@
-02transpile.c:            transpile(&info).catch {
-04heap.c:        result = solve_method_generics(result, method_generics_types,info).catch
-04heap.c:        result = solve_generics(result, generics_type, info).catch {
-04heap.c:            var fun,new_fun_name = create_finalizer_automatically(type, fun_name, info).catch { exit(1); }
-04heap.c:        sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
-04heap.c:        var fun,new_fun_name = create_cloner_automatically(type, fun_name, info).catch { exit(1); }
-04heap.c:        sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
-04heap.c:        var fun,new_fun_name = create_equals_automatically(type, fun_name, info).catch { exit(1); }
-04heap.c:        sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
-04heap.c:        var fun,new_fun_name = create_operator_equals_automatically(type, fun_name, info).catch { exit(1); }
-04heap.c:        sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
-04heap.c:        var fun,new_fun_name = create_operator_not_equals_automatically(type, fun_name, info).catch { exit(1); }
-04heap.c:                type = solve_type(type, info->generics_type, info->method_generics_types, info).catch
-05function.c:                type_name = parse_word(info).catch {
-05function.c:                    sNode*% node = expression(info).catch {
-05function.c:    sType*% type2 = solve_generics(type, info.generics_type, info).catch {
-05function.c:            parse_type(info).catch {}
-05function.c:                var word2 = parse_word(info).catch {}
-05function.c:        transpile_block(self.mFun.mBlock, self.mParamTypes, self.mParamNames, info).catch {
-05function.c:        transpile_block(self.mFun.mBlock, self.mParamTypes, self.mParamNames, info).catch {
-05function.c:    sType*% result_type = solve_generics(generics_fun->mResultType, generics_type, info).catch {
-05function.c:        var param_type = solve_generics(it, generics_type, info).catch {
-05function.c:    sBlock*% block = parse_block(info).catch {
-05function.c:        parse_type(info).catch {};
-05function.c:                word = parse_word(info).catch {}
-05function.c:                    word = parse_word(info).catch {}
-05function.c:                        word = parse_word(info).catch {}
-05function.c:        parse_type(parse_variable_name:false, info).catch {};
-06str.c:    sBlock*% block = parse_block(info, true@no_block_level).catch { return false; }
-06str.c:    sBlock*% block = parse_block(info, true@no_block_level).catch { return false; }
-06str.c:    sBlock*% block = parse_block(info, true@no_block_level).catch { return false; }
-07var.c:            var type = solve_generics(self.type, info->generics_type, info).catch {
-07var.c:                    var type = solve_generics(self.type, info->generics_type, info).catch {
-07var.c:        string word = parse_word(info).catch { }
-08if.c:    transpile_block(if_block, null!, null!, info).catch {
-08if.c:            transpile_block(elif_node_block, null!, null!, info).catch {
-08if.c:        transpile_block(else_block, null!, null!, info).catch {
-09while.c:    transpile_block(block, null!, null!, info).catch {
-10do_while.c:    transpile_block(block, null!, null!, info).catch {
-11for.c:    transpile_block(block, null!, null!, info).catch {
-12switch.c:    transpile_block(block, null!, null!, info).catch {
-13op.c:        sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
-14struct.c:            sType*% new_type = solve_generics(type, generics_type, info).catch {
-18field.c:        sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
-20method.c:    sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
-20method.c:            sNode*% node = parse_function(info).catch {
-21obj.c:    sType*% type2 = solve_generics(type, info->generics_type, info).catch {
-21obj.c:    var type2 = solve_generics(type, info->generics_type, info).catch {
-a.c:    int x = fun(1, 2).catch { };
-e.c:    fun2().catch {
+a.c.c:130:20: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+    unsigned short short _cur_column;
+                   ^~~~~~
+a.c.c:1283:5: warning: incompatible redeclaration of library function 'snprintf' [-Wincompatible-library-redeclaration]
+int snprintf(char* __s, int __maxlen, const char* __format, ...);
+    ^
+a.c.c:1283:5: note: 'snprintf' is a builtin with type 'int (char *, unsigned long, const char *, ...)'
+a.c.c:1284:5: warning: incompatible redeclaration of library function 'vsnprintf' [-Wincompatible-library-redeclaration]
+int vsnprintf(char* __s, int __maxlen, const char* __format, va_list __arg);
+    ^
+a.c.c:1284:5: note: 'vsnprintf' is a builtin with type 'int (char *, unsigned long, const char *, __builtin_va_list)'
+a.c.c:1324:5: warning: incompatible redeclaration of library function 'fread' [-Wincompatible-library-redeclaration]
+int fread(void* __ptr, int __size, int __n, struct _IO_FILE* __stream);
+    ^
+a.c.c:1324:5: note: 'fread' is a builtin with type 'unsigned long (void *, unsigned long, unsigned long, FILE *)' (aka 'unsigned long (void *, unsigned long, unsigned long, struct _IO_FILE *)')
+a.c.c:1325:5: warning: incompatible redeclaration of library function 'fwrite' [-Wincompatible-library-redeclaration]
+int fwrite(const void* __ptr, int __size, int __n, struct _IO_FILE* __s);
+    ^
+a.c.c:1325:5: note: 'fwrite' is a builtin with type 'unsigned long (const void *, unsigned long, unsigned long, FILE *)' (aka 'unsigned long (const void *, unsigned long, unsigned long, struct _IO_FILE *)')
+a.c.c:1360:7: warning: incompatible redeclaration of library function 'memcpy' [-Wincompatible-library-redeclaration]
+void* memcpy(void* __dest, const void* __src, int __n);
+      ^
+a.c.c:1360:7: note: 'memcpy' is a builtin with type 'void *(void *, const void *, unsigned long)'
+a.c.c:1361:7: warning: incompatible redeclaration of library function 'memmove' [-Wincompatible-library-redeclaration]
+void* memmove(void* __dest, const void* __src, int __n);
+      ^
+a.c.c:1361:7: note: 'memmove' is a builtin with type 'void *(void *, const void *, unsigned long)'
+a.c.c:1362:7: warning: incompatible redeclaration of library function 'memccpy' [-Wincompatible-library-redeclaration]
+void* memccpy(void* __dest, const void* __src, int __c, int __n);
+      ^
+a.c.c:1362:7: note: 'memccpy' is a builtin with type 'void *(void *, const void *, int, unsigned long)'
+a.c.c:1363:7: warning: incompatible redeclaration of library function 'memset' [-Wincompatible-library-redeclaration]
+void* memset(void* __s, int __c, int __n);
+      ^
+a.c.c:1363:7: note: 'memset' is a builtin with type 'void *(void *, int, unsigned long)'
+a.c.c:1364:5: warning: incompatible redeclaration of library function 'memcmp' [-Wincompatible-library-redeclaration]
+int memcmp(const void* __s1, const void* __s2, int __n);
+    ^
+a.c.c:1364:5: note: 'memcmp' is a builtin with type 'int (const void *, const void *, unsigned long)'
+a.c.c:1366:7: warning: incompatible redeclaration of library function 'memchr' [-Wincompatible-library-redeclaration]
+void* memchr(const void* __s, int __c, int __n);
+      ^
+a.c.c:1366:7: note: 'memchr' is a builtin with type 'void *(const void *, int, unsigned long)'
+a.c.c:1370:7: warning: incompatible redeclaration of library function 'strncpy' [-Wincompatible-library-redeclaration]
+char* strncpy(char* __dest, const char* __src, int __n);
+      ^
+a.c.c:1370:7: note: 'strncpy' is a builtin with type 'char *(char *, const char *, unsigned long)'
+a.c.c:1372:7: warning: incompatible redeclaration of library function 'strncat' [-Wincompatible-library-redeclaration]
+char* strncat(char* __dest, const char* __src, int __n);
+      ^
+a.c.c:1372:7: note: 'strncat' is a builtin with type 'char *(char *, const char *, unsigned long)'
+a.c.c:1374:5: warning: incompatible redeclaration of library function 'strncmp' [-Wincompatible-library-redeclaration]
+int strncmp(const char* __s1, const char* __s2, int __n);
+    ^
+a.c.c:1374:5: note: 'strncmp' is a builtin with type 'int (const char *, const char *, unsigned long)'
+a.c.c:1376:5: warning: incompatible redeclaration of library function 'strxfrm' [-Wincompatible-library-redeclaration]
+int strxfrm(char* __dest, const char* __src, int __n);
+    ^
+a.c.c:1376:5: note: 'strxfrm' is a builtin with type 'unsigned long (char *, const char *, unsigned long)'
+a.c.c:1380:7: warning: incompatible redeclaration of library function 'strndup' [-Wincompatible-library-redeclaration]
+char* strndup(const char* __string, int __n);
+      ^
+a.c.c:1380:7: note: 'strndup' is a builtin with type 'char *(const char *, unsigned long)'
+a.c.c:1384:5: warning: incompatible redeclaration of library function 'strcspn' [-Wincompatible-library-redeclaration]
+int strcspn(const char* __s, const char* __reject);
+    ^
+a.c.c:1384:5: note: 'strcspn' is a builtin with type 'unsigned long (const char *, const char *)'
+a.c.c:1385:5: warning: incompatible redeclaration of library function 'strspn' [-Wincompatible-library-redeclaration]
+int strspn(const char* __s, const char* __accept);
+    ^
+a.c.c:1385:5: note: 'strspn' is a builtin with type 'unsigned long (const char *, const char *)'
+a.c.c:1394:7: warning: incompatible redeclaration of library function 'mempcpy' [-Wincompatible-library-redeclaration]
+void* mempcpy(void* __dest, const void* __src, int __n);
+      ^
+a.c.c:1394:7: note: 'mempcpy' is a builtin with type 'void *(void *, const void *, unsigned long)'
+a.c.c:1395:5: warning: incompatible redeclaration of library function 'strlen' [-Wincompatible-library-redeclaration]
+int strlen(const char* __s);
+    ^
+a.c.c:1395:5: note: 'strlen' is a builtin with type 'unsigned long (const char *)'
+a.c.c:1402:5: warning: incompatible redeclaration of library function 'bcmp' [-Wincompatible-library-redeclaration]
+int bcmp(const void* __s1, const void* __s2, int __n);
+    ^
+a.c.c:1402:5: note: 'bcmp' is a builtin with type 'int (const void *, const void *, unsigned long)'
+a.c.c:1404:6: warning: incompatible redeclaration of library function 'bzero' [-Wincompatible-library-redeclaration]
+void bzero(void* __s, int __n);
+     ^
+a.c.c:1404:6: note: 'bzero' is a builtin with type 'void (void *, unsigned long)'
+a.c.c:1411:5: warning: incompatible redeclaration of library function 'strncasecmp' [-Wincompatible-library-redeclaration]
+int strncasecmp(const char* __s1, const char* __s2, int __n);
+    ^
+a.c.c:1411:5: note: 'strncasecmp' is a builtin with type 'int (const char *, const char *, unsigned long)'
+a.c.c:1422:7: warning: incompatible redeclaration of library function 'stpncpy' [-Wincompatible-library-redeclaration]
+char* stpncpy(char* __dest, const char* __src, int __n);
+      ^
+a.c.c:1422:7: note: 'stpncpy' is a builtin with type 'char *(char *, const char *, unsigned long)'
+a.c.c:1444:5: warning: incompatible redeclaration of library function 'strtoll' [-Wincompatible-library-redeclaration]
+int strtoll(const char* __nptr, char** __endptr, int __base);
+    ^
+a.c.c:1444:5: note: 'strtoll' is a builtin with type 'long long (const char *, char **, int)'
+a.c.c:1445:14: warning: incompatible redeclaration of library function 'strtoull' [-Wincompatible-library-redeclaration]
+unsigned int strtoull(const char* __nptr, char** __endptr, int __base);
+             ^
+a.c.c:1445:14: note: 'strtoull' is a builtin with type 'unsigned long long (const char *, char **, int)'
+a.c.c:1502:7: warning: incompatible redeclaration of library function 'malloc' [-Wincompatible-library-redeclaration]
+void* malloc(int __size);
+      ^
+a.c.c:1502:7: note: 'malloc' is a builtin with type 'void *(unsigned long)'
+a.c.c:1503:7: warning: incompatible redeclaration of library function 'calloc' [-Wincompatible-library-redeclaration]
+void* calloc(int __nmemb, int __size);
+      ^
+a.c.c:1503:7: note: 'calloc' is a builtin with type 'void *(unsigned long, unsigned long)'
+a.c.c:1504:7: warning: incompatible redeclaration of library function 'realloc' [-Wincompatible-library-redeclaration]
+void* realloc(void* __ptr, int __size);
+      ^
+a.c.c:1504:7: note: 'realloc' is a builtin with type 'void *(void *, unsigned long)'
+a.c.c:1507:7: warning: incompatible redeclaration of library function 'alloca' [-Wincompatible-library-redeclaration]
+void* alloca(int __size);
+      ^
+a.c.c:1507:7: note: 'alloca' is a builtin with type 'void *(unsigned long)'
+a.c.c:1510:7: warning: incompatible redeclaration of library function 'aligned_alloc' [-Wincompatible-library-redeclaration]
+void* aligned_alloc(int __alignment, int __size);
+      ^
+a.c.c:1510:7: note: 'aligned_alloc' is a builtin with type 'void *(unsigned long, unsigned long)'
+a.c.c:1542:5: warning: incompatible redeclaration of library function 'llabs' [-Wincompatible-library-redeclaration]
+int llabs(int __x);
+    ^
+a.c.c:1542:5: note: 'llabs' is a builtin with type 'long long (long long)'
+a.c.c:1813:47: warning: integer literal is too large to be represented in a signed integer type, interpreting as unsigned [-Wimplicitly-unsigned-literal]
+    unsigned long int __result__ = ((((__bsx)&18374686479671623680)>>56)|(((__bsx)&71776119061217280)>>40)|(((__bsx)&280375465082880)>>24)|(((__bsx)&1095216660480)>>8)|(((__bsx)&4278190080)<<8)|(((__bsx)&16711680)<<24)|(((__bsx)&65280)<<40)|(((__bsx)&255)<<56));
+                                              ^
+a.c.c:1873:40: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+static inline _Bool short_equals(short short self, short short right){
+                                       ^~~~~~
+a.c.c:1873:58: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+static inline _Bool short_equals(short short self, short short right){
+                                                         ^~~~~~
+a.c.c:1874:11: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+    short short __result__ = self==right;
+          ^~~~~~
+a.c.c:1972:43: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+static inline short int short_clone(short short self){
+                                          ^~~~~~
+a.c.c:1973:11: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+    short short __result__ = self;
+          ^~~~~~
+a.c.c:1996:20: warning: expression result unused [-Wunused-value]
+    if(self->buf) {(char*)come_decrement_ref_count(self->buf,0,0); }
+                   ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:2017:25: warning: expression result unused [-Wunused-value]
+    if(result_29->buf) {(char*)come_decrement_ref_count(result_29->buf,0,0); }
+                        ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:2046:24: warning: expression result unused [-Wunused-value]
+        if(self->buf) {(char*)come_decrement_ref_count(self->buf,0,0); }
+                       ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:2064:24: warning: expression result unused [-Wunused-value]
+        if(self->buf) {(char*)come_decrement_ref_count(self->buf,0,0); }
+                       ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:2091:67: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+static inline void buffer_append_short(struct buffer* self, short short value){
+                                                                  ^~~~~~
+a.c.c:2092:51: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+    buffer_append(self,(char*)&value,sizeof(short short));
+                                                  ^~~~~
+a.c.c:2106:24: warning: expression result unused [-Wunused-value]
+        if(self->buf) {(char*)come_decrement_ref_count(self->buf,0,0); }
+                       ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:2843:18: warning: incompatible pointer types assigning to 'struct list_item$$1char$ph *' from 'struct list_item$p$1char$ph *' [-Wincompatible-pointer-types]
+            it_42=self->head;
+                 ^~~~~~~~~~~
+a.c.c:2849:22: warning: incompatible pointer types assigning to 'struct list_item$$1char$ph *' from 'struct list_item$p$1char$ph *' [-Wincompatible-pointer-types]
+                it_42=it_42->next;
+                     ^~~~~~~~~~~~
+a.c.c:2859:14: warning: incompatible pointer types assigning to 'struct list_item$$1char$ph$$1char$ph *' from 'struct list_item$p$1char$ph *' [-Wincompatible-pointer-types]
+        it_45=self->head;
+             ^~~~~~~~~~~
+a.c.c:2865:18: warning: incompatible pointer types assigning to 'struct list_item$$1char$ph$$1char$ph *' from 'struct list_item$p$1char$ph *' [-Wincompatible-pointer-types]
+            it_45=it_45->next;
+                 ^~~~~~~~~~~~
+a.c.c:2886:27: warning: incompatible pointer types assigning to 'struct list_item$p$1char$ph *' from 'struct list_item$$1char$ph$$1char$ph *' [-Wincompatible-pointer-types]
+                self->tail=litem_48;
+                          ^~~~~~~~~
+a.c.c:2887:27: warning: incompatible pointer types assigning to 'struct list_item$p$1char$ph *' from 'struct list_item$$1char$ph$$1char$ph *' [-Wincompatible-pointer-types]
+                self->head=litem_48;
+                          ^~~~~~~~~
+a.c.c:2895:27: warning: incompatible pointer types assigning to 'struct list_item$p$1char$ph *' from 'struct list_item$$1char$ph$$1char$ph *' [-Wincompatible-pointer-types]
+                self->tail=litem_49;
+                          ^~~~~~~~~
+a.c.c:2896:33: warning: incompatible pointer types assigning to 'struct list_item$p$1char$ph *' from 'struct list_item$$1char$ph$$1char$ph *' [-Wincompatible-pointer-types]
+                self->head->next=litem_49;
+                                ^~~~~~~~~
+a.c.c:2904:33: warning: incompatible pointer types assigning to 'struct list_item$p$1char$ph *' from 'struct list_item$$1char$ph$$1char$ph *' [-Wincompatible-pointer-types]
+                self->tail->next=litem_50;
+                                ^~~~~~~~~
+a.c.c:2905:27: warning: incompatible pointer types assigning to 'struct list_item$p$1char$ph *' from 'struct list_item$$1char$ph$$1char$ph *' [-Wincompatible-pointer-types]
+                self->tail=litem_50;
+                          ^~~~~~~~~
+a.c.c:2884:37: warning: expression result unused [-Wunused-value]
+                if(litem_48->item) {(char*)come_decrement_ref_count(litem_48->item,0,0); }
+                                    ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:2893:37: warning: expression result unused [-Wunused-value]
+                if(litem_49->item) {(char*)come_decrement_ref_count(litem_49->item,0,0); }
+                                    ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:2902:37: warning: expression result unused [-Wunused-value]
+                if(litem_50->item) {(char*)come_decrement_ref_count(litem_50->item,0,0); }
+                                    ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3003:40: warning: incompatible pointer types passing 'struct list$$1sType$ph *' to parameter of type 'struct list$p$1sType$ph *' [-Wincompatible-pointer-types]
+    if(list$$1sType$phphsTypeph_length(type->mGenericsTypes)>0) {
+                                       ^~~~~~~~~~~~~~~~~~~~
+a.c.c:1731:69: note: passing argument to parameter 'self' here
+static int list$$1sType$phphsTypeph_length(struct list$p$1sType$ph* self);
+                                                                    ^
+a.c.c:3018:138: warning: incompatible pointer types passing 'struct tuple2$ph$2sType$phbool$ *' to parameter of type 'struct tuple2$p$2sType$phbool$ *' [-Wincompatible-pointer-types]
+        obj_type_272=(struct sType*)come_increment_ref_count(((struct sType*)(right_value158=tuple2$ph$2sType$phbool$phsTypephbool_catch(((struct tuple2$ph$2sType$phbool$*)(right_value157=solve_generics(type,info->generics_type,info))),&__current_stack8__,method_block8))));
+                                                                                                                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1732:98: note: passing argument to parameter 'self' here
+static struct sType* tuple2$ph$2sType$phbool$phsTypephbool_catch(struct tuple2$p$2sType$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                 ^
+a.c.c:3018:257: warning: incompatible function pointer types passing 'void (struct __current_stack8__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+        obj_type_272=(struct sType*)come_increment_ref_count(((struct sType*)(right_value158=tuple2$ph$2sType$phbool$phsTypephbool_catch(((struct tuple2$ph$2sType$phbool$*)(right_value157=solve_generics(type,info->generics_type,info))),&__current_stack8__,method_block8))));
+                                                                                                                                                                                                                                                                ^~~~~~~~~~~~~
+a.c.c:1732:125: note: passing argument to parameter 'block' here
+static struct sType* tuple2$ph$2sType$phbool$phsTypephbool_catch(struct tuple2$p$2sType$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                            ^
+a.c.c:3026:80: warning: incompatible pointer types passing 'struct map$$2char$phsGenericsFun$ph *' to parameter of type 'struct map$p$2char$phsGenericsFun$ph *' [-Wincompatible-pointer-types]
+        generics_fun_274=map$$2char$phsGenericsFun$phphcharphsGenericsFunph_at(info->generics_funcs,fun_name3_273,((void*)0));
+                                                                               ^~~~~~~~~~~~~~~~~~~~
+a.c.c:1788:121: note: passing argument to parameter 'self' here
+static struct sGenericsFun* map$$2char$phsGenericsFun$phphcharphsGenericsFunph_at(struct map$p$2char$phsGenericsFun$ph* self, char* key, struct sGenericsFun* default_value);
+                                                                                                                        ^
+a.c.c:3037:77: warning: incompatible pointer types passing 'struct map$$2char$phsFun$ph *' to parameter of type 'struct map$p$2char$phsFun$ph *' [-Wincompatible-pointer-types]
+        cloner_269=map$$2char$phsFun$phphcharphsFunph_operator_load_element(info->funcs,fun_name2_270);
+                                                                            ^~~~~~~~~~~
+a.c.c:1767:108: note: passing argument to parameter 'self' here
+static struct sFun* map$$2char$phsFun$phphcharphsFunph_operator_load_element(struct map$p$2char$phsFun$ph* self, char* key);
+                                                                                                           ^
+a.c.c:3050:81: warning: incompatible pointer types passing 'struct map$$2char$phsFun$ph *' to parameter of type 'struct map$p$2char$phsFun$ph *' [-Wincompatible-pointer-types]
+            cloner_269=map$$2char$phsFun$phphcharphsFunph_operator_load_element(info->funcs,new_fun_name_276);
+                                                                                ^~~~~~~~~~~
+a.c.c:1767:108: note: passing argument to parameter 'self' here
+static struct sFun* map$$2char$phsFun$phphcharphsFunph_operator_load_element(struct map$p$2char$phsFun$ph* self, char* key);
+                                                                                                           ^
+a.c.c:3060:81: warning: incompatible pointer types passing 'struct map$$2char$phsFun$ph *' to parameter of type 'struct map$p$2char$phsFun$ph *' [-Wincompatible-pointer-types]
+            cloner_269=map$$2char$phsFun$phphcharphsFunph_operator_load_element(info->funcs,fun_name2_270);
+                                                                                ^~~~~~~~~~~
+a.c.c:1767:108: note: passing argument to parameter 'self' here
+static struct sFun* map$$2char$phsFun$phphcharphsFunph_operator_load_element(struct map$p$2char$phsFun$ph* self, char* key);
+                                                                                                           ^
+a.c.c:3075:121: warning: incompatible pointer types passing 'struct tuple3$ph$3sFun$pchar$phbool$ *' to parameter of type 'struct tuple3$p$3sFun$pchar$phbool$ *' [-Wincompatible-pointer-types]
+        fun_277=((struct tuple2$ph$2sFun$pchar$ph*)(right_value166=tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(((struct tuple3$ph$3sFun$pchar$phbool$*)(right_value165=create_equals_automatically(type,fun_name_267,info))),&__current_stack9__,method_block9)))->v1;
+                                                                                                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1774:131: note: passing argument to parameter 'self' here
+static struct tuple2$ph$2sFun$pchar$ph* tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(struct tuple3$p$3sFun$pchar$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                                  ^
+a.c.c:3075:251: warning: incompatible function pointer types passing 'void (struct __current_stack9__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+        fun_277=((struct tuple2$ph$2sFun$pchar$ph*)(right_value166=tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(((struct tuple3$ph$3sFun$pchar$phbool$*)(right_value165=create_equals_automatically(type,fun_name_267,info))),&__current_stack9__,method_block9)))->v1;
+                                                                                                                                                                                                                                                          ^~~~~~~~~~~~~
+a.c.c:1774:158: note: passing argument to parameter 'block' here
+static struct tuple2$ph$2sFun$pchar$ph* tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(struct tuple3$p$3sFun$pchar$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                                                             ^
+a.c.c:3076:162: warning: incompatible pointer types passing 'struct tuple3$ph$3sFun$pchar$phbool$ *' to parameter of type 'struct tuple3$p$3sFun$pchar$phbool$ *' [-Wincompatible-pointer-types]
+        new_fun_name_278=(char*)come_increment_ref_count(((struct tuple2$ph$2sFun$pchar$ph*)(right_value166=tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(((struct tuple3$ph$3sFun$pchar$phbool$*)(right_value165=create_equals_automatically(type,fun_name_267,info))),&__current_stack9__,method_block9)))->v2);
+                                                                                                                                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1774:131: note: passing argument to parameter 'self' here
+static struct tuple2$ph$2sFun$pchar$ph* tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(struct tuple3$p$3sFun$pchar$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                                  ^
+a.c.c:3076:292: warning: incompatible function pointer types passing 'void (struct __current_stack9__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+        new_fun_name_278=(char*)come_increment_ref_count(((struct tuple2$ph$2sFun$pchar$ph*)(right_value166=tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(((struct tuple3$ph$3sFun$pchar$phbool$*)(right_value165=create_equals_automatically(type,fun_name_267,info))),&__current_stack9__,method_block9)))->v2);
+                                                                                                                                                                                                                                                                                                   ^~~~~~~~~~~~~
+a.c.c:1774:158: note: passing argument to parameter 'block' here
+static struct tuple2$ph$2sFun$pchar$ph* tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(struct tuple3$p$3sFun$pchar$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                                                             ^
+a.c.c:3021:28: warning: expression result unused [-Wunused-value]
+        if(fun_name2_270) {(char*)come_decrement_ref_count(fun_name2_270,0,0); }
+                           ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3040:28: warning: expression result unused [-Wunused-value]
+        if(fun_name2_270) {(char*)come_decrement_ref_count(fun_name2_270,0,0); }
+                           ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3052:36: warning: expression result unused [-Wunused-value]
+                if(fun_name2_270) {(char*)come_decrement_ref_count(fun_name2_270,0,0); }
+                                   ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3079:28: warning: expression result unused [-Wunused-value]
+        if(fun_name2_270) {(char*)come_decrement_ref_count(fun_name2_270,0,0); }
+                           ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3084:36: warning: expression result unused [-Wunused-value]
+    if(info->right_value_objects) {(struct list$$1sRightValueObject$ph*)come_decrement_ref_count(info->right_value_objects,0,0); }
+                                   ^                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3086:22: warning: expression result unused [-Wunused-value]
+    if(info->stack) {(struct list$$1CVALUE$ph*)come_decrement_ref_count(info->stack,0,0); }
+                     ^                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3156:40: warning: incompatible pointer types passing 'struct list$$1sType$ph *' to parameter of type 'struct list$p$1sType$ph *' [-Wincompatible-pointer-types]
+    if(list$$1sType$phphsTypeph_length(type->mGenericsTypes)>0) {
+                                       ^~~~~~~~~~~~~~~~~~~~
+a.c.c:1731:69: note: passing argument to parameter 'self' here
+static int list$$1sType$phphsTypeph_length(struct list$p$1sType$ph* self);
+                                                                    ^
+a.c.c:3171:138: warning: incompatible pointer types passing 'struct tuple2$ph$2sType$phbool$ *' to parameter of type 'struct tuple2$p$2sType$phbool$ *' [-Wincompatible-pointer-types]
+        obj_type_289=(struct sType*)come_increment_ref_count(((struct sType*)(right_value169=tuple2$ph$2sType$phbool$phsTypephbool_catch(((struct tuple2$ph$2sType$phbool$*)(right_value168=solve_generics(type,info->generics_type,info))),&__current_stack10__,method_block10))));
+                                                                                                                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1732:98: note: passing argument to parameter 'self' here
+static struct sType* tuple2$ph$2sType$phbool$phsTypephbool_catch(struct tuple2$p$2sType$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                 ^
+a.c.c:3171:258: warning: incompatible function pointer types passing 'void (struct __current_stack10__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+        obj_type_289=(struct sType*)come_increment_ref_count(((struct sType*)(right_value169=tuple2$ph$2sType$phbool$phsTypephbool_catch(((struct tuple2$ph$2sType$phbool$*)(right_value168=solve_generics(type,info->generics_type,info))),&__current_stack10__,method_block10))));
+                                                                                                                                                                                                                                                                 ^~~~~~~~~~~~~~
+a.c.c:1732:125: note: passing argument to parameter 'block' here
+static struct sType* tuple2$ph$2sType$phbool$phsTypephbool_catch(struct tuple2$p$2sType$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                            ^
+a.c.c:3179:80: warning: incompatible pointer types passing 'struct map$$2char$phsGenericsFun$ph *' to parameter of type 'struct map$p$2char$phsGenericsFun$ph *' [-Wincompatible-pointer-types]
+        generics_fun_291=map$$2char$phsGenericsFun$phphcharphsGenericsFunph_at(info->generics_funcs,fun_name3_290,((void*)0));
+                                                                               ^~~~~~~~~~~~~~~~~~~~
+a.c.c:1788:121: note: passing argument to parameter 'self' here
+static struct sGenericsFun* map$$2char$phsGenericsFun$phphcharphsGenericsFunph_at(struct map$p$2char$phsGenericsFun$ph* self, char* key, struct sGenericsFun* default_value);
+                                                                                                                        ^
+a.c.c:3190:77: warning: incompatible pointer types passing 'struct map$$2char$phsFun$ph *' to parameter of type 'struct map$p$2char$phsFun$ph *' [-Wincompatible-pointer-types]
+        cloner_286=map$$2char$phsFun$phphcharphsFunph_operator_load_element(info->funcs,fun_name2_287);
+                                                                            ^~~~~~~~~~~
+a.c.c:1767:108: note: passing argument to parameter 'self' here
+static struct sFun* map$$2char$phsFun$phphcharphsFunph_operator_load_element(struct map$p$2char$phsFun$ph* self, char* key);
+                                                                                                           ^
+a.c.c:3203:81: warning: incompatible pointer types passing 'struct map$$2char$phsFun$ph *' to parameter of type 'struct map$p$2char$phsFun$ph *' [-Wincompatible-pointer-types]
+            cloner_286=map$$2char$phsFun$phphcharphsFunph_operator_load_element(info->funcs,new_fun_name_293);
+                                                                                ^~~~~~~~~~~
+a.c.c:1767:108: note: passing argument to parameter 'self' here
+static struct sFun* map$$2char$phsFun$phphcharphsFunph_operator_load_element(struct map$p$2char$phsFun$ph* self, char* key);
+                                                                                                           ^
+a.c.c:3213:81: warning: incompatible pointer types passing 'struct map$$2char$phsFun$ph *' to parameter of type 'struct map$p$2char$phsFun$ph *' [-Wincompatible-pointer-types]
+            cloner_286=map$$2char$phsFun$phphcharphsFunph_operator_load_element(info->funcs,fun_name2_287);
+                                                                                ^~~~~~~~~~~
+a.c.c:1767:108: note: passing argument to parameter 'self' here
+static struct sFun* map$$2char$phsFun$phphcharphsFunph_operator_load_element(struct map$p$2char$phsFun$ph* self, char* key);
+                                                                                                           ^
+a.c.c:3228:121: warning: incompatible pointer types passing 'struct tuple3$ph$3sFun$pchar$phbool$ *' to parameter of type 'struct tuple3$p$3sFun$pchar$phbool$ *' [-Wincompatible-pointer-types]
+        fun_294=((struct tuple2$ph$2sFun$pchar$ph*)(right_value177=tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(((struct tuple3$ph$3sFun$pchar$phbool$*)(right_value176=create_operator_equals_automatically(type,fun_name_284,info))),&__current_stack11__,method_block11)))->v1;
+                                                                                                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1774:131: note: passing argument to parameter 'self' here
+static struct tuple2$ph$2sFun$pchar$ph* tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(struct tuple3$p$3sFun$pchar$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                                  ^
+a.c.c:3228:261: warning: incompatible function pointer types passing 'void (struct __current_stack11__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+        fun_294=((struct tuple2$ph$2sFun$pchar$ph*)(right_value177=tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(((struct tuple3$ph$3sFun$pchar$phbool$*)(right_value176=create_operator_equals_automatically(type,fun_name_284,info))),&__current_stack11__,method_block11)))->v1;
+                                                                                                                                                                                                                                                                    ^~~~~~~~~~~~~~
+a.c.c:1774:158: note: passing argument to parameter 'block' here
+static struct tuple2$ph$2sFun$pchar$ph* tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(struct tuple3$p$3sFun$pchar$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                                                             ^
+a.c.c:3229:162: warning: incompatible pointer types passing 'struct tuple3$ph$3sFun$pchar$phbool$ *' to parameter of type 'struct tuple3$p$3sFun$pchar$phbool$ *' [-Wincompatible-pointer-types]
+        new_fun_name_295=(char*)come_increment_ref_count(((struct tuple2$ph$2sFun$pchar$ph*)(right_value177=tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(((struct tuple3$ph$3sFun$pchar$phbool$*)(right_value176=create_operator_equals_automatically(type,fun_name_284,info))),&__current_stack11__,method_block11)))->v2);
+                                                                                                                                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1774:131: note: passing argument to parameter 'self' here
+static struct tuple2$ph$2sFun$pchar$ph* tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(struct tuple3$p$3sFun$pchar$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                                  ^
+a.c.c:3229:302: warning: incompatible function pointer types passing 'void (struct __current_stack11__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+        new_fun_name_295=(char*)come_increment_ref_count(((struct tuple2$ph$2sFun$pchar$ph*)(right_value177=tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(((struct tuple3$ph$3sFun$pchar$phbool$*)(right_value176=create_operator_equals_automatically(type,fun_name_284,info))),&__current_stack11__,method_block11)))->v2);
+                                                                                                                                                                                                                                                                                                             ^~~~~~~~~~~~~~
+a.c.c:1774:158: note: passing argument to parameter 'block' here
+static struct tuple2$ph$2sFun$pchar$ph* tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(struct tuple3$p$3sFun$pchar$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                                                             ^
+a.c.c:3174:28: warning: expression result unused [-Wunused-value]
+        if(fun_name2_287) {(char*)come_decrement_ref_count(fun_name2_287,0,0); }
+                           ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3193:28: warning: expression result unused [-Wunused-value]
+        if(fun_name2_287) {(char*)come_decrement_ref_count(fun_name2_287,0,0); }
+                           ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3205:36: warning: expression result unused [-Wunused-value]
+                if(fun_name2_287) {(char*)come_decrement_ref_count(fun_name2_287,0,0); }
+                                   ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3232:28: warning: expression result unused [-Wunused-value]
+        if(fun_name2_287) {(char*)come_decrement_ref_count(fun_name2_287,0,0); }
+                           ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3237:36: warning: expression result unused [-Wunused-value]
+    if(info->right_value_objects) {(struct list$$1sRightValueObject$ph*)come_decrement_ref_count(info->right_value_objects,0,0); }
+                                   ^                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3239:22: warning: expression result unused [-Wunused-value]
+    if(info->stack) {(struct list$$1CVALUE$ph*)come_decrement_ref_count(info->stack,0,0); }
+                     ^                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3309:40: warning: incompatible pointer types passing 'struct list$$1sType$ph *' to parameter of type 'struct list$p$1sType$ph *' [-Wincompatible-pointer-types]
+    if(list$$1sType$phphsTypeph_length(type->mGenericsTypes)>0) {
+                                       ^~~~~~~~~~~~~~~~~~~~
+a.c.c:1731:69: note: passing argument to parameter 'self' here
+static int list$$1sType$phphsTypeph_length(struct list$p$1sType$ph* self);
+                                                                    ^
+a.c.c:3324:138: warning: incompatible pointer types passing 'struct tuple2$ph$2sType$phbool$ *' to parameter of type 'struct tuple2$p$2sType$phbool$ *' [-Wincompatible-pointer-types]
+        obj_type_306=(struct sType*)come_increment_ref_count(((struct sType*)(right_value180=tuple2$ph$2sType$phbool$phsTypephbool_catch(((struct tuple2$ph$2sType$phbool$*)(right_value179=solve_generics(type,info->generics_type,info))),&__current_stack12__,method_block12))));
+                                                                                                                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1732:98: note: passing argument to parameter 'self' here
+static struct sType* tuple2$ph$2sType$phbool$phsTypephbool_catch(struct tuple2$p$2sType$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                 ^
+a.c.c:3324:258: warning: incompatible function pointer types passing 'void (struct __current_stack12__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+        obj_type_306=(struct sType*)come_increment_ref_count(((struct sType*)(right_value180=tuple2$ph$2sType$phbool$phsTypephbool_catch(((struct tuple2$ph$2sType$phbool$*)(right_value179=solve_generics(type,info->generics_type,info))),&__current_stack12__,method_block12))));
+                                                                                                                                                                                                                                                                 ^~~~~~~~~~~~~~
+a.c.c:1732:125: note: passing argument to parameter 'block' here
+static struct sType* tuple2$ph$2sType$phbool$phsTypephbool_catch(struct tuple2$p$2sType$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                            ^
+a.c.c:3332:80: warning: incompatible pointer types passing 'struct map$$2char$phsGenericsFun$ph *' to parameter of type 'struct map$p$2char$phsGenericsFun$ph *' [-Wincompatible-pointer-types]
+        generics_fun_308=map$$2char$phsGenericsFun$phphcharphsGenericsFunph_at(info->generics_funcs,fun_name3_307,((void*)0));
+                                                                               ^~~~~~~~~~~~~~~~~~~~
+a.c.c:1788:121: note: passing argument to parameter 'self' here
+static struct sGenericsFun* map$$2char$phsGenericsFun$phphcharphsGenericsFunph_at(struct map$p$2char$phsGenericsFun$ph* self, char* key, struct sGenericsFun* default_value);
+                                                                                                                        ^
+a.c.c:3343:77: warning: incompatible pointer types passing 'struct map$$2char$phsFun$ph *' to parameter of type 'struct map$p$2char$phsFun$ph *' [-Wincompatible-pointer-types]
+        cloner_303=map$$2char$phsFun$phphcharphsFunph_operator_load_element(info->funcs,fun_name2_304);
+                                                                            ^~~~~~~~~~~
+a.c.c:1767:108: note: passing argument to parameter 'self' here
+static struct sFun* map$$2char$phsFun$phphcharphsFunph_operator_load_element(struct map$p$2char$phsFun$ph* self, char* key);
+                                                                                                           ^
+a.c.c:3356:81: warning: incompatible pointer types passing 'struct map$$2char$phsFun$ph *' to parameter of type 'struct map$p$2char$phsFun$ph *' [-Wincompatible-pointer-types]
+            cloner_303=map$$2char$phsFun$phphcharphsFunph_operator_load_element(info->funcs,new_fun_name_310);
+                                                                                ^~~~~~~~~~~
+a.c.c:1767:108: note: passing argument to parameter 'self' here
+static struct sFun* map$$2char$phsFun$phphcharphsFunph_operator_load_element(struct map$p$2char$phsFun$ph* self, char* key);
+                                                                                                           ^
+a.c.c:3366:81: warning: incompatible pointer types passing 'struct map$$2char$phsFun$ph *' to parameter of type 'struct map$p$2char$phsFun$ph *' [-Wincompatible-pointer-types]
+            cloner_303=map$$2char$phsFun$phphcharphsFunph_operator_load_element(info->funcs,fun_name2_304);
+                                                                                ^~~~~~~~~~~
+a.c.c:1767:108: note: passing argument to parameter 'self' here
+static struct sFun* map$$2char$phsFun$phphcharphsFunph_operator_load_element(struct map$p$2char$phsFun$ph* self, char* key);
+                                                                                                           ^
+a.c.c:3381:121: warning: incompatible pointer types passing 'struct tuple3$ph$3sFun$pchar$phbool$ *' to parameter of type 'struct tuple3$p$3sFun$pchar$phbool$ *' [-Wincompatible-pointer-types]
+        fun_311=((struct tuple2$ph$2sFun$pchar$ph*)(right_value188=tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(((struct tuple3$ph$3sFun$pchar$phbool$*)(right_value187=create_operator_not_equals_automatically(type,fun_name_301,info))),&__current_stack13__,method_block13)))->v1;
+                                                                                                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1774:131: note: passing argument to parameter 'self' here
+static struct tuple2$ph$2sFun$pchar$ph* tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(struct tuple3$p$3sFun$pchar$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                                  ^
+a.c.c:3381:265: warning: incompatible function pointer types passing 'void (struct __current_stack13__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+        fun_311=((struct tuple2$ph$2sFun$pchar$ph*)(right_value188=tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(((struct tuple3$ph$3sFun$pchar$phbool$*)(right_value187=create_operator_not_equals_automatically(type,fun_name_301,info))),&__current_stack13__,method_block13)))->v1;
+                                                                                                                                                                                                                                                                        ^~~~~~~~~~~~~~
+a.c.c:1774:158: note: passing argument to parameter 'block' here
+static struct tuple2$ph$2sFun$pchar$ph* tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(struct tuple3$p$3sFun$pchar$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                                                             ^
+a.c.c:3382:162: warning: incompatible pointer types passing 'struct tuple3$ph$3sFun$pchar$phbool$ *' to parameter of type 'struct tuple3$p$3sFun$pchar$phbool$ *' [-Wincompatible-pointer-types]
+        new_fun_name_312=(char*)come_increment_ref_count(((struct tuple2$ph$2sFun$pchar$ph*)(right_value188=tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(((struct tuple3$ph$3sFun$pchar$phbool$*)(right_value187=create_operator_not_equals_automatically(type,fun_name_301,info))),&__current_stack13__,method_block13)))->v2);
+                                                                                                                                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1774:131: note: passing argument to parameter 'self' here
+static struct tuple2$ph$2sFun$pchar$ph* tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(struct tuple3$p$3sFun$pchar$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                                  ^
+a.c.c:3382:306: warning: incompatible function pointer types passing 'void (struct __current_stack13__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+        new_fun_name_312=(char*)come_increment_ref_count(((struct tuple2$ph$2sFun$pchar$ph*)(right_value188=tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(((struct tuple3$ph$3sFun$pchar$phbool$*)(right_value187=create_operator_not_equals_automatically(type,fun_name_301,info))),&__current_stack13__,method_block13)))->v2);
+                                                                                                                                                                                                                                                                                                                 ^~~~~~~~~~~~~~
+a.c.c:1774:158: note: passing argument to parameter 'block' here
+static struct tuple2$ph$2sFun$pchar$ph* tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(struct tuple3$p$3sFun$pchar$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                                                             ^
+a.c.c:3327:28: warning: expression result unused [-Wunused-value]
+        if(fun_name2_304) {(char*)come_decrement_ref_count(fun_name2_304,0,0); }
+                           ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3346:28: warning: expression result unused [-Wunused-value]
+        if(fun_name2_304) {(char*)come_decrement_ref_count(fun_name2_304,0,0); }
+                           ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3358:36: warning: expression result unused [-Wunused-value]
+                if(fun_name2_304) {(char*)come_decrement_ref_count(fun_name2_304,0,0); }
+                                   ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3385:28: warning: expression result unused [-Wunused-value]
+        if(fun_name2_304) {(char*)come_decrement_ref_count(fun_name2_304,0,0); }
+                           ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3390:36: warning: expression result unused [-Wunused-value]
+    if(info->right_value_objects) {(struct list$$1sRightValueObject$ph*)come_decrement_ref_count(info->right_value_objects,0,0); }
+                                   ^                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3392:22: warning: expression result unused [-Wunused-value]
+    if(info->stack) {(struct list$$1CVALUE$ph*)come_decrement_ref_count(info->stack,0,0); }
+                     ^                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3471:186: warning: incompatible pointer types passing 'struct tuple2$$2sType$phbool$ *' to parameter of type 'struct tuple2$ph$2sType$phbool$ *' [-Wincompatible-pointer-types]
+        __tuple_value1___129=(struct tuple2$ph$2sType$phbool$*)come_increment_ref_count(((struct tuple2$ph$2sType$phbool$*)(right_value83=tuple2$$2sType$phbool$phsTypephbool_initialize((struct tuple2$$2sType$phbool$*)come_increment_ref_count(((struct tuple2$$2sType$phbool$*)(right_value82=(struct tuple2$$2sType$phbool$*)come_calloc(1, sizeof(struct tuple2$$2sType$phbool$)*(1))))),(struct sType*)come_increment_ref_count(result_128),(_Bool)1))));
+                                                                                                                                                                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1728:121: note: passing argument to parameter 'self' here
+static struct tuple2$ph$2sType$phbool$* tuple2$$2sType$phbool$phsTypephbool_initialize(struct tuple2$ph$2sType$phbool$* self, struct sType* v1, _Bool v2);
+                                                                                                                        ^
+a.c.c:3478:40: warning: incompatible pointer types passing 'struct list$$1sType$ph *' to parameter of type 'struct list$p$1sType$ph *' [-Wincompatible-pointer-types]
+    if(list$$1sType$phphsTypeph_length(generics_type->mGenericsTypes)==0) {
+                                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1731:69: note: passing argument to parameter 'self' here
+static int list$$1sType$phphsTypeph_length(struct list$p$1sType$ph* self);
+                                                                    ^
+a.c.c:3479:186: warning: incompatible pointer types passing 'struct tuple2$$2sType$phbool$ *' to parameter of type 'struct tuple2$ph$2sType$phbool$ *' [-Wincompatible-pointer-types]
+        __tuple_value2___130=(struct tuple2$ph$2sType$phbool$*)come_increment_ref_count(((struct tuple2$ph$2sType$phbool$*)(right_value85=tuple2$$2sType$phbool$phsTypephbool_initialize((struct tuple2$$2sType$phbool$*)come_increment_ref_count(((struct tuple2$$2sType$phbool$*)(right_value84=(struct tuple2$$2sType$phbool$*)come_calloc(1, sizeof(struct tuple2$$2sType$phbool$)*(1))))),(struct sType*)come_increment_ref_count(result_128),(_Bool)1))));
+                                                                                                                                                                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1728:121: note: passing argument to parameter 'self' here
+static struct tuple2$ph$2sType$phbool$* tuple2$$2sType$phbool$phsTypephbool_initialize(struct tuple2$ph$2sType$phbool$* self, struct sType* v1, _Bool v2);
+                                                                                                                        ^
+a.c.c:3493:140: warning: incompatible pointer types passing 'struct tuple2$ph$2sType$phbool$ *' to parameter of type 'struct tuple2$p$2sType$phbool$ *' [-Wincompatible-pointer-types]
+        result_type_132=(struct sType*)come_increment_ref_count(((struct sType*)(right_value87=tuple2$ph$2sType$phbool$phsTypephbool_catch(((struct tuple2$ph$2sType$phbool$*)(right_value86=solve_generics(type->mResultType->v1,generics_type,info))),&__current_stack1__,method_block1))));
+                                                                                                                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1732:98: note: passing argument to parameter 'self' here
+static struct sType* tuple2$ph$2sType$phbool$phsTypephbool_catch(struct tuple2$p$2sType$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                 ^
+a.c.c:3493:269: warning: incompatible function pointer types passing 'void (struct __current_stack1__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+        result_type_132=(struct sType*)come_increment_ref_count(((struct sType*)(right_value87=tuple2$ph$2sType$phbool$phsTypephbool_catch(((struct tuple2$ph$2sType$phbool$*)(right_value86=solve_generics(type->mResultType->v1,generics_type,info))),&__current_stack1__,method_block1))));
+                                                                                                                                                                                                                                                                            ^~~~~~~~~~~~~
+a.c.c:1732:125: note: passing argument to parameter 'block' here
+static struct sType* tuple2$ph$2sType$phbool$phsTypephbool_catch(struct tuple2$p$2sType$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                            ^
+a.c.c:3497:170: warning: incompatible pointer types passing 'struct tuple1$$1sType$ph *' to parameter of type 'struct tuple1$ph$1sType$ph *' [-Wincompatible-pointer-types]
+        result_128->mResultType=(struct tuple1$ph$1sType$ph*)come_increment_ref_count(((struct tuple1$ph$1sType$ph*)(right_value89=tuple1$$1sType$phphsTypeph_initialize((struct tuple1$$1sType$ph*)come_increment_ref_count(((struct tuple1$$1sType$ph*)(right_value88=(struct tuple1$$1sType$ph*)come_calloc(1, sizeof(struct tuple1$$1sType$ph)*(1))))),(struct sType*)come_increment_ref_count(result_type_132)))));
+                                                                                                                                                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1734:102: note: passing argument to parameter 'self' here
+static struct tuple1$ph$1sType$ph* tuple1$$1sType$phphsTypeph_initialize(struct tuple1$ph$1sType$ph* self, struct sType* v1);
+                                                                                                     ^
+a.c.c:3497:32: warning: incompatible pointer types assigning to 'struct tuple1$$1sType$ph *' from 'struct tuple1$ph$1sType$ph *' [-Wincompatible-pointer-types]
+        result_128->mResultType=(struct tuple1$ph$1sType$ph*)come_increment_ref_count(((struct tuple1$ph$1sType$ph*)(right_value89=tuple1$$1sType$phphsTypeph_initialize((struct tuple1$$1sType$ph*)come_increment_ref_count(((struct tuple1$$1sType$ph*)(right_value88=(struct tuple1$$1sType$ph*)come_calloc(1, sizeof(struct tuple1$$1sType$ph)*(1))))),(struct sType*)come_increment_ref_count(result_type_132)))));
+                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3500:160: warning: incompatible pointer types passing 'struct list$$1sType$ph *' to parameter of type 'struct list$ph$1sType$ph *' [-Wincompatible-pointer-types]
+        new_param_types_133=(struct list$ph$1sType$ph*)come_increment_ref_count(((struct list$ph$1sType$ph*)(right_value91=list$$1sType$phphsTypeph_initialize((struct list$$1sType$ph*)come_increment_ref_count(((struct list$$1sType$ph*)(right_value90=(struct list$$1sType$ph*)come_calloc(1, sizeof(struct list$$1sType$ph)*(1)))))))));
+                                                                                                                                                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1737:96: note: passing argument to parameter 'self' here
+static struct list$ph$1sType$ph* list$$1sType$phphsTypeph_initialize(struct list$ph$1sType$ph* self);
+                                                                                               ^
+a.c.c:3500:28: warning: incompatible pointer types assigning to 'struct list$$1sType$ph *' from 'struct list$ph$1sType$ph *' [-Wincompatible-pointer-types]
+        new_param_types_133=(struct list$ph$1sType$ph*)come_increment_ref_count(((struct list$ph$1sType$ph*)(right_value91=list$$1sType$phphsTypeph_initialize((struct list$$1sType$ph*)come_increment_ref_count(((struct list$$1sType$ph*)(right_value90=(struct list$$1sType$ph*)come_calloc(1, sizeof(struct list$$1sType$ph)*(1)))))))));
+                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3504:47: warning: incompatible pointer types passing 'struct list$$1sType$ph *' to parameter of type 'struct list$p$1sType$ph *' [-Wincompatible-pointer-types]
+        it_137=list$$1sType$phphsTypeph_begin((type->mParamTypes));
+                                              ^~~~~~~~~~~~~~~~~~~
+a.c.c:1739:78: note: passing argument to parameter 'self' here
+static struct sType* list$$1sType$phphsTypeph_begin(struct list$p$1sType$ph* self);
+                                                                             ^
+a.c.c:3505:39: warning: incompatible pointer types passing 'struct list$$1sType$ph *' to parameter of type 'struct list$p$1sType$ph *' [-Wincompatible-pointer-types]
+        !list$$1sType$phphsTypeph_end((type->mParamTypes));
+                                      ^~~~~~~~~~~~~~~~~~~
+a.c.c:1740:68: note: passing argument to parameter 'self' here
+static _Bool list$$1sType$phphsTypeph_end(struct list$p$1sType$ph* self);
+                                                                   ^
+a.c.c:3506:46: warning: incompatible pointer types passing 'struct list$$1sType$ph *' to parameter of type 'struct list$p$1sType$ph *' [-Wincompatible-pointer-types]
+        it_137=list$$1sType$phphsTypeph_next((type->mParamTypes))
+                                             ^~~~~~~~~~~~~~~~~~~
+a.c.c:1741:77: note: passing argument to parameter 'self' here
+static struct sType* list$$1sType$phphsTypeph_next(struct list$p$1sType$ph* self);
+                                                                            ^
+a.c.c:3516:147: warning: incompatible pointer types passing 'struct tuple2$ph$2sType$phbool$ *' to parameter of type 'struct tuple2$p$2sType$phbool$ *' [-Wincompatible-pointer-types]
+            new_param_type_139=(struct sType*)come_increment_ref_count(((struct sType*)(right_value93=tuple2$ph$2sType$phbool$phsTypephbool_catch(((struct tuple2$ph$2sType$phbool$*)(right_value92=solve_generics(it_137,generics_type,info))),&__current_stack2__,method_block2))));
+                                                                                                                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1732:98: note: passing argument to parameter 'self' here
+static struct sType* tuple2$ph$2sType$phbool$phsTypephbool_catch(struct tuple2$p$2sType$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                 ^
+a.c.c:3516:261: warning: incompatible function pointer types passing 'void (struct __current_stack2__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+            new_param_type_139=(struct sType*)come_increment_ref_count(((struct sType*)(right_value93=tuple2$ph$2sType$phbool$phsTypephbool_catch(((struct tuple2$ph$2sType$phbool$*)(right_value92=solve_generics(it_137,generics_type,info))),&__current_stack2__,method_block2))));
+                                                                                                                                                                                                                                                                    ^~~~~~~~~~~~~
+a.c.c:1732:125: note: passing argument to parameter 'block' here
+static struct sType* tuple2$ph$2sType$phbool$phsTypephbool_catch(struct tuple2$p$2sType$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                            ^
+a.c.c:3519:48: warning: incompatible pointer types passing 'struct list$$1sType$ph *' to parameter of type 'struct list$p$1sType$ph *' [-Wincompatible-pointer-types]
+            list$$1sType$phphsTypeph_push_back(new_param_types_133,(struct sType*)come_increment_ref_count(new_param_type_139));
+                                               ^~~~~~~~~~~~~~~~~~~
+a.c.c:1743:73: note: passing argument to parameter 'self' here
+static void list$$1sType$phphsTypeph_push_back(struct list$p$1sType$ph* self, struct sType* item);
+                                                                        ^
+a.c.c:3529:65: warning: incompatible pointer types passing 'struct list$$1sType$ph *' to parameter of type 'struct list$p$1sType$ph *' [-Wincompatible-pointer-types]
+        if(generics_number_143>=list$$1sType$phphsTypeph_length(generics_type->mGenericsTypes)) {
+                                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1731:69: note: passing argument to parameter 'self' here
+static int list$$1sType$phphsTypeph_length(struct list$p$1sType$ph* self);
+                                                                    ^
+a.c.c:3533:67: warning: incompatible pointer types passing 'struct list$$1sType$ph *' to parameter of type 'struct list$p$1sType$ph *' [-Wincompatible-pointer-types]
+        klass2_147=list$$1sType$phphsTypeph_operator_load_element(generics_type->mGenericsTypes,generics_number_143)->mClass;
+                                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1744:94: note: passing argument to parameter 'self' here
+static struct sType* list$$1sType$phphsTypeph_operator_load_element(struct list$p$1sType$ph* self, int index);
+                                                                                             ^
+a.c.c:3536:108: warning: incompatible pointer types passing 'struct list$$1sNode$ph *' to parameter of type 'struct list$p$1sNode$ph *' [-Wincompatible-pointer-types]
+            array_num_149=(struct list$$1sNode$ph*)come_increment_ref_count(list$$1sNode$phphsNodeph_clone(type->mArrayNum));
+                                                                                                           ^~~~~~~~~~~~~~~
+a.c.c:1715:90: note: passing argument to parameter 'self' here
+static struct list$ph$1sNode$ph* list$$1sNode$phphsNodeph_clone(struct list$p$1sNode$ph* self);
+                                                                                         ^
+a.c.c:3541:83: warning: incompatible pointer types passing 'struct list$$1sType$ph *' to parameter of type 'struct list$p$1sType$ph *' [-Wincompatible-pointer-types]
+            result_128=sType_clone(list$$1sType$phphsTypeph_operator_load_element(generics_type->mGenericsTypes,generics_number_143));
+                                                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1744:94: note: passing argument to parameter 'self' here
+static struct sType* list$$1sType$phphsTypeph_operator_load_element(struct list$p$1sType$ph* self, int index);
+                                                                                             ^
+a.c.c:3551:48: warning: incompatible pointer types passing 'struct list$$1sNode$ph *' to parameter of type 'struct list$p$1sNode$ph *' [-Wincompatible-pointer-types]
+            if(list$$1sNode$phphsNodeph_length(array_num_149)>0) {
+                                               ^~~~~~~~~~~~~
+a.c.c:1746:69: note: passing argument to parameter 'self' here
+static int list$$1sNode$phphsNodeph_length(struct list$p$1sNode$ph* self);
+                                                                    ^
+a.c.c:3563:40: warning: incompatible pointer types passing 'struct list$$1sType$ph *' to parameter of type 'struct list$p$1sType$ph *' [-Wincompatible-pointer-types]
+        list$$1sType$phphsTypeph_reset(result_128->mGenericsTypes);
+                                       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1748:69: note: passing argument to parameter 'self' here
+static void list$$1sType$phphsTypeph_reset(struct list$p$1sType$ph* self);
+                                                                    ^
+a.c.c:3565:47: warning: incompatible pointer types passing 'struct list$$1sType$ph *' to parameter of type 'struct list$p$1sType$ph *' [-Wincompatible-pointer-types]
+        it_159=list$$1sType$phphsTypeph_begin((type->mGenericsTypes));
+                                              ^~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1739:78: note: passing argument to parameter 'self' here
+static struct sType* list$$1sType$phphsTypeph_begin(struct list$p$1sType$ph* self);
+                                                                             ^
+a.c.c:3566:39: warning: incompatible pointer types passing 'struct list$$1sType$ph *' to parameter of type 'struct list$p$1sType$ph *' [-Wincompatible-pointer-types]
+        !list$$1sType$phphsTypeph_end((type->mGenericsTypes));
+                                      ^~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1740:68: note: passing argument to parameter 'self' here
+static _Bool list$$1sType$phphsTypeph_end(struct list$p$1sType$ph* self);
+                                                                   ^
+a.c.c:3567:46: warning: incompatible pointer types passing 'struct list$$1sType$ph *' to parameter of type 'struct list$p$1sType$ph *' [-Wincompatible-pointer-types]
+        it_159=list$$1sType$phphsTypeph_next((type->mGenericsTypes))
+                                             ^~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1741:77: note: passing argument to parameter 'self' here
+static struct sType* list$$1sType$phphsTypeph_next(struct list$p$1sType$ph* self);
+                                                                            ^
+a.c.c:3576:137: warning: incompatible pointer types passing 'struct tuple2$ph$2sType$phbool$ *' to parameter of type 'struct tuple2$p$2sType$phbool$ *' [-Wincompatible-pointer-types]
+            type_160=(struct sType*)come_increment_ref_count(((struct sType*)(right_value98=tuple2$ph$2sType$phbool$phsTypephbool_catch(((struct tuple2$ph$2sType$phbool$*)(right_value97=solve_generics(it_159,generics_type,info))),&__current_stack3__,method_block3))));
+                                                                                                                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1732:98: note: passing argument to parameter 'self' here
+static struct sType* tuple2$ph$2sType$phbool$phsTypephbool_catch(struct tuple2$p$2sType$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                 ^
+a.c.c:3576:251: warning: incompatible function pointer types passing 'void (struct __current_stack3__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+            type_160=(struct sType*)come_increment_ref_count(((struct sType*)(right_value98=tuple2$ph$2sType$phbool$phsTypephbool_catch(((struct tuple2$ph$2sType$phbool$*)(right_value97=solve_generics(it_159,generics_type,info))),&__current_stack3__,method_block3))));
+                                                                                                                                                                                                                                                          ^~~~~~~~~~~~~
+a.c.c:1732:125: note: passing argument to parameter 'block' here
+static struct sType* tuple2$ph$2sType$phbool$phsTypephbool_catch(struct tuple2$p$2sType$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                            ^
+a.c.c:3579:48: warning: incompatible pointer types passing 'struct list$$1sType$ph *' to parameter of type 'struct list$p$1sType$ph *' [-Wincompatible-pointer-types]
+            list$$1sType$phphsTypeph_push_back(result_128->mGenericsTypes,(struct sType*)come_increment_ref_count(sType_clone(type_160)));
+                                               ^~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1743:73: note: passing argument to parameter 'self' here
+static void list$$1sType$phphsTypeph_push_back(struct list$p$1sType$ph* self, struct sType* item);
+                                                                        ^
+a.c.c:3587:73: warning: incompatible pointer types passing 'struct map$$2char$phsClass$ph *' to parameter of type 'struct map$p$2char$phsClass$ph *' [-Wincompatible-pointer-types]
+        if(map$$2char$phsClass$phphcharphsClassph_operator_load_element(info->generics_classes,none_generics_name_161)&&map$$2char$phsClass$phphcharphsClassph_operator_load_element(info->classes,new_name_162)==((void*)0)) {
+                                                                        ^~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1751:116: note: passing argument to parameter 'self' here
+static struct sClass* map$$2char$phsClass$phphcharphsClassph_operator_load_element(struct map$p$2char$phsClass$ph* self, char* key);
+                                                                                                                   ^
+a.c.c:3587:182: warning: incompatible pointer types passing 'struct map$$2char$phsClass$ph *' to parameter of type 'struct map$p$2char$phsClass$ph *' [-Wincompatible-pointer-types]
+        if(map$$2char$phsClass$phphcharphsClassph_operator_load_element(info->generics_classes,none_generics_name_161)&&map$$2char$phsClass$phphcharphsClassph_operator_load_element(info->classes,new_name_162)==((void*)0)) {
+                                                                                                                                                                                     ^~~~~~~~~~~~~
+a.c.c:1751:116: note: passing argument to parameter 'self' here
+static struct sClass* map$$2char$phsClass$phphcharphsClassph_operator_load_element(struct map$p$2char$phsClass$ph* self, char* key);
+                                                                                                                   ^
+a.c.c:3594:101: warning: incompatible pointer types passing 'struct map$$2char$phsClass$ph *' to parameter of type 'struct map$p$2char$phsClass$ph *' [-Wincompatible-pointer-types]
+                    result_128->mClass=map$$2char$phsClass$phphcharphsClassph_operator_load_element(info->classes,new_name_162);
+                                                                                                    ^~~~~~~~~~~~~
+a.c.c:1751:116: note: passing argument to parameter 'self' here
+static struct sClass* map$$2char$phsClass$phphcharphsClassph_operator_load_element(struct map$p$2char$phsClass$ph* self, char* key);
+                                                                                                                   ^
+a.c.c:3599:78: warning: incompatible pointer types passing 'struct map$$2char$phsClass$ph *' to parameter of type 'struct map$p$2char$phsClass$ph *' [-Wincompatible-pointer-types]
+        else if(map$$2char$phsClass$phphcharphsClassph_operator_load_element(info->classes,none_generics_name_161)==((void*)0)) {
+                                                                             ^~~~~~~~~~~~~
+a.c.c:1751:116: note: passing argument to parameter 'self' here
+static struct sClass* map$$2char$phsClass$phphcharphsClassph_operator_load_element(struct map$p$2char$phsClass$ph* self, char* key);
+                                                                                                                   ^
+a.c.c:3602:101: warning: incompatible pointer types passing 'struct map$$2char$phsClass$ph *' to parameter of type 'struct map$p$2char$phsClass$ph *' [-Wincompatible-pointer-types]
+                    result_128->mClass=map$$2char$phsClass$phphcharphsClassph_operator_load_element(info->classes,new_name_162);
+                                                                                                    ^~~~~~~~~~~~~
+a.c.c:1751:116: note: passing argument to parameter 'self' here
+static struct sClass* map$$2char$phsClass$phphcharphsClassph_operator_load_element(struct map$p$2char$phsClass$ph* self, char* key);
+                                                                                                                   ^
+a.c.c:3612:183: warning: incompatible pointer types passing 'struct tuple2$$2sType$phbool$ *' to parameter of type 'struct tuple2$ph$2sType$phbool$ *' [-Wincompatible-pointer-types]
+    __tuple_value3___168=(struct tuple2$ph$2sType$phbool$*)come_increment_ref_count(((struct tuple2$ph$2sType$phbool$*)(right_value102=tuple2$$2sType$phbool$phsTypephbool_initialize((struct tuple2$$2sType$phbool$*)come_increment_ref_count(((struct tuple2$$2sType$phbool$*)(right_value101=(struct tuple2$$2sType$phbool$*)come_calloc(1, sizeof(struct tuple2$$2sType$phbool$)*(1))))),(struct sType*)come_increment_ref_count(result_128),(_Bool)1))));
+                                                                                                                                                                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1728:121: note: passing argument to parameter 'self' here
+static struct tuple2$ph$2sType$phbool$* tuple2$$2sType$phbool$phsTypephbool_initialize(struct tuple2$ph$2sType$phbool$* self, struct sType* v1, _Bool v2);
+                                                                                                                        ^
+a.c.c:3496:38: warning: expression result unused [-Wunused-value]
+        if(result_128->mResultType) {(struct tuple1$$1sType$ph*)come_decrement_ref_count(result_128->mResultType,0,0); }
+                                     ^                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3522:38: warning: expression result unused [-Wunused-value]
+        if(result_128->mParamTypes) {(struct list$$1sType$ph*)come_decrement_ref_count(result_128->mParamTypes,0,0); }
+                                     ^                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3552:44: warning: expression result unused [-Wunused-value]
+                if(result_128->mArrayNum) {(struct list$$1sNode$ph*)come_decrement_ref_count(result_128->mArrayNum,0,0); }
+                                           ^                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3628:75: warning: incompatible pointer types passing 'struct map$$2char$phsVar$ph *' to parameter of type 'struct map$p$2char$phsVar$ph *' [-Wincompatible-pointer-types]
+        var__321=map$$2char$phsVar$phphcharphsVarph_operator_load_element(it_317->mVars,name);
+                                                                          ^~~~~~~~~~~~~
+a.c.c:1797:108: note: passing argument to parameter 'self' here
+static struct sVar* map$$2char$phsVar$phphcharphsVarph_operator_load_element(struct map$p$2char$phsVar$ph* self, char* key);
+                                                                                                           ^
+a.c.c:3734:44: warning: incompatible pointer types passing 'struct list$$1sType$ph *' to parameter of type 'struct list$p$1sType$ph *' [-Wincompatible-pointer-types]
+        if(list$$1sType$phphsTypeph_length(type->mGenericsTypes)>0) {
+                                           ^~~~~~~~~~~~~~~~~~~~
+a.c.c:1731:69: note: passing argument to parameter 'self' here
+static int list$$1sType$phphsTypeph_length(struct list$p$1sType$ph* self);
+                                                                    ^
+a.c.c:3735:84: warning: incompatible pointer types passing 'struct map$$2char$phsFun$ph *' to parameter of type 'struct map$p$2char$phsFun$ph *' [-Wincompatible-pointer-types]
+            finalizer_217=map$$2char$phsFun$phphcharphsFunph_operator_load_element(info->funcs,fun_name2_216);
+                                                                                   ^~~~~~~~~~~
+a.c.c:1767:108: note: passing argument to parameter 'self' here
+static struct sFun* map$$2char$phsFun$phphcharphsFunph_operator_load_element(struct map$p$2char$phsFun$ph* self, char* key);
+                                                                                                           ^
+a.c.c:3741:107: warning: incompatible pointer types passing 'struct map$$2char$phsGenericsFun$ph *' to parameter of type 'struct map$p$2char$phsGenericsFun$ph *' [-Wincompatible-pointer-types]
+                generics_fun_223=map$$2char$phsGenericsFun$phphcharphsGenericsFunph_operator_load_element(info->generics_funcs,generics_fun_name_219);
+                                                                                                          ^~~~~~~~~~~~~~~~~~~~
+a.c.c:1771:140: note: passing argument to parameter 'self' here
+static struct sGenericsFun* map$$2char$phsGenericsFun$phphcharphsGenericsFunph_operator_load_element(struct map$p$2char$phsGenericsFun$ph* self, char* key);
+                                                                                                                                           ^
+a.c.c:3747:92: warning: incompatible pointer types passing 'struct map$$2char$phsFun$ph *' to parameter of type 'struct map$p$2char$phsFun$ph *' [-Wincompatible-pointer-types]
+                    finalizer_217=map$$2char$phsFun$phphcharphsFunph_operator_load_element(info->funcs,fun_name2_216);
+                                                                                           ^~~~~~~~~~~
+a.c.c:1767:108: note: passing argument to parameter 'self' here
+static struct sFun* map$$2char$phsFun$phphcharphsFunph_operator_load_element(struct map$p$2char$phsFun$ph* self, char* key);
+                                                                                                           ^
+a.c.c:3761:88: warning: incompatible pointer types passing 'struct map$$2char$phsFun$ph *' to parameter of type 'struct map$p$2char$phsFun$ph *' [-Wincompatible-pointer-types]
+                finalizer_217=map$$2char$phsFun$phphcharphsFunph_operator_load_element(info->funcs,new_fun_name_225);
+                                                                                       ^~~~~~~~~~~
+a.c.c:1767:108: note: passing argument to parameter 'self' here
+static struct sFun* map$$2char$phsFun$phphcharphsFunph_operator_load_element(struct map$p$2char$phsFun$ph* self, char* key);
+                                                                                                           ^
+a.c.c:3771:88: warning: incompatible pointer types passing 'struct map$$2char$phsFun$ph *' to parameter of type 'struct map$p$2char$phsFun$ph *' [-Wincompatible-pointer-types]
+                finalizer_217=map$$2char$phsFun$phphcharphsFunph_operator_load_element(info->funcs,fun_name2_216);
+                                                                                       ^~~~~~~~~~~
+a.c.c:1767:108: note: passing argument to parameter 'self' here
+static struct sFun* map$$2char$phsFun$phphcharphsFunph_operator_load_element(struct map$p$2char$phsFun$ph* self, char* key);
+                                                                                                           ^
+a.c.c:3789:125: warning: incompatible pointer types passing 'struct tuple3$ph$3sFun$pchar$phbool$ *' to parameter of type 'struct tuple3$p$3sFun$pchar$phbool$ *' [-Wincompatible-pointer-types]
+            fun_226=((struct tuple2$ph$2sFun$pchar$ph*)(right_value136=tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(((struct tuple3$ph$3sFun$pchar$phbool$*)(right_value133=create_finalizer_automatically(type,fun_name_214,info))),&__current_stack5__,method_block5)))->v1;
+                                                                                                                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1774:131: note: passing argument to parameter 'self' here
+static struct tuple2$ph$2sFun$pchar$ph* tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(struct tuple3$p$3sFun$pchar$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                                  ^
+a.c.c:3789:258: warning: incompatible function pointer types passing 'void (struct __current_stack5__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+            fun_226=((struct tuple2$ph$2sFun$pchar$ph*)(right_value136=tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(((struct tuple3$ph$3sFun$pchar$phbool$*)(right_value133=create_finalizer_automatically(type,fun_name_214,info))),&__current_stack5__,method_block5)))->v1;
+                                                                                                                                                                                                                                                                 ^~~~~~~~~~~~~
+a.c.c:1774:158: note: passing argument to parameter 'block' here
+static struct tuple2$ph$2sFun$pchar$ph* tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(struct tuple3$p$3sFun$pchar$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                                                             ^
+a.c.c:3790:166: warning: incompatible pointer types passing 'struct tuple3$ph$3sFun$pchar$phbool$ *' to parameter of type 'struct tuple3$p$3sFun$pchar$phbool$ *' [-Wincompatible-pointer-types]
+            new_fun_name_227=(char*)come_increment_ref_count(((struct tuple2$ph$2sFun$pchar$ph*)(right_value136=tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(((struct tuple3$ph$3sFun$pchar$phbool$*)(right_value133=create_finalizer_automatically(type,fun_name_214,info))),&__current_stack5__,method_block5)))->v2);
+                                                                                                                                                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1774:131: note: passing argument to parameter 'self' here
+static struct tuple2$ph$2sFun$pchar$ph* tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(struct tuple3$p$3sFun$pchar$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                                  ^
+a.c.c:3790:299: warning: incompatible function pointer types passing 'void (struct __current_stack5__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+            new_fun_name_227=(char*)come_increment_ref_count(((struct tuple2$ph$2sFun$pchar$ph*)(right_value136=tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(((struct tuple3$ph$3sFun$pchar$phbool$*)(right_value133=create_finalizer_automatically(type,fun_name_214,info))),&__current_stack5__,method_block5)))->v2);
+                                                                                                                                                                                                                                                                                                          ^~~~~~~~~~~~~
+a.c.c:1774:158: note: passing argument to parameter 'block' here
+static struct tuple2$ph$2sFun$pchar$ph* tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(struct tuple3$p$3sFun$pchar$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                                                             ^
+a.c.c:3813:90: warning: incompatible pointer types passing 'struct list$$1tuple2$$2char$phsType$ph *' to parameter of type 'struct list$p$1tuple2$$2char$phsType$ph *' [-Wincompatible-pointer-types]
+                it_229=list$$1tuple2$$2char$phsType$phphtuple2$$2char$phsType$phph_begin((klass_212->mFields));
+                                                                                         ^~~~~~~~~~~~~~~~~~~~
+a.c.c:1780:148: note: passing argument to parameter 'self' here
+static struct tuple2$$2char$phsType$ph* list$$1tuple2$$2char$phsType$phphtuple2$$2char$phsType$phph_begin(struct list$p$1tuple2$$2char$phsType$ph* self);
+                                                                                                                                                   ^
+a.c.c:3814:82: warning: incompatible pointer types passing 'struct list$$1tuple2$$2char$phsType$ph *' to parameter of type 'struct list$p$1tuple2$$2char$phsType$ph *' [-Wincompatible-pointer-types]
+                !list$$1tuple2$$2char$phsType$phphtuple2$$2char$phsType$phph_end((klass_212->mFields));
+                                                                                 ^~~~~~~~~~~~~~~~~~~~
+a.c.c:1782:119: note: passing argument to parameter 'self' here
+static _Bool list$$1tuple2$$2char$phsType$phphtuple2$$2char$phsType$phph_end(struct list$p$1tuple2$$2char$phsType$ph* self);
+                                                                                                                      ^
+a.c.c:3815:89: warning: incompatible pointer types passing 'struct list$$1tuple2$$2char$phsType$ph *' to parameter of type 'struct list$p$1tuple2$$2char$phsType$ph *' [-Wincompatible-pointer-types]
+                it_229=list$$1tuple2$$2char$phsType$phphtuple2$$2char$phsType$phph_next((klass_212->mFields))
+                                                                                        ^~~~~~~~~~~~~~~~~~~~
+a.c.c:1783:147: note: passing argument to parameter 'self' here
+static struct tuple2$$2char$phsType$ph* list$$1tuple2$$2char$phsType$phphtuple2$$2char$phsType$phph_next(struct list$p$1tuple2$$2char$phsType$ph* self);
+                                                                                                                                                  ^
+a.c.c:3831:90: warning: incompatible pointer types passing 'struct list$$1tuple2$$2char$phsType$ph *' to parameter of type 'struct list$p$1tuple2$$2char$phsType$ph *' [-Wincompatible-pointer-types]
+                it_234=list$$1tuple2$$2char$phsType$phphtuple2$$2char$phsType$phph_begin((klass_212->mFields));
+                                                                                         ^~~~~~~~~~~~~~~~~~~~
+a.c.c:1780:148: note: passing argument to parameter 'self' here
+static struct tuple2$$2char$phsType$ph* list$$1tuple2$$2char$phsType$phphtuple2$$2char$phsType$phph_begin(struct list$p$1tuple2$$2char$phsType$ph* self);
+                                                                                                                                                   ^
+a.c.c:3832:82: warning: incompatible pointer types passing 'struct list$$1tuple2$$2char$phsType$ph *' to parameter of type 'struct list$p$1tuple2$$2char$phsType$ph *' [-Wincompatible-pointer-types]
+                !list$$1tuple2$$2char$phsType$phphtuple2$$2char$phsType$phph_end((klass_212->mFields));
+                                                                                 ^~~~~~~~~~~~~~~~~~~~
+a.c.c:1782:119: note: passing argument to parameter 'self' here
+static _Bool list$$1tuple2$$2char$phsType$phphtuple2$$2char$phsType$phph_end(struct list$p$1tuple2$$2char$phsType$ph* self);
+                                                                                                                      ^
+a.c.c:3833:89: warning: incompatible pointer types passing 'struct list$$1tuple2$$2char$phsType$ph *' to parameter of type 'struct list$p$1tuple2$$2char$phsType$ph *' [-Wincompatible-pointer-types]
+                it_234=list$$1tuple2$$2char$phsType$phphtuple2$$2char$phsType$phph_next((klass_212->mFields))
+                                                                                        ^~~~~~~~~~~~~~~~~~~~
+a.c.c:1783:147: note: passing argument to parameter 'self' here
+static struct tuple2$$2char$phsType$ph* list$$1tuple2$$2char$phsType$phphtuple2$$2char$phsType$phph_next(struct list$p$1tuple2$$2char$phsType$ph* self);
+                                                                                                                                                  ^
+a.c.c:3763:40: warning: expression result unused [-Wunused-value]
+                    if(fun_name2_216) {(char*)come_decrement_ref_count(fun_name2_216,0,0); }
+                                       ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3793:32: warning: expression result unused [-Wunused-value]
+            if(fun_name2_216) {(char*)come_decrement_ref_count(fun_name2_216,0,0); }
+                               ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3857:36: warning: expression result unused [-Wunused-value]
+    if(info->right_value_objects) {(struct list$$1sRightValueObject$ph*)come_decrement_ref_count(info->right_value_objects,0,0); }
+                                   ^                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3859:22: warning: expression result unused [-Wunused-value]
+    if(info->stack) {(struct list$$1CVALUE$ph*)come_decrement_ref_count(info->stack,0,0); }
+                     ^                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3932:40: warning: incompatible pointer types passing 'struct list$$1sType$ph *' to parameter of type 'struct list$p$1sType$ph *' [-Wincompatible-pointer-types]
+    if(list$$1sType$phphsTypeph_length(type->mGenericsTypes)>0) {
+                                       ^~~~~~~~~~~~~~~~~~~~
+a.c.c:1731:69: note: passing argument to parameter 'self' here
+static int list$$1sType$phphsTypeph_length(struct list$p$1sType$ph* self);
+                                                                    ^
+a.c.c:3949:138: warning: incompatible pointer types passing 'struct tuple2$ph$2sType$phbool$ *' to parameter of type 'struct tuple2$p$2sType$phbool$ *' [-Wincompatible-pointer-types]
+        obj_type_253=(struct sType*)come_increment_ref_count(((struct sType*)(right_value144=tuple2$ph$2sType$phbool$phsTypephbool_catch(((struct tuple2$ph$2sType$phbool$*)(right_value142=solve_generics(type,info->generics_type,info))),&__current_stack6__,method_block6))));
+                                                                                                                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1732:98: note: passing argument to parameter 'self' here
+static struct sType* tuple2$ph$2sType$phbool$phsTypephbool_catch(struct tuple2$p$2sType$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                 ^
+a.c.c:3949:257: warning: incompatible function pointer types passing 'void (struct __current_stack6__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+        obj_type_253=(struct sType*)come_increment_ref_count(((struct sType*)(right_value144=tuple2$ph$2sType$phbool$phsTypephbool_catch(((struct tuple2$ph$2sType$phbool$*)(right_value142=solve_generics(type,info->generics_type,info))),&__current_stack6__,method_block6))));
+                                                                                                                                                                                                                                                                ^~~~~~~~~~~~~
+a.c.c:1732:125: note: passing argument to parameter 'block' here
+static struct sType* tuple2$ph$2sType$phbool$phsTypephbool_catch(struct tuple2$p$2sType$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                            ^
+a.c.c:3957:80: warning: incompatible pointer types passing 'struct map$$2char$phsGenericsFun$ph *' to parameter of type 'struct map$p$2char$phsGenericsFun$ph *' [-Wincompatible-pointer-types]
+        generics_fun_257=map$$2char$phsGenericsFun$phphcharphsGenericsFunph_at(info->generics_funcs,fun_name3_254,((void*)0));
+                                                                               ^~~~~~~~~~~~~~~~~~~~
+a.c.c:1788:121: note: passing argument to parameter 'self' here
+static struct sGenericsFun* map$$2char$phsGenericsFun$phphcharphsGenericsFunph_at(struct map$p$2char$phsGenericsFun$ph* self, char* key, struct sGenericsFun* default_value);
+                                                                                                                        ^
+a.c.c:3968:77: warning: incompatible pointer types passing 'struct map$$2char$phsFun$ph *' to parameter of type 'struct map$p$2char$phsFun$ph *' [-Wincompatible-pointer-types]
+        cloner_250=map$$2char$phsFun$phphcharphsFunph_operator_load_element(info->funcs,fun_name2_251);
+                                                                            ^~~~~~~~~~~
+a.c.c:1767:108: note: passing argument to parameter 'self' here
+static struct sFun* map$$2char$phsFun$phphcharphsFunph_operator_load_element(struct map$p$2char$phsFun$ph* self, char* key);
+                                                                                                           ^
+a.c.c:3981:81: warning: incompatible pointer types passing 'struct map$$2char$phsFun$ph *' to parameter of type 'struct map$p$2char$phsFun$ph *' [-Wincompatible-pointer-types]
+            cloner_250=map$$2char$phsFun$phphcharphsFunph_operator_load_element(info->funcs,new_fun_name_259);
+                                                                                ^~~~~~~~~~~
+a.c.c:1767:108: note: passing argument to parameter 'self' here
+static struct sFun* map$$2char$phsFun$phphcharphsFunph_operator_load_element(struct map$p$2char$phsFun$ph* self, char* key);
+                                                                                                           ^
+a.c.c:3991:81: warning: incompatible pointer types passing 'struct map$$2char$phsFun$ph *' to parameter of type 'struct map$p$2char$phsFun$ph *' [-Wincompatible-pointer-types]
+            cloner_250=map$$2char$phsFun$phphcharphsFunph_operator_load_element(info->funcs,fun_name2_251);
+                                                                                ^~~~~~~~~~~
+a.c.c:1767:108: note: passing argument to parameter 'self' here
+static struct sFun* map$$2char$phsFun$phphcharphsFunph_operator_load_element(struct map$p$2char$phsFun$ph* self, char* key);
+                                                                                                           ^
+a.c.c:4008:121: warning: incompatible pointer types passing 'struct tuple3$ph$3sFun$pchar$phbool$ *' to parameter of type 'struct tuple3$p$3sFun$pchar$phbool$ *' [-Wincompatible-pointer-types]
+        fun_260=((struct tuple2$ph$2sFun$pchar$ph*)(right_value153=tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(((struct tuple3$ph$3sFun$pchar$phbool$*)(right_value152=create_cloner_automatically(type,fun_name_248,info))),&__current_stack7__,method_block7)))->v1;
+                                                                                                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1774:131: note: passing argument to parameter 'self' here
+static struct tuple2$ph$2sFun$pchar$ph* tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(struct tuple3$p$3sFun$pchar$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                                  ^
+a.c.c:4008:251: warning: incompatible function pointer types passing 'void (struct __current_stack7__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+        fun_260=((struct tuple2$ph$2sFun$pchar$ph*)(right_value153=tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(((struct tuple3$ph$3sFun$pchar$phbool$*)(right_value152=create_cloner_automatically(type,fun_name_248,info))),&__current_stack7__,method_block7)))->v1;
+                                                                                                                                                                                                                                                          ^~~~~~~~~~~~~
+a.c.c:1774:158: note: passing argument to parameter 'block' here
+static struct tuple2$ph$2sFun$pchar$ph* tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(struct tuple3$p$3sFun$pchar$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                                                             ^
+a.c.c:4009:162: warning: incompatible pointer types passing 'struct tuple3$ph$3sFun$pchar$phbool$ *' to parameter of type 'struct tuple3$p$3sFun$pchar$phbool$ *' [-Wincompatible-pointer-types]
+        new_fun_name_261=(char*)come_increment_ref_count(((struct tuple2$ph$2sFun$pchar$ph*)(right_value153=tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(((struct tuple3$ph$3sFun$pchar$phbool$*)(right_value152=create_cloner_automatically(type,fun_name_248,info))),&__current_stack7__,method_block7)))->v2);
+                                                                                                                                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1774:131: note: passing argument to parameter 'self' here
+static struct tuple2$ph$2sFun$pchar$ph* tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(struct tuple3$p$3sFun$pchar$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                                  ^
+a.c.c:4009:292: warning: incompatible function pointer types passing 'void (struct __current_stack7__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+        new_fun_name_261=(char*)come_increment_ref_count(((struct tuple2$ph$2sFun$pchar$ph*)(right_value153=tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(((struct tuple3$ph$3sFun$pchar$phbool$*)(right_value152=create_cloner_automatically(type,fun_name_248,info))),&__current_stack7__,method_block7)))->v2);
+                                                                                                                                                                                                                                                                                                   ^~~~~~~~~~~~~
+a.c.c:1774:158: note: passing argument to parameter 'block' here
+static struct tuple2$ph$2sFun$pchar$ph* tuple3$ph$3sFun$pchar$phbool$phsFunpcharphbool_catch(struct tuple3$p$3sFun$pchar$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                                                             ^
+a.c.c:3952:28: warning: expression result unused [-Wunused-value]
+        if(fun_name2_251) {(char*)come_decrement_ref_count(fun_name2_251,0,0); }
+                           ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3971:28: warning: expression result unused [-Wunused-value]
+        if(fun_name2_251) {(char*)come_decrement_ref_count(fun_name2_251,0,0); }
+                           ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:3983:36: warning: expression result unused [-Wunused-value]
+                if(fun_name2_251) {(char*)come_decrement_ref_count(fun_name2_251,0,0); }
+                                   ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4012:28: warning: expression result unused [-Wunused-value]
+        if(fun_name2_251) {(char*)come_decrement_ref_count(fun_name2_251,0,0); }
+                           ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4018:25: warning: expression result unused [-Wunused-value]
+        if(result_242) {(char*)come_decrement_ref_count(result_242,0,0); }
+                        ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4023:25: warning: expression result unused [-Wunused-value]
+        if(result_242) {(char*)come_decrement_ref_count(result_242,0,0); }
+                        ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4027:36: warning: expression result unused [-Wunused-value]
+    if(info->right_value_objects) {(struct list$$1sRightValueObject$ph*)come_decrement_ref_count(info->right_value_objects,0,0); }
+                                   ^                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4029:22: warning: expression result unused [-Wunused-value]
+    if(info->stack) {(struct list$$1CVALUE$ph*)come_decrement_ref_count(info->stack,0,0); }
+                     ^                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4053:67: warning: incompatible pointer types passing 'struct list$$1sRightValueObject$ph *' to parameter of type 'struct list$p$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+    it_314=list$$1sRightValueObject$phphsRightValueObjectph_begin((right_value_objects_313));
+                                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1760:126: note: passing argument to parameter 'self' here
+static struct sRightValueObject* list$$1sRightValueObject$phphsRightValueObjectph_begin(struct list$p$1sRightValueObject$ph* self);
+                                                                                                                             ^
+a.c.c:4054:59: warning: incompatible pointer types passing 'struct list$$1sRightValueObject$ph *' to parameter of type 'struct list$p$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+    !list$$1sRightValueObject$phphsRightValueObjectph_end((right_value_objects_313));
+                                                          ^~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1761:104: note: passing argument to parameter 'self' here
+static _Bool list$$1sRightValueObject$phphsRightValueObjectph_end(struct list$p$1sRightValueObject$ph* self);
+                                                                                                       ^
+a.c.c:4055:66: warning: incompatible pointer types passing 'struct list$$1sRightValueObject$ph *' to parameter of type 'struct list$p$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+    it_314=list$$1sRightValueObject$phphsRightValueObjectph_next((right_value_objects_313))
+                                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1762:125: note: passing argument to parameter 'self' here
+static struct sRightValueObject* list$$1sRightValueObject$phphsRightValueObjectph_next(struct list$p$1sRightValueObject$ph* self);
+                                                                                                                            ^
+a.c.c:4065:142: warning: incompatible pointer types passing 'struct tuple2$ph$2sType$phbool$ *' to parameter of type 'struct tuple2$p$2sType$phbool$ *' [-Wincompatible-pointer-types]
+                type_315=(struct sType*)come_increment_ref_count(((struct sType*)(right_value190=tuple2$ph$2sType$phbool$phsTypephbool_catch(((struct tuple2$ph$2sType$phbool$*)(right_value189=solve_type(type_315,info->generics_type,info->method_generics_types,info))),&__current_stack14__,method_block14))));
+                                                                                                                                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1732:98: note: passing argument to parameter 'self' here
+static struct sType* tuple2$ph$2sType$phbool$phsTypephbool_catch(struct tuple2$p$2sType$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                 ^
+a.c.c:4065:290: warning: incompatible function pointer types passing 'void (struct __current_stack14__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+                type_315=(struct sType*)come_increment_ref_count(((struct sType*)(right_value190=tuple2$ph$2sType$phbool$phsTypephbool_catch(((struct tuple2$ph$2sType$phbool$*)(right_value189=solve_type(type_315,info->generics_type,info->method_generics_types,info))),&__current_stack14__,method_block14))));
+                                                                                                                                                                                                                                                                                                 ^~~~~~~~~~~~~~
+a.c.c:1732:125: note: passing argument to parameter 'block' here
+static struct sType* tuple2$ph$2sType$phbool$phsTypephbool_catch(struct tuple2$p$2sType$phbool$* self, void* parent, void (*block)(void*));
+                                                                                                                            ^
+a.c.c:4064:31: warning: expression result unused [-Wunused-value]
+                if(type_315) {(struct sType*)come_decrement_ref_count(type_315,0,0); }
+                              ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4092:53: warning: incompatible pointer types passing 'struct map$$2char$phsVar$ph *' to parameter of type 'struct map$p$2char$phsVar$ph *' [-Wincompatible-pointer-types]
+    it_323=map$$2char$phsVar$phphcharphsVarph_begin((table->mVars));
+                                                    ^~~~~~~~~~~~~~
+a.c.c:1800:85: note: passing argument to parameter 'self' here
+static char* map$$2char$phsVar$phphcharphsVarph_begin(struct map$p$2char$phsVar$ph* self);
+                                                                                    ^
+a.c.c:4093:45: warning: incompatible pointer types passing 'struct map$$2char$phsVar$ph *' to parameter of type 'struct map$p$2char$phsVar$ph *' [-Wincompatible-pointer-types]
+    !map$$2char$phsVar$phphcharphsVarph_end((table->mVars));
+                                            ^~~~~~~~~~~~~~
+a.c.c:1801:83: note: passing argument to parameter 'self' here
+static _Bool map$$2char$phsVar$phphcharphsVarph_end(struct map$p$2char$phsVar$ph* self);
+                                                                                  ^
+a.c.c:4094:52: warning: incompatible pointer types passing 'struct map$$2char$phsVar$ph *' to parameter of type 'struct map$p$2char$phsVar$ph *' [-Wincompatible-pointer-types]
+    it_323=map$$2char$phsVar$phphcharphsVarph_next((table->mVars))
+                                                   ^~~~~~~~~~~~~~
+a.c.c:1802:84: note: passing argument to parameter 'self' here
+static char* map$$2char$phsVar$phphcharphsVarph_next(struct map$p$2char$phsVar$ph* self);
+                                                                                   ^
+a.c.c:4096:72: warning: incompatible pointer types passing 'struct map$$2char$phsVar$ph *' to parameter of type 'struct map$p$2char$phsVar$ph *' [-Wincompatible-pointer-types]
+        p_325=map$$2char$phsVar$phphcharphsVarph_operator_load_element(table->mVars,it_323);
+                                                                       ^~~~~~~~~~~~
+a.c.c:1797:108: note: passing argument to parameter 'self' here
+static struct sVar* map$$2char$phsVar$phphcharphsVarph_operator_load_element(struct map$p$2char$phsVar$ph* self, char* key);
+                                                                                                           ^
+a.c.c:4152:64: warning: incompatible pointer types passing 'struct list$$1sRightValueObject$ph *' to parameter of type 'struct list$p$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+    list$$1sRightValueObject$phphsRightValueObjectph_push_back(info->right_value_objects,(struct sRightValueObject*)come_increment_ref_count(new_value_173));
+                                                               ^~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1759:109: note: passing argument to parameter 'self' here
+static void list$$1sRightValueObject$phphsRightValueObjectph_push_back(struct list$p$1sRightValueObject$ph* self, struct sRightValueObject* item);
+                                                                                                            ^
+a.c.c:4142:31: warning: expression result unused [-Wunused-value]
+    if(new_value_173->mType) {(struct sType*)come_decrement_ref_count(new_value_173->mType,0,0); }
+                              ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4146:34: warning: expression result unused [-Wunused-value]
+    if(new_value_173->mVarName) {(char*)come_decrement_ref_count(new_value_173->mVarName,0,0); }
+                                 ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4149:34: warning: expression result unused [-Wunused-value]
+    if(new_value_173->mFunName) {(char*)come_decrement_ref_count(new_value_173->mFunName,0,0); }
+                                 ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4168:67: warning: incompatible pointer types passing 'struct list$$1sRightValueObject$ph *' to parameter of type 'struct list$p$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+    it_316=list$$1sRightValueObject$phphsRightValueObjectph_begin((info->right_value_objects));
+                                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1760:126: note: passing argument to parameter 'self' here
+static struct sRightValueObject* list$$1sRightValueObject$phphsRightValueObjectph_begin(struct list$p$1sRightValueObject$ph* self);
+                                                                                                                             ^
+a.c.c:4169:59: warning: incompatible pointer types passing 'struct list$$1sRightValueObject$ph *' to parameter of type 'struct list$p$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+    !list$$1sRightValueObject$phphsRightValueObjectph_end((info->right_value_objects));
+                                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1761:104: note: passing argument to parameter 'self' here
+static _Bool list$$1sRightValueObject$phphsRightValueObjectph_end(struct list$p$1sRightValueObject$ph* self);
+                                                                                                       ^
+a.c.c:4170:66: warning: incompatible pointer types passing 'struct list$$1sRightValueObject$ph *' to parameter of type 'struct list$p$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+    it_316=list$$1sRightValueObject$phphsRightValueObjectph_next((info->right_value_objects))
+                                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1762:125: note: passing argument to parameter 'self' here
+static struct sRightValueObject* list$$1sRightValueObject$phphsRightValueObjectph_next(struct list$p$1sRightValueObject$ph* self);
+                                                                                                                            ^
+a.c.c:4221:67: warning: incompatible pointer types passing 'struct list$$1sRightValueObject$ph *' to parameter of type 'struct list$p$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+    it_180=list$$1sRightValueObject$phphsRightValueObjectph_begin((info->right_value_objects));
+                                                                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1760:126: note: passing argument to parameter 'self' here
+static struct sRightValueObject* list$$1sRightValueObject$phphsRightValueObjectph_begin(struct list$p$1sRightValueObject$ph* self);
+                                                                                                                             ^
+a.c.c:4222:59: warning: incompatible pointer types passing 'struct list$$1sRightValueObject$ph *' to parameter of type 'struct list$p$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+    !list$$1sRightValueObject$phphsRightValueObjectph_end((info->right_value_objects));
+                                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1761:104: note: passing argument to parameter 'self' here
+static _Bool list$$1sRightValueObject$phphsRightValueObjectph_end(struct list$p$1sRightValueObject$ph* self);
+                                                                                                       ^
+a.c.c:4223:66: warning: incompatible pointer types passing 'struct list$$1sRightValueObject$ph *' to parameter of type 'struct list$p$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+    it_180=list$$1sRightValueObject$phphsRightValueObjectph_next((info->right_value_objects))
+                                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1762:125: note: passing argument to parameter 'self' here
+static struct sRightValueObject* list$$1sRightValueObject$phphsRightValueObjectph_next(struct list$p$1sRightValueObject$ph* self);
+                                                                                                                            ^
+a.c.c:4230:61: warning: incompatible pointer types passing 'struct list$$1sRightValueObject$ph *' to parameter of type 'struct list$p$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+    list$$1sRightValueObject$phphsRightValueObjectph_delete(info->right_value_objects,i_178,i_178+1);
+                                                            ^~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1763:106: note: passing argument to parameter 'self' here
+static void list$$1sRightValueObject$phphsRightValueObjectph_delete(struct list$p$1sRightValueObject$ph* self, int head, int tail);
+                                                                                                         ^
+a.c.c:4308:120: warning: incompatible pointer types passing 'struct list$$1sType$ph *' to parameter of type 'struct list$p$1sType$ph *' [-Wincompatible-pointer-types]
+            result_89->mGenericsTypes=(struct list$$1sType$ph*)come_increment_ref_count(list$$1sType$phphsTypeph_clone(self->mGenericsTypes));
+                                                                                                                       ^~~~~~~~~~~~~~~~~~~~
+a.c.c:1709:90: note: passing argument to parameter 'self' here
+static struct list$ph$1sType$ph* list$$1sType$phphsTypeph_clone(struct list$p$1sType$ph* self);
+                                                                                         ^
+a.c.c:4312:115: warning: incompatible pointer types passing 'struct list$$1sNode$ph *' to parameter of type 'struct list$p$1sNode$ph *' [-Wincompatible-pointer-types]
+            result_89->mArrayNum=(struct list$$1sNode$ph*)come_increment_ref_count(list$$1sNode$phphsNodeph_clone(self->mArrayNum));
+                                                                                                                  ^~~~~~~~~~~~~~~
+a.c.c:1715:90: note: passing argument to parameter 'self' here
+static struct list$ph$1sNode$ph* list$$1sNode$phphsNodeph_clone(struct list$p$1sNode$ph* self);
+                                                                                         ^
+a.c.c:4316:117: warning: incompatible pointer types passing 'struct list$$1sType$ph *' to parameter of type 'struct list$p$1sType$ph *' [-Wincompatible-pointer-types]
+            result_89->mParamTypes=(struct list$$1sType$ph*)come_increment_ref_count(list$$1sType$phphsTypeph_clone(self->mParamTypes));
+                                                                                                                    ^~~~~~~~~~~~~~~~~
+a.c.c:1709:90: note: passing argument to parameter 'self' here
+static struct list$ph$1sType$ph* list$$1sType$phphsTypeph_clone(struct list$p$1sType$ph* self);
+                                                                                         ^
+a.c.c:4320:114: warning: incompatible pointer types passing 'struct list$$1char$ph *' to parameter of type 'struct list$p$1char$ph *' [-Wincompatible-pointer-types]
+            result_89->mParamNames=(struct list$$1char$ph*)come_increment_ref_count(list$$1char$phphcharph_clone(self->mParamNames));
+                                                                                                                 ^~~~~~~~~~~~~~~~~
+a.c.c:1721:86: note: passing argument to parameter 'self' here
+static struct list$ph$1char$ph* list$$1char$phphcharph_clone(struct list$p$1char$ph* self);
+                                                                                     ^
+a.c.c:4303:43: warning: expression result unused [-Wunused-value]
+            if(result_89->mGenericsName) {(char*)come_decrement_ref_count(result_89->mGenericsName,0,0); }
+                                          ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4307:44: warning: expression result unused [-Wunused-value]
+            if(result_89->mGenericsTypes) {(struct list$$1sType$ph*)come_decrement_ref_count(result_89->mGenericsTypes,0,0); }
+                                           ^                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4311:39: warning: expression result unused [-Wunused-value]
+            if(result_89->mArrayNum) {(struct list$$1sNode$ph*)come_decrement_ref_count(result_89->mArrayNum,0,0); }
+                                      ^                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4315:41: warning: expression result unused [-Wunused-value]
+            if(result_89->mParamTypes) {(struct list$$1sType$ph*)come_decrement_ref_count(result_89->mParamTypes,0,0); }
+                                        ^                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4319:41: warning: expression result unused [-Wunused-value]
+            if(result_89->mParamNames) {(struct list$$1char$ph*)come_decrement_ref_count(result_89->mParamNames,0,0); }
+                                        ^                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4323:41: warning: expression result unused [-Wunused-value]
+            if(result_89->mResultType) {(struct tuple1$$1sType$ph*)come_decrement_ref_count(result_89->mResultType,0,0); }
+                                        ^                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4327:47: warning: expression result unused [-Wunused-value]
+            if(result_89->mOriginalTypeName) {(char*)come_decrement_ref_count(result_89->mOriginalTypeName,0,0); }
+                                              ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4364:26: warning: incompatible pointer types assigning to 'struct list_item$$1sType$ph *' from 'struct list_item$p$1sType$ph *' [-Wincompatible-pointer-types]
+                    it_90=self->head;
+                         ^~~~~~~~~~~
+a.c.c:4370:30: warning: incompatible pointer types assigning to 'struct list_item$$1sType$ph *' from 'struct list_item$p$1sType$ph *' [-Wincompatible-pointer-types]
+                        it_90=it_90->next;
+                             ^~~~~~~~~~~~
+a.c.c:4380:26: warning: incompatible pointer types assigning to 'struct list_item$$1sNode$ph *' from 'struct list_item$p$1sNode$ph *' [-Wincompatible-pointer-types]
+                    it_92=self->head;
+                         ^~~~~~~~~~~
+a.c.c:4387:30: warning: incompatible pointer types assigning to 'struct list_item$$1sNode$ph *' from 'struct list_item$p$1sNode$ph *' [-Wincompatible-pointer-types]
+                        it_92=it_92->next;
+                             ^~~~~~~~~~~~
+a.c.c:4397:26: warning: incompatible pointer types assigning to 'struct list_item$$1char$ph$$1char$ph *' from 'struct list_item$p$1char$ph *' [-Wincompatible-pointer-types]
+                    it_94=self->head;
+                         ^~~~~~~~~~~
+a.c.c:4403:30: warning: incompatible pointer types assigning to 'struct list_item$$1char$ph$$1char$ph *' from 'struct list_item$p$1char$ph *' [-Wincompatible-pointer-types]
+                        it_94=it_94->next;
+                             ^~~~~~~~~~~~
+a.c.c:4425:169: warning: incompatible pointer types passing 'struct list$$1sType$ph$$1sType$ph *' to parameter of type 'struct list$ph$1sType$ph *' [-Wincompatible-pointer-types]
+                result_98=(struct list$ph$1sType$ph*)come_increment_ref_count(((struct list$ph$1sType$ph*)(right_value67=list$$1sType$ph$$1sType$phphsTypeph_initialize((struct list$$1sType$ph$$1sType$ph*)come_increment_ref_count(((struct list$$1sType$ph$$1sType$ph*)(right_value66=(struct list$$1sType$ph$$1sType$ph*)come_calloc(1, sizeof(struct list$$1sType$ph$$1sType$ph)*(1)))))))));
+                                                                                                                                                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1710:107: note: passing argument to parameter 'self' here
+static struct list$ph$1sType$ph* list$$1sType$ph$$1sType$phphsTypeph_initialize(struct list$ph$1sType$ph* self);
+                                                                                                          ^
+a.c.c:4428:23: warning: incompatible pointer types assigning to 'struct list_item$$1sType$ph$$1sType$ph *' from 'struct list_item$p$1sType$ph *' [-Wincompatible-pointer-types]
+                it_103=self->head;
+                      ^~~~~~~~~~~
+a.c.c:4430:72: warning: incompatible pointer types passing 'struct list$ph$1sType$ph *' to parameter of type 'struct list$p$1sType$ph *' [-Wincompatible-pointer-types]
+                    list$ph$1sType$ph$ph$1sType$phphsTypeph_push_back2(result_98,(struct sType*)come_increment_ref_count(sType_clone(it_103->item)));
+                                                                       ^~~~~~~~~
+a.c.c:1714:89: note: passing argument to parameter 'self' here
+static void list$ph$1sType$ph$ph$1sType$phphsTypeph_push_back2(struct list$p$1sType$ph* self, struct sType* item);
+                                                                                        ^
+a.c.c:4431:27: warning: incompatible pointer types assigning to 'struct list_item$$1sType$ph$$1sType$ph *' from 'struct list_item$p$1sType$ph *' [-Wincompatible-pointer-types]
+                    it_103=it_103->next;
+                          ^~~~~~~~~~~~~
+a.c.c:4452:30: warning: incompatible pointer types assigning to 'struct list_item$$1sType$ph$$1sType$ph *' from 'struct list_item$p$1sType$ph *' [-Wincompatible-pointer-types]
+                        it_96=self->head;
+                             ^~~~~~~~~~~
+a.c.c:4458:34: warning: incompatible pointer types assigning to 'struct list_item$$1sType$ph$$1sType$ph *' from 'struct list_item$p$1sType$ph *' [-Wincompatible-pointer-types]
+                            it_96=it_96->next;
+                                 ^~~~~~~~~~~~
+a.c.c:4468:26: warning: incompatible pointer types assigning to 'struct list_item$$1sType$ph$$1sType$ph *' from 'struct list_item$p$1sType$ph *' [-Wincompatible-pointer-types]
+                    it_99=self->head;
+                         ^~~~~~~~~~~
+a.c.c:4474:30: warning: incompatible pointer types assigning to 'struct list_item$$1sType$ph$$1sType$ph *' from 'struct list_item$p$1sType$ph *' [-Wincompatible-pointer-types]
+                        it_99=it_99->next;
+                             ^~~~~~~~~~~~
+a.c.c:4484:27: warning: incompatible pointer types assigning to 'struct list_item$$1sType$ph$$1sType$ph *' from 'struct list_item$p$1sType$ph *' [-Wincompatible-pointer-types]
+                    it_101=self->head;
+                          ^~~~~~~~~~~
+a.c.c:4490:31: warning: incompatible pointer types assigning to 'struct list_item$$1sType$ph$$1sType$ph *' from 'struct list_item$p$1sType$ph *' [-Wincompatible-pointer-types]
+                        it_101=it_101->next;
+                              ^~~~~~~~~~~~~
+a.c.c:4511:39: warning: incompatible pointer types assigning to 'struct list_item$p$1sType$ph *' from 'struct list_item$$1sType$ph$$1sType$ph *' [-Wincompatible-pointer-types]
+                            self->tail=litem_104;
+                                      ^~~~~~~~~~
+a.c.c:4512:39: warning: incompatible pointer types assigning to 'struct list_item$p$1sType$ph *' from 'struct list_item$$1sType$ph$$1sType$ph *' [-Wincompatible-pointer-types]
+                            self->head=litem_104;
+                                      ^~~~~~~~~~
+a.c.c:4520:39: warning: incompatible pointer types assigning to 'struct list_item$p$1sType$ph *' from 'struct list_item$$1sType$ph$$1sType$ph *' [-Wincompatible-pointer-types]
+                            self->tail=litem_105;
+                                      ^~~~~~~~~~
+a.c.c:4521:45: warning: incompatible pointer types assigning to 'struct list_item$p$1sType$ph *' from 'struct list_item$$1sType$ph$$1sType$ph *' [-Wincompatible-pointer-types]
+                            self->head->next=litem_105;
+                                            ^~~~~~~~~~
+a.c.c:4529:45: warning: incompatible pointer types assigning to 'struct list_item$p$1sType$ph *' from 'struct list_item$$1sType$ph$$1sType$ph *' [-Wincompatible-pointer-types]
+                            self->tail->next=litem_106;
+                                            ^~~~~~~~~~
+a.c.c:4530:39: warning: incompatible pointer types assigning to 'struct list_item$p$1sType$ph *' from 'struct list_item$$1sType$ph$$1sType$ph *' [-Wincompatible-pointer-types]
+                            self->tail=litem_106;
+                                      ^~~~~~~~~~
+a.c.c:4509:50: warning: expression result unused [-Wunused-value]
+                            if(litem_104->item) {(struct sType*)come_decrement_ref_count(litem_104->item,0,0); }
+                                                 ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4518:50: warning: expression result unused [-Wunused-value]
+                            if(litem_105->item) {(struct sType*)come_decrement_ref_count(litem_105->item,0,0); }
+                                                 ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4527:50: warning: expression result unused [-Wunused-value]
+                            if(litem_106->item) {(struct sType*)come_decrement_ref_count(litem_106->item,0,0); }
+                                                 ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4548:170: warning: incompatible pointer types passing 'struct list$$1sNode$ph$$1sNode$ph *' to parameter of type 'struct list$ph$1sNode$ph *' [-Wincompatible-pointer-types]
+                result_109=(struct list$ph$1sNode$ph*)come_increment_ref_count(((struct list$ph$1sNode$ph*)(right_value72=list$$1sNode$ph$$1sNode$phphsNodeph_initialize((struct list$$1sNode$ph$$1sNode$ph*)come_increment_ref_count(((struct list$$1sNode$ph$$1sNode$ph*)(right_value71=(struct list$$1sNode$ph$$1sNode$ph*)come_calloc(1, sizeof(struct list$$1sNode$ph$$1sNode$ph)*(1)))))))));
+                                                                                                                                                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1716:107: note: passing argument to parameter 'self' here
+static struct list$ph$1sNode$ph* list$$1sNode$ph$$1sNode$phphsNodeph_initialize(struct list$ph$1sNode$ph* self);
+                                                                                                          ^
+a.c.c:4551:23: warning: incompatible pointer types assigning to 'struct list_item$$1sNode$ph$$1sNode$ph *' from 'struct list_item$p$1sNode$ph *' [-Wincompatible-pointer-types]
+                it_114=self->head;
+                      ^~~~~~~~~~~
+a.c.c:4553:33: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                    _inf_valueX4=(struct sNode*)come_increment_ref_count(come_memdup(it_114->item));
+                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4555:72: warning: incompatible pointer types passing 'struct list$ph$1sNode$ph *' to parameter of type 'struct list$p$1sNode$ph *' [-Wincompatible-pointer-types]
+                    list$ph$1sNode$ph$ph$1sNode$phphsNodeph_push_back2(result_109,_inf_valueX4);
+                                                                       ^~~~~~~~~~
+a.c.c:1720:89: note: passing argument to parameter 'self' here
+static void list$ph$1sNode$ph$ph$1sNode$phphsNodeph_push_back2(struct list$p$1sNode$ph* self, struct sNode* item);
+                                                                                        ^
+a.c.c:4555:83: warning: incompatible pointer types passing 'struct sNode **' to parameter of type 'struct sNode *'; dereference with * [-Wincompatible-pointer-types]
+                    list$ph$1sNode$ph$ph$1sNode$phphsNodeph_push_back2(result_109,_inf_valueX4);
+                                                                                  ^~~~~~~~~~~~
+                                                                                  *
+a.c.c:1720:109: note: passing argument to parameter 'item' here
+static void list$ph$1sNode$ph$ph$1sNode$phphsNodeph_push_back2(struct list$p$1sNode$ph* self, struct sNode* item);
+                                                                                                            ^
+a.c.c:4556:27: warning: incompatible pointer types assigning to 'struct list_item$$1sNode$ph$$1sNode$ph *' from 'struct list_item$p$1sNode$ph *' [-Wincompatible-pointer-types]
+                    it_114=it_114->next;
+                          ^~~~~~~~~~~~~
+a.c.c:4577:31: warning: incompatible pointer types assigning to 'struct list_item$$1sNode$ph$$1sNode$ph *' from 'struct list_item$p$1sNode$ph *' [-Wincompatible-pointer-types]
+                        it_107=self->head;
+                              ^~~~~~~~~~~
+a.c.c:4584:35: warning: incompatible pointer types assigning to 'struct list_item$$1sNode$ph$$1sNode$ph *' from 'struct list_item$p$1sNode$ph *' [-Wincompatible-pointer-types]
+                            it_107=it_107->next;
+                                  ^~~~~~~~~~~~~
+a.c.c:4594:27: warning: incompatible pointer types assigning to 'struct list_item$$1sNode$ph$$1sNode$ph *' from 'struct list_item$p$1sNode$ph *' [-Wincompatible-pointer-types]
+                    it_110=self->head;
+                          ^~~~~~~~~~~
+a.c.c:4601:31: warning: incompatible pointer types assigning to 'struct list_item$$1sNode$ph$$1sNode$ph *' from 'struct list_item$p$1sNode$ph *' [-Wincompatible-pointer-types]
+                        it_110=it_110->next;
+                              ^~~~~~~~~~~~~
+a.c.c:4611:27: warning: incompatible pointer types assigning to 'struct list_item$$1sNode$ph$$1sNode$ph *' from 'struct list_item$p$1sNode$ph *' [-Wincompatible-pointer-types]
+                    it_112=self->head;
+                          ^~~~~~~~~~~
+a.c.c:4618:31: warning: incompatible pointer types assigning to 'struct list_item$$1sNode$ph$$1sNode$ph *' from 'struct list_item$p$1sNode$ph *' [-Wincompatible-pointer-types]
+                        it_112=it_112->next;
+                              ^~~~~~~~~~~~~
+a.c.c:4641:41: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                            _inf_valueX1=(struct sNode*)come_increment_ref_count(item);
+                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4643:44: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+                            litem_115->item=_inf_valueX1;
+                                           ^~~~~~~~~~~~~
+                                            *
+a.c.c:4644:39: warning: incompatible pointer types assigning to 'struct list_item$p$1sNode$ph *' from 'struct list_item$$1sNode$ph$$1sNode$ph *' [-Wincompatible-pointer-types]
+                            self->tail=litem_115;
+                                      ^~~~~~~~~~
+a.c.c:4645:39: warning: incompatible pointer types assigning to 'struct list_item$p$1sNode$ph *' from 'struct list_item$$1sNode$ph$$1sNode$ph *' [-Wincompatible-pointer-types]
+                            self->head=litem_115;
+                                      ^~~~~~~~~~
+a.c.c:4652:41: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                            _inf_valueX2=(struct sNode*)come_increment_ref_count(item);
+                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4654:44: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+                            litem_116->item=_inf_valueX2;
+                                           ^~~~~~~~~~~~~
+                                            *
+a.c.c:4655:39: warning: incompatible pointer types assigning to 'struct list_item$p$1sNode$ph *' from 'struct list_item$$1sNode$ph$$1sNode$ph *' [-Wincompatible-pointer-types]
+                            self->tail=litem_116;
+                                      ^~~~~~~~~~
+a.c.c:4656:45: warning: incompatible pointer types assigning to 'struct list_item$p$1sNode$ph *' from 'struct list_item$$1sNode$ph$$1sNode$ph *' [-Wincompatible-pointer-types]
+                            self->head->next=litem_116;
+                                            ^~~~~~~~~~
+a.c.c:4663:41: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                            _inf_valueX3=(struct sNode*)come_increment_ref_count(item);
+                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4665:44: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+                            litem_117->item=_inf_valueX3;
+                                           ^~~~~~~~~~~~~
+                                            *
+a.c.c:4666:45: warning: incompatible pointer types assigning to 'struct list_item$p$1sNode$ph *' from 'struct list_item$$1sNode$ph$$1sNode$ph *' [-Wincompatible-pointer-types]
+                            self->tail->next=litem_117;
+                                            ^~~~~~~~~~
+a.c.c:4667:39: warning: incompatible pointer types assigning to 'struct list_item$p$1sNode$ph *' from 'struct list_item$$1sNode$ph$$1sNode$ph *' [-Wincompatible-pointer-types]
+                            self->tail=litem_117;
+                                      ^~~~~~~~~~
+a.c.c:4640:50: warning: left operand of comma operator has no effect [-Wunused-value]
+                            if(litem_115->item) {(struct sNode*)come_decrement_ref_count(litem_115->item,0,0), come_decrement_ref_count(((struct sNode*)litem_115->item)->_protocol_obj,0,0); }
+                                                 ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4651:50: warning: left operand of comma operator has no effect [-Wunused-value]
+                            if(litem_116->item) {(struct sNode*)come_decrement_ref_count(litem_116->item,0,0), come_decrement_ref_count(((struct sNode*)litem_116->item)->_protocol_obj,0,0); }
+                                                 ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4662:50: warning: left operand of comma operator has no effect [-Wunused-value]
+                            if(litem_117->item) {(struct sNode*)come_decrement_ref_count(litem_117->item,0,0), come_decrement_ref_count(((struct sNode*)litem_117->item)->_protocol_obj,0,0); }
+                                                 ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4685:165: warning: incompatible pointer types passing 'struct list$$1char$ph$$1char$ph *' to parameter of type 'struct list$ph$1char$ph *' [-Wincompatible-pointer-types]
+                result_118=(struct list$ph$1char$ph*)come_increment_ref_count(((struct list$ph$1char$ph*)(right_value77=list$$1char$ph$$1char$phphcharph_initialize((struct list$$1char$ph$$1char$ph*)come_increment_ref_count(((struct list$$1char$ph$$1char$ph*)(right_value76=(struct list$$1char$ph$$1char$ph*)come_calloc(1, sizeof(struct list$$1char$ph$$1char$ph)*(1)))))))));
+                                                                                                                                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1722:102: note: passing argument to parameter 'self' here
+static struct list$ph$1char$ph* list$$1char$ph$$1char$phphcharph_initialize(struct list$ph$1char$ph* self);
+                                                                                                     ^
+a.c.c:4688:23: warning: incompatible pointer types assigning to 'struct list_item$$1char$ph$$1char$ph *' from 'struct list_item$p$1char$ph *' [-Wincompatible-pointer-types]
+                it_123=self->head;
+                      ^~~~~~~~~~~
+a.c.c:4690:69: warning: incompatible pointer types passing 'struct list$ph$1char$ph *' to parameter of type 'struct list$p$1char$ph *' [-Wincompatible-pointer-types]
+                    list$ph$1char$ph$ph$1char$phphcharph_push_back2(result_118,(char*)come_increment_ref_count(string_clone(it_123->item)));
+                                                                    ^~~~~~~~~~
+a.c.c:1725:85: note: passing argument to parameter 'self' here
+static void list$ph$1char$ph$ph$1char$phphcharph_push_back2(struct list$p$1char$ph* self, char* item);
+                                                                                    ^
+a.c.c:4691:27: warning: incompatible pointer types assigning to 'struct list_item$$1char$ph$$1char$ph *' from 'struct list_item$p$1char$ph *' [-Wincompatible-pointer-types]
+                    it_123=it_123->next;
+                          ^~~~~~~~~~~~~
+a.c.c:4712:27: warning: incompatible pointer types assigning to 'struct list_item$$1char$ph$$1char$ph *' from 'struct list_item$p$1char$ph *' [-Wincompatible-pointer-types]
+                    it_119=self->head;
+                          ^~~~~~~~~~~
+a.c.c:4718:31: warning: incompatible pointer types assigning to 'struct list_item$$1char$ph$$1char$ph *' from 'struct list_item$p$1char$ph *' [-Wincompatible-pointer-types]
+                        it_119=it_119->next;
+                              ^~~~~~~~~~~~~
+a.c.c:4728:27: warning: incompatible pointer types assigning to 'struct list_item$$1char$ph$$1char$ph *' from 'struct list_item$p$1char$ph *' [-Wincompatible-pointer-types]
+                    it_121=self->head;
+                          ^~~~~~~~~~~
+a.c.c:4734:31: warning: incompatible pointer types assigning to 'struct list_item$$1char$ph$$1char$ph *' from 'struct list_item$p$1char$ph *' [-Wincompatible-pointer-types]
+                        it_121=it_121->next;
+                              ^~~~~~~~~~~~~
+a.c.c:4755:39: warning: incompatible pointer types assigning to 'struct list_item$p$1char$ph *' from 'struct list_item$$1char$ph$$1char$ph *' [-Wincompatible-pointer-types]
+                            self->tail=litem_124;
+                                      ^~~~~~~~~~
+a.c.c:4756:39: warning: incompatible pointer types assigning to 'struct list_item$p$1char$ph *' from 'struct list_item$$1char$ph$$1char$ph *' [-Wincompatible-pointer-types]
+                            self->head=litem_124;
+                                      ^~~~~~~~~~
+a.c.c:4764:39: warning: incompatible pointer types assigning to 'struct list_item$p$1char$ph *' from 'struct list_item$$1char$ph$$1char$ph *' [-Wincompatible-pointer-types]
+                            self->tail=litem_125;
+                                      ^~~~~~~~~~
+a.c.c:4765:45: warning: incompatible pointer types assigning to 'struct list_item$p$1char$ph *' from 'struct list_item$$1char$ph$$1char$ph *' [-Wincompatible-pointer-types]
+                            self->head->next=litem_125;
+                                            ^~~~~~~~~~
+a.c.c:4773:45: warning: incompatible pointer types assigning to 'struct list_item$p$1char$ph *' from 'struct list_item$$1char$ph$$1char$ph *' [-Wincompatible-pointer-types]
+                            self->tail->next=litem_126;
+                                            ^~~~~~~~~~
+a.c.c:4774:39: warning: incompatible pointer types assigning to 'struct list_item$p$1char$ph *' from 'struct list_item$$1char$ph$$1char$ph *' [-Wincompatible-pointer-types]
+                            self->tail=litem_126;
+                                      ^~~~~~~~~~
+a.c.c:4753:50: warning: expression result unused [-Wunused-value]
+                            if(litem_124->item) {(char*)come_decrement_ref_count(litem_124->item,0,0); }
+                                                 ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4762:50: warning: expression result unused [-Wunused-value]
+                            if(litem_125->item) {(char*)come_decrement_ref_count(litem_125->item,0,0); }
+                                                 ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4771:50: warning: expression result unused [-Wunused-value]
+                            if(litem_126->item) {(char*)come_decrement_ref_count(litem_126->item,0,0); }
+                                                 ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4787:41: warning: expression result unused [-Wunused-value]
+                    if(result_127->v1) {(struct sType*)come_decrement_ref_count(result_127->v1,0,0); }
+                                        ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4802:27: warning: expression result unused [-Wunused-value]
+            if(self->v1) {(struct sType*)come_decrement_ref_count(self->v1,0,0); }
+                          ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4841:27: warning: expression result unused [-Wunused-value]
+            if(self->v1) {(struct sType*)come_decrement_ref_count(self->v1,0,0); }
+                          ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4875:19: warning: incompatible pointer types assigning to 'struct list_item$$1sType$ph$$1sType$ph *' from 'struct list_item$p$1sType$ph *' [-Wincompatible-pointer-types]
+            it_134=self->head;
+                  ^~~~~~~~~~~
+a.c.c:4881:23: warning: incompatible pointer types assigning to 'struct list_item$$1sType$ph$$1sType$ph *' from 'struct list_item$p$1sType$ph *' [-Wincompatible-pointer-types]
+                it_134=it_134->next;
+                      ^~~~~~~~~~~~~
+a.c.c:4901:43: warning: incompatible integer to pointer conversion initializing 'struct list_item$p$1sType$ph *' with an expression of type 'int' [-Wint-conversion]
+            struct list_item$p$1sType$ph* __result__ = self->it==((void*)0);
+                                          ^            ~~~~~~~~~~~~~~~~~~~~
+a.c.c:4939:31: warning: incompatible pointer types assigning to 'struct list_item$p$1sType$ph *' from 'struct list_item$$1sType$ph$$1sType$ph *' [-Wincompatible-pointer-types]
+                    self->tail=litem_140;
+                              ^~~~~~~~~~
+a.c.c:4940:31: warning: incompatible pointer types assigning to 'struct list_item$p$1sType$ph *' from 'struct list_item$$1sType$ph$$1sType$ph *' [-Wincompatible-pointer-types]
+                    self->head=litem_140;
+                              ^~~~~~~~~~
+a.c.c:4948:31: warning: incompatible pointer types assigning to 'struct list_item$p$1sType$ph *' from 'struct list_item$$1sType$ph$$1sType$ph *' [-Wincompatible-pointer-types]
+                    self->tail=litem_141;
+                              ^~~~~~~~~~
+a.c.c:4949:37: warning: incompatible pointer types assigning to 'struct list_item$p$1sType$ph *' from 'struct list_item$$1sType$ph$$1sType$ph *' [-Wincompatible-pointer-types]
+                    self->head->next=litem_141;
+                                    ^~~~~~~~~~
+a.c.c:4957:37: warning: incompatible pointer types assigning to 'struct list_item$p$1sType$ph *' from 'struct list_item$$1sType$ph$$1sType$ph *' [-Wincompatible-pointer-types]
+                    self->tail->next=litem_142;
+                                    ^~~~~~~~~~
+a.c.c:4958:31: warning: incompatible pointer types assigning to 'struct list_item$p$1sType$ph *' from 'struct list_item$$1sType$ph$$1sType$ph *' [-Wincompatible-pointer-types]
+                    self->tail=litem_142;
+                              ^~~~~~~~~~
+a.c.c:4937:42: warning: expression result unused [-Wunused-value]
+                    if(litem_140->item) {(struct sType*)come_decrement_ref_count(litem_140->item,0,0); }
+                                         ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4946:42: warning: expression result unused [-Wunused-value]
+                    if(litem_141->item) {(struct sType*)come_decrement_ref_count(litem_141->item,0,0); }
+                                         ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4955:42: warning: expression result unused [-Wunused-value]
+                    if(litem_142->item) {(struct sType*)come_decrement_ref_count(litem_142->item,0,0); }
+                                         ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4981:23: warning: incompatible pointer types assigning to 'struct list_item$$1sType$ph$$1sType$ph *' from 'struct list_item$p$1sType$ph *' [-Wincompatible-pointer-types]
+                it_145=self->head;
+                      ^~~~~~~~~~~
+a.c.c:4988:27: warning: incompatible pointer types assigning to 'struct list_item$$1sType$ph$$1sType$ph *' from 'struct list_item$p$1sType$ph *' [-Wincompatible-pointer-types]
+                    it_145=it_145->next;
+                          ^~~~~~~~~~~~~
+a.c.c:5005:23: warning: incompatible pointer types assigning to 'struct list_item$$1sNode$ph$$1sNode$ph *' from 'struct list_item$p$1sNode$ph *' [-Wincompatible-pointer-types]
+                it_154=self->head;
+                      ^~~~~~~~~~~
+a.c.c:5012:27: warning: incompatible pointer types assigning to 'struct list_item$$1sNode$ph$$1sNode$ph *' from 'struct list_item$p$1sNode$ph *' [-Wincompatible-pointer-types]
+                    it_154=it_154->next;
+                          ^~~~~~~~~~~~~
+a.c.c:5022:19: warning: incompatible pointer types assigning to 'struct list_item$$1sType$ph$$1sType$ph *' from 'struct list_item$p$1sType$ph *' [-Wincompatible-pointer-types]
+            it_157=self->head;
+                  ^~~~~~~~~~~
+a.c.c:5025:23: warning: incompatible pointer types assigning to 'struct list_item$$1sType$ph$$1sType$ph *' from 'struct list_item$p$1sType$ph *' [-Wincompatible-pointer-types]
+                it_157=it_157->next;
+                      ^~~~~~~~~~~~~
+a.c.c:5097:31: warning: incompatible pointer types assigning to 'struct list_item$$1tuple2$$2char$phsType$ph *' from 'struct list_item$p$1tuple2$$2char$phsType$ph *' [-Wincompatible-pointer-types]
+                        it_166=self->head;
+                              ^~~~~~~~~~~
+a.c.c:5103:35: warning: incompatible pointer types assigning to 'struct list_item$$1tuple2$$2char$phsType$ph *' from 'struct list_item$p$1tuple2$$2char$phsType$ph *' [-Wincompatible-pointer-types]
+                            it_166=it_166->next;
+                                  ^~~~~~~~~~~~~
+a.c.c:5135:136: warning: incompatible pointer types passing 'struct tuple2$ph$2sType$phbool$ *' to parameter of type 'struct tuple2$p$2sType$phbool$ *' [-Wincompatible-pointer-types]
+        result_169=(struct sType*)come_increment_ref_count(((struct sType*)(right_value104=tuple2$ph$2sType$phbool$phsTypephbool_catch(((struct tuple2$ph$2sType$phbool$*)(right_value103=solve_generics(result_169,generics_type,info))),&__current_stack4__,method_block4))));
+                                                                                                                                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4828:98: note: passing argument to parameter 'self' here
+static struct sType* tuple2$ph$2sType$phbool$phsTypephbool_catch(struct tuple2$p$2sType$phbool$* self, void* parent, void (*block)(void*)){
+                                                                                                 ^
+a.c.c:5135:255: warning: incompatible function pointer types passing 'void (struct __current_stack4__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+        result_169=(struct sType*)come_increment_ref_count(((struct sType*)(right_value104=tuple2$ph$2sType$phbool$phsTypephbool_catch(((struct tuple2$ph$2sType$phbool$*)(right_value103=solve_generics(result_169,generics_type,info))),&__current_stack4__,method_block4))));
+                                                                                                                                                                                                                                                              ^~~~~~~~~~~~~
+a.c.c:4828:125: note: passing argument to parameter 'block' here
+static struct sType* tuple2$ph$2sType$phbool$phsTypephbool_catch(struct tuple2$p$2sType$phbool$* self, void* parent, void (*block)(void*)){
+                                                                                                                            ^
+a.c.c:5139:183: warning: incompatible pointer types passing 'struct tuple2$$2sType$phbool$ *' to parameter of type 'struct tuple2$ph$2sType$phbool$ *' [-Wincompatible-pointer-types]
+    __tuple_value4___170=(struct tuple2$ph$2sType$phbool$*)come_increment_ref_count(((struct tuple2$ph$2sType$phbool$*)(right_value106=tuple2$$2sType$phbool$phsTypephbool_initialize((struct tuple2$$2sType$phbool$*)come_increment_ref_count(((struct tuple2$$2sType$phbool$*)(right_value105=(struct tuple2$$2sType$phbool$*)come_calloc(1, sizeof(struct tuple2$$2sType$phbool$)*(1))))),(struct sType*)come_increment_ref_count(result_169),(_Bool)1))));
+                                                                                                                                                                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:4801:121: note: passing argument to parameter 'self' here
+static struct tuple2$ph$2sType$phbool$* tuple2$$2sType$phbool$phsTypephbool_initialize(struct tuple2$ph$2sType$phbool$* self, struct sType* v1, _Bool v2){
+                                                                                                                        ^
+a.c.c:5134:25: warning: expression result unused [-Wunused-value]
+        if(result_169) {(struct sType*)come_decrement_ref_count(result_169,0,0); }
+                        ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:5178:22: warning: incompatible pointer types assigning to 'struct list_item$$1sRightValueObject$ph *' from 'struct list_item$$1sRightValueObject$ph$$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+            litem_174=((struct list_item$$1sRightValueObject$ph$$1sRightValueObject$ph*)(right_value110=(struct list_item$$1sRightValueObject$ph$$1sRightValueObject$ph*)come_calloc(1, sizeof(struct list_item$$1sRightValueObject$ph$$1sRightValueObject$ph)*(1))));
+                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:5183:23: warning: incompatible pointer types assigning to 'struct list_item$p$1sRightValueObject$ph *' from 'struct list_item$$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+            self->tail=litem_174;
+                      ^~~~~~~~~~
+a.c.c:5184:23: warning: incompatible pointer types assigning to 'struct list_item$p$1sRightValueObject$ph *' from 'struct list_item$$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+            self->head=litem_174;
+                      ^~~~~~~~~~
+a.c.c:5192:23: warning: incompatible pointer types assigning to 'struct list_item$p$1sRightValueObject$ph *' from 'struct list_item$$1sRightValueObject$ph$$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+            self->tail=litem_175;
+                      ^~~~~~~~~~
+a.c.c:5193:29: warning: incompatible pointer types assigning to 'struct list_item$p$1sRightValueObject$ph *' from 'struct list_item$$1sRightValueObject$ph$$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+            self->head->next=litem_175;
+                            ^~~~~~~~~~
+a.c.c:5201:29: warning: incompatible pointer types assigning to 'struct list_item$p$1sRightValueObject$ph *' from 'struct list_item$$1sRightValueObject$ph$$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+            self->tail->next=litem_176;
+                            ^~~~~~~~~~
+a.c.c:5202:23: warning: incompatible pointer types assigning to 'struct list_item$p$1sRightValueObject$ph *' from 'struct list_item$$1sRightValueObject$ph$$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+            self->tail=litem_176;
+                      ^~~~~~~~~~
+a.c.c:5181:34: warning: expression result unused [-Wunused-value]
+            if(litem_174->item) {(struct sRightValueObject*)come_decrement_ref_count(litem_174->item,0,0); }
+                                 ^                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:5190:34: warning: expression result unused [-Wunused-value]
+            if(litem_175->item) {(struct sRightValueObject*)come_decrement_ref_count(litem_175->item,0,0); }
+                                 ^                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:5199:34: warning: expression result unused [-Wunused-value]
+            if(litem_176->item) {(struct sRightValueObject*)come_decrement_ref_count(litem_176->item,0,0); }
+                                 ^                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:5223:51: warning: incompatible integer to pointer conversion initializing 'struct list_item$p$1sRightValueObject$ph *' with an expression of type 'int' [-Wint-conversion]
+        struct list_item$p$1sRightValueObject$ph* __result__ = self->it==((void*)0);
+                                                  ^            ~~~~~~~~~~~~~~~~~~~~
+a.c.c:5290:19: warning: incompatible pointer types assigning to 'struct list_item$$1sRightValueObject$ph$$1sRightValueObject$ph *' from 'struct list_item$p$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+            it_185=self->head;
+                  ^~~~~~~~~~~
+a.c.c:5295:27: warning: incompatible pointer types assigning to 'struct list_item$$1sRightValueObject$ph$$1sRightValueObject$ph *' from 'struct list_item$p$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+                    it_185=it_185->next;
+                          ^~~~~~~~~~~~~
+a.c.c:5301:31: warning: incompatible pointer types assigning to 'struct list_item$p$1sRightValueObject$ph *' from 'struct list_item$$1sRightValueObject$ph$$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+                    self->head=it_185;
+                              ^~~~~~~
+a.c.c:5306:27: warning: incompatible pointer types assigning to 'struct list_item$$1sRightValueObject$ph$$1sRightValueObject$ph *' from 'struct list_item$p$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+                    it_185=it_185->next;
+                          ^~~~~~~~~~~~~
+a.c.c:5312:19: warning: incompatible pointer types assigning to 'struct list_item$$1sRightValueObject$ph$$1sRightValueObject$ph *' from 'struct list_item$p$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+            it_188=self->head;
+                  ^~~~~~~~~~~
+a.c.c:5321:27: warning: incompatible pointer types assigning to 'struct list_item$$1sRightValueObject$ph$$1sRightValueObject$ph *' from 'struct list_item$p$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+                    it_188=it_188->next;
+                          ^~~~~~~~~~~~~
+a.c.c:5327:27: warning: incompatible pointer types assigning to 'struct list_item$$1sRightValueObject$ph$$1sRightValueObject$ph *' from 'struct list_item$p$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+                    it_188=it_188->next;
+                          ^~~~~~~~~~~~~
+a.c.c:5333:19: warning: incompatible pointer types assigning to 'struct list_item$$1sRightValueObject$ph$$1sRightValueObject$ph *' from 'struct list_item$p$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+            it_191=self->head;
+                  ^~~~~~~~~~~
+a.c.c:5339:37: warning: incompatible pointer types assigning to 'struct list_item$$1sRightValueObject$ph$$1sRightValueObject$ph *' from 'struct list_item$p$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+                    head_prev_it_192=it_191->prev;
+                                    ^~~~~~~~~~~~~
+a.c.c:5346:27: warning: incompatible pointer types assigning to 'struct list_item$$1sRightValueObject$ph$$1sRightValueObject$ph *' from 'struct list_item$p$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+                    it_191=it_191->next;
+                          ^~~~~~~~~~~~~
+a.c.c:5352:27: warning: incompatible pointer types assigning to 'struct list_item$$1sRightValueObject$ph$$1sRightValueObject$ph *' from 'struct list_item$p$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+                    it_191=it_191->next;
+                          ^~~~~~~~~~~~~
+a.c.c:5357:39: warning: incompatible pointer types assigning to 'struct list_item$p$1sRightValueObject$ph *' from 'struct list_item$$1sRightValueObject$ph$$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+                head_prev_it_192->next=tail_it_193;
+                                      ^~~~~~~~~~~~
+a.c.c:5360:34: warning: incompatible pointer types assigning to 'struct list_item$p$1sRightValueObject$ph *' from 'struct list_item$$1sRightValueObject$ph$$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+                tail_it_193->prev=head_prev_it_192;
+                                 ^~~~~~~~~~~~~~~~~
+a.c.c:5370:23: warning: incompatible pointer types assigning to 'struct list_item$$1sRightValueObject$ph$$1sRightValueObject$ph *' from 'struct list_item$p$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+                it_183=self->head;
+                      ^~~~~~~~~~~
+a.c.c:5373:27: warning: incompatible pointer types assigning to 'struct list_item$$1sRightValueObject$ph$$1sRightValueObject$ph *' from 'struct list_item$p$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+                    it_183=it_183->next;
+                          ^~~~~~~~~~~~~
+a.c.c:5396:75: warning: incompatible pointer types passing 'struct map$$2char$phsFun$ph *' to parameter of type 'struct map$p$2char$phsFun$ph *' [-Wincompatible-pointer-types]
+    come_fun_207=map$$2char$phsFun$phphcharphsFunph_operator_load_element(info->funcs,fun_name_203);
+                                                                          ^~~~~~~~~~~
+a.c.c:1767:108: note: passing argument to parameter 'self' here
+static struct sFun* map$$2char$phsFun$phphcharphsFunph_operator_load_element(struct map$p$2char$phsFun$ph* self, char* key);
+                                                                                                           ^
+a.c.c:5562:161: warning: incompatible pointer types passing 'struct tuple2$$2sFun$pchar$ph *' to parameter of type 'struct tuple2$ph$2sFun$pchar$ph *' [-Wincompatible-pointer-types]
+                struct tuple2$ph$2sFun$pchar$ph* __result__ = ((struct tuple2$ph$2sFun$pchar$ph*)(right_value135=tuple2$$2sFun$pchar$phphsFunpcharph_initialize((struct tuple2$$2sFun$pchar$ph*)come_increment_ref_count(((struct tuple2$$2sFun$pchar$ph*)(right_value134=(struct tuple2$$2sFun$pchar$ph*)come_calloc(1, sizeof(struct tuple2$$2sFun$pchar$ph)*(1))))),self->v1,(char*)come_increment_ref_count(self->v2))));
+                                                                                                                                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:1775:121: note: passing argument to parameter 'self' here
+static struct tuple2$ph$2sFun$pchar$ph* tuple2$$2sFun$pchar$phphsFunpcharph_initialize(struct tuple2$ph$2sFun$pchar$ph* self, struct sFun* v1, char* v2);
+                                                                                                                        ^
+a.c.c:5569:35: warning: expression result unused [-Wunused-value]
+                    if(self->v2) {(char*)come_decrement_ref_count(self->v2,0,0); }
+                                  ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+a.c.c:5623:67: warning: incompatible integer to pointer conversion initializing 'struct list_item$p$1tuple2$$2char$phsType$ph *' with an expression of type 'int' [-Wint-conversion]
+                    struct list_item$p$1tuple2$$2char$phsType$ph* __result__ = self->it==((void*)0);
+                                                                  ^            ~~~~~~~~~~~~~~~~~~~~
+a.c.c:5646:15: warning: incompatible pointer types assigning to 'struct list_item$$1CVALUE$ph *' from 'struct list_item$p$1CVALUE$ph *' [-Wincompatible-pointer-types]
+        it_238=self->head;
+              ^~~~~~~~~~~
+a.c.c:5652:19: warning: incompatible pointer types assigning to 'struct list_item$$1CVALUE$ph *' from 'struct list_item$p$1CVALUE$ph *' [-Wincompatible-pointer-types]
+            it_238=it_238->next;
+                  ^~~~~~~~~~~~~
+a.c.c:5671:15: warning: incompatible pointer types assigning to 'struct list_item$$1sRightValueObject$ph$$1sRightValueObject$ph *' from 'struct list_item$p$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+        it_240=self->head;
+              ^~~~~~~~~~~
+a.c.c:5677:19: warning: incompatible pointer types assigning to 'struct list_item$$1sRightValueObject$ph$$1sRightValueObject$ph *' from 'struct list_item$p$1sRightValueObject$ph *' [-Wincompatible-pointer-types]
+            it_240=it_240->next;
+                  ^~~~~~~~~~~~~
+a.c.c:5686:13: error: void function 'method_block6' should not return a value [-Wreturn-type]
+            return __result__;
+            ^      ~~~~~~~~~~
+a.c.c:5727:13: error: void function 'method_block8' should not return a value [-Wreturn-type]
+            return __result__;
+            ^      ~~~~~~~~~~
+a.c.c:5737:13: error: void function 'method_block10' should not return a value [-Wreturn-type]
+            return __result__;
+            ^      ~~~~~~~~~~
+a.c.c:5747:13: error: void function 'method_block12' should not return a value [-Wreturn-type]
+            return __result__;
+            ^      ~~~~~~~~~~
+a.c.c:5826:37: warning: incompatible integer to pointer conversion initializing 'struct list_item$p$1char$p *' with an expression of type 'int' [-Wint-conversion]
+        struct list_item$p$1char$p* __result__ = self->key_list->it==((void*)0);
+                                    ^            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+348 warnings and 4 errors generated.
+a.c 1214: clang is faield
+a.c 1214: compile faield

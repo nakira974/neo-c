@@ -1,16 +1,10 @@
-# 0 "02transpile.c"
+# 0 "code2/HelloWorld2.c"
 # 0 "<built-in>"
 # 0 "<command-line>"
 # 1 "/usr/include/stdc-predef.h" 1 3 4
 # 0 "<command-line>" 2
-# 1 "02transpile.c"
-# 1 "common.h" 1
-
-
-
-# 1 "/usr/local/include/comelang2.h" 1 3
-
-# 1 "/usr/local/include/comelang2.h" 3
+# 1 "code2/HelloWorld2.c"
+# 1 "./comelang2.h" 1
 using comelang;
 
 struct __builtin_va_list
@@ -69,6 +63,8 @@ void __builtin_va_end(char*);
 
 
 # 1 "/usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h" 1 3 4
+# 214 "/usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h" 3 4
+
 # 214 "/usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h" 3 4
 typedef long unsigned int size_t;
 # 34 "/usr/include/stdio.h" 2 3 4
@@ -915,7 +911,7 @@ extern int __uflow (FILE *);
 extern int __overflow (FILE *, int);
 # 909 "/usr/include/stdio.h" 3 4
 
-# 18 "/usr/local/include/comelang2.h" 2 3
+# 18 "./comelang2.h" 2
 # 1 "/usr/include/string.h" 1 3 4
 # 26 "/usr/include/string.h" 3 4
 # 1 "/usr/include/aarch64-linux-gnu/bits/libc-header-start.h" 1 3 4
@@ -1278,7 +1274,7 @@ extern void *memfrob (void *__s, size_t __n)
 extern char *basename (const char *__filename) ;
 # 539 "/usr/include/string.h" 3 4
 
-# 19 "/usr/local/include/comelang2.h" 2 3
+# 19 "./comelang2.h" 2
 # 1 "/usr/include/stdlib.h" 1 3 4
 # 26 "/usr/include/stdlib.h" 3 4
 # 1 "/usr/include/aarch64-linux-gnu/bits/libc-header-start.h" 1 3 4
@@ -2621,7 +2617,7 @@ extern int getloadavg (double __loadavg[], int __nelem)
 # 1037 "/usr/include/stdlib.h" 2 3 4
 # 1048 "/usr/include/stdlib.h" 3 4
 
-# 20 "/usr/local/include/comelang2.h" 2 3
+# 20 "./comelang2.h" 2
 # 1 "/usr/include/libgen.h" 1 3 4
 # 23 "/usr/include/libgen.h" 3 4
 
@@ -2639,8 +2635,10 @@ extern char *__xpg_basename (char *__path) ;
 
 
 
-# 21 "/usr/local/include/comelang2.h" 2 3
+# 21 "./comelang2.h" 2
 
+
+# 22 "./comelang2.h"
 static inline void xassert(char* msg, bool test)
 {
     printf("%s...", msg);
@@ -2675,7 +2673,11 @@ static void* come_calloc(size_t count, size_t size)
 
 static void* come_increment_ref_count(void* mem)
 {
-    if(mem == ((void *)0)) {
+    if(mem == 
+# 56 "./comelang2.h" 3 4
+             ((void *)0)
+# 56 "./comelang2.h"
+                 ) {
         return mem;
     }
 
@@ -2688,8 +2690,16 @@ static void* come_increment_ref_count(void* mem)
 
 static void* come_decrement_ref_count(void* mem, bool no_decrement, bool no_free)
 {
-    if(mem == ((void *)0)) {
-        return ((void *)0);
+    if(mem == 
+# 69 "./comelang2.h" 3 4
+             ((void *)0)
+# 69 "./comelang2.h"
+                 ) {
+        return 
+# 70 "./comelang2.h" 3 4
+              ((void *)0)
+# 70 "./comelang2.h"
+                  ;
     }
 
     int* ref_count = (int*)((char*)mem - sizeof(int) - sizeof(long));
@@ -2701,7 +2711,11 @@ static void* come_decrement_ref_count(void* mem, bool no_decrement, bool no_free
     int count = *ref_count;
     if(!no_free && count <= 0) {
         ncfree(ref_count);
-        return ((void *)0);
+        return 
+# 82 "./comelang2.h" 3 4
+              ((void *)0)
+# 82 "./comelang2.h"
+                  ;
     }
 
     return mem;
@@ -2709,7 +2723,11 @@ static void* come_decrement_ref_count(void* mem, bool no_decrement, bool no_free
 
 static void come_free_object(void* mem)
 {
-    if(mem == ((void *)0)) {
+    if(mem == 
+# 90 "./comelang2.h" 3 4
+             ((void *)0)
+# 90 "./comelang2.h"
+                 ) {
         return;
     }
 
@@ -2720,7 +2738,11 @@ static void come_free_object(void* mem)
 
 static void call_finalizer(void* fun, void* mem, int call_finalizer_only, int no_decrement, int no_free)
 {
-    if(mem == ((void *)0)) {
+    if(mem == 
+# 101 "./comelang2.h" 3 4
+             ((void *)0)
+# 101 "./comelang2.h"
+                 ) {
         return;
     }
 
@@ -3353,6 +3375,18 @@ static inline string char*::operator_add(char* self, char* right)
     return result;
 }
 
+static inline string string::operator_add(char* self, char* right)
+{
+    int len = strlen(self) + strlen(right);
+
+    char*% result = new char[len+1];
+
+    strncpy(result, self, len+1);
+    strncat(result, right, len+1);
+
+    return result;
+}
+
 struct map<T, T2>
 {
     T*& keys;
@@ -3509,7 +3543,11 @@ impl map <T, T2>
                         n = 0;
                     }
                     else if(n == hash) {
-                        fprintf(stderr, "unexpected error in map.rehash(1)\n");
+                        fprintf(
+# 902 "./comelang2.h" 3 4
+                               stderr
+# 902 "./comelang2.h"
+                                     , "unexpected error in map.rehash(1)\n");
                         exit(2);
                     }
                 }
@@ -3573,7 +3611,11 @@ impl map <T, T2>
                     it = 0;
                 }
                 else if(it == hash) {
-                    fprintf(stderr, "unexpected error in map.insert\n");
+                    fprintf(
+# 966 "./comelang2.h" 3 4
+                           stderr
+# 966 "./comelang2.h"
+                                 , "unexpected error in map.insert\n");
                     exit(2);
                 }
             }
@@ -3647,7 +3689,11 @@ impl map <T, T2>
                     it = 0;
                 }
                 else if(it == hash) {
-                    fprintf(stderr, "unexpected error in map.insert\n");
+                    fprintf(
+# 1040 "./comelang2.h" 3 4
+                           stderr
+# 1040 "./comelang2.h"
+                                 , "unexpected error in map.insert\n");
                     exit(2);
                 }
             }
@@ -4092,13 +4138,37 @@ static inline buffer*% string::to_buffer(char* self)
 static inline string xsprintf(char* msg, ...)
 {
     va_list args;
-    __builtin_va_start(args,msg);
+    
+# 1485 "./comelang2.h" 3 4
+   __builtin_va_start(
+# 1485 "./comelang2.h"
+   args
+# 1485 "./comelang2.h" 3 4
+   ,
+# 1485 "./comelang2.h"
+   msg
+# 1485 "./comelang2.h" 3 4
+   )
+# 1485 "./comelang2.h"
+                      ;
     char* result;
     int len = vasprintf(&result, msg, args);
-    __builtin_va_end(args);
+    
+# 1488 "./comelang2.h" 3 4
+   __builtin_va_end(
+# 1488 "./comelang2.h"
+   args
+# 1488 "./comelang2.h" 3 4
+   )
+# 1488 "./comelang2.h"
+               ;
 
     if(len < 0) {
-        fprintf(stderr, "vasprintf can't get heap memory.(msg %s)\n", msg);
+        fprintf(
+# 1491 "./comelang2.h" 3 4
+               stderr
+# 1491 "./comelang2.h"
+                     , "vasprintf can't get heap memory.(msg %s)\n", msg);
         exit(2);
     }
 
@@ -4124,9 +4194,21 @@ static inline list<string>*% FILE::readlines(FILE* f)
     list<string>*% result = new list<string>.initialize();
 
     while(1) {
-        char buf[8192];
+        char buf[
+# 1517 "./comelang2.h" 3 4
+                8192
+# 1517 "./comelang2.h"
+                      ];
 
-        if(fgets(buf, 8192, f) == ((void *)0)) {
+        if(fgets(buf, 
+# 1519 "./comelang2.h" 3 4
+                     8192
+# 1519 "./comelang2.h"
+                           , f) == 
+# 1519 "./comelang2.h" 3 4
+                                   ((void *)0)
+# 1519 "./comelang2.h"
+                                       ) {
             break;
         }
 
@@ -4141,13 +4223,25 @@ static inline string FILE::read(FILE* f)
     buffer*% buf = new buffer.initialize();
 
     while(1) {
-        char buf2[8192];
+        char buf2[
+# 1534 "./comelang2.h" 3 4
+                 8192
+# 1534 "./comelang2.h"
+                       ];
 
-        int size = fread(buf2, 1, 8192, f);
+        int size = fread(buf2, 1, 
+# 1536 "./comelang2.h" 3 4
+                                 8192
+# 1536 "./comelang2.h"
+                                       , f);
 
         buf.append(buf2, size);
 
-        if(size < 8192) {
+        if(size < 
+# 1540 "./comelang2.h" 3 4
+                 8192
+# 1540 "./comelang2.h"
+                       ) {
             break;
         }
     }
@@ -4160,13 +4254,25 @@ static inline string FILE*::read(FILE* f)
     buffer*% buf = new buffer.initialize();
 
     while(1) {
-        char buf2[8192];
+        char buf2[
+# 1553 "./comelang2.h" 3 4
+                 8192
+# 1553 "./comelang2.h"
+                       ];
 
-        int size = fread(buf2, 1, 8192, f);
+        int size = fread(buf2, 1, 
+# 1555 "./comelang2.h" 3 4
+                                 8192
+# 1555 "./comelang2.h"
+                                       , f);
 
         buf.append(buf2, size);
 
-        if(size < 8192) {
+        if(size < 
+# 1559 "./comelang2.h" 3 4
+                 8192
+# 1559 "./comelang2.h"
+                       ) {
             break;
         }
     }
@@ -4179,9 +4285,29 @@ static inline FILE* FILE::fprintf(FILE* f, const char* msg, ...)
     char msg2[1024];
 
     va_list args;
-    __builtin_va_start(args,msg);
+    
+# 1572 "./comelang2.h" 3 4
+   __builtin_va_start(
+# 1572 "./comelang2.h"
+   args
+# 1572 "./comelang2.h" 3 4
+   ,
+# 1572 "./comelang2.h"
+   msg
+# 1572 "./comelang2.h" 3 4
+   )
+# 1572 "./comelang2.h"
+                      ;
     vsnprintf(msg2, 1024, msg, args);
-    __builtin_va_end(args);
+    
+# 1574 "./comelang2.h" 3 4
+   __builtin_va_end(
+# 1574 "./comelang2.h"
+   args
+# 1574 "./comelang2.h" 3 4
+   )
+# 1574 "./comelang2.h"
+               ;
 
     (void)fprintf(f, "%s", msg2);
 
@@ -4193,9 +4319,29 @@ static inline FILE* FILE*::fprintf(FILE* f, const char* msg, ...)
     char msg2[1024];
 
     va_list args;
-    __builtin_va_start(args,msg);
+    
+# 1586 "./comelang2.h" 3 4
+   __builtin_va_start(
+# 1586 "./comelang2.h"
+   args
+# 1586 "./comelang2.h" 3 4
+   ,
+# 1586 "./comelang2.h"
+   msg
+# 1586 "./comelang2.h" 3 4
+   )
+# 1586 "./comelang2.h"
+                      ;
     vsnprintf(msg2, 1024, msg, args);
-    __builtin_va_end(args);
+    
+# 1588 "./comelang2.h" 3 4
+   __builtin_va_end(
+# 1588 "./comelang2.h"
+   args
+# 1588 "./comelang2.h" 3 4
+   )
+# 1588 "./comelang2.h"
+               ;
 
     (void)fprintf(f, "%s", msg2);
 
@@ -4529,1333 +4675,388 @@ static inline bool xiswascii(wchar_t c)
     bool result = (c >= ' ' && c <= '~');
     return result;
 }
-# 5 "common.h" 2
 
-
-# 6 "common.h"
-using unsafe;
-using no-null-check;
-
-
-
-
-
-extern bool gComelang;
-extern bool gGC;
-
-struct sType;
-
-struct sClass {
-    bool mStruct;
-    bool mFloat;
-    bool mUnion;
-    bool mGenerics;
-    bool mMethodGenerics;
-    bool mEnum;
-    bool mProtocol;
-    bool mNumber;
-
-    string mName;
-
-    int mGenericsNum;
-    int mMethodGenericsNum;
-
-    list<tuple2<string, sType*%>*%>*% mFields;
-
-    bool mOutputed;
-};
-
-struct sInfo;
-
-interface sNode {
-    bool compile(sInfo* info);
-    int sline();
-    string sname();
-};
-
-struct sType
+static inline string string::read(char* file_name)
 {
-    sClass* mClass;
+    FILE* f = fopen(file_name, "r");
 
-    string mGenericsName;
+    if(f == 
+# 1927 "./comelang2.h" 3 4
+           ((void *)0)
+# 1927 "./comelang2.h"
+               ) {
+        return string("");
+    }
 
-    list<sType*%>*% mGenericsTypes;
+    string result = f.read();
 
-    list<sNode*%>*% mArrayNum;
-    bool mOmitArrayNum;
+    f.fclose()
 
-    list<sType*%>*% mParamTypes;
-    list<string>*% mParamNames;
-    tuple1<sType*%>*% mResultType;
-    bool mVarArgs;
-
-    bool mUnsigned;
-    bool mShort;
-    bool mLong;
-    bool mLongLong;
-    bool mConstant;
-    bool mRegister;
-    bool mVolatile;
-    bool mStatic;
-    bool mExtern;
-    bool mRestrict;
-    bool mImmutable;
-    bool mHeap;
-    bool mDummyHeap;
-    bool mNoHeap;
-    bool mRefference;
-    bool mException;
-
-    int mPointerNum;
-    int mNoArrayPointerNum;
-    int mSizeNum;
-
-    unsigned int mDynamicArrayNum;
-    unsigned int mTypeOfExpression;
-
-    string mOriginalTypeName;
-    int mOriginalPointerNum;
-
-    bool mFunctionParam;
-    bool mAllocaValue;
-    bool mGenericsStruct;
-    bool mSolvedGenericsName;
-
-    bool mInline;
-};
-
-struct sVar;
-
-struct CVALUE {
-    string c_value;
-    sType*% type;
-    sVar* var;
-};
-
-struct sVar {
-    string mName;
-    string mCValueName;
-    sType*% mType;
-
-    int mBlockLevel;
-
-    bool mGlobal;
-    bool mAllocaValue;
-    bool mFunctionParam;
-    bool mNoFree;
-};
-
-struct sVarTable;
-
-struct sBlock;
-
-struct sFun
-{
-    string mName;
-
-    sType*% mResultType;
-    list<sType*%>*% mParamTypes;
-    list<string>*% mParamNames;
-    list<string>*% mParamDefaultParametors;
-
-    sType*% mLambdaType;
-
-    sBlock*% mBlock;
-
-    bool mExternal;
-    bool mVarArgs;
-
-    buffer*% mSource;
-    buffer*% mSourceHead;
-    buffer*% mSourceHead2;
-    buffer*% mSourceDefer;
-
-    bool mStatic;
-
-    string mComeHeader;
-};
-
-struct sGenericsFun
-{
-    sType*% mImplType;
-    list<string>*% mGenericsTypeNames;
-
-    string mName;
-
-    sType*% mResultType;
-    list<sType*%>*% mParamTypes;
-    list<string%>*% mParamNames;
-
-    string mBlock;
-    int mSLine;
-
-    bool mVarArgs;
-};
-
-struct sModule
-{
-    buffer*% mSourceHead;
-    buffer*% mSource;
-    string mLastCode;
-};
-
-struct sVarTable;
-
-struct sVarTable {
-    map<string, sVar*%>*% mVars;
-    bool mGlobal;
-    struct sVarTable* mParent;
-    int mID;
-};
-
-struct sBlock
-{
-    list<sNode*%>*% mNodes;
-    sVarTable*% mVarTable;
-};
-
-struct sRightValueObject
-{
-    sType*% mType;
-    string mVarName;
-    string mFunName;
-    bool mFreed;
-    int mID;
-    int mBlockLevel;
-};
-
-struct sInfo
-{
-    char* p;
-    char* head;
-    buffer*% source;
-    string sname;
-    int sline;
-    int err_num;
-    string clang_option;
-    bool no_output_err;
-    bool no_output_come_code;
-
-    sFun* come_fun;
-    int block_level;
-
-    map<string, sFun*%>*% funcs;
-    map<string, sGenericsFun*%>*% generics_funcs;
-    map<string, sClass*%>*% classes;
-    map<string, sType*%>*% types;
-    map<string, sClass*%>*% generics_classes;
-    sModule*% module;
-
-    sType*% type;
-
-    list<sRightValueObject*%>*% right_value_objects;
-
-    sType*% generics_type;
-    list<sType*%>*% method_generics_types;
-
-    list<CVALUE*%>*% stack;
-
-    sType*% come_function_result_type;
-
-    sVarTable* lv_table;
-    sVarTable*% gv_table;
-
-    bool no_comma;
-    bool last_statment_is_return;
-
-    list<string>*% generics_type_names;
-    sType*% impl_type;
-
-    int current_stack_num;
-    int num_method_block;
-    sClass* current_stack_frame_struct;
-    list<sType*%>*? param_types;
-    list<string>*? param_names;
-
-    bool define_struct;
-    bool in_typedef;
-};
-
-
-
-
-int come_main(int argc, char** argv) version 1;
-
-
-
-
-int come_main(int argc, char** argv) version 2;
-void come_init() version 2;
-void come_final() version 2;
-void err_msg(sInfo* info, char* msg, ...);
-exception int transpile(sInfo* info) version 2;
-bool output_source_file(sInfo* info) version 2;
-sModule*% sModule*::initialize(sModule*% self);
-sType*% sType*::initialize(sType*% self, char* name, sInfo* info, bool heap=false);
-sVarTable*% sVarTable*::initialize(sVarTable*% self, bool global, sVarTable* parent);
-void sVarTable*::finalize(sVarTable* self);
-sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool union_=false, bool generics=false, bool method_generics=false, bool protocol_=false, bool struct_=false, bool float_=false, int generics_num=-1, int method_generics_num=-1, bool enum_=false);
-sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, list<string>*% param_default_parametors, bool external, bool var_args, sBlock*% block, bool static_, string come_header, sInfo* info);
-string make_type_name_string(sType* type, bool in_header, bool array_cast_pointer, sInfo* info, bool no_pointer=false);
-string make_come_type_name_string(sType* type, sInfo* info);
-
-
-
-
-void come_init() version 3;
-void come_final() version 3;
-
-string header_function(sFun* fun, sInfo* info);
-exception int transpile(sInfo* info) version 3;
-bool output_source_file(sInfo* info) version 3;
-void show_type(sType* type, sInfo* info);
-string create_generics_name(sType* generics_type, sInfo* info);
-void add_last_code_to_source(sInfo* info);
-void add_come_code_at_function_head(sInfo* info, char* code, ...);
-void add_come_code_at_function_head2(sInfo* info, char* code, ...);
-void add_come_code_at_source_head(sInfo* info, const char* msg, ...);
-void add_come_code(sInfo* info, const char* msg, ...);
-void add_come_last_code(sInfo* info, const char* msg, ...);
-void add_last_code_to_source_without_semicolon(sInfo* info);
-void dec_stack_ptr(int value, sInfo* info);
-CVALUE*% get_value_from_stack(int offset, sInfo* info);
-string make_define_var(sType* type, char* name, sInfo* info, bool in_header=false);
-string make_come_define_var(sType* type, char* name, sInfo* info);
-void transpiler_clear_last_code(sInfo* info);
-
-
-
-
-bool create_equals_method(sType* type, sInfo* info);
-bool create_operator_equals_method(sType* type, sInfo* info);
-bool create_operator_not_equals_method(sType* type, sInfo* info);
-exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info);
-sVar* get_variable_from_table(sVarTable* table, char* name);
-void free_objects_on_return(sBlock* current_block, sInfo* info, char* ret_value, bool top_block);
-void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo* info);
-string clone_object(sType* type, char* obj, sInfo* info);
-void free_right_value_objects(sInfo* info);
-void free_objects(sVarTable* table, char* ret_value, sInfo* info);
-string append_object_to_right_values(char* obj, sType*% type, sInfo* info);
-bool is_right_values(int right_value_num, sInfo* info);
-int get_right_value_id_from_obj(string obj);
-void remove_object_from_right_values(int right_value_num, sInfo* info);
-string increment_ref_count_object(sType* type, char* obj, sInfo* info);
-void decrement_ref_count_object(sType* type, char* obj, sInfo* info);
-
-
-
-
-exception sNode*% post_position_operator3(sNode*% node, sInfo* info) version 5;
-exception list<sType*%>*%, list<string>*%, list<string>*%, bool parse_params(sInfo* info);
-exception sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sInfo* info);
-exception sFun*,string create_cloner_automatically(sType* type, char* fun_name, sInfo* info);
-exception sFun*,string create_equals_automatically(sType* type, char* fun_name, sInfo* info);
-exception sFun*,string create_operator_equals_automatically(sType* type, char* fun_name, sInfo* info);
-exception sFun*,string create_operator_not_equals_automatically(sType* type, char* fun_name, sInfo* info);
-exception string skip_block(sInfo* info);
-bool is_contained_generics_class(sType* type, sInfo* info);
-bool is_type_name(char* buf, sInfo* info);
-bool parsecmp(char* str, sInfo* info);
-exception string parse_word(sInfo* info, bool no_check_err=false);
-void skip_spaces_and_lf(sInfo* info);
-exception int expected_next_character(char c, sInfo* info);
-sBlock*% sBlock*::initialize(sBlock*% self, sInfo* info);
-bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* generics_type, sInfo* info);
-
-exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_name=false, bool parse_multiple_type=true);
-exception sBlock*% parse_block(sInfo* info, bool no_block_level=false);
-exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<string>*? param_names, sInfo* info, bool no_var_table=false);
-void arrange_stack(sInfo* info, int top);
-exception int expected_next_character(char c, sInfo* info);
-exception sNode*% parse_function(sInfo* info);
-
-exception sNode*% expression(sInfo* info) version 5;
-exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 1;
-exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 99;
-exception sNode*% expression_node(sInfo* info) version 1;
-exception sNode*% expression_node(sInfo* info) version 99;
-
-exception int transpile(sInfo* info) version 5;
-void parse_sharp(sInfo* info) version 5;
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 5;
-exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 5;
-string create_method_name(sType* obj_type, bool no_pointer_name, char* fun_name, sInfo* info);
-
-
-
-
-exception sNode*% expression_node(sInfo* info) version 98;
-exception sNode*% parse_tuple(sInfo* info);
-
-
-
-
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 7;
-void add_variable_to_table(char* name, sType* type, sInfo* info);
-void add_variable_to_global_table(char* name, sType* type, sInfo* info);
-
-
-
-
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 8;
-
-
-
-
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 9;
-
-
-
-
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 10;
-
-
-
-
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 11;
-
-
-
-
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 12;
-
-
-
-
-bool operator_overload_fun(sType* type, char* fun_name, CVALUE* left_value, CVALUE* right_value, sInfo* info);
-exception sNode*% expression(sInfo* info) version 13;
-exception sNode*% post_op(sNode*% node, sInfo* info) version 13;
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 13;
-
-
-
-
-exception sNode*% parse_struct(string type_name, sInfo* info);
-string get_none_generics_name(char* class_name);
-exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 98;
-bool output_generics_struct(sType* type, sInfo* info);
-void output_struct(sClass* klass, sInfo* info);
-
-
-
-
-exception sNode*% parse_union(string type_name, sInfo* info);
-exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 97;
-
-
-
-
-exception sNode*% parse_enum(string type_name, sInfo* info);
-exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 96;
-
-
-
-
-exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 95;
-
-
-
-
-exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 18;
-exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 18;
-exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) version 18;
-
-
-
-
-exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 19;
-
-
-
-
-exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) version 20;
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 20;
-exception sNode*% post_position_operator3(sNode*% node, sInfo* info) version 20;
-
-
-
-
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 21;
-exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 94;
-exception sNode*% post_position_operator3(sNode*% node, sInfo* info) version 21;
-
-
-
-
-
-exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 93;
-
-
-
-
-exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 92;
-# 2 "02transpile.c" 2
-# 1 "/usr/include/dirent.h" 1 3 4
-# 27 "/usr/include/dirent.h" 3 4
-
-# 61 "/usr/include/dirent.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/dirent.h" 1 3 4
-# 22 "/usr/include/aarch64-linux-gnu/bits/dirent.h" 3 4
-
-# 22 "/usr/include/aarch64-linux-gnu/bits/dirent.h" 3 4
-struct dirent
-  {
-
-    __ino_t d_ino;
-    __off_t d_off;
-
-
-
-
-    unsigned short int d_reclen;
-    unsigned char d_type;
-    char d_name[256];
-  };
-
-
-struct dirent64
-  {
-    __ino64_t d_ino;
-    __off64_t d_off;
-    unsigned short int d_reclen;
-    unsigned char d_type;
-    char d_name[256];
-  };
-# 62 "/usr/include/dirent.h" 2 3 4
-# 97 "/usr/include/dirent.h" 3 4
-enum
-  {
-    DT_UNKNOWN = 0,
-
-    DT_FIFO = 1,
-
-    DT_CHR = 2,
-
-    DT_DIR = 4,
-
-    DT_BLK = 6,
-
-    DT_REG = 8,
-
-    DT_LNK = 10,
-
-    DT_SOCK = 12,
-
-    DT_WHT = 14
-
-  };
-# 127 "/usr/include/dirent.h" 3 4
-typedef struct __dirstream DIR;
-
-
-
-
-
-
-extern int closedir (DIR *__dirp) ;
-
-
-
-
-
-
-extern DIR *opendir (const char *__name)
- ;
-
-
-
-
-
-
-extern DIR *fdopendir (int __fd)
- ;
-# 164 "/usr/include/dirent.h" 3 4
-extern struct dirent *readdir (DIR *__dirp) ;
-# 175 "/usr/include/dirent.h" 3 4
-extern struct dirent64 *readdir64 (DIR *__dirp) ;
-# 185 "/usr/include/dirent.h" 3 4
-extern int readdir_r (DIR *restrict __dirp,
-        struct dirent *restrict __entry,
-        struct dirent **restrict __result)
-     ;
-# 203 "/usr/include/dirent.h" 3 4
-extern int readdir64_r (DIR *restrict __dirp,
-   struct dirent64 *restrict __entry,
-   struct dirent64 **restrict __result)
-  ;
-
-
-
-
-extern void rewinddir (DIR *__dirp) ;
-
-
-
-
-
-extern void seekdir (DIR *__dirp, long int __pos) ;
-
-
-extern long int telldir (DIR *__dirp) ;
-
-
-
-
-
-extern int dirfd (DIR *__dirp) ;
-# 235 "/usr/include/dirent.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/posix1_lim.h" 1 3 4
-# 27 "/usr/include/aarch64-linux-gnu/bits/posix1_lim.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/wordsize.h" 1 3 4
-# 28 "/usr/include/aarch64-linux-gnu/bits/posix1_lim.h" 2 3 4
-# 161 "/usr/include/aarch64-linux-gnu/bits/posix1_lim.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/local_lim.h" 1 3 4
-# 38 "/usr/include/aarch64-linux-gnu/bits/local_lim.h" 3 4
-# 1 "/usr/include/linux/limits.h" 1 3 4
-# 39 "/usr/include/aarch64-linux-gnu/bits/local_lim.h" 2 3 4
-# 81 "/usr/include/aarch64-linux-gnu/bits/local_lim.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/pthread_stack_min-dynamic.h" 1 3 4
-# 23 "/usr/include/aarch64-linux-gnu/bits/pthread_stack_min-dynamic.h" 3 4
-
-extern long int __sysconf (int __name) ;
-
-# 82 "/usr/include/aarch64-linux-gnu/bits/local_lim.h" 2 3 4
-# 162 "/usr/include/aarch64-linux-gnu/bits/posix1_lim.h" 2 3 4
-# 236 "/usr/include/dirent.h" 2 3 4
-# 247 "/usr/include/dirent.h" 3 4
-# 1 "/usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h" 1 3 4
-# 248 "/usr/include/dirent.h" 2 3 4
-# 257 "/usr/include/dirent.h" 3 4
-extern int scandir (const char *restrict __dir,
-      struct dirent ***restrict __namelist,
-      int (*__selector) (const struct dirent *),
-      int (*__cmp) (const struct dirent **,
-      const struct dirent **))
-     ;
-# 280 "/usr/include/dirent.h" 3 4
-extern int scandir64 (const char *restrict __dir,
-        struct dirent64 ***restrict __namelist,
-        int (*__selector) (const struct dirent64 *),
-        int (*__cmp) (const struct dirent64 **,
-        const struct dirent64 **))
-     ;
-# 295 "/usr/include/dirent.h" 3 4
-extern int scandirat (int __dfd, const char *restrict __dir,
-        struct dirent ***restrict __namelist,
-        int (*__selector) (const struct dirent *),
-        int (*__cmp) (const struct dirent **,
-        const struct dirent **))
-     ;
-# 317 "/usr/include/dirent.h" 3 4
-extern int scandirat64 (int __dfd, const char *restrict __dir,
-   struct dirent64 ***restrict __namelist,
-   int (*__selector) (const struct dirent64 *),
-   int (*__cmp) (const struct dirent64 **,
-          const struct dirent64 **))
-     ;
-
-
-
-
-extern int alphasort (const struct dirent **__e1,
-        const struct dirent **__e2)
-     ;
-# 342 "/usr/include/dirent.h" 3 4
-extern int alphasort64 (const struct dirent64 **__e1,
-   const struct dirent64 **__e2)
-     ;
-# 355 "/usr/include/dirent.h" 3 4
-extern __ssize_t getdirentries (int __fd, char *restrict __buf,
-    size_t __nbytes,
-    __off_t *restrict __basep)
-     ;
-# 372 "/usr/include/dirent.h" 3 4
-extern __ssize_t getdirentries64 (int __fd, char *restrict __buf,
-      size_t __nbytes,
-      __off64_t *restrict __basep)
-     ;
-
-
-
-
-
-
-extern int versionsort (const struct dirent **__e1,
-   const struct dirent **__e2)
-     ;
-# 398 "/usr/include/dirent.h" 3 4
-extern int versionsort64 (const struct dirent64 **__e1,
-     const struct dirent64 **__e2)
-     ;
-
-
-
-
-
-# 1 "/usr/include/aarch64-linux-gnu/bits/dirent_ext.h" 1 3 4
-# 23 "/usr/include/aarch64-linux-gnu/bits/dirent_ext.h" 3 4
-
-
-
-
-
-
-extern __ssize_t getdents64 (int __fd, void *__buffer, size_t __length)
-  ;
-
-
-
-# 407 "/usr/include/dirent.h" 2 3 4
-# 3 "02transpile.c" 2
-
-
-# 4 "02transpile.c"
-bool gComelang;
-bool gGC;
-
-void come_init() version 2
-{
-    gComelang = false;
-    gGC = false;
+    return result;
 }
 
-void come_final() version 2
+static inline string char*::read(char* file_name)
 {
+    FILE* f = fopen(file_name, "r");
+
+    if(f == 
+# 1942 "./comelang2.h" 3 4
+           ((void *)0)
+# 1942 "./comelang2.h"
+               ) {
+        return string("");
+    }
+
+    string result = f.read();
+
+    f.fclose()
+
+    return result;
 }
 
-void err_msg(sInfo* info, char* msg, ...)
+static inline void bool::expect(bool self, void* parent, void (*block)(void* parent))
 {
-    if(!info.no_output_err) {
-        char msg2[2048];
+    if(!self) {
+        block(parent);
+    }
+}
+# 2 "code2/HelloWorld2.c" 2
 
-        va_list args;
-        
-# 23 "02transpile.c" 3 4
-       __builtin_va_start(
-# 23 "02transpile.c"
-       args
-# 23 "02transpile.c" 3 4
-       ,
-# 23 "02transpile.c"
-       msg
-# 23 "02transpile.c" 3 4
-       )
-# 23 "02transpile.c"
-                          ;
-        vsnprintf(msg2, 2048, msg, args);
-        
-# 25 "02transpile.c" 3 4
-       __builtin_va_end(
-# 25 "02transpile.c"
-       args
-# 25 "02transpile.c" 3 4
-       )
-# 25 "02transpile.c"
-                   ;
+struct sData
+{
+    char*% a;
+};
 
-        fprintf(
-# 27 "02transpile.c" 3 4
-               stderr
-# 27 "02transpile.c"
-                     , "%s %d: %s\n", info.sname, info.sline, msg2);
-        info.err_num++;
+int*% funHeap(int x, int y)
+{
+    int*% result = new int;
+
+    *result = x + y;
+
+    return result;
+}
+
+int funHeap2(int*% x, int*% y)
+{
+    return *x + *y;
+}
+
+impl int*
+{
+    int fun(int* self) {
+        return *self;
     }
 }
 
-exception int transpile(sInfo* info) version 2
+interface IA
 {
-    return 0;
-}
+    int fun(int a, int b);
+};
 
-bool output_source_file(sInfo* info) version 2
+struct sDataA
 {
-    string output_file_name = xsprintf("%s.c", info.sname);
+    int a;
+    int b;
+};
 
-
-    string("int main(int argc, char** argv) { return 0; }\n").write(output_file_name);
-
-    return true;
-}
-
-static bool cpp(sInfo* info)
+sDataA*% sDataA*::initialize(sDataA*% self, int a, int b)
 {
-    string input_file_name = info.sname;
-    string output_file_name = xsprintf("%s.i", info.sname);
-
-    buffer*% include_files = new buffer();
-
-    DIR* dir = opendir(".");
-
-    if(dir == null) {
-        return false;
-    }
-
-    struct dirent* entry;
-    while(entry = readdir(dir)) {
-        string ext = xextname(entry->d_name);
-        string dname = xdirname(entry->d_name);
-
-        if(ext === "ach" && entry->d_name !== xsprintf("%s.ach", info.sname) && dname === "")
-        {
-            include_files.append_str(xsprintf("-include %s ", entry->d_name));
-        }
-    }
-
-    closedir(dir);
-
-    char cmd[1024];
-
-
-
-    snprintf(cmd, 1024, "cpp -I. -U__GNUC__ %s %s > %s", include_files.to_string(), input_file_name, output_file_name);
-
-    puts(cmd);
-
-    int rc = system(cmd);
-    if(rc != 0) {
-        char cmd[1024];
-        snprintf(cmd, 1024, "cpp %s -I. -C %s > %s", include_files.to_string(), input_file_name, output_file_name);
-
-        puts(cmd);
-        rc = system(cmd);
-
-        if(rc != 0) {
-            fprintf(
-# 90 "02transpile.c" 3 4
-                   stderr
-# 90 "02transpile.c"
-                         , "failed to cpp(2) (%s)\n", cmd);
-            exit(5);
-        }
-    }
-
-    return true;
-}
-
-static bool compile(sInfo* info, bool output_object_file, list<string>* object_files)
-{
-    string noextname = xnoextname(info.sname);
-    string output_file_name = noextname + ".o";
-
-    string input_file_name = xsprintf("%s.c", info.sname);
-
-    var command = xsprintf("clang -o %s -c %s %s", output_file_name, input_file_name, info.clang_option);
-
-    puts(command);
-    int rc = system(command);
-
-    if(rc != 0) {
-        err_msg(info, "clang is faield");
-        return false;
-    }
-
-    if(!output_object_file) {
-        object_files.push_back(string(output_file_name));
-    }
-
-    return true;
-}
-
-static bool linker(sInfo* info, list<string>* object_files)
-{
-    string output_file_name = xnoextname(info.sname);
-
-    var command = new buffer();
-
-    command.append_str(xsprintf("clang -o %s %s ", output_file_name, info.clang_option));
-
-    
-# 130 "02transpile.c" 3
-   for(var 
-# 130 "02transpile.c"
-   it 
-# 130 "02transpile.c" 3
-   = (
-# 130 "02transpile.c"
-   object_files
-# 130 "02transpile.c" 3
-   ).begin(); !(
-# 130 "02transpile.c"
-   object_files
-# 130 "02transpile.c" 3
-   ).end(); 
-# 130 "02transpile.c"
-   it 
-# 130 "02transpile.c" 3
-   = (
-# 130 "02transpile.c"
-   object_files
-# 130 "02transpile.c" 3
-   ).next()) 
-# 130 "02transpile.c"
-                             {
-        command.append_str(xsprintf("%s ", it));
-    }
-
-    int rc = system(command.to_string());
-
-    if(rc != 0) {
-        err_msg(info, "clang is faield");
-        return false;
-    }
-
-    return true;
-}
-
-sModule*% sModule*::initialize(sModule*% self)
-{
-    self.mSourceHead = new buffer();
-    self.mSource = new buffer();
-    self.mLastCode = null;
+    self.a = a;
+    self.b = b;
 
     return self;
 }
 
-sVarTable*% sVarTable*::initialize(sVarTable*% self, bool global, sVarTable* parent)
+int sDataA*::fun(sDataA* self, int a, int b)
 {
-    self.mVars = new map<string, sVar*%>();
-    self.mGlobal = global;
-    self.mParent = parent;
-    static int id = 0;
-    self.mID = ++id;
-
-    return self;
+    return self.a + self.b + a + b;
 }
 
-void sVarTable*::finalize(sVarTable* self)
+void fun_default_parametor(int x=1, int y=2)
 {
-    delete borrow self.mVars;
+    xassert("default parametor", x == 1 && y == 2);
 }
 
-sType*% sType*::initialize(sType*% self, char* name, sInfo* info, bool heap=false)
+exception int fun_exception(int x, int y)
 {
-    int pointer_num = 0;
-    char* p = name;
-    while(*p) {
-        if(xisalpha(*p)) {
-            p++;
-        }
-        else {
-            break;
-        }
-    }
-    while(*p == '*') {
-        pointer_num++;
-        p++;
-    }
-    string name2 = string(name).substring(0, -pointer_num-1);
-    sClass* klass = info.classes[name2];
-    sClass* generics_class = info.generics_classes[name2]
-
-    if(klass == null && generics_class == null) {
-        err_msg(info, "class not found(%s)(1)\n", name2);
-    }
-    if(klass) {
-        self.mClass = klass;
-    }
-    else {
-        self.mClass = borrow clone generics_class;
-    }
-
-    self.mGenericsTypes = new list<sType*%>();
-    self.mArrayNum = new list<sNode*%>();
-    self.mOmitArrayNum = false;
-    self.mParamTypes = new list<sType*%>();
-    self.mParamNames = new list<string>();
-    self.mVarArgs = false;
-    self.mResultType = null;
-    self.mUnsigned = false;
-    self.mConstant = false;
-    self.mRegister = false;
-    self.mVolatile = false;
-    self.mStatic = false;
-    self.mRestrict = false;
-    self.mImmutable = false;
-    self.mLongLong = false;
-    self.mHeap = heap;
-    self.mDummyHeap = false;
-    self.mNoHeap = false;
-    self.mRefference = false;
-
-    self.mPointerNum = pointer_num;
-    self.mNoArrayPointerNum = 0;
-    self.mSizeNum = 0;
-
-    self.mDynamicArrayNum = 0;
-    self.mTypeOfExpression = 0;
-
-    self.mOriginalTypeName = string("");
-    self.mOriginalPointerNum = 0;
-
-    self.mFunctionParam = false;
-
-    return self;
+    return x+y;
 }
 
-sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool union_=false, bool generics=false, bool method_generics=false, bool protocol_=false, bool struct_=false, bool float_=false, int generics_num=-1, int method_generics_num=-1, bool enum_=false)
+int main()
 {
-    self.mNumber = number;
-    self.mStruct = struct_;
-    self.mUnion = union_;
-    self.mGenerics = generics;
-    self.mMethodGenerics = method_generics;
-    self.mEnum = false;
-    self.mProtocol = protocol_;
-    self.mFloat = float_;
-    self.mEnum = enum_;
-
-    self.mName = string(name);
-
-    self.mGenericsNum = generics_num;
-    self.mMethodGenericsNum = method_generics_num;
-
-    self.mFields = new list<tuple2<string, sType*%>*%>();
-
-    return self;
-};
-
-sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, list<string>%* param_default_parametors, bool external, bool var_args, sBlock*% block, bool static_, string come_header, sInfo* info)
-{
-    self.mName = name;
-    self.mResultType = result_type;
-    self.mParamTypes = param_types;
-    self.mParamNames = param_names;
-    self.mParamDefaultParametors = param_default_parametors;
-    self.mExternal = external;
-    self.mVarArgs = var_args;
-    self.mStatic = static_;
-
-    self.mLambdaType = new sType("lambda", info);
-
-    
-# 269 "02transpile.c" 3
-   for(var 
-# 269 "02transpile.c"
-   it 
-# 269 "02transpile.c" 3
-   = (
-# 269 "02transpile.c"
-   param_types
-# 269 "02transpile.c" 3
-   ).begin(); !(
-# 269 "02transpile.c"
-   param_types
-# 269 "02transpile.c" 3
-   ).end(); 
-# 269 "02transpile.c"
-   it 
-# 269 "02transpile.c" 3
-   = (
-# 269 "02transpile.c"
-   param_types
-# 269 "02transpile.c" 3
-   ).next()) 
-# 269 "02transpile.c"
-                            {
-        self.mLambdaType.mParamTypes.push_back(clone it);
+    if(1) {
+        char*% a = new char[128];
     }
 
-    
-# 273 "02transpile.c" 3
-   for(var 
-# 273 "02transpile.c"
-   it 
-# 273 "02transpile.c" 3
-   = (
-# 273 "02transpile.c"
-   param_names
-# 273 "02transpile.c" 3
-   ).begin(); !(
-# 273 "02transpile.c"
-   param_names
-# 273 "02transpile.c" 3
-   ).end(); 
-# 273 "02transpile.c"
-   it 
-# 273 "02transpile.c" 3
-   = (
-# 273 "02transpile.c"
-   param_names
-# 273 "02transpile.c" 3
-   ).next()) 
-# 273 "02transpile.c"
-                            {
-        self.mLambdaType.mParamNames.push_back(clone it);
-    }
+    printf("%ld\n", sizeof(unsigned long));
 
-    self.mLambdaType.mResultType = new tuple1<sType*%>(result_type);
-    self.mLambdaType.mVarArgs = var_args;
+    char* p = "ABC";
 
-    self.mSource = new buffer();
-    self.mSourceHead = new buffer();
-    self.mSourceHead2 = new buffer();
-    self.mSourceDefer = new buffer();
+    void* p2 = "ABC";
 
-    self.mBlock = block;
+    printf("%s\n", (char*)p2);
 
-    self.mComeHeader = come_header;
+    printf("%c\n", *p);
 
-    return self;
-}
+    int count = 0;
+    int size2 = 1;
 
-void init_classes(sInfo* info)
-{
-    info.classes.insert(string("int"), new sClass("int", number:true));
-    info.classes.insert(string("short"), new sClass("short", number:true));
-    info.classes.insert(string("long"), new sClass("long", number:true));
-    info.classes.insert(string("char"), new sClass("char", number:true));
-    info.classes.insert(string("bool"), new sClass("bool", number:true));
-    info.classes.insert(string("_Bool"), new sClass("_Bool", number:true));
-    info.classes.insert(string("void"), new sClass("void"));
-    info.classes.insert(string("float"), new sClass("float", float_:true));
-    info.classes.insert(string("double"), new sClass("double", float_:true));
-    info.classes.insert(string("lambda"), new sClass("lambda"));
-    for(int i=0; i<12; i++) {
-        string generics_type = xsprintf("generics_type%d", i);
-        info.classes.insert(generics_type, new sClass(generics_type, generics:true, generics_num:i));
-    }
-}
+    char* mem2 = calloc(1, sizeof(int)+sizeof(long)+count*size2);
 
-void init_module(sInfo* info)
-{
-    char fname[
-# 312 "02transpile.c" 3 4
-              4096
-# 312 "02transpile.c"
-                      ];
-    char* p = info.sname;
-    char* p2 = fname;
-    while(*p) {
-        if(xisalpha(*p)) {
-            *p2++ = *p++;
-        }
-        else {
-            *p2++ = '_';
-            p++;
+    free(mem2);
+
+    int b;
+    int *a = &b;
+
+    (*a) = 123;
+
+    int a2 = 123;
+
+    if(true) {
+        int b = 234;
+        int n = 0;
+        while(n < 3) {
+            printf("a %d\n", a2);
+            printf("b %d\n", b);
+            n++;
         }
     }
 
-    *p2 = '\0';
-}
+    char*% ax = new char[128];
 
-void output_err_source_code(sInfo* info)
-{
-    char* p = info.p;
-    while(*p != '\n' && p >= info.head) {
-        p--;
-    }
-    char* head;
-    if(*p == '\n') {
-        head = p + 1;
-    }
-    else {
-        head = p;
+    if(1) {
+        char*% a = new char[128];
+        char*% b = a;
+
+        sData data;
+        data.a = a;
     }
 
-    p = info.p;
-    while(*p != '\0' && *p != '\n') {
-        p++;
+    char*% str = new char[128];
+
+    strncpy(str, "ABC", 128);
+
+    sData*% data = new sData;
+    data.a = str;
+
+    puts(data.a);
+
+    funHeap(7,7);
+
+    xassert("right value test", *funHeap(3,4) == 7);
+
+    int*% axyz = funHeap(1,2);
+
+    xassert("variable test", *axyz == 3);
+
+    int*% xxx = new int;
+    *xxx = 1;
+    int*% yyy = new int;
+    *yyy = 2;
+
+    xassert("heap", funHeap2(xxx, yyy) == 3);
+
+    int*% zzz = new int;
+    new int;
+
+    int bzyz = 123;
+
+    int* azyz = &bzyz;
+
+    xassert("impl", azyz.fun() == 123);
+
+    int n = 0;
+
+    3.times() {
+        puts("HO!");
+        printf("%d\n", n);
+        n++;
     }
 
-    char* tail = p;
+    list<string>*% liX = new list<string>.initialize();
 
-    char*% buf = new char[tail-head+1];
-    memcpy(buf, head, tail-head);
-    buf[tail-head] = '\0';
-    if(info.come_fun) {
-        fprintf(
-# 353 "02transpile.c" 3 4
-               stderr
-# 353 "02transpile.c"
-                     , "-+- %s function -+-\n", info.come_fun.mName);
-        fprintf(
-# 354 "02transpile.c" 3 4
-               stderr
-# 354 "02transpile.c"
-                     , "%s\n", buf);
-    }
-    else {
-        fprintf(
-# 357 "02transpile.c" 3 4
-               stderr
-# 357 "02transpile.c"
-                     , "%s\n", buf);
-    }
-}
+    liX.push_back(string("ABC"));
+    liX.push_back(string("DEF"));
+    liX.push_back(string("GHI"));
 
-int come_main(int argc, char** argv) version 2
-{
-    var clang_option = new buffer();
-    var files = new list<string>();
-    var object_files = new list<string>();
-    bool output_object_file = false;
-    bool output_cpp_file = false;
-    bool output_source_file_flag = false;
-    for(int i=1; i<argc; i++) {
-        if(argv[i] === "-g") {
-            clang_option.append_str("-g ");
-        }
-        else if(argv[i] === "-s" || argv[i] === "-S") {
-            output_source_file_flag = true;
-        }
-        else if(argv[i] === "-c") {
-            output_object_file = true;
-        }
-        else if(argv[i] === "-E") {
-            output_cpp_file = true;
-        }
-        else if(argv[i] === "-no-gc") {
-            gGC = false;
-        }
-        else if(argv[i] === "-gc") {
-            gGC = true;
-        }
-        else if(argv[i][0] == '-') {
-            clang_option.append_str(argv[i] + " ");
-        }
-        else if(memcmp(argv[i] + strlen(argv[i]) -2, ".o", 2) == 0) {
-            object_files.push_back(string(argv[i]));
-        }
-        else {
-            files.push_back(string(argv[i]));
-        }
+    for(var it = (liX).begin(); !(liX).end(); it = (liX).next()) {
+        printf("%s\n", it);
     }
 
-    come_init();
+    list<int>*% liX2 = new list<int>.initialize();
 
-    
-# 401 "02transpile.c" 3
-   for(var 
-# 401 "02transpile.c"
-   it 
-# 401 "02transpile.c" 3
-   = (
-# 401 "02transpile.c"
-   files
-# 401 "02transpile.c" 3
-   ).begin(); !(
-# 401 "02transpile.c"
-   files
-# 401 "02transpile.c" 3
-   ).end(); 
-# 401 "02transpile.c"
-   it 
-# 401 "02transpile.c" 3
-   = (
-# 401 "02transpile.c"
-   files
-# 401 "02transpile.c" 3
-   ).next()) 
-# 401 "02transpile.c"
-                      {
-        sInfo info;
+    liX2.push_back(1);
+    liX2.push_back(2);
+    liX2.push_back(3);
 
-        info.sname = clone it;
-        info.sline = 1;
-        info.err_num = 0;
-        info.clang_option = clang_option.to_string();
-        info.no_output_err = false;
-        info.funcs = new map<string, sFun*%>();
-        info.generics_funcs = new map<string, sGenericsFun*%>();
-        info.classes = new map<string, sClass*%>();
-        info.types = new map<string, sType*%>();
-        info.module = new sModule();
-        info.right_value_objects = new list<sRightValueObject*%>();
-        info.stack = new list<CVALUE*%>();
-        info.gv_table = new sVarTable(global:true, parent:null);
-        sVarTable*% lv_table = new sVarTable(global:false, parent:null);
-        info.lv_table = lv_table;
-        info.generics_type_names = new list<string>();
-        info.generics_classes = new map<string, sClass*%>();
-
-        init_classes(&info);
-        init_module(&info);
-
-        if(!cpp(&info)) {
-            fprintf(
-# 426 "02transpile.c" 3 4
-                   stderr
-# 426 "02transpile.c"
-                         , "%s %d: traspile faield\n", info.sname, info.sline);
-            exit(2);
-        }
-
-        info.source = xsprintf("%s.i", it).read().to_buffer();
-        info.p = info.source.buf;
-        info.head = info.source.buf;
-
-        if(!output_cpp_file) {
-            transpile(&info).catch {
-                fprintf(
-# 436 "02transpile.c" 3 4
-                       stderr
-# 436 "02transpile.c"
-                             , "%s %d: traspile faield\n", info.sname, info.sline);
-                output_err_source_code(&info);
-                exit(2);
-            }
-
-            if(!output_source_file(&info)) {
-                fprintf(
-# 442 "02transpile.c" 3 4
-                       stderr
-# 442 "02transpile.c"
-                             , "%s %d: output source file faield\n", info->sname, info->sline);
-                output_err_source_code(&info);
-                exit(2);
-            }
-
-            (void)system(xsprintf("rm -f %s.i", info.sname));
-
-            if(info.err_num > 0) {
-                fprintf(
-# 450 "02transpile.c" 3 4
-                       stderr
-# 450 "02transpile.c"
-                             , "transpile error. err num %d\n", info->err_num);
-                output_err_source_code(&info);
-
-                exit(2);
-            }
-            else {
-                if(!compile(&info, output_object_file, object_files)) {
-                    fprintf(
-# 457 "02transpile.c" 3 4
-                           stderr
-# 457 "02transpile.c"
-                                 , "%s %d: compile faield\n", info.sname, info.sline);
-                    exit(1);
-                }
-
-
-
-
-
-
-            }
-        }
+    for(var it = (liX2).begin(); !(liX2).end(); it = (liX2).next()) {
+        printf("%d\n", it);
     }
 
-    if(!output_object_file && !output_cpp_file && files.length() > 0) {
-        sInfo info;
-
-        info.sname = clone files[0];
-        info.clang_option = clang_option.to_string();
-
-        linker(&info, object_files).expect {
-            fprintf(
-# 477 "02transpile.c" 3 4
-                   stderr
-# 477 "02transpile.c"
-                         , "%s %d: linker faield\n", info.sname, info.sline);
-            exit(1);
-        }
-
-        (void)system(xsprintf("rm -f %s.o", xnoextname(info.sname)));
+    int aX = 123;
+    liX2.each() {
+        printf("%d %d\n", it, aX);
+        aX = 2;
     }
 
-    come_final();
+    xassert("method_block test", aX == 2);
+
+    int aXYZY;
+
+    xassert("var initialize test", aXYZY == 0);
+
+    list<string>*% li = new list<string>.initialize();
+
+    li.push_back(string("ABC"));
+    li.push_back(string("DEF"));
+    li.push_back(string("GHI"));
+
+    for(var it = (li).begin(); !(li).end(); it = (li).next()) {
+        printf("%s\n", it);
+    }
+
+    list<int>*% li2 = new list<int>.initialize();
+
+    li2.push_back(1);
+    li2.push_back(2);
+    li2.push_back(3);
+
+    for(var it = (li2).begin(); !(li2).end(); it = (li2).next()) {
+        printf("%d\n", it);
+    }
+
+    int aXL = 123;
+    li2.each() {
+        printf("%d %d\n", it, aXL);
+        aXL = 2;
+    }
+
+    xassert("var of method block", aXL == 2);
+
+    xassert("list::item", li2.item(0, -1) == 1);
+
+    li2.insert(1, 5);
+
+    xassert("list::insert", li2.item(0, -1) == 1 && li2.item(1, -1) == 5 && li2.item(2, -1) == 2 && li2.item(3, -1) == 3);
+
+    li.insert(1, string("GGG"));
+
+    xassert("list::insert", strcmp(li.item(0, -1), "ABC") == 0 && strcmp(li.item(1, -1), "GGG") == 0 && strcmp(li.item(2,-1), "DEF") == 0 && strcmp(li.item(3,-1), "GHI") == 0);
+
+    li.reset();
+
+    xassert("list::reset", li.length() == 0);
+
+    li2.delete(0, 1);
+
+    xassert("list::delete", li2.item(0, -1) == 5 && li2.item(1, -1) == 2 && li2.item(2, -1) == 3);
+
+    var li3 = new list<string>.initialize();
+
+    li3.push_back(string("AAA"));
+    li3.push_back(string("BBB"));
+    li3.push_back(string("CCC"));
+
+    li3.replace(0, string("ABC"));
+    xassert("list::replace", strcmp(li3.item(0, null), "ABC") == 0 && strcmp(li3.item(1, null), "BBB") == 0 && strcmp(li3.item(2, null), "CCC") == 0);
+
+    var li4 = new list<int>.initialize();
+
+    li4.push_back(1);
+    li4.push_back(3);
+    li4.push_back(5);
+
+    var li5 = new list<int>.initialize();
+
+    li5.push_back(1);
+    li5.push_back(3);
+    li5.push_back(5);
+
+    xassert("list::equals", li4.equals(li5));
+    xassert("list::find", li4.find(5,-1) == 2);
+
+    var li6 = new list<int>.initialize();
+
+    li6.push_back(3);
+    li6.push_back(5);
+
+    xassert("list::sublist", li5.sublist(1, -1).equals(li6));
+
+    int*% axyzX;
+
+    axyzX = new int;
+    axyzX = new int;
+
+    xassert("operator equals", string("AAA") === string("AAA"));
+
+    xassert("operator test", "AAA" + "BBB" === "AAABBB");
+
+    char* strXYXY = "ABC";
+
+    xassert("operator test", *(strXYXY + 1) == 'B');
+
+    list<int>*% liZ = new list<int>.initialize();
+
+    liZ.push_back(1);
+    liZ.push_back(2);
+    liZ.push_back(3);
+
+    liZ.each {
+        printf("%d\n", it);
+    }
+
+    liZ[0] = 777;
+
+    printf("liZ[0] %d\n", liZ[0]);
+
+    list<int>*% liZ2 = new list<int>.initialize();
+
+    liZ2.push_back(777);
+    liZ2.push_back(2);
+    liZ2.push_back(3);
+
+    xassert("list equals", liZ === liZ2);
+
+    xassert("list equals test", [1,2,3] === [1,2,3]);
+
+    [1,2,3,4,5].each {
+        printf("%d\n", it);
+    }
+# 357 "code2/HelloWorld2.c"
+    IA*% ia = new sDataA.initialize(111,222) implements IA;
+
+    printf("%d\n", ia.fun(0, 0));
+
+    list<IA*%>*% liIA = new list<IA*%>.initialize();
+
+    liIA.push_back(new sDataA.initialize(1, 1) implements IA);
+    liIA.push_back(new sDataA.initialize(2, 2) implements IA);
+    liIA.push_back(new sDataA.initialize(3, 3) implements IA);
+
+    for(var it = (liIA).begin(); !(liIA).end(); it = (liIA).next()) {
+        printf("%d\n", it.fun(0, 0));
+    }
+
+    var aZZZ, bZZZ = (1,2, false);
+
+    xassert("tuple test", aZZZ == 1 && bZZZ == 2);
+
+    fun_default_parametor();
+    int xZZZZZZZZ = fun_exception(1,2).catch { fprintf(
+# 376 "code2/HelloWorld2.c" 3 4
+                                                      stderr
+# 376 "code2/HelloWorld2.c"
+                                                            , "exception\n"); }
+
+    xassert("exception test", xZZZZZZZZ == 3);
+
+    list<string>*% li_str = new list<string>();
+
+    li_str.push_back(string("AAA"));
+    li_str.push_back(string("BBB"));
+    li_str.push_back(string("CCC"));
+
+    xassert("list test", li_str === [string("AAA"), string("BBB"), string("CCC")]);
 
     return 0;
 }

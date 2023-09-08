@@ -15,6 +15,11 @@ sNullNodeX*% sNullNodeX*::initialize(sNullNodeX*% self, sInfo* info)
     return self;
 }
 
+bool sNullNodeX*::terminated()
+{
+    return false;
+}
+
 bool sNullNodeX*::compile(sNullNodeX* self, sInfo* info)
 {
 
@@ -58,6 +63,11 @@ string sNewNode*::sname(sNewNode* self, sInfo* info)
     return string(self.sname);
 }
 
+bool sNewNode*::terminated()
+{
+    return false;
+}
+
 bool sNewNode*::compile(sNewNode* self, sInfo* info)
 {
     sType* type = self.type;
@@ -76,7 +86,7 @@ bool sNewNode*::compile(sNewNode* self, sInfo* info)
         CVALUE*% cvalue = get_value_from_stack(-1, info);
         dec_stack_ptr(1, info);
         
-        num_string.append_str(xsprintf("*%s", cvalue.c_value));
+        num_string.append_str(xsprintf("*(%s)", cvalue.c_value));
     }
     
     sType*% type2 = solve_generics(type, info->generics_type, info).catch {
@@ -85,7 +95,7 @@ bool sNewNode*::compile(sNewNode* self, sInfo* info)
     
     string type_name = make_type_name_string(type2, false@in_header, true@array_cast_pointer, info);
     
-    come_value.c_value = xsprintf("(%s*)come_calloc(1, sizeof(%s)*%s)", type_name, type_name, num_string.to_string());
+    come_value.c_value = xsprintf("(%s*)come_calloc(1, sizeof(%s)*(%s))", type_name, type_name, num_string.to_string());
     sType*% type3 = clone type2;
     type3->mPointerNum++;
     type3->mHeap = true;
@@ -129,6 +139,11 @@ int sImplementsNode*::sline(sImplementsNode* self, sInfo* info)
 string sImplementsNode*::sname(sImplementsNode* self, sInfo* info)
 {
     return string(self.sname);
+}
+
+bool sImplementsNode*::terminated()
+{
+    return false;
 }
 
 bool sImplementsNode*::compile(sImplementsNode* self, sInfo* info)
@@ -222,6 +237,11 @@ string sTrueNode*::sname(sTrueNode* self, sInfo* info)
     return string(self.sname);
 }
 
+bool sTrueNode*::terminated()
+{
+    return false;
+}
+
 bool sTrueNode*::compile(sTrueNode* self, sInfo* info)
 {
     CVALUE*% come_value = new CVALUE;
@@ -258,6 +278,11 @@ int sFalseNode*::sline(sFalseNode* self, sInfo* info)
 string sFalseNode*::sname(sFalseNode* self, sInfo* info)
 {
     return string(self.sname);
+}
+
+bool sFalseNode*::terminated()
+{
+    return false;
 }
 
 bool sFalseNode*::compile(sFalseNode* self, sInfo* info)
@@ -299,6 +324,11 @@ int sSizeOfNode*::sline(sSizeOfNode* self, sInfo* info)
 string sSizeOfNode*::sname(sSizeOfNode* self, sInfo* info)
 {
     return string(self.sname);
+}
+
+bool sSizeOfNode*::terminated()
+{
+    return false;
 }
 
 bool sSizeOfNode*::compile(sSizeOfNode* self, sInfo* info)
@@ -351,6 +381,11 @@ string sDeleteNode*::sname(sDeleteNode* self, sInfo* info)
     return string(self.sname);
 }
 
+bool sDeleteNode*::terminated()
+{
+    return false;
+}
+
 bool sDeleteNode*::compile(sDeleteNode* self, sInfo* info)
 {
     sNode* node = self.node;
@@ -391,6 +426,11 @@ int sBorrowNode*::sline(sBorrowNode* self, sInfo* info)
 string sBorrowNode*::sname(sBorrowNode* self, sInfo* info)
 {
     return string(self.sname);
+}
+
+bool sBorrowNode*::terminated()
+{
+    return false;
 }
 
 bool sBorrowNode*::compile(sBorrowNode* self, sInfo* info)
@@ -443,6 +483,11 @@ string sCloneNode*::sname(sCloneNode* self, sInfo* info)
     return string(self.sname);
 }
 
+bool sCloneNode*::terminated()
+{
+    return false;
+}
+
 bool sCloneNode*::compile(sCloneNode* self, sInfo* info)
 {
     sNode* node = self.node;
@@ -492,6 +537,11 @@ string sDummyHeapNode*::sname(sDummyHeapNode* self, sInfo* info)
     return string(self.sname);
 }
 
+bool sDummyHeapNode*::terminated()
+{
+    return false;
+}
+
 bool sDummyHeapNode*::compile(sDummyHeapNode* self, sInfo* info)
 {
     sNode* node = self.node;
@@ -534,6 +584,11 @@ int sGCIncNode*::sline(sGCIncNode* self, sInfo* info)
 string sGCIncNode*::sname(sGCIncNode* self, sInfo* info)
 {
     return string(self.sname);
+}
+
+bool sGCIncNode*::terminated()
+{
+    return false;
 }
 
 bool sGCIncNode*::compile(sGCIncNode* self, sInfo* info)
@@ -585,6 +640,11 @@ string sGCDecNode*::sname(sGCDecNode* self, sInfo* info)
     return string(self.sname);
 }
 
+bool sGCDecNode*::terminated()
+{
+    return false;
+}
+
 bool sGCDecNode*::compile(sGCDecNode* self, sInfo* info)
 {
     sNode* node = self.node;
@@ -631,6 +691,11 @@ string sIsHeap*::sname(sIsHeap* self, sInfo* info)
     return string(self.sname);
 }
 
+bool sIsHeap*::terminated()
+{
+    return false;
+}
+
 bool sIsHeap*::compile(sIsHeap* self, sInfo* info)
 {
     sType* node = self.type;
@@ -667,40 +732,10 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         var type, name = parse_type(info) throws;
         
         if(*info->p == '(') {
-            bool interface_ = false;
-            {
-                char* p = info.p;
-                int sline = info.sline;
-                
-                info->p++;
-                skip_spaces_and_lf(info);
-                
-                var word = parse_word(info, true) throws;
-                
-                if(word === "new") {
-                    interface_ = true;
-                }
-                
-                info.p = p;
-                info.sline = sline;
-            }
+            sNode*% obj = new sNode(new sNewNode(type, info));
+            string fun_name = string("initialize");
             
-            if(interface_) {
-                info->p++;
-                skip_spaces_and_lf(info);
-                
-                sNode*% node = expression(info) throws;
-                
-                expected_next_character(')', info) throws;
-                
-                return new sNode(new sImplementsNode(node, type, info));
-            }
-            else {
-                sNode*% obj = new sNode(new sNewNode(type, info));
-                string fun_name = string("initialize");
-                
-                return parse_method_call(obj, fun_name, info) throws;
-            }
+            return parse_method_call(obj, fun_name, info) throws;
         }
         else {
             return new sNode(new sNewNode(type, info));

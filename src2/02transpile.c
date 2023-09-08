@@ -196,6 +196,7 @@ sType*% sType*::initialize(sType*% self, char* name, sInfo* info, bool heap=fals
         self.mClass = borrow clone generics_class;
     }
     
+/*
     self.mGenericsTypes = new list<sType*%>();
     self.mArrayNum = new list<sNode*%>();
     self.mOmitArrayNum = false;
@@ -227,10 +228,12 @@ sType*% sType*::initialize(sType*% self, char* name, sInfo* info, bool heap=fals
     self.mOriginalPointerNum = 0;
     
     self.mFunctionParam = false;
+*/
     
     return self;
 }
 
+/*
 sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool union_=false, bool generics=false, bool method_generics=false, bool protocol_=false, bool struct_=false, bool float_=false, int generics_num=-1, int method_generics_num=-1, bool enum_=false)
 {
     self.mNumber = number;
@@ -458,11 +461,6 @@ int come_main(int argc, char** argv) version 2
                     exit(1);
                 }
                 
-/*
-                if(!output_source_file_flag) {
-                    (void)system(xsprintf("rm -f %s.c", info.sname));
-                }
-*/
             }
         }
     }
@@ -485,3 +483,4 @@ int come_main(int argc, char** argv) version 2
     
     return 0;
 }
+*/

@@ -581,3 +581,10 @@ void bool::expect(bool self, void* parent, void (*block_)(void* parent))
         block_(parent);
     }
 }
+
+void bool::catch(bool self, void* parent, void (*block_)(void* parent))
+{
+    if(!self) {
+        block_(parent);
+    }
+}

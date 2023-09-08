@@ -16,7 +16,7 @@ string make_type_name_string(sType* type, bool in_header, bool array_cast_pointe
     
     char* class_name = type->mClass->mName;
     
-    if(type->mStatic && !type->mStruct && !type->mUnion) {
+    if(type->mStatic && !type->mClass->mStruct && !type->mClass->mUnion) {
         buf.append_str("static ");
     }
     
@@ -28,21 +28,12 @@ string make_type_name_string(sType* type, bool in_header, bool array_cast_pointe
         buf.append_str("unsigned ");
     }
     
-/*
-    if(type->mLongLong) {
-        buf.append_str("long long ");
-    }
-    
-    if(type->mLong) {
-        buf.append_str("long ");
-    }
-*/
     
     if(type->mShort) {
         buf.append_str("short ");
     }
     
-    if(type->mStruct) {
+    if(type->mClass->mStruct) {
         if(class_name === "__builtin_va_list") {
             if(in_header) {
                 buf.append_str(class_name);
@@ -56,11 +47,11 @@ string make_type_name_string(sType* type, bool in_header, bool array_cast_pointe
             buf.append_str(class_name);
         }
     }
-    else if(type->mUnion) {
+    else if(type->mClass->mUnion) {
         buf.append_str("union ");
         buf.append_str(class_name);
     }
-    else if(type->mEnum) {
+    else if(type->mClass->mEnum) {
         buf.append_str("enum ");
         buf.append_str(class_name);
     }
@@ -90,7 +81,7 @@ string make_type_name_string(sType* type, bool in_header, bool array_cast_pointe
         buf.append_str("_Bool");
     }
     else if(class_name === "lambda") {
-        string result_type_str = make_type_name_string(type->mResultType.0, in_header, false@array_cast_pointer, info);
+        string result_type_str = make_type_name_string(type->mResultType.v1, in_header, false@array_cast_pointer, info);
         buf.append_str(result_type_str);
         buf.append_str(" (*)(");
         
@@ -157,7 +148,7 @@ void show_type(sType* type, sInfo* info)
 string make_lambda_type_name_string(sType* type, char* var_name, sInfo* info)
 {
     var buf = new buffer();
-    if(type->mResultType.0 && type->mResultType.0->mClass->mName === "lambda") {
+    if(type->mResultType.v1 && type->mResultType.v1->mClass->mName === "lambda") {
         buf.append_str(xsprintf("(*%s)(", var_name));
         
         int i = 0;
@@ -172,10 +163,10 @@ string make_lambda_type_name_string(sType* type, char* var_name, sInfo* info)
         
         buf.append_str(")");
         
-        return make_lambda_type_name_string(type->mResultType.0, buf.to_string(), info);
+        return make_lambda_type_name_string(type->mResultType.v1, buf.to_string(), info);
     }
     else {
-        buf.append_str(xsprintf("%s (*%s)(", make_type_name_string(type->mResultType.0, false@in_header, false@array_cast_pointer, info), var_name));
+        buf.append_str(xsprintf("%s (*%s)(", make_type_name_string(type->mResultType.v1, false@in_header, false@array_cast_pointer, info), var_name));
         
         int i = 0;
         foreach(it, type->mParamTypes) {
@@ -627,10 +618,10 @@ bool output_source_file(sInfo* info) version 3
     
     FILE* f = fopen(output_file_name, "w");
     
-    fprintf(f, "/* source head */\n");
+    fprintf(f, "// source head\n");
     fprintf(f, "%s\n", info.module.mSourceHead.to_string());
     
-    fprintf(f, "/* header function */\n");
+    fprintf(f, "// header function\n");
     foreach(it, info.funcs) {
         sFun* it2 = info.funcs[string(it)];
 
@@ -648,7 +639,7 @@ bool output_source_file(sInfo* info) version 3
         }
     }
     
-    fprintf(f, "/* inline function */\n");
+    fprintf(f, "// inline function\n");
     foreach(it, info.funcs) {
         sFun* it2 = info.funcs[string(it)];
 
@@ -670,7 +661,7 @@ bool output_source_file(sInfo* info) version 3
     
     fprintf(f, "\n");
     
-    fprintf(f, "/* body function */\n");
+    fprintf(f, "// body function\n");
     foreach(it, info.funcs) {
         sFun* it2 = info.funcs[it];
         

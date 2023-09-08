@@ -21,6 +21,11 @@ sDoWhileNode*% sDoWhileNode*::initialize(sDoWhileNode*% self, sNode*% expression
     return self;
 }
 
+bool sDoWhileNode*::terminated()
+{
+    return true;
+}
+
 bool sDoWhileNode*::compile(sDoWhileNode* self, sInfo* info)
 {
     sBlock* block = self.mBlock;

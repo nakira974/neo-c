@@ -54,6 +54,8 @@ bool sEnumNode*::compile(sEnumNode* self, sInfo* info)
             CVALUE*% right_value = get_value_from_stack(-1, info);
             dec_stack_ptr(1, info);
             
+            add_variable_to_global_table_with_int_value(name, new sType("int", info), right_value.c_value, info);
+            
             buf.append_str(xsprintf("%s=%s", name, right_value.c_value));
         }
         
@@ -97,6 +99,7 @@ exception sNode*% parse_enum(string type_name, sInfo* info)
             
             sNode*% element_value = expression(info) throws;
             
+puts(element_name);
             elements.push_back(new tuple2<string,sNode*%>(element_name, element_value));
         }
         else {
@@ -137,6 +140,8 @@ exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info)
         
         while(true) {
             string element_name = parse_word(info) throws;
+            
+puts(element_name);
             
             if(*info->p == '=') {
                 info->p++;

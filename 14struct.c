@@ -30,14 +30,6 @@ string create_generics_name(sType* generics_type, sInfo* info)
     }
     
     buf.append_char('$');
-
-    for(int i=0; i<generics_type->mPointerNum; i++) {
-        buf.append_char('p');
-    }
-
-    if(generics_type->mHeap) {
-        buf.append_str("h");
-    }
     
     if(generics_type->mGenericsTypes.length() > 0) {
         buf.append_char('$');
@@ -48,6 +40,14 @@ string create_generics_name(sType* generics_type, sInfo* info)
             string type_name = create_generics_name(it, info);
             
             buf.append_str(type_name);
+
+            for(int i=0; i<it->mPointerNum; i++) {
+                buf.append_char('p');
+            }
+        
+            if(it->mHeap) {
+                buf.append_str("h");
+            }
             
             i++;
         }
@@ -65,15 +65,6 @@ sType*% create_generics_types_from_class_name_core(char** p, sInfo* info)
     while(**p) {
         if(**p == '$') {
             (*p)++;
-            while(**p == 'p') {
-                (*p)++;
-                pointer_num++;
-            }
-            
-            if(**p == 'h') {
-                (*p)++;
-                heap = true;
-            }
             break;
         }
         else {
@@ -94,6 +85,22 @@ sType*% create_generics_types_from_class_name_core(char** p, sInfo* info)
         
         for(int i=0; i<num_generics_types; i++) {
             sType*% type2 = create_generics_types_from_class_name_core(p, info);
+            
+
+            int pointer_num = 0;
+            while(**p == 'p') {
+                (*p)++;
+                pointer_num++;
+            }
+            
+            bool heap = false;
+            if(**p == 'h') {
+                (*p)++;
+                heap = true;
+            }
+            
+            type2->mHeap = heap;
+            type2->mPointerNum = pointer_num;
             
             type->mGenericsTypes.push_back(type2);
         }

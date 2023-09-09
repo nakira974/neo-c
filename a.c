@@ -688,7 +688,6 @@ exception list<sType*%>*%, list<string>*%, list<string>*%, bool parse_params(sIn
     return new tuple4<list<sType*%>*%, list<string>*%, list<string>*%, bool>(param_types, param_names, param_default_parametors, var_args);
 }
 
-/*
 exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_name=false, bool parse_multiple_type=true)
 {
     char* head = info.p;
@@ -697,7 +696,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
     
     string type_name = parse_word(info) throws;
     
-    bool constant = false;
+    bool constant_ = false;
     bool static_ = false;
     bool volatile_ = false;
     bool register_ = false;
@@ -875,7 +874,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             }
         }
         else if(type_name === "const") {
-            constant = true;
+            constant_ = true;
             
             type_name = parse_word(info) throws;
         }
@@ -1115,7 +1114,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             result_type = new sType(type_name, info);
         }
         
-        result_type->mConstant = result_type->mConstant || constant;
+        result_type->mConstant = result_type->mConstant || constant_;
         result_type->mRegister = register_;
         result_type->mUnsigned = result_type->mUnsigned || unsigned_;
         result_type->mVolatile = volatile_;
@@ -1158,7 +1157,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             result_type = new sType(type_name, info);
         }
         
-        result_type->mConstant = result_type->mConstant || constant;
+        result_type->mConstant = result_type->mConstant || constant_;
         result_type->mRegister = register_;
         result_type->mUnsigned = result_type->mUnsigned || unsigned_;
         result_type->mVolatile = volatile_;
@@ -1187,7 +1186,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             type = clone info.types[type_name];
             type.mOriginalTypeName = string(type_name);
             
-            type->mConstant = type->mConstant || constant;
+            type->mConstant = type->mConstant || constant_;
             type->mRegister = register_;
             type->mUnsigned = type->mUnsigned || unsigned_;
             type->mVolatile = volatile_;
@@ -1206,7 +1205,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                 }
             }
             
-            type->mConstant = type->mConstant || constant;
+            type->mConstant = type->mConstant || constant_;
             type->mRegister = register_;
             type->mUnsigned = type->mUnsigned || unsigned_;
             type->mVolatile = volatile_;
@@ -1280,7 +1279,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                 }
             }
             
-            type->mConstant = type->mConstant || constant;
+            type->mConstant = type->mConstant || constant_;
             type->mRegister = register_;
             type->mUnsigned = type->mUnsigned || unsigned_;
             type->mVolatile = volatile_;
@@ -1303,7 +1302,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             
             type = new sType(type_name, info);
             
-            type->mConstant = type->mConstant || constant;
+            type->mConstant = type->mConstant || constant_;
             type->mRegister = register_;
             type->mUnsigned = type->mUnsigned || unsigned_;
             type->mVolatile = volatile_;
@@ -1480,6 +1479,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
 }
 
 
+/*
 sBlock*% sBlock*::initialize(sBlock*% self, sInfo* info)
 {
     self.mNodes = new list<sNode*%>();

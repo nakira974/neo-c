@@ -491,6 +491,25 @@ void add_variable_to_global_table(char* name, sType* type, sInfo* info)
     info.gv_table.mVars.insert(string(name), self);
 }
 
+void add_variable_to_global_table_with_int_value(char* name, sType* type, char* c_value, sInfo* info)
+{
+    sVar*% self = new sVar;
+    
+    self->mName = string(name);
+    self->mType = clone type;
+    
+    self->mGlobal = true;
+    
+    self->mCValueName = string(c_value);
+    
+    self->mBlockLevel = info->block_level;
+    self->mAllocaValue = false;
+    self->mFunctionParam = false;
+    self->mNoFree = false;
+    
+    info.gv_table.mVars.insert(string(name), self);
+}
+
 exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 7
 {
     bool is_type_name_flag = is_type_name(buf, info);
@@ -586,6 +605,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
             parse_sharp(info);
             var type, name = parse_type(info, true@parse_variable_name) throws;
             parse_sharp(info);
+            
             
             if(*info->p == '=') {
                 info.p++;

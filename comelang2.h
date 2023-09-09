@@ -657,6 +657,16 @@ impl list <T>
     bool operator_not_equals(list<T>* left, list<T>* right) {
         return !left.equals(right);
     }
+    bool contained(list<T>* self, T item) {
+        for(var it = self.begin(); !self.end(); it = self.next())
+        {
+            if(it === item) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
 }
 
 #define foreach(o1, o2) for(var o1 = (o2).begin(); !(o2).end(); o1 = (o2).next())
@@ -932,7 +942,6 @@ impl map <T, T2>
         if(self.len*2 >= self.size) {
             self.rehash();
         }
-
         int hash = key.get_hash_key() % self.size;
         int it = hash;
 
@@ -992,7 +1001,8 @@ impl map <T, T2>
         }
         
         bool same_key_exist = false;
-        foreach(it2, self.key_list) {
+        for(var it2 = self.key_list.begin(); !self.key_list.end(); it = self.key_list.next())
+        {
             if(it2.equals(key)) {
                 same_key_exist = true;
             }
@@ -1066,7 +1076,8 @@ impl map <T, T2>
         }
         
         bool same_key_exist = false;
-        foreach(it2, self.key_list) {
+        for(var it2 = self.key_list.begin(); !self.key_list.end(); it = self.key_list.next())
+        {
             if(it2.equals(key)) {
                 same_key_exist = true;
             }
@@ -1096,7 +1107,8 @@ impl map <T, T2>
 
         int n = 0;
         bool result = true;
-        foreach(it, left.key_list) {
+        for(var it = left.key_list.begin(); !left.key_list.end(); it = left.key_list.next())
+        {
             T default_value;
             T& it2 = right.key_list.item(n, default_value);
             
@@ -1151,7 +1163,13 @@ static inline unsigned int string::get_hash_key(char* value)
 
 static inline unsigned int char*::get_hash_key(char* value)
 {
-    return string(value).get_hash_key();
+    int result = 0;
+    char* p = value;
+    while(*p) {
+        result += (*p);
+        p++;
+    }
+    return result;
 }
 
 static inline unsigned int bool::get_hash_key(bool value)
@@ -1951,7 +1969,7 @@ static inline string char*::read(char* file_name)
     return result;
 }
 
-static inline void bool::expect(bool self, void* parent, void (*block)(void* parent))
+static inline void bool::catch(bool self, void* parent, void (*block)(void* parent))
 {
     if(!self) {
         block(parent);

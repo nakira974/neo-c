@@ -365,6 +365,7 @@ exception sNode*% parse_tuple(sInfo* info);
 exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 7;
 void add_variable_to_table(char* name, sType* type, sInfo* info);
 void add_variable_to_global_table(char* name, sType* type, sInfo* info);
+void add_variable_to_global_table_with_int_value(char* name, sType* type, char* c_value, sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
 /// 08if.c

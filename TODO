@@ -1,4 +1,6 @@
 
-new type() implements
+new(new) --> new type() implements
+
+expect --> catch
 
 

@@ -406,7 +406,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
 exception sNode*% parse_struct(string type_name, sInfo* info);
 string get_none_generics_name(char* class_name);
 exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 98;
-bool output_generics_struct(sType* type, sInfo* info);
+bool output_generics_struct(sType* type, sType* generics_type, sInfo* info);
 void output_struct(sClass* klass, sInfo* info);
 
 /////////////////////////////////////////////////////////////////////

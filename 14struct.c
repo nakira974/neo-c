@@ -17,7 +17,7 @@ string get_none_generics_name(char* class_name)
 
 string create_generics_name(sType* generics_type, sInfo* info)
 {
-    var buf = new buffer();
+    buffer*% buf = new buffer();
     
     sClass* klass = generics_type->mClass;
     
@@ -25,115 +25,27 @@ string create_generics_name(sType* generics_type, sInfo* info)
     
     buf.append_str(class_name);
     
-    if(generics_type->mSolvedGenericsName) {
-        return buf.to_string();
-    }
-    
-    buf.append_char('$');
-    
     if(generics_type->mGenericsTypes.length() > 0) {
         buf.append_char('$');
         buf.append_char(generics_type->mGenericsTypes.length()+'0');
         
-        int i = 0;
-        foreach(it, generics_type->mGenericsTypes) {
-            string type_name = create_generics_name(it, info);
+        for(int i=0; i<generics_type->mGenericsTypes.length(); i++) {
+            sType* type = generics_type->mGenericsTypes[i];
+            string type_name = create_generics_name(type, info);
             
             buf.append_str(type_name);
 
-            for(int i=0; i<it->mPointerNum; i++) {
+            for(int i=0; i<type->mPointerNum; i++) {
                 buf.append_char('p');
             }
         
-            if(it->mHeap) {
+            if(type->mHeap) {
                 buf.append_str("h");
             }
-            
-            i++;
         }
     }
     
     return buf.to_string();
-}
-
-sType*% create_generics_types_from_class_name_core(char** p, sInfo* info)
-{
-    buffer*% buf = new buffer();
-    
-    int pointer_num = 0;
-    bool heap = false;
-    while(**p) {
-        if(**p == '$') {
-            (*p)++;
-            break;
-        }
-        else {
-            buf.append_char(**p);
-            (*p)++;
-        }
-    }
-    
-    sType*% type = new sType(buf.to_string(), info);
-    type->mPointerNum = pointer_num;
-    type->mHeap = heap;
-    
-    if(**p == '$') {
-        (*p)++;
-        
-        int num_generics_types = **p - '0';
-        (*p)++;
-        
-        for(int i=0; i<num_generics_types; i++) {
-            sType*% type2 = create_generics_types_from_class_name_core(p, info);
-            
-
-            int pointer_num = 0;
-            while(**p == 'p') {
-                (*p)++;
-                pointer_num++;
-            }
-            
-            bool heap = false;
-            if(**p == 'h') {
-                (*p)++;
-                heap = true;
-            }
-            
-            type2->mHeap = heap;
-            type2->mPointerNum = pointer_num;
-            
-            type->mGenericsTypes.push_back(type2);
-        }
-    }
-    
-    return type;
-}
-
-sType*% create_generics_types_from_class_name(string new_name, sInfo* info)
-{
-    char* p = new_name;
-    return create_generics_types_from_class_name_core(&p, info);
-}
-
-bool is_no_solve_generics_type(sType* type, sInfo* info)
-{
-    sClass* klass = type->mClass;
-    
-    if(klass->mGenerics) {
-        return true;
-    }
-    
-    foreach(it, klass->mFields) {
-        var name, type2 = it;
-        
-        if(type->mClass.mName !== type2.mClass.mName) {
-            if(is_no_solve_generics_type(type2, info)) {
-                return true;
-            }
-        }
-    }
-    
-    return false;
 }
 
 void output_struct(sClass* klass, sInfo* info)
@@ -159,29 +71,19 @@ void output_struct(sClass* klass, sInfo* info)
     }
 }
 
-bool output_generics_struct(sType* type, sInfo* info)
+bool output_generics_struct(sType* type, sType* generics_type, sInfo* info)
 {
-    string generics_name = get_none_generics_name(type.mClass.mName);
-    
-    sType*% generics_type = clone type;
-    string new_name = create_generics_name(generics_type, info);
+    string new_name = create_generics_name(type, info);
     
     if(!info.classes.find(new_name)) {
-        sClass* klass = info.classes[generics_name];
-        sClass* generics_class = info.generics_classes[generics_name];
+        sClass* generics_class = info.generics_classes[type.mClass.mName];
         
         if(generics_class == null) {
-            err_msg(info, "generics_class(%s) is null", generics_name);
+            err_msg(info, "generics_class(%s) is null", type.mClass.mName);
             return false;
         }
         
         sClass*% new_class = new sClass(name:new_name, struct_:true);
-        
-        info.classes.insert(string(new_name), new_class);
-        
-        if(generics_type.mGenericsTypes.length() == 0) {
-            generics_type = create_generics_types_from_class_name(new_name, info);
-        }
         
         int i = 0;
         foreach(it, generics_class.mFields) {
@@ -193,6 +95,11 @@ bool output_generics_struct(sType* type, sInfo* info)
             
             new_class.mFields.push_back((clone name, clone new_type));
         }
+        
+        info.classes.insert(string(new_name), new_class);
+        
+        type->mClass = new_class;
+        type->mGenericsTypes.reset();
         
         output_struct(new_class, info);
     }

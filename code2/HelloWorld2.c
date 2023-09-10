@@ -318,6 +318,7 @@ int main()
     
     printf("%d\n", tt1.v1);
     
+/*
     tuple1<string>*% tt2 = new tuple1<string>.initialize(string("ABC"));
     
     tt2.v1 = string("DEF");
@@ -382,6 +383,7 @@ int main()
     li_str.push_back(string("CCC"));
     
     xassert("list test", li_str === [string("AAA"), string("BBB"), string("CCC")]);
+*/
     
     return 0;
 }

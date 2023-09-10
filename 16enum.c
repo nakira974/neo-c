@@ -99,7 +99,6 @@ exception sNode*% parse_enum(string type_name, sInfo* info)
             
             sNode*% element_value = expression(info) throws;
             
-puts(element_name);
             elements.push_back(new tuple2<string,sNode*%>(element_name, element_value));
         }
         else {
@@ -140,8 +139,6 @@ exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info)
         
         while(true) {
             string element_name = parse_word(info) throws;
-            
-puts(element_name);
             
             if(*info->p == '=') {
                 info->p++;

@@ -141,15 +141,9 @@ string make_generics_function(sType* type, string fun_name, sInfo* info)
     string fun_name2 = create_method_name(obj_type, false@no_pointer_name, fun_name, info);
     string fun_name3 = xsprintf("%s_%s", none_generics_name, fun_name);
     
-puts(fun_name3);
-    
     sGenericsFun* generics_fun = info.generics_funcs.at(fun_name3, null!);
     
-printf("generics_fun %d\n", generics_fun);
-    
-puts(fun_name2);
     if(generics_fun) {
-puts("AAA");
         if(!create_generics_fun(string(fun_name2), generics_fun, obj_type, info)) {
             err_msg(info, "%s not found", fun_name3);
             return string("");

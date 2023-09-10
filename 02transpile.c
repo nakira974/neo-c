@@ -182,7 +182,9 @@ sType*% sType*::initialize(sType*% self, char* name, sInfo* info, bool heap=fals
         pointer_num++;
         p++;
     }
+    
     string name2 = string(name).substring(0, -pointer_num-1);
+    
     sClass* klass = info.classes[name2];
     sClass* generics_class = info.generics_classes[name2]
     
@@ -193,7 +195,8 @@ sType*% sType*::initialize(sType*% self, char* name, sInfo* info, bool heap=fals
         self.mClass = klass;
     }
     else {
-        self.mClass = borrow clone generics_class;
+        self.mClass = borrow new sClass;
+        self.mClass.mName = string(name);
     }
     
     self.mGenericsTypes = new list<sType*%>();

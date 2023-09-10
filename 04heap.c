@@ -71,42 +71,18 @@ exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
         }
     }
     else {
-        int i = 0;
         result.mGenericsTypes.reset();
         foreach(it, type->mGenericsTypes) {
             var type = solve_generics(it, generics_type, info) throws;
             result->mGenericsTypes.push_back(clone type);
-            i++;
         }
         
-        string none_generics_name = get_none_generics_name(type->mClass->mName);
-    
-        string new_name = create_generics_name(result, info);
-        
-        if(info.generics_classes[none_generics_name] && info.classes[new_name] == null) {
-            if(!is_contained_generics_class(result, info)) {
-                if(!type->mSolvedGenericsName) {
-                    if(!output_generics_struct(result, info)) {
-                        err_msg(info, "output_generics_struct is failed");
-                        exit(2);
-                    }
-                    
-                    result->mClass = info.classes[new_name];
-                    result->mSolvedGenericsName = true;
-                }
-            }
+        if(!output_generics_struct(result, generics_type, info))
+        {
+            string new_name = create_generics_name(type, info);
+            err_msg(info, "output generics is failed(%s)", new_name);
+            exit(1);
         }
-        else if(info.classes[none_generics_name] == null) {
-            if(!is_contained_generics_class(result, info)) {
-                if(!type->mSolvedGenericsName) {
-                    result->mClass = info.classes[new_name];
-                }
-            }
-        }
-    }
-
-    if(result->mPointerNum == 0) {
-        result->mHeap = false;
     }
 
     return result;

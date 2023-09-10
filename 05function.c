@@ -279,6 +279,9 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             type_name = parse_word(info) throws;
             
             if(*info->p == '<') {
+                char* p = info.p;
+                int sline = info.sline;
+                
                 info->p++;
                 skip_spaces_and_lf(info);
                 
@@ -286,6 +289,14 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                     if(*info->p == '>') {
                         info->p++;
                         skip_spaces_and_lf(info);
+                        
+                        if(*info->p == '{') {
+                        }
+                        else {
+                            info.p = p;
+                            info.sline = sline;
+                        }
+                        break;
                     }
                     else if(*info->p == '\0') {
                         err_msg(info, "invalid struct definition");
@@ -569,6 +580,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
     string var_name;
             
     if(anonymous_type && *info->p == '{') {
+puts("LLL");
         static int anonymous_num = 0;
         if(struct_) {
             if(type_name === "") {
@@ -718,7 +730,9 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         type->mVarArgs = var_args;
     }
     else {
+printf("%c\n", *info->p);
         if(info.types[type_name]) {
+puts("1");
             type = clone info.types[type_name];
             type.mOriginalTypeName = string(type_name);
             
@@ -735,6 +749,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             type->mShort = type->mShort || short_;
         }
         else if(info.generics_type_names.contained(type_name)) {
+puts("L2");
             for(int i=0; i<info.generics_type_names.length(); i++) {
                 if(info.generics_type_names[i] === type_name) {
                     type = new sType(xsprintf("generics_type%d", i), info);
@@ -754,10 +769,11 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             type->mShort = type->mShort || short_;
         }
         else if(*info->p == '<') {
+puts("LO");
             info->p++;
             skip_spaces_and_lf(info);
             
-            if(info.generics_classes[type_name] == null && info.classes[type_name] == null)
+            if(info.generics_classes[type_name] == null)
             {
                 throw;
             }
@@ -785,33 +801,18 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                 }
             }
             
-            type = solve_generics(type, info->generics_type, info) throws;
-            
-            string class_name = create_generics_name(type, info);
-            
-            if(info.classes[class_name] == null) {
-                if(!is_contained_generics_class(type, info)) {
-                    if(!type->mSolvedGenericsName) {
-                        if(!output_generics_struct(type, info)) {
-                            err_msg(info, "output generics struct is failed");
-                            throw;
-                        }
-                        
-                        if(info.classes[class_name]) {
-                            type->mClass = info.classes[class_name];
-                            type->mSolvedGenericsName = true;
-                        }
-                    }
-                }
+puts("CCC");
+            if(is_contained_generics_class(type, info)) {
+puts("AAA");
+                type = solve_generics(type, info.generics_type, info) throws;
             }
             else {
-                if(!is_contained_generics_class(type, info)) {
-                    if(!type->mSolvedGenericsName) {
-                        if(info.classes[class_name]) {
-                            type->mClass = info.classes[class_name];
-                            type->mSolvedGenericsName = true;
-                        }
-                    }
+puts("BBB");
+                if(!output_generics_struct(type, type, info))
+                {
+                    string new_name = create_generics_name(type, info);
+                    err_msg(info, "output generics is failed(%s)", new_name);
+                    exit(1);
                 }
             }
             
@@ -828,6 +829,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             type->mShort = type->mShort || short_;
         }
         else {
+puts("LOX");
             if(struct_) {
                 sClass* klass = info.classes[type_name];
                 
@@ -952,31 +954,15 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                 type->mGenericsTypes.push_back(new sType("bool", info));
             }
             
-            string class_name = create_generics_name(type, info);
-            
-            if(info.classes[class_name] == null) {
-                if(!is_contained_generics_class(type, info)) {
-                    if(!type->mSolvedGenericsName) {
-                        if(!output_generics_struct(type, info)) {
-                            err_msg(info, "output generics struct is failed");
-                            throw;
-                        }
-                        
-                        if(info.classes[class_name]) {
-                            type->mClass = info.classes[class_name];
-                            type->mSolvedGenericsName = true;
-                        }
-                    }
-                }
+            if(is_contained_generics_class(type, info)) {
+                type = solve_generics(type, info.generics_type, info) throws;
             }
             else {
-                if(!is_contained_generics_class(type, info)) {
-                    if(!type->mSolvedGenericsName) {
-                        if(info.classes[class_name]) {
-                            type->mClass = info.classes[class_name];
-                            type->mSolvedGenericsName = true;
-                        }
-                    }
+                if(!output_generics_struct(type, type, info))
+                {
+                    string new_name = create_generics_name(type, info);
+                    err_msg(info, "output generics is failed(%s)", new_name);
+                    exit(1);
                 }
             }
         }
@@ -1372,7 +1358,7 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
             
             buffer*% result_tuple = new buffer();
             
-            result_tuple.append_str(xsprintf("(new tuple2<%s,bool>(", make_type_name_string(come_value.type, false@in_header, false@array_cast_pointer, info)));
+            result_tuple.append_str(xsprintf("(new tuple2<%s,bool>(", make_come_type_name_string(come_value.type, info)));
             result_tuple.append_str(xsprintf("%s,", self.value_source));
             result_tuple.append_str(xsprintf("true))"));
             

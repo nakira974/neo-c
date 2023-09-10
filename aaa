@@ -1,232 +1,286 @@
-c.c.c:130:20: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+b.c.c:130:20: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
     unsigned short short _cur_column;
                    ^~~~~~
-c.c.c:494:5: warning: incompatible redeclaration of library function 'snprintf' [-Wincompatible-library-redeclaration]
+b.c.c:504:5: warning: incompatible redeclaration of library function 'snprintf' [-Wincompatible-library-redeclaration]
 int snprintf(char* __s, int __maxlen, const char* __format, ...);
     ^
-c.c.c:494:5: note: 'snprintf' is a builtin with type 'int (char *, unsigned long, const char *, ...)'
-c.c.c:495:5: warning: incompatible redeclaration of library function 'vsnprintf' [-Wincompatible-library-redeclaration]
+b.c.c:504:5: note: 'snprintf' is a builtin with type 'int (char *, unsigned long, const char *, ...)'
+b.c.c:505:5: warning: incompatible redeclaration of library function 'vsnprintf' [-Wincompatible-library-redeclaration]
 int vsnprintf(char* __s, int __maxlen, const char* __format, va_list __arg);
     ^
-c.c.c:495:5: note: 'vsnprintf' is a builtin with type 'int (char *, unsigned long, const char *, __builtin_va_list)'
-c.c.c:535:5: warning: incompatible redeclaration of library function 'fread' [-Wincompatible-library-redeclaration]
+b.c.c:505:5: note: 'vsnprintf' is a builtin with type 'int (char *, unsigned long, const char *, __builtin_va_list)'
+b.c.c:545:5: warning: incompatible redeclaration of library function 'fread' [-Wincompatible-library-redeclaration]
 int fread(void* __ptr, int __size, int __n, struct _IO_FILE* __stream);
     ^
-c.c.c:535:5: note: 'fread' is a builtin with type 'unsigned long (void *, unsigned long, unsigned long, FILE *)' (aka 'unsigned long (void *, unsigned long, unsigned long, struct _IO_FILE *)')
-c.c.c:536:5: warning: incompatible redeclaration of library function 'fwrite' [-Wincompatible-library-redeclaration]
+b.c.c:545:5: note: 'fread' is a builtin with type 'unsigned long (void *, unsigned long, unsigned long, FILE *)' (aka 'unsigned long (void *, unsigned long, unsigned long, struct _IO_FILE *)')
+b.c.c:546:5: warning: incompatible redeclaration of library function 'fwrite' [-Wincompatible-library-redeclaration]
 int fwrite(const void* __ptr, int __size, int __n, struct _IO_FILE* __s);
     ^
-c.c.c:536:5: note: 'fwrite' is a builtin with type 'unsigned long (const void *, unsigned long, unsigned long, FILE *)' (aka 'unsigned long (const void *, unsigned long, unsigned long, struct _IO_FILE *)')
-c.c.c:571:7: warning: incompatible redeclaration of library function 'memcpy' [-Wincompatible-library-redeclaration]
+b.c.c:546:5: note: 'fwrite' is a builtin with type 'unsigned long (const void *, unsigned long, unsigned long, FILE *)' (aka 'unsigned long (const void *, unsigned long, unsigned long, struct _IO_FILE *)')
+b.c.c:581:7: warning: incompatible redeclaration of library function 'memcpy' [-Wincompatible-library-redeclaration]
 void* memcpy(void* __dest, const void* __src, int __n);
       ^
-c.c.c:571:7: note: 'memcpy' is a builtin with type 'void *(void *, const void *, unsigned long)'
-c.c.c:572:7: warning: incompatible redeclaration of library function 'memmove' [-Wincompatible-library-redeclaration]
+b.c.c:581:7: note: 'memcpy' is a builtin with type 'void *(void *, const void *, unsigned long)'
+b.c.c:582:7: warning: incompatible redeclaration of library function 'memmove' [-Wincompatible-library-redeclaration]
 void* memmove(void* __dest, const void* __src, int __n);
       ^
-c.c.c:572:7: note: 'memmove' is a builtin with type 'void *(void *, const void *, unsigned long)'
-c.c.c:573:7: warning: incompatible redeclaration of library function 'memccpy' [-Wincompatible-library-redeclaration]
+b.c.c:582:7: note: 'memmove' is a builtin with type 'void *(void *, const void *, unsigned long)'
+b.c.c:583:7: warning: incompatible redeclaration of library function 'memccpy' [-Wincompatible-library-redeclaration]
 void* memccpy(void* __dest, const void* __src, int __c, int __n);
       ^
-c.c.c:573:7: note: 'memccpy' is a builtin with type 'void *(void *, const void *, int, unsigned long)'
-c.c.c:574:7: warning: incompatible redeclaration of library function 'memset' [-Wincompatible-library-redeclaration]
+b.c.c:583:7: note: 'memccpy' is a builtin with type 'void *(void *, const void *, int, unsigned long)'
+b.c.c:584:7: warning: incompatible redeclaration of library function 'memset' [-Wincompatible-library-redeclaration]
 void* memset(void* __s, int __c, int __n);
       ^
-c.c.c:574:7: note: 'memset' is a builtin with type 'void *(void *, int, unsigned long)'
-c.c.c:575:5: warning: incompatible redeclaration of library function 'memcmp' [-Wincompatible-library-redeclaration]
+b.c.c:584:7: note: 'memset' is a builtin with type 'void *(void *, int, unsigned long)'
+b.c.c:585:5: warning: incompatible redeclaration of library function 'memcmp' [-Wincompatible-library-redeclaration]
 int memcmp(const void* __s1, const void* __s2, int __n);
     ^
-c.c.c:575:5: note: 'memcmp' is a builtin with type 'int (const void *, const void *, unsigned long)'
-c.c.c:577:7: warning: incompatible redeclaration of library function 'memchr' [-Wincompatible-library-redeclaration]
+b.c.c:585:5: note: 'memcmp' is a builtin with type 'int (const void *, const void *, unsigned long)'
+b.c.c:587:7: warning: incompatible redeclaration of library function 'memchr' [-Wincompatible-library-redeclaration]
 void* memchr(const void* __s, int __c, int __n);
       ^
-c.c.c:577:7: note: 'memchr' is a builtin with type 'void *(const void *, int, unsigned long)'
-c.c.c:581:7: warning: incompatible redeclaration of library function 'strncpy' [-Wincompatible-library-redeclaration]
+b.c.c:587:7: note: 'memchr' is a builtin with type 'void *(const void *, int, unsigned long)'
+b.c.c:591:7: warning: incompatible redeclaration of library function 'strncpy' [-Wincompatible-library-redeclaration]
 char* strncpy(char* __dest, const char* __src, int __n);
       ^
-c.c.c:581:7: note: 'strncpy' is a builtin with type 'char *(char *, const char *, unsigned long)'
-c.c.c:583:7: warning: incompatible redeclaration of library function 'strncat' [-Wincompatible-library-redeclaration]
+b.c.c:591:7: note: 'strncpy' is a builtin with type 'char *(char *, const char *, unsigned long)'
+b.c.c:593:7: warning: incompatible redeclaration of library function 'strncat' [-Wincompatible-library-redeclaration]
 char* strncat(char* __dest, const char* __src, int __n);
       ^
-c.c.c:583:7: note: 'strncat' is a builtin with type 'char *(char *, const char *, unsigned long)'
-c.c.c:585:5: warning: incompatible redeclaration of library function 'strncmp' [-Wincompatible-library-redeclaration]
+b.c.c:593:7: note: 'strncat' is a builtin with type 'char *(char *, const char *, unsigned long)'
+b.c.c:595:5: warning: incompatible redeclaration of library function 'strncmp' [-Wincompatible-library-redeclaration]
 int strncmp(const char* __s1, const char* __s2, int __n);
     ^
-c.c.c:585:5: note: 'strncmp' is a builtin with type 'int (const char *, const char *, unsigned long)'
-c.c.c:587:5: warning: incompatible redeclaration of library function 'strxfrm' [-Wincompatible-library-redeclaration]
+b.c.c:595:5: note: 'strncmp' is a builtin with type 'int (const char *, const char *, unsigned long)'
+b.c.c:597:5: warning: incompatible redeclaration of library function 'strxfrm' [-Wincompatible-library-redeclaration]
 int strxfrm(char* __dest, const char* __src, int __n);
     ^
-c.c.c:587:5: note: 'strxfrm' is a builtin with type 'unsigned long (char *, const char *, unsigned long)'
-c.c.c:591:7: warning: incompatible redeclaration of library function 'strndup' [-Wincompatible-library-redeclaration]
+b.c.c:597:5: note: 'strxfrm' is a builtin with type 'unsigned long (char *, const char *, unsigned long)'
+b.c.c:601:7: warning: incompatible redeclaration of library function 'strndup' [-Wincompatible-library-redeclaration]
 char* strndup(const char* __string, int __n);
       ^
-c.c.c:591:7: note: 'strndup' is a builtin with type 'char *(const char *, unsigned long)'
-c.c.c:595:5: warning: incompatible redeclaration of library function 'strcspn' [-Wincompatible-library-redeclaration]
+b.c.c:601:7: note: 'strndup' is a builtin with type 'char *(const char *, unsigned long)'
+b.c.c:605:5: warning: incompatible redeclaration of library function 'strcspn' [-Wincompatible-library-redeclaration]
 int strcspn(const char* __s, const char* __reject);
     ^
-c.c.c:595:5: note: 'strcspn' is a builtin with type 'unsigned long (const char *, const char *)'
-c.c.c:596:5: warning: incompatible redeclaration of library function 'strspn' [-Wincompatible-library-redeclaration]
+b.c.c:605:5: note: 'strcspn' is a builtin with type 'unsigned long (const char *, const char *)'
+b.c.c:606:5: warning: incompatible redeclaration of library function 'strspn' [-Wincompatible-library-redeclaration]
 int strspn(const char* __s, const char* __accept);
     ^
-c.c.c:596:5: note: 'strspn' is a builtin with type 'unsigned long (const char *, const char *)'
-c.c.c:605:7: warning: incompatible redeclaration of library function 'mempcpy' [-Wincompatible-library-redeclaration]
+b.c.c:606:5: note: 'strspn' is a builtin with type 'unsigned long (const char *, const char *)'
+b.c.c:615:7: warning: incompatible redeclaration of library function 'mempcpy' [-Wincompatible-library-redeclaration]
 void* mempcpy(void* __dest, const void* __src, int __n);
       ^
-c.c.c:605:7: note: 'mempcpy' is a builtin with type 'void *(void *, const void *, unsigned long)'
-c.c.c:606:5: warning: incompatible redeclaration of library function 'strlen' [-Wincompatible-library-redeclaration]
+b.c.c:615:7: note: 'mempcpy' is a builtin with type 'void *(void *, const void *, unsigned long)'
+b.c.c:616:5: warning: incompatible redeclaration of library function 'strlen' [-Wincompatible-library-redeclaration]
 int strlen(const char* __s);
     ^
-c.c.c:606:5: note: 'strlen' is a builtin with type 'unsigned long (const char *)'
-c.c.c:613:5: warning: incompatible redeclaration of library function 'bcmp' [-Wincompatible-library-redeclaration]
+b.c.c:616:5: note: 'strlen' is a builtin with type 'unsigned long (const char *)'
+b.c.c:623:5: warning: incompatible redeclaration of library function 'bcmp' [-Wincompatible-library-redeclaration]
 int bcmp(const void* __s1, const void* __s2, int __n);
     ^
-c.c.c:613:5: note: 'bcmp' is a builtin with type 'int (const void *, const void *, unsigned long)'
-c.c.c:615:6: warning: incompatible redeclaration of library function 'bzero' [-Wincompatible-library-redeclaration]
+b.c.c:623:5: note: 'bcmp' is a builtin with type 'int (const void *, const void *, unsigned long)'
+b.c.c:625:6: warning: incompatible redeclaration of library function 'bzero' [-Wincompatible-library-redeclaration]
 void bzero(void* __s, int __n);
      ^
-c.c.c:615:6: note: 'bzero' is a builtin with type 'void (void *, unsigned long)'
-c.c.c:622:5: warning: incompatible redeclaration of library function 'strncasecmp' [-Wincompatible-library-redeclaration]
+b.c.c:625:6: note: 'bzero' is a builtin with type 'void (void *, unsigned long)'
+b.c.c:632:5: warning: incompatible redeclaration of library function 'strncasecmp' [-Wincompatible-library-redeclaration]
 int strncasecmp(const char* __s1, const char* __s2, int __n);
     ^
-c.c.c:622:5: note: 'strncasecmp' is a builtin with type 'int (const char *, const char *, unsigned long)'
-c.c.c:633:7: warning: incompatible redeclaration of library function 'stpncpy' [-Wincompatible-library-redeclaration]
+b.c.c:632:5: note: 'strncasecmp' is a builtin with type 'int (const char *, const char *, unsigned long)'
+b.c.c:643:7: warning: incompatible redeclaration of library function 'stpncpy' [-Wincompatible-library-redeclaration]
 char* stpncpy(char* __dest, const char* __src, int __n);
       ^
-c.c.c:633:7: note: 'stpncpy' is a builtin with type 'char *(char *, const char *, unsigned long)'
-c.c.c:655:5: warning: incompatible redeclaration of library function 'strtoll' [-Wincompatible-library-redeclaration]
+b.c.c:643:7: note: 'stpncpy' is a builtin with type 'char *(char *, const char *, unsigned long)'
+b.c.c:665:5: warning: incompatible redeclaration of library function 'strtoll' [-Wincompatible-library-redeclaration]
 int strtoll(const char* __nptr, char** __endptr, int __base);
     ^
-c.c.c:655:5: note: 'strtoll' is a builtin with type 'long long (const char *, char **, int)'
-c.c.c:656:14: warning: incompatible redeclaration of library function 'strtoull' [-Wincompatible-library-redeclaration]
+b.c.c:665:5: note: 'strtoll' is a builtin with type 'long long (const char *, char **, int)'
+b.c.c:666:14: warning: incompatible redeclaration of library function 'strtoull' [-Wincompatible-library-redeclaration]
 unsigned int strtoull(const char* __nptr, char** __endptr, int __base);
              ^
-c.c.c:656:14: note: 'strtoull' is a builtin with type 'unsigned long long (const char *, char **, int)'
-c.c.c:713:7: warning: incompatible redeclaration of library function 'malloc' [-Wincompatible-library-redeclaration]
+b.c.c:666:14: note: 'strtoull' is a builtin with type 'unsigned long long (const char *, char **, int)'
+b.c.c:723:7: warning: incompatible redeclaration of library function 'malloc' [-Wincompatible-library-redeclaration]
 void* malloc(int __size);
       ^
-c.c.c:713:7: note: 'malloc' is a builtin with type 'void *(unsigned long)'
-c.c.c:714:7: warning: incompatible redeclaration of library function 'calloc' [-Wincompatible-library-redeclaration]
+b.c.c:723:7: note: 'malloc' is a builtin with type 'void *(unsigned long)'
+b.c.c:724:7: warning: incompatible redeclaration of library function 'calloc' [-Wincompatible-library-redeclaration]
 void* calloc(int __nmemb, int __size);
       ^
-c.c.c:714:7: note: 'calloc' is a builtin with type 'void *(unsigned long, unsigned long)'
-c.c.c:715:7: warning: incompatible redeclaration of library function 'realloc' [-Wincompatible-library-redeclaration]
+b.c.c:724:7: note: 'calloc' is a builtin with type 'void *(unsigned long, unsigned long)'
+b.c.c:725:7: warning: incompatible redeclaration of library function 'realloc' [-Wincompatible-library-redeclaration]
 void* realloc(void* __ptr, int __size);
       ^
-c.c.c:715:7: note: 'realloc' is a builtin with type 'void *(void *, unsigned long)'
-c.c.c:718:7: warning: incompatible redeclaration of library function 'alloca' [-Wincompatible-library-redeclaration]
+b.c.c:725:7: note: 'realloc' is a builtin with type 'void *(void *, unsigned long)'
+b.c.c:728:7: warning: incompatible redeclaration of library function 'alloca' [-Wincompatible-library-redeclaration]
 void* alloca(int __size);
       ^
-c.c.c:718:7: note: 'alloca' is a builtin with type 'void *(unsigned long)'
-c.c.c:721:7: warning: incompatible redeclaration of library function 'aligned_alloc' [-Wincompatible-library-redeclaration]
+b.c.c:728:7: note: 'alloca' is a builtin with type 'void *(unsigned long)'
+b.c.c:731:7: warning: incompatible redeclaration of library function 'aligned_alloc' [-Wincompatible-library-redeclaration]
 void* aligned_alloc(int __alignment, int __size);
       ^
-c.c.c:721:7: note: 'aligned_alloc' is a builtin with type 'void *(unsigned long, unsigned long)'
-c.c.c:753:5: warning: incompatible redeclaration of library function 'llabs' [-Wincompatible-library-redeclaration]
+b.c.c:731:7: note: 'aligned_alloc' is a builtin with type 'void *(unsigned long, unsigned long)'
+b.c.c:763:5: warning: incompatible redeclaration of library function 'llabs' [-Wincompatible-library-redeclaration]
 int llabs(int __x);
     ^
-c.c.c:753:5: note: 'llabs' is a builtin with type 'long long (long long)'
-c.c.c:801:57: warning: declaration of 'struct tuple2$$2int$bool$' will not be visible outside of this function [-Wvisibility]
-static void tuple2$$2int$bool$phintbool_finalize(struct tuple2$$2int$bool$* self);
-                                                        ^
-c.c.c:815:47: warning: integer literal is too large to be represented in a signed integer type, interpreting as unsigned [-Wimplicitly-unsigned-literal]
+b.c.c:763:5: note: 'llabs' is a builtin with type 'long long (long long)'
+b.c.c:823:47: warning: integer literal is too large to be represented in a signed integer type, interpreting as unsigned [-Wimplicitly-unsigned-literal]
     unsigned long int __result__ = ((((__bsx)&18374686479671623680)>>56)|(((__bsx)&71776119061217280)>>40)|(((__bsx)&280375465082880)>>24)|(((__bsx)&1095216660480)>>8)|(((__bsx)&4278190080)<<8)|(((__bsx)&16711680)<<24)|(((__bsx)&65280)<<40)|(((__bsx)&255)<<56));
                                               ^
-c.c.c:875:40: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+b.c.c:883:40: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
 static inline _Bool short_equals(short short self, short short right){
                                        ^~~~~~
-c.c.c:875:58: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+b.c.c:883:58: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
 static inline _Bool short_equals(short short self, short short right){
                                                          ^~~~~~
-c.c.c:876:11: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+b.c.c:884:11: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
     short short __result__ = self==right;
           ^~~~~~
-c.c.c:982:43: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+b.c.c:986:43: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
 static inline short int short_clone(short short self){
                                           ^~~~~~
-c.c.c:983:11: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+b.c.c:987:11: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
     short short __result__ = self;
           ^~~~~~
-c.c.c:1006:20: warning: expression result unused [-Wunused-value]
+b.c.c:1006:20: warning: expression result unused [-Wunused-value]
     if(self->buf) {(char*)come_decrement_ref_count(self->buf,0,0); }
                    ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-c.c.c:1027:25: warning: expression result unused [-Wunused-value]
+b.c.c:1027:25: warning: expression result unused [-Wunused-value]
     if(result_31->buf) {(char*)come_decrement_ref_count(result_31->buf,0,0); }
                         ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-c.c.c:1056:24: warning: expression result unused [-Wunused-value]
+b.c.c:1056:24: warning: expression result unused [-Wunused-value]
         if(self->buf) {(char*)come_decrement_ref_count(self->buf,0,0); }
                        ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-c.c.c:1074:24: warning: expression result unused [-Wunused-value]
+b.c.c:1074:24: warning: expression result unused [-Wunused-value]
         if(self->buf) {(char*)come_decrement_ref_count(self->buf,0,0); }
                        ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-c.c.c:1101:67: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+b.c.c:1101:67: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
 static inline void buffer_append_short(struct buffer* self, short short value){
                                                                   ^~~~~~
-c.c.c:1102:51: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+b.c.c:1102:51: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
     buffer_append(self,(char*)&value,sizeof(short short));
                                                   ^~~~~
-c.c.c:1116:24: warning: expression result unused [-Wunused-value]
+b.c.c:1116:24: warning: expression result unused [-Wunused-value]
         if(self->buf) {(char*)come_decrement_ref_count(self->buf,0,0); }
                        ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-c.c.c:1853:18: warning: incompatible pointer types assigning to 'struct list_item$$1char$p *' from 'struct list_item$p$1char$p *' [-Wincompatible-pointer-types]
+b.c.c:1838:13: error: incomplete definition of type 'struct list$1charph$1charph'
+        self->head=((void*)0);
+        ~~~~^
+b.c.c:803:15: note: forward declaration of 'struct list$1charph$1charph'
+static struct list$1charph$1charph* list$1charph_initialize(struct list$1charph$1charph* self);
+              ^
+b.c.c:1839:13: error: incomplete definition of type 'struct list$1charph$1charph'
+        self->tail=((void*)0);
+        ~~~~^
+b.c.c:803:15: note: forward declaration of 'struct list$1charph$1charph'
+static struct list$1charph$1charph* list$1charph_initialize(struct list$1charph$1charph* self);
+              ^
+b.c.c:1840:13: error: incomplete definition of type 'struct list$1charph$1charph'
+        self->len=0;
+        ~~~~^
+b.c.c:803:15: note: forward declaration of 'struct list$1charph$1charph'
+static struct list$1charph$1charph* list$1charph_initialize(struct list$1charph$1charph* self);
+              ^
+b.c.c:1851:23: error: incomplete definition of type 'struct list$1charph$1charph'
             it_44=self->head;
-                 ^~~~~~~~~~~
-c.c.c:1859:22: warning: incompatible pointer types assigning to 'struct list_item$$1char$p *' from 'struct list_item$p$1char$p *' [-Wincompatible-pointer-types]
-                it_44=it_44->next;
-                     ^~~~~~~~~~~~
-c.c.c:1869:14: warning: incompatible pointer types assigning to 'struct list_item$$1char$p$$1char$p *' from 'struct list_item$p$1char$p *' [-Wincompatible-pointer-types]
+                  ~~~~^
+b.c.c:803:15: note: forward declaration of 'struct list$1charph$1charph'
+static struct list$1charph$1charph* list$1charph_initialize(struct list$1charph$1charph* self);
+              ^
+b.c.c:1867:19: error: incomplete definition of type 'struct list$1charph$1charph'
         it_47=self->head;
-             ^~~~~~~~~~~
-c.c.c:1875:18: warning: incompatible pointer types assigning to 'struct list_item$$1char$p$$1char$p *' from 'struct list_item$p$1char$p *' [-Wincompatible-pointer-types]
-            it_47=it_47->next;
-                 ^~~~~~~~~~~~
-c.c.c:1896:27: warning: incompatible pointer types assigning to 'struct list_item$p$1char$p *' from 'struct list_item$$1char$p$$1char$p *' [-Wincompatible-pointer-types]
+              ~~~~^
+b.c.c:803:15: note: forward declaration of 'struct list$1charph$1charph'
+static struct list$1charph$1charph* list$1charph_initialize(struct list$1charph$1charph* self);
+              ^
+b.c.c:1888:20: error: incomplete definition of type 'struct list$1charph$1charph'
+            if(self->len==0) {
+               ~~~~^
+b.c.c:803:15: note: forward declaration of 'struct list$1charph$1charph'
+static struct list$1charph$1charph* list$1charph_initialize(struct list$1charph$1charph* self);
+              ^
+b.c.c:1894:21: error: incomplete definition of type 'struct list$1charph$1charph'
                 self->tail=litem_50;
-                          ^~~~~~~~~
-c.c.c:1897:27: warning: incompatible pointer types assigning to 'struct list_item$p$1char$p *' from 'struct list_item$$1char$p$$1char$p *' [-Wincompatible-pointer-types]
+                ~~~~^
+b.c.c:803:15: note: forward declaration of 'struct list$1charph$1charph'
+static struct list$1charph$1charph* list$1charph_initialize(struct list$1charph$1charph* self);
+              ^
+b.c.c:1895:21: error: incomplete definition of type 'struct list$1charph$1charph'
                 self->head=litem_50;
-                          ^~~~~~~~~
-c.c.c:1905:27: warning: incompatible pointer types assigning to 'struct list_item$p$1char$p *' from 'struct list_item$$1char$p$$1char$p *' [-Wincompatible-pointer-types]
+                ~~~~^
+b.c.c:803:15: note: forward declaration of 'struct list$1charph$1charph'
+static struct list$1charph$1charph* list$1charph_initialize(struct list$1charph$1charph* self);
+              ^
+b.c.c:1897:25: error: incomplete definition of type 'struct list$1charph$1charph'
+            else if(self->len==1) {
+                    ~~~~^
+b.c.c:803:15: note: forward declaration of 'struct list$1charph$1charph'
+static struct list$1charph$1charph* list$1charph_initialize(struct list$1charph$1charph* self);
+              ^
+b.c.c:1899:36: error: incomplete definition of type 'struct list$1charph$1charph'
+                litem_51->prev=self->head;
+                               ~~~~^
+b.c.c:803:15: note: forward declaration of 'struct list$1charph$1charph'
+static struct list$1charph$1charph* list$1charph_initialize(struct list$1charph$1charph* self);
+              ^
+b.c.c:1903:21: error: incomplete definition of type 'struct list$1charph$1charph'
                 self->tail=litem_51;
-                          ^~~~~~~~~
-c.c.c:1906:33: warning: incompatible pointer types assigning to 'struct list_item$p$1char$p *' from 'struct list_item$$1char$p$$1char$p *' [-Wincompatible-pointer-types]
+                ~~~~^
+b.c.c:803:15: note: forward declaration of 'struct list$1charph$1charph'
+static struct list$1charph$1charph* list$1charph_initialize(struct list$1charph$1charph* self);
+              ^
+b.c.c:1904:21: error: incomplete definition of type 'struct list$1charph$1charph'
                 self->head->next=litem_51;
-                                ^~~~~~~~~
-c.c.c:1914:33: warning: incompatible pointer types assigning to 'struct list_item$p$1char$p *' from 'struct list_item$$1char$p$$1char$p *' [-Wincompatible-pointer-types]
+                ~~~~^
+b.c.c:803:15: note: forward declaration of 'struct list$1charph$1charph'
+static struct list$1charph$1charph* list$1charph_initialize(struct list$1charph$1charph* self);
+              ^
+b.c.c:1908:36: error: incomplete definition of type 'struct list$1charph$1charph'
+                litem_52->prev=self->tail;
+                               ~~~~^
+b.c.c:803:15: note: forward declaration of 'struct list$1charph$1charph'
+static struct list$1charph$1charph* list$1charph_initialize(struct list$1charph$1charph* self);
+              ^
+b.c.c:1912:21: error: incomplete definition of type 'struct list$1charph$1charph'
                 self->tail->next=litem_52;
-                                ^~~~~~~~~
-c.c.c:1915:27: warning: incompatible pointer types assigning to 'struct list_item$p$1char$p *' from 'struct list_item$$1char$p$$1char$p *' [-Wincompatible-pointer-types]
+                ~~~~^
+b.c.c:803:15: note: forward declaration of 'struct list$1charph$1charph'
+static struct list$1charph$1charph* list$1charph_initialize(struct list$1charph$1charph* self);
+              ^
+b.c.c:1913:21: error: incomplete definition of type 'struct list$1charph$1charph'
                 self->tail=litem_52;
-                          ^~~~~~~~~
-c.c.c:1894:37: warning: expression result unused [-Wunused-value]
+                ~~~~^
+b.c.c:803:15: note: forward declaration of 'struct list$1charph$1charph'
+static struct list$1charph$1charph* list$1charph_initialize(struct list$1charph$1charph* self);
+              ^
+b.c.c:1915:17: error: incomplete definition of type 'struct list$1charph$1charph'
+            self->len++;
+            ~~~~^
+b.c.c:803:15: note: forward declaration of 'struct list$1charph$1charph'
+static struct list$1charph$1charph* list$1charph_initialize(struct list$1charph$1charph* self);
+              ^
+b.c.c:1892:37: warning: expression result unused [-Wunused-value]
                 if(litem_50->item) {(char*)come_decrement_ref_count(litem_50->item,0,0); }
                                     ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-c.c.c:1903:37: warning: expression result unused [-Wunused-value]
+b.c.c:1901:37: warning: expression result unused [-Wunused-value]
                 if(litem_51->item) {(char*)come_decrement_ref_count(litem_51->item,0,0); }
                                     ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-c.c.c:1912:37: warning: expression result unused [-Wunused-value]
+b.c.c:1910:37: warning: expression result unused [-Wunused-value]
                 if(litem_52->item) {(char*)come_decrement_ref_count(litem_52->item,0,0); }
                                     ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-c.c.c:1957:271: error: invalid application of 'sizeof' to an incomplete type 'struct tuple2$$2int$bool$'
-    struct tuple2$p$2int$bool$* __result__ = (((struct tuple2$p$2int$bool$*)(right_value65=tuple2$$2int$bool$phintbool_initialize((struct tuple2$$2int$bool$*)come_increment_ref_count(((struct tuple2$$2int$bool$*)(right_value64=(struct tuple2$$2int$bool$*)come_calloc(1, sizeof(struct tuple2$$2int$bool$)*(1))))),x+y,(_Bool)1))));
-                                                                                                                                                                                                                                                                              ^     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-c.c.c:1957:139: note: forward declaration of 'struct tuple2$$2int$bool$'
-    struct tuple2$p$2int$bool$* __result__ = (((struct tuple2$p$2int$bool$*)(right_value65=tuple2$$2int$bool$phintbool_initialize((struct tuple2$$2int$bool$*)come_increment_ref_count(((struct tuple2$$2int$bool$*)(right_value64=(struct tuple2$$2int$bool$*)come_calloc(1, sizeof(struct tuple2$$2int$bool$)*(1))))),x+y,(_Bool)1))));
-                                                                                                                                          ^
-c.c.c:1973:57: warning: declaration of 'struct tuple2$$2int$bool$' will not be visible outside of this function [-Wvisibility]
-static void tuple2$$2int$bool$phintbool_finalize(struct tuple2$$2int$bool$* self){
-                                                        ^
-c.c.c:1973:13: error: conflicting types for 'tuple2$$2int$bool$phintbool_finalize'
-static void tuple2$$2int$bool$phintbool_finalize(struct tuple2$$2int$bool$* self){
-            ^
-c.c.c:801:13: note: previous declaration is here
-static void tuple2$$2int$bool$phintbool_finalize(struct tuple2$$2int$bool$* self);
-            ^
-c.c.c:1983:139: warning: incompatible function pointer types passing 'void (struct __current_stack1__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
-    xZZZZZZZZ_91=tuple2$p$2int$bool$phintbool_catch(((struct tuple2$p$2int$bool$*)(right_value66=fun_exception(1,2))),&__current_stack1__,method_block1);
-                                                                                                                                          ^~~~~~~~~~~~~
-c.c.c:803:102: note: passing argument to parameter 'block' here
-static int tuple2$p$2int$bool$phintbool_catch(struct tuple2$p$2int$bool$* self, void* parent, void (*block)(void*));
-                                                                                                     ^
-61 warnings and 2 errors generated.
-c.c 14: clang is faield
-c.c 14: compile faield
+b.c.c:1958:292: error: invalid application of 'sizeof' to an incomplete type 'struct tuple2$2sTypephbool'
+    struct tuple2$2sTypephbool$2sTypephbool* __result__ = (((struct tuple2$2sTypephbool$2sTypephbool*)(right_value65=tuple2$2sTypephbool_initialize((struct tuple2$2sTypephbool*)come_increment_ref_count(((struct tuple2$2sTypephbool*)(right_value64=(struct tuple2$2sTypephbool*)come_calloc(1, sizeof(struct tuple2$2sTypephbool)*(1))))),(struct sType*)come_increment_ref_count(result_91),(_Bool)1))));
+                                                                                                                                                                                                                                                                                                   ^     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+b.c.c:1958:157: note: forward declaration of 'struct tuple2$2sTypephbool'
+    struct tuple2$2sTypephbool$2sTypephbool* __result__ = (((struct tuple2$2sTypephbool$2sTypephbool*)(right_value65=tuple2$2sTypephbool_initialize((struct tuple2$2sTypephbool*)come_increment_ref_count(((struct tuple2$2sTypephbool*)(right_value64=(struct tuple2$2sTypephbool*)come_calloc(1, sizeof(struct tuple2$2sTypephbool)*(1))))),(struct sType*)come_increment_ref_count(result_91),(_Bool)1))));
+                                                                                                                                                            ^
+b.c.c:1960:12: warning: incompatible pointer types returning 'struct tuple2$2sTypephbool$2sTypephbool *' from a function with result type 'struct tuple2$2list$1sTypephphbool *' [-Wincompatible-pointer-types]
+    return __result__;
+           ^~~~~~~~~~
+b.c.c:1964:23: warning: expression result unused [-Wunused-value]
+        if(self->v1) {(struct sType*)come_decrement_ref_count(self->v1,0,0); }
+                      ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+50 warnings and 17 errors generated.
+b.c 27: clang is faield
+b.c 27: compile faield

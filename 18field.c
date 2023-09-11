@@ -271,11 +271,7 @@ bool sLoadFieldNode*::compile(sLoadFieldNode* self, sInfo* info)
     CVALUE*% left_value = get_value_from_stack(-1, info);
     dec_stack_ptr(1, info);
     
-    sClass* klass = info.classes[left_value.type->mClass.mName];
-    
-    if(klass->mFields.length() == 0) {
-        klass = left_value.type->mClass;
-    }
+    sClass* klass = left_value.type->mClass;
 
     sType*% field_type = null;
     int index = 0;

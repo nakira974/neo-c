@@ -85,6 +85,8 @@ bool output_generics_struct(sType* type, sType* generics_type, sInfo* info)
         
         sClass*% new_class = new sClass(name:new_name, struct_:true);
         
+        info.classes.insert(string(new_name), new_class);
+        
         int i = 0;
         foreach(it, generics_class.mFields) {
             var name, type = it;
@@ -96,12 +98,16 @@ bool output_generics_struct(sType* type, sType* generics_type, sInfo* info)
             new_class.mFields.push_back((clone name, clone new_type));
         }
         
-        info.classes.insert(string(new_name), new_class);
-        
+        type->mNoSolvedGenericsType.v1 = clone type;
         type->mClass = new_class;
         type->mGenericsTypes.reset();
         
         output_struct(new_class, info);
+    }
+    else {
+        type->mNoSolvedGenericsType.v1 = clone type;
+        type->mClass = info.classes[new_name];
+        type->mGenericsTypes.reset();
     }
     
     return true;

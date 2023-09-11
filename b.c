@@ -1,14 +1,16 @@
-//#include <comelang2.h>
-
-struct sData<T, T2>
-{
-    T v1;
-    T2 v2;
-};
+#include <comelang2.h>
 
 int main()
 {
-    struct sData<int, char> data;
+    list<string>*% li = new list<string>();
+    
+    li.push_back(string("AAA"));
+    li.push_back(string("BBB"));
+    li.push_back(string("CCC"));
+    
+    foreach(it, li) {
+        puts(it);
+    }
     
     return 0;
 }

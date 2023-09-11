@@ -580,7 +580,6 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
     string var_name;
             
     if(anonymous_type && *info->p == '{') {
-puts("LLL");
         static int anonymous_num = 0;
         if(struct_) {
             if(type_name === "") {
@@ -730,9 +729,7 @@ puts("LLL");
         type->mVarArgs = var_args;
     }
     else {
-printf("%c\n", *info->p);
         if(info.types[type_name]) {
-puts("1");
             type = clone info.types[type_name];
             type.mOriginalTypeName = string(type_name);
             
@@ -749,7 +746,6 @@ puts("1");
             type->mShort = type->mShort || short_;
         }
         else if(info.generics_type_names.contained(type_name)) {
-puts("L2");
             for(int i=0; i<info.generics_type_names.length(); i++) {
                 if(info.generics_type_names[i] === type_name) {
                     type = new sType(xsprintf("generics_type%d", i), info);
@@ -769,7 +765,6 @@ puts("L2");
             type->mShort = type->mShort || short_;
         }
         else if(*info->p == '<') {
-puts("LO");
             info->p++;
             skip_spaces_and_lf(info);
             
@@ -801,13 +796,10 @@ puts("LO");
                 }
             }
             
-puts("CCC");
             if(is_contained_generics_class(type, info)) {
-puts("AAA");
                 type = solve_generics(type, info.generics_type, info) throws;
             }
             else {
-puts("BBB");
                 if(!output_generics_struct(type, type, info))
                 {
                     string new_name = create_generics_name(type, info);
@@ -829,7 +821,6 @@ puts("BBB");
             type->mShort = type->mShort || short_;
         }
         else {
-puts("LOX");
             if(struct_) {
                 sClass* klass = info.classes[type_name];
                 
@@ -3708,6 +3699,9 @@ string create_method_name(sType* obj_type, bool no_pointer_name, char* fun_name,
 
 bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* generics_type, sInfo* info)
 {
+    if(generics_type->mNoSolvedGenericsType.v1) {
+        generics_type = generics_type->mNoSolvedGenericsType.v1;
+    }
     sFun* funX = info.funcs[fun_name];
     if(funX) {
         return true;

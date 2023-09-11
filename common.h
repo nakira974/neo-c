@@ -48,6 +48,8 @@ struct sType
 {
     sClass* mClass;
     
+    tuple1<sType*%>*% mNoSolvedGenericsType;
+    
     string mGenericsName;
 
     list<sType*%>*% mGenericsTypes;

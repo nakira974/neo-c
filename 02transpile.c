@@ -199,6 +199,7 @@ sType*% sType*::initialize(sType*% self, char* name, sInfo* info, bool heap=fals
         self.mClass.mName = string(name);
     }
     
+    self.mNoSolvedGenericsType = new tuple1<sType*%>(null);
     self.mGenericsTypes = new list<sType*%>();
     self.mArrayNum = new list<sNode*%>();
     self.mOmitArrayNum = false;

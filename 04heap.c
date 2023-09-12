@@ -221,7 +221,10 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
     var stack_saved = info.stack;
     var right_value_objects = info->right_value_objects;
     
-    if(!gGC && type->mPointerNum > 0) {
+    if(type->mNoSolvedGenericsType.v1) {
+        type = type->mNoSolvedGenericsType.v1;
+    }
+    if(type->mPointerNum > 0) {
         string c_value = string(obj);
         
         sClass* klass = type->mClass;
@@ -238,6 +241,7 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
         sFun* finalizer = NULL;
         if(type->mGenericsTypes.length() > 0) {
             finalizer = info->funcs[fun_name2];
+            
             
             if(finalizer == NULL) {
                 string none_generics_name = get_none_generics_name(type2.mClass.mName);
@@ -327,6 +331,10 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
 
 string clone_object(sType* type, char* obj, sInfo* info)
 {
+    if(type->mNoSolvedGenericsType.v1) {
+        type = type->mNoSolvedGenericsType.v1;
+    }
+    
     string result = null
     var stack_saved = info.stack;
     var right_value_objects = info->right_value_objects;
@@ -409,6 +417,9 @@ string clone_object(sType* type, char* obj, sInfo* info)
 
 bool create_equals_method(sType* type, sInfo* info)
 {
+    if(type->mNoSolvedGenericsType.v1) {
+        type = type->mNoSolvedGenericsType.v1;
+    }
     string result = null
     var stack_saved = info.stack;
     var right_value_objects = info->right_value_objects;
@@ -481,6 +492,9 @@ bool create_equals_method(sType* type, sInfo* info)
 
 bool create_operator_equals_method(sType* type, sInfo* info)
 {
+    if(type->mNoSolvedGenericsType.v1) {
+        type = type->mNoSolvedGenericsType.v1;
+    }
     string result = null
     var stack_saved = info.stack;
     var right_value_objects = info->right_value_objects;
@@ -553,6 +567,9 @@ bool create_operator_equals_method(sType* type, sInfo* info)
 
 bool create_operator_not_equals_method(sType* type, sInfo* info)
 {
+    if(type->mNoSolvedGenericsType.v1) {
+        type = type->mNoSolvedGenericsType.v1;
+    }
     string result = null
     var stack_saved = info.stack;
     var right_value_objects = info->right_value_objects;

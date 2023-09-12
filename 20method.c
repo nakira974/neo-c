@@ -131,20 +131,21 @@ string sMethodCallNode*::sname(sMethodCallNode* self, sInfo* info)
 
 string make_generics_function(sType* type, string fun_name, sInfo* info)
 {
-    string none_generics_name = get_none_generics_name(type.mClass.mName);
-    
+/*
     sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
         err_msg(info, "solve generics error");
         return string("");
     }
+*/
     
-    string fun_name2 = create_method_name(obj_type, false@no_pointer_name, fun_name, info);
+    string none_generics_name = get_none_generics_name(type.mClass.mName);
+    string fun_name2 = create_method_name(type, false@no_pointer_name, fun_name, info);
     string fun_name3 = xsprintf("%s_%s", none_generics_name, fun_name);
     
     sGenericsFun* generics_fun = info.generics_funcs.at(fun_name3, null!);
     
     if(generics_fun) {
-        if(!create_generics_fun(string(fun_name2), generics_fun, obj_type, info)) {
+        if(!create_generics_fun(string(fun_name2), generics_fun, type, info)) {
             err_msg(info, "%s not found", fun_name3);
             return string("");
         }
@@ -550,7 +551,9 @@ exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) v
             
             sNode*% node = expression(info) throws;
             
-            node = post_position_operator3(node, info) throws;
+            node = post_position_operator3(node, info).catch {
+                throw;
+            }
             
             info.no_comma = no_comma;
             

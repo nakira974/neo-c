@@ -863,14 +863,18 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             }
             
             type->mPointerNum++;
+            if(type->mNoSolvedGenericsType.v1) {
+                type->mNoSolvedGenericsType.v1.mPointerNum++;
+            }
         }
         
         if(*info->p == '%') {
             info->p++;
             skip_spaces_and_lf(info);
             
-            if(!gGC) {
-                type->mHeap = true;
+            type->mHeap = true;
+            if(type->mNoSolvedGenericsType.v1) {
+                type->mNoSolvedGenericsType.v1.mHeap = true;
             }
         }
         
@@ -878,8 +882,10 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             info->p++;
             skip_spaces_and_lf(info);
             
-            if(!gGC) {
-                type->mNoHeap = true;
+            type->mNoHeap = true;
+            
+            if(type->mNoSolvedGenericsType.v1) {
+                type->mNoSolvedGenericsType.v1.mHeap = false;
             }
         }
         
@@ -900,6 +906,10 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             }
             
             type->mPointerNum++;
+            
+            if(type->mNoSolvedGenericsType.v1) {
+                type->mNoSolvedGenericsType.v1.mPointerNum++;
+            }
         }
         
         if(memcmp(info.p, "__restrict ", strlen("__restrict ")) == 0) {

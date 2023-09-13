@@ -242,7 +242,6 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
         if(type->mGenericsTypes.length() > 0) {
             finalizer = info->funcs[fun_name2];
             
-            
             if(finalizer == NULL) {
                 string none_generics_name = get_none_generics_name(type2.mClass.mName);
                 

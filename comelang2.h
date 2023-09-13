@@ -427,6 +427,9 @@ impl list <T>
         list_item<T>* it = self.head;
         while(it != null) {
             var prev_it = it;
+            if(isheap(T)) {
+                delete borrow it.item;
+            }
             it = it.next;
             delete borrow prev_it;
         }

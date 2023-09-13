@@ -4536,6 +4536,10 @@ exception sFun*,string create_finalizer_automatically(sType* type, char* fun_nam
     
     string real_fun_name = create_method_name(type, false@no_pointer_name, fun_name, info);
     
+    sType*% type2 = solve_generics(type, type, info) throws;
+    
+    type = borrow type2;
+    
     sClass* klass = type->mClass;
     
     if(type->mPointerNum > 0 && klass->mStruct) {

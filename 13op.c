@@ -2,6 +2,9 @@
 
 bool operator_overload_fun(sType* type, char* fun_name, CVALUE* left_value, CVALUE* right_value, sInfo* info)
 {
+    if(type->mNoSolvedGenericsType.v1) {
+        type = type->mNoSolvedGenericsType.v1;
+    }
     sClass* klass = type->mClass;
     char* class_name = klass->mName;
     
@@ -24,6 +27,7 @@ bool operator_overload_fun(sType* type, char* fun_name, CVALUE* left_value, CVAL
         
         sGenericsFun* generics_fun = info.generics_funcs.at(fun_name3, null!);
         
+        
         if(generics_fun) {
             if(!create_generics_fun(string(fun_name2), generics_fun, obj_type, info)) {
                 return false;
@@ -33,39 +37,20 @@ bool operator_overload_fun(sType* type, char* fun_name, CVALUE* left_value, CVAL
         }
         else {
             if(fun_name === "operator_equals") {
-                if(!create_equals_method(obj_type, info)) {
-                    return false;
-                }
-                if(!create_operator_equals_method(obj_type, info)) {
-                    return false;
-                }
-           
-                sGenericsFun* generics_fun = info.generics_funcs.at(fun_name3, null!);
+                var fun, fun_name = create_equals_automatically(obj_type, "equals", info).catch { return false; }
+                var fun2, fun_name2 = create_operator_equals_automatically(obj_type, "operator_equals", info).catch { return false; }
                 
-                if(generics_fun) {
-                    if(!create_generics_fun(string(fun_name2), generics_fun, obj_type, info)) {
-                        return false;
-                    }
-                }
+                operator_fun = fun2;
             }
             else if(fun_name === "operator_not_equals") {
-                if(!create_equals_method(obj_type, info)) {
-                    return false;
-                }
-                if(!create_operator_not_equals_method(obj_type, info)) {
-                    return false;
-                }
-           
-                sGenericsFun* generics_fun = info.generics_funcs.at(fun_name3, null!);
+                var fun, fun_name = create_equals_automatically(obj_type, "not_equals", info).catch { return false; }
+                var fun2, fun_name2 = create_operator_not_equals_automatically(obj_type, "operator_not_equals", info).catch { return false; }
                 
-                if(generics_fun) {
-                    if(!create_generics_fun(string(fun_name2), generics_fun, obj_type, info)) {
-                        return false;
-                    }
-                }
+                operator_fun = fun2;
             }
-            
-            operator_fun = info->funcs[fun_name2];
+            else {
+                operator_fun = info->funcs[fun_name2];
+            }
         }
     }
     else {

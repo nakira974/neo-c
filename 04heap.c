@@ -84,7 +84,7 @@ exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
             exit(1);
         }
     }
-
+    
     return result;
 }
 

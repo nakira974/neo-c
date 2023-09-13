@@ -42,7 +42,6 @@ bool sStoreNode*::terminated()
 
 bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
 {
-sClass* klasSs = info.classes["sType"];
     if(self.right_value == null) {
         if(self.alloc) {
             sVar* var_ = info.lv_table.mVars[self.name];
@@ -106,6 +105,12 @@ sClass* klasSs = info.classes["sType"];
         CVALUE*% right_value = get_value_from_stack(-1, info);
         dec_stack_ptr(1, info);
         sType* right_type = right_value.type;
+        
+        if(self.multiple_assign) {
+            if(right_type->mNoSolvedGenericsType.v1) {
+                right_type = right_type->mNoSolvedGenericsType.v1;
+            }
+        }
         
         if(self.alloc) {
             sVar* var_ = info.lv_table.mVars[self.name];

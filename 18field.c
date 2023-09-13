@@ -10,6 +10,11 @@ bool operator_overload_fun2(sType* type, char* fun_name, CVALUE* left_value, CVA
     
     string fun_name2;
     sFun* operator_fun = null;
+    
+    if(type->mNoSolvedGenericsType.v1) {
+        type = type->mNoSolvedGenericsType.v1;
+    }
+    
     if(type->mGenericsTypes.length() > 0) {
         string none_generics_name = get_none_generics_name(type.mClass.mName);
         

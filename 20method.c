@@ -174,7 +174,13 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
     CVALUE*% obj_value = get_value_from_stack(-1, info);
     dec_stack_ptr(1, info);
     
-    sType* obj_type = obj_value.type;
+/*
+    sType*% obj_type = solve_generics(obj_value.type, info.generics_type, info).catch 
+    {
+        return false;
+    }
+*/
+    sType*% obj_type = clone obj_value.type;
     
     sClass* klass = obj_type.mClass;
     
@@ -261,12 +267,12 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
         info.stack.push_back(come_value2);
     }
     else {
-        string generics_fun_name = make_generics_function(obj_value.type, string(fun_name), info).to_string();
+        string generics_fun_name = make_generics_function(obj_type, string(fun_name), info).to_string();
         
         sFun* fun = info.funcs.at(generics_fun_name, null!);
         
         if(fun == null) {
-            err_msg(info, "function not found(%s) at method\n", generics_fun_name);
+            err_msg(info, "function not found(%s) at method(%s)\n", generics_fun_name, info.come_fun.mName);
             return false;
         }
         

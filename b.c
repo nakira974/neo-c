@@ -228,7 +228,6 @@ int main()
     xassert("list::reset", li.length() == 0);
     
     li2.delete(0, 1);
-/*
     
     xassert("list::delete", li2.item(0, -1) == 5 && li2.item(1, -1) == 2 && li2.item(2, -1) == 3);
     
@@ -347,13 +346,13 @@ int main()
     
     printf("(%s)\n", ttt3.v1);
     
-    xassert("tuple test", ttt2 === ttt3);
+    xassert("tuple test1", ttt2 === ttt3);
     
     tuple2<string, int>*% t4 = (string("ABC"), 5);
     
-    xassert("tuple test", t4.v1 === string("ABC") && t4.v2 === 5);
-    xassert("tuple testX", ("AAA", 7) === ("AAA", 7));
-    xassert("tuple testX", ("AAA", 8) !== ("AAA", 7));
+    xassert("tuple test2", t4.v1 === string("ABC") && t4.v2 === 5);
+    xassert("tuple test3", ("AAA", 7) === ("AAA", 7));
+    xassert("tuple test4", ("AAA", 8) !== ("AAA", 7));
     
     IA*% ia = new sDataA.initialize(111,222) implements IA;
     
@@ -371,7 +370,8 @@ int main()
     
     var aZZZ, bZZZ = (1,2, false);
     
-    xassert("tuple test", aZZZ == 1 && bZZZ == 2);
+    
+    xassert("tuple test5", aZZZ == 1 && bZZZ == 2);
     
     fun_default_parametor();
     int xZZZZZZZZ = fun_exception(1,2).catch { fprintf(stderr, "exception\n"); }
@@ -385,7 +385,6 @@ int main()
     li_str.push_back(string("CCC"));
     
     xassert("list test", li_str === [string("AAA"), string("BBB"), string("CCC")]);
-*/
     
     return 0;
 }

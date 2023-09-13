@@ -1386,6 +1386,11 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
             CVALUE*% come_value2 = get_value_from_stack(-1, info);
             dec_stack_ptr(1, info);
             
+            sType*% come_value_type = solve_generics(come_value2.type, info.generics_type, info).catch
+            {
+                return false;
+            }
+            
             if(come_value2.type->mHeap && come_value2.var == null) {
                 int right_value_id = get_right_value_id_from_obj(come_value2.c_value);
                 
@@ -1394,7 +1399,7 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
                     remove_object_from_right_values(right_value_id-1, info);
                 }
             }
-            add_come_code(info, "%s __result__ = %s;\n", make_type_name_string(come_value2.type, false@in_header, false@array_cast_pointer, info), come_value2.c_value);
+            add_come_code(info, "%s __result__ = %s;\n", make_type_name_string(result_type, false@in_header, false@array_cast_pointer, info), come_value2.c_value);
             
             free_objects_on_return(come_fun.mBlock, info, come_value2.c_value, false@top_block);
             free_right_value_objects(info);
@@ -1417,7 +1422,12 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
                 }
             }
             
-            add_come_code(info, "%s __result__ = %s;\n", make_type_name_string(come_value.type, false@in_header, false@array_cast_pointer, info), come_value.c_value);
+            sType*% come_value_type = solve_generics(come_value.type, info.generics_type, info).catch
+            {
+                return false;
+            }
+            
+            add_come_code(info, "%s __result__ = %s;\n", make_type_name_string(result_type, false@in_header, false@array_cast_pointer, info), come_value.c_value);
             
             free_objects_on_return(come_fun.mBlock, info, come_value.c_value, false@top_block);
             free_right_value_objects(info);
@@ -2093,7 +2103,7 @@ bool sCastNode*::compile(sCastNode* self, sInfo* info)
     CVALUE*% come_value = new CVALUE;
     
     come_value.c_value = xsprintf("(%s)%s", make_type_name_string(type2, false@in_header, false@array_cast_pointer, info), left_value.c_value);
-    come_value.type = clone type;
+    come_value.type = clone type2;
     come_value.var = null;
     
     add_come_last_code(info, "%s;\n", come_value.c_value);
@@ -3744,6 +3754,7 @@ bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* gen
     
     var generics_type_saved = clone info->generics_type;
     info->generics_type = clone generics_type;
+    
     var generics_type_names_saved = clone info->generics_type_names;
     info->generics_type_names = clone generics_fun.mGenericsTypeNames;
     
@@ -4641,9 +4652,13 @@ exception sFun*,string create_equals_automatically(sType* type, char* fun_name, 
     
     string real_fun_name = create_method_name(type, false@no_pointer_name, fun_name, info);
     
+    sType*% type2 = solve_generics(type, type, info) throws;
+    
+    type = borrow type2;
+    
     sClass* klass = type->mClass;
     
-    if(type->mPointerNum > 0 && klass->mStruct) {
+    if(type->mPointerNum > 0 && !klass->mNumber) {
         var source = new buffer();
         
         source.append_char('{');
@@ -4754,9 +4769,13 @@ exception sFun*,string create_operator_not_equals_automatically(sType* type, cha
     
     string real_fun_name = create_method_name(type, false@no_pointer_name, fun_name, info);
     
+    sType*% type2 = solve_generics(type, type, info) throws;
+    
+    type = borrow type2;
+    
     sClass* klass = type->mClass;
     
-    if(type->mPointerNum > 0 && klass->mStruct) {
+    if(type->mPointerNum > 0 && !klass->mNumber) {
         var source = new buffer();
         
         source.append_char('{');
@@ -4884,9 +4903,13 @@ exception sFun*,string create_operator_equals_automatically(sType* type, char* f
     
     string real_fun_name = create_method_name(type, false@no_pointer_name, fun_name, info);
     
+    sType*% type2 = solve_generics(type, type, info) throws;
+    
+    type = borrow type2;
+    
     sClass* klass = type->mClass;
     
-    if(type->mPointerNum > 0 && klass->mStruct) {
+    if(type->mPointerNum > 0 && !klass->mNumber) {
         var source = new buffer();
         
         source.append_char('{');
@@ -4997,9 +5020,13 @@ exception sFun*,string create_cloner_automatically(sType* type, char* fun_name, 
     
     string real_fun_name = create_method_name(type, false@no_pointer_name, fun_name, info);
     
+    sType*% type2 = solve_generics(type, type, info) throws;
+    
+    type = borrow type2;
+    
     sClass* klass = type->mClass;
     
-    if(type->mPointerNum > 0 && klass->mStruct) {
+    if(type->mPointerNum > 0 && !klass->mNumber) {
         var source = new buffer();
         
         source.append_char('{');

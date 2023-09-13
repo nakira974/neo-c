@@ -105,7 +105,9 @@ bool output_generics_struct(sType* type, sType* generics_type, sInfo* info)
         output_struct(new_class, info);
     }
     else {
-        type->mNoSolvedGenericsType.v1 = clone type;
+        if(type->mNoSolvedGenericsType.v1 == null) {
+            type->mNoSolvedGenericsType.v1 = clone type;
+        }
         type->mClass = info.classes[new_name];
         type->mGenericsTypes.reset();
     }

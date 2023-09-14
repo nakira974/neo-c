@@ -148,7 +148,8 @@ void show_type(sType* type, sInfo* info)
 string make_lambda_type_name_string(sType* type, char* var_name, sInfo* info)
 {
     var buf = new buffer();
-    if(type->mResultType.v1 && type->mResultType.v1->mClass->mName === "lambda") {
+    if(type->mResultType.v1 && type->mResultType.v1.mClass->mName === "lambda") 
+    {
         buf.append_str(xsprintf("(*%s)(", var_name));
         
         int i = 0;

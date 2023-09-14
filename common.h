@@ -1,14 +1,14 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
+using unsafe;
+using no-null-check;
+
 #ifdef COMELANG2
 #include <comelang2.h>
 #else
 #include <comelang.h>
 #endif
-
-using unsafe;
-using no-null-check;
 
 #define COME_CODE_MAX 2048
 #define FUN_VERSION_MAX 128
@@ -209,6 +209,7 @@ struct sInfo
     string sname;
     int sline;
     int err_num;
+    string err_line;
     string clang_option;
     bool no_output_err;
     bool no_output_come_code;

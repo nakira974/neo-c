@@ -1,6 +1,8 @@
+#include <comelang2.h>
+
 int fun(int x, int y)
 {
-    return x + y;
+     return x + y;
 }
 
 int main(int argc, char** argv)

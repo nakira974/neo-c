@@ -1978,3 +1978,10 @@ static inline void bool::catch(bool self, void* parent, void (*block)(void* pare
         block(parent);
     }
 }
+
+inline void bool::expect(bool self, void* parent, void (*block)(void* parent)) 
+{
+    if(!self) {
+        block(parent);
+    }
+}

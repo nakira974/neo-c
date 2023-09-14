@@ -78,9 +78,7 @@ exception string parse_word(sInfo* info, bool no_check_err=false)
     
     if(!no_check_err && buf.length() == 0) {
         err_msg(info, "unexpected character(%c)\n", *info->p);
-int* a = (void*)0;
-*a =0;
-        throw;
+//        throw;
     }
     
     return buf.to_string();
@@ -1481,12 +1479,14 @@ bool sThrowNode*::compile(sThrowNode* self, sInfo* info)
     sFun* come_fun = info.come_fun;
     sType* result_type = come_fun.mResultType;
     
+    sType* result_type2 = result_type->mNoSolvedGenericsType.v1;
+    
     buffer*% result_tuple = new buffer();
     
     result_tuple.append_str(xsprintf("("));
     
     int i = 0;
-    foreach(it, result_type->mGenericsTypes) {
+    foreach(it, result_type2->mGenericsTypes) {
         if(i == 0) {
             if(it->mPointerNum > 0) {
                 result_tuple.append_str(xsprintf("null"));
@@ -1495,7 +1495,7 @@ bool sThrowNode*::compile(sThrowNode* self, sInfo* info)
                 result_tuple.append_str(xsprintf("0"));
             }
         }
-        else if(i == result_type->mGenericsTypes.length() -1) {
+        else if(i == result_type2->mGenericsTypes.length() -1) {
         
             result_tuple.append_str(xsprintf(", false"));
         }
@@ -3719,6 +3719,9 @@ string create_method_name(sType* obj_type, bool no_pointer_name, char* fun_name,
 
 bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* generics_type, sInfo* info)
 {
+    string sname_top = string(info->sname);
+    int sline_top = info->sline;
+    
     if(generics_type->mNoSolvedGenericsType.v1) {
         generics_type = generics_type->mNoSolvedGenericsType.v1;
     }
@@ -3783,6 +3786,9 @@ bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* gen
     
     info->generics_type = generics_type_saved;
     info->generics_type_names = generics_type_names_saved;
+    
+    info->sname = string(sname_top);
+    info->sline = sline_top;
     
     return true;
 }

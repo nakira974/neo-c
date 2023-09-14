@@ -341,39 +341,6 @@ void init_module(sInfo* info)
     *p2 = '\0';
 }
                 
-void output_err_source_code(sInfo* info)
-{
-    char* p = info.p;
-    while(*p != '\n' && p >= info.head) {
-        p--;
-    }
-    char* head;
-    if(*p == '\n') {
-        head = p + 1;
-    }
-    else {
-        head = p;
-    }
-    
-    p = info.p;
-    while(*p != '\0' && *p != '\n') {
-        p++;
-    }
-    
-    char* tail = p;
-    
-    char*% buf = new char[tail-head+1];
-    memcpy(buf, head, tail-head);
-    buf[tail-head] = '\0';
-    if(info.come_fun) {
-        fprintf(stderr, "-+- %s function -+-\n", info.come_fun.mName);
-        fprintf(stderr, "%s\n", buf);
-    }
-    else {
-        fprintf(stderr, "%s\n", buf);
-    }
-}
-
 int come_main(int argc, char** argv) version 2
 {
     var clang_option = new buffer();
@@ -449,13 +416,11 @@ int come_main(int argc, char** argv) version 2
         if(!output_cpp_file) {
             transpile(&info).catch {
                 fprintf(stderr, "%s %d: traspile faield\n", info.sname, info.sline);
-                output_err_source_code(&info);
                 exit(2);
             }
             
             if(!output_source_file(&info)) {
                 fprintf(stderr, "%s %d: output source file faield\n", info->sname, info->sline);
-                output_err_source_code(&info);
                 exit(2);
             }
             
@@ -463,7 +428,6 @@ int come_main(int argc, char** argv) version 2
             
             if(info.err_num > 0) {
                 fprintf(stderr, "transpile error. err num %d\n", info->err_num);
-                output_err_source_code(&info);
                 
                 exit(2);
             }

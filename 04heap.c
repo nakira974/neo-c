@@ -51,6 +51,11 @@ exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
             bool no_heap = type->mNoHeap;
             
             result = clone generics_type->mGenericsTypes[generics_number];
+/*
+            if(info.classes[result->mClass->mName]) {
+                result->mClass = info.classes[result->mClass->mName];
+            }
+*/
 
             if(heap) {
                 result->mHeap = heap;

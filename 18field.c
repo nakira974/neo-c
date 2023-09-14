@@ -162,6 +162,7 @@ bool sStoreFieldNode*::compile(sStoreFieldNode* self, sInfo* info)
     }
     
     sClass* klass = left_type2->mClass;
+    klass = info.classes[klass->mName];
     
     sType*% field_type = null;
     int index = 0;
@@ -291,6 +292,7 @@ bool sLoadFieldNode*::compile(sLoadFieldNode* self, sInfo* info)
     }
     
     sClass* klass = left_type2->mClass;
+    klass = info.classes[klass->mName];
 
     sType*% field_type = null;
     int index = 0;

@@ -11,5 +11,7 @@ int main(int argc, char** argv)
     
     data.a = string("ABC");
     
+    var data2 = clone data;
+    
     return 0;
 }

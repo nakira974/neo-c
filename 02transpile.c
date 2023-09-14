@@ -47,7 +47,14 @@ bool output_source_file(sInfo* info) version 2
 static bool cpp(sInfo* info)
 {
     string input_file_name = info.sname;
-    string output_file_name = xsprintf("%s.i", info.sname);
+    
+    string output_file_name;
+    if(info.output_file_name) {
+        output_file_name = info.output_file_name + ".i";
+    }
+    else {
+        output_file_name = info.sname + ".i";
+    }
     
     buffer*% include_files = new buffer();
 
@@ -72,9 +79,9 @@ static bool cpp(sInfo* info)
     
     char cmd[1024];
 #ifdef __DARWIN_ARM__
-    snprintf(cmd, 1024, "/opt/homebrew/opt/llvm/bin/clang-cpp -lang-c -I. -I/usr/local/include -D__DARWIN_ARM__ -U__GNUC__ %s %s > %s", include_files.to_string(), input_file_name, output_file_name);
+    snprintf(cmd, 1024, "/opt/homebrew/opt/llvm/bin/clang-cpp -lang-c -I. -I/usr/local/include -DCOMELANG2 -D__DARWIN_ARM__ -U__GNUC__ %s %s > %s", include_files.to_string(), input_file_name, output_file_name);
 #else
-    snprintf(cmd, 1024, "cpp -lang-c -I. -U__GNUC__ %s %s > %s", include_files.to_string(), input_file_name, output_file_name);
+    snprintf(cmd, 1024, "cpp -lang-c -I. -DCOMELANG2 -U__GNUC__ %s %s > %s", include_files.to_string(), input_file_name, output_file_name);
 #endif
     puts(cmd);
 
@@ -97,10 +104,8 @@ static bool cpp(sInfo* info)
 
 static bool compile(sInfo* info, bool output_object_file, list<string>* object_files)
 {
-    string noextname = xnoextname(info.sname);
-    string output_file_name = noextname + ".o";
-    
-    string input_file_name = xsprintf("%s.c", info.sname);
+    string output_file_name = info.sname + ".o";
+    string input_file_name = info.sname + ".c";
     
     var command = xsprintf("clang -o %s -c %s %s", output_file_name, input_file_name, info.clang_option);
     
@@ -121,7 +126,13 @@ static bool compile(sInfo* info, bool output_object_file, list<string>* object_f
 
 static bool linker(sInfo* info, list<string>* object_files)
 {
-    string output_file_name = xnoextname(info.sname);
+    string output_file_name = null;
+    if(info.output_file_name) {
+        output_file_name = string(info.output_file_name);
+    }
+    else {
+        output_file_name = xnoextname(info.sname);
+    }
     
     var command = new buffer();
     
@@ -131,6 +142,7 @@ static bool linker(sInfo* info, list<string>* object_files)
         command.append_str(xsprintf("%s ", it));
     }
     
+    puts(command.to_string());
     int rc = system(command.to_string());
     
     if(rc != 0) {
@@ -370,8 +382,13 @@ int come_main(int argc, char** argv) version 2
     bool output_object_file = false;
     bool output_cpp_file = false;
     bool output_source_file_flag = false;
+    string output_file_name = null;
     for(int i=1; i<argc; i++) {
-        if(argv[i] === "-g") {
+        if(argv[i] === "-o" && i+1 < argc) {
+            output_file_name = string(argv[i+1]);
+            i++;
+        }
+        else if(argv[i] === "-g") {
             clang_option.append_str("-g ");
         }
         else if(argv[i] === "-s" || argv[i] === "-S") {
@@ -382,12 +399,6 @@ int come_main(int argc, char** argv) version 2
         }
         else if(argv[i] === "-E") {
             output_cpp_file = true;
-        }
-        else if(argv[i] === "-no-gc") {
-            gGC = false;
-        }
-        else if(argv[i] === "-gc") {
-            gGC = true;
         }
         else if(argv[i][0] == '-') {
             clang_option.append_str(argv[i] + " ");
@@ -462,27 +473,27 @@ int come_main(int argc, char** argv) version 2
                     exit(1);
                 }
                 
-/*
-                if(!output_source_file_flag) {
-                    (void)system(xsprintf("rm -f %s.c", info.sname));
-                }
-*/
             }
         }
     }
     
-    if(!output_object_file && !output_cpp_file && files.length() > 0) {
+    if(!output_object_file && !output_cpp_file && (files.length() > 0 || object_files.length() > 0)) {
         sInfo info;
         
         info.sname = clone files[0];
         info.clang_option = clang_option.to_string();
         
+        if(output_file_name) {
+            info.output_file_name = string(output_file_name);
+        }
+        else {
+            info.output_file_name = null;
+        }
+        
         linker(&info, object_files).expect {
             fprintf(stderr, "%s %d: linker faield\n", info.sname, info.sline);
             exit(1);
         }
-        
-        (void)system(xsprintf("rm -f %s.o", xnoextname(info.sname)));
     }
     
     come_final();

@@ -1,7 +1,11 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
+#ifdef COMELANG2
+#include <comelang2.h>
+#else
 #include <comelang.h>
+#endif
 
 using unsafe;
 using no-null-check;
@@ -247,6 +251,8 @@ struct sInfo
     
     bool define_struct;
     bool in_typedef;
+    
+    string output_file_name;
 };
 
 /////////////////////////////////////////////////////////////////////

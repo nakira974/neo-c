@@ -1,16 +1,8 @@
 #include <comelang2.h>
-
-
-exception int fun(int x, int y)
-{
-    throw;
-}
+#include <stdio.h>
 
 int main(int argc, char** argv)
 {
-    int a = fun(1,2).catch {
-        puts("CATCH");
-    }
-    
+    puts("HELLO COMELANG2");
     return 0;
 }

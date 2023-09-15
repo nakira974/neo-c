@@ -1479,9 +1479,6 @@ bool sThrowNode*::compile(sThrowNode* self, sInfo* info)
     sFun* come_fun = info.come_fun;
     sType* result_type = come_fun.mResultType;
     
-puts(come_fun.mName);
-puts(come_fun.mResultType.mClass.mName);
-    
     sType* result_type2 = result_type->mNoSolvedGenericsType.v1;
     if(result_type->mNoSolvedGenericsType.v1) {
         result_type2 = result_type->mNoSolvedGenericsType.v1;
@@ -3770,7 +3767,7 @@ bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* gen
                     , param_names, new list<string>(), false@external
                     , var_args, block, true@static_, string(""), info);
     
-    info.funcs.insert(clone fun_name, clone fun);
+    info.funcs.insert(clone fun_name, fun);
     
     sNode*% node = new sNode(new sFunNode(fun, info));
     
@@ -4153,7 +4150,7 @@ exception sNode*% parse_function(sInfo* info)
         var fun2 = info.funcs[string(fun_name)];
         if(fun2 == null || fun2.mExternal) {
     
-            info.funcs.insert(clone fun_name, clone fun);
+            info.funcs.insert(clone fun_name, fun);
         }
         
         return new sNode(new sLambdaNode(fun, info));
@@ -4196,7 +4193,7 @@ exception sNode*% parse_function(sInfo* info)
         var fun2 = info.funcs[string(fun_name)];
         if(fun2 == null || fun2.mExternal) {
     
-            info.funcs.insert(clone fun_name, clone fun);
+            info.funcs.insert(clone fun_name, fun);
         }
         
         return new sNode(new sFunNode(fun, info));
@@ -4222,7 +4219,7 @@ exception sNode*% parse_function(sInfo* info)
             var fun2 = info.funcs[string(fun_name)];
             if(fun2 == null || fun2.mExternal) {
     
-                info.funcs.insert(clone fun_name, clone fun);
+                info.funcs.insert(clone fun_name, fun);
             }
             
             return new sNode(new sFunNode(fun, info));
@@ -4247,7 +4244,7 @@ exception sNode*% parse_function(sInfo* info)
             var fun2 = info.funcs[string(fun_name)];
             if(fun2 == null || fun2.mExternal) {
     
-                info.funcs.insert(clone fun_name, clone fun);
+                info.funcs.insert(clone fun_name, fun);
             }
             
             return new sNode(new sFunNode(fun, info));
@@ -4634,7 +4631,7 @@ exception sFun*,string create_finalizer_automatically(sType* type, char* fun_nam
         var fun2 = info.funcs[string(fun_name)];
         if(fun2 == null || fun2.mExternal) {
     
-            info.funcs.insert(clone name, clone fun);
+            info.funcs.insert(clone name, fun);
         }
         
         finalizer = fun;
@@ -4752,7 +4749,7 @@ exception sFun*,string create_equals_automatically(sType* type, char* fun_name, 
         var fun2 = info.funcs[string(fun_name)];
         if(fun2 == null || fun2.mExternal) {
     
-            info.funcs.insert(clone name, clone fun);
+            info.funcs.insert(clone name, fun);
         }
         
         equaler = fun;
@@ -4887,7 +4884,7 @@ exception sFun*,string create_operator_not_equals_automatically(sType* type, cha
         var fun2 = info.funcs[string(fun_name)];
         if(fun2 == null || fun2.mExternal) {
     
-            info.funcs.insert(clone name, clone fun);
+            info.funcs.insert(clone name, fun);
         }
         
         equaler = fun;
@@ -5005,7 +5002,7 @@ exception sFun*,string create_operator_equals_automatically(sType* type, char* f
         var fun2 = info.funcs[string(fun_name)];
         if(fun2 == null || fun2.mExternal) {
     
-            info.funcs.insert(clone name, clone fun);
+            info.funcs.insert(clone name, fun);
         }
         
         equaler = fun;
@@ -5124,7 +5121,7 @@ exception sFun*,string create_cloner_automatically(sType* type, char* fun_name, 
         
         var fun2 = info.funcs[string(fun_name)];
         if(fun2 == null || fun2.mExternal) {
-            info.funcs.insert(clone name, clone fun);
+            info.funcs.insert(clone name, fun);
         }
         
         cloner = fun;

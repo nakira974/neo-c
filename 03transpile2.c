@@ -650,11 +650,11 @@ bool output_source_file(sInfo* info) version 3
             string output = output_function(it2, info);
             fprintf(f, "static inline %s", output);
         }
-        else if(it2->mStatic) {
-        }
         else if(it2->mResultType->mInline) {
             string output = output_function(it2, info);
             fprintf(f, "inline %s", output);
+        }
+        else if(it2->mStatic) {
         }
         else if(it !== "__builtin_va_start" && it !== "__builtin_va_end") {
         }

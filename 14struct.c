@@ -60,6 +60,8 @@ void output_struct(sClass* klass, sInfo* info)
         foreach(it, klass.mFields) {
             var name, type = it;
             
+            type->mStatic = false;
+            
             buf.append_str("    ");
             buf.append_str(make_define_var(type, name, info));
             buf.append_str(";\n");
@@ -155,7 +157,7 @@ bool sStructNode*::compile(sStructNode* self, sInfo* info)
     
     output_struct(klass, info);
 
-    return TRUE;
+    return true;
 }
 
 int sStructNode*::sline(sStructNode* self, sInfo* info)
@@ -208,7 +210,7 @@ bool sStructNobodyNode*::compile(sStructNobodyNode* self, sInfo* info)
     
     add_come_code_at_source_head(info, "struct %s;\n", name);
 
-    return TRUE;
+    return true;
 }
 
 int sStructNobodyNode*::sline(sStructNobodyNode* self, sInfo* info)
@@ -244,7 +246,7 @@ bool sGenericsStructNode*::terminated()
 bool sGenericsStructNode*::compile(sGenericsStructNode* self, sInfo* info)
 {
 
-    return TRUE;
+    return true;
 }
 
 int sGenericsStructNode*::sline(sGenericsStructNode* self, sInfo* info)

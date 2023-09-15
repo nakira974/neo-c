@@ -703,7 +703,7 @@ void free_objects(sVarTable* table, char* ret_value, sInfo* info)
         sType* type = p->mType;
         sClass* klass = type->mClass;
         
-        if(type->mHeap && ret_value != null && p->mCValueName === ret_value) 
+        if(type->mHeap && ret_value != null && p->mCValueName != null && p->mCValueName === ret_value) 
         {
             free_object(p->mType, p->mCValueName, false@no_decrement, true@no_free, info);
 

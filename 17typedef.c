@@ -34,7 +34,7 @@ bool sTypedefNode*::compile(sTypedefNode* self, sInfo* info)
     
     add_come_code_at_source_head(info, "typedef %s;\n", make_define_var(type, type_name, info, true@in_header));
 
-    return TRUE;
+    return true;
 }
 
 int sTypedefNode*::sline(sTypedefNode* self, sInfo* info)

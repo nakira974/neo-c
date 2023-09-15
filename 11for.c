@@ -12,14 +12,29 @@ struct sForNode
 };
 
 
-sForNode*% sForNode*::initialize(sForNode*% self, sNode*% expression_node, sNode*% expression_node2, sNode*% expression_node3, sBlock* block, sInfo* info)
+sForNode*% sForNode*::initialize(sForNode*% self, sNode*%? expression_node, sNode*%? expression_node2, sNode*%? expression_node3, sBlock* block, sInfo* info)
 {
     self.sline = info.sline;
     self.sname = string(info.sname);
 
-    self.mExpressionNode = clone expression_node;
-    self.mExpressionNode2 = clone expression_node2;
-    self.mExpressionNode3 = clone expression_node3;
+    if(expression_node) {
+        self.mExpressionNode = clone expression_node;
+    }
+    else {
+        self.mExpressionNode = null;
+    }
+    if(expression_node2) {
+        self.mExpressionNode2 = clone expression_node2;
+    }
+    else {
+        self.mExpressionNode2 = null;
+    }
+    if(expression_node3) {
+        self.mExpressionNode3 = clone expression_node3;
+    }
+    else {
+        self.mExpressionNode3 = null;
+    }
     self.mBlock = clone block;
 
     return self;
@@ -42,44 +57,59 @@ bool sForNode*::compile(sForNode* self, sInfo* info)
     
     /// compile expression ///
     sNode* expression_node = self.mExpressionNode;
-
-    if(!expression_node.compile->(info)) {
-        return false;
+    
+    CVALUE*% conditional_value = null;
+    if(expression_node) {
+        if(!expression_node.compile->(info)) {
+            return false;
+        }
+        
+        add_last_code_to_source(info);
+        
+        conditional_value = get_value_from_stack(-1, info);
+        dec_stack_ptr(1, info);
+    
+        free_right_value_objects(info);
     }
-    
-    add_last_code_to_source(info);
-    
-    CVALUE*% conditional_value = get_value_from_stack(-1, info);
-    dec_stack_ptr(1, info);
-
-    free_right_value_objects(info);
+    else {
+        add_come_code(info, ";");
+    }
     
     /// compile expression ///
     sNode* expression_node2 = self.mExpressionNode2;
 
-    if(!expression_node2.compile->(info)) {
-        return false;
+    CVALUE*% conditional_value2 = null;
+    if(expression_node2) {
+        if(!expression_node2.compile->(info)) {
+            return false;
+        }
+        
+        add_last_code_to_source(info);
+        
+        conditional_value2 = get_value_from_stack(-1, info);
+        dec_stack_ptr(1, info);
+    
+        free_right_value_objects(info);
     }
-    
-    add_last_code_to_source(info);
-    
-    CVALUE*% conditional_value2 = get_value_from_stack(-1, info);
-    dec_stack_ptr(1, info);
-
-    free_right_value_objects(info);
+    else {
+        add_come_code(info, ";");
+    }
     
     sNode* expression_node3 = self.mExpressionNode3;
-
-    if(!expression_node3.compile->(info)) {
-        return false;
+    
+    CVALUE*% conditional_value3;
+    if(expression_node3) {
+        if(!expression_node3.compile->(info)) {
+            return false;
+        }
+        
+        add_last_code_to_source_without_semicolon(info);
+        
+        CVALUE*% conditional_value3 = get_value_from_stack(-1, info);
+        dec_stack_ptr(1, info);
+    
+        free_right_value_objects(info);
     }
-    
-    add_last_code_to_source_without_semicolon(info);
-    
-    CVALUE*% conditional_value3 = get_value_from_stack(-1, info);
-    dec_stack_ptr(1, info);
-
-    free_right_value_objects(info);
     
     add_come_code(info, "){\n");
 
@@ -92,7 +122,7 @@ bool sForNode*::compile(sForNode* self, sInfo* info)
     transpiler_clear_last_code(info);
     info->lv_table = lv_table;
 
-    return TRUE;
+    return true;
 }
 
 int sForNode*::sline(sForNode* self, sInfo* info)
@@ -112,15 +142,33 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         
         /// expression ///
         parse_sharp(info);
-        sNode*% expression_node = expression(info) throws;
+        sNode*% expression_node;
+        if(*info->p == ';') {
+            expression_node = null;
+        }
+        else {
+            expression_node = expression(info) throws;
+        }
         parse_sharp(info);
         expected_next_character(';', info) throws;
         parse_sharp(info);
-        sNode*% expression_node2 = expression(info) throws;
+        sNode*% expression_node2;
+        if(*info->p == ';') {
+            expression_node2 = null;
+        }
+        else {
+            expression_node2 = expression(info) throws;
+        }
         parse_sharp(info);
         expected_next_character(';', info) throws;
         parse_sharp(info);
-        sNode*% expression_node3 = expression(info) throws;
+        sNode*% expression_node3;
+        if(*info->p == ')') {
+            expression_node3 = null;
+        }
+        else {
+            expression_node3 = expression(info) throws;
+        }
         parse_sharp(info);
         expected_next_character(')', info) throws;
         parse_sharp(info);

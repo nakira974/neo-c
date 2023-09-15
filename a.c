@@ -1,11 +1,34 @@
 #include <comelang2.h>
 
-int fun(int x, int y)
+interface IA
 {
-     return x + y;
+    void fun();
+};
+
+struct sTest
+{
+    int a;
+    int b;
+};
+
+sTest*% sTest*::initialize(sTest*% self, int a, int b)
+{
+    self.a = a;
+    self.b = b;
+    
+    return self;
+}
+
+void sTest*::fun(sTest* test)
+{
+    printf("%d %d\n", test.a, test.b);
 }
 
 int main(int argc, char** argv)
 {
-    return 7;
+    IA*% ia = new IA(new sTest(111, 222));
+    
+    ia.fun();
+    
+    return 0;
 }

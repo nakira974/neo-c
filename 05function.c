@@ -1479,90 +1479,76 @@ bool sThrowNode*::compile(sThrowNode* self, sInfo* info)
     sFun* come_fun = info.come_fun;
     sType* result_type = come_fun.mResultType;
     
+puts(come_fun.mName);
+puts(come_fun.mResultType.mClass.mName);
+    
     sType* result_type2 = result_type->mNoSolvedGenericsType.v1;
+    if(result_type->mNoSolvedGenericsType.v1) {
+        result_type2 = result_type->mNoSolvedGenericsType.v1;
+    }
+    else {
+        result_type2 = result_type;
+    }
     
-    buffer*% result_tuple = new buffer();
-    
-    result_tuple.append_str(xsprintf("("));
-    
-    int i = 0;
-    foreach(it, result_type2->mGenericsTypes) {
-        if(i == 0) {
-            if(it->mPointerNum > 0) {
-                result_tuple.append_str(xsprintf("null"));
-            }
-            else {
-                result_tuple.append_str(xsprintf("0"));
-            }
-        }
-        else if(i == result_type2->mGenericsTypes.length() -1) {
+    if(result_type2->mException) {
+        buffer*% result_tuple = new buffer();
         
-            result_tuple.append_str(xsprintf(", false"));
+        result_tuple.append_str(xsprintf("(new tuple2<%s,bool>(", make_come_type_name_string(result_type, info)));
+        if(result_type->mPointerNum > 0) {
+            result_tuple.append_str(xsprintf("(void*)0,"));
         }
         else {
-            if(it->mPointerNum > 0) {
-                result_tuple.append_str(xsprintf(", null"));
-            }
-            else {
-                result_tuple.append_str(xsprintf(", 0"));
-            }
+            result_tuple.append_str(xsprintf("0,"));
+        }
+        result_tuple.append_str(xsprintf("false))"));
+        
+        char* p = info.p;
+        char* head = info.head;
+        int sline = info.sline;
+        buffer*% source = info.source;
+        
+        info.source = result_tuple;
+        info.p = info.source.buf;
+        info.head = info.source.buf;
+    
+        sNode*% value = expression(info).catch { exit(1); }
+        
+        info.p = p;
+        info.head = head;
+        info.sline = sline;
+        info.source = source;
+        
+        if(!value->compile->(info)) {
+            return false;
         }
         
-        i++;
+        CVALUE*% come_value2 = get_value_from_stack(-1, info);
+        dec_stack_ptr(1, info);
+        
+        sType*% come_value_type = solve_generics(come_value2.type, info.generics_type, info).catch
+        {
+            return false;
+        }
+        
+        if(come_value2.type->mHeap && come_value2.var == null) {
+            int right_value_id = get_right_value_id_from_obj(come_value2.c_value);
+            
+            if(right_value_id != -1) {
+                remove_object_from_right_values(right_value_id, info);
+                remove_object_from_right_values(right_value_id-1, info);
+            }
+        }
+        add_come_code(info, "%s __result__ = %s;\n", make_type_name_string(result_type, false@in_header, false@array_cast_pointer, info), come_value2.c_value);
+        
+        free_objects_on_return(come_fun.mBlock, info, come_value2.c_value, false@top_block);
+        free_right_value_objects(info);
+        
+        add_come_code(info, "return __result__;\n");
     }
-    
-    result_tuple.append_str(xsprintf(")"));
-    
-    char* p = info.p;
-    char* head = info.head;
-    int sline = info.sline;
-    buffer*% source = info.source;
-    
-    info.source = result_tuple;
-    info.p = info.source.buf;
-    info.head = info.source.buf;
-
-    sNode*% value = expression(info).catch { return false }
-    
-    info.p = p;
-    info.head = head;
-    info.sline = sline;
-    info.source = source;
-    
-    if(!value->compile->(info)) {
+    else {
+        err_msg(info, "no exception function");
         return false;
     }
-    
-    CVALUE*% come_value = get_value_from_stack(-1, info);
-    dec_stack_ptr(1, info);
-    
-    if(come_value.type->mHeap && come_value.var == null) {
-        int right_value_id = get_right_value_id_from_obj(come_value.c_value);
-        
-        if(right_value_id != -1) {
-            remove_object_from_right_values(right_value_id, info);
-        }
-    }
-    
-    string come_value2 = xsprintf("%s", come_value.c_value);
-    //string come_value2 = xsprintf("%s", increment_ref_count_object(come_value.type, come_value.c_value, info));
-    
-    add_come_code(info, "%s __result__ = %s;\n", make_type_name_string(come_value.type, false@in_header, false@array_cast_pointer, info), come_value2);
-
-    if(info.come_fun.mName === "main") {
-        foreach(it, info.funcs) {
-            sFun* it2 = info.funcs[it];
-            
-            if(memcmp(it, "__final_", strlen("__final_")) == 0) {
-                add_come_code(info, "%s();\n", it);
-            }
-        }
-    }
-    
-    free_objects_on_return(come_fun.mBlock, info, come_value.c_value, false@top_block);
-    free_right_value_objects(info);
-    
-    add_come_code(info, "return __result__;\n");
     
     return true;
 }
@@ -1751,7 +1737,7 @@ exception sNode*% expression_node(sInfo* info) version 1
 struct sFunCallNode 
 {
     string fun_name;
-    list<tuple2<string,sNode*%>*%>*% params
+    list<tuple2<string,sNode*%>*%>*% params;
     int sline;
     string sname;
 };
@@ -1791,7 +1777,7 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
     if(var_) {
         sType* lambda_type = var_->mType;
         
-        sType*% result_type = clone lambda_type->mResultType.0;
+        sType*% result_type = clone lambda_type->mResultType.v1;
         result_type->mStatic = false;
         
         list<CVALUE*%>*% come_params = new list<CVALUE*%>();
@@ -1843,8 +1829,8 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
         CVALUE*% come_value = new CVALUE;
         come_value.c_value = buf.to_string();
         
-        if(lambda_type->mResultType.0.mHeap) {
-            come_value.c_value = append_object_to_right_values(come_value.c_value, lambda_type->mResultType.0, info);
+        if(lambda_type->mResultType.v1.mHeap) {
+            come_value.c_value = append_object_to_right_values(come_value.c_value, lambda_type->mResultType.v1, info);
         }
         
         come_value.type = clone result_type;
@@ -1961,6 +1947,9 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
         if(params.length() < fun.mParamTypes.length()) {
             for(; i<fun.mParamTypes.length(); i++) {
                 string default_param = clone fun.mParamDefaultParametors[i];
+                char* param_name = fun.mParamNames[i];
+                
+                CVALUE* come_value = label_params[param_name];
                 
                 if(default_param && default_param !== "") {
                     buffer*% source = info.source;
@@ -1993,8 +1982,13 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
                     dec_stack_ptr(1, info);
                 }
                 else {
-                    err_msg(info, "require parametor(%s)", fun.mName);
-                    return false;
+                    if(come_value == null) {
+                        err_msg(info, "require parametor(%s)", fun.mName);
+                        return false;
+                    }
+                    else {
+                        come_params.push_back(null);
+                    }
                 }
             }
         }
@@ -3070,7 +3064,7 @@ exception sNode*% expression_node(sInfo* info) version 99
             return new sNode(new sReturnNode(value, string(buf), info));
         }
     }
-    else if(parsecmp("throw", info) && !parsecmp("throws", info)) {
+    else if((parsecmp("throw;", info) || parsecmp("throw ", info) || parsecmp("throw\n", info)) && !parsecmp("throws", info)) {
         info->p += strlen("throw");
         skip_spaces_and_lf(info);
         
@@ -3637,7 +3631,7 @@ bool sFunNode*::compile(sFunNode* self, sInfo* info)
     info.come_fun = self.mFun;
     
     if(self.mFun.mBlock) {
-        transpile_block(self.mFun.mBlock, self.mParamTypes, self.mParamNames, info).catch {
+        transpile_block(self.mFun.mBlock, self.mFun.mParamTypes, self.mFun.mParamNames, info).catch {
             return false;
         }
     }
@@ -3684,7 +3678,7 @@ bool sLambdaNode*::compile(sLambdaNode* self, sInfo* info)
     
     bool result = true;
     if(self.mFun.mBlock) {
-        transpile_block(self.mFun.mBlock, self.mParamTypes, self.mParamNames, info).catch {
+        transpile_block(self.mFun.mBlock, self.mFun.mParamTypes, self.mFun.mParamNames, info).catch {
             result = false;
         }
     }
@@ -3776,7 +3770,7 @@ bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* gen
                     , param_names, new list<string>(), false@external
                     , var_args, block, true@static_, string(""), info);
     
-    info.funcs.insert(string(fun_name), fun);
+    info.funcs.insert(clone fun_name, clone fun);
     
     sNode*% node = new sNode(new sFunNode(fun, info));
     
@@ -4105,17 +4099,17 @@ exception sNode*% parse_function(sInfo* info)
         expected_next_character(':', info) throws;
         expected_next_character(':', info) throws;
         
-        base_fun_name = parse_word(info) throws;
-        fun_name = create_method_name(obj_type, false@no_pointer_name, base_fun_name, info)
+        base_fun_name = clone parse_word(info) throws;
+        fun_name = clone create_method_name(obj_type, false@no_pointer_name, string(base_fun_name), info)
     }
     else if(info->impl_type) {
-        base_fun_name = parse_word(info) throws;
+        base_fun_name = clone parse_word(info) throws;
     
-        fun_name = create_method_name(info->impl_type, false@no_pointer_name, base_fun_name, info);
+        fun_name = clone create_method_name(info->impl_type, false@no_pointer_name, string(base_fun_name), info);
     }
     else {
-        fun_name = parse_word(info) throws;
-        base_fun_name = string(fun_name);
+        fun_name = clone parse_word(info) throws;
+        base_fun_name = clone string(fun_name);
     }
     
     var param_types, param_names, param_default_parametors, var_args = parse_params(info) throws;
@@ -4151,14 +4145,15 @@ exception sNode*% parse_function(sInfo* info)
         
         result_type->mStatic = false;
         
-        var fun = new sFun(fun_name, result_type, param_types, param_names
+        var fun = new sFun(string(fun_name), result_type, param_types, param_names
                             , param_default_parametors
                             , false@external, var_args, block
                             , true@static_, header_buf.to_string(), info);
         
         var fun2 = info.funcs[string(fun_name)];
         if(fun2 == null || fun2.mExternal) {
-            info.funcs.insert(string(fun_name), fun);
+    
+            info.funcs.insert(clone fun_name, clone fun);
         }
         
         return new sNode(new sLambdaNode(fun, info));
@@ -4168,7 +4163,7 @@ exception sNode*% parse_function(sInfo* info)
         
         string block = skip_block(info) throws;
         
-        var fun = new sGenericsFun(info.impl_type, info.generics_type_names, fun_name, result_type, param_types, param_names, var_args, block, info);
+        var fun = new sGenericsFun(info.impl_type, info.generics_type_names, string(fun_name), result_type, param_types, param_names, var_args, block, info);
         
         string fun_name3 = xsprintf("%s_%s", none_generics_name, base_fun_name);
         
@@ -4186,11 +4181,11 @@ exception sNode*% parse_function(sInfo* info)
         }
         
         if(version > 0) {
-            string new_fun_name = xsprintf("%s_v%d", fun_name, version);
+            string new_fun_name = xsprintf("%s_v%d", string(fun_name), version);
             fun_name = string(new_fun_name);
         }
         
-        var fun = new sFun(fun_name, result_type, param_types
+        var fun = new sFun(string(fun_name), result_type, param_types
                                 , param_names
                                 , param_default_parametors
                                 , false@external, var_args, clone block
@@ -4200,7 +4195,8 @@ exception sNode*% parse_function(sInfo* info)
         
         var fun2 = info.funcs[string(fun_name)];
         if(fun2 == null || fun2.mExternal) {
-            info.funcs.insert(string(fun_name), fun);
+    
+            info.funcs.insert(clone fun_name, clone fun);
         }
         
         return new sNode(new sFunNode(fun, info));
@@ -4217,7 +4213,7 @@ exception sNode*% parse_function(sInfo* info)
             
             result_type->mStatic = false;
             
-            var fun = new sFun(fun_name, result_type
+            var fun = new sFun(string(fun_name), result_type
                                 , param_types, param_names
                                 , param_default_parametors
                                 , true@external, var_args, null!@block
@@ -4225,7 +4221,8 @@ exception sNode*% parse_function(sInfo* info)
             
             var fun2 = info.funcs[string(fun_name)];
             if(fun2 == null || fun2.mExternal) {
-                info.funcs.insert(string(fun_name), fun);
+    
+                info.funcs.insert(clone fun_name, clone fun);
             }
             
             return new sNode(new sFunNode(fun, info));
@@ -4234,14 +4231,14 @@ exception sNode*% parse_function(sInfo* info)
             string asm_fun = parse_attribute(info) throws;
             
             if(asm_fun !== "") {
-                fun_name = asm_fun;
+                fun_name = string(asm_fun);
             }
             
             expected_next_character(';', info) throws;
             
             result_type->mStatic = false;
             
-            var fun = new sFun(fun_name, result_type, param_types
+            var fun = new sFun(string(fun_name), result_type, param_types
                                 , param_names
                                 , param_default_parametors
                                 , true@external, var_args, null!@block
@@ -4249,7 +4246,8 @@ exception sNode*% parse_function(sInfo* info)
             
             var fun2 = info.funcs[string(fun_name)];
             if(fun2 == null || fun2.mExternal) {
-                info.funcs.insert(string(fun_name), fun);
+    
+                info.funcs.insert(clone fun_name, clone fun);
             }
             
             return new sNode(new sFunNode(fun, info));
@@ -4635,7 +4633,8 @@ exception sFun*,string create_finalizer_automatically(sType* type, char* fun_nam
         
         var fun2 = info.funcs[string(fun_name)];
         if(fun2 == null || fun2.mExternal) {
-            info.funcs.insert(string(name), fun);
+    
+            info.funcs.insert(clone name, clone fun);
         }
         
         finalizer = fun;
@@ -4752,7 +4751,8 @@ exception sFun*,string create_equals_automatically(sType* type, char* fun_name, 
         
         var fun2 = info.funcs[string(fun_name)];
         if(fun2 == null || fun2.mExternal) {
-            info.funcs.insert(string(name), fun);
+    
+            info.funcs.insert(clone name, clone fun);
         }
         
         equaler = fun;
@@ -4886,7 +4886,8 @@ exception sFun*,string create_operator_not_equals_automatically(sType* type, cha
         
         var fun2 = info.funcs[string(fun_name)];
         if(fun2 == null || fun2.mExternal) {
-            info.funcs.insert(string(name), fun);
+    
+            info.funcs.insert(clone name, clone fun);
         }
         
         equaler = fun;
@@ -5003,7 +5004,8 @@ exception sFun*,string create_operator_equals_automatically(sType* type, char* f
         
         var fun2 = info.funcs[string(fun_name)];
         if(fun2 == null || fun2.mExternal) {
-            info.funcs.insert(string(name), fun);
+    
+            info.funcs.insert(clone name, clone fun);
         }
         
         equaler = fun;
@@ -5122,7 +5124,7 @@ exception sFun*,string create_cloner_automatically(sType* type, char* fun_name, 
         
         var fun2 = info.funcs[string(fun_name)];
         if(fun2 == null || fun2.mExternal) {
-            info.funcs.insert(string(name), fun);
+            info.funcs.insert(clone name, clone fun);
         }
         
         cloner = fun;
@@ -5145,6 +5147,5 @@ exception sFun*,string create_cloner_automatically(sType* type, char* fun_name, 
 
 exception sNode*% post_position_operator3(sNode*% node, sInfo* info) version 5
 {
-    
     return node;
 }

@@ -52,7 +52,7 @@ bool sWhileNode*::compile(sWhileNode* self, sInfo* info)
     
     transpiler_clear_last_code(info);
 
-    return TRUE;
+    return true;
 }
 
 int sWhileNode*::sline(sWhileNode* self, sInfo* info)

@@ -1992,11 +1992,11 @@ impl map <T, T2>
                 if(self.keys[it].equals(key)) 
                 {
                     if(isheap(T)) {
-                        delete borrow self.keys[it];
+                        //delete borrow self.keys[it];
                         gc_inc key;
                     }
                     if(isheap(T2)) {
-                        delete borrow self.items[it];
+                        //delete borrow self.items[it];
                         gc_inc item;
                     }
                     self.keys[it] = key;

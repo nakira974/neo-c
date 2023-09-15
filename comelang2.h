@@ -861,6 +861,9 @@ impl map <T, T2>
 
         return default_value;
     }
+    int length(map<T, T2>* self) {
+        return self.len;
+    }
     
     T& begin(map<T, T2>* self) {
         self.key_list.it = self.key_list.head;
@@ -941,7 +944,7 @@ impl map <T, T2>
         self.len = len;
     }
     
-    void insert(map<T,T2>* self, T key, T2 item) {
+    void insert(map<T,T2>* self, T& key, T2& item) {
         if(self.len*2 >= self.size) {
             self.rehash();
         }
@@ -1140,6 +1143,35 @@ impl map <T, T2>
     
     bool operator_not_equals(map<T, T2>* left, map<T,T2>* right) {
         return !left.equals(right);
+    }
+    
+    bool find(map<T, T2>* self, T& key) {
+        int hash = ((T)key).get_hash_key() % self.size;
+        int it = hash;
+
+        while(true) {
+            if(self.item_existance[it])
+            {
+                if(self.keys[it].equals(key))
+                {
+                    return true;
+                }
+
+                it++;
+
+                if(it >= self.size) {
+                    it = 0;
+                }
+                else if(it == hash) {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+        }
+
+        return false;
     }
 }
 
@@ -1979,9 +2011,14 @@ static inline void bool::catch(bool self, void* parent, void (*block)(void* pare
     }
 }
 
-inline void bool::expect(bool self, void* parent, void (*block)(void* parent)) 
+static inline void bool::expect(bool self, void* parent, void (*block)(void* parent)) 
 {
     if(!self) {
         block(parent);
     }
+}
+
+static inline string string::to_string(char* self)
+{
+    return string(self);
 }

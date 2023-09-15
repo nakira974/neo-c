@@ -15,7 +15,7 @@ sUnionNode*% sUnionNode*::initialize(sUnionNode*% self, sType*% type, sInfo* inf
 
     self.mType = clone type;
     
-    info.types.insert(string(type.mName), clone type);
+    info.types.insert(string(type.mClass.mName), clone type);
 
     return self;
 }
@@ -35,21 +35,21 @@ bool sUnionNode*::compile(sUnionNode* self, sInfo* info)
         
         buffer*% buf = new buffer();
         
-        buf.append_str(xsprintf("union %s\n{\n", type.mName));
+        buf.append_str(xsprintf("union %s\n{\n", type.mClass.mName));
         
-        foreach(it, type.mFields) {
+        foreach(it, type.mClass.mFields) {
             var name, type = it;
             
             buf.append_str(make_define_var(type, name, info));
             buf.append_str(";\n");
         }
         
-        buf.append_str(xsprintf("};\n", type.mName));
+        buf.append_str(xsprintf("};\n", type.mClass.mName));
         
         add_come_code_at_source_head(info, "%s", buf.to_string());
     }
 
-    return TRUE;
+    return true;
 }
 
 int sUnionNode*::sline(sUnionNode* self, sInfo* info)
@@ -70,13 +70,13 @@ exception sNode*% parse_union(string type_name, sInfo* info)
     
     expected_next_character('{', info) throws;
     
-    type.mFields.reset();
+    type.mClass.mFields.reset();
     
     while(true) {
         var type2, name = parse_type(info, true@parse_variable_name) throws;
         expected_next_character(';', info) throws;
         
-        type.mFields.push_back(new tuple2<string, sType*%>(name, type2));
+        type.mClass.mFields.push_back(new tuple2<string, sType*%>(name, type2));
         
         if(*info->p == '}') {
             info->p++;
@@ -99,13 +99,13 @@ exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info)
         
         expected_next_character('{', info) throws;
         
-        type.mFields.reset();
+        type.mClass.mFields.reset();
         
         while(true) {
             var type2, name = parse_type(info, true@parse_variable_name) throws;
             expected_next_character(';', info) throws;
             
-            type.mFields.push_back(new tuple2<string, sType*%>(name, type2));
+            type.mClass.mFields.push_back(new tuple2<string, sType*%>(name, type2));
             
             if(*info->p == '}') {
                 info->p++;

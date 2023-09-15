@@ -105,7 +105,7 @@ bool sIfNode*::compile(sIfNode* self, sInfo* info)
     
     transpiler_clear_last_code(info);
 
-    return TRUE;
+    return true;
 }
 
 int sIfNode*::sline(sIfNode* self, sInfo* info)
@@ -123,14 +123,16 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
     if(buf === "if") {
         string sname = clone info->sname;
         int sline = info->sline;
+        
+        parse_sharp(info);
     
         expected_next_character('(', info) throws;
-    
     
         /// expression ///
         sNode*% expression_node = expression(info) throws;
         
         expected_next_character(')', info) throws;
+        parse_sharp(info);
     
         sBlock*% if_block = parse_block(info) throws;
         
@@ -145,18 +147,22 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         while(1) {
             char* saved_p = info->p;
             int saved_sline = info->sline;
+            parse_sharp(info);
     
             /// else ///
             if(!xisalpha(*info->p)) {
                 break;
             }
-            
+            parse_sharp(info);
             string buf = parse_word(info) throws;
+            parse_sharp(info);
     
             if(buf === "else") {
                 if(parsecmp("if", info)) {
+                    parse_sharp(info);
                     info->p+=strlen("if");
                     skip_spaces_and_lf(info);
+                    parse_sharp(info);
     
                     expected_next_character('(', info) throws;
     
@@ -166,6 +172,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
                     elif_expression_nodes.push_back(expression_node);
     
                     expected_next_character(')', info) throws;
+                    parse_sharp(info);
     
                     
                     sBlock*% elif_block = parse_block(info) throws;

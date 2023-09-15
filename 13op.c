@@ -146,7 +146,7 @@ bool sNullNode*::compile(sNullNode* self, sInfo* info)
     
     info.stack.push_back(come_value);
 
-    return TRUE;
+    return true;
 }
 
 int sNullNode*::sline(sNullNode* self, sInfo* info)
@@ -225,7 +225,7 @@ bool sAddNode*::compile(sAddNode* self, sInfo* info)
         info.stack.push_back(come_value);
     }
 
-    return TRUE;
+    return true;
 }
 
 int sAddNode*::sline(sAddNode* self, sInfo* info)
@@ -303,7 +303,7 @@ bool sSubNode*::compile(sSubNode* self, sInfo* info)
         info.stack.push_back(come_value);
     }
 
-    return TRUE;
+    return true;
 }
 
 int sSubNode*::sline(sSubNode* self, sInfo* info)
@@ -381,7 +381,7 @@ bool sMultNode*::compile(sMultNode* self, sInfo* info)
         info.stack.push_back(come_value);
     }
 
-    return TRUE;
+    return true;
 }
 
 int sMultNode*::sline(sMultNode* self, sInfo* info)
@@ -459,7 +459,7 @@ bool sDivNode*::compile(sDivNode* self, sInfo* info)
         info.stack.push_back(come_value);
     }
 
-    return TRUE;
+    return true;
 }
 
 int sDivNode*::sline(sDivNode* self, sInfo* info)
@@ -537,7 +537,7 @@ bool sModNode*::compile(sModNode* self, sInfo* info)
         info.stack.push_back(come_value);
     }
 
-    return TRUE;
+    return true;
 }
 
 int sModNode*::sline(sModNode* self, sInfo* info)
@@ -615,7 +615,7 @@ bool sLShiftNode*::compile(sLShiftNode* self, sInfo* info)
         info.stack.push_back(come_value);
     }
 
-    return TRUE;
+    return true;
 }
 
 int sLShiftNode*::sline(sLShiftNode* self, sInfo* info)
@@ -693,7 +693,7 @@ bool sRShiftNode*::compile(sRShiftNode* self, sInfo* info)
         info.stack.push_back(come_value);
     }
 
-    return TRUE;
+    return true;
 }
 
 int sRShiftNode*::sline(sRShiftNode* self, sInfo* info)
@@ -771,7 +771,7 @@ bool sGtEqNode*::compile(sGtEqNode* self, sInfo* info)
         info.stack.push_back(come_value);
     }
 
-    return TRUE;
+    return true;
 }
 
 int sGtEqNode*::sline(sGtEqNode* self, sInfo* info)
@@ -849,7 +849,7 @@ bool sLtEqNode*::compile(sLtEqNode* self, sInfo* info)
         info.stack.push_back(come_value);
     }
 
-    return TRUE;
+    return true;
 }
 
 int sLtEqNode*::sline(sLtEqNode* self, sInfo* info)
@@ -927,7 +927,7 @@ bool sLtNode*::compile(sLtNode* self, sInfo* info)
         info.stack.push_back(come_value);
     }
 
-    return TRUE;
+    return true;
 }
 
 int sLtNode*::sline(sLtNode* self, sInfo* info)
@@ -1005,7 +1005,7 @@ bool sGtNode*::compile(sGtNode* self, sInfo* info)
         info.stack.push_back(come_value);
     }
 
-    return TRUE;
+    return true;
 }
 
 int sGtNode*::sline(sGtNode* self, sInfo* info)
@@ -1086,7 +1086,7 @@ bool sEqNode*::compile(sEqNode* self, sInfo* info)
     
     info.stack.push_back(come_value);
 
-    return TRUE;
+    return true;
 }
 
 struct sNotEqNode
@@ -1147,7 +1147,7 @@ bool sNotEqNode*::compile(sNotEqNode* self, sInfo* info)
     
     info.stack.push_back(come_value);
 
-    return TRUE;
+    return true;
 }
 
 int sNotEqNode*::sline(sNotEqNode* self, sInfo* info)
@@ -1226,7 +1226,7 @@ bool sEq2Node*::compile(sEqNode* self, sInfo* info)
         info.stack.push_back(come_value);
     }
 
-    return TRUE;
+    return true;
 }
 
 int sEq2Node*::sline(sEq2Node* self, sInfo* info)
@@ -1304,7 +1304,7 @@ bool sNotEq2Node*::compile(sNotEq2Node* self, sInfo* info)
         info.stack.push_back(come_value);
     }
 
-    return TRUE;
+    return true;
 }
 
 int sNotEq2Node*::sline(sNotEq2Node* self, sInfo* info)
@@ -1382,7 +1382,7 @@ bool sAndNode*::compile(sAndNode* self, sInfo* info)
         info.stack.push_back(come_value);
     }
 
-    return TRUE;
+    return true;
 }
 
 int sAndNode*::sline(sAndNode* self, sInfo* info)
@@ -1460,7 +1460,7 @@ bool sXOrNode*::compile(sXOrNode* self, sInfo* info)
         info.stack.push_back(come_value);
     }
 
-    return TRUE;
+    return true;
 }
 
 int sXOrNode*::sline(sXOrNode* self, sInfo* info)
@@ -1537,7 +1537,7 @@ bool sOrNode*::compile(sOrNode* self, sInfo* info)
         info.stack.push_back(come_value);
     }
 
-    return TRUE;
+    return true;
 }
 
 int sOrNode*::sline(sOrNode* self, sInfo* info)
@@ -1614,7 +1614,7 @@ bool sAndAndNode*::compile(sAndAndNode* self, sInfo* info)
         info.stack.push_back(come_value);
     }
 
-    return TRUE;
+    return true;
 }
 
 int sAndAndNode*::sline(sAndAndNode* self, sInfo* info)
@@ -1691,7 +1691,7 @@ bool sOrOrNode*::compile(sOrOrNode* self, sInfo* info)
         info.stack.push_back(come_value);
     }
 
-    return TRUE;
+    return true;
 }
 
 int sOrOrNode*::sline(sOrOrNode* self, sInfo* info)
@@ -1761,7 +1761,7 @@ bool sCommaNode*::compile(sCommaNode* self, sInfo* info)
     
     info.stack.push_back(come_value);
 
-    return TRUE;
+    return true;
 }
 
 int sCommaNode*::sline(sCommaNode* self, sInfo* info)
@@ -1842,7 +1842,7 @@ bool sConditionalNode*::compile(sConditionalNode* self, sInfo* info)
     
     info.stack.push_back(come_value);
 
-    return TRUE;
+    return true;
 }
 
 int sConditionalNode*::sline(sConditionalNode* self, sInfo* info)

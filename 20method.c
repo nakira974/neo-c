@@ -47,7 +47,9 @@ bool sCurrentNode*::compile(sCurrentNode* self, sInfo* info)
             
             tuple2<string, sType*%>*% item = (value.mCValueName, type2);
             
-            current_stack.mFields.push_back(item);
+            if(value.mCValueName != null) {
+                current_stack.mFields.push_back(item);
+            }
         }
         
         vtable = vtable->mParent;
@@ -72,11 +74,13 @@ bool sCurrentNode*::compile(sCurrentNode* self, sInfo* info)
             
             tuple2<string, sType*%>*% item = (value.mCValueName, type2);
             
-            if(type2->mClass->mName === "lambda") {
-                add_come_code(info, "__current_stack%d__.%s = %s;\n", num_current_stack, value.mCValueName, value.mCValueName);
-            }
-            else {
-                add_come_code(info, "__current_stack%d__.%s = &%s;\n", num_current_stack, value.mCValueName, value.mCValueName);
+            if(value.mCValueName != null) {
+                if(type2->mClass->mName === "lambda") {
+                    add_come_code(info, "__current_stack%d__.%s = %s;\n", num_current_stack, value.mCValueName, value.mCValueName);
+                }
+                else {
+                    add_come_code(info, "__current_stack%d__.%s = &%s;\n", num_current_stack, value.mCValueName, value.mCValueName);
+                }
             }
         }
         
@@ -321,6 +325,9 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
         {
             for(; i<fun.mParamTypes.length()+(method_block?-2:0); i++) {
                 string default_param = clone fun.mParamDefaultParametors[i];
+                char* param_name = fun.mParamNames[i];
+                
+                CVALUE* come_value = label_params[param_name];
                 
                 if(default_param && default_param !== "") {
                     buffer*% source = info.source;
@@ -353,8 +360,13 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
                     dec_stack_ptr(1, info);
                 }
                 else {
-                    err_msg(info, "require parametor(%s)", fun.mName);
-                    return false;
+                    if(come_value) {
+                        come_params.push_back(null);
+                    }
+                    else {
+                        err_msg(info, "require parametor(%s)", fun.mName);
+                        return false;
+                    }
                 }
             }
         }
@@ -392,17 +404,32 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
             
             info->num_method_block++;
             
-            if(method_block_type.mName !== "lambda") {
+            if(method_block_type.mClass.mName !== "lambda") {
                 err_msg(info, "This function does not have method block(%s)", fun_name);
                 return false;
             }
             
-            sType*% result_type = clone method_block_type->mResultType.0;
+            sType*% result_type = clone method_block_type->mResultType.v1;
             result_type->mStatic = false;
             list<sType*%>* param_types = method_block_type->mParamTypes;
             list<string>* param_names = method_block_type->mParamNames;
             
-            method_block2.append_str(xsprintf("%s method_block%d(", make_type_name_string(result_type, false@in_header, false@array_cast_pointer, info), info->num_method_block));
+            char all_alhabet_sname[PATH_MAX];
+            {
+                char* p = info->sname;
+                char* p2 = all_alhabet_sname;
+                while(*p) {
+                    if(xisalnum(*p)) {
+                        *p2++ = *p++;
+                    }
+                    else {
+                        p++;
+                    }
+                }
+                *p2 = '\0';
+            }
+            
+            method_block2.append_str(xsprintf("%s method_block%d_%s(", make_type_name_string(result_type, false@in_header, false@array_cast_pointer, info), info->num_method_block, all_alhabet_sname));
             
             int i = 0;
             foreach(it, param_types) {
@@ -451,7 +478,24 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
                 return false;
             }
             
-            char*% method_block_name = xsprintf("method_block%d", info->num_method_block);
+            /*
+            char all_alhabet_sname[PATH_MAX];
+            {
+                char* p = info->sname;
+                char* p2 = all_alhabet_sname;
+                while(*p) {
+                    if(xisalnum(*p)) {
+                        *p2++ = *p++;
+                    }
+                    else {
+                        p++;
+                    }
+                }
+                *p2 = '\0';
+            }
+            */
+            
+            char*% method_block_name = xsprintf("method_block%d_%s", info->num_method_block, all_alhabet_sname);
             
             CVALUE*% come_value2 = new CVALUE;
             
@@ -557,7 +601,12 @@ exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) v
             
             sNode*% node = expression(info) throws;
             
+            bool throwing = false;
             node = post_position_operator3(node, info).catch {
+                throwing = true;
+            }
+            
+            if(throwing) {
                 throw;
             }
             

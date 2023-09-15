@@ -1,0 +1,316 @@
+==95808== Memcheck, a memory error detector
+==95808== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==95808== Using Valgrind-3.19.0 and LibVEX; rerun with -h for copyright info
+==95808== Command: comelang2 05function.c
+==95808== 
+==95808== Invalid read of size 1
+==95808==    at 0x4A64580: strcmp (strcmp.S:64)
+==95808==    by 0x201333: string_equals (in /usr/local/bin/comelang2)
+==95808==    by 0x164D13: map_insert_charph_sFunph (in /usr/local/bin/comelang2)
+==95808==    by 0x14053F: parse_function (05function.c:4213)
+==95808==    by 0x142F8F: top_level_v99 (05function.c:4497)
+==95808==    by 0x14AEBF: transpile_v5 (05function.c:4528)
+==95808==    by 0x10CB6F: come_main_v2 (02transpile.c:417)
+==95808==    by 0x10BEBF: main (01main.c:12)
+==95808==  Address 0x831c3ac is 12 bytes inside a block of size 36 free'd
+==95808==    at 0x4887B40: free (vg_replace_malloc.c:872)
+==95808==    by 0x200387: ncfree (in /usr/local/bin/comelang2)
+==95808==    by 0x2001D7: igc_decrement_ref_count (in /usr/local/bin/comelang2)
+==95808==    by 0x164B87: map_insert_charph_sFunph (in /usr/local/bin/comelang2)
+==95808==    by 0x14053F: parse_function (05function.c:4213)
+==95808==    by 0x142F8F: top_level_v99 (05function.c:4497)
+==95808==    by 0x14AEBF: transpile_v5 (05function.c:4528)
+==95808==    by 0x10CB6F: come_main_v2 (02transpile.c:417)
+==95808==    by 0x10BEBF: main (01main.c:12)
+==95808==  Block was alloc'd at
+==95808==    at 0x4889F94: calloc (vg_replace_malloc.c:1328)
+==95808==    by 0x1FFF37: ncmemdup (in /usr/local/bin/comelang2)
+==95808==    by 0x140C5F: parse_function (05function.c:4239)
+==95808==    by 0x142F8F: top_level_v99 (05function.c:4497)
+==95808==    by 0x14AEBF: transpile_v5 (05function.c:4528)
+==95808==    by 0x10CB6F: come_main_v2 (02transpile.c:417)
+==95808==    by 0x10BEBF: main (01main.c:12)
+==95808== 
+==95808== Invalid read of size 1
+==95808==    at 0x488C2EC: strcmp (vg_replace_strmem.c:924)
+==95808==    by 0x201333: string_equals (in /usr/local/bin/comelang2)
+==95808==    by 0x164D13: map_insert_charph_sFunph (in /usr/local/bin/comelang2)
+==95808==    by 0x14053F: parse_function (05function.c:4213)
+==95808==    by 0x142F8F: top_level_v99 (05function.c:4497)
+==95808==    by 0x14AEBF: transpile_v5 (05function.c:4528)
+==95808==    by 0x10CB6F: come_main_v2 (02transpile.c:417)
+==95808==    by 0x10BEBF: main (01main.c:12)
+==95808==  Address 0x831c3ad is 13 bytes inside a block of size 36 free'd
+==95808==    at 0x4887B40: free (vg_replace_malloc.c:872)
+==95808==    by 0x200387: ncfree (in /usr/local/bin/comelang2)
+==95808==    by 0x2001D7: igc_decrement_ref_count (in /usr/local/bin/comelang2)
+==95808==    by 0x164B87: map_insert_charph_sFunph (in /usr/local/bin/comelang2)
+==95808==    by 0x14053F: parse_function (05function.c:4213)
+==95808==    by 0x142F8F: top_level_v99 (05function.c:4497)
+==95808==    by 0x14AEBF: transpile_v5 (05function.c:4528)
+==95808==    by 0x10CB6F: come_main_v2 (02transpile.c:417)
+==95808==    by 0x10BEBF: main (01main.c:12)
+==95808==  Block was alloc'd at
+==95808==    at 0x4889F94: calloc (vg_replace_malloc.c:1328)
+==95808==    by 0x1FFF37: ncmemdup (in /usr/local/bin/comelang2)
+==95808==    by 0x140C5F: parse_function (05function.c:4239)
+==95808==    by 0x142F8F: top_level_v99 (05function.c:4497)
+==95808==    by 0x14AEBF: transpile_v5 (05function.c:4528)
+==95808==    by 0x10CB6F: come_main_v2 (02transpile.c:417)
+==95808==    by 0x10BEBF: main (01main.c:12)
+==95808== 
+==95808== Invalid read of size 1
+==95808==    at 0x488C2FC: strcmp (vg_replace_strmem.c:924)
+==95808==    by 0x201333: string_equals (in /usr/local/bin/comelang2)
+==95808==    by 0x164D13: map_insert_charph_sFunph (in /usr/local/bin/comelang2)
+==95808==    by 0x14053F: parse_function (05function.c:4213)
+==95808==    by 0x142F8F: top_level_v99 (05function.c:4497)
+==95808==    by 0x14AEBF: transpile_v5 (05function.c:4528)
+==95808==    by 0x10CB6F: come_main_v2 (02transpile.c:417)
+==95808==    by 0x10BEBF: main (01main.c:12)
+==95808==  Address 0x831c3ae is 14 bytes inside a block of size 36 free'd
+==95808==    at 0x4887B40: free (vg_replace_malloc.c:872)
+==95808==    by 0x200387: ncfree (in /usr/local/bin/comelang2)
+==95808==    by 0x2001D7: igc_decrement_ref_count (in /usr/local/bin/comelang2)
+==95808==    by 0x164B87: map_insert_charph_sFunph (in /usr/local/bin/comelang2)
+==95808==    by 0x14053F: parse_function (05function.c:4213)
+==95808==    by 0x142F8F: top_level_v99 (05function.c:4497)
+==95808==    by 0x14AEBF: transpile_v5 (05function.c:4528)
+==95808==    by 0x10CB6F: come_main_v2 (02transpile.c:417)
+==95808==    by 0x10BEBF: main (01main.c:12)
+==95808==  Block was alloc'd at
+==95808==    at 0x4889F94: calloc (vg_replace_malloc.c:1328)
+==95808==    by 0x1FFF37: ncmemdup (in /usr/local/bin/comelang2)
+==95808==    by 0x140C5F: parse_function (05function.c:4239)
+==95808==    by 0x142F8F: top_level_v99 (05function.c:4497)
+==95808==    by 0x14AEBF: transpile_v5 (05function.c:4528)
+==95808==    by 0x10CB6F: come_main_v2 (02transpile.c:417)
+==95808==    by 0x10BEBF: main (01main.c:12)
+==95808== 
+==95808== Invalid read of size 1
+==95808==    at 0x4A64580: strcmp (strcmp.S:64)
+==95808==    by 0x201333: string_equals (in /usr/local/bin/comelang2)
+==95808==    by 0x164D13: map_insert_charph_sFunph (in /usr/local/bin/comelang2)
+==95808==    by 0x12AB57: create_finalizer_automatically (05function.c:4651)
+==95808==    by 0x121CCF: free_object (04heap.c:286)
+==95808==    by 0x123507: free_objects (04heap.c:708)
+==95808==    by 0x121743: free_objects_on_return (04heap.c:738)
+==95808==    by 0x151EDB: sReturnNodep_compile (05function.c:1430)
+==95808==    by 0x13D3F7: transpile_block (05function.c:3432)
+==95808==    by 0x164583: sFunNodep_compile (05function.c:3648)
+==95808==    by 0x14B0A3: transpile_v5 (05function.c:4538)
+==95808==    by 0x10CB6F: come_main_v2 (02transpile.c:417)
+==95808==  Address 0x831c3ac is 12 bytes inside a block of size 36 free'd
+==95808==    at 0x4887B40: free (vg_replace_malloc.c:872)
+==95808==    by 0x200387: ncfree (in /usr/local/bin/comelang2)
+==95808==    by 0x2001D7: igc_decrement_ref_count (in /usr/local/bin/comelang2)
+==95808==    by 0x164B87: map_insert_charph_sFunph (in /usr/local/bin/comelang2)
+==95808==    by 0x14053F: parse_function (05function.c:4213)
+==95808==    by 0x142F8F: top_level_v99 (05function.c:4497)
+==95808==    by 0x14AEBF: transpile_v5 (05function.c:4528)
+==95808==    by 0x10CB6F: come_main_v2 (02transpile.c:417)
+==95808==    by 0x10BEBF: main (01main.c:12)
+==95808==  Block was alloc'd at
+==95808==    at 0x4889F94: calloc (vg_replace_malloc.c:1328)
+==95808==    by 0x1FFF37: ncmemdup (in /usr/local/bin/comelang2)
+==95808==    by 0x140C5F: parse_function (05function.c:4239)
+==95808==    by 0x142F8F: top_level_v99 (05function.c:4497)
+==95808==    by 0x14AEBF: transpile_v5 (05function.c:4528)
+==95808==    by 0x10CB6F: come_main_v2 (02transpile.c:417)
+==95808==    by 0x10BEBF: main (01main.c:12)
+==95808== 
+==95808== Invalid read of size 1
+==95808==    at 0x4A64580: strcmp (strcmp.S:64)
+==95808==    by 0x201333: string_equals (in /usr/local/bin/comelang2)
+==95808==    by 0x164D13: map_insert_charph_sFunph (in /usr/local/bin/comelang2)
+==95808==    by 0x132537: create_generics_fun (05function.c:0)
+==95808==    by 0x1E3D6B: make_generics_function (20method.c:152)
+==95808==    by 0x1E4393: sMethodCallNodep_compile (20method.c:274)
+==95808==    by 0x13D3F7: transpile_block (05function.c:3432)
+==95808==    by 0x164583: sFunNodep_compile (05function.c:3648)
+==95808==    by 0x14B0A3: transpile_v5 (05function.c:4538)
+==95808==    by 0x10CB6F: come_main_v2 (02transpile.c:417)
+==95808==    by 0x10BEBF: main (01main.c:12)
+==95808==  Address 0x831c3ac is 12 bytes inside a block of size 36 free'd
+==95808==    at 0x4887B40: free (vg_replace_malloc.c:872)
+==95808==    by 0x200387: ncfree (in /usr/local/bin/comelang2)
+==95808==    by 0x2001D7: igc_decrement_ref_count (in /usr/local/bin/comelang2)
+==95808==    by 0x164B87: map_insert_charph_sFunph (in /usr/local/bin/comelang2)
+==95808==    by 0x14053F: parse_function (05function.c:4213)
+==95808==    by 0x142F8F: top_level_v99 (05function.c:4497)
+==95808==    by 0x14AEBF: transpile_v5 (05function.c:4528)
+==95808==    by 0x10CB6F: come_main_v2 (02transpile.c:417)
+==95808==    by 0x10BEBF: main (01main.c:12)
+==95808==  Block was alloc'd at
+==95808==    at 0x4889F94: calloc (vg_replace_malloc.c:1328)
+==95808==    by 0x1FFF37: ncmemdup (in /usr/local/bin/comelang2)
+==95808==    by 0x140C5F: parse_function (05function.c:4239)
+==95808==    by 0x142F8F: top_level_v99 (05function.c:4497)
+==95808==    by 0x14AEBF: transpile_v5 (05function.c:4528)
+==95808==    by 0x10CB6F: come_main_v2 (02transpile.c:417)
+==95808==    by 0x10BEBF: main (01main.c:12)
+==95808== 
+==95808== Invalid read of size 1
+==95808==    at 0x4A64580: strcmp (strcmp.S:64)
+==95808==    by 0x201333: string_equals (in /usr/local/bin/comelang2)
+==95808==    by 0x164D13: map_insert_charph_sFunph (in /usr/local/bin/comelang2)
+==95808==    by 0x12C05B: create_cloner_automatically (05function.c:5141)
+==95808==    by 0x1F12A3: sImplementsNodep_compile (21obj.c:191)
+==95808==    by 0x17B9DF: sStoreNodep_compile (07var.c:101)
+==95808==    by 0x13D3F7: transpile_block (05function.c:3432)
+==95808==    by 0x164583: sFunNodep_compile (05function.c:3648)
+==95808==    by 0x14B0A3: transpile_v5 (05function.c:4538)
+==95808==    by 0x10CB6F: come_main_v2 (02transpile.c:417)
+==95808==    by 0x10BEBF: main (01main.c:12)
+==95808==  Address 0x831c3ac is 12 bytes inside a block of size 36 free'd
+==95808==    at 0x4887B40: free (vg_replace_malloc.c:872)
+==95808==    by 0x200387: ncfree (in /usr/local/bin/comelang2)
+==95808==    by 0x2001D7: igc_decrement_ref_count (in /usr/local/bin/comelang2)
+==95808==    by 0x164B87: map_insert_charph_sFunph (in /usr/local/bin/comelang2)
+==95808==    by 0x14053F: parse_function (05function.c:4213)
+==95808==    by 0x142F8F: top_level_v99 (05function.c:4497)
+==95808==    by 0x14AEBF: transpile_v5 (05function.c:4528)
+==95808==    by 0x10CB6F: come_main_v2 (02transpile.c:417)
+==95808==    by 0x10BEBF: main (01main.c:12)
+==95808==  Block was alloc'd at
+==95808==    at 0x4889F94: calloc (vg_replace_malloc.c:1328)
+==95808==    by 0x1FFF37: ncmemdup (in /usr/local/bin/comelang2)
+==95808==    by 0x140C5F: parse_function (05function.c:4239)
+==95808==    by 0x142F8F: top_level_v99 (05function.c:4497)
+==95808==    by 0x14AEBF: transpile_v5 (05function.c:4528)
+==95808==    by 0x10CB6F: come_main_v2 (02transpile.c:417)
+==95808==    by 0x10BEBF: main (01main.c:12)
+==95808== 
+==95808== Invalid read of size 1
+==95808==    at 0x488B2C4: __GI_strlen (vg_replace_strmem.c:495)
+==95808==    by 0x4A3C793: puts (ioputs.c:35)
+==95808==    by 0x117C6F: output_source_file_v3 (03transpile2.c:627)
+==95808==    by 0x10CC07: come_main_v2 (02transpile.c:422)
+==95808==    by 0x10BEBF: main (01main.c:12)
+==95808==  Address 0x831c3ac is 12 bytes inside a block of size 28 free'd
+==95808==    at 0x4887B40: free (vg_replace_malloc.c:872)
+==95808==    by 0x200387: ncfree (in /usr/local/bin/comelang2)
+==95808==    by 0x200487: ncfree_object (in /usr/local/bin/comelang2)
+==95808==    by 0x1FFEC3: call_finalizer (in /usr/local/bin/comelang2)
+==95808==    by 0x1C8983: post_position_operator_v18 (18field.c:0)
+==95808==    by 0x149703: expression_node_v99 (05function.c:3209)
+==95808==    by 0x1A2D5F: mult_exp (13op.c:1860)
+==95808==    by 0x1A4B43: add_exp (13op.c:1901)
+==95808==    by 0x1A5F7F: shift_exp (13op.c:1938)
+==95808==    by 0x1A73BB: comparison_exp (13op.c:1973)
+==95808==    by 0x1A983B: eq_exp (13op.c:2024)
+==95808==    by 0x1ABD53: and_exp (13op.c:2075)
+==95808==  Block was alloc'd at
+==95808==    at 0x4889F94: calloc (vg_replace_malloc.c:1328)
+==95808==    by 0x20008F: igc_calloc (in /usr/local/bin/comelang2)
+==95808==    by 0x1D1FA7: post_position_operator2_v19 (19eq.c:969)
+==95808==    by 0x1C88FF: post_position_operator_v18 (18field.c:684)
+==95808==    by 0x149703: expression_node_v99 (05function.c:3209)
+==95808==    by 0x1A2D5F: mult_exp (13op.c:1860)
+==95808==    by 0x1A4B43: add_exp (13op.c:1901)
+==95808==    by 0x1A5F7F: shift_exp (13op.c:1938)
+==95808==    by 0x1A73BB: comparison_exp (13op.c:1973)
+==95808==    by 0x1A983B: eq_exp (13op.c:2024)
+==95808==    by 0x1ABD53: and_exp (13op.c:2075)
+==95808==    by 0x1AC863: xor_exp (13op.c:2102)
+==95808== 
+==95808== Invalid read of size 1
+==95808==    at 0x488B298: strlen (vg_replace_strmem.c:494)
+==95808==    by 0x20051F: __builtin_string (in /usr/local/bin/comelang2)
+==95808==    by 0x117C83: output_source_file_v3 (03transpile2.c:628)
+==95808==    by 0x10CC07: come_main_v2 (02transpile.c:422)
+==95808==    by 0x10BEBF: main (01main.c:12)
+==95808==  Address 0x831c3ac is 12 bytes inside a block of size 28 free'd
+==95808==    at 0x4887B40: free (vg_replace_malloc.c:872)
+==95808==    by 0x200387: ncfree (in /usr/local/bin/comelang2)
+==95808==    by 0x200487: ncfree_object (in /usr/local/bin/comelang2)
+==95808==    by 0x1FFEC3: call_finalizer (in /usr/local/bin/comelang2)
+==95808==    by 0x1C8983: post_position_operator_v18 (18field.c:0)
+==95808==    by 0x149703: expression_node_v99 (05function.c:3209)
+==95808==    by 0x1A2D5F: mult_exp (13op.c:1860)
+==95808==    by 0x1A4B43: add_exp (13op.c:1901)
+==95808==    by 0x1A5F7F: shift_exp (13op.c:1938)
+==95808==    by 0x1A73BB: comparison_exp (13op.c:1973)
+==95808==    by 0x1A983B: eq_exp (13op.c:2024)
+==95808==    by 0x1ABD53: and_exp (13op.c:2075)
+==95808==  Block was alloc'd at
+==95808==    at 0x4889F94: calloc (vg_replace_malloc.c:1328)
+==95808==    by 0x20008F: igc_calloc (in /usr/local/bin/comelang2)
+==95808==    by 0x1D1FA7: post_position_operator2_v19 (19eq.c:969)
+==95808==    by 0x1C88FF: post_position_operator_v18 (18field.c:684)
+==95808==    by 0x149703: expression_node_v99 (05function.c:3209)
+==95808==    by 0x1A2D5F: mult_exp (13op.c:1860)
+==95808==    by 0x1A4B43: add_exp (13op.c:1901)
+==95808==    by 0x1A5F7F: shift_exp (13op.c:1938)
+==95808==    by 0x1A73BB: comparison_exp (13op.c:1973)
+==95808==    by 0x1A983B: eq_exp (13op.c:2024)
+==95808==    by 0x1ABD53: and_exp (13op.c:2075)
+==95808==    by 0x1AC863: xor_exp (13op.c:2102)
+==95808== 
+==95808== Invalid read of size 1
+==95808==    at 0x488B5C4: strncpy (vg_replace_strmem.c:599)
+==95808==    by 0x20059F: __builtin_string (in /usr/local/bin/comelang2)
+==95808==    by 0x117C83: output_source_file_v3 (03transpile2.c:628)
+==95808==    by 0x10CC07: come_main_v2 (02transpile.c:422)
+==95808==    by 0x10BEBF: main (01main.c:12)
+==95808==  Address 0x831c3ac is 12 bytes inside a block of size 28 free'd
+==95808==    at 0x4887B40: free (vg_replace_malloc.c:872)
+==95808==    by 0x200387: ncfree (in /usr/local/bin/comelang2)
+==95808==    by 0x200487: ncfree_object (in /usr/local/bin/comelang2)
+==95808==    by 0x1FFEC3: call_finalizer (in /usr/local/bin/comelang2)
+==95808==    by 0x1C8983: post_position_operator_v18 (18field.c:0)
+==95808==    by 0x149703: expression_node_v99 (05function.c:3209)
+==95808==    by 0x1A2D5F: mult_exp (13op.c:1860)
+==95808==    by 0x1A4B43: add_exp (13op.c:1901)
+==95808==    by 0x1A5F7F: shift_exp (13op.c:1938)
+==95808==    by 0x1A73BB: comparison_exp (13op.c:1973)
+==95808==    by 0x1A983B: eq_exp (13op.c:2024)
+==95808==    by 0x1ABD53: and_exp (13op.c:2075)
+==95808==  Block was alloc'd at
+==95808==    at 0x4889F94: calloc (vg_replace_malloc.c:1328)
+==95808==    by 0x20008F: igc_calloc (in /usr/local/bin/comelang2)
+==95808==    by 0x1D1FA7: post_position_operator2_v19 (19eq.c:969)
+==95808==    by 0x1C88FF: post_position_operator_v18 (18field.c:684)
+==95808==    by 0x149703: expression_node_v99 (05function.c:3209)
+==95808==    by 0x1A2D5F: mult_exp (13op.c:1860)
+==95808==    by 0x1A4B43: add_exp (13op.c:1901)
+==95808==    by 0x1A5F7F: shift_exp (13op.c:1938)
+==95808==    by 0x1A73BB: comparison_exp (13op.c:1973)
+==95808==    by 0x1A983B: eq_exp (13op.c:2024)
+==95808==    by 0x1ABD53: and_exp (13op.c:2075)
+==95808==    by 0x1AC863: xor_exp (13op.c:2102)
+==95808== 
+==95808== Invalid read of size 8
+==95808==    at 0x116D2C: header_function (03transpile2.c:451)
+==95808==    by 0x117CFB: output_source_file_v3 (03transpile2.c:630)
+==95808==    by 0x10CC07: come_main_v2 (02transpile.c:422)
+==95808==    by 0x10BEBF: main (01main.c:12)
+==95808==  Address 0x8 is not stack'd, malloc'd or (recently) free'd
+==95808== 
+==95808== 
+==95808== Process terminating with default action of signal 11 (SIGSEGV)
+==95808==  Access not within mapped region at address 0x8
+==95808==    at 0x116D2C: header_function (03transpile2.c:451)
+==95808==    by 0x117CFB: output_source_file_v3 (03transpile2.c:630)
+==95808==    by 0x10CC07: come_main_v2 (02transpile.c:422)
+==95808==    by 0x10BEBF: main (01main.c:12)
+==95808==  If you believe this happened as a result of a stack
+==95808==  overflow in your program's main thread (unlikely but
+==95808==  possible), you can try to increase the size of the
+==95808==  main thread stack using the --main-stacksize= flag.
+==95808==  The main thread stack size used in this run was 8388608.
+==95808== 
+==95808== HEAP SUMMARY:
+==95808==     in use at exit: 20,998,963 bytes in 313,375 blocks
+==95808==   total heap usage: 4,837,411 allocs, 4,524,036 frees, 246,156,961 bytes allocated
+==95808== 
+==95808== LEAK SUMMARY:
+==95808==    definitely lost: 20,485,671 bytes in 313,351 blocks
+==95808==    indirectly lost: 0 bytes in 0 blocks
+==95808==      possibly lost: 507,700 bytes in 21 blocks
+==95808==    still reachable: 5,592 bytes in 3 blocks
+==95808==         suppressed: 0 bytes in 0 blocks
+==95808== Rerun with --leak-check=full to see details of leaked memory
+==95808== 
+==95808== For lists of detected and suppressed errors, rerun with: -s
+==95808== ERROR SUMMARY: 174 errors from 10 contexts (suppressed: 0 from 0)

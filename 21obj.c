@@ -23,7 +23,7 @@ bool sNullNodeX*::terminated()
 bool sNullNodeX*::compile(sNullNodeX* self, sInfo* info)
 {
 
-    return TRUE;
+    return true;
 }
 
 int sNullNodeX*::sline(sNullNodeX* self, sInfo* info)
@@ -37,7 +37,7 @@ string sNullNodeX*::sname(sNullNodeX* self, sInfo* info)
 }
 
 struct sNewNode {
-    sType*% type
+    sType*% type;
     
     int sline;
     string sname;
@@ -301,7 +301,7 @@ bool sFalseNode*::compile(sFalseNode* self, sInfo* info)
 }
 
 struct sSizeOfNode {
-    sType*% type
+    sType*% type;
     int sline;
     string sname;
 };
@@ -732,10 +732,24 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         var type, name = parse_type(info) throws;
         
         if(*info->p == '(') {
-            sNode*% obj = new sNode(new sNewNode(type, info));
-            string fun_name = string("initialize");
-            
-            return parse_method_call(obj, fun_name, info) throws;
+            if(type->mClass->mProtocol) {
+                info->p++;
+                skip_spaces_and_lf(info);
+                
+                sType*% inf_type = clone type;
+                
+                sNode*% node = expression(info) throws;
+                
+                expected_next_character(')', info);
+                
+                return new sNode(new sImplementsNode(node, inf_type, info));
+            }
+            else {
+                sNode*% obj = new sNode(new sNewNode(type, info));
+                string fun_name = string("initialize");
+                
+                return parse_method_call(obj, fun_name, info) throws;
+            }
         }
         else {
             return new sNode(new sNewNode(type, info));

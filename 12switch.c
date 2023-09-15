@@ -52,7 +52,7 @@ bool sSwitchNode*::compile(sSwitchNode* self, sInfo* info)
     
     transpiler_clear_last_code(info);
 
-    return TRUE;
+    return true;
 }
 
 int sSwitchNode*::sline(sSwitchNode* self, sInfo* info)
@@ -67,19 +67,19 @@ string sSwitchNode*::sname(sSwitchNode* self, sInfo* info)
 
 struct sCaseNode
 {
-  string mName;
+  sNode*% mNode;
   
   int sline;
   string sname;
 };
 
 
-sCaseNode*% sCaseNode*::initialize(sCaseNode*% self, string name, sInfo* info)
+sCaseNode*% sCaseNode*::initialize(sCaseNode*% self, sNode*% node, sInfo* info)
 {
     self.sline = info.sline;
     self.sname = string(info.sname);
 
-    self.mName = string(name);
+    self.mNode = clone node;
 
     return self;
 }
@@ -91,11 +91,20 @@ bool sCaseNode*::terminated()
 
 bool sCaseNode*::compile(sCaseNode* self, sInfo* info)
 {
-    add_come_code(info, "case %s:\n", self.mName);
+    sNode* node = self.mNode;
+    
+    if(!node.compile->(info)) {
+        return false;
+    }
+    
+    CVALUE*% label_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
+    
+    add_come_code(info, "case %s:\n", label_value.c_value);
     
     transpiler_clear_last_code(info);
 
-    return TRUE;
+    return true;
 }
 
 int sCaseNode*::sline(sCaseNode* self, sInfo* info)
@@ -104,6 +113,45 @@ int sCaseNode*::sline(sCaseNode* self, sInfo* info)
 }
 
 string sCaseNode*::sname(sCaseNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+struct sDefaultNode
+{
+  int sline;
+  string sname;
+};
+
+
+sDefaultNode*% sDefaultNode*::initialize(sDefaultNode*% self, sInfo* info)
+{
+    self.sline = info.sline;
+    self.sname = string(info.sname);
+
+    return self;
+}
+
+bool sDefaultNode*::terminated()
+{
+    return false;
+}
+
+bool sDefaultNode*::compile(sDefaultNode* self, sInfo* info)
+{
+    add_come_code(info, "default:\n");
+    
+    transpiler_clear_last_code(info);
+
+    return true;
+}
+
+int sDefaultNode*::sline(sDefaultNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sDefaultNode*::sname(sDefaultNode* self, sInfo* info)
 {
     return string(self.sname);
 }
@@ -134,7 +182,7 @@ bool sBreakNode*::compile(sBreakNode* self, sInfo* info)
     
     transpiler_clear_last_code(info);
 
-    return TRUE;
+    return true;
 }
 
 int sBreakNode*::sline(sBreakNode* self, sInfo* info)
@@ -150,10 +198,15 @@ string sBreakNode*::sname(sBreakNode* self, sInfo* info)
 exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 12
 {
     if(buf === "case") {
-        string name = parse_word(info) throws;
+        sNode*% node = expression(info) throws;
         expected_next_character(':', info) throws;
         
-        return new sNode(new sCaseNode(name, info));
+        return new sNode(new sCaseNode(node, info));
+    }
+    else if(buf === "default") {
+        expected_next_character(':', info) throws;
+        
+        return new sNode(new sDefaultNode(info));
     }
     else if(buf === "break") {
         return new sNode(new sBreakNode(info));

@@ -598,7 +598,7 @@ exception int transpile(sInfo* info) version 3
         , string("int main(int argc, char** argv)")
         , info);
     
-    info.funcs.insert(name, main_fun);
+    info.funcs.insert(string(name), main_fun);
     
     add_come_code(info, "#include <stdio.h>\n");
     
@@ -625,7 +625,7 @@ bool output_source_file(sInfo* info) version 3
     fprintf(f, "// header function\n");
     foreach(it, info.funcs) {
         sFun* it2 = info.funcs[string(it)];
-
+        
         string header = header_function(it2, info);
         
         if(it2->mStatic && it2->mResultType->mInline) {

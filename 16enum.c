@@ -69,7 +69,7 @@ bool sEnumNode*::compile(sEnumNode* self, sInfo* info)
     
     add_come_code_at_source_head(info, "%s", buf.to_string());
 
-    return TRUE;
+    return true;
 }
 
 int sEnumNode*::sline(sEnumNode* self, sInfo* info)

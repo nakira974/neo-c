@@ -154,7 +154,7 @@ bool sStoreFieldNode*::compile(sStoreFieldNode* self, sInfo* info)
     
     sType* right_type = right_value.type;
     
-    sType* left_type* = left_value.type;
+    sType* left_type = left_value.type;
     
     sType*% left_type2 = solve_generics(left_type, left_type, info).catch {
         fprintf(stderr, "solve generics is failed\n");
@@ -284,7 +284,7 @@ bool sLoadFieldNode*::compile(sLoadFieldNode* self, sInfo* info)
     CVALUE*% left_value = get_value_from_stack(-1, info);
     dec_stack_ptr(1, info);
     
-    sType* left_type* = left_value.type;
+    sType* left_type = left_value.type;
     
     sType*% left_type2 = solve_generics(left_type, left_type, info).catch {
         fprintf(stderr, "solve generics is failed\n");

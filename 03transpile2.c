@@ -127,6 +127,21 @@ string make_come_type_name_string(sType* type, sInfo* info)
     
     buf.append_str(class_name);
     
+    if(type->mGenericsTypes.length() > 0) {
+        buf.append_str("<");
+        for(int i=0; i<type->mGenericsTypes.length(); i++) {
+            sType* gtype = type->mGenericsTypes[i];
+            
+            buf.append_str(make_come_type_name_string(gtype, info));
+            
+            if(i != type->mGenericsTypes.length() -1) {
+                buf.append_str(",");
+            }
+        }
+        
+        buf.append_str(">");
+    }
+    
     if(type->mNoArrayPointerNum == 0 && class_name !== "lambda") {
         for(int i=0; i<type->mPointerNum; i++) {
             buf.append_str("*");

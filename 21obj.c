@@ -96,6 +96,7 @@ bool sNewNode*::compile(sNewNode* self, sInfo* info)
     string type_name = make_type_name_string(type2, false@in_header, true@array_cast_pointer, info);
     
     come_value.c_value = xsprintf("(%s*)come_calloc(1, sizeof(%s)*(%s))", type_name, type_name, num_string.to_string());
+    
     sType*% type3 = clone type2;
     type3->mPointerNum++;
     type3->mHeap = true;

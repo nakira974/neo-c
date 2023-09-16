@@ -406,8 +406,6 @@ int come_main(int argc, char** argv) version 2
         
         if(!cpp(&info)) {
             fprintf(stderr, "%s %d: transpile failed\n", info.sname, info.sline);
-int* a = (void*)0;
-*a = 0;
             exit(2);
         }
         
@@ -418,32 +416,22 @@ int* a = (void*)0;
         if(!output_cpp_file) {
             transpile(&info).catch {
                 fprintf(stderr, "%s %d: transpile faild\n", info.sname, info.sline);
-int* a = (void*)0;
-*a = 0;
                 exit(2);
             }
             
             if(!output_source_file(&info)) {
                 fprintf(stderr, "%s %d: output source file faield\n", info->sname, info->sline);
-int* a = (void*)0;
-*a = 0;
                 exit(2);
             }
             
-            (void)system(xsprintf("rm -f %s.i", info.sname));
-            
             if(info.err_num > 0) {
                 fprintf(stderr, "transpile error. err num %d\n", info->err_num);
-int* a = (void*)0;
-*a = 0;
                 
                 exit(2);
             }
             else {
                 if(!compile(&info, output_object_file, object_files)) {
                     fprintf(stderr, "%s %d: compile faield\n", info.sname, info.sline);
-int* a = (void*)0;
-*a = 0;
                     exit(1);
                 }
                 

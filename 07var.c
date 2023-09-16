@@ -198,6 +198,14 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         }
         
         if(self.multiple_assign) {
+            static int num_multiple_var = 0;
+            string multiple_var_name = xsprintf("multiple_assgin_var%d", ++num_multiple_var);
+            add_come_code_at_function_head(info, "%s;\n", make_define_var(right_value.type, multiple_var_name, info));
+            
+            add_come_code(info, "%s=%s;\n", multiple_var_name, right_value.c_value);
+            
+            right_value.c_value = clone multiple_var_name;
+            
             int i = 0;
             foreach(it, self.multiple_assign) {
                 if(i < right_type.mGenericsTypes.length()) {

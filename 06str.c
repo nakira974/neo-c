@@ -338,19 +338,24 @@ bool sTupleNode*::compile(sTupleNode* self, sInfo* info)
     }
     
     static int tuple_value_num = 0;
-    string var_name = xsprintf("__tuple_value%d__", ++tuple_value_num);
+//    string var_name = xsprintf("__tuple_value%d__", ++tuple_value_num);
     
     buffer*% tuple_value_source = new buffer();
     
-    tuple_value_source.append_char('{');
-    tuple_value_source.append_str(xsprintf("var %s = new tuple%d<"
-        , var_name
+//    tuple_value_source.append_char('{');
+//    tuple_value_source.append_str(xsprintf("var %s = new tuple%d<"
+//        , var_name
+    tuple_value_source.append_str(xsprintf("new tuple%d<"
         , tuple_types.length()));
     
     int i = 0;
     foreach(it, tuple_types) {
+        sType* type = it;
+        if(type.mNoSolvedGenericsType.v1) {
+            type = type.mNoSolvedGenericsType.v1;
+        }
         tuple_value_source.append_str(xsprintf("%s"
-            , make_come_type_name_string(it, info)));
+            , make_come_type_name_string(type, info)));
         
         if(i != tuple_types.length() -1) {
             tuple_value_source.append_str(",");
@@ -358,7 +363,7 @@ bool sTupleNode*::compile(sTupleNode* self, sInfo* info)
         
         i++;
     }
-    tuple_value_source.append_str(">.initialize(");
+    tuple_value_source.append_str(">(");
     i=0;
     foreach(it, tuple_elements_source) {
         tuple_value_source.append_str(xsprintf("%s", it));
@@ -370,8 +375,9 @@ bool sTupleNode*::compile(sTupleNode* self, sInfo* info)
         i++;
     }
     tuple_value_source.append_str(");\n");
-    tuple_value_source.append_char('}');
+//    tuple_value_source.append_char('}');
     
+/*
     char* p = info.p;
     char* head = info.head;
     int sline = info.sline;
@@ -384,7 +390,30 @@ bool sTupleNode*::compile(sTupleNode* self, sInfo* info)
     sBlock*% block = parse_block(info, true@no_block_level).catch { return false; }
     
     transpile_block(block, null, null, info, true@no_var_table);
+*/
+puts(tuple_value_source.to_string());
     
+    char* p = info.p;
+    char* head = info.head;
+    int sline = info.sline;
+    buffer*% source = info.source;
+    
+    info.source = tuple_value_source;
+    info.p = info.source.buf;
+    info.head = info.source.buf;
+
+    sNode*% value = expression(info).catch { exit(1); }
+    
+    info.p = p;
+    info.head = head;
+    info.sline = sline;
+    info.source = source;
+    
+    if(!value.compile->(info)) {
+        return false;
+    }
+    
+/*
     info.source = source3;
     info.p = p;
     info.head = head;
@@ -396,14 +425,17 @@ bool sTupleNode*::compile(sTupleNode* self, sInfo* info)
         err_msg(info, "unexpected error, var not found");
         return false;
     }
+*/
+    CVALUE*% come_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
     
-    CVALUE*% come_value = new CVALUE;
+    CVALUE*% come_value2 = new CVALUE;
     
-    come_value.c_value = xsprintf("%s", var_->mCValueName);
-    come_value.type = clone var_->mType;
-    come_value.var = null;
+    come_value2.c_value = clone come_value.c_value;
+    come_value2.type = clone come_value.type;
+    come_value2.var = null;
     
-    info.stack.push_back(come_value);
+    info.stack.push_back(come_value2);
     
     add_come_last_code(info, "%s;\n", come_value.c_value);
     

@@ -794,11 +794,11 @@ static void list$1charph_finalize(struct list$1charph* self);
 static void list$1charph_push_back(struct list$1charph* self, char* item);
 static void FILE_finalize(struct _IO_FILE* self);
 struct tuple2$2list$1sTypephphbool* parse_params(struct sInfo* info);
-static struct list$1sTypeph* list$1sTypeph_initialize(struct list$1sTypeph* self);
-static void list$1sTypeph_finalize(struct list$1sTypeph* self);
-static void sType_finalize(struct sType* self);
 static struct tuple2$2list$1sTypephphbool* tuple2$2list$1sTypephphbool_initialize(struct tuple2$2list$1sTypephphbool* self, struct list$1sTypeph* v1, _Bool v2);
 static void tuple2$2list$1sTypephphbool_finalize(struct tuple2$2list$1sTypephphbool* self);
+static void list$1sTypeph_finalize(struct list$1sTypeph* self);
+static void sType_finalize(struct sType* self);
+static struct list$1sTypeph* list$1sTypeph_initialize(struct list$1sTypeph* self);
 int main(int argc, char** argv);
 static void sInfo_finalize(struct sInfo* self);
 // inline function
@@ -1946,15 +1946,6 @@ void* right_value68;
     return __result__;
 }
 
-static struct list$1sTypeph* list$1sTypeph_initialize(struct list$1sTypeph* self){
-}
-
-static void list$1sTypeph_finalize(struct list$1sTypeph* self){
-}
-
-static void sType_finalize(struct sType* self){
-}
-
 static struct tuple2$2list$1sTypephphbool* tuple2$2list$1sTypephphbool_initialize(struct tuple2$2list$1sTypephphbool* self, struct list$1sTypeph* v1, _Bool v2){
         if(self->v1) {(struct list$1sTypeph*)come_decrement_ref_count(self->v1,0,0); }
         self->v1=(struct list$1sTypeph*)come_increment_ref_count(v1);
@@ -1969,6 +1960,34 @@ static void tuple2$2list$1sTypephphbool_finalize(struct tuple2$2list$1sTypephphb
             if(self!=((void*)0)&&self->v1!=((void*)0)) {
                 call_finalizer(list$1sTypeph_finalize,self->v1,0, 0, 0);
             }
+}
+
+static void list$1sTypeph_finalize(struct list$1sTypeph* self){
+struct list_item$1sTypeph* it_89;
+struct list_item$1sTypeph* prev_it_90;
+memset(&it_89, 0, sizeof(struct list_item$1sTypeph*));
+memset(&prev_it_90, 0, sizeof(struct list_item$1sTypeph*));
+                    it_89=self->head;
+                    while(it_89!=((void*)0)) {
+                        if(1) {
+                            call_finalizer(sType_finalize,it_89->item,0, 0, 0);
+                        }
+                        prev_it_90=it_89;
+                        it_89=it_89->next;
+                        come_free_object(prev_it_90);
+                    }
+}
+
+static void sType_finalize(struct sType* self){
+}
+
+static struct list$1sTypeph* list$1sTypeph_initialize(struct list$1sTypeph* self){
+        self->head=((void*)0);
+        self->tail=((void*)0);
+        self->len=0;
+        struct list$1sTypeph* __result__ = self;
+        call_finalizer(list$1sTypeph_finalize,self,0, 0, 1);
+        return __result__;
 }
 
 int main(int argc, char** argv){

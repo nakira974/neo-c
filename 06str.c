@@ -296,15 +296,13 @@ string sListNode*::sname(sListNode* self, sInfo* info)
 struct sTupleNode
 {
     list<sNode*%>*% tuple_elements;
-    list<string>*% tuple_elements_source;
     int sline;
     string sname;
 };
 
-sTupleNode*% sTupleNode*::initialize(sTupleNode*% self, list<sNode*%>*% tuple_elements, list<string>*% tuple_elements_source, sInfo* info)
+sTupleNode*% sTupleNode*::initialize(sTupleNode*% self, list<sNode*%>*% tuple_elements, sInfo* info)
 {
     self.tuple_elements = tuple_elements;
-    self.tuple_elements_source = tuple_elements_source;
     
     self.sline = info.sline;
     self.sname = string(info->sname);
@@ -320,124 +318,116 @@ bool sTupleNode*::terminated()
 bool sTupleNode*::compile(sTupleNode* self, sInfo* info)
 {
     list<sNode*%>* tuple_elements = self.tuple_elements;
-    list<string>* tuple_elements_source = self.tuple_elements_source;
-    
     list<sType*%>*% tuple_types = new list<sType*%>();
+    list<CVALUE*%>*% tuple_values = new list<CVALUE*%>();
     
     foreach(it, tuple_elements) {
-        info->no_output_come_code = true;
         if(!it.compile->(info)) {
             return false;
         }
-        info->no_output_come_code = false;
         
         CVALUE*% come_value = get_value_from_stack(-1, info);
         dec_stack_ptr(1, info);
         
+        tuple_values.push_back(clone come_value);
         tuple_types.push_back(clone come_value.type);
     }
     
-    static int tuple_value_num = 0;
-//    string var_name = xsprintf("__tuple_value%d__", ++tuple_value_num);
+    sType*% type = new sType(xsprintf("tuple%d", tuple_types.length()), info);
     
-    buffer*% tuple_value_source = new buffer();
-    
-//    tuple_value_source.append_char('{');
-//    tuple_value_source.append_str(xsprintf("var %s = new tuple%d<"
-//        , var_name
-    tuple_value_source.append_str(xsprintf("new tuple%d<"
-        , tuple_types.length()));
-    
-    int i = 0;
     foreach(it, tuple_types) {
-        sType* type = it;
-        if(type.mNoSolvedGenericsType.v1) {
-            type = type.mNoSolvedGenericsType.v1;
-        }
-        tuple_value_source.append_str(xsprintf("%s"
-            , make_come_type_name_string(type, info)));
-        
-        if(i != tuple_types.length() -1) {
-            tuple_value_source.append_str(",");
-        }
-        
-        i++;
+        type->mGenericsTypes.push_back(clone it);
     }
-    tuple_value_source.append_str(">(");
-    i=0;
-    foreach(it, tuple_elements_source) {
-        tuple_value_source.append_str(xsprintf("%s", it));
-        
-        if(i != tuple_types.length() -1) {
-            tuple_value_source.append_str(",");
-        }
-        
-        i++;
+    
+    CVALUE*% obj_value = new CVALUE;
+    
+    buffer*% num_string = new buffer();
+    
+    num_string.append_str("1");
+    
+    sType*% type2 = solve_generics(type, type, info).catch {
+        return false;
     }
-    tuple_value_source.append_str(");\n");
-//    tuple_value_source.append_char('}');
     
-/*
-    char* p = info.p;
-    char* head = info.head;
-    int sline = info.sline;
-    buffer*% source3 = info.source;
+    string type_name = make_type_name_string(type2, false@in_header, true@array_cast_pointer, info);
     
-    info.source = tuple_value_source;
-    info.p = info.source.buf;
-    info.head = info.source.buf;
+    obj_value.c_value = xsprintf("(%s*)come_calloc(1, sizeof(%s)*(%s))", type_name, type_name, num_string.to_string());
     
-    sBlock*% block = parse_block(info, true@no_block_level).catch { return false; }
+    sType*% type3 = clone type2;
+    type3->mPointerNum++;
+    type3->mHeap = true;
+    type2->mHeap = true;
+    obj_value.type = clone type2;
+    obj_value.c_value = append_object_to_right_values(obj_value.c_value, type3 ,info);
+    obj_value.type->mPointerNum ++;
+    obj_value.var = null;
     
-    transpile_block(block, null, null, info, true@no_var_table);
-*/
-puts(tuple_value_source.to_string());
+    sType*% obj_type = clone type2;
+    char* fun_name = "initialize";
     
-    char* p = info.p;
-    char* head = info.head;
-    int sline = info.sline;
-    buffer*% source = info.source;
+    string generics_fun_name = make_generics_function(obj_type, string(fun_name), info).to_string();
     
-    info.source = tuple_value_source;
-    info.p = info.source.buf;
-    info.head = info.source.buf;
+    sFun* fun = info.funcs.at(generics_fun_name, null!);
+    
+    if(fun == null) {
+        err_msg(info, "function not found(%s) at method(%s)\n", generics_fun_name, info.come_fun.mName);
+        return false;
+    }
+        
+    sType*% result_type = clone fun->mResultType;
+    result_type->mStatic = false;
+        
+    list<CVALUE*%>*% come_params = new list<CVALUE*%>();
+    
+    if(fun.mParamTypes[0].mHeap && obj_value.type.mHeap) {
+        obj_value.c_value = increment_ref_count_object(obj_value.type, obj_value.c_value, info);
+    }
+    come_params.push_back(obj_value);
 
-    sNode*% value = expression(info).catch { exit(1); }
-    
-    info.p = p;
-    info.head = head;
-    info.sline = sline;
-    info.source = source;
-    
-    if(!value.compile->(info)) {
-        return false;
+    int i = 1;
+    foreach(it, tuple_values) {
+        CVALUE*% come_value = clone it;
+        
+        if(fun.mParamTypes[i] && fun.mParamTypes[i].mHeap && come_value.type.mHeap) {
+            come_value.c_value = increment_ref_count_object(come_value.type, come_value.c_value, info);
+        }
+        come_params.push_back(come_value);
+        
+        i++;
     }
     
-/*
-    info.source = source3;
-    info.p = p;
-    info.head = head;
-    info.sline = sline;
+    buffer*% buf = new buffer();
     
-    sVar* var_ = get_variable_from_table(info.lv_table, var_name);
+    buf.append_str(generics_fun_name);
+    buf.append_str("(");
     
-    if(var_ == null) {
-        err_msg(info, "unexpected error, var not found");
-        return false;
+    int j = 0;
+    foreach(it, come_params) {
+        buf.append_str(it.c_value);
+        
+        if(j != come_params.length()-1) {
+            buf.append_str(",");
+        }
+        
+        j++;
     }
-*/
-    CVALUE*% come_value = get_value_from_stack(-1, info);
-    dec_stack_ptr(1, info);
+    buf.append_str(")");
     
     CVALUE*% come_value2 = new CVALUE;
     
-    come_value2.c_value = clone come_value.c_value;
-    come_value2.type = clone come_value.type;
+    come_value2.c_value = buf.to_string();
+    
+    if(result_type->mHeap) {
+        come_value2.c_value = append_object_to_right_values(buf.to_string(), result_type, info);
+    }
+    
+    come_value2.type = clone result_type;
+    come_value2.type->mStatic = false;
     come_value2.var = null;
     
-    info.stack.push_back(come_value2);
+    add_come_last_code(info, "%s;\n", buf.to_string());
     
-    add_come_last_code(info, "%s;\n", come_value.c_value);
+    info.stack.push_back(come_value2);
     
     return true;
 }
@@ -1239,7 +1229,6 @@ exception sNode*% expression_node(sInfo* info) version 98
 exception sNode*% parse_tuple(sInfo* info)
 {
     list<sNode*%>*% tuple_elements = new list<sNode*%>();
-    list<string>*% tuple_elements_source = new list<string>();
     while(true) {
         char* p = info.p;
         
@@ -1250,16 +1239,7 @@ exception sNode*% parse_tuple(sInfo* info)
         
         info.no_comma = no_comma;
         
-        char* p2 = info.p;
-        
         tuple_elements.push_back(node);
-        
-        buffer*% elements_source = new buffer();
-        
-        elements_source.append(p, p2 - p);
-        elements_source.append_char('\0');
-        
-        tuple_elements_source.push_back(elements_source.to_string());
         
         if(*info->p == ',') {
             info->p++;
@@ -1276,5 +1256,5 @@ exception sNode*% parse_tuple(sInfo* info)
         }
     }
     
-    return new sNode(new sTupleNode(tuple_elements, tuple_elements_source, info));
+    return new sNode(new sTupleNode(tuple_elements, info));
 }

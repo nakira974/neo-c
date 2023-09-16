@@ -14,8 +14,7 @@ struct sType
 
 tuple2<list<sType*%>*%,bool>*% parse_params(sInfo* info)
 {
-    //return (new list<sType*%>(), false);
-    return new tuple2<list<sType*%>*%,bool>(new list<sType*%>(), false);
+    return (new list<sType*%>(), false);
 }
 
 int main(int argc, char** argv)

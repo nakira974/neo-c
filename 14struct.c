@@ -50,6 +50,11 @@ string create_generics_name(sType* generics_type, sInfo* info)
 
 void output_struct(sClass* klass, sInfo* info)
 {
+/*
+    if(info->no_output_come_code) {
+        return;
+    }
+*/
     if(!klass->mOutputed) {
         klass->mOutputed = true;
         
@@ -75,6 +80,11 @@ void output_struct(sClass* klass, sInfo* info)
 
 bool output_generics_struct(sType* type, sType* generics_type, sInfo* info)
 {
+/*
+    if(info->no_output_come_code) {
+        return true;
+    }
+*/
     string new_name = create_generics_name(type, info);
     
     if(!info.classes.find(new_name)) {

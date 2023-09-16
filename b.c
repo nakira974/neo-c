@@ -3,6 +3,7 @@
 
 int main(int argc, char** argv)
 {
-    puts("HELLO COMELANG2");
+    var a = [string("AAA"):1, string("BBB"):2];
+    printf("%d\n", a[string("AAA")]);
     return 0;
 }

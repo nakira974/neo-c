@@ -283,7 +283,7 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
         if(finalizer == NULL && !type->mClass->mProtocol && !type->mClass->mNumber 
             && gComelang)
         {
-            var fun,new_fun_name = create_finalizer_automatically(type, fun_name, info).catch { exit(1); }
+            var fun,new_fun_name = create_finalizer_automatically(type, fun_name, info).catch { err_msg(info, "create_finalizer_automatically faield."); exit(1); }
             
             fun_name2 = new_fun_name;
             finalizer = fun;
@@ -399,7 +399,7 @@ string clone_object(sType* type, char* obj, sInfo* info)
     if(cloner == NULL && !type->mClass->mProtocol && !type->mClass->mNumber 
         && gComelang)
     {
-        var fun,new_fun_name = create_cloner_automatically(type, fun_name, info).catch { exit(1); }
+        var fun,new_fun_name = create_cloner_automatically(type, fun_name, info).catch { err_msg(info, "create_cloner failed"); exit(1); }
         
         fun_name2 = new_fun_name;
         cloner = fun;
@@ -482,7 +482,7 @@ bool create_equals_method(sType* type, sInfo* info)
     if(cloner == NULL && !type->mClass->mProtocol && !type->mClass->mNumber 
         && gComelang)
     {
-        var fun,new_fun_name = create_equals_automatically(type, fun_name, info).catch { exit(1); }
+        var fun,new_fun_name = create_equals_automatically(type, fun_name, info).catch { err_msg(info, "create_equals_automatically faield"); exit(1); }
         
         fun_name2 = new_fun_name;
         cloner = fun;
@@ -557,7 +557,7 @@ bool create_operator_equals_method(sType* type, sInfo* info)
     if(cloner == NULL && !type->mClass->mProtocol && !type->mClass->mNumber 
         && gComelang)
     {
-        var fun,new_fun_name = create_operator_equals_automatically(type, fun_name, info).catch { exit(1); }
+        var fun,new_fun_name = create_operator_equals_automatically(type, fun_name, info).catch { err_msg(info, "operator_equals faield"); exit(1); }
         
         fun_name2 = new_fun_name;
         cloner = fun;
@@ -632,7 +632,7 @@ bool create_operator_not_equals_method(sType* type, sInfo* info)
     if(cloner == NULL && !type->mClass->mProtocol && !type->mClass->mNumber 
         && gComelang)
     {
-        var fun,new_fun_name = create_operator_not_equals_automatically(type, fun_name, info).catch { exit(1); }
+        var fun,new_fun_name = create_operator_not_equals_automatically(type, fun_name, info).catch { err_msg(info, "not_equals operator faield"); exit(1); }
         
         fun_name2 = new_fun_name;
         cloner = fun;

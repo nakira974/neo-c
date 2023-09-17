@@ -1,18 +1,32 @@
-#include <comelang2.h>
+#include "common.h"
+
+struct sData
+{
+    int a;
+    int b;
+};
+
+sData*% sData*::initialize(sData*% self, int a, int b)
+{
+    self.a = a;
+    self.b = b;
+    
+    return self;
+}
+
+exception sData*%,sData*%,int fun(int x, int y)
+{
+    return (new sData(111, 222), new sData(333, 444));
+}
 
 int main(int argc, char** argv)
 {
-    var a = [string("AAA"), string("BBB")];
-    
-    printf("str %s\n", a[0]);
-    
-    var b = [1,2,3,4,5];
-    
-    printf("int %d\n", b[0]);
-    
-    var c = ["AAA":1, "BBB":2, "CCC":3];
-    
-    printf("map %d\n", c["AAA"]);
+    var data, data2 = fun(1, 2).catch {
+        puts("CATCH");
+        exit(2);
+    }
+    printf("data %d %d\n", data.a, data.b);
+    printf("data2 %d %d\n", data2.a, data2.b);
     
     return 0;
 }

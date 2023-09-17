@@ -372,6 +372,8 @@ exception sNode*% parse_tuple(sInfo* info);
 /////////////////////////////////////////////////////////////////////
 /// 07var.c
 /////////////////////////////////////////////////////////////////////
+sNode*% store_var(string name, list<string>*%? multiple_assign, sType*% type, bool alloc, sNode*%? right_node, sInfo* info);
+sNode*% load_var(string name, sInfo* info);
 exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 7;
 void add_variable_to_table(char* name, sType* type, sInfo* info);
 void add_variable_to_global_table(char* name, sType* type, sInfo* info);
@@ -439,6 +441,8 @@ exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info)
 /////////////////////////////////////////////////////////////////////
 /// 18field.c
 /////////////////////////////////////////////////////////////////////
+sNode*% store_field(sNode* left, sNode*% right, string name, sInfo* info);
+
 exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 18;
 exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 18;
 exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) version 18;
@@ -459,6 +463,9 @@ exception sNode*% post_position_operator3(sNode*% node, sInfo* info) version 20;
 /////////////////////////////////////////////////////////////////////
 /// 21obj.c
 /////////////////////////////////////////////////////////////////////
+sNode*% create_object(sType*% type, sInfo* info);
+sNode*% create_true_object(sInfo* info);
+
 exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 21;
 exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 94;
 exception sNode*% post_position_operator3(sNode*% node, sInfo* info) version 21;

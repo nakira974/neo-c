@@ -247,6 +247,11 @@ string sStoreFieldNode*::sname(sStoreFieldNode* self, sInfo* info)
     return string(self.sname);
 }
 
+sNode*% store_field(sNode* left, sNode*% right, string name, sInfo* info)
+{
+    return new sNode(new sStoreFieldNode(left, right, name, info));
+}
+
 struct sLoadFieldNode
 {
     sNode*% mLeft;

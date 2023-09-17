@@ -1326,7 +1326,7 @@ impl tuple2 <T, T2>
         return self;
     }
     
-    T catch(tuple2<T, T2>* self, void* parent, void (*block)(void* parent))
+    T& catch(tuple2<T, T2>* self, void* parent, void (*block)(void* parent))
     {
         if(!self.v2) {
             block(parent);

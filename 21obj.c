@@ -113,6 +113,11 @@ bool sNewNode*::compile(sNewNode* self, sInfo* info)
     return true;
 }
 
+sNode*% create_object(sType*% type, sInfo* info)
+{
+    return new sNode(new sNewNode(type, info));
+}
+
 struct sImplementsNode {
     sNode*% obj_exp;
     sType*% inf_type;
@@ -256,6 +261,11 @@ bool sTrueNode*::compile(sTrueNode* self, sInfo* info)
     info.stack.push_back(come_value);
     
     return true;
+}
+
+sNode*% create_true_object(sInfo* info)
+{
+    return new sNode(new sTrueNode(info));
 }
 
 struct sFalseNode {

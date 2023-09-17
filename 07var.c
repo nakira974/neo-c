@@ -326,6 +326,10 @@ string sStoreNode*::sname(sStoreNode* self, sInfo* info)
     return string(self.sname);
 }
 
+sNode*% store_var(string name, list<string>*%? multiple_assign, sType*% type, bool alloc, sNode*%? right_node, sInfo* info)
+{
+    return new sNode(new sStoreNode(name, multiple_assign, type, alloc, right_node, info));
+}
 
 struct sLoadNode
 {
@@ -406,6 +410,11 @@ int sLoadNode*::sline(sLoadNode* self, sInfo* info)
 string sLoadNode*::sname(sLoadNode* self, sInfo* info)
 {
     return string(self.sname);
+}
+
+sNode*% load_var(string name, sInfo* info)
+{
+    return new sNode(new sLoadNode(name, info));
 }
 
 struct sFunLoadNode

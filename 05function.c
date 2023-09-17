@@ -920,45 +920,65 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         }
         
         if(parse_multiple_type && (*info->p == ',' || exception_)) {
-            list<sType*%>*% types = new list<sType*%>();
-            
-            types.push_back(clone type);
-            
-            while(*info->p == ',') {
-                info->p++;
-                skip_spaces_and_lf(info);
+            if(*info->p == ',') {
+                list<sType*%>*% types = new list<sType*%>();
                 
-                var type2, name = parse_type(info
-                    , false@parse_variable_name, false@parse_multiple_type) throws;
+                types.push_back(clone type);
+                
+                while(*info->p == ',') {
+                    info->p++;
+                    skip_spaces_and_lf(info);
                     
-                types.push_back(clone type2);
+                    var type2, name = parse_type(info
+                        , false@parse_variable_name, false@parse_multiple_type) throws;
+                        
+                    types.push_back(clone type2);
+                }
+                
+                int num_tuples = types.length();
+                
+                type = new sType(xsprintf("tuple%d", num_tuples), info);
+                type->mPointerNum++;
+                type->mHeap = true;
+                
+                foreach(it, types) {
+                    type->mGenericsTypes.push_back(clone it);
+                }
+                
+                if(is_contained_generics_class(type, info)) {
+                    type = solve_generics(type, info.generics_type, info) throws;
+                }
+                else {
+                    if(!output_generics_struct(type, type, info))
+                    {
+                        string new_name = create_generics_name(type, info);
+                        err_msg(info, "output generics is failed(%s)", new_name);
+                        exit(1);
+                    }
+                }
             }
-            
-            int num_tuples = types.length();
             
             if(exception_) {
-                num_tuples++;
-                types.push_back(new sType("bool", info));
-            }
-            
-            type = new sType(xsprintf("tuple%d", num_tuples), info);
-            type->mPointerNum++;
-            type->mHeap = true;
-            type->mException = true;
-            
-            foreach(it, types) {
-                type->mGenericsTypes.push_back(clone it);
-            }
-            
-            if(is_contained_generics_class(type, info)) {
-                type = solve_generics(type, info.generics_type, info) throws;
-            }
-            else {
-                if(!output_generics_struct(type, type, info))
-                {
-                    string new_name = create_generics_name(type, info);
-                    err_msg(info, "output generics is failed(%s)", new_name);
-                    exit(1);
+                sType*% type2 = clone type;
+                
+                type = new sType("tuple2", info);
+                type->mPointerNum++;
+                type->mHeap = true;
+                type->mException = true;
+                
+                type->mGenericsTypes.push_back(clone type2);
+                type->mGenericsTypes.push_back(new sType("bool", info));
+                
+                if(is_contained_generics_class(type, info)) {
+                    type = solve_generics(type, info.generics_type, info) throws;
+                }
+                else {
+                    if(!output_generics_struct(type, type, info))
+                    {
+                        string new_name = create_generics_name(type, info);
+                        err_msg(info, "output generics is failed(%s)", new_name);
+                        exit(1);
+                    }
                 }
             }
         }
@@ -1357,8 +1377,57 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
             result_type3 = result_type2;
         }
         
-        if(!self.value->compile->(info)) {
-            return false;
+        if(result_type->mException) {
+puts("AAA");
+            int stack_num_before = info->stack.length();
+            
+            sType*% result_type4 = clone result_type2;
+            result_type4->mPointerNum = 0;
+            
+            sNode*% obj_node = create_object(clone result_type4, info);
+            sNode*% store_node = store_var(string("result_tuple")@name, null@multiple_assign, clone result_type2@type, true@alloc, clone obj_node@right_node, info);
+            
+            if(!store_node.compile->(info)) {
+                return false;
+            }
+            add_last_code_to_source(info);
+            arrange_stack(info, stack_num_before);
+            free_right_value_objects(info);
+            
+            sNode*% load_node = load_var(string("result_tuple"), info);
+            
+            sNode*% right_node = clone self.value;
+            
+            sNode*% store_field_node1 = store_field(load_node, clone right_node, string("v1"), info);
+            
+            if(!store_field_node1.compile->(info)) {
+                return false;
+            }
+            add_last_code_to_source(info);
+            arrange_stack(info, stack_num_before);
+            free_right_value_objects(info);
+            
+            sNode*% true_node = create_true_object(info);
+            
+            sNode*% store_field_node2 = store_field(load_node, clone true_node, string("v2"), info);
+            
+            if(!store_field_node2.compile->(info)) {
+                return false;
+            }
+            add_last_code_to_source(info);
+            arrange_stack(info, stack_num_before);
+            free_right_value_objects(info);
+            
+            if(!load_node.compile->(info)) {
+                return false;
+            }
+            add_last_code_to_source(info);
+            free_right_value_objects(info);
+        }
+        else {
+            if(!self.value->compile->(info)) {
+                return false;
+            }
         }
         
         CVALUE*% come_value = get_value_from_stack(-1, info);
@@ -1469,7 +1538,7 @@ bool sThrowNode*::compile(sThrowNode* self, sInfo* info)
     info.p = info.source.buf;
     info.head = info.source.buf;
 
-    sNode*% value = expression(info).catch { exit(1); }
+    sNode*% value = expression(info).catch { err_msg(info, "throws failed"); exit(1); }
     
     info.p = p;
     info.head = head;
@@ -5109,3 +5178,4 @@ exception sNode*% post_position_operator3(sNode*% node, sInfo* info) version 5
 {
     return node;
 }
+

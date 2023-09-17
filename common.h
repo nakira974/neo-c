@@ -326,6 +326,7 @@ void decrement_ref_count_object(sType* type, char* obj, sInfo* info);
 /////////////////////////////////////////////////////////////////////
 /// 05function.c ///
 /////////////////////////////////////////////////////////////////////
+sNode*% create_int_node(int value, sInfo* info);
 exception sNode*% post_position_operator3(sNode*% node, sInfo* info) version 5;
 exception list<sType*%>*%, list<string>*%, list<string>*%, bool parse_params(sInfo* info);
 exception sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sInfo* info);

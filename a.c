@@ -1,26 +1,18 @@
 #include <comelang2.h>
 
-struct sInfo
-{
-    int a;
-    int b;
-};
-
-struct sType
-{
-    int a;
-    int b;
-};
-
-tuple2<list<sType*%>*%,bool>*% parse_params(sInfo* info)
-{
-    return (new list<sType*%>(), false);
-}
-
 int main(int argc, char** argv)
 {
-    sInfo info;
-    var a, b = parse_params(&info);
+    var a = [string("AAA"), string("BBB")];
+    
+    printf("str %s\n", a[0]);
+    
+    var b = [1,2,3,4,5];
+    
+    printf("int %d\n", b[0]);
+    
+    var c = ["AAA":1, "BBB":2, "CCC":3];
+    
+    printf("map %d\n", c["AAA"]);
     
     return 0;
 }

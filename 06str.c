@@ -192,15 +192,13 @@ string sWStringNode*::sname(sWStringNode* self, sInfo* info)
 struct sListNode
 {
     list<sNode*%>*% list_elements;
-    list<string>*% list_elements_source;
     int sline;
     string sname;
 };
 
-sListNode*% sListNode*::initialize(sListNode*% self, list<sNode*%>*% list_elements, list<string>*% list_elements_source, sInfo* info)
+sListNode*% sListNode*::initialize(sListNode*% self, list<sNode*%>*% list_elements, sInfo* info)
 {
     self.list_elements = list_elements;
-    self.list_elements_source = list_elements_source;
     
     self.sline = info.sline;
     self.sname = string(info->sname);
@@ -216,69 +214,153 @@ bool sListNode*::terminated()
 bool sListNode*::compile(sListNode* self, sInfo* info)
 {
     list<sNode*%>* list_elements = self.list_elements;
-    list<string>* list_elements_source = self.list_elements_source;
     
-    info->no_output_come_code = true;
-    if(!list_elements[0].compile->(info)) {
-        return false;
+    list<CVALUE*%>*% params = new list<CVALUE*%>();
+    sType*% list_element_type;
+    
+    foreach(it, list_elements) {
+        if(!it.compile->(info)) {
+            return false;
+        }
+        
+        CVALUE*% come_value = get_value_from_stack(-1, info);
+        dec_stack_ptr(1, info);
+        
+        params.push_back(come_value);
+        
+        list_element_type = clone come_value.type;
     }
-    info->no_output_come_code = false;
     
-    CVALUE*% first_value = get_value_from_stack(-1, info);
-    dec_stack_ptr(1, info);
-    
-    sType*% element_type = first_value.type;
+    sType*% type_values = clone list_element_type;
+    type_values.mArrayNum.push_back(create_int_node(params.length(), info));
+    type_values->mHeap = false;
     
     static int list_value_num = 0;
-    string var_name = xsprintf("__list_value%d__", ++list_value_num);
+    string var_name = xsprintf("__list_values%d__", ++list_value_num);
     
-    buffer*% list_value_source = new buffer();
-    
-    list_value_source.append_char('{');
-    list_value_source.append_str(xsprintf("list<%s>*%% %s = new list<%s>.initialize();\n"
-        , make_come_type_name_string(element_type, info)
-        , var_name
-        , make_come_type_name_string(element_type, info)));
-    
-    foreach(element_source, list_elements_source) {
-        list_value_source.append_str(xsprintf("%s.push_back(%s);\n", var_name, element_source));
-    }
-    list_value_source.append_char('}');
-    
-    char* p = info.p;
-    char* head = info.head;
-    int sline = info.sline;
-    buffer*% source3 = info.source;
-    
-    info.source = list_value_source;
-    info.p = info.source.buf;
-    info.head = info.source.buf;
-    
-    sBlock*% block = parse_block(info, true@no_block_level).catch { return false; }
-    
-    transpile_block(block, null, null, info, true@no_var_table);
-    
-    info.source = source3;
-    info.p = p;
-    info.head = head;
-    info.sline = sline;
+    add_variable_to_table(var_name, type_values, info);
     
     sVar* var_ = get_variable_from_table(info.lv_table, var_name);
     
-    if(var_ == null) {
-        err_msg(info, "unexpected error, var not found");
+    add_come_code_at_function_head(info, "%s;\n", make_define_var(type_values, var_->mCValueName, info));
+    
+    buffer*% source = new buffer();
+    
+    source.append_str("{");
+    
+    int i = 0;
+    foreach(it, params) {
+        if(list_element_type->mHeap) {
+            source.append_str(xsprintf("%s[%d]=come_increment_ref_count(%s);\n", var_->mCValueName, i, params[i].c_value));
+        }
+        else {
+            source.append_str(xsprintf("%s[%d]=%s;\n", var_->mCValueName, i, params[i].c_value));
+        }
+        i++;
+    }
+    
+    source.append_str("}");
+    
+    add_come_code(info, "%s", source.to_string());
+    
+    sType*% list_type = new sType("list", info);
+    list_type->mGenericsTypes.push_back(clone list_element_type);
+    
+    sType*% obj_type = clone list_type;
+    char* fun_name = "initialize_with_values";
+    
+    string generics_fun_name = make_generics_function(obj_type, string(fun_name), info).to_string();
+    
+    sFun* fun = info.funcs.at(generics_fun_name, null!);
+    
+    if(fun == null) {
+        err_msg(info, "function not found(%s) at method(%s)\n", generics_fun_name, info.come_fun.mName);
+        return false;
+    }
+        
+    sType*% result_type = clone fun->mResultType;
+    result_type->mStatic = false;
+    
+    sType* type = list_type;
+    
+    CVALUE*% obj_value = new CVALUE;
+    
+    buffer*% num_string = new buffer();
+    
+    num_string.append_str("1");
+    
+    sType*% type2 = solve_generics(type, type, info).catch {
         return false;
     }
     
-    CVALUE*% come_value = new CVALUE;
+    string type_name = make_type_name_string(type2, false@in_header, true@array_cast_pointer, info);
     
-    come_value.c_value = xsprintf("%s", var_->mCValueName);
-    come_value.type = clone var_->mType;
-    come_value.var = null;
+    obj_value.c_value = xsprintf("(%s*)come_calloc(1, sizeof(%s)*(%s))", type_name, type_name, num_string.to_string());
     
-    info.stack.push_back(come_value);
+    sType*% type3 = clone type2;
+    type3->mPointerNum++;
+    type3->mHeap = true;
+    type2->mHeap = true;
+    obj_value.type = clone type2;
+    obj_value.c_value = append_object_to_right_values(obj_value.c_value, type3 ,info);
+    obj_value.type->mPointerNum ++;
+    obj_value.var = null;
+        
+    list<CVALUE*%>*% come_params = new list<CVALUE*%>();
     
-    add_come_last_code(info, "%s;\n", come_value.c_value);
+    if(fun.mParamTypes[0].mHeap && obj_value.type.mHeap) {
+        obj_value.c_value = increment_ref_count_object(obj_value.type, obj_value.c_value, info);
+    }
+    come_params.push_back(obj_value);
+    
+    CVALUE*% come_value2 = new CVALUE;
+    
+    come_value2.c_value = xsprintf("%d", params.length());
+    come_value2.type = null; // no required
+    come_value2.var = null;
+    
+    come_params.push_back(come_value2);
+    
+    CVALUE*% come_value3 = new CVALUE;
+    
+    come_value3.c_value = xsprintf("%s", var_->mCValueName);
+    come_value3.type = null; // no required
+    come_value3.var = null;
+    
+    come_params.push_back(come_value3);
+    
+    buffer*% buf = new buffer();
+    
+    buf.append_str(generics_fun_name);
+    buf.append_str("(");
+    
+    int j = 0;
+    foreach(it, come_params) {
+        buf.append_str(it.c_value);
+        
+        if(j != come_params.length()-1) {
+            buf.append_str(",");
+        }
+        
+        j++;
+    }
+    buf.append_str(")");
+    
+    CVALUE*% come_value4 = new CVALUE;
+    
+    come_value4.c_value = buf.to_string();
+    
+    if(result_type->mHeap) {
+        come_value4.c_value = append_object_to_right_values(buf.to_string(), result_type, info);
+    }
+    
+    come_value4.type = clone result_type;
+    come_value4.type->mStatic = false;
+    come_value4.var = null;
+    
+    add_come_last_code(info, "%s;\n", buf.to_string());
+    
+    info.stack.push_back(come_value4);
     
     return true;
 }
@@ -445,19 +527,15 @@ string sTupleNode*::sname(sTupleNode* self, sInfo* info)
 struct sMapNode
 {
     list<sNode*%>*% map_key_elements;
-    list<string>*% map_key_elements_source;
     list<sNode*%>*% map_elements;
-    list<string>*% map_elements_source;
     int sline;
     string sname;
 };
 
-sMapNode*% sMapNode*::initialize(sMapNode*% self, list<sNode*%>*% map_key_elements, list<string>*% map_key_elements_source, list<sNode*%>*% map_elements, list<string>*% map_elements_source, sInfo* info)
+sMapNode*% sMapNode*::initialize(sMapNode*% self, list<sNode*%>*% map_key_elements, list<sNode*%>*% map_elements, sInfo* info)
 {
     self.map_key_elements = map_key_elements;
-    self.map_key_elements_source = map_key_elements_source;
     self.map_elements = map_elements;
-    self.map_elements_source = map_elements_source;
     
     self.sline = info.sline;
     self.sname = string(info->sname);
@@ -473,92 +551,199 @@ bool sMapNode*::terminated()
 bool sMapNode*::compile(sMapNode* self, sInfo* info)
 {
     list<sNode*%>* map_key_elements = self.map_key_elements;
-    list<string>* map_key_elements_source = self.map_key_elements_source;
     list<sNode*%>* map_elements = self.map_elements;
-    list<string>* map_elements_source = self.map_elements_source;
+
+    list<CVALUE*%>*% key_params = new list<CVALUE*%>();
+    list<CVALUE*%>*% element_params = new list<CVALUE*%>();
+    sType*% map_key_type;
+    sType*% map_element_type;
     
-    info->no_output_come_code = true;
-    if(!map_key_elements[0].compile->(info)) {
-        return false;
+    for(int i=0; i<map_key_elements.length(); i++) {
+        sNode* key_elements = map_key_elements[i];
+        sNode* elements = map_elements[i];
+        
+        if(!key_elements.compile->(info)) {
+            return false;
+        }
+        
+        CVALUE*% come_value = get_value_from_stack(-1, info);
+        dec_stack_ptr(1, info);
+        
+        key_params.push_back(come_value);
+        
+        if(!elements.compile->(info)) {
+            return false;
+        }
+        
+        CVALUE*% come_value2 = get_value_from_stack(-1, info);
+        dec_stack_ptr(1, info);
+        
+        element_params.push_back(come_value2);
+        
+        map_key_type = clone come_value.type;
+        map_element_type = clone come_value2.type;
     }
-    info->no_output_come_code = false;
-    
-    CVALUE*% first_key_value = get_value_from_stack(-1, info);
-    dec_stack_ptr(1, info);
-    
-    sType*% key_type = first_key_value.type;
-    
-    info->no_output_come_code = true;
-    if(!map_elements[0].compile->(info)) {
-        return false;
-    }
-    info->no_output_come_code = false;
-    
-    CVALUE*% first_value = get_value_from_stack(-1, info);
-    dec_stack_ptr(1, info);
-    
-    sType*% element_type = first_value.type;
     
     static int map_value_num = 0;
-    string var_name = xsprintf("__map_value%d__", ++map_value_num);
     
-    buffer*% map_value_source = new buffer();
+    sType*% key_type_values = clone map_key_type;
+    key_type_values.mArrayNum.push_back(create_int_node(key_params.length(), info));
+    key_type_values->mHeap = false;
     
-    map_value_source.append_char('{');
-    map_value_source.append_str(xsprintf("map<%s,%s>*%% %s = new map<%s,%s>.initialize();\n"
-        , make_come_type_name_string(key_type, info)
-        , make_come_type_name_string(element_type, info)
-        , var_name
-        , make_come_type_name_string(key_type, info)
-        , make_come_type_name_string(element_type, info)
-        ));
+    string var_name = xsprintf("__map_keys%d__", ++map_value_num);
     
-    var key_source = map_key_elements_source.begin();
-    foreach(element_source, map_elements_source) {
-        map_value_source.append_str(xsprintf("%s.insert(%s, %s);\n"
-            , var_name
-            , key_source
-            , element_source
-        ));
-        
-        key_source = map_key_elements_source.next();
-    }
-    map_value_source.append_char('}');
-    
-    buffer*% source3 = info.source;
-    char* p = info.p;
-    char* head = info.head;
-    int sline = info.sline;
-    
-    info.source = map_value_source
-    info.p = info.source.buf;
-    info.head = info.source.buf;
-    
-    sBlock*% block = parse_block(info, true@no_block_level).catch { return false; }
-    
-    transpile_block(block, null, null, info, true@no_var_table);
-    
-    info.source = source3;
-    info.p = p;
-    info.head = head;
-    info.sline = sline;
+    add_variable_to_table(var_name, key_type_values, info);
     
     sVar* var_ = get_variable_from_table(info.lv_table, var_name);
     
-    if(var_ == null) {
-        err_msg(info, "unexpected error, var not found");
+    add_come_code_at_function_head(info, "%s;\n", make_define_var(key_type_values, var_->mCValueName, info));
+    
+    sType*% element_type_values = clone map_element_type;
+    element_type_values.mArrayNum.push_back(create_int_node(element_params.length(), info));
+    element_type_values->mHeap = false;
+    
+    string var_name2 = xsprintf("__map_element%d__", map_value_num);
+    
+    add_variable_to_table(var_name2, element_type_values, info);
+    
+    sVar* var2_ = get_variable_from_table(info.lv_table, var_name2);
+    
+    add_come_code_at_function_head(info, "%s;\n", make_define_var(element_type_values, var2_->mCValueName, info));
+    
+    buffer*% source = new buffer();
+    
+    source.append_str("{");
+    
+    for(int i = 0; i<key_params.length(); i++) {
+        CVALUE* key_param = key_params[i];
+        CVALUE* element_param = element_params[i];
+        
+        if(map_key_type->mHeap) {
+            source.append_str(xsprintf("%s[%d]=come_increment_ref_count(%s);\n", var_->mCValueName, i, key_param.c_value));
+        }
+        else {
+            source.append_str(xsprintf("%s[%d]=%s;\n", var_->mCValueName, i, key_param.c_value));
+        }
+        
+        if(map_element_type->mHeap) {
+            source.append_str(xsprintf("%s[%d]=come_increment_ref_count(%s);\n", var2_->mCValueName, i, element_param.c_value));
+        }
+        else {
+            source.append_str(xsprintf("%s[%d]=%s;\n", var2_->mCValueName, i, element_param.c_value));
+        }
+    }
+    
+    source.append_str("}");
+    
+    add_come_code(info, "%s", source.to_string());
+    
+    sType*% map_type = new sType("map", info);
+    map_type->mGenericsTypes.push_back(clone map_key_type);
+    map_type->mGenericsTypes.push_back(clone map_element_type);
+    
+    sType*% obj_type = clone map_type;
+    char* fun_name = "initialize_with_values";
+    
+    string generics_fun_name = make_generics_function(obj_type, string(fun_name), info).to_string();
+    
+    sFun* fun = info.funcs.at(generics_fun_name, null!);
+    
+    if(fun == null) {
+        err_msg(info, "function not found(%s) at method(%s)\n", generics_fun_name, info.come_fun.mName);
+        return false;
+    }
+        
+    sType*% result_type = clone fun->mResultType;
+    result_type->mStatic = false;
+    
+    sType* type = map_type;
+    
+    CVALUE*% obj_value = new CVALUE;
+    
+    buffer*% num_string = new buffer();
+    
+    num_string.append_str("1");
+    
+    sType*% type2 = solve_generics(type, type, info).catch {
         return false;
     }
     
-    CVALUE*% come_value = new CVALUE;
+    string type_name = make_type_name_string(type2, false@in_header, true@array_cast_pointer, info);
     
-    come_value.c_value = xsprintf("%s", var_->mCValueName);
-    come_value.type = clone var_->mType;
-    come_value.var = null;
+    obj_value.c_value = xsprintf("(%s*)come_calloc(1, sizeof(%s)*(%s))", type_name, type_name, num_string.to_string());
     
-    info.stack.push_back(come_value);
+    sType*% type3 = clone type2;
+    type3->mPointerNum++;
+    type3->mHeap = true;
+    type2->mHeap = true;
+    obj_value.type = clone type2;
+    obj_value.c_value = append_object_to_right_values(obj_value.c_value, type3 ,info);
+    obj_value.type->mPointerNum ++;
+    obj_value.var = null;
+        
+    list<CVALUE*%>*% come_params = new list<CVALUE*%>();
     
-    add_come_last_code(info, "%s;\n", come_value.c_value);
+    if(fun.mParamTypes[0].mHeap && obj_value.type.mHeap) {
+        obj_value.c_value = increment_ref_count_object(obj_value.type, obj_value.c_value, info);
+    }
+    come_params.push_back(obj_value);
+    
+    CVALUE*% come_value2 = new CVALUE;
+    
+    come_value2.c_value = xsprintf("%d", key_params.length());
+    come_value2.type = null; // no required
+    come_value2.var = null;
+    
+    come_params.push_back(come_value2);
+    
+    CVALUE*% come_value3 = new CVALUE;
+    
+    come_value3.c_value = xsprintf("%s", var_->mCValueName);
+    come_value3.type = null; // no required
+    come_value3.var = null;
+    
+    come_params.push_back(come_value3);
+    
+    CVALUE*% come_value4 = new CVALUE;
+    
+    come_value4.c_value = xsprintf("%s", var2_->mCValueName);
+    come_value4.type = null; // no required
+    come_value4.var = null;
+    
+    come_params.push_back(come_value4);
+    
+    buffer*% buf = new buffer();
+    
+    buf.append_str(generics_fun_name);
+    buf.append_str("(");
+    
+    int j = 0;
+    foreach(it, come_params) {
+        buf.append_str(it.c_value);
+        
+        if(j != come_params.length()-1) {
+            buf.append_str(",");
+        }
+        
+        j++;
+    }
+    buf.append_str(")");
+    
+    CVALUE*% come_value5 = new CVALUE;
+    
+    come_value5.c_value = buf.to_string();
+    
+    if(result_type->mHeap) {
+        come_value5.c_value = append_object_to_right_values(buf.to_string(), result_type, info);
+    }
+    
+    come_value5.type = clone result_type;
+    come_value5.type->mStatic = false;
+    come_value5.var = null;
+    
+    add_come_last_code(info, "%s;\n", buf.to_string());
+    
+    info.stack.push_back(come_value5);
     
     return true;
 }
@@ -1052,12 +1237,9 @@ exception sNode*% expression_node(sInfo* info) version 98
         first_element_source.append_char('\0');
         
         list<sNode*%>*% list_elements = new list<sNode*%>();
-        list<string>*% list_elements_source = new list<string>();
         
         list<sNode*%>*% map_keys = new list<sNode*%>();
-        list<string>*% map_keys_source = new list<string>();
         list<sNode*%>*% map_elements = new list<sNode*%>();
-        list<string>*% map_elements_source = new list<string>();
         
         //// map ///
         if(*info->p == ':') {
@@ -1065,31 +1247,21 @@ exception sNode*% expression_node(sInfo* info) version 98
             skip_spaces_and_lf(info);
             
             map_keys.push_back(node);
-            map_keys_source.push_back(first_element_source.to_string());
             
             bool no_comma = info.no_comma;
             info.no_comma = true;
-            
-            char* p = info.p;
             
             sNode*% node2 = expression(info) throws;
             
             info.no_comma = no_comma;
             
-            char* p2 = info.p;
-            
-            buffer*% map_element_source = new buffer();
-            map_element_source.append(p, p2 - p);
-            map_element_source.append_char('\0');
-            
             map_elements.push_back(node2);
-            map_elements_source.push_back(map_element_source.to_string());
             
             if(*info->p == ']') {
                 info->p++;
                 skip_spaces_and_lf(info);
                 
-                return new sNode(new sMapNode(map_keys, map_keys_source, map_elements, map_elements_source, info));
+                return new sNode(new sMapNode(map_keys, map_elements, info));
             }
             else {
                 expected_next_character(',', info) throws;
@@ -1098,40 +1270,22 @@ exception sNode*% expression_node(sInfo* info) version 98
                     bool no_comma = info.no_comma;
                     info.no_comma = true;
                     
-                    char* p = info.p;
-                    
                     sNode*% node2 = expression(info) throws;
                     
                     info.no_comma = no_comma;
                     
-                    char* p2 = info.p;
-                    
-                    buffer*% key_source = new buffer();
-                    key_source.append(p, p2 - p);
-                    key_source.append_char('\0');
-                    
                     map_keys.push_back(node2);
-                    map_keys_source.push_back(key_source.to_string());
                     
                     expected_next_character(':', info) throws;
                     
                     no_comma = info.no_comma;
                     info.no_comma = true;
                     
-                    p = info.p;
-                    
                     sNode*% node3 = expression(info) throws;
                     
                     info.no_comma = no_comma;
                     
-                    p2 = info.p;
-                    
-                    buffer*% element_source = new buffer();
-                    element_source.append(p, p2 - p);
-                    element_source.append_char('\0');
-                    
                     map_elements.push_back(node3);
-                    map_elements_source.push_back(element_source.to_string());
                     
                     if(*info->p == '\0') {
                         err_msg(info, "invalid source end");
@@ -1152,7 +1306,7 @@ exception sNode*% expression_node(sInfo* info) version 98
                     }
                 }
                 
-                return new sNode(new sMapNode(map_keys, map_keys_source, map_elements, map_elements_source, info));
+                return new sNode(new sMapNode(map_keys, map_elements, info));
             }
         }
         /// list ///
@@ -1161,33 +1315,22 @@ exception sNode*% expression_node(sInfo* info) version 98
             skip_spaces_and_lf(info);
             
             list_elements.push_back(node);
-            list_elements_source.push_back(first_element_source.to_string());
         }
         else if(*info->p == ',') {
             info->p++;
             skip_spaces_and_lf(info);
             
             list_elements.push_back(node);
-            list_elements_source.push_back(first_element_source.to_string());
             
             while(true) {
                 bool no_comma = info.no_comma;
                 info.no_comma = true;
                 
-                char* p = info.p;
-                
                 sNode*% node2 = expression(info) throws;
                 
                 info.no_comma = no_comma;
                 
-                char* p2 = info.p;
-                
-                buffer*% element_source = new buffer();
-                element_source.append(p, p2 - p);
-                element_source.append_char('\0');
-                
                 list_elements.push_back(node2);
-                list_elements_source.push_back(element_source.to_string());
                 
                 if(*info->p == '\0') {
                     err_msg(info, "invalid source end");
@@ -1214,7 +1357,7 @@ exception sNode*% expression_node(sInfo* info) version 98
         }
         
         if(list_elements.length() > 0) {
-            return new sNode(new sListNode(list_elements, list_elements_source, info));
+            return new sNode(new sListNode(list_elements, info));
         }
         else {
         }

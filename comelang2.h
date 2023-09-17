@@ -200,6 +200,18 @@ impl list <T>
 
         return self;
     }
+    list<T>*% initialize_with_values(list<T>*% self, int num_value, T&* values) 
+    {
+        self.head = null;
+        self.tail = null;
+        self.len = 0;
+        
+        for(int i=0; i<num_value; i++) {
+            self.push_back(values[i]);
+        }
+
+        return self;
+    }
     void finalize(list<T>* self) {
         list_item<T>* it = self.head;
         while(it != null) {
@@ -790,6 +802,30 @@ impl map <T, T2>
         self.key_list = new list<T&>.initialize();
 
         self.it = 0;
+
+        return self;
+    }
+    map<T,T2>*% initialize_with_values(map<T,T2>*% self, int num_keys, T&* keys, T2&* values) 
+    {
+        self.keys = borrow new T[MAP_TABLE_DEFAULT_SIZE];
+        self.items = borrow new T2[MAP_TABLE_DEFAULT_SIZE];
+        self.item_existance = borrow new bool[MAP_TABLE_DEFAULT_SIZE];
+
+        for(int i=0; i<MAP_TABLE_DEFAULT_SIZE; i++)
+        {
+            self.item_existance[i] = false;
+        }
+
+        self.size = MAP_TABLE_DEFAULT_SIZE;
+        self.len = 0;
+
+        self.it = 0;
+        
+        self.key_list = new list<T>();
+        
+        for(int i=0; i<num_keys; i++) {
+            self.insert(keys[i], values[i]);
+        }
 
         return self;
     }

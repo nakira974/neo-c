@@ -2373,6 +2373,11 @@ exception sNode*% get_number(bool minus, sInfo* info)
     return (sNode*%)null;
 }
 
+sNode*% create_int_node(int value, sInfo* info)
+{
+    return new sNode(new sIntNode(value, info));
+}
+
 exception sNode*% get_hex_number(bool minus, sInfo* info)
 {
     int buf_size = 128;
@@ -3716,6 +3721,8 @@ bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* gen
     info.p = p;
     info.sline = sline;
     info.head = head;
+    
+    result_type->mInline = false;
     
     bool var_args = generics_fun.mVarArgs;
     var fun = new sFun(fun_name, result_type

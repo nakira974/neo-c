@@ -1364,8 +1364,12 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
         
         sType*% result_type = clone come_fun.mResultType;
         
+        bool result = true;
         sType*% result_type2 = solve_generics(result_type, info.generics_type, info).catch
         {
+            result = false;
+        }
+        if(!result) {
             return false;
         }
         
@@ -1441,8 +1445,12 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
             }
         }
         
+        result = true;
         sType*% come_value_type = solve_generics(come_value.type, info.generics_type, info).catch
         {
+            result = false;
+        }
+        if(!result) {
             return false;
         }
         
@@ -1501,8 +1509,12 @@ bool sThrowNode*::compile(sThrowNode* self, sInfo* info)
     
     sType*% result_type = clone come_fun.mResultType;
     
+    bool result = true;
     sType*% result_type2 = solve_generics(result_type, info.generics_type, info).catch
     {
+        result = false;
+    }
+    if(!result) {
         return false;
     }
     
@@ -1585,8 +1597,12 @@ bool sThrowNode*::compile(sThrowNode* self, sInfo* info)
         }
     }
     
+    result = true;
     sType*% come_value_type = solve_generics(come_value.type, info.generics_type, info).catch
     {
+        result = false;
+    }
+    if(!result) {
         return false;
     }
     
@@ -2011,7 +2027,11 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
                     info.p = info.source.buf;
                     info.head = info.source.buf;
                     
+                    bool result = true;
                     sNode*% node = expression(info).catch {
+                        result = false;
+                    }
+                    if(!result) {
                         return false;
                     }
                     
@@ -2140,7 +2160,11 @@ bool sCastNode*::compile(sCastNode* self, sInfo* info)
     CVALUE*% left_value = get_value_from_stack(-1, info);
     dec_stack_ptr(1, info);
     
+    bool result = true;
     sType*% type2 = solve_generics(type, info.generics_type, info).catch {
+        result = false;
+    }
+    if(!result) {
         return false;
     }
     
@@ -3686,7 +3710,11 @@ bool sFunNode*::compile(sFunNode* self, sInfo* info)
     info.come_fun = self.mFun;
     
     if(self.mFun.mBlock) {
+        bool result = true;
         transpile_block(self.mFun.mBlock, self.mFun.mParamTypes, self.mFun.mParamNames, info).catch {
+            result = false;
+        }
+        if(!result) {
             return false;
         }
     }
@@ -3733,8 +3761,12 @@ bool sLambdaNode*::compile(sLambdaNode* self, sInfo* info)
     
     bool result = true;
     if(self.mFun.mBlock) {
+        bool result = true;
         transpile_block(self.mFun.mBlock, self.mFun.mParamTypes, self.mFun.mParamNames, info).catch {
             result = false;
+        }
+        if(!result) {
+            return false;
         }
     }
     
@@ -3779,13 +3811,21 @@ bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* gen
         return true;
     }
 
+    bool result = true;
     sType*% result_type = solve_generics(generics_fun->mResultType, generics_type, info).catch {
+        result = false;
+    }
+    if(!result) {
         return false;
     }
     
     list<sType*%>*% param_types = new list<sType*%>();
     foreach(it, generics_fun->mParamTypes) {
+        bool result = true;
         var param_type = solve_generics(it, generics_type, info).catch {
+            result = false;
+        }
+        if(!result) {
             return false;
         }
         
@@ -3810,7 +3850,11 @@ bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* gen
     var generics_type_names_saved = clone info->generics_type_names;
     info->generics_type_names = clone generics_fun.mGenericsTypeNames;
     
+    result = true;
     sBlock*% block = parse_block(info).catch {
+        result = false;
+    }
+    if(!result) {
         return false;
     }
     

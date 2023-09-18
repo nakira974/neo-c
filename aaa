@@ -1,0 +1,398 @@
+code2/HelloWorld2.c.c:130:20: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+    unsigned short short _cur_column;
+                   ^~~~~~
+code2/HelloWorld2.c.c:670:5: warning: incompatible redeclaration of library function 'snprintf' [-Wincompatible-library-redeclaration]
+int snprintf(char* __s, int __maxlen, const char* __format, ...);
+    ^
+code2/HelloWorld2.c.c:670:5: note: 'snprintf' is a builtin with type 'int (char *, unsigned long, const char *, ...)'
+code2/HelloWorld2.c.c:671:5: warning: incompatible redeclaration of library function 'vsnprintf' [-Wincompatible-library-redeclaration]
+int vsnprintf(char* __s, int __maxlen, const char* __format, va_list __arg);
+    ^
+code2/HelloWorld2.c.c:671:5: note: 'vsnprintf' is a builtin with type 'int (char *, unsigned long, const char *, __builtin_va_list)'
+code2/HelloWorld2.c.c:711:5: warning: incompatible redeclaration of library function 'fread' [-Wincompatible-library-redeclaration]
+int fread(void* __ptr, int __size, int __n, struct _IO_FILE* __stream);
+    ^
+code2/HelloWorld2.c.c:711:5: note: 'fread' is a builtin with type 'unsigned long (void *, unsigned long, unsigned long, FILE *)' (aka 'unsigned long (void *, unsigned long, unsigned long, struct _IO_FILE *)')
+code2/HelloWorld2.c.c:712:5: warning: incompatible redeclaration of library function 'fwrite' [-Wincompatible-library-redeclaration]
+int fwrite(const void* __ptr, int __size, int __n, struct _IO_FILE* __s);
+    ^
+code2/HelloWorld2.c.c:712:5: note: 'fwrite' is a builtin with type 'unsigned long (const void *, unsigned long, unsigned long, FILE *)' (aka 'unsigned long (const void *, unsigned long, unsigned long, struct _IO_FILE *)')
+code2/HelloWorld2.c.c:747:7: warning: incompatible redeclaration of library function 'memcpy' [-Wincompatible-library-redeclaration]
+void* memcpy(void* __dest, const void* __src, int __n);
+      ^
+code2/HelloWorld2.c.c:747:7: note: 'memcpy' is a builtin with type 'void *(void *, const void *, unsigned long)'
+code2/HelloWorld2.c.c:748:7: warning: incompatible redeclaration of library function 'memmove' [-Wincompatible-library-redeclaration]
+void* memmove(void* __dest, const void* __src, int __n);
+      ^
+code2/HelloWorld2.c.c:748:7: note: 'memmove' is a builtin with type 'void *(void *, const void *, unsigned long)'
+code2/HelloWorld2.c.c:749:7: warning: incompatible redeclaration of library function 'memccpy' [-Wincompatible-library-redeclaration]
+void* memccpy(void* __dest, const void* __src, int __c, int __n);
+      ^
+code2/HelloWorld2.c.c:749:7: note: 'memccpy' is a builtin with type 'void *(void *, const void *, int, unsigned long)'
+code2/HelloWorld2.c.c:750:7: warning: incompatible redeclaration of library function 'memset' [-Wincompatible-library-redeclaration]
+void* memset(void* __s, int __c, int __n);
+      ^
+code2/HelloWorld2.c.c:750:7: note: 'memset' is a builtin with type 'void *(void *, int, unsigned long)'
+code2/HelloWorld2.c.c:751:5: warning: incompatible redeclaration of library function 'memcmp' [-Wincompatible-library-redeclaration]
+int memcmp(const void* __s1, const void* __s2, int __n);
+    ^
+code2/HelloWorld2.c.c:751:5: note: 'memcmp' is a builtin with type 'int (const void *, const void *, unsigned long)'
+code2/HelloWorld2.c.c:753:7: warning: incompatible redeclaration of library function 'memchr' [-Wincompatible-library-redeclaration]
+void* memchr(const void* __s, int __c, int __n);
+      ^
+code2/HelloWorld2.c.c:753:7: note: 'memchr' is a builtin with type 'void *(const void *, int, unsigned long)'
+code2/HelloWorld2.c.c:757:7: warning: incompatible redeclaration of library function 'strncpy' [-Wincompatible-library-redeclaration]
+char* strncpy(char* __dest, const char* __src, int __n);
+      ^
+code2/HelloWorld2.c.c:757:7: note: 'strncpy' is a builtin with type 'char *(char *, const char *, unsigned long)'
+code2/HelloWorld2.c.c:759:7: warning: incompatible redeclaration of library function 'strncat' [-Wincompatible-library-redeclaration]
+char* strncat(char* __dest, const char* __src, int __n);
+      ^
+code2/HelloWorld2.c.c:759:7: note: 'strncat' is a builtin with type 'char *(char *, const char *, unsigned long)'
+code2/HelloWorld2.c.c:761:5: warning: incompatible redeclaration of library function 'strncmp' [-Wincompatible-library-redeclaration]
+int strncmp(const char* __s1, const char* __s2, int __n);
+    ^
+code2/HelloWorld2.c.c:761:5: note: 'strncmp' is a builtin with type 'int (const char *, const char *, unsigned long)'
+code2/HelloWorld2.c.c:763:5: warning: incompatible redeclaration of library function 'strxfrm' [-Wincompatible-library-redeclaration]
+int strxfrm(char* __dest, const char* __src, int __n);
+    ^
+code2/HelloWorld2.c.c:763:5: note: 'strxfrm' is a builtin with type 'unsigned long (char *, const char *, unsigned long)'
+code2/HelloWorld2.c.c:767:7: warning: incompatible redeclaration of library function 'strndup' [-Wincompatible-library-redeclaration]
+char* strndup(const char* __string, int __n);
+      ^
+code2/HelloWorld2.c.c:767:7: note: 'strndup' is a builtin with type 'char *(const char *, unsigned long)'
+code2/HelloWorld2.c.c:771:5: warning: incompatible redeclaration of library function 'strcspn' [-Wincompatible-library-redeclaration]
+int strcspn(const char* __s, const char* __reject);
+    ^
+code2/HelloWorld2.c.c:771:5: note: 'strcspn' is a builtin with type 'unsigned long (const char *, const char *)'
+code2/HelloWorld2.c.c:772:5: warning: incompatible redeclaration of library function 'strspn' [-Wincompatible-library-redeclaration]
+int strspn(const char* __s, const char* __accept);
+    ^
+code2/HelloWorld2.c.c:772:5: note: 'strspn' is a builtin with type 'unsigned long (const char *, const char *)'
+code2/HelloWorld2.c.c:781:7: warning: incompatible redeclaration of library function 'mempcpy' [-Wincompatible-library-redeclaration]
+void* mempcpy(void* __dest, const void* __src, int __n);
+      ^
+code2/HelloWorld2.c.c:781:7: note: 'mempcpy' is a builtin with type 'void *(void *, const void *, unsigned long)'
+code2/HelloWorld2.c.c:782:5: warning: incompatible redeclaration of library function 'strlen' [-Wincompatible-library-redeclaration]
+int strlen(const char* __s);
+    ^
+code2/HelloWorld2.c.c:782:5: note: 'strlen' is a builtin with type 'unsigned long (const char *)'
+code2/HelloWorld2.c.c:789:5: warning: incompatible redeclaration of library function 'bcmp' [-Wincompatible-library-redeclaration]
+int bcmp(const void* __s1, const void* __s2, int __n);
+    ^
+code2/HelloWorld2.c.c:789:5: note: 'bcmp' is a builtin with type 'int (const void *, const void *, unsigned long)'
+code2/HelloWorld2.c.c:791:6: warning: incompatible redeclaration of library function 'bzero' [-Wincompatible-library-redeclaration]
+void bzero(void* __s, int __n);
+     ^
+code2/HelloWorld2.c.c:791:6: note: 'bzero' is a builtin with type 'void (void *, unsigned long)'
+code2/HelloWorld2.c.c:798:5: warning: incompatible redeclaration of library function 'strncasecmp' [-Wincompatible-library-redeclaration]
+int strncasecmp(const char* __s1, const char* __s2, int __n);
+    ^
+code2/HelloWorld2.c.c:798:5: note: 'strncasecmp' is a builtin with type 'int (const char *, const char *, unsigned long)'
+code2/HelloWorld2.c.c:809:7: warning: incompatible redeclaration of library function 'stpncpy' [-Wincompatible-library-redeclaration]
+char* stpncpy(char* __dest, const char* __src, int __n);
+      ^
+code2/HelloWorld2.c.c:809:7: note: 'stpncpy' is a builtin with type 'char *(char *, const char *, unsigned long)'
+code2/HelloWorld2.c.c:831:5: warning: incompatible redeclaration of library function 'strtoll' [-Wincompatible-library-redeclaration]
+int strtoll(const char* __nptr, char** __endptr, int __base);
+    ^
+code2/HelloWorld2.c.c:831:5: note: 'strtoll' is a builtin with type 'long long (const char *, char **, int)'
+code2/HelloWorld2.c.c:832:14: warning: incompatible redeclaration of library function 'strtoull' [-Wincompatible-library-redeclaration]
+unsigned int strtoull(const char* __nptr, char** __endptr, int __base);
+             ^
+code2/HelloWorld2.c.c:832:14: note: 'strtoull' is a builtin with type 'unsigned long long (const char *, char **, int)'
+code2/HelloWorld2.c.c:889:7: warning: incompatible redeclaration of library function 'malloc' [-Wincompatible-library-redeclaration]
+void* malloc(int __size);
+      ^
+code2/HelloWorld2.c.c:889:7: note: 'malloc' is a builtin with type 'void *(unsigned long)'
+code2/HelloWorld2.c.c:890:7: warning: incompatible redeclaration of library function 'calloc' [-Wincompatible-library-redeclaration]
+void* calloc(int __nmemb, int __size);
+      ^
+code2/HelloWorld2.c.c:890:7: note: 'calloc' is a builtin with type 'void *(unsigned long, unsigned long)'
+code2/HelloWorld2.c.c:891:7: warning: incompatible redeclaration of library function 'realloc' [-Wincompatible-library-redeclaration]
+void* realloc(void* __ptr, int __size);
+      ^
+code2/HelloWorld2.c.c:891:7: note: 'realloc' is a builtin with type 'void *(void *, unsigned long)'
+code2/HelloWorld2.c.c:894:7: warning: incompatible redeclaration of library function 'alloca' [-Wincompatible-library-redeclaration]
+void* alloca(int __size);
+      ^
+code2/HelloWorld2.c.c:894:7: note: 'alloca' is a builtin with type 'void *(unsigned long)'
+code2/HelloWorld2.c.c:897:7: warning: incompatible redeclaration of library function 'aligned_alloc' [-Wincompatible-library-redeclaration]
+void* aligned_alloc(int __alignment, int __size);
+      ^
+code2/HelloWorld2.c.c:897:7: note: 'aligned_alloc' is a builtin with type 'void *(unsigned long, unsigned long)'
+code2/HelloWorld2.c.c:929:5: warning: incompatible redeclaration of library function 'llabs' [-Wincompatible-library-redeclaration]
+int llabs(int __x);
+    ^
+code2/HelloWorld2.c.c:929:5: note: 'llabs' is a builtin with type 'long long (long long)'
+code2/HelloWorld2.c.c:1051:48: warning: integer literal is too large to be represented in a signed integer type, interpreting as unsigned [-Wimplicitly-unsigned-literal]
+    unsigned long int __result3__ = ((((__bsx)&18374686479671623680)>>56)|(((__bsx)&71776119061217280)>>40)|(((__bsx)&280375465082880)>>24)|(((__bsx)&1095216660480)>>8)|(((__bsx)&4278190080)<<8)|(((__bsx)&16711680)<<24)|(((__bsx)&65280)<<40)|(((__bsx)&255)<<56));
+                                               ^
+code2/HelloWorld2.c.c:1111:40: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+static inline _Bool short_equals(short short self, short short right){
+                                       ^~~~~~
+code2/HelloWorld2.c.c:1111:58: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+static inline _Bool short_equals(short short self, short short right){
+                                                         ^~~~~~
+code2/HelloWorld2.c.c:1214:43: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+static inline short int short_clone(short short self){
+                                          ^~~~~~
+code2/HelloWorld2.c.c:1234:20: warning: expression result unused [-Wunused-value]
+    if(self->buf) {(char*)come_decrement_ref_count(self->buf,0,0); }
+                   ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code2/HelloWorld2.c.c:1255:25: warning: expression result unused [-Wunused-value]
+    if(result_31->buf) {(char*)come_decrement_ref_count(result_31->buf,0,0); }
+                        ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code2/HelloWorld2.c.c:1284:24: warning: expression result unused [-Wunused-value]
+        if(self->buf) {(char*)come_decrement_ref_count(self->buf,0,0); }
+                       ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code2/HelloWorld2.c.c:1302:24: warning: expression result unused [-Wunused-value]
+        if(self->buf) {(char*)come_decrement_ref_count(self->buf,0,0); }
+                       ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code2/HelloWorld2.c.c:1329:67: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+static inline void buffer_append_short(struct buffer* self, short short value){
+                                                                  ^~~~~~
+code2/HelloWorld2.c.c:1330:51: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+    buffer_append(self,(char*)&value,sizeof(short short));
+                                                  ^~~~~
+code2/HelloWorld2.c.c:1344:24: warning: expression result unused [-Wunused-value]
+        if(self->buf) {(char*)come_decrement_ref_count(self->buf,0,0); }
+                       ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code2/HelloWorld2.c.c:2107:37: warning: expression result unused [-Wunused-value]
+                if(litem_48->item) {(char*)come_decrement_ref_count(litem_48->item,0,0); }
+                                    ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code2/HelloWorld2.c.c:2116:37: warning: expression result unused [-Wunused-value]
+                if(litem_49->item) {(char*)come_decrement_ref_count(litem_49->item,0,0); }
+                                    ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code2/HelloWorld2.c.c:2125:37: warning: expression result unused [-Wunused-value]
+                if(litem_50->item) {(char*)come_decrement_ref_count(litem_50->item,0,0); }
+                                    ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code2/HelloWorld2.c.c:2481:37: warning: incompatible function pointer types passing 'void (struct __current_stack1__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+    int_times(3,&__current_stack1__,method_block1_code2HelloWorld2c);
+                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code2/HelloWorld2.c.c:1074:61: note: passing argument to parameter 'block' here
+static inline void int_times(int self, void* parent, void (*block)(void*)){
+                                                            ^
+code2/HelloWorld2.c.c:2531:49: warning: incompatible function pointer types passing 'void (struct __current_stack2__ *, int, int, _Bool *)' to parameter of type 'void (*)(void *, int, int, _Bool *)' [-Wincompatible-function-pointer-types]
+    list$1int_each(liX2_121,&__current_stack2__,method_block2_code2HelloWorld2c);
+                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code2/HelloWorld2.c.c:994:73: note: passing argument to parameter 'block' here
+static void list$1int_each(struct list$1int* self, void* parent, void (*block)(void*,int,int,_Bool*));
+                                                                        ^
+code2/HelloWorld2.c.c:2587:48: warning: incompatible function pointer types passing 'void (struct __current_stack3__ *, int, int, _Bool *)' to parameter of type 'void (*)(void *, int, int, _Bool *)' [-Wincompatible-function-pointer-types]
+    list$1int_each(li2_135,&__current_stack3__,method_block3_code2HelloWorld2c);
+                                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code2/HelloWorld2.c.c:994:73: note: passing argument to parameter 'block' here
+static void list$1int_each(struct list$1int* self, void* parent, void (*block)(void*,int,int,_Bool*));
+                                                                        ^
+code2/HelloWorld2.c.c:2594:62: warning: incompatible integer to pointer conversion passing 'int' to parameter of type 'char *' [-Wint-conversion]
+    xassert("list::insert",strcmp(list$1charph_item(li_133,0,-1),"ABC")==0&&strcmp(list$1charph_item(li_133,1,-1),"GGG")==0&&strcmp(list$1charph_item(li_133,2,-1),"DEF")==0&&strcmp(list$1charph_item(li_133,3,-1),"GHI")==0);
+                                                             ^~
+code2/HelloWorld2.c.c:1000:79: note: passing argument to parameter 'default_value' here
+static char* list$1charph_item(struct list$1charph* self, int position, char* default_value);
+                                                                              ^
+code2/HelloWorld2.c.c:2594:111: warning: incompatible integer to pointer conversion passing 'int' to parameter of type 'char *' [-Wint-conversion]
+    xassert("list::insert",strcmp(list$1charph_item(li_133,0,-1),"ABC")==0&&strcmp(list$1charph_item(li_133,1,-1),"GGG")==0&&strcmp(list$1charph_item(li_133,2,-1),"DEF")==0&&strcmp(list$1charph_item(li_133,3,-1),"GHI")==0);
+                                                                                                              ^~
+code2/HelloWorld2.c.c:1000:79: note: passing argument to parameter 'default_value' here
+static char* list$1charph_item(struct list$1charph* self, int position, char* default_value);
+                                                                              ^
+code2/HelloWorld2.c.c:2594:160: warning: incompatible integer to pointer conversion passing 'int' to parameter of type 'char *' [-Wint-conversion]
+    xassert("list::insert",strcmp(list$1charph_item(li_133,0,-1),"ABC")==0&&strcmp(list$1charph_item(li_133,1,-1),"GGG")==0&&strcmp(list$1charph_item(li_133,2,-1),"DEF")==0&&strcmp(list$1charph_item(li_133,3,-1),"GHI")==0);
+                                                                                                                                                               ^~
+code2/HelloWorld2.c.c:1000:79: note: passing argument to parameter 'default_value' here
+static char* list$1charph_item(struct list$1charph* self, int position, char* default_value);
+                                                                              ^
+code2/HelloWorld2.c.c:2594:209: warning: incompatible integer to pointer conversion passing 'int' to parameter of type 'char *' [-Wint-conversion]
+    xassert("list::insert",strcmp(list$1charph_item(li_133,0,-1),"ABC")==0&&strcmp(list$1charph_item(li_133,1,-1),"GGG")==0&&strcmp(list$1charph_item(li_133,2,-1),"DEF")==0&&strcmp(list$1charph_item(li_133,3,-1),"GHI")==0);
+                                                                                                                                                                                                                ^~
+code2/HelloWorld2.c.c:1000:79: note: passing argument to parameter 'default_value' here
+static char* list$1charph_item(struct list$1charph* self, int position, char* default_value);
+                                                                              ^
+code2/HelloWorld2.c.c:2678:48: warning: incompatible function pointer types passing 'void (struct __current_stack4__ *, int, int, _Bool *)' to parameter of type 'void (*)(void *, int, int, _Bool *)' [-Wincompatible-function-pointer-types]
+    list$1int_each(liZ_183,&__current_stack4__,method_block4_code2HelloWorld2c);
+                                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code2/HelloWorld2.c.c:994:73: note: passing argument to parameter 'block' here
+static void list$1int_each(struct list$1int* self, void* parent, void (*block)(void*,int,int,_Bool*));
+                                                                        ^
+code2/HelloWorld2.c.c:2734:24: error: no member named '__list_values1___188' in 'struct __current_stack5__'
+    __current_stack5__.__list_values1___188 = &__list_values1___188;
+    ~~~~~~~~~~~~~~~~~~ ^
+code2/HelloWorld2.c.c:2735:24: error: no member named '__list_values2___190' in 'struct __current_stack5__'
+    __current_stack5__.__list_values2___190 = &__list_values2___190;
+    ~~~~~~~~~~~~~~~~~~ ^
+code2/HelloWorld2.c.c:2736:24: error: no member named '__list_values3___191' in 'struct __current_stack5__'
+    __current_stack5__.__list_values3___191 = &__list_values3___191;
+    ~~~~~~~~~~~~~~~~~~ ^
+code2/HelloWorld2.c.c:2737:282: warning: incompatible function pointer types passing 'void (struct __current_stack5__ *, int, int, _Bool *)' to parameter of type 'void (*)(void *, int, int, _Bool *)' [-Wincompatible-function-pointer-types]
+    list$1int_each(((struct list$1int*)(right_value132=list$1int_initialize_with_values((struct list$1int*)come_increment_ref_count(((struct list$1int*)(right_value131=(struct list$1int*)come_calloc(1, sizeof(struct list$1int)*(1))))),5,__list_values3___191))),&__current_stack5__,method_block5_code2HelloWorld2c);
+                                                                                                                                                                                                                                                                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code2/HelloWorld2.c.c:994:73: note: passing argument to parameter 'block' here
+static void list$1int_each(struct list$1int* self, void* parent, void (*block)(void*,int,int,_Bool*));
+                                                                        ^
+code2/HelloWorld2.c.c:2427:25: warning: expression result unused [-Wunused-value]
+        if(data_105.a) {(char*)come_decrement_ref_count(data_105.a,0,0); }
+                        ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code2/HelloWorld2.c.c:2438:22: warning: expression result unused [-Wunused-value]
+    if(data_107->a) {(char*)come_decrement_ref_count(data_107->a,0,0); }
+                     ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code2/HelloWorld2.c.c:2441:6: warning: expression result unused [-Wunused-value]
+    ((int*)(right_value72=funHeap(7,7)));
+     ^     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code2/HelloWorld2.c.c:2457:6: warning: expression result unused [-Wunused-value]
+    ((int*)(right_value78=(int*)come_calloc(1, sizeof(int)*(1))));
+     ^     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code2/HelloWorld2.c.c:2628:20: warning: expression result unused [-Wunused-value]
+    if(axyzX_181) {(int*)come_decrement_ref_count(axyzX_181,0,0); }
+                   ^     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code2/HelloWorld2.c.c:2631:20: warning: expression result unused [-Wunused-value]
+    if(axyzX_181) {(int*)come_decrement_ref_count(axyzX_181,0,0); }
+                   ^     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code2/HelloWorld2.c.c:3061:34: warning: expression result unused [-Wunused-value]
+            if(litem_145->item) {(char*)come_decrement_ref_count(litem_145->item,0,0); }
+                                 ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code2/HelloWorld2.c.c:3071:34: warning: expression result unused [-Wunused-value]
+            if(litem_146->item) {(char*)come_decrement_ref_count(litem_146->item,0,0); }
+                                 ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code2/HelloWorld2.c.c:3085:42: warning: expression result unused [-Wunused-value]
+                    if(litem_149->item) {(char*)come_decrement_ref_count(litem_149->item,0,0); }
+                                         ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code2/HelloWorld2.c.c:3307:35: warning: expression result unused [-Wunused-value]
+                if(it_169->item) {(char*)come_decrement_ref_count(it_169->item,0,0); }
+                                  ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code2/HelloWorld2.c.c:3468:19: warning: incompatible pointer types assigning to 'char **' from 'char ***'; dereference with * [-Wincompatible-pointer-types]
+        self->keys=((char***)(right_value133=(char***)come_calloc(1, sizeof(char**)*(1*(128)))));
+                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                   *(                                                                           )
+code2/HelloWorld2.c.c:3469:20: warning: incompatible pointer types assigning to 'int *' from 'int **'; dereference with * [-Wincompatible-pointer-types]
+        self->items=((int**)(right_value134=(int**)come_calloc(1, sizeof(int*)*(1*(128)))));
+                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                    *(                                                                     )
+code2/HelloWorld2.c.c:3470:29: warning: incompatible pointer types assigning to '_Bool *' from '_Bool **'; dereference with * [-Wincompatible-pointer-types]
+        self->item_existance=((_Bool**)(right_value135=(_Bool**)come_calloc(1, sizeof(_Bool*)*(1*(128)))));
+                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                             *(                                                                           )
+code2/HelloWorld2.c.c:3481:29: warning: expression result unused [-Wunused-value]
+        if(self->key_list) {(struct list$1charp*)come_decrement_ref_count(self->key_list,0,0); }
+                            ^                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code2/HelloWorld2.c.c:3537:40: warning: incompatible pointer to integer conversion passing 'char *' to parameter of type 'char'; dereference with * [-Wint-conversion]
+                        if(char_equals(self->keys[it_214],key)) {
+                                       ^~~~~~~~~~~~~~~~~~
+                                       *
+code2/HelloWorld2.c.c:1107:38: note: passing argument to parameter 'self' here
+static inline _Bool char_equals(char self, char right){
+                                     ^
+code2/HelloWorld2.c.c:3537:59: warning: incompatible pointer to integer conversion passing 'char *' to parameter of type 'char'; dereference with * [-Wint-conversion]
+                        if(char_equals(self->keys[it_214],key)) {
+                                                          ^~~
+                                                          *
+code2/HelloWorld2.c.c:1107:49: note: passing argument to parameter 'right' here
+static inline _Bool char_equals(char self, char right){
+                                                ^
+code2/HelloWorld2.c.c:3585:23: warning: incompatible pointer to integer conversion assigning to 'int' from 'char *' [-Wint-conversion]
+                it_214=list$1charp_next(self->key_list)
+                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code2/HelloWorld2.c.c:3587:36: warning: incompatible pointer to integer conversion passing 'char *' to parameter of type 'char'; dereference with * [-Wint-conversion]
+                    if(char_equals(it2_217,key)) {
+                                   ^~~~~~~
+                                   *
+code2/HelloWorld2.c.c:1107:38: note: passing argument to parameter 'self' here
+static inline _Bool char_equals(char self, char right){
+                                     ^
+code2/HelloWorld2.c.c:3587:44: warning: incompatible pointer to integer conversion passing 'char *' to parameter of type 'char'; dereference with * [-Wint-conversion]
+                    if(char_equals(it2_217,key)) {
+                                           ^~~
+                                           *
+code2/HelloWorld2.c.c:1107:49: note: passing argument to parameter 'right' here
+static inline _Bool char_equals(char self, char right){
+                                                ^
+code2/HelloWorld2.c.c:3621:33: warning: incompatible pointer types assigning to 'char **' from 'char ***'; dereference with * [-Wincompatible-pointer-types]
+                        keys_199=((char***)(right_value138=(char***)come_calloc(1, sizeof(char**)*(1*(size_198)))));
+                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                 *(                                                                                )
+code2/HelloWorld2.c.c:3622:34: warning: incompatible pointer types assigning to 'int *' from 'int **'; dereference with * [-Wincompatible-pointer-types]
+                        items_200=((int**)(right_value139=(int**)come_calloc(1, sizeof(int*)*(1*(size_198)))));
+                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                  *(                                                                          )
+code2/HelloWorld2.c.c:3623:43: warning: incompatible pointer types assigning to '_Bool *' from '_Bool **'; dereference with * [-Wincompatible-pointer-types]
+                        item_existance_201=((_Bool**)(right_value140=(_Bool**)come_calloc(1, sizeof(_Bool*)*(1*(size_198)))));
+                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                           *(                                                                                )
+code2/HelloWorld2.c.c:3701:56: warning: incompatible pointer to integer conversion passing 'char *' to parameter of type 'char'; dereference with * [-Wint-conversion]
+                                        if(char_equals(self->keys[it_208],key)) {
+                                                       ^~~~~~~~~~~~~~~~~~
+                                                       *
+code2/HelloWorld2.c.c:1107:38: note: passing argument to parameter 'self' here
+static inline _Bool char_equals(char self, char right){
+                                     ^
+code2/HelloWorld2.c.c:3701:75: warning: incompatible pointer to integer conversion passing 'char *' to parameter of type 'char'; dereference with * [-Wint-conversion]
+                                        if(char_equals(self->keys[it_208],key)) {
+                                                                          ^~~
+                                                                          *
+code2/HelloWorld2.c.c:1107:49: note: passing argument to parameter 'right' here
+static inline _Bool char_equals(char self, char right){
+                                                ^
+code2/HelloWorld2.c.c:3853:32: warning: incompatible pointer to integer conversion passing 'char *' to parameter of type 'char'; dereference with * [-Wint-conversion]
+                if(char_equals(it_228,it2_232)) {
+                               ^~~~~~
+                               *
+code2/HelloWorld2.c.c:1107:38: note: passing argument to parameter 'self' here
+static inline _Bool char_equals(char self, char right){
+                                     ^
+code2/HelloWorld2.c.c:3853:39: warning: incompatible pointer to integer conversion passing 'char *' to parameter of type 'char'; dereference with * [-Wint-conversion]
+                if(char_equals(it_228,it2_232)) {
+                                      ^~~~~~~
+                                      *
+code2/HelloWorld2.c.c:1107:49: note: passing argument to parameter 'right' here
+static inline _Bool char_equals(char self, char right){
+                                                ^
+code2/HelloWorld2.c.c:3935:23: warning: incompatible pointer types assigning to 'char **' from 'char ***'; dereference with * [-Wincompatible-pointer-types]
+            self->keys=((char***)(right_value151=(char***)come_calloc(1, sizeof(char**)*(1*(128)))));
+                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                       *(                                                                           )
+code2/HelloWorld2.c.c:3936:24: warning: incompatible pointer types assigning to 'int *' from 'int **'; dereference with * [-Wincompatible-pointer-types]
+            self->items=((int**)(right_value152=(int**)come_calloc(1, sizeof(int*)*(1*(128)))));
+                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                        *(                                                                     )
+code2/HelloWorld2.c.c:3937:33: warning: incompatible pointer types assigning to '_Bool *' from '_Bool **'; dereference with * [-Wincompatible-pointer-types]
+            self->item_existance=((_Bool**)(right_value153=(_Bool**)come_calloc(1, sizeof(_Bool*)*(1*(128)))));
+                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                 *(                                                                           )
+code2/HelloWorld2.c.c:3947:33: warning: expression result unused [-Wunused-value]
+            if(self->key_list) {(struct list$1charp*)come_decrement_ref_count(self->key_list,0,0); }
+                                ^                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code2/HelloWorld2.c.c:3972:40: warning: incompatible pointer to integer conversion passing 'char *' to parameter of type 'char'; dereference with * [-Wint-conversion]
+                        if(char_equals(self->keys[it_246],key)) {
+                                       ^~~~~~~~~~~~~~~~~~
+                                       *
+code2/HelloWorld2.c.c:1107:38: note: passing argument to parameter 'self' here
+static inline _Bool char_equals(char self, char right){
+                                     ^
+code2/HelloWorld2.c.c:3972:59: warning: incompatible pointer to integer conversion passing 'char *' to parameter of type 'char'; dereference with * [-Wint-conversion]
+                        if(char_equals(self->keys[it_246],key)) {
+                                                          ^~~
+                                                          *
+code2/HelloWorld2.c.c:1107:49: note: passing argument to parameter 'right' here
+static inline _Bool char_equals(char self, char right){
+                                                ^
+code2/HelloWorld2.c.c:4020:23: warning: incompatible pointer to integer conversion assigning to 'int' from 'char *' [-Wint-conversion]
+                it_246=list$1charp_next(self->key_list)
+                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code2/HelloWorld2.c.c:4022:36: warning: incompatible pointer to integer conversion passing 'char *' to parameter of type 'char'; dereference with * [-Wint-conversion]
+                    if(char_equals(it2_248,key)) {
+                                   ^~~~~~~
+                                   *
+code2/HelloWorld2.c.c:1107:38: note: passing argument to parameter 'self' here
+static inline _Bool char_equals(char self, char right){
+                                     ^
+code2/HelloWorld2.c.c:4022:44: warning: incompatible pointer to integer conversion passing 'char *' to parameter of type 'char'; dereference with * [-Wint-conversion]
+                    if(char_equals(it2_248,key)) {
+                                           ^~~
+                                           *
+code2/HelloWorld2.c.c:1107:49: note: passing argument to parameter 'right' here
+static inline _Bool char_equals(char self, char right){
+                                                ^
+90 warnings and 3 errors generated.
+code2/HelloWorld2.c 390: clang is faield
+code2/HelloWorld2.c 390: compile faield
+make: *** [Makefile:424: comelang2-test] Error 1

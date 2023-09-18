@@ -51,6 +51,7 @@ bool sIfNode*::compile(sIfNode* self, sInfo* info)
     if(!expression_node.compile->(info)) {
         return false;
     }
+    
 
     CVALUE*% conditional_value = get_value_from_stack(-1, info);
     dec_stack_ptr(1, info);

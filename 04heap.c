@@ -707,7 +707,7 @@ void free_objects(sVarTable* table, char* ret_value, sInfo* info)
         {
             free_object(p->mType, p->mCValueName, false@no_decrement, true@no_free, info);
 
-            p->mCValueName = null;
+//            p->mCValueName = null;
         }
         else if(type->mHeap && p->mCValueName) {
             if(type->mFunctionParam) {
@@ -717,7 +717,7 @@ void free_objects(sVarTable* table, char* ret_value, sInfo* info)
                 free_object(p->mType, p->mCValueName, false@no_decrement, false@no_free, info);
             }
 
-            p->mCValueName = null;
+//            p->mCValueName = null;
         }
         else if(klass->mStruct && p->mCValueName && type->mAllocaValue) {
             string c_value = xsprintf("(&%s)", p->mCValueName);
@@ -725,7 +725,7 @@ void free_objects(sVarTable* table, char* ret_value, sInfo* info)
             type2->mPointerNum++;
             free_object(type2, c_value, false@no_decrement, false@no_free, info);
 
-            p->mCValueName = null;
+//            p->mCValueName = null;
         }
     }
 }

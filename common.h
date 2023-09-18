@@ -467,7 +467,6 @@ exception sNode*% post_position_operator3(sNode*% node, sInfo* info) version 20;
 sNode*% create_object(sType*% type, sInfo* info);
 sNode*% create_true_object(sInfo* info);
 sNode*% create_false_object(sInfo* info);
-sNode*% create_null_object(sType* type, sInfo* info);
 
 exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 21;
 exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 94;

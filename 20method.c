@@ -48,7 +48,18 @@ bool sCurrentNode*::compile(sCurrentNode* self, sInfo* info)
             tuple2<string, sType*%>*% item = (value.mCValueName, type2);
             
             if(value.mCValueName != null) {
-                current_stack.mFields.push_back(item);
+                if(memcmp(value.mCValueName, "__list_values", strlen("__list_values")) == 0)
+                {
+                }
+                else if(memcmp(value.mCValueName, "__map_keys", strlen("__map_keys")) == 0)
+                {
+                }
+                else if(memcmp(value.mCValueName, "__map_element", strlen("__map_element")) == 0)
+                {
+                }
+                else {
+                    current_stack.mFields.push_back(item);
+                }
             }
         }
         
@@ -75,11 +86,22 @@ bool sCurrentNode*::compile(sCurrentNode* self, sInfo* info)
             tuple2<string, sType*%>*% item = (value.mCValueName, type2);
             
             if(value.mCValueName != null) {
-                if(type2->mClass->mName === "lambda") {
-                    add_come_code(info, "__current_stack%d__.%s = %s;\n", num_current_stack, value.mCValueName, value.mCValueName);
+                if(memcmp(value.mCValueName, "__list_values", strlen("__list_values")) == 0)
+                {
+                }
+                else if(memcmp(value.mCValueName, "__map_keys", strlen("__map_keys")) == 0)
+                {
+                }
+                else if(memcmp(value.mCValueName, "__map_element", strlen("__map_element")) == 0)
+                {
                 }
                 else {
-                    add_come_code(info, "__current_stack%d__.%s = &%s;\n", num_current_stack, value.mCValueName, value.mCValueName);
+                    if(type2->mClass->mName === "lambda") {
+                        add_come_code(info, "__current_stack%d__.%s = %s;\n", num_current_stack, value.mCValueName, value.mCValueName);
+                    }
+                    else {
+                        add_come_code(info, "__current_stack%d__.%s = &%s;\n", num_current_stack, value.mCValueName, value.mCValueName);
+                    }
                 }
             }
         }

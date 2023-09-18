@@ -2897,6 +2897,18 @@ impl list <T>
 
         return self;
     }
+    list<T>*% initialize_with_values(list<T>*% self, int num_value, T&* values)
+    {
+        self.head = null;
+        self.tail = null;
+        self.len = 0;
+
+        for(int i=0; i<num_value; i++) {
+            self.push_back(values[i]);
+        }
+
+        return self;
+    }
     void finalize(list<T>* self) {
         list_item<T>* it = self.head;
         while(it != null) {
@@ -3490,6 +3502,30 @@ impl map <T, T2>
 
         return self;
     }
+    map<T,T2>*% initialize_with_values(map<T,T2>*% self, int num_keys, T&* keys, T2&* values)
+    {
+        self.keys = borrow new T[128];
+        self.items = borrow new T2[128];
+        self.item_existance = borrow new bool[128];
+
+        for(int i=0; i<128; i++)
+        {
+            self.item_existance[i] = false;
+        }
+
+        self.size = 128;
+        self.len = 0;
+
+        self.it = 0;
+
+        self.key_list = new list<T>();
+
+        for(int i=0; i<num_keys; i++) {
+            self.insert(keys[i], values[i]);
+        }
+
+        return self;
+    }
     void finalize(map<T,T2>* self) {
         for(int i=0; i<self.size; i++) {
             if(self.item_existance[i]) {
@@ -3614,9 +3650,9 @@ impl map <T, T2>
                     }
                     else if(n == hash) {
                         fprintf(
-# 919 "./comelang2.h" 3 4
+# 955 "./comelang2.h" 3 4
                                stderr
-# 919 "./comelang2.h"
+# 955 "./comelang2.h"
                                      , "unexpected error in map.rehash(1)\n");
                         exit(2);
                     }
@@ -3681,9 +3717,9 @@ impl map <T, T2>
                 }
                 else if(it == hash) {
                     fprintf(
-# 982 "./comelang2.h" 3 4
+# 1018 "./comelang2.h" 3 4
                            stderr
-# 982 "./comelang2.h"
+# 1018 "./comelang2.h"
                                  , "unexpected error in map.insert\n");
                     exit(2);
                 }
@@ -3760,9 +3796,9 @@ impl map <T, T2>
                 }
                 else if(it == hash) {
                     fprintf(
-# 1057 "./comelang2.h" 3 4
+# 1093 "./comelang2.h" 3 4
                            stderr
-# 1057 "./comelang2.h"
+# 1093 "./comelang2.h"
                                  , "unexpected error in map.insert\n");
                     exit(2);
                 }
@@ -3999,7 +4035,7 @@ impl tuple2 <T, T2>
         return self;
     }
 
-    T catch(tuple2<T, T2>* self, void* parent, void (*block)(void* parent))
+    T& catch(tuple2<T, T2>* self, void* parent, void (*block)(void* parent))
     {
         if(!self.v2) {
             block(parent);
@@ -4246,35 +4282,35 @@ static inline string xsprintf(char* msg, ...)
 {
     va_list args;
     
-# 1539 "./comelang2.h" 3 4
+# 1575 "./comelang2.h" 3 4
    __builtin_va_start(
-# 1539 "./comelang2.h"
+# 1575 "./comelang2.h"
    args
-# 1539 "./comelang2.h" 3 4
+# 1575 "./comelang2.h" 3 4
    ,
-# 1539 "./comelang2.h"
+# 1575 "./comelang2.h"
    msg
-# 1539 "./comelang2.h" 3 4
+# 1575 "./comelang2.h" 3 4
    )
-# 1539 "./comelang2.h"
+# 1575 "./comelang2.h"
                       ;
     char* result;
     int len = vasprintf(&result, msg, args);
     
-# 1542 "./comelang2.h" 3 4
+# 1578 "./comelang2.h" 3 4
    __builtin_va_end(
-# 1542 "./comelang2.h"
+# 1578 "./comelang2.h"
    args
-# 1542 "./comelang2.h" 3 4
+# 1578 "./comelang2.h" 3 4
    )
-# 1542 "./comelang2.h"
+# 1578 "./comelang2.h"
                ;
 
     if(len < 0) {
         fprintf(
-# 1545 "./comelang2.h" 3 4
+# 1581 "./comelang2.h" 3 4
                stderr
-# 1545 "./comelang2.h"
+# 1581 "./comelang2.h"
                      , "vasprintf can't get heap memory.(msg %s)\n", msg);
         exit(2);
     }
@@ -4302,19 +4338,19 @@ static inline list<string>*% FILE::readlines(FILE* f)
 
     while(1) {
         char buf[
-# 1571 "./comelang2.h" 3 4
+# 1607 "./comelang2.h" 3 4
                 8192
-# 1571 "./comelang2.h"
+# 1607 "./comelang2.h"
                       ];
 
         if(fgets(buf, 
-# 1573 "./comelang2.h" 3 4
+# 1609 "./comelang2.h" 3 4
                      8192
-# 1573 "./comelang2.h"
+# 1609 "./comelang2.h"
                            , f) == 
-# 1573 "./comelang2.h" 3 4
+# 1609 "./comelang2.h" 3 4
                                    ((void *)0)
-# 1573 "./comelang2.h"
+# 1609 "./comelang2.h"
                                        ) {
             break;
         }
@@ -4331,23 +4367,23 @@ static inline string FILE::read(FILE* f)
 
     while(1) {
         char buf2[
-# 1588 "./comelang2.h" 3 4
+# 1624 "./comelang2.h" 3 4
                  8192
-# 1588 "./comelang2.h"
+# 1624 "./comelang2.h"
                        ];
 
         int size = fread(buf2, 1, 
-# 1590 "./comelang2.h" 3 4
+# 1626 "./comelang2.h" 3 4
                                  8192
-# 1590 "./comelang2.h"
+# 1626 "./comelang2.h"
                                        , f);
 
         buf.append(buf2, size);
 
         if(size < 
-# 1594 "./comelang2.h" 3 4
+# 1630 "./comelang2.h" 3 4
                  8192
-# 1594 "./comelang2.h"
+# 1630 "./comelang2.h"
                        ) {
             break;
         }
@@ -4362,23 +4398,23 @@ static inline string FILE*::read(FILE* f)
 
     while(1) {
         char buf2[
-# 1607 "./comelang2.h" 3 4
+# 1643 "./comelang2.h" 3 4
                  8192
-# 1607 "./comelang2.h"
+# 1643 "./comelang2.h"
                        ];
 
         int size = fread(buf2, 1, 
-# 1609 "./comelang2.h" 3 4
+# 1645 "./comelang2.h" 3 4
                                  8192
-# 1609 "./comelang2.h"
+# 1645 "./comelang2.h"
                                        , f);
 
         buf.append(buf2, size);
 
         if(size < 
-# 1613 "./comelang2.h" 3 4
+# 1649 "./comelang2.h" 3 4
                  8192
-# 1613 "./comelang2.h"
+# 1649 "./comelang2.h"
                        ) {
             break;
         }
@@ -4393,27 +4429,27 @@ static inline FILE* FILE::fprintf(FILE* f, const char* msg, ...)
 
     va_list args;
     
-# 1626 "./comelang2.h" 3 4
+# 1662 "./comelang2.h" 3 4
    __builtin_va_start(
-# 1626 "./comelang2.h"
+# 1662 "./comelang2.h"
    args
-# 1626 "./comelang2.h" 3 4
+# 1662 "./comelang2.h" 3 4
    ,
-# 1626 "./comelang2.h"
+# 1662 "./comelang2.h"
    msg
-# 1626 "./comelang2.h" 3 4
+# 1662 "./comelang2.h" 3 4
    )
-# 1626 "./comelang2.h"
+# 1662 "./comelang2.h"
                       ;
     vsnprintf(msg2, 1024, msg, args);
     
-# 1628 "./comelang2.h" 3 4
+# 1664 "./comelang2.h" 3 4
    __builtin_va_end(
-# 1628 "./comelang2.h"
+# 1664 "./comelang2.h"
    args
-# 1628 "./comelang2.h" 3 4
+# 1664 "./comelang2.h" 3 4
    )
-# 1628 "./comelang2.h"
+# 1664 "./comelang2.h"
                ;
 
     (void)fprintf(f, "%s", msg2);
@@ -4427,27 +4463,27 @@ static inline FILE* FILE*::fprintf(FILE* f, const char* msg, ...)
 
     va_list args;
     
-# 1640 "./comelang2.h" 3 4
+# 1676 "./comelang2.h" 3 4
    __builtin_va_start(
-# 1640 "./comelang2.h"
+# 1676 "./comelang2.h"
    args
-# 1640 "./comelang2.h" 3 4
+# 1676 "./comelang2.h" 3 4
    ,
-# 1640 "./comelang2.h"
+# 1676 "./comelang2.h"
    msg
-# 1640 "./comelang2.h" 3 4
+# 1676 "./comelang2.h" 3 4
    )
-# 1640 "./comelang2.h"
+# 1676 "./comelang2.h"
                       ;
     vsnprintf(msg2, 1024, msg, args);
     
-# 1642 "./comelang2.h" 3 4
+# 1678 "./comelang2.h" 3 4
    __builtin_va_end(
-# 1642 "./comelang2.h"
+# 1678 "./comelang2.h"
    args
-# 1642 "./comelang2.h" 3 4
+# 1678 "./comelang2.h" 3 4
    )
-# 1642 "./comelang2.h"
+# 1678 "./comelang2.h"
                ;
 
     (void)fprintf(f, "%s", msg2);
@@ -4788,9 +4824,9 @@ static inline string string::read(char* file_name)
     FILE* f = fopen(file_name, "r");
 
     if(f == 
-# 1981 "./comelang2.h" 3 4
+# 2017 "./comelang2.h" 3 4
            ((void *)0)
-# 1981 "./comelang2.h"
+# 2017 "./comelang2.h"
                ) {
         return string("");
     }
@@ -4807,9 +4843,9 @@ static inline string char*::read(char* file_name)
     FILE* f = fopen(file_name, "r");
 
     if(f == 
-# 1996 "./comelang2.h" 3 4
+# 2032 "./comelang2.h" 3 4
            ((void *)0)
-# 1996 "./comelang2.h"
+# 2032 "./comelang2.h"
                ) {
         return string("");
     }

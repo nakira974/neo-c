@@ -28,7 +28,7 @@ bool sStrNode*::compile(sStrNode* self, sInfo* info)
     
     come_value.c_value = xsprintf("\"%s\"", self.value);
     come_value.type = new sType("char*", info);
-    come_value.type.mConstant = true;
+    //come_value.type.mConstant = true;
     come_value.var = null;
     
     info.stack.push_back(come_value);

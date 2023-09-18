@@ -159,6 +159,11 @@ string sNullNode*::sname(sNullNode* self, sInfo* info)
     return string(self.sname);
 }
 
+sNode*% create_null_object(sInfo* info)
+{
+    return new sNode(new sNullNode(info));
+}
+
 
 struct sAddNode
 {

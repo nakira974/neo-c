@@ -14,19 +14,19 @@ sData*% sData*::initialize(sData*% self, int a, int b)
     return self;
 }
 
-exception sData*%,sData*%,int fun(int x, int y)
+exception sData*%, sData*% fun(int x, int y)
 {
-    return (new sData(111, 222), new sData(333, 444));
+    throw;
+    return (new sData(1,2), new sData(3,3));
 }
 
 int main(int argc, char** argv)
 {
-    var data, data2 = fun(1, 2).catch {
+    var x,y = fun(1, 2).catch {
         puts("CATCH");
-        exit(2);
     }
-    printf("data %d %d\n", data.a, data.b);
-    printf("data2 %d %d\n", data2.a, data2.b);
+    
+    printf("%p %p\n", x, y);
     
     return 0;
 }

@@ -311,6 +311,11 @@ bool sFalseNode*::compile(sFalseNode* self, sInfo* info)
     return true;
 }
 
+sNode*% create_false_object(sInfo* info)
+{
+    return new sNode(new sFalseNode(info));
+}
+
 struct sSizeOfNode {
     sType*% type;
     int sline;

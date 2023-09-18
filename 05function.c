@@ -1378,14 +1378,14 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
         }
         
         if(result_type->mException) {
-puts("AAA");
             int stack_num_before = info->stack.length();
             
             sType*% result_type4 = clone result_type2;
             result_type4->mPointerNum = 0;
             
             sNode*% obj_node = create_object(clone result_type4, info);
-            sNode*% store_node = store_var(string("result_tuple")@name, null@multiple_assign, clone result_type2@type, true@alloc, clone obj_node@right_node, info);
+            static int num_result_tuple = 0;
+            sNode*% store_node = store_var(xsprintf("result_tuplea%d", ++num_result_tuple)@name, null@multiple_assign, clone result_type2@type, true@alloc, clone obj_node@right_node, info);
             
             if(!store_node.compile->(info)) {
                 return false;
@@ -1394,7 +1394,7 @@ puts("AAA");
             arrange_stack(info, stack_num_before);
             free_right_value_objects(info);
             
-            sNode*% load_node = load_var(string("result_tuple"), info);
+            sNode*% load_node = load_var(xsprintf("result_tuplea%d", num_result_tuple), info);
             
             sNode*% right_node = clone self.value;
             
@@ -1446,12 +1446,13 @@ puts("AAA");
             return false;
         }
         
-        add_come_code(info, "%s __result__ = %s;\n", make_type_name_string(result_type2, false@in_header, false@array_cast_pointer, info), come_value.c_value);
+        static int num_result = 0;
+        add_come_code(info, "%s __result%d__ = %s;\n", make_type_name_string(result_type2, false@in_header, false@array_cast_pointer, info), ++num_result, come_value.c_value);
         
         free_objects_on_return(come_fun.mBlock, info, come_value.c_value, false@top_block);
         free_right_value_objects(info);
         
-        add_come_code(info, "return __result__;\n");
+        add_come_code(info, "return __result%d__;\n", num_result);
     }
     else {
         sFun* come_fun = info.come_fun;
@@ -1497,7 +1498,8 @@ bool sThrowNode*::terminated()
 bool sThrowNode*::compile(sThrowNode* self, sInfo* info)
 {
     sFun* come_fun = info.come_fun;
-    sType* result_type = come_fun.mResultType;
+    
+    sType*% result_type = clone come_fun.mResultType;
     
     sType*% result_type2 = solve_generics(result_type, info.generics_type, info).catch
     {
@@ -1512,65 +1514,91 @@ bool sThrowNode*::compile(sThrowNode* self, sInfo* info)
         result_type3 = result_type2;
     }
     
-    buffer*% result_tuple = new buffer();
-    
-    int num_tuple = result_type3->mGenericsTypes.length() + 1;
-    
-    result_tuple.append_str(xsprintf("(new tuple%d<", num_tuple));
-    
-    for(int i=0; i<result_type3->mGenericsTypes.length(); i++) {
-        sType* gtype = result_type3->mGenericsTypes[i];
-        if(gtype->mPointerNum > 0) {
-            result_tuple.append_str(xsprintf("(void*)0,"));
+    if(result_type->mException) {
+        int stack_num_before = info->stack.length();
+        
+        sType*% result_type4 = clone result_type2;
+        result_type4->mPointerNum = 0;
+        
+        sNode*% obj_node = create_object(clone result_type4, info);
+        static int num_result_tuple = 0;
+        sNode*% store_node = store_var(xsprintf("result_tupleb%d", ++num_result_tuple)@name, null@multiple_assign, clone result_type2@type, true@alloc, clone obj_node@right_node, info);
+        
+        if(!store_node.compile->(info)) {
+            return false;
+        }
+        add_last_code_to_source(info);
+        arrange_stack(info, stack_num_before);
+        free_right_value_objects(info);
+        
+        sNode*% load_node = load_var(xsprintf("result_tupleb%d", num_result_tuple), info);
+        
+        sNode*% right_node;
+        if(result_type3->mGenericsTypes[0].mClass.mStruct) {
+            sType*% type = clone result_type3->mGenericsTypes[0];
+            type->mPointerNum = 0;
+            right_node = create_object(clone type, info);
         }
         else {
-            result_tuple.append_str(xsprintf("0,"));
+            right_node = create_null_object(info);
         }
+        
+        sNode*% store_field_node1 = store_field(load_node, clone right_node, string("v1"), info);
+        
+        if(!store_field_node1.compile->(info)) {
+            return false;
+        }
+        add_last_code_to_source(info);
+        arrange_stack(info, stack_num_before);
+        free_right_value_objects(info);
+        
+        sNode*% false_node = create_false_object(info);
+        
+        sNode*% store_field_node2 = store_field(load_node, clone false_node, string("v2"), info);
+        
+        if(!store_field_node2.compile->(info)) {
+            return false;
+        }
+        add_last_code_to_source(info);
+        arrange_stack(info, stack_num_before);
+        free_right_value_objects(info);
+        
+        if(!load_node.compile->(info)) {
+            return false;
+        }
+        add_last_code_to_source(info);
+        free_right_value_objects(info);
     }
-    result_tuple.append_str(xsprintf("false))"));
-    
-    char* p = info.p;
-    char* head = info.head;
-    int sline = info.sline;
-    buffer*% source = info.source;
-    
-    info.source = result_tuple;
-    info.p = info.source.buf;
-    info.head = info.source.buf;
-
-    sNode*% value = expression(info).catch { err_msg(info, "throws failed"); exit(1); }
-    
-    info.p = p;
-    info.head = head;
-    info.sline = sline;
-    info.source = source;
-    
-    if(!value->compile->(info)) {
+    else {
+        err_msg(info, "There is not in exception function");
         return false;
     }
     
-    CVALUE*% come_value2 = get_value_from_stack(-1, info);
+    CVALUE*% come_value = get_value_from_stack(-1, info);
     dec_stack_ptr(1, info);
     
-    sType*% come_value_type = solve_generics(come_value2.type, info.generics_type, info).catch
+    if(come_value.type->mHeap && come_value.var == null) {
+        int right_value_id = get_right_value_id_from_obj(come_value.c_value);
+        
+        if(right_value_id != -1) {
+            remove_object_from_right_values(right_value_id, info);
+        }
+    }
+    
+    sType*% come_value_type = solve_generics(come_value.type, info.generics_type, info).catch
     {
         return false;
     }
     
-    if(come_value2.type->mHeap && come_value2.var == null) {
-        int right_value_id = get_right_value_id_from_obj(come_value2.c_value);
-        
-        if(right_value_id != -1) {
-            remove_object_from_right_values(right_value_id, info);
-            remove_object_from_right_values(right_value_id-1, info);
-        }
-    }
-    add_come_code(info, "%s __result__ = %s;\n", make_type_name_string(result_type2, false@in_header, false@array_cast_pointer, info), come_value2.c_value);
+    static int num_result = 0;
+    add_come_code(info, "%s __result%d__ = %s;\n", make_type_name_string(result_type2, false@in_header, false@array_cast_pointer, info), ++num_result, come_value.c_value);
     
-    free_objects_on_return(come_fun.mBlock, info, come_value2.c_value, false@top_block);
+    free_objects_on_return(come_fun.mBlock, info, come_value.c_value, false@top_block);
     free_right_value_objects(info);
     
-    add_come_code(info, "return __result__;\n");
+    add_come_code(info, "return __result%d__;\n", num_result);
+    
+    info->last_statment_is_return = true;
     
     return true;
 }

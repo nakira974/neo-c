@@ -1589,11 +1589,6 @@ static inline string xsprintf(char* msg, ...)
     return result2;
 }
 
-list<string>*% FILE::readlines(FILE* f);
-inline list<string>*% FILE*::readlines(FILE* f) {
-    return FILE_readlines(f);
-}
-
 static inline void FILE*::fclose(FILE* f) 
 {
     FILE_fclose(f);
@@ -1687,7 +1682,7 @@ static inline void FILE::fclose(FILE* f)
     fclose(f);
 }
 
-inline string string::write(char* self, char* file_name, bool append=false) 
+static inline string string::write(char* self, char* file_name, bool append=false) 
 {
     FILE* f;
     if(append) {
@@ -1704,7 +1699,7 @@ inline string string::write(char* self, char* file_name, bool append=false)
     return string(self);
 }
 
-inline string char*::write(char* self, char* file_name, bool append=false) 
+static inline string char*::write(char* self, char* file_name, bool append=false) 
 {
     FILE* f;
     if(append) {
@@ -2059,7 +2054,7 @@ static inline string string::to_string(char* self)
     return string(self);
 }
 
-inline list<string>*% FILE::readlines(FILE* f)
+static snline list<string>*% FILE::readlines(FILE* f)
 {
     list<string>*% result = new list<string>.initialize();
     
@@ -2076,7 +2071,7 @@ inline list<string>*% FILE::readlines(FILE* f)
     return result;
 }
 
-inline list<string>*% FILE*::readlines(FILE* f)
+static inline list<string>*% FILE*::readlines(FILE* f)
 {
     list<string>*% result = new list<string>.initialize();
     
@@ -2093,17 +2088,17 @@ inline list<string>*% FILE*::readlines(FILE* f)
     return result;
 }
 
-inline void FILE::fclose(FILE* f) 
+static inline void FILE::fclose(FILE* f) 
 {
     fclose(f);
 }
 
-inline void FILE*::fclose(FILE* f) 
+static inline void FILE*::fclose(FILE* f) 
 {
     fclose(f);
 }
 
-inline string FILE::read(FILE* f)
+static inline string FILE::read(FILE* f)
 {
     buffer*% buf = new buffer.initialize();
     
@@ -2122,7 +2117,7 @@ inline string FILE::read(FILE* f)
     return buf.to_string();
 }
 
-inline string FILE*::read(FILE* f)
+static inline string FILE*::read(FILE* f)
 {
     buffer*% buf = new buffer.initialize();
     
@@ -2141,7 +2136,7 @@ inline string FILE*::read(FILE* f)
     return buf.to_string();
 }
 
-inline FILE* FILE::fprintf(FILE* f, const char* msg, ...)
+static inline FILE* FILE::fprintf(FILE* f, const char* msg, ...)
 {
     char msg2[1024];
 
@@ -2155,7 +2150,7 @@ inline FILE* FILE::fprintf(FILE* f, const char* msg, ...)
     return f;
 }
 
-inline FILE* FILE*::fprintf(FILE* f, const char* msg, ...)
+static inline FILE* FILE*::fprintf(FILE* f, const char* msg, ...)
 {
     char msg2[1024];
 
@@ -2169,17 +2164,17 @@ inline FILE* FILE*::fprintf(FILE* f, const char* msg, ...)
     return f;
 }
 
-inline void FILE::fclose(FILE* f)
+static inline void FILE::fclose(FILE* f)
 {
     fclose(f);
 }
 
-inline void FILE*::fclose(FILE* f)
+static inline void FILE*::fclose(FILE* f)
 {
     fclose(f);
 }
 
-inline string string::write(char* self, char* file_name, bool append=false) 
+static inline string string::write(char* self, char* file_name, bool append=false) 
 {
     FILE* f;
     if(append) {
@@ -2196,7 +2191,7 @@ inline string string::write(char* self, char* file_name, bool append=false)
     return string(self);
 }
 
-inline string char*::write(char* self, char* file_name, bool append=false) 
+static inline string char*::write(char* self, char* file_name, bool append=false) 
 {
     FILE* f;
     if(append) {

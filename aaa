@@ -1,398 +1,820 @@
-code2/HelloWorld2.c.c:130:20: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+18field.c.c:130:20: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
     unsigned short short _cur_column;
                    ^~~~~~
-code2/HelloWorld2.c.c:670:5: warning: incompatible redeclaration of library function 'snprintf' [-Wincompatible-library-redeclaration]
+18field.c.c:943:5: warning: incompatible redeclaration of library function 'snprintf' [-Wincompatible-library-redeclaration]
 int snprintf(char* __s, int __maxlen, const char* __format, ...);
     ^
-code2/HelloWorld2.c.c:670:5: note: 'snprintf' is a builtin with type 'int (char *, unsigned long, const char *, ...)'
-code2/HelloWorld2.c.c:671:5: warning: incompatible redeclaration of library function 'vsnprintf' [-Wincompatible-library-redeclaration]
+18field.c.c:943:5: note: 'snprintf' is a builtin with type 'int (char *, unsigned long, const char *, ...)'
+18field.c.c:944:5: warning: incompatible redeclaration of library function 'vsnprintf' [-Wincompatible-library-redeclaration]
 int vsnprintf(char* __s, int __maxlen, const char* __format, va_list __arg);
     ^
-code2/HelloWorld2.c.c:671:5: note: 'vsnprintf' is a builtin with type 'int (char *, unsigned long, const char *, __builtin_va_list)'
-code2/HelloWorld2.c.c:711:5: warning: incompatible redeclaration of library function 'fread' [-Wincompatible-library-redeclaration]
+18field.c.c:944:5: note: 'vsnprintf' is a builtin with type 'int (char *, unsigned long, const char *, __builtin_va_list)'
+18field.c.c:984:5: warning: incompatible redeclaration of library function 'fread' [-Wincompatible-library-redeclaration]
 int fread(void* __ptr, int __size, int __n, struct _IO_FILE* __stream);
     ^
-code2/HelloWorld2.c.c:711:5: note: 'fread' is a builtin with type 'unsigned long (void *, unsigned long, unsigned long, FILE *)' (aka 'unsigned long (void *, unsigned long, unsigned long, struct _IO_FILE *)')
-code2/HelloWorld2.c.c:712:5: warning: incompatible redeclaration of library function 'fwrite' [-Wincompatible-library-redeclaration]
+18field.c.c:984:5: note: 'fread' is a builtin with type 'unsigned long (void *, unsigned long, unsigned long, FILE *)' (aka 'unsigned long (void *, unsigned long, unsigned long, struct _IO_FILE *)')
+18field.c.c:985:5: warning: incompatible redeclaration of library function 'fwrite' [-Wincompatible-library-redeclaration]
 int fwrite(const void* __ptr, int __size, int __n, struct _IO_FILE* __s);
     ^
-code2/HelloWorld2.c.c:712:5: note: 'fwrite' is a builtin with type 'unsigned long (const void *, unsigned long, unsigned long, FILE *)' (aka 'unsigned long (const void *, unsigned long, unsigned long, struct _IO_FILE *)')
-code2/HelloWorld2.c.c:747:7: warning: incompatible redeclaration of library function 'memcpy' [-Wincompatible-library-redeclaration]
+18field.c.c:985:5: note: 'fwrite' is a builtin with type 'unsigned long (const void *, unsigned long, unsigned long, FILE *)' (aka 'unsigned long (const void *, unsigned long, unsigned long, struct _IO_FILE *)')
+18field.c.c:1020:7: warning: incompatible redeclaration of library function 'memcpy' [-Wincompatible-library-redeclaration]
 void* memcpy(void* __dest, const void* __src, int __n);
       ^
-code2/HelloWorld2.c.c:747:7: note: 'memcpy' is a builtin with type 'void *(void *, const void *, unsigned long)'
-code2/HelloWorld2.c.c:748:7: warning: incompatible redeclaration of library function 'memmove' [-Wincompatible-library-redeclaration]
+18field.c.c:1020:7: note: 'memcpy' is a builtin with type 'void *(void *, const void *, unsigned long)'
+18field.c.c:1021:7: warning: incompatible redeclaration of library function 'memmove' [-Wincompatible-library-redeclaration]
 void* memmove(void* __dest, const void* __src, int __n);
       ^
-code2/HelloWorld2.c.c:748:7: note: 'memmove' is a builtin with type 'void *(void *, const void *, unsigned long)'
-code2/HelloWorld2.c.c:749:7: warning: incompatible redeclaration of library function 'memccpy' [-Wincompatible-library-redeclaration]
+18field.c.c:1021:7: note: 'memmove' is a builtin with type 'void *(void *, const void *, unsigned long)'
+18field.c.c:1022:7: warning: incompatible redeclaration of library function 'memccpy' [-Wincompatible-library-redeclaration]
 void* memccpy(void* __dest, const void* __src, int __c, int __n);
       ^
-code2/HelloWorld2.c.c:749:7: note: 'memccpy' is a builtin with type 'void *(void *, const void *, int, unsigned long)'
-code2/HelloWorld2.c.c:750:7: warning: incompatible redeclaration of library function 'memset' [-Wincompatible-library-redeclaration]
+18field.c.c:1022:7: note: 'memccpy' is a builtin with type 'void *(void *, const void *, int, unsigned long)'
+18field.c.c:1023:7: warning: incompatible redeclaration of library function 'memset' [-Wincompatible-library-redeclaration]
 void* memset(void* __s, int __c, int __n);
       ^
-code2/HelloWorld2.c.c:750:7: note: 'memset' is a builtin with type 'void *(void *, int, unsigned long)'
-code2/HelloWorld2.c.c:751:5: warning: incompatible redeclaration of library function 'memcmp' [-Wincompatible-library-redeclaration]
+18field.c.c:1023:7: note: 'memset' is a builtin with type 'void *(void *, int, unsigned long)'
+18field.c.c:1024:5: warning: incompatible redeclaration of library function 'memcmp' [-Wincompatible-library-redeclaration]
 int memcmp(const void* __s1, const void* __s2, int __n);
     ^
-code2/HelloWorld2.c.c:751:5: note: 'memcmp' is a builtin with type 'int (const void *, const void *, unsigned long)'
-code2/HelloWorld2.c.c:753:7: warning: incompatible redeclaration of library function 'memchr' [-Wincompatible-library-redeclaration]
+18field.c.c:1024:5: note: 'memcmp' is a builtin with type 'int (const void *, const void *, unsigned long)'
+18field.c.c:1026:7: warning: incompatible redeclaration of library function 'memchr' [-Wincompatible-library-redeclaration]
 void* memchr(const void* __s, int __c, int __n);
       ^
-code2/HelloWorld2.c.c:753:7: note: 'memchr' is a builtin with type 'void *(const void *, int, unsigned long)'
-code2/HelloWorld2.c.c:757:7: warning: incompatible redeclaration of library function 'strncpy' [-Wincompatible-library-redeclaration]
+18field.c.c:1026:7: note: 'memchr' is a builtin with type 'void *(const void *, int, unsigned long)'
+18field.c.c:1030:7: warning: incompatible redeclaration of library function 'strncpy' [-Wincompatible-library-redeclaration]
 char* strncpy(char* __dest, const char* __src, int __n);
       ^
-code2/HelloWorld2.c.c:757:7: note: 'strncpy' is a builtin with type 'char *(char *, const char *, unsigned long)'
-code2/HelloWorld2.c.c:759:7: warning: incompatible redeclaration of library function 'strncat' [-Wincompatible-library-redeclaration]
+18field.c.c:1030:7: note: 'strncpy' is a builtin with type 'char *(char *, const char *, unsigned long)'
+18field.c.c:1032:7: warning: incompatible redeclaration of library function 'strncat' [-Wincompatible-library-redeclaration]
 char* strncat(char* __dest, const char* __src, int __n);
       ^
-code2/HelloWorld2.c.c:759:7: note: 'strncat' is a builtin with type 'char *(char *, const char *, unsigned long)'
-code2/HelloWorld2.c.c:761:5: warning: incompatible redeclaration of library function 'strncmp' [-Wincompatible-library-redeclaration]
+18field.c.c:1032:7: note: 'strncat' is a builtin with type 'char *(char *, const char *, unsigned long)'
+18field.c.c:1034:5: warning: incompatible redeclaration of library function 'strncmp' [-Wincompatible-library-redeclaration]
 int strncmp(const char* __s1, const char* __s2, int __n);
     ^
-code2/HelloWorld2.c.c:761:5: note: 'strncmp' is a builtin with type 'int (const char *, const char *, unsigned long)'
-code2/HelloWorld2.c.c:763:5: warning: incompatible redeclaration of library function 'strxfrm' [-Wincompatible-library-redeclaration]
+18field.c.c:1034:5: note: 'strncmp' is a builtin with type 'int (const char *, const char *, unsigned long)'
+18field.c.c:1036:5: warning: incompatible redeclaration of library function 'strxfrm' [-Wincompatible-library-redeclaration]
 int strxfrm(char* __dest, const char* __src, int __n);
     ^
-code2/HelloWorld2.c.c:763:5: note: 'strxfrm' is a builtin with type 'unsigned long (char *, const char *, unsigned long)'
-code2/HelloWorld2.c.c:767:7: warning: incompatible redeclaration of library function 'strndup' [-Wincompatible-library-redeclaration]
+18field.c.c:1036:5: note: 'strxfrm' is a builtin with type 'unsigned long (char *, const char *, unsigned long)'
+18field.c.c:1040:7: warning: incompatible redeclaration of library function 'strndup' [-Wincompatible-library-redeclaration]
 char* strndup(const char* __string, int __n);
       ^
-code2/HelloWorld2.c.c:767:7: note: 'strndup' is a builtin with type 'char *(const char *, unsigned long)'
-code2/HelloWorld2.c.c:771:5: warning: incompatible redeclaration of library function 'strcspn' [-Wincompatible-library-redeclaration]
+18field.c.c:1040:7: note: 'strndup' is a builtin with type 'char *(const char *, unsigned long)'
+18field.c.c:1044:5: warning: incompatible redeclaration of library function 'strcspn' [-Wincompatible-library-redeclaration]
 int strcspn(const char* __s, const char* __reject);
     ^
-code2/HelloWorld2.c.c:771:5: note: 'strcspn' is a builtin with type 'unsigned long (const char *, const char *)'
-code2/HelloWorld2.c.c:772:5: warning: incompatible redeclaration of library function 'strspn' [-Wincompatible-library-redeclaration]
+18field.c.c:1044:5: note: 'strcspn' is a builtin with type 'unsigned long (const char *, const char *)'
+18field.c.c:1045:5: warning: incompatible redeclaration of library function 'strspn' [-Wincompatible-library-redeclaration]
 int strspn(const char* __s, const char* __accept);
     ^
-code2/HelloWorld2.c.c:772:5: note: 'strspn' is a builtin with type 'unsigned long (const char *, const char *)'
-code2/HelloWorld2.c.c:781:7: warning: incompatible redeclaration of library function 'mempcpy' [-Wincompatible-library-redeclaration]
+18field.c.c:1045:5: note: 'strspn' is a builtin with type 'unsigned long (const char *, const char *)'
+18field.c.c:1054:7: warning: incompatible redeclaration of library function 'mempcpy' [-Wincompatible-library-redeclaration]
 void* mempcpy(void* __dest, const void* __src, int __n);
       ^
-code2/HelloWorld2.c.c:781:7: note: 'mempcpy' is a builtin with type 'void *(void *, const void *, unsigned long)'
-code2/HelloWorld2.c.c:782:5: warning: incompatible redeclaration of library function 'strlen' [-Wincompatible-library-redeclaration]
+18field.c.c:1054:7: note: 'mempcpy' is a builtin with type 'void *(void *, const void *, unsigned long)'
+18field.c.c:1055:5: warning: incompatible redeclaration of library function 'strlen' [-Wincompatible-library-redeclaration]
 int strlen(const char* __s);
     ^
-code2/HelloWorld2.c.c:782:5: note: 'strlen' is a builtin with type 'unsigned long (const char *)'
-code2/HelloWorld2.c.c:789:5: warning: incompatible redeclaration of library function 'bcmp' [-Wincompatible-library-redeclaration]
+18field.c.c:1055:5: note: 'strlen' is a builtin with type 'unsigned long (const char *)'
+18field.c.c:1062:5: warning: incompatible redeclaration of library function 'bcmp' [-Wincompatible-library-redeclaration]
 int bcmp(const void* __s1, const void* __s2, int __n);
     ^
-code2/HelloWorld2.c.c:789:5: note: 'bcmp' is a builtin with type 'int (const void *, const void *, unsigned long)'
-code2/HelloWorld2.c.c:791:6: warning: incompatible redeclaration of library function 'bzero' [-Wincompatible-library-redeclaration]
+18field.c.c:1062:5: note: 'bcmp' is a builtin with type 'int (const void *, const void *, unsigned long)'
+18field.c.c:1064:6: warning: incompatible redeclaration of library function 'bzero' [-Wincompatible-library-redeclaration]
 void bzero(void* __s, int __n);
      ^
-code2/HelloWorld2.c.c:791:6: note: 'bzero' is a builtin with type 'void (void *, unsigned long)'
-code2/HelloWorld2.c.c:798:5: warning: incompatible redeclaration of library function 'strncasecmp' [-Wincompatible-library-redeclaration]
+18field.c.c:1064:6: note: 'bzero' is a builtin with type 'void (void *, unsigned long)'
+18field.c.c:1071:5: warning: incompatible redeclaration of library function 'strncasecmp' [-Wincompatible-library-redeclaration]
 int strncasecmp(const char* __s1, const char* __s2, int __n);
     ^
-code2/HelloWorld2.c.c:798:5: note: 'strncasecmp' is a builtin with type 'int (const char *, const char *, unsigned long)'
-code2/HelloWorld2.c.c:809:7: warning: incompatible redeclaration of library function 'stpncpy' [-Wincompatible-library-redeclaration]
+18field.c.c:1071:5: note: 'strncasecmp' is a builtin with type 'int (const char *, const char *, unsigned long)'
+18field.c.c:1082:7: warning: incompatible redeclaration of library function 'stpncpy' [-Wincompatible-library-redeclaration]
 char* stpncpy(char* __dest, const char* __src, int __n);
       ^
-code2/HelloWorld2.c.c:809:7: note: 'stpncpy' is a builtin with type 'char *(char *, const char *, unsigned long)'
-code2/HelloWorld2.c.c:831:5: warning: incompatible redeclaration of library function 'strtoll' [-Wincompatible-library-redeclaration]
+18field.c.c:1082:7: note: 'stpncpy' is a builtin with type 'char *(char *, const char *, unsigned long)'
+18field.c.c:1104:5: warning: incompatible redeclaration of library function 'strtoll' [-Wincompatible-library-redeclaration]
 int strtoll(const char* __nptr, char** __endptr, int __base);
     ^
-code2/HelloWorld2.c.c:831:5: note: 'strtoll' is a builtin with type 'long long (const char *, char **, int)'
-code2/HelloWorld2.c.c:832:14: warning: incompatible redeclaration of library function 'strtoull' [-Wincompatible-library-redeclaration]
+18field.c.c:1104:5: note: 'strtoll' is a builtin with type 'long long (const char *, char **, int)'
+18field.c.c:1105:14: warning: incompatible redeclaration of library function 'strtoull' [-Wincompatible-library-redeclaration]
 unsigned int strtoull(const char* __nptr, char** __endptr, int __base);
              ^
-code2/HelloWorld2.c.c:832:14: note: 'strtoull' is a builtin with type 'unsigned long long (const char *, char **, int)'
-code2/HelloWorld2.c.c:889:7: warning: incompatible redeclaration of library function 'malloc' [-Wincompatible-library-redeclaration]
+18field.c.c:1105:14: note: 'strtoull' is a builtin with type 'unsigned long long (const char *, char **, int)'
+18field.c.c:1162:7: warning: incompatible redeclaration of library function 'malloc' [-Wincompatible-library-redeclaration]
 void* malloc(int __size);
       ^
-code2/HelloWorld2.c.c:889:7: note: 'malloc' is a builtin with type 'void *(unsigned long)'
-code2/HelloWorld2.c.c:890:7: warning: incompatible redeclaration of library function 'calloc' [-Wincompatible-library-redeclaration]
+18field.c.c:1162:7: note: 'malloc' is a builtin with type 'void *(unsigned long)'
+18field.c.c:1163:7: warning: incompatible redeclaration of library function 'calloc' [-Wincompatible-library-redeclaration]
 void* calloc(int __nmemb, int __size);
       ^
-code2/HelloWorld2.c.c:890:7: note: 'calloc' is a builtin with type 'void *(unsigned long, unsigned long)'
-code2/HelloWorld2.c.c:891:7: warning: incompatible redeclaration of library function 'realloc' [-Wincompatible-library-redeclaration]
+18field.c.c:1163:7: note: 'calloc' is a builtin with type 'void *(unsigned long, unsigned long)'
+18field.c.c:1164:7: warning: incompatible redeclaration of library function 'realloc' [-Wincompatible-library-redeclaration]
 void* realloc(void* __ptr, int __size);
       ^
-code2/HelloWorld2.c.c:891:7: note: 'realloc' is a builtin with type 'void *(void *, unsigned long)'
-code2/HelloWorld2.c.c:894:7: warning: incompatible redeclaration of library function 'alloca' [-Wincompatible-library-redeclaration]
+18field.c.c:1164:7: note: 'realloc' is a builtin with type 'void *(void *, unsigned long)'
+18field.c.c:1167:7: warning: incompatible redeclaration of library function 'alloca' [-Wincompatible-library-redeclaration]
 void* alloca(int __size);
       ^
-code2/HelloWorld2.c.c:894:7: note: 'alloca' is a builtin with type 'void *(unsigned long)'
-code2/HelloWorld2.c.c:897:7: warning: incompatible redeclaration of library function 'aligned_alloc' [-Wincompatible-library-redeclaration]
+18field.c.c:1167:7: note: 'alloca' is a builtin with type 'void *(unsigned long)'
+18field.c.c:1170:7: warning: incompatible redeclaration of library function 'aligned_alloc' [-Wincompatible-library-redeclaration]
 void* aligned_alloc(int __alignment, int __size);
       ^
-code2/HelloWorld2.c.c:897:7: note: 'aligned_alloc' is a builtin with type 'void *(unsigned long, unsigned long)'
-code2/HelloWorld2.c.c:929:5: warning: incompatible redeclaration of library function 'llabs' [-Wincompatible-library-redeclaration]
+18field.c.c:1170:7: note: 'aligned_alloc' is a builtin with type 'void *(unsigned long, unsigned long)'
+18field.c.c:1202:5: warning: incompatible redeclaration of library function 'llabs' [-Wincompatible-library-redeclaration]
 int llabs(int __x);
     ^
-code2/HelloWorld2.c.c:929:5: note: 'llabs' is a builtin with type 'long long (long long)'
-code2/HelloWorld2.c.c:1051:48: warning: integer literal is too large to be represented in a signed integer type, interpreting as unsigned [-Wimplicitly-unsigned-literal]
+18field.c.c:1202:5: note: 'llabs' is a builtin with type 'long long (long long)'
+18field.c.c:1476:48: warning: integer literal is too large to be represented in a signed integer type, interpreting as unsigned [-Wimplicitly-unsigned-literal]
     unsigned long int __result3__ = ((((__bsx)&18374686479671623680)>>56)|(((__bsx)&71776119061217280)>>40)|(((__bsx)&280375465082880)>>24)|(((__bsx)&1095216660480)>>8)|(((__bsx)&4278190080)<<8)|(((__bsx)&16711680)<<24)|(((__bsx)&65280)<<40)|(((__bsx)&255)<<56));
                                                ^
-code2/HelloWorld2.c.c:1111:40: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+18field.c.c:1536:40: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
 static inline _Bool short_equals(short short self, short short right){
                                        ^~~~~~
-code2/HelloWorld2.c.c:1111:58: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+18field.c.c:1536:58: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
 static inline _Bool short_equals(short short self, short short right){
                                                          ^~~~~~
-code2/HelloWorld2.c.c:1214:43: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+18field.c.c:1639:43: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
 static inline short int short_clone(short short self){
                                           ^~~~~~
-code2/HelloWorld2.c.c:1234:20: warning: expression result unused [-Wunused-value]
+18field.c.c:1659:20: warning: expression result unused [-Wunused-value]
     if(self->buf) {(char*)come_decrement_ref_count(self->buf,0,0); }
                    ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code2/HelloWorld2.c.c:1255:25: warning: expression result unused [-Wunused-value]
+18field.c.c:1680:25: warning: expression result unused [-Wunused-value]
     if(result_31->buf) {(char*)come_decrement_ref_count(result_31->buf,0,0); }
                         ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code2/HelloWorld2.c.c:1284:24: warning: expression result unused [-Wunused-value]
+18field.c.c:1709:24: warning: expression result unused [-Wunused-value]
         if(self->buf) {(char*)come_decrement_ref_count(self->buf,0,0); }
                        ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code2/HelloWorld2.c.c:1302:24: warning: expression result unused [-Wunused-value]
+18field.c.c:1727:24: warning: expression result unused [-Wunused-value]
         if(self->buf) {(char*)come_decrement_ref_count(self->buf,0,0); }
                        ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code2/HelloWorld2.c.c:1329:67: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+18field.c.c:1754:67: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
 static inline void buffer_append_short(struct buffer* self, short short value){
                                                                   ^~~~~~
-code2/HelloWorld2.c.c:1330:51: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+18field.c.c:1755:51: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
     buffer_append(self,(char*)&value,sizeof(short short));
                                                   ^~~~~
-code2/HelloWorld2.c.c:1344:24: warning: expression result unused [-Wunused-value]
+18field.c.c:1769:24: warning: expression result unused [-Wunused-value]
         if(self->buf) {(char*)come_decrement_ref_count(self->buf,0,0); }
                        ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code2/HelloWorld2.c.c:2107:37: warning: expression result unused [-Wunused-value]
+18field.c.c:2539:37: warning: expression result unused [-Wunused-value]
                 if(litem_48->item) {(char*)come_decrement_ref_count(litem_48->item,0,0); }
                                     ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code2/HelloWorld2.c.c:2116:37: warning: expression result unused [-Wunused-value]
+18field.c.c:2548:37: warning: expression result unused [-Wunused-value]
                 if(litem_49->item) {(char*)come_decrement_ref_count(litem_49->item,0,0); }
                                     ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code2/HelloWorld2.c.c:2125:37: warning: expression result unused [-Wunused-value]
+18field.c.c:2557:37: warning: expression result unused [-Wunused-value]
                 if(litem_50->item) {(char*)come_decrement_ref_count(litem_50->item,0,0); }
                                     ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code2/HelloWorld2.c.c:2481:37: warning: incompatible function pointer types passing 'void (struct __current_stack1__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
-    int_times(3,&__current_stack1__,method_block1_code2HelloWorld2c);
-                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code2/HelloWorld2.c.c:1074:61: note: passing argument to parameter 'block' here
-static inline void int_times(int self, void* parent, void (*block)(void*)){
-                                                            ^
-code2/HelloWorld2.c.c:2531:49: warning: incompatible function pointer types passing 'void (struct __current_stack2__ *, int, int, _Bool *)' to parameter of type 'void (*)(void *, int, int, _Bool *)' [-Wincompatible-function-pointer-types]
-    list$1int_each(liX2_121,&__current_stack2__,method_block2_code2HelloWorld2c);
-                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code2/HelloWorld2.c.c:994:73: note: passing argument to parameter 'block' here
-static void list$1int_each(struct list$1int* self, void* parent, void (*block)(void*,int,int,_Bool*));
-                                                                        ^
-code2/HelloWorld2.c.c:2587:48: warning: incompatible function pointer types passing 'void (struct __current_stack3__ *, int, int, _Bool *)' to parameter of type 'void (*)(void *, int, int, _Bool *)' [-Wincompatible-function-pointer-types]
-    list$1int_each(li2_135,&__current_stack3__,method_block3_code2HelloWorld2c);
-                                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code2/HelloWorld2.c.c:994:73: note: passing argument to parameter 'block' here
-static void list$1int_each(struct list$1int* self, void* parent, void (*block)(void*,int,int,_Bool*));
-                                                                        ^
-code2/HelloWorld2.c.c:2594:62: warning: incompatible integer to pointer conversion passing 'int' to parameter of type 'char *' [-Wint-conversion]
-    xassert("list::insert",strcmp(list$1charph_item(li_133,0,-1),"ABC")==0&&strcmp(list$1charph_item(li_133,1,-1),"GGG")==0&&strcmp(list$1charph_item(li_133,2,-1),"DEF")==0&&strcmp(list$1charph_item(li_133,3,-1),"GHI")==0);
-                                                             ^~
-code2/HelloWorld2.c.c:1000:79: note: passing argument to parameter 'default_value' here
-static char* list$1charph_item(struct list$1charph* self, int position, char* default_value);
+18field.c.c:2608:17: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+    _inf_valueX6=(struct sNode*)come_increment_ref_count(right);
+                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2611:266: warning: incompatible pointer types passing 'struct sNode **' to parameter of type 'struct sNode *'; dereference with * [-Wincompatible-pointer-types]
+    _inf_obj_value1=((struct sStoreFieldNode*)(right_value119=sStoreFieldNode_initialize((struct sStoreFieldNode*)come_increment_ref_count(((struct sStoreFieldNode*)(right_value118=(struct sStoreFieldNode*)come_calloc(1, sizeof(struct sStoreFieldNode)*(1))))),left,_inf_valueX6,(char*)come_increment_ref_count(name),info)));
+                                                                                                                                                                                                                                                                         ^~~~~~~~~~~~
+                                                                                                                                                                                                                                                                         *
+18field.c.c:1401:116: note: passing argument to parameter 'right' here
+struct sStoreFieldNode* sStoreFieldNode_initialize(struct sStoreFieldNode* self, struct sNode* left, struct sNode* right, char* name, struct sInfo* info);
+                                                                                                                   ^
+18field.c.c:2613:26: warning: incompatible function pointer types assigning to 'void (*)(void *)' from 'void (struct sStoreFieldNode *)' [-Wincompatible-function-pointer-types]
+    _inf_value1->finalize=sStoreFieldNode_finalize;
+                         ^~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2614:23: warning: incompatible function pointer types assigning to 'void *(*)(void *)' from 'struct sStoreFieldNode *(struct sStoreFieldNode *)' [-Wincompatible-function-pointer-types]
+    _inf_value1->clone=sStoreFieldNode_clone;
+                      ^~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2615:25: warning: incompatible function pointer types assigning to '_Bool (*)(void *, struct sInfo *)' from '_Bool (struct sStoreFieldNode *, struct sInfo *)' [-Wincompatible-function-pointer-types]
+    _inf_value1->compile=sStoreFieldNode_compile;
+                        ^~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2616:23: warning: incompatible function pointer types assigning to 'int (*)(void *)' from 'int (struct sStoreFieldNode *, struct sInfo *)' [-Wincompatible-function-pointer-types]
+    _inf_value1->sline=sStoreFieldNode_sline;
+                      ^~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2617:23: warning: incompatible function pointer types assigning to 'char *(*)(void *)' from 'char *(struct sStoreFieldNode *, struct sInfo *)' [-Wincompatible-function-pointer-types]
+    _inf_value1->sname=sStoreFieldNode_sname;
+                      ^~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2705:145: warning: incompatible function pointer types passing 'void (struct __current_stack4__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+                    node_240=tuple2$2sNodephbool_catch(((struct tuple2$2sNodephbool*)(right_value171=expression_v13(info))),&__current_stack4__,method_block4_18fieldc);
+                                                                                                                                                ^~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:1453:103: note: passing argument to parameter 'block' here
+static struct sNode* tuple2$2sNodephbool_catch(struct tuple2$2sNodephbool* self, void* parent, void (*block)(void*));
+                                                                                                      ^
+18field.c.c:2707:34: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                    _inf_valueX14=(struct sNode*)come_increment_ref_count(node_240);
+                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2709:59: warning: incompatible pointer types passing 'struct sNode **' to parameter of type 'struct sNode *'; dereference with * [-Wincompatible-pointer-types]
+                    list$1sNodeph_push_back(array_num_239,_inf_valueX14);
+                                                          ^~~~~~~~~~~~~
+                                                          *
+18field.c.c:1455:79: note: passing argument to parameter 'item' here
+static void list$1sNodeph_push_back(struct list$1sNodeph* self, struct sNode* item);
                                                                               ^
-code2/HelloWorld2.c.c:2594:111: warning: incompatible integer to pointer conversion passing 'int' to parameter of type 'char *' [-Wint-conversion]
-    xassert("list::insert",strcmp(list$1charph_item(li_133,0,-1),"ABC")==0&&strcmp(list$1charph_item(li_133,1,-1),"GGG")==0&&strcmp(list$1charph_item(li_133,2,-1),"DEF")==0&&strcmp(list$1charph_item(li_133,3,-1),"GHI")==0);
-                                                                                                              ^~
-code2/HelloWorld2.c.c:1000:79: note: passing argument to parameter 'default_value' here
-static char* list$1charph_item(struct list$1charph* self, int position, char* default_value);
-                                                                              ^
-code2/HelloWorld2.c.c:2594:160: warning: incompatible integer to pointer conversion passing 'int' to parameter of type 'char *' [-Wint-conversion]
-    xassert("list::insert",strcmp(list$1charph_item(li_133,0,-1),"ABC")==0&&strcmp(list$1charph_item(li_133,1,-1),"GGG")==0&&strcmp(list$1charph_item(li_133,2,-1),"DEF")==0&&strcmp(list$1charph_item(li_133,3,-1),"GHI")==0);
-                                                                                                                                                               ^~
-code2/HelloWorld2.c.c:1000:79: note: passing argument to parameter 'default_value' here
-static char* list$1charph_item(struct list$1charph* self, int position, char* default_value);
-                                                                              ^
-code2/HelloWorld2.c.c:2594:209: warning: incompatible integer to pointer conversion passing 'int' to parameter of type 'char *' [-Wint-conversion]
-    xassert("list::insert",strcmp(list$1charph_item(li_133,0,-1),"ABC")==0&&strcmp(list$1charph_item(li_133,1,-1),"GGG")==0&&strcmp(list$1charph_item(li_133,2,-1),"DEF")==0&&strcmp(list$1charph_item(li_133,3,-1),"GHI")==0);
-                                                                                                                                                                                                                ^~
-code2/HelloWorld2.c.c:1000:79: note: passing argument to parameter 'default_value' here
-static char* list$1charph_item(struct list$1charph* self, int position, char* default_value);
-                                                                              ^
-code2/HelloWorld2.c.c:2678:48: warning: incompatible function pointer types passing 'void (struct __current_stack4__ *, int, int, _Bool *)' to parameter of type 'void (*)(void *, int, int, _Bool *)' [-Wincompatible-function-pointer-types]
-    list$1int_each(liZ_183,&__current_stack4__,method_block4_code2HelloWorld2c);
-                                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code2/HelloWorld2.c.c:994:73: note: passing argument to parameter 'block' here
-static void list$1int_each(struct list$1int* self, void* parent, void (*block)(void*,int,int,_Bool*));
-                                                                        ^
-code2/HelloWorld2.c.c:2734:24: error: no member named '__list_values1___188' in 'struct __current_stack5__'
-    __current_stack5__.__list_values1___188 = &__list_values1___188;
-    ~~~~~~~~~~~~~~~~~~ ^
-code2/HelloWorld2.c.c:2735:24: error: no member named '__list_values2___190' in 'struct __current_stack5__'
-    __current_stack5__.__list_values2___190 = &__list_values2___190;
-    ~~~~~~~~~~~~~~~~~~ ^
-code2/HelloWorld2.c.c:2736:24: error: no member named '__list_values3___191' in 'struct __current_stack5__'
-    __current_stack5__.__list_values3___191 = &__list_values3___191;
-    ~~~~~~~~~~~~~~~~~~ ^
-code2/HelloWorld2.c.c:2737:282: warning: incompatible function pointer types passing 'void (struct __current_stack5__ *, int, int, _Bool *)' to parameter of type 'void (*)(void *, int, int, _Bool *)' [-Wincompatible-function-pointer-types]
-    list$1int_each(((struct list$1int*)(right_value132=list$1int_initialize_with_values((struct list$1int*)come_increment_ref_count(((struct list$1int*)(right_value131=(struct list$1int*)come_calloc(1, sizeof(struct list$1int)*(1))))),5,__list_values3___191))),&__current_stack5__,method_block5_code2HelloWorld2c);
-                                                                                                                                                                                                                                                                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code2/HelloWorld2.c.c:994:73: note: passing argument to parameter 'block' here
-static void list$1int_each(struct list$1int* self, void* parent, void (*block)(void*,int,int,_Bool*));
-                                                                        ^
-code2/HelloWorld2.c.c:2427:25: warning: expression result unused [-Wunused-value]
-        if(data_105.a) {(char*)come_decrement_ref_count(data_105.a,0,0); }
-                        ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code2/HelloWorld2.c.c:2438:22: warning: expression result unused [-Wunused-value]
-    if(data_107->a) {(char*)come_decrement_ref_count(data_107->a,0,0); }
+18field.c.c:2719:38: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                        _inf_valueX15=(struct sNode*)come_increment_ref_count(((struct sNode*)(right_value176=(struct sNode*)come_calloc(1, sizeof(struct sNode)*(1)))));
+                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2721:47: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+                        result_tupleb2_244->v1=_inf_valueX15;
+                                              ^~~~~~~~~~~~~~
+                                               *
+18field.c.c:2743:147: warning: incompatible function pointer types passing 'void (struct __current_stack5__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+                right_node_245=tuple2$2sNodephbool_catch(((struct tuple2$2sNodephbool*)(right_value177=expression_v13(info))),&__current_stack5__,method_block5_18fieldc);
+                                                                                                                                                  ^~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:1453:103: note: passing argument to parameter 'block' here
+static struct sNode* tuple2$2sNodephbool_catch(struct tuple2$2sNodephbool* self, void* parent, void (*block)(void*));
+                                                                                                      ^
+18field.c.c:2745:30: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                _inf_valueX16=(struct sNode*)come_increment_ref_count(right_node_245);
+                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2748:278: warning: incompatible pointer types passing 'struct sNode **' to parameter of type 'struct sNode *'; dereference with * [-Wincompatible-pointer-types]
+                _inf_obj_value2=((struct sStoreArrayNode*)(right_value179=sStoreArrayNode_initialize((struct sStoreArrayNode*)come_increment_ref_count(((struct sStoreArrayNode*)(right_value178=(struct sStoreArrayNode*)come_calloc(1, sizeof(struct sStoreArrayNode)*(1))))),node,_inf_valueX16,(struct list$1sNodeph*)come_increment_ref_count(array_num_239),info)));
+                                                                                                                                                                                                                                                                                     ^~~~~~~~~~~~~
+                                                                                                                                                                                                                                                                                     *
+18field.c.c:1425:116: note: passing argument to parameter 'right' here
+struct sStoreArrayNode* sStoreArrayNode_initialize(struct sStoreArrayNode* self, struct sNode* left, struct sNode* right, struct list$1sNodeph* array_num, struct sInfo* info);
+                                                                                                                   ^
+18field.c.c:2750:38: warning: incompatible function pointer types assigning to 'void (*)(void *)' from 'void (struct sStoreArrayNode *)' [-Wincompatible-function-pointer-types]
+                _inf_value2->finalize=sStoreArrayNode_finalize;
+                                     ^~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2751:35: warning: incompatible function pointer types assigning to 'void *(*)(void *)' from 'struct sStoreArrayNode *(struct sStoreArrayNode *)' [-Wincompatible-function-pointer-types]
+                _inf_value2->clone=sStoreArrayNode_clone;
+                                  ^~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2752:37: warning: incompatible function pointer types assigning to '_Bool (*)(void *, struct sInfo *)' from '_Bool (struct sStoreArrayNode *, struct sInfo *)' [-Wincompatible-function-pointer-types]
+                _inf_value2->compile=sStoreArrayNode_compile;
+                                    ^~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2753:35: warning: incompatible function pointer types assigning to 'int (*)(void *)' from 'int (struct sStoreArrayNode *, struct sInfo *)' [-Wincompatible-function-pointer-types]
+                _inf_value2->sline=sStoreArrayNode_sline;
+                                  ^~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2754:35: warning: incompatible function pointer types assigning to 'char *(*)(void *)' from 'char *(struct sStoreArrayNode *, struct sInfo *)' [-Wincompatible-function-pointer-types]
+                _inf_value2->sname=sStoreArrayNode_sname;
+                                  ^~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2757:30: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                _inf_valueX19=(struct sNode*)come_increment_ref_count(((struct sNode*)(right_value181=_inf_value2)));
+                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2759:21: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+                node=_inf_valueX19;
+                    ^~~~~~~~~~~~~~
+                     *
+18field.c.c:2769:38: warning: incompatible function pointer types assigning to 'void (*)(void *)' from 'void (struct sLoadArrayNode *)' [-Wincompatible-function-pointer-types]
+                _inf_value3->finalize=sLoadArrayNode_finalize;
+                                     ^~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2770:35: warning: incompatible function pointer types assigning to 'void *(*)(void *)' from 'struct sLoadArrayNode *(struct sLoadArrayNode *)' [-Wincompatible-function-pointer-types]
+                _inf_value3->clone=sLoadArrayNode_clone;
+                                  ^~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2771:37: warning: incompatible function pointer types assigning to '_Bool (*)(void *, struct sInfo *)' from '_Bool (struct sLoadArrayNode *, struct sInfo *)' [-Wincompatible-function-pointer-types]
+                _inf_value3->compile=sLoadArrayNode_compile;
+                                    ^~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2772:35: warning: incompatible function pointer types assigning to 'int (*)(void *)' from 'int (struct sLoadArrayNode *, struct sInfo *)' [-Wincompatible-function-pointer-types]
+                _inf_value3->sline=sLoadArrayNode_sline;
+                                  ^~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2773:35: warning: incompatible function pointer types assigning to 'char *(*)(void *)' from 'char *(struct sLoadArrayNode *, struct sInfo *)' [-Wincompatible-function-pointer-types]
+                _inf_value3->sname=sLoadArrayNode_sname;
+                                  ^~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2776:30: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                _inf_valueX21=(struct sNode*)come_increment_ref_count(((struct sNode*)(right_value185=_inf_value3)));
+                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2778:21: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+                node=_inf_valueX21;
+                    ^~~~~~~~~~~~~~
+                     *
+18field.c.c:2800:146: warning: incompatible function pointer types passing 'void (struct __current_stack6__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+            field_name_248=tuple2$2charphbool_catch(((struct tuple2$2charphbool*)(right_value186=parse_word(info,(_Bool)0))),&__current_stack6__,method_block6_18fieldc);
+                                                                                                                                                 ^~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:1459:93: note: passing argument to parameter 'block' here
+static char* tuple2$2charphbool_catch(struct tuple2$2charphbool* self, void* parent, void (*block)(void*));
+                                                                                            ^
+18field.c.c:2808:147: warning: incompatible function pointer types passing 'void (struct __current_stack7__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+                right_node_249=tuple2$2sNodephbool_catch(((struct tuple2$2sNodephbool*)(right_value187=expression_v13(info))),&__current_stack7__,method_block7_18fieldc);
+                                                                                                                                                  ^~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:1453:103: note: passing argument to parameter 'block' here
+static struct sNode* tuple2$2sNodephbool_catch(struct tuple2$2sNodephbool* self, void* parent, void (*block)(void*));
+                                                                                                      ^
+18field.c.c:2810:30: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                _inf_valueX22=(struct sNode*)come_increment_ref_count(right_node_249);
+                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2813:278: warning: incompatible pointer types passing 'struct sNode **' to parameter of type 'struct sNode *'; dereference with * [-Wincompatible-pointer-types]
+                _inf_obj_value4=((struct sStoreFieldNode*)(right_value189=sStoreFieldNode_initialize((struct sStoreFieldNode*)come_increment_ref_count(((struct sStoreFieldNode*)(right_value188=(struct sStoreFieldNode*)come_calloc(1, sizeof(struct sStoreFieldNode)*(1))))),node,_inf_valueX22,(char*)come_increment_ref_count(field_name_248),info)));
+                                                                                                                                                                                                                                                                                     ^~~~~~~~~~~~~
+                                                                                                                                                                                                                                                                                     *
+18field.c.c:1401:116: note: passing argument to parameter 'right' here
+struct sStoreFieldNode* sStoreFieldNode_initialize(struct sStoreFieldNode* self, struct sNode* left, struct sNode* right, char* name, struct sInfo* info);
+                                                                                                                   ^
+18field.c.c:2815:38: warning: incompatible function pointer types assigning to 'void (*)(void *)' from 'void (struct sStoreFieldNode *)' [-Wincompatible-function-pointer-types]
+                _inf_value4->finalize=sStoreFieldNode_finalize;
+                                     ^~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2816:35: warning: incompatible function pointer types assigning to 'void *(*)(void *)' from 'struct sStoreFieldNode *(struct sStoreFieldNode *)' [-Wincompatible-function-pointer-types]
+                _inf_value4->clone=sStoreFieldNode_clone;
+                                  ^~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2817:37: warning: incompatible function pointer types assigning to '_Bool (*)(void *, struct sInfo *)' from '_Bool (struct sStoreFieldNode *, struct sInfo *)' [-Wincompatible-function-pointer-types]
+                _inf_value4->compile=sStoreFieldNode_compile;
+                                    ^~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2818:35: warning: incompatible function pointer types assigning to 'int (*)(void *)' from 'int (struct sStoreFieldNode *, struct sInfo *)' [-Wincompatible-function-pointer-types]
+                _inf_value4->sline=sStoreFieldNode_sline;
+                                  ^~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2819:35: warning: incompatible function pointer types assigning to 'char *(*)(void *)' from 'char *(struct sStoreFieldNode *, struct sInfo *)' [-Wincompatible-function-pointer-types]
+                _inf_value4->sname=sStoreFieldNode_sname;
+                                  ^~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2822:30: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                _inf_valueX25=(struct sNode*)come_increment_ref_count(((struct sNode*)(right_value191=_inf_value4)));
+                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2824:21: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+                node=_inf_valueX25;
+                    ^~~~~~~~~~~~~~
+                     *
+18field.c.c:2831:30: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                _inf_valueX26=(struct sNode*)come_increment_ref_count(node);
+                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2836:116: warning: incompatible pointer types passing 'struct sNode **' to parameter of type 'struct sNode *'; dereference with * [-Wincompatible-pointer-types]
+                node=tuple2$2sNodephbool_catch(((struct tuple2$2sNodephbool*)(right_value192=parse_method_call_v20(_inf_valueX26,(char*)come_increment_ref_count(field_name_248),info))),&__current_stack8__,method_block8_18fieldc);
+                                                                                                                   ^~~~~~~~~~~~~
+                                                                                                                   *
+18field.c.c:1362:65: note: passing argument to parameter 'obj' here
+struct tuple2$2sNodephbool* parse_method_call_v20(struct sNode* obj, char* fun_name, struct sInfo* info);
+                                                                ^
+18field.c.c:2836:206: warning: incompatible function pointer types passing 'void (struct __current_stack8__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+                node=tuple2$2sNodephbool_catch(((struct tuple2$2sNodephbool*)(right_value192=parse_method_call_v20(_inf_valueX26,(char*)come_increment_ref_count(field_name_248),info))),&__current_stack8__,method_block8_18fieldc);
+                                                                                                                                                                                                             ^~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:1453:103: note: passing argument to parameter 'block' here
+static struct sNode* tuple2$2sNodephbool_catch(struct tuple2$2sNodephbool* self, void* parent, void (*block)(void*));
+                                                                                                      ^
+18field.c.c:2843:38: warning: incompatible function pointer types assigning to 'void (*)(void *)' from 'void (struct sLoadFieldNode *)' [-Wincompatible-function-pointer-types]
+                _inf_value5->finalize=sLoadFieldNode_finalize;
+                                     ^~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2844:35: warning: incompatible function pointer types assigning to 'void *(*)(void *)' from 'struct sLoadFieldNode *(struct sLoadFieldNode *)' [-Wincompatible-function-pointer-types]
+                _inf_value5->clone=sLoadFieldNode_clone;
+                                  ^~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2845:37: warning: incompatible function pointer types assigning to '_Bool (*)(void *, struct sInfo *)' from '_Bool (struct sLoadFieldNode *, struct sInfo *)' [-Wincompatible-function-pointer-types]
+                _inf_value5->compile=sLoadFieldNode_compile;
+                                    ^~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2846:35: warning: incompatible function pointer types assigning to 'int (*)(void *)' from 'int (struct sLoadFieldNode *, struct sInfo *)' [-Wincompatible-function-pointer-types]
+                _inf_value5->sline=sLoadFieldNode_sline;
+                                  ^~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2847:35: warning: incompatible function pointer types assigning to 'char *(*)(void *)' from 'char *(struct sLoadFieldNode *, struct sInfo *)' [-Wincompatible-function-pointer-types]
+                _inf_value5->sname=sLoadFieldNode_sname;
+                                  ^~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2850:30: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                _inf_valueX28=(struct sNode*)come_increment_ref_count(((struct sNode*)(right_value196=_inf_value5)));
+                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2852:21: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+                node=_inf_valueX28;
+                    ^~~~~~~~~~~~~~
+                     *
+18field.c.c:2860:26: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+            _inf_valueX29=(struct sNode*)come_increment_ref_count(node);
+                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2864:123: warning: incompatible pointer types passing 'struct sNode **' to parameter of type 'struct sNode *'; dereference with * [-Wincompatible-pointer-types]
+            node2_252=tuple2$2sNodephbool_catch(((struct tuple2$2sNodephbool*)(right_value197=post_position_operator2_v19(_inf_valueX29,info))),&__current_stack9__,method_block9_18fieldc);
+                                                                                                                          ^~~~~~~~~~~~~
+                                                                                                                          *
+18field.c.c:1360:71: note: passing argument to parameter 'node' here
+struct tuple2$2sNodephbool* post_position_operator2_v19(struct sNode* node, struct sInfo* info);
+                                                                      ^
+18field.c.c:2864:165: warning: incompatible function pointer types passing 'void (struct __current_stack9__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+            node2_252=tuple2$2sNodephbool_catch(((struct tuple2$2sNodephbool*)(right_value197=post_position_operator2_v19(_inf_valueX29,info))),&__current_stack9__,method_block9_18fieldc);
+                                                                                                                                                                    ^~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:1453:103: note: passing argument to parameter 'block' here
+static struct sNode* tuple2$2sNodephbool_catch(struct tuple2$2sNodephbool* self, void* parent, void (*block)(void*));
+                                                                                                      ^
+18field.c.c:2870:26: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+            _inf_valueX30=(struct sNode*)come_increment_ref_count(node2_252);
+                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2872:17: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+            node=_inf_valueX30;
+                ^~~~~~~~~~~~~~
+                 *
+18field.c.c:2880:18: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+    _inf_valueX31=(struct sNode*)come_increment_ref_count(node);
+                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2882:27: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+    result_tuplea3_253->v1=_inf_valueX31;
+                          ^~~~~~~~~~~~~~
+                           *
+18field.c.c:2718:53: warning: left operand of comma operator has no effect [-Wunused-value]
+                        if(result_tupleb2_244->v1) {(struct sNode*)come_decrement_ref_count(result_tupleb2_244->v1,0,0), come_decrement_ref_count(((struct sNode*)result_tupleb2_244->v1)->_protocol_obj,0,0); }
+                                                    ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2756:27: warning: left operand of comma operator has no effect [-Wunused-value]
+                if(node) {(struct sNode*)come_decrement_ref_count(node,0,0), come_decrement_ref_count(((struct sNode*)node)->_protocol_obj,0,0); }
+                          ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2775:27: warning: left operand of comma operator has no effect [-Wunused-value]
+                if(node) {(struct sNode*)come_decrement_ref_count(node,0,0), come_decrement_ref_count(((struct sNode*)node)->_protocol_obj,0,0); }
+                          ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2821:27: warning: left operand of comma operator has no effect [-Wunused-value]
+                if(node) {(struct sNode*)come_decrement_ref_count(node,0,0), come_decrement_ref_count(((struct sNode*)node)->_protocol_obj,0,0); }
+                          ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2849:27: warning: left operand of comma operator has no effect [-Wunused-value]
+                if(node) {(struct sNode*)come_decrement_ref_count(node,0,0), come_decrement_ref_count(((struct sNode*)node)->_protocol_obj,0,0); }
+                          ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2869:23: warning: left operand of comma operator has no effect [-Wunused-value]
+            if(node) {(struct sNode*)come_decrement_ref_count(node,0,0), come_decrement_ref_count(((struct sNode*)node)->_protocol_obj,0,0); }
+                      ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2879:33: warning: left operand of comma operator has no effect [-Wunused-value]
+    if(result_tuplea3_253->v1) {(struct sNode*)come_decrement_ref_count(result_tuplea3_253->v1,0,0), come_decrement_ref_count(((struct sNode*)result_tuplea3_253->v1)->_protocol_obj,0,0); }
+                                ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2919:18: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+    _inf_valueX10=(struct sNode*)come_increment_ref_count(((struct sNode*)(right_value167=(struct sNode*)come_calloc(1, sizeof(struct sNode)*(1)))));
+                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:2921:27: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+    result_tupleb1_237->v1=_inf_valueX10;
+                          ^~~~~~~~~~~~~~
+                           *
+18field.c.c:2918:33: warning: left operand of comma operator has no effect [-Wunused-value]
+    if(result_tupleb1_237->v1) {(struct sNode*)come_decrement_ref_count(result_tupleb1_237->v1,0,0), come_decrement_ref_count(((struct sNode*)result_tupleb1_237->v1)->_protocol_obj,0,0); }
+                                ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3020:161: warning: incompatible function pointer types passing 'void (struct __current_stack1__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+        obj_type_116=tuple2$2sTypephbool_catch(((struct tuple2$2sTypephbool*)(right_value83=solve_generics(type,info->generics_type,info))),&__current_stack1__,method_block1_18fieldc);
+                                                                                                                                                                ^~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:1389:103: note: passing argument to parameter 'block' here
+static struct sType* tuple2$2sTypephbool_catch(struct tuple2$2sTypephbool* self, void* parent, void (*block)(void*));
+                                                                                                      ^
+18field.c.c:3022:28: warning: expression result unused [-Wunused-value]
+        if(fun_name2_113) {(char*)come_decrement_ref_count(fun_name2_113,0,0); }
+                           ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3041:28: warning: expression result unused [-Wunused-value]
+        if(fun_name2_113) {(char*)come_decrement_ref_count(fun_name2_113,0,0); }
+                           ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3053:36: warning: expression result unused [-Wunused-value]
+                if(fun_name2_113) {(char*)come_decrement_ref_count(fun_name2_113,0,0); }
+                                   ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3069:38: warning: expression result unused [-Wunused-value]
+            if(left_value->c_value) {(char*)come_decrement_ref_count(left_value->c_value,0,0); }
+                                     ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3072:34: warning: expression result unused [-Wunused-value]
+            if(left_value2_128) {(char*)come_decrement_ref_count(left_value2_128,0,0); }
+                                 ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3077:34: warning: expression result unused [-Wunused-value]
+            if(left_value2_128) {(char*)come_decrement_ref_count(left_value2_128,0,0); }
+                                 ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3081:40: warning: expression result unused [-Wunused-value]
+            if(middle_value->c_value) {(char*)come_decrement_ref_count(middle_value->c_value,0,0); }
+                                       ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3084:36: warning: expression result unused [-Wunused-value]
+            if(middle_value2_132) {(char*)come_decrement_ref_count(middle_value2_132,0,0); }
+                                   ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3089:36: warning: expression result unused [-Wunused-value]
+            if(middle_value2_132) {(char*)come_decrement_ref_count(middle_value2_132,0,0); }
+                                   ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3093:39: warning: expression result unused [-Wunused-value]
+            if(right_value->c_value) {(char*)come_decrement_ref_count(right_value->c_value,0,0); }
+                                      ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3096:35: warning: expression result unused [-Wunused-value]
+            if(right_value2_133) {(char*)come_decrement_ref_count(right_value2_133,0,0); }
+                                  ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3101:35: warning: expression result unused [-Wunused-value]
+            if(right_value2_133) {(char*)come_decrement_ref_count(right_value2_133,0,0); }
+                                  ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3104:38: warning: expression result unused [-Wunused-value]
+        if(come_value_127->c_value) {(char*)come_decrement_ref_count(come_value_127->c_value,0,0); }
+                                     ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3109:42: warning: expression result unused [-Wunused-value]
+            if(come_value_127->c_value) {(char*)come_decrement_ref_count(come_value_127->c_value,0,0); }
+                                         ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3113:35: warning: expression result unused [-Wunused-value]
+        if(come_value_127->type) {(struct sType*)come_decrement_ref_count(come_value_127->type,0,0); }
+                                  ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3138:51: warning: expression result unused [-Wunused-value]
+            if(result_91->mNoSolvedGenericsType) {(struct tuple1$1sTypeph*)come_decrement_ref_count(result_91->mNoSolvedGenericsType,0,0); }
+                                                  ^                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3142:43: warning: expression result unused [-Wunused-value]
+            if(result_91->mGenericsName) {(char*)come_decrement_ref_count(result_91->mGenericsName,0,0); }
+                                          ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3146:44: warning: expression result unused [-Wunused-value]
+            if(result_91->mGenericsTypes) {(struct list$1sTypeph*)come_decrement_ref_count(result_91->mGenericsTypes,0,0); }
+                                           ^                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3150:39: warning: expression result unused [-Wunused-value]
+            if(result_91->mArrayNum) {(struct list$1sNodeph*)come_decrement_ref_count(result_91->mArrayNum,0,0); }
+                                      ^                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3154:41: warning: expression result unused [-Wunused-value]
+            if(result_91->mParamTypes) {(struct list$1sTypeph*)come_decrement_ref_count(result_91->mParamTypes,0,0); }
+                                        ^                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3158:41: warning: expression result unused [-Wunused-value]
+            if(result_91->mParamNames) {(struct list$1charph*)come_decrement_ref_count(result_91->mParamNames,0,0); }
+                                        ^                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3162:41: warning: expression result unused [-Wunused-value]
+            if(result_91->mResultType) {(struct tuple1$1sTypeph*)come_decrement_ref_count(result_91->mResultType,0,0); }
+                                        ^                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3166:47: warning: expression result unused [-Wunused-value]
+            if(result_91->mOriginalTypeName) {(char*)come_decrement_ref_count(result_91->mOriginalTypeName,0,0); }
+                                              ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3247:40: warning: expression result unused [-Wunused-value]
+                    if(result_96->v1) {(struct sType*)come_decrement_ref_count(result_96->v1,0,0); }
+                                       ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3301:49: warning: expression result unused [-Wunused-value]
+                            if(litem_99->item) {(struct sType*)come_decrement_ref_count(litem_99->item,0,0); }
+                                                ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3310:50: warning: expression result unused [-Wunused-value]
+                            if(litem_100->item) {(struct sType*)come_decrement_ref_count(litem_100->item,0,0); }
+                                                 ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3319:50: warning: expression result unused [-Wunused-value]
+                            if(litem_101->item) {(struct sType*)come_decrement_ref_count(litem_101->item,0,0); }
+                                                 ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3344:33: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                    _inf_valueX4=(struct sNode*)come_increment_ref_count(come_memdup(it_103->item));
+                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3346:57: warning: incompatible pointer types passing 'struct sNode **' to parameter of type 'struct sNode *'; dereference with * [-Wincompatible-pointer-types]
+                    list$1sNodeph_push_back2(result_102,_inf_valueX4);
+                                                        ^~~~~~~~~~~~
+                                                        *
+18field.c.c:1385:80: note: passing argument to parameter 'item' here
+static void list$1sNodeph_push_back2(struct list$1sNodeph* self, struct sNode* item);
+                                                                               ^
+18field.c.c:3381:41: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                            _inf_valueX1=(struct sNode*)come_increment_ref_count(item);
+                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3383:44: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+                            litem_104->item=_inf_valueX1;
+                                           ^~~~~~~~~~~~~
+                                            *
+18field.c.c:3392:41: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                            _inf_valueX2=(struct sNode*)come_increment_ref_count(item);
+                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3394:44: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+                            litem_105->item=_inf_valueX2;
+                                           ^~~~~~~~~~~~~
+                                            *
+18field.c.c:3403:41: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                            _inf_valueX3=(struct sNode*)come_increment_ref_count(item);
+                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3405:44: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+                            litem_106->item=_inf_valueX3;
+                                           ^~~~~~~~~~~~~
+                                            *
+18field.c.c:3380:50: warning: left operand of comma operator has no effect [-Wunused-value]
+                            if(litem_104->item) {(struct sNode*)come_decrement_ref_count(litem_104->item,0,0), come_decrement_ref_count(((struct sNode*)litem_104->item)->_protocol_obj,0,0); }
+                                                 ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3391:50: warning: left operand of comma operator has no effect [-Wunused-value]
+                            if(litem_105->item) {(struct sNode*)come_decrement_ref_count(litem_105->item,0,0), come_decrement_ref_count(((struct sNode*)litem_105->item)->_protocol_obj,0,0); }
+                                                 ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3402:50: warning: left operand of comma operator has no effect [-Wunused-value]
+                            if(litem_106->item) {(struct sNode*)come_decrement_ref_count(litem_106->item,0,0), come_decrement_ref_count(((struct sNode*)litem_106->item)->_protocol_obj,0,0); }
+                                                 ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3451:50: warning: expression result unused [-Wunused-value]
+                            if(litem_109->item) {(char*)come_decrement_ref_count(litem_109->item,0,0); }
+                                                 ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3460:50: warning: expression result unused [-Wunused-value]
+                            if(litem_110->item) {(char*)come_decrement_ref_count(litem_110->item,0,0); }
+                                                 ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3469:50: warning: expression result unused [-Wunused-value]
+                            if(litem_111->item) {(char*)come_decrement_ref_count(litem_111->item,0,0); }
+                                                 ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3669:38: warning: expression result unused [-Wunused-value]
+                if(litem_135->item) {(struct CVALUE*)come_decrement_ref_count(litem_135->item,0,0); }
+                                     ^               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3678:38: warning: expression result unused [-Wunused-value]
+                if(litem_136->item) {(struct CVALUE*)come_decrement_ref_count(litem_136->item,0,0); }
+                                     ^               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3687:38: warning: expression result unused [-Wunused-value]
+                if(litem_137->item) {(struct CVALUE*)come_decrement_ref_count(litem_137->item,0,0); }
+                                     ^               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3706:17: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+    _inf_valueX5=(struct sNode*)come_increment_ref_count(come_memdup(right));
+                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3708:17: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+    self->mRight=_inf_valueX5;
+                ^~~~~~~~~~~~~
+                 *
+18field.c.c:3701:22: warning: expression result unused [-Wunused-value]
+    if(self->sname) {(char*)come_decrement_ref_count(self->sname,0,0); }
                      ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code2/HelloWorld2.c.c:2441:6: warning: expression result unused [-Wunused-value]
-    ((int*)(right_value72=funHeap(7,7)));
-     ^     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code2/HelloWorld2.c.c:2457:6: warning: expression result unused [-Wunused-value]
-    ((int*)(right_value78=(int*)come_calloc(1, sizeof(int)*(1))));
-     ^     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code2/HelloWorld2.c.c:2628:20: warning: expression result unused [-Wunused-value]
-    if(axyzX_181) {(int*)come_decrement_ref_count(axyzX_181,0,0); }
-                   ^     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code2/HelloWorld2.c.c:2631:20: warning: expression result unused [-Wunused-value]
-    if(axyzX_181) {(int*)come_decrement_ref_count(axyzX_181,0,0); }
-                   ^     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code2/HelloWorld2.c.c:3061:34: warning: expression result unused [-Wunused-value]
-            if(litem_145->item) {(char*)come_decrement_ref_count(litem_145->item,0,0); }
-                                 ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code2/HelloWorld2.c.c:3071:34: warning: expression result unused [-Wunused-value]
-            if(litem_146->item) {(char*)come_decrement_ref_count(litem_146->item,0,0); }
-                                 ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code2/HelloWorld2.c.c:3085:42: warning: expression result unused [-Wunused-value]
-                    if(litem_149->item) {(char*)come_decrement_ref_count(litem_149->item,0,0); }
-                                         ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code2/HelloWorld2.c.c:3307:35: warning: expression result unused [-Wunused-value]
-                if(it_169->item) {(char*)come_decrement_ref_count(it_169->item,0,0); }
-                                  ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code2/HelloWorld2.c.c:3468:19: warning: incompatible pointer types assigning to 'char **' from 'char ***'; dereference with * [-Wincompatible-pointer-types]
-        self->keys=((char***)(right_value133=(char***)come_calloc(1, sizeof(char**)*(1*(128)))));
-                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                   *(                                                                           )
-code2/HelloWorld2.c.c:3469:20: warning: incompatible pointer types assigning to 'int *' from 'int **'; dereference with * [-Wincompatible-pointer-types]
-        self->items=((int**)(right_value134=(int**)come_calloc(1, sizeof(int*)*(1*(128)))));
-                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                    *(                                                                     )
-code2/HelloWorld2.c.c:3470:29: warning: incompatible pointer types assigning to '_Bool *' from '_Bool **'; dereference with * [-Wincompatible-pointer-types]
-        self->item_existance=((_Bool**)(right_value135=(_Bool**)come_calloc(1, sizeof(_Bool*)*(1*(128)))));
-                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                             *(                                                                           )
-code2/HelloWorld2.c.c:3481:29: warning: expression result unused [-Wunused-value]
-        if(self->key_list) {(struct list$1charp*)come_decrement_ref_count(self->key_list,0,0); }
-                            ^                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code2/HelloWorld2.c.c:3537:40: warning: incompatible pointer to integer conversion passing 'char *' to parameter of type 'char'; dereference with * [-Wint-conversion]
-                        if(char_equals(self->keys[it_214],key)) {
-                                       ^~~~~~~~~~~~~~~~~~
-                                       *
-code2/HelloWorld2.c.c:1107:38: note: passing argument to parameter 'self' here
-static inline _Bool char_equals(char self, char right){
-                                     ^
-code2/HelloWorld2.c.c:3537:59: warning: incompatible pointer to integer conversion passing 'char *' to parameter of type 'char'; dereference with * [-Wint-conversion]
-                        if(char_equals(self->keys[it_214],key)) {
-                                                          ^~~
-                                                          *
-code2/HelloWorld2.c.c:1107:49: note: passing argument to parameter 'right' here
-static inline _Bool char_equals(char self, char right){
-                                                ^
-code2/HelloWorld2.c.c:3585:23: warning: incompatible pointer to integer conversion assigning to 'int' from 'char *' [-Wint-conversion]
-                it_214=list$1charp_next(self->key_list)
-                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code2/HelloWorld2.c.c:3587:36: warning: incompatible pointer to integer conversion passing 'char *' to parameter of type 'char'; dereference with * [-Wint-conversion]
-                    if(char_equals(it2_217,key)) {
-                                   ^~~~~~~
-                                   *
-code2/HelloWorld2.c.c:1107:38: note: passing argument to parameter 'self' here
-static inline _Bool char_equals(char self, char right){
-                                     ^
-code2/HelloWorld2.c.c:3587:44: warning: incompatible pointer to integer conversion passing 'char *' to parameter of type 'char'; dereference with * [-Wint-conversion]
-                    if(char_equals(it2_217,key)) {
-                                           ^~~
+18field.c.c:3705:23: warning: left operand of comma operator has no effect [-Wunused-value]
+    if(self->mRight) {(struct sNode*)come_decrement_ref_count(self->mRight,0,0), come_decrement_ref_count(((struct sNode*)self->mRight)->_protocol_obj,0,0); }
+                      ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3709:22: warning: expression result unused [-Wunused-value]
+    if(self->mName) {(char*)come_decrement_ref_count(self->mName,0,0); }
+                     ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3825:163: warning: incompatible function pointer types passing 'void (struct __current_stack2__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+    left_type2_145=tuple2$2sTypephbool_catch(((struct tuple2$2sTypephbool*)(right_value107=solve_generics(left_type_144,left_type_144,info))),&__current_stack2__,method_block2_18fieldc);
+                                                                                                                                                                  ^~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3483:103: note: passing argument to parameter 'block' here
+static struct sType* tuple2$2sTypephbool_catch(struct tuple2$2sTypephbool* self, void* parent, void (*block)(void*)){
+                                                                                                      ^
+18field.c.c:3844:14: error: cannot increment value of type 'char *(const char *, int)'
+        index++;
+        ~~~~~^
+18field.c.c:3848:13: warning: comparison between pointer and integer ('char *(*)(const char *, int)' and 'int') [-Wpointer-integer-compare]
+    if(index==list$1tuple2$2charphsTypephph_length(klass_146->mFields)) {
+       ~~~~~^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3840:33: warning: expression result unused [-Wunused-value]
+            if(field_type_152) {(struct sType*)come_decrement_ref_count(field_type_152,0,0); }
+                                ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3860:43: warning: expression result unused [-Wunused-value]
+            if(right_value_142->c_value) {(char*)come_decrement_ref_count(right_value_142->c_value,0,0); }
+                                          ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3863:42: warning: expression result unused [-Wunused-value]
+            if(come_value_159->c_value) {(char*)come_decrement_ref_count(come_value_159->c_value,0,0); }
+                                         ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3872:43: warning: expression result unused [-Wunused-value]
+            if(right_value_142->c_value) {(char*)come_decrement_ref_count(right_value_142->c_value,0,0); }
+                                          ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3875:42: warning: expression result unused [-Wunused-value]
+            if(come_value_159->c_value) {(char*)come_decrement_ref_count(come_value_159->c_value,0,0); }
+                                         ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3892:42: warning: expression result unused [-Wunused-value]
+            if(come_value_159->c_value) {(char*)come_decrement_ref_count(come_value_159->c_value,0,0); }
+                                         ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3897:42: warning: expression result unused [-Wunused-value]
+            if(come_value_159->c_value) {(char*)come_decrement_ref_count(come_value_159->c_value,0,0); }
+                                         ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3907:31: warning: expression result unused [-Wunused-value]
+    if(come_value_159->type) {(struct sType*)come_decrement_ref_count(come_value_159->type,0,0); }
+                              ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4060:38: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                        _inf_valueX23=(struct sNode*)come_increment_ref_count(come_memdup(self->mLeft));
+                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4062:42: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+                        result_250->mLeft=_inf_valueX23;
+                                         ^~~~~~~~~~~~~~
+                                          *
+18field.c.c:4066:38: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                        _inf_valueX24=(struct sNode*)come_increment_ref_count(come_memdup(self->mRight));
+                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4068:43: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+                        result_250->mRight=_inf_valueX24;
+                                          ^~~~~~~~~~~~~~
                                            *
-code2/HelloWorld2.c.c:1107:49: note: passing argument to parameter 'right' here
-static inline _Bool char_equals(char self, char right){
-                                                ^
-code2/HelloWorld2.c.c:3621:33: warning: incompatible pointer types assigning to 'char **' from 'char ***'; dereference with * [-Wincompatible-pointer-types]
-                        keys_199=((char***)(right_value138=(char***)come_calloc(1, sizeof(char**)*(1*(size_198)))));
-                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                                 *(                                                                                )
-code2/HelloWorld2.c.c:3622:34: warning: incompatible pointer types assigning to 'int *' from 'int **'; dereference with * [-Wincompatible-pointer-types]
-                        items_200=((int**)(right_value139=(int**)come_calloc(1, sizeof(int*)*(1*(size_198)))));
-                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                                  *(                                                                          )
-code2/HelloWorld2.c.c:3623:43: warning: incompatible pointer types assigning to '_Bool *' from '_Bool **'; dereference with * [-Wincompatible-pointer-types]
-                        item_existance_201=((_Bool**)(right_value140=(_Bool**)come_calloc(1, sizeof(_Bool*)*(1*(size_198)))));
-                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                                           *(                                                                                )
-code2/HelloWorld2.c.c:3701:56: warning: incompatible pointer to integer conversion passing 'char *' to parameter of type 'char'; dereference with * [-Wint-conversion]
-                                        if(char_equals(self->keys[it_208],key)) {
-                                                       ^~~~~~~~~~~~~~~~~~
-                                                       *
-code2/HelloWorld2.c.c:1107:38: note: passing argument to parameter 'self' here
-static inline _Bool char_equals(char self, char right){
-                                     ^
-code2/HelloWorld2.c.c:3701:75: warning: incompatible pointer to integer conversion passing 'char *' to parameter of type 'char'; dereference with * [-Wint-conversion]
-                                        if(char_equals(self->keys[it_208],key)) {
-                                                                          ^~~
-                                                                          *
-code2/HelloWorld2.c.c:1107:49: note: passing argument to parameter 'right' here
-static inline _Bool char_equals(char self, char right){
-                                                ^
-code2/HelloWorld2.c.c:3853:32: warning: incompatible pointer to integer conversion passing 'char *' to parameter of type 'char'; dereference with * [-Wint-conversion]
-                if(char_equals(it_228,it2_232)) {
-                               ^~~~~~
-                               *
-code2/HelloWorld2.c.c:1107:38: note: passing argument to parameter 'self' here
-static inline _Bool char_equals(char self, char right){
-                                     ^
-code2/HelloWorld2.c.c:3853:39: warning: incompatible pointer to integer conversion passing 'char *' to parameter of type 'char'; dereference with * [-Wint-conversion]
-                if(char_equals(it_228,it2_232)) {
-                                      ^~~~~~~
-                                      *
-code2/HelloWorld2.c.c:1107:49: note: passing argument to parameter 'right' here
-static inline _Bool char_equals(char self, char right){
-                                                ^
-code2/HelloWorld2.c.c:3935:23: warning: incompatible pointer types assigning to 'char **' from 'char ***'; dereference with * [-Wincompatible-pointer-types]
-            self->keys=((char***)(right_value151=(char***)come_calloc(1, sizeof(char**)*(1*(128)))));
-                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                       *(                                                                           )
-code2/HelloWorld2.c.c:3936:24: warning: incompatible pointer types assigning to 'int *' from 'int **'; dereference with * [-Wincompatible-pointer-types]
-            self->items=((int**)(right_value152=(int**)come_calloc(1, sizeof(int*)*(1*(128)))));
-                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                        *(                                                                     )
-code2/HelloWorld2.c.c:3937:33: warning: incompatible pointer types assigning to '_Bool *' from '_Bool **'; dereference with * [-Wincompatible-pointer-types]
-            self->item_existance=((_Bool**)(right_value153=(_Bool**)come_calloc(1, sizeof(_Bool*)*(1*(128)))));
-                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                                 *(                                                                           )
-code2/HelloWorld2.c.c:3947:33: warning: expression result unused [-Wunused-value]
-            if(self->key_list) {(struct list$1charp*)come_decrement_ref_count(self->key_list,0,0); }
-                                ^                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code2/HelloWorld2.c.c:3972:40: warning: incompatible pointer to integer conversion passing 'char *' to parameter of type 'char'; dereference with * [-Wint-conversion]
-                        if(char_equals(self->keys[it_246],key)) {
-                                       ^~~~~~~~~~~~~~~~~~
-                                       *
-code2/HelloWorld2.c.c:1107:38: note: passing argument to parameter 'self' here
-static inline _Bool char_equals(char self, char right){
-                                     ^
-code2/HelloWorld2.c.c:3972:59: warning: incompatible pointer to integer conversion passing 'char *' to parameter of type 'char'; dereference with * [-Wint-conversion]
-                        if(char_equals(self->keys[it_246],key)) {
-                                                          ^~~
-                                                          *
-code2/HelloWorld2.c.c:1107:49: note: passing argument to parameter 'right' here
-static inline _Bool char_equals(char self, char right){
-                                                ^
-code2/HelloWorld2.c.c:4020:23: warning: incompatible pointer to integer conversion assigning to 'int' from 'char *' [-Wint-conversion]
-                it_246=list$1charp_next(self->key_list)
-                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code2/HelloWorld2.c.c:4022:36: warning: incompatible pointer to integer conversion passing 'char *' to parameter of type 'char'; dereference with * [-Wint-conversion]
-                    if(char_equals(it2_248,key)) {
-                                   ^~~~~~~
-                                   *
-code2/HelloWorld2.c.c:1107:38: note: passing argument to parameter 'self' here
-static inline _Bool char_equals(char self, char right){
-                                     ^
-code2/HelloWorld2.c.c:4022:44: warning: incompatible pointer to integer conversion passing 'char *' to parameter of type 'char'; dereference with * [-Wint-conversion]
-                    if(char_equals(it2_248,key)) {
-                                           ^~~
+18field.c.c:4059:48: warning: left operand of comma operator has no effect [-Wunused-value]
+                        if(result_250->mLeft) {(struct sNode*)come_decrement_ref_count(result_250->mLeft,0,0), come_decrement_ref_count(((struct sNode*)result_250->mLeft)->_protocol_obj,0,0); }
+                                               ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4065:49: warning: left operand of comma operator has no effect [-Wunused-value]
+                        if(result_250->mRight) {(struct sNode*)come_decrement_ref_count(result_250->mRight,0,0), come_decrement_ref_count(((struct sNode*)result_250->mRight)->_protocol_obj,0,0); }
+                                                ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4071:48: warning: expression result unused [-Wunused-value]
+                        if(result_250->mName) {(char*)come_decrement_ref_count(result_250->mName,0,0); }
+                                               ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4075:48: warning: expression result unused [-Wunused-value]
+                        if(result_250->sname) {(char*)come_decrement_ref_count(result_250->sname,0,0); }
+                                               ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4087:22: warning: expression result unused [-Wunused-value]
+    if(self->sname) {(char*)come_decrement_ref_count(self->sname,0,0); }
+                     ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4091:22: warning: expression result unused [-Wunused-value]
+    if(self->mName) {(char*)come_decrement_ref_count(self->mName,0,0); }
+                     ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4172:163: warning: incompatible function pointer types passing 'void (struct __current_stack3__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+    left_type2_168=tuple2$2sTypephbool_catch(((struct tuple2$2sTypephbool*)(right_value126=solve_generics(left_type_167,left_type_167,info))),&__current_stack3__,method_block3_18fieldc);
+                                                                                                                                                                  ^~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:3483:103: note: passing argument to parameter 'block' here
+static struct sType* tuple2$2sTypephbool_catch(struct tuple2$2sTypephbool* self, void* parent, void (*block)(void*)){
+                                                                                                      ^
+18field.c.c:4191:14: error: cannot increment value of type 'char *(const char *, int)'
+        index++;
+        ~~~~~^
+18field.c.c:4195:13: warning: comparison between pointer and integer ('char *(*)(const char *, int)' and 'int') [-Wpointer-integer-compare]
+    if(index==list$1tuple2$2charphsTypephph_length(klass_169->mFields)) {
+       ~~~~~^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4187:33: warning: expression result unused [-Wunused-value]
+            if(field_type_170) {(struct sType*)come_decrement_ref_count(field_type_170,0,0); }
+                                ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4205:38: warning: expression result unused [-Wunused-value]
+        if(come_value_176->c_value) {(char*)come_decrement_ref_count(come_value_176->c_value,0,0); }
+                                     ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4210:38: warning: expression result unused [-Wunused-value]
+        if(come_value_176->c_value) {(char*)come_decrement_ref_count(come_value_176->c_value,0,0); }
+                                     ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4214:31: warning: expression result unused [-Wunused-value]
+    if(come_value_176->type) {(struct sType*)come_decrement_ref_count(come_value_176->type,0,0); }
+                              ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4252:17: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+    _inf_valueX9=(struct sNode*)come_increment_ref_count(come_memdup(right));
+                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4254:17: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+    self->mRight=_inf_valueX9;
+                ^~~~~~~~~~~~~
+                 *
+18field.c.c:4247:22: warning: expression result unused [-Wunused-value]
+    if(self->sname) {(char*)come_decrement_ref_count(self->sname,0,0); }
+                     ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4251:23: warning: left operand of comma operator has no effect [-Wunused-value]
+    if(self->mRight) {(struct sNode*)come_decrement_ref_count(self->mRight,0,0), come_decrement_ref_count(((struct sNode*)self->mRight)->_protocol_obj,0,0); }
+                      ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4255:26: warning: expression result unused [-Wunused-value]
+    if(self->mArrayNum) {(struct list$1sNodeph*)come_decrement_ref_count(self->mArrayNum,0,0); }
+                         ^                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4406:47: warning: expression result unused [-Wunused-value]
+                if(right_value_189->c_value) {(char*)come_decrement_ref_count(right_value_189->c_value,0,0); }
+                                              ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4409:46: warning: expression result unused [-Wunused-value]
+                if(come_value_198->c_value) {(char*)come_decrement_ref_count(come_value_198->c_value,0,0); }
+                                             ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4415:47: warning: expression result unused [-Wunused-value]
+                if(right_value_189->c_value) {(char*)come_decrement_ref_count(right_value_189->c_value,0,0); }
+                                              ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4418:46: warning: expression result unused [-Wunused-value]
+                if(come_value_198->c_value) {(char*)come_decrement_ref_count(come_value_198->c_value,0,0); }
+                                             ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4437:46: warning: expression result unused [-Wunused-value]
+                if(come_value_198->c_value) {(char*)come_decrement_ref_count(come_value_198->c_value,0,0); }
+                                             ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4442:46: warning: expression result unused [-Wunused-value]
+                if(come_value_198->c_value) {(char*)come_decrement_ref_count(come_value_198->c_value,0,0); }
+                                             ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4456:41: warning: expression result unused [-Wunused-value]
+        if(result_type_205->mArrayNum) {(struct list$1sNodeph*)come_decrement_ref_count(result_type_205->mArrayNum,0,0); }
+                                        ^                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4459:35: warning: expression result unused [-Wunused-value]
+        if(come_value_198->type) {(struct sType*)come_decrement_ref_count(come_value_198->type,0,0); }
+                                  ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4611:22: warning: expression result unused [-Wunused-value]
+    if(self->sname) {(char*)come_decrement_ref_count(self->sname,0,0); }
+                     ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4614:26: warning: expression result unused [-Wunused-value]
+    if(self->mArrayNum) {(struct list$1sNodeph*)come_decrement_ref_count(self->mArrayNum,0,0); }
+                         ^                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4733:38: warning: expression result unused [-Wunused-value]
+        if(come_value_216->c_value) {(char*)come_decrement_ref_count(come_value_216->c_value,0,0); }
+                                     ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4737:41: warning: expression result unused [-Wunused-value]
+        if(result_type_220->mArrayNum) {(struct list$1sNodeph*)come_decrement_ref_count(result_type_220->mArrayNum,0,0); }
+                                        ^                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4752:35: warning: expression result unused [-Wunused-value]
+        if(come_value_216->type) {(struct sType*)come_decrement_ref_count(come_value_216->type,0,0); }
+                                  ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4978:42: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                            _inf_valueX11=(struct sNode*)come_increment_ref_count(item);
+                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4980:44: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+                            litem_241->item=_inf_valueX11;
+                                           ^~~~~~~~~~~~~~
+                                            *
+18field.c.c:4989:42: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                            _inf_valueX12=(struct sNode*)come_increment_ref_count(item);
+                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4991:44: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+                            litem_242->item=_inf_valueX12;
+                                           ^~~~~~~~~~~~~~
+                                            *
+18field.c.c:5000:42: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                            _inf_valueX13=(struct sNode*)come_increment_ref_count(item);
+                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:5002:44: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+                            litem_243->item=_inf_valueX13;
+                                           ^~~~~~~~~~~~~~
+                                            *
+18field.c.c:4977:50: warning: left operand of comma operator has no effect [-Wunused-value]
+                            if(litem_241->item) {(struct sNode*)come_decrement_ref_count(litem_241->item,0,0), come_decrement_ref_count(((struct sNode*)litem_241->item)->_protocol_obj,0,0); }
+                                                 ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4988:50: warning: left operand of comma operator has no effect [-Wunused-value]
+                            if(litem_242->item) {(struct sNode*)come_decrement_ref_count(litem_242->item,0,0), come_decrement_ref_count(((struct sNode*)litem_242->item)->_protocol_obj,0,0); }
+                                                 ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:4999:50: warning: left operand of comma operator has no effect [-Wunused-value]
+                            if(litem_243->item) {(struct sNode*)come_decrement_ref_count(litem_243->item,0,0), come_decrement_ref_count(((struct sNode*)litem_243->item)->_protocol_obj,0,0); }
+                                                 ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:5025:38: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                        _inf_valueX17=(struct sNode*)come_increment_ref_count(come_memdup(self->mLeft));
+                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:5027:42: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+                        result_246->mLeft=_inf_valueX17;
+                                         ^~~~~~~~~~~~~~
+                                          *
+18field.c.c:5031:38: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                        _inf_valueX18=(struct sNode*)come_increment_ref_count(come_memdup(self->mRight));
+                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:5033:43: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+                        result_246->mRight=_inf_valueX18;
+                                          ^~~~~~~~~~~~~~
                                            *
-code2/HelloWorld2.c.c:1107:49: note: passing argument to parameter 'right' here
-static inline _Bool char_equals(char self, char right){
-                                                ^
-90 warnings and 3 errors generated.
-code2/HelloWorld2.c 390: clang is faield
-code2/HelloWorld2.c 390: compile faield
-make: *** [Makefile:424: comelang2-test] Error 1
+18field.c.c:5024:48: warning: left operand of comma operator has no effect [-Wunused-value]
+                        if(result_246->mLeft) {(struct sNode*)come_decrement_ref_count(result_246->mLeft,0,0), come_decrement_ref_count(((struct sNode*)result_246->mLeft)->_protocol_obj,0,0); }
+                                               ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:5030:49: warning: left operand of comma operator has no effect [-Wunused-value]
+                        if(result_246->mRight) {(struct sNode*)come_decrement_ref_count(result_246->mRight,0,0), come_decrement_ref_count(((struct sNode*)result_246->mRight)->_protocol_obj,0,0); }
+                                                ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:5036:52: warning: expression result unused [-Wunused-value]
+                        if(result_246->mArrayNum) {(struct list$1sNodeph*)come_decrement_ref_count(result_246->mArrayNum,0,0); }
+                                                   ^                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:5040:48: warning: expression result unused [-Wunused-value]
+                        if(result_246->sname) {(char*)come_decrement_ref_count(result_246->sname,0,0); }
+                                               ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:5057:38: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                        _inf_valueX20=(struct sNode*)come_increment_ref_count(come_memdup(self->mLeft));
+                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:5059:42: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+                        result_247->mLeft=_inf_valueX20;
+                                         ^~~~~~~~~~~~~~
+                                          *
+18field.c.c:5056:48: warning: left operand of comma operator has no effect [-Wunused-value]
+                        if(result_247->mLeft) {(struct sNode*)come_decrement_ref_count(result_247->mLeft,0,0), come_decrement_ref_count(((struct sNode*)result_247->mLeft)->_protocol_obj,0,0); }
+                                               ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:5062:52: warning: expression result unused [-Wunused-value]
+                        if(result_247->mArrayNum) {(struct list$1sNodeph*)come_decrement_ref_count(result_247->mArrayNum,0,0); }
+                                                   ^                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:5066:48: warning: expression result unused [-Wunused-value]
+                        if(result_247->sname) {(char*)come_decrement_ref_count(result_247->sname,0,0); }
+                                               ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:5109:38: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                        _inf_valueX27=(struct sNode*)come_increment_ref_count(come_memdup(self->mLeft));
+                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:5111:42: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+                        result_251->mLeft=_inf_valueX27;
+                                         ^~~~~~~~~~~~~~
+                                          *
+18field.c.c:5108:48: warning: left operand of comma operator has no effect [-Wunused-value]
+                        if(result_251->mLeft) {(struct sNode*)come_decrement_ref_count(result_251->mLeft,0,0), come_decrement_ref_count(((struct sNode*)result_251->mLeft)->_protocol_obj,0,0); }
+                                               ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:5114:48: warning: expression result unused [-Wunused-value]
+                        if(result_251->mName) {(char*)come_decrement_ref_count(result_251->mName,0,0); }
+                                               ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+18field.c.c:5118:48: warning: expression result unused [-Wunused-value]
+                        if(result_251->sname) {(char*)come_decrement_ref_count(result_251->sname,0,0); }
+                                               ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+234 warnings and 2 errors generated.
+18field.c 701: clang is faield
+18field.c 701: compile faield
+make: *** [Makefile:95: 18field.c.o] Error 1

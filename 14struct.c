@@ -104,7 +104,7 @@ bool output_generics_struct(sType* type, sType* generics_type, sInfo* info)
             var name, type = it;
             
             sType*% new_type = solve_generics(type, generics_type, info).catch {
-                return false;
+                exit(2);
             }
             
             new_class.mFields.push_back((clone name, clone new_type));

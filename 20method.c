@@ -57,6 +57,13 @@ bool sCurrentNode*::compile(sCurrentNode* self, sInfo* info)
                 else if(memcmp(value.mCValueName, "__map_element", strlen("__map_element")) == 0)
                 {
                 }
+                else if(type2->mArrayNum.length() == 1) {
+                    sType*% type3 = clone type2;
+                    type3->mArrayNum.reset();
+                    type3->mPointerNum++;
+                    tuple2<string, sType*%>*% item2 = (value.mCValueName, type3);
+                    current_stack.mFields.push_back(item2);
+                }
                 else {
                     current_stack.mFields.push_back(item);
                 }
@@ -362,7 +369,7 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
                     info.head = info.source.buf;
                     
                     sNode*% node = expression(info).catch {
-                        return false;
+                        exit(2);
                     }
                     
                     if(!node.compile->(info)) {
@@ -493,7 +500,7 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
             info.sline = method_block_sline;
             
             sNode*% node = parse_function(info).catch {
-                return false;
+                exit(2);
             }
             
             if(!node.compile->(info)) {
@@ -605,7 +612,9 @@ exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) v
             int sline = info.sline;
             
             bool err_flag = false;
-            string label = parse_word(info, true@no_check_err).catch { err_flag = true };
+            string label = parse_word(info, true@no_check_err).catch {
+                 err_flag = true 
+            };
             
             if(err_flag == false && *info->p == ':') {
                 info->p++;

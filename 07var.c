@@ -51,7 +51,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
             }
             
             var type = solve_generics(self.type, info->generics_type, info).catch {
-                return false;
+                exit(2);
             }
             
             add_variable_to_table(self.name, type, info);
@@ -147,7 +147,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                 }
                 else {
                     var type = solve_generics(self.type, info->generics_type, info).catch {
-                        return false;
+                        exit(2);
                     }
                     
                     add_variable_to_table(self.name, type, info);
@@ -402,15 +402,27 @@ bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
         var_ = get_variable_from_table(info.gv_table, self.name);
         
         if(var_ == null) {
-            err_msg(info, "var not found(%s)(Z) at loading variable\n", self.name);
-int* a = (void*)0;
-*a = 0;
-            return false;
+            sFun* fun = info.funcs[self.name]
+            
+            if(fun) {
+                CVALUE*% come_value = new CVALUE;
+                
+                come_value.c_value = xsprintf("%s", fun->mName);
+                come_value.type = fun->mLambdaType;
+                come_value.var = null;
+                
+                info.stack.push_back(come_value);
+                
+                return true;
+            }
+            else {
+                err_msg(info, "var not found(%s)(Z) at loading variable\n", self.name);
+                return false;
+            }
         }
     }
     
     CVALUE*% come_value = new CVALUE;
-    
     come_value.c_value = xsprintf("%s", var_->mCValueName);
     come_value.type = clone var_->mType;
     come_value.var = var_;
@@ -612,6 +624,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         parse_sharp(info);
         return new sNode(new sStoreNode(string(buf)@name, null!, null!, false@alloc, right_value, info));
     }
+/*
     else if(fun) {
         sNode*% node = new sNode(new sFunLoadNode(string(buf)@name, info));
         
@@ -619,6 +632,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         
         return node;
     }
+*/
     else if(!is_type_name_flag) {
         sNode*% node = new sNode(new sLoadNode(string(buf)@name, info));
         

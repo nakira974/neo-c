@@ -20,7 +20,7 @@ bool operator_overload_fun2(sType* type, char* fun_name, CVALUE* left_value, CVA
         
         sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
             err_msg(info, "solve generics error");
-            return false;
+            exit(2);
         }
         
         fun_name2 = create_method_name(obj_type, false@no_pointer_name, fun_name, info);
@@ -172,7 +172,7 @@ bool sStoreFieldNode*::compile(sStoreFieldNode* self, sInfo* info)
         if(field_name === name) {
             field_type = clone field_type2;
             break;
-        }
+        };
         
         index++;
     }

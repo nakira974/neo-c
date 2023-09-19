@@ -39,7 +39,8 @@ bool output_source_file(sInfo* info) version 2
     string output_file_name = xsprintf("%s.c", info.sname);
     
     /// dummy output ///
-    string("int main(int argc, char** argv) { return 0; }\n").write(output_file_name);
+    string("int main(int argc, char** argv) { return 0; }\n")
+        .write(output_file_name);
     
     return true;
 }

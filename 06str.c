@@ -290,7 +290,7 @@ bool sListNode*::compile(sListNode* self, sInfo* info)
     num_string.append_str("1");
     
     sType*% type2 = solve_generics(type, type, info).catch {
-        return false;
+        exit(2);
     }
     
     string type_name = make_type_name_string(type2, false@in_header, true@array_cast_pointer, info);
@@ -428,7 +428,7 @@ bool sTupleNode*::compile(sTupleNode* self, sInfo* info)
     num_string.append_str("1");
     
     sType*% type2 = solve_generics(type, type, info).catch {
-        return false;
+        exit(2);
     }
     
     string type_name = make_type_name_string(type2, false@in_header, true@array_cast_pointer, info);
@@ -665,7 +665,7 @@ bool sMapNode*::compile(sMapNode* self, sInfo* info)
     num_string.append_str("1");
     
     sType*% type2 = solve_generics(type, type, info).catch {
-        return false;
+        exit(2);
     }
     
     string type_name = make_type_name_string(type2, false@in_header, true@array_cast_pointer, info);

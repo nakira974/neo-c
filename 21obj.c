@@ -90,7 +90,7 @@ bool sNewNode*::compile(sNewNode* self, sInfo* info)
     }
     
     sType*% type2 = solve_generics(type, info->generics_type, info).catch {
-        return false;
+        exit(2);
     }
     
     string type_name = make_type_name_string(type2, false@in_header, true@array_cast_pointer, info);
@@ -354,7 +354,7 @@ bool sSizeOfNode*::compile(sSizeOfNode* self, sInfo* info)
     CVALUE*% come_value = new CVALUE;
     
     var type2 = solve_generics(type, info->generics_type, info).catch {
-        return false;
+        exit(2);
     }
     
     string type_name = make_type_name_string(type2, false@in_header, false@array_cast_pointer, info);

@@ -114,7 +114,7 @@ bool sForNode*::compile(sForNode* self, sInfo* info)
     add_come_code(info, "){\n");
 
     transpile_block(block, null!, null!, info).catch {
-        return false;
+        exit(2);
     }
 
     add_come_code(info, "}\n");

@@ -2058,3 +2058,158 @@ static inline string string::to_string(char* self)
 {
     return string(self);
 }
+
+inline list<string>*% FILE::readlines(FILE* f)
+{
+    list<string>*% result = new list<string>.initialize();
+    
+    while(1) {
+        char buf[BUFSIZ];
+        
+        if(fgets(buf, BUFSIZ, f) == NULL) {
+            break;
+        }
+        
+        result.push_back(string(buf));
+    }
+    
+    return result;
+}
+
+inline list<string>*% FILE*::readlines(FILE* f)
+{
+    list<string>*% result = new list<string>.initialize();
+    
+    while(1) {
+        char buf[BUFSIZ];
+        
+        if(fgets(buf, BUFSIZ, f) == NULL) {
+            break;
+        }
+        
+        result.push_back(string(buf));
+    }
+    
+    return result;
+}
+
+inline void FILE::fclose(FILE* f) 
+{
+    fclose(f);
+}
+
+inline void FILE*::fclose(FILE* f) 
+{
+    fclose(f);
+}
+
+inline string FILE::read(FILE* f)
+{
+    buffer*% buf = new buffer.initialize();
+    
+    while(1) {
+        char buf2[BUFSIZ];
+        
+        int size = fread(buf2, 1, BUFSIZ, f);
+        
+        buf.append(buf2, size);
+
+        if(size < BUFSIZ) {
+            break;
+        }
+    }
+    
+    return buf.to_string();
+}
+
+inline string FILE*::read(FILE* f)
+{
+    buffer*% buf = new buffer.initialize();
+    
+    while(1) {
+        char buf2[BUFSIZ];
+        
+        int size = fread(buf2, 1, BUFSIZ, f);
+        
+        buf.append(buf2, size);
+
+        if(size < BUFSIZ) {
+            break;
+        }
+    }
+    
+    return buf.to_string();
+}
+
+inline FILE* FILE::fprintf(FILE* f, const char* msg, ...)
+{
+    char msg2[1024];
+
+    va_list args;
+    va_start(args, msg);
+    vsnprintf(msg2, 1024, msg, args);
+    va_end(args);
+
+    (void)fprintf(f, "%s", msg2);
+    
+    return f;
+}
+
+inline FILE* FILE*::fprintf(FILE* f, const char* msg, ...)
+{
+    char msg2[1024];
+
+    va_list args;
+    va_start(args, msg);
+    vsnprintf(msg2, 1024, msg, args);
+    va_end(args);
+
+    (void)fprintf(f, "%s", msg2);
+    
+    return f;
+}
+
+inline void FILE::fclose(FILE* f)
+{
+    fclose(f);
+}
+
+inline void FILE*::fclose(FILE* f)
+{
+    fclose(f);
+}
+
+inline string string::write(char* self, char* file_name, bool append=false) 
+{
+    FILE* f;
+    if(append) {
+       f = fopen(file_name, "a");
+    }
+    else {
+       f = fopen(file_name, "w");
+    }
+    
+    f.fprintf("%s", self);
+    
+    f.fclose()
+    
+    return string(self);
+}
+
+inline string char*::write(char* self, char* file_name, bool append=false) 
+{
+    FILE* f;
+    if(append) {
+       f = fopen(file_name, "a");
+    }
+    else {
+       f = fopen(file_name, "w");
+    }
+    
+    f.fprintf("%s", self);
+    
+    f.fclose()
+    
+    return string(self);
+}
+

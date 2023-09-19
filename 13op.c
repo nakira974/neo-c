@@ -19,7 +19,7 @@ bool operator_overload_fun(sType* type, char* fun_name, CVALUE* left_value, CVAL
         
         sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
             err_msg(info, "solve generics error");
-            return false;
+            exit(2);
         }
         
         fun_name2 = create_method_name(obj_type, false@no_pointer_name, fun_name, info);
@@ -37,14 +37,22 @@ bool operator_overload_fun(sType* type, char* fun_name, CVALUE* left_value, CVAL
         }
         else {
             if(fun_name === "operator_equals") {
-                var fun, fun_name = create_equals_automatically(obj_type, "equals", info).catch { return false; }
-                var fun2, fun_name2 = create_operator_equals_automatically(obj_type, "operator_equals", info).catch { return false; }
+                var fun, fun_name = create_equals_automatically(obj_type, "equals", info).catch {
+                    exit(2);
+                }
+                var fun2, fun_name2 = create_operator_equals_automatically(obj_type, "operator_equals", info).catch { 
+                    exit(2);
+                }
                 
                 operator_fun = fun2;
             }
             else if(fun_name === "operator_not_equals") {
-                var fun, fun_name = create_equals_automatically(obj_type, "not_equals", info).catch { return false; }
-                var fun2, fun_name2 = create_operator_not_equals_automatically(obj_type, "operator_not_equals", info).catch { return false; }
+                var fun, fun_name = create_equals_automatically(obj_type, "not_equals", info).catch { 
+                    exit(2);
+                }
+                var fun2, fun_name2 = create_operator_not_equals_automatically(obj_type, "operator_not_equals", info).catch {
+                    exit(2);
+                }
                 
                 operator_fun = fun2;
             }

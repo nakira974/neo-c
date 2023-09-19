@@ -1364,13 +1364,9 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
         
         sType*% result_type = clone come_fun.mResultType;
         
-        bool result = true;
         sType*% result_type2 = solve_generics(result_type, info.generics_type, info).catch
         {
-            result = false;
-        }
-        if(!result) {
-            return false;
+            exit(2);
         }
         
         sType* result_type3 = result_type2->mNoSolvedGenericsType.v1;
@@ -1445,13 +1441,9 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
             }
         }
         
-        result = true;
         sType*% come_value_type = solve_generics(come_value.type, info.generics_type, info).catch
         {
-            result = false;
-        }
-        if(!result) {
-            return false;
+            exit(1);
         }
         
         static int num_result = 0;
@@ -1509,13 +1501,9 @@ bool sThrowNode*::compile(sThrowNode* self, sInfo* info)
     
     sType*% result_type = clone come_fun.mResultType;
     
-    bool result = true;
     sType*% result_type2 = solve_generics(result_type, info.generics_type, info).catch
     {
-        result = false;
-    }
-    if(!result) {
-        return false;
+        exit(2);
     }
     
     sType* result_type3 = result_type2->mNoSolvedGenericsType.v1;
@@ -1597,13 +1585,9 @@ bool sThrowNode*::compile(sThrowNode* self, sInfo* info)
         }
     }
     
-    result = true;
     sType*% come_value_type = solve_generics(come_value.type, info.generics_type, info).catch
     {
-        result = false;
-    }
-    if(!result) {
-        return false;
+        exit(2);
     }
     
     static int num_result = 0;
@@ -2027,12 +2011,8 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
                     info.p = info.source.buf;
                     info.head = info.source.buf;
                     
-                    bool result = true;
                     sNode*% node = expression(info).catch {
-                        result = false;
-                    }
-                    if(!result) {
-                        return false;
+                        exit(2);
                     }
                     
                     if(!node.compile->(info)) {
@@ -2160,12 +2140,8 @@ bool sCastNode*::compile(sCastNode* self, sInfo* info)
     CVALUE*% left_value = get_value_from_stack(-1, info);
     dec_stack_ptr(1, info);
     
-    bool result = true;
     sType*% type2 = solve_generics(type, info.generics_type, info).catch {
-        result = false;
-    }
-    if(!result) {
-        return false;
+        exit(2);
     }
     
     CVALUE*% come_value = new CVALUE;
@@ -3710,12 +3686,8 @@ bool sFunNode*::compile(sFunNode* self, sInfo* info)
     info.come_fun = self.mFun;
     
     if(self.mFun.mBlock) {
-        bool result = true;
         transpile_block(self.mFun.mBlock, self.mFun.mParamTypes, self.mFun.mParamNames, info).catch {
-            result = false;
-        }
-        if(!result) {
-            return false;
+            exit(2);
         }
     }
     
@@ -3759,14 +3731,9 @@ bool sLambdaNode*::compile(sLambdaNode* self, sInfo* info)
     sFun* come_fun = info.come_fun;
     info.come_fun = self.mFun;
     
-    bool result = true;
     if(self.mFun.mBlock) {
-        bool result = true;
         transpile_block(self.mFun.mBlock, self.mFun.mParamTypes, self.mFun.mParamNames, info).catch {
-            result = false;
-        }
-        if(!result) {
-            return false;
+            exit(2);
         }
     }
     
@@ -3782,7 +3749,7 @@ bool sLambdaNode*::compile(sLambdaNode* self, sInfo* info)
     
     info.come_fun = come_fun;
     
-    return result;
+    return true;
 }
 
 string create_method_name(sType* obj_type, bool no_pointer_name, char* fun_name, sInfo* info)
@@ -3811,22 +3778,14 @@ bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* gen
         return true;
     }
 
-    bool result = true;
     sType*% result_type = solve_generics(generics_fun->mResultType, generics_type, info).catch {
-        result = false;
-    }
-    if(!result) {
-        return false;
+        exit(2);
     }
     
     list<sType*%>*% param_types = new list<sType*%>();
     foreach(it, generics_fun->mParamTypes) {
-        bool result = true;
         var param_type = solve_generics(it, generics_type, info).catch {
-            result = false;
-        }
-        if(!result) {
-            return false;
+            exit(2);
         }
         
         param_type->mFunctionParam = true;
@@ -3850,12 +3809,8 @@ bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* gen
     var generics_type_names_saved = clone info->generics_type_names;
     info->generics_type_names = clone generics_fun.mGenericsTypeNames;
     
-    result = true;
     sBlock*% block = parse_block(info).catch {
-        result = false;
-    }
-    if(!result) {
-        return false;
+        exit(1);
     }
     
     info.source = source;

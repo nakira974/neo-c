@@ -63,7 +63,7 @@ bool sIfNode*::compile(sIfNode* self, sInfo* info)
     add_come_code(info, "if(%s) {\n", conditional_value.c_value);
 
     transpile_block(if_block, null!, null!, info).catch {
-        return false;
+        exit(2);
     }
     
     add_come_code(info, "}\n");
@@ -87,7 +87,7 @@ bool sIfNode*::compile(sIfNode* self, sInfo* info)
             add_come_code(info, "else if(%s) {\n", conditional_value.c_value);
             
             transpile_block(elif_node_block, null!, null!, info).catch {
-                return false;
+                exit(2);
             }
 
             add_come_code(info, "}\n");
@@ -98,7 +98,7 @@ bool sIfNode*::compile(sIfNode* self, sInfo* info)
         add_come_code(info, "else {\n");
 
         transpile_block(else_block, null!, null!, info).catch {
-            return false;
+            exit(2);
         }
         
         add_come_code(info, "}\n");

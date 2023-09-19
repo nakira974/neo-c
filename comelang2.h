@@ -2054,7 +2054,7 @@ static inline string string::to_string(char* self)
     return string(self);
 }
 
-static snline list<string>*% FILE::readlines(FILE* f)
+static inline list<string>*% FILE::readlines(FILE* f)
 {
     list<string>*% result = new list<string>.initialize();
     

@@ -80,6 +80,7 @@ struct sType
     bool mHeap;
     bool mDummyHeap;
     bool mNoHeap;
+    bool mNoCallingDestructor;
     bool mRefference;
     bool mException;
     
@@ -311,11 +312,11 @@ bool create_operator_equals_method(sType* type, sInfo* info);
 bool create_operator_not_equals_method(sType* type, sInfo* info);
 exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info);
 sVar* get_variable_from_table(sVarTable* table, char* name);
-void free_objects_on_return(sBlock* current_block, sInfo* info, char* ret_value, bool top_block);
+void free_objects_on_return(sBlock* current_block, sInfo* info, sVar* ret_value, bool top_block);
 void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo* info);
 string clone_object(sType* type, char* obj, sInfo* info);
 void free_right_value_objects(sInfo* info);
-void free_objects(sVarTable* table, char* ret_value, sInfo* info);
+void free_objects(sVarTable* table, sVar* ret_value, sInfo* info);
 string append_object_to_right_values(char* obj, sType*% type, sInfo* info);
 bool is_right_values(int right_value_num, sInfo* info);
 int get_right_value_id_from_obj(string obj);

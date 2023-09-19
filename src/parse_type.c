@@ -49,6 +49,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
     *result_type = NULL;
 
     BOOL nullable_ = FALSE;
+    BOOL no_calling_destructor = FALSE;
     BOOL constant = FALSE;
     BOOL register_ = FALSE;
     BOOL volatile_ = FALSE;
@@ -513,6 +514,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                 }
 
                 nullable_ = (*result_type)->mNullable;
+                no_calling_destructor = (*result_type)->mNoCallingDestructor;
                 no_heap = (*result_type)->mNoHeap;
                 refference = (*result_type)->mRefference;
                 heap = (*result_type)->mHeap;
@@ -724,6 +726,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                 node_type->mPointerNum = pointer_num;
                 node_type->mImmutable = immutable_;
                 node_type->mNullable = nullable_;
+                node_type->mNoCallingDestructor = no_calling_destructor;
                 node_type->mNoHeap = no_heap;
                 node_type->mRefference = refference;
                 node_type->mHeap = heap;
@@ -739,6 +742,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                 pointer_num = 0;
                 immutable_ = FALSE;
                 nullable_ = FALSE;
+                no_calling_destructor = FALSE;
                 no_heap = FALSE;
                 refference = FALSE;
                 heap = FALSE;
@@ -937,6 +941,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                         node_type->mPointerNum = pointer_num;
                         node_type->mImmutable = immutable_;
                         node_type->mNullable = nullable_;
+                        node_type->mNoCallingDestructor = no_calling_destructor;
                         node_type->mNoHeap = no_heap;
                         node_type->mRefference = refference;
                         node_type->mHeap = heap;
@@ -952,6 +957,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                         pointer_num = 0;
                         immutable_ = FALSE;
                         nullable_ = FALSE;
+                        no_calling_destructor = FALSE;
                         no_heap = FALSE;
                         refference = FALSE;
                         heap = FALSE;
@@ -1052,6 +1058,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                                             node_type->mPointerNum = pointer_num;
                                             node_type->mImmutable = immutable_;
                                             node_type->mNullable = nullable_;
+                                            node_type->mNoCallingDestructor = no_calling_destructor;
                                             node_type->mNoHeap = no_heap;
                                             node_type->mRefference = refference;
                                             node_type->mHeap = heap;
@@ -1067,6 +1074,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                                             pointer_num = 0;
                                             immutable_ = FALSE;
                                             nullable_ = FALSE;
+                                            no_calling_destructor = FALSE;
                                             no_heap = FALSE;
                                             refference = FALSE;
                                             heap = FALSE;
@@ -1342,6 +1350,14 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
 
             nullable_ = TRUE;
         }
+        else if(*info->p == '|') {
+            info->p++;
+            skip_spaces_and_lf(info);
+
+            if(!gNCGC) {
+                no_calling_destructor = TRUE;
+            }
+        }
         else if(*info->p == '%') {
             info->p++;
             skip_spaces_and_lf(info);
@@ -1437,6 +1453,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
     
     
     (*result_type)->mNullable = nullable_;
+    (*result_type)->mNoCallingDestructor = no_calling_destructor;
     (*result_type)->mNoHeap = no_heap;
     (*result_type)->mRefference = refference;
     (*result_type)->mHeap = heap;

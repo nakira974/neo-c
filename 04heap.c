@@ -49,6 +49,7 @@ exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
             bool heap = type->mHeap;
             
             bool no_heap = type->mNoHeap;
+            bool no_calling_destructor = type->mNoCallingDestructor;
             
             result = clone generics_type->mGenericsTypes[generics_number];
 /*
@@ -62,6 +63,9 @@ exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
             }
             if(no_heap) {
                 result->mHeap = false;
+            }
+            if(no_calling_destructor) {
+                result->mNoCallingDestructor = true;
             }
             if(immutable_) {
                 result->mImmutable = immutable_;
@@ -696,14 +700,17 @@ sVar* get_variable_from_table(sVarTable* table, char* name)
     return null;
 }
 
-void free_objects(sVarTable* table, char* ret_value, sInfo* info)
+void free_objects(sVarTable* table, sVar* ret_value, sInfo* info)
 {
     foreach(it, table->mVars) {
         sVar* p = table->mVars[it];
         sType* type = p->mType;
         sClass* klass = type->mClass;
         
-        if(type->mHeap && ret_value != null && p->mCValueName != null && p->mCValueName === ret_value) 
+        if(ret_value != null && p->mCValueName != null && p->mCValueName === ret_value->mCValueName) 
+        {
+        }
+        else if(type->mHeap && ret_value != null && p->mCValueName != null) 
         {
             free_object(p->mType, p->mCValueName, false@no_decrement, true@no_free, info);
 
@@ -719,7 +726,7 @@ void free_objects(sVarTable* table, char* ret_value, sInfo* info)
 
 //            p->mCValueName = null;
         }
-        else if(klass->mStruct && p->mCValueName && type->mAllocaValue) {
+        else if(klass->mStruct && p->mCValueName && type->mAllocaValue && !type->mNoCallingDestructor) {
             string c_value = xsprintf("(&%s)", p->mCValueName);
             sType*% type2 = clone type;
             type2->mPointerNum++;
@@ -730,7 +737,7 @@ void free_objects(sVarTable* table, char* ret_value, sInfo* info)
     }
 }
 
-void free_objects_on_return(sBlock* current_block, sInfo* info, char* ret_value, bool top_block)
+void free_objects_on_return(sBlock* current_block, sInfo* info, sVar* ret_value, bool top_block)
 {
     sVarTable* it = info->lv_table;
     

@@ -660,7 +660,7 @@ impl list <T>
         self.replace(position, item);
     }
     T& operator_load_element(list<T>* self, int index) {
-        T& default_value;
+        T&| default_value;
         memset(&default_value, 0, sizeof(T));
         
         return self.item(index, default_value);
@@ -860,7 +860,7 @@ impl map <T, T2>
         var result = new map<T,T2>.initialize();
 
         for(var it = self.begin(); !self.end(); it = self.next()) {
-            T2& default_value;
+            T2&| default_value;
             var it2 = self.at(it, default_value);
 
             result.insert2(clone it, clone it2);
@@ -938,7 +938,7 @@ impl map <T, T2>
         int len = 0;
 
         for(var it = self.begin(); !self.end(); it = self.next()) {
-            T2& default_value;
+            T2&| default_value;
             T2& it2 = self.at(it, default_value);
             int hash = it.get_hash_key() % size;
             int n = hash;
@@ -980,7 +980,7 @@ impl map <T, T2>
         self.len = len;
     }
     
-    void insert(map<T,T2>* self, T& key, T2& item) {
+    void insert(map<T,T2>* self, T key, T2 item) {
         if(self.len*2 >= self.size) {
             self.rehash();
         }
@@ -1022,14 +1022,12 @@ impl map <T, T2>
             else {
                 self.item_existance[it] = true;
                 if(isheap(T)) {
-                    delete borrow self.keys[it];
                     self.keys[it] = borrow gc_inc(key);
                 }
                 else {
                     self.keys[it] = borrow key;
                 }
                 if(isheap(T2)) {
-                    delete borrow self.items[it];
                     self.items[it] = borrow gc_inc(item);
                 }
                 else {
@@ -1058,7 +1056,6 @@ impl map <T, T2>
         if(self.len*2 >= self.size) {
             self.rehash();
         }
-
         int hash = key.get_hash_key() % self.size;
         int it = hash;
 
@@ -1097,14 +1094,12 @@ impl map <T, T2>
             else {
                 self.item_existance[it] = true;
                 if(isheap(T)) {
-                    delete borrow self.keys[it];
                     self.keys[it] = borrow gc_inc(key);
                 }
                 else {
                     self.keys[it] = borrow key;
                 }
                 if(isheap(T2)) {
-                    delete borrow self.items[it];
                     self.items[it] = borrow gc_inc(item);
                 }
                 else {
@@ -1131,7 +1126,7 @@ impl map <T, T2>
     }
     
     T2& operator_load_element(map<T, T2>* self, T& key) {
-        T2& default_value;
+        T2&| default_value;
         memset(&default_value, 0, sizeof(T2));
         
         return self.at(key, default_value);
@@ -1151,11 +1146,11 @@ impl map <T, T2>
         bool result = true;
         for(var it = left.key_list.begin(); !left.key_list.end(); it = left.key_list.next())
         {
-            T default_value;
+            T| default_value;
             T& it2 = right.key_list.item(n, default_value);
             
             if(it.equals(it2)) {
-                T2 default_value2;
+                T2| default_value2;
                 T2& item = left.at(it, default_value2);
                 T2& item2 = left.at(it2, default_value2);
                 
@@ -1591,43 +1586,7 @@ static inline string xsprintf(char* msg, ...)
 
 static inline void FILE*::fclose(FILE* f) 
 {
-    FILE_fclose(f);
-}
-
-static inline list<string>*% FILE::readlines(FILE* f)
-{
-    list<string>*% result = new list<string>.initialize();
-    
-    while(1) {
-        char buf[BUFSIZ];
-        
-        if(fgets(buf, BUFSIZ, f) == NULL) {
-            break;
-        }
-        
-        result.push_back(string(buf));
-    }
-    
-    return result;
-}
-
-static inline string FILE::read(FILE* f)
-{
-    buffer*% buf = new buffer.initialize();
-    
-    while(1) {
-        char buf2[BUFSIZ];
-        
-        int size = fread(buf2, 1, BUFSIZ, f);
-        
-        buf.append(buf2, size);
-
-        if(size < BUFSIZ) {
-            break;
-        }
-    }
-    
-    return buf.to_string();
+    fclose(f);
 }
 
 static inline string FILE*::read(FILE* f)
@@ -1649,20 +1608,6 @@ static inline string FILE*::read(FILE* f)
     return buf.to_string();
 }
 
-static inline FILE* FILE::fprintf(FILE* f, const char* msg, ...)
-{
-    char msg2[1024];
-
-    va_list args;
-    va_start(args, msg);
-    vsnprintf(msg2, 1024, msg, args);
-    va_end(args);
-
-    (void)fprintf(f, "%s", msg2);
-    
-    return f;
-}
-
 static inline FILE* FILE*::fprintf(FILE* f, const char* msg, ...)
 {
     char msg2[1024];
@@ -1675,11 +1620,6 @@ static inline FILE* FILE*::fprintf(FILE* f, const char* msg, ...)
     (void)fprintf(f, "%s", msg2);
     
     return f;
-}
-
-static inline void FILE::fclose(FILE* f)
-{
-    fclose(f);
 }
 
 static inline string string::write(char* self, char* file_name, bool append=false) 
@@ -2054,22 +1994,6 @@ static inline string string::to_string(char* self)
     return string(self);
 }
 
-static inline list<string>*% FILE::readlines(FILE* f)
-{
-    list<string>*% result = new list<string>.initialize();
-    
-    while(1) {
-        char buf[BUFSIZ];
-        
-        if(fgets(buf, BUFSIZ, f) == NULL) {
-            break;
-        }
-        
-        result.push_back(string(buf));
-    }
-    
-    return result;
-}
 
 static inline list<string>*% FILE*::readlines(FILE* f)
 {
@@ -2086,35 +2010,6 @@ static inline list<string>*% FILE*::readlines(FILE* f)
     }
     
     return result;
-}
-
-static inline void FILE::fclose(FILE* f) 
-{
-    fclose(f);
-}
-
-static inline void FILE*::fclose(FILE* f) 
-{
-    fclose(f);
-}
-
-static inline string FILE::read(FILE* f)
-{
-    buffer*% buf = new buffer.initialize();
-    
-    while(1) {
-        char buf2[BUFSIZ];
-        
-        int size = fread(buf2, 1, BUFSIZ, f);
-        
-        buf.append(buf2, size);
-
-        if(size < BUFSIZ) {
-            break;
-        }
-    }
-    
-    return buf.to_string();
 }
 
 static inline string FILE*::read(FILE* f)
@@ -2136,20 +2031,6 @@ static inline string FILE*::read(FILE* f)
     return buf.to_string();
 }
 
-static inline FILE* FILE::fprintf(FILE* f, const char* msg, ...)
-{
-    char msg2[1024];
-
-    va_list args;
-    va_start(args, msg);
-    vsnprintf(msg2, 1024, msg, args);
-    va_end(args);
-
-    (void)fprintf(f, "%s", msg2);
-    
-    return f;
-}
-
 static inline FILE* FILE*::fprintf(FILE* f, const char* msg, ...)
 {
     char msg2[1024];
@@ -2164,47 +2045,4 @@ static inline FILE* FILE*::fprintf(FILE* f, const char* msg, ...)
     return f;
 }
 
-static inline void FILE::fclose(FILE* f)
-{
-    fclose(f);
-}
-
-static inline void FILE*::fclose(FILE* f)
-{
-    fclose(f);
-}
-
-static inline string string::write(char* self, char* file_name, bool append=false) 
-{
-    FILE* f;
-    if(append) {
-       f = fopen(file_name, "a");
-    }
-    else {
-       f = fopen(file_name, "w");
-    }
-    
-    f.fprintf("%s", self);
-    
-    f.fclose()
-    
-    return string(self);
-}
-
-static inline string char*::write(char* self, char* file_name, bool append=false) 
-{
-    FILE* f;
-    if(append) {
-       f = fopen(file_name, "a");
-    }
-    else {
-       f = fopen(file_name, "w");
-    }
-    
-    f.fprintf("%s", self);
-    
-    f.fclose()
-    
-    return string(self);
-}
 

@@ -207,6 +207,7 @@ struct sNodeTypeStruct
     BOOL mHeap;
     BOOL mDummyHeap;
     BOOL mNoHeap;
+    BOOL mNoCallingDestructor;
     BOOL mRefference;
 
     unsigned int mDynamicArrayNum;

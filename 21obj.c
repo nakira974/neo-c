@@ -93,6 +93,10 @@ bool sNewNode*::compile(sNewNode* self, sInfo* info)
         exit(2);
     }
     
+    if(type->mArrayNum.length() > 0) {
+        type2->mPointerNum--;
+    }
+    
     string type_name = make_type_name_string(type2, false@in_header, true@array_cast_pointer, info);
     
     come_value.c_value = xsprintf("(%s*)come_calloc(1, sizeof(%s)*(%s))", type_name, type_name, num_string.to_string());

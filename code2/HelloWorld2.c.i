@@ -4322,14 +4322,9 @@ static inline string xsprintf(char* msg, ...)
     return result2;
 }
 
-list<string>*% FILE::readlines(FILE* f);
-inline list<string>*% FILE*::readlines(FILE* f) {
-    return FILE_readlines(f);
-}
-
 static inline void FILE*::fclose(FILE* f)
 {
-    FILE_fclose(f);
+    fclose(f);
 }
 
 static inline list<string>*% FILE::readlines(FILE* f)
@@ -4338,19 +4333,19 @@ static inline list<string>*% FILE::readlines(FILE* f)
 
     while(1) {
         char buf[
-# 1607 "./comelang2.h" 3 4
+# 1602 "./comelang2.h" 3 4
                 8192
-# 1607 "./comelang2.h"
+# 1602 "./comelang2.h"
                       ];
 
         if(fgets(buf, 
-# 1609 "./comelang2.h" 3 4
+# 1604 "./comelang2.h" 3 4
                      8192
-# 1609 "./comelang2.h"
+# 1604 "./comelang2.h"
                            , f) == 
-# 1609 "./comelang2.h" 3 4
+# 1604 "./comelang2.h" 3 4
                                    ((void *)0)
-# 1609 "./comelang2.h"
+# 1604 "./comelang2.h"
                                        ) {
             break;
         }
@@ -4367,23 +4362,23 @@ static inline string FILE::read(FILE* f)
 
     while(1) {
         char buf2[
-# 1624 "./comelang2.h" 3 4
+# 1619 "./comelang2.h" 3 4
                  8192
-# 1624 "./comelang2.h"
+# 1619 "./comelang2.h"
                        ];
 
         int size = fread(buf2, 1, 
-# 1626 "./comelang2.h" 3 4
+# 1621 "./comelang2.h" 3 4
                                  8192
-# 1626 "./comelang2.h"
+# 1621 "./comelang2.h"
                                        , f);
 
         buf.append(buf2, size);
 
         if(size < 
-# 1630 "./comelang2.h" 3 4
+# 1625 "./comelang2.h" 3 4
                  8192
-# 1630 "./comelang2.h"
+# 1625 "./comelang2.h"
                        ) {
             break;
         }
@@ -4398,23 +4393,23 @@ static inline string FILE*::read(FILE* f)
 
     while(1) {
         char buf2[
-# 1643 "./comelang2.h" 3 4
+# 1638 "./comelang2.h" 3 4
                  8192
-# 1643 "./comelang2.h"
+# 1638 "./comelang2.h"
                        ];
 
         int size = fread(buf2, 1, 
-# 1645 "./comelang2.h" 3 4
+# 1640 "./comelang2.h" 3 4
                                  8192
-# 1645 "./comelang2.h"
+# 1640 "./comelang2.h"
                                        , f);
 
         buf.append(buf2, size);
 
         if(size < 
-# 1649 "./comelang2.h" 3 4
+# 1644 "./comelang2.h" 3 4
                  8192
-# 1649 "./comelang2.h"
+# 1644 "./comelang2.h"
                        ) {
             break;
         }
@@ -4429,27 +4424,27 @@ static inline FILE* FILE::fprintf(FILE* f, const char* msg, ...)
 
     va_list args;
     
-# 1662 "./comelang2.h" 3 4
+# 1657 "./comelang2.h" 3 4
    __builtin_va_start(
-# 1662 "./comelang2.h"
+# 1657 "./comelang2.h"
    args
-# 1662 "./comelang2.h" 3 4
+# 1657 "./comelang2.h" 3 4
    ,
-# 1662 "./comelang2.h"
+# 1657 "./comelang2.h"
    msg
-# 1662 "./comelang2.h" 3 4
+# 1657 "./comelang2.h" 3 4
    )
-# 1662 "./comelang2.h"
+# 1657 "./comelang2.h"
                       ;
     vsnprintf(msg2, 1024, msg, args);
     
-# 1664 "./comelang2.h" 3 4
+# 1659 "./comelang2.h" 3 4
    __builtin_va_end(
-# 1664 "./comelang2.h"
+# 1659 "./comelang2.h"
    args
-# 1664 "./comelang2.h" 3 4
+# 1659 "./comelang2.h" 3 4
    )
-# 1664 "./comelang2.h"
+# 1659 "./comelang2.h"
                ;
 
     (void)fprintf(f, "%s", msg2);
@@ -4463,27 +4458,27 @@ static inline FILE* FILE*::fprintf(FILE* f, const char* msg, ...)
 
     va_list args;
     
-# 1676 "./comelang2.h" 3 4
+# 1671 "./comelang2.h" 3 4
    __builtin_va_start(
-# 1676 "./comelang2.h"
+# 1671 "./comelang2.h"
    args
-# 1676 "./comelang2.h" 3 4
+# 1671 "./comelang2.h" 3 4
    ,
-# 1676 "./comelang2.h"
+# 1671 "./comelang2.h"
    msg
-# 1676 "./comelang2.h" 3 4
+# 1671 "./comelang2.h" 3 4
    )
-# 1676 "./comelang2.h"
+# 1671 "./comelang2.h"
                       ;
     vsnprintf(msg2, 1024, msg, args);
     
-# 1678 "./comelang2.h" 3 4
+# 1673 "./comelang2.h" 3 4
    __builtin_va_end(
-# 1678 "./comelang2.h"
+# 1673 "./comelang2.h"
    args
-# 1678 "./comelang2.h" 3 4
+# 1673 "./comelang2.h" 3 4
    )
-# 1678 "./comelang2.h"
+# 1673 "./comelang2.h"
                ;
 
     (void)fprintf(f, "%s", msg2);
@@ -4496,7 +4491,7 @@ static inline void FILE::fclose(FILE* f)
     fclose(f);
 }
 
-inline string string::write(char* self, char* file_name, bool append=false)
+static inline string string::write(char* self, char* file_name, bool append=false)
 {
     FILE* f;
     if(append) {
@@ -4513,7 +4508,7 @@ inline string string::write(char* self, char* file_name, bool append=false)
     return string(self);
 }
 
-inline string char*::write(char* self, char* file_name, bool append=false)
+static inline string char*::write(char* self, char* file_name, bool append=false)
 {
     FILE* f;
     if(append) {
@@ -4824,9 +4819,9 @@ static inline string string::read(char* file_name)
     FILE* f = fopen(file_name, "r");
 
     if(f == 
-# 2017 "./comelang2.h" 3 4
+# 2012 "./comelang2.h" 3 4
            ((void *)0)
-# 2017 "./comelang2.h"
+# 2012 "./comelang2.h"
                ) {
         return string("");
     }
@@ -4843,9 +4838,9 @@ static inline string char*::read(char* file_name)
     FILE* f = fopen(file_name, "r");
 
     if(f == 
-# 2032 "./comelang2.h" 3 4
+# 2027 "./comelang2.h" 3 4
            ((void *)0)
-# 2032 "./comelang2.h"
+# 2027 "./comelang2.h"
                ) {
         return string("");
     }
@@ -4873,6 +4868,229 @@ static inline void bool::expect(bool self, void* parent, void (*block)(void* par
 
 static inline string string::to_string(char* self)
 {
+    return string(self);
+}
+
+static inline list<string>*% FILE::readlines(FILE* f)
+{
+    list<string>*% result = new list<string>.initialize();
+
+    while(1) {
+        char buf[
+# 2062 "./comelang2.h" 3 4
+                8192
+# 2062 "./comelang2.h"
+                      ];
+
+        if(fgets(buf, 
+# 2064 "./comelang2.h" 3 4
+                     8192
+# 2064 "./comelang2.h"
+                           , f) == 
+# 2064 "./comelang2.h" 3 4
+                                   ((void *)0)
+# 2064 "./comelang2.h"
+                                       ) {
+            break;
+        }
+
+        result.push_back(string(buf));
+    }
+
+    return result;
+}
+
+static inline list<string>*% FILE*::readlines(FILE* f)
+{
+    list<string>*% result = new list<string>.initialize();
+
+    while(1) {
+        char buf[
+# 2079 "./comelang2.h" 3 4
+                8192
+# 2079 "./comelang2.h"
+                      ];
+
+        if(fgets(buf, 
+# 2081 "./comelang2.h" 3 4
+                     8192
+# 2081 "./comelang2.h"
+                           , f) == 
+# 2081 "./comelang2.h" 3 4
+                                   ((void *)0)
+# 2081 "./comelang2.h"
+                                       ) {
+            break;
+        }
+
+        result.push_back(string(buf));
+    }
+
+    return result;
+}
+
+static inline string FILE::read(FILE* f)
+{
+    buffer*% buf = new buffer.initialize();
+
+    while(1) {
+        char buf2[
+# 2096 "./comelang2.h" 3 4
+                 8192
+# 2096 "./comelang2.h"
+                       ];
+
+        int size = fread(buf2, 1, 
+# 2098 "./comelang2.h" 3 4
+                                 8192
+# 2098 "./comelang2.h"
+                                       , f);
+
+        buf.append(buf2, size);
+
+        if(size < 
+# 2102 "./comelang2.h" 3 4
+                 8192
+# 2102 "./comelang2.h"
+                       ) {
+            break;
+        }
+    }
+
+    return buf.to_string();
+}
+
+static inline string FILE*::read(FILE* f)
+{
+    buffer*% buf = new buffer.initialize();
+
+    while(1) {
+        char buf2[
+# 2115 "./comelang2.h" 3 4
+                 8192
+# 2115 "./comelang2.h"
+                       ];
+
+        int size = fread(buf2, 1, 
+# 2117 "./comelang2.h" 3 4
+                                 8192
+# 2117 "./comelang2.h"
+                                       , f);
+
+        buf.append(buf2, size);
+
+        if(size < 
+# 2121 "./comelang2.h" 3 4
+                 8192
+# 2121 "./comelang2.h"
+                       ) {
+            break;
+        }
+    }
+
+    return buf.to_string();
+}
+
+static inline FILE* FILE::fprintf(FILE* f, const char* msg, ...)
+{
+    char msg2[1024];
+
+    va_list args;
+    
+# 2134 "./comelang2.h" 3 4
+   __builtin_va_start(
+# 2134 "./comelang2.h"
+   args
+# 2134 "./comelang2.h" 3 4
+   ,
+# 2134 "./comelang2.h"
+   msg
+# 2134 "./comelang2.h" 3 4
+   )
+# 2134 "./comelang2.h"
+                      ;
+    vsnprintf(msg2, 1024, msg, args);
+    
+# 2136 "./comelang2.h" 3 4
+   __builtin_va_end(
+# 2136 "./comelang2.h"
+   args
+# 2136 "./comelang2.h" 3 4
+   )
+# 2136 "./comelang2.h"
+               ;
+
+    (void)fprintf(f, "%s", msg2);
+
+    return f;
+}
+
+static inline FILE* FILE*::fprintf(FILE* f, const char* msg, ...)
+{
+    char msg2[1024];
+
+    va_list args;
+    
+# 2148 "./comelang2.h" 3 4
+   __builtin_va_start(
+# 2148 "./comelang2.h"
+   args
+# 2148 "./comelang2.h" 3 4
+   ,
+# 2148 "./comelang2.h"
+   msg
+# 2148 "./comelang2.h" 3 4
+   )
+# 2148 "./comelang2.h"
+                      ;
+    vsnprintf(msg2, 1024, msg, args);
+    
+# 2150 "./comelang2.h" 3 4
+   __builtin_va_end(
+# 2150 "./comelang2.h"
+   args
+# 2150 "./comelang2.h" 3 4
+   )
+# 2150 "./comelang2.h"
+               ;
+
+    (void)fprintf(f, "%s", msg2);
+
+    return f;
+}
+
+
+static inline string string::write(char* self, char* file_name, bool append=false)
+{
+    FILE* f;
+    if(append) {
+       f = fopen(file_name, "a");
+    }
+    else {
+       f = fopen(file_name, "w");
+    }
+
+    f.fprintf("%s", self);
+
+    f.fclose()
+
+    return string(self);
+}
+
+static inline string char*::write(char* self, char* file_name, bool append=false)
+{
+    FILE* f;
+    if(append) {
+       f = fopen(file_name, "a");
+    }
+    else {
+       f = fopen(file_name, "w");
+    }
+
+    f.fprintf("%s", self);
+
+    f.fclose()
+
     return string(self);
 }
 # 2 "code2/HelloWorld2.c" 2

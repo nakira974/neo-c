@@ -891,6 +891,12 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             info->p++;
             skip_spaces_and_lf(info);
         }
+        if(*info->p == '|') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            type->mNoCallingDestructor = true;
+        }
         
         while(*info->p == '*') {
             info->p++;
@@ -1449,7 +1455,7 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
         static int num_result = 0;
         add_come_code(info, "%s __result%d__ = %s;\n", make_type_name_string(result_type2, false@in_header, false@array_cast_pointer, info), ++num_result, come_value.c_value);
         
-        free_objects_on_return(come_fun.mBlock, info, come_value.c_value, false@top_block);
+        free_objects_on_return(come_fun.mBlock, info, come_value.var, false@top_block);
         free_right_value_objects(info);
         
         add_come_code(info, "return __result%d__;\n", num_result);
@@ -1593,7 +1599,7 @@ bool sThrowNode*::compile(sThrowNode* self, sInfo* info)
     static int num_result = 0;
     add_come_code(info, "%s __result%d__ = %s;\n", make_type_name_string(result_type2, false@in_header, false@array_cast_pointer, info), ++num_result, come_value.c_value);
     
-    free_objects_on_return(come_fun.mBlock, info, come_value.c_value, false@top_block);
+    free_objects_on_return(come_fun.mBlock, info, come_value.var, false@top_block);
     free_right_value_objects(info);
     
     add_come_code(info, "return __result%d__;\n", num_result);

@@ -312,6 +312,25 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
         sType*% result_type = clone fun->mResultType;
         result_type->mStatic = false;
         
+        sType*% result_type2 = solve_generics(result_type, info.generics_type, info).catch 
+        {
+            exit(1);
+        }
+        
+        list<sType*%>*% param_types = new list<sType*%>();
+        foreach(it, fun.mParamTypes) {
+            if(it == null) {
+                param_types.push_back(it);
+            }
+            else {
+                sType*% it2 = solve_generics(it, info.generics_type, info).catch {
+                    exit(1);
+                }
+                
+                param_types.push_back(clone it2);
+            }
+        }
+        
         list<CVALUE*%>*% come_params = new list<CVALUE*%>();
 
         map<string,CVALUE*%>*% label_params = new map<string,CVALUE*%>();
@@ -321,7 +340,7 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
             var label, node = it;
             
             if(i == 0) {
-                if(fun.mParamTypes[i].mHeap && obj_value.type.mHeap) {
+                if(param_types[i].mHeap && obj_value.type.mHeap) {
                     obj_value.c_value = increment_ref_count_object(obj_value.type, obj_value.c_value, info);
                 }
                 come_params.push_back(obj_value);
@@ -335,7 +354,7 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
                 
                 CVALUE*% come_value = get_value_from_stack(-1, info);
                 
-                if(fun.mParamTypes[i] && fun.mParamTypes[i].mHeap && come_value.type.mHeap) {
+                if(param_types[i] && param_types[i] && param_types[i].mHeap && come_value.type.mHeap) {
                     come_value.c_value = increment_ref_count_object(come_value.type, come_value.c_value, info);
                 }
                 if(label == null) {
@@ -382,7 +401,7 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
                     info.sline = sline;
             
                     CVALUE*% come_value = get_value_from_stack(-1, info);
-                    if(fun.mParamTypes[i].mHeap && come_value.type.mHeap) {
+                    if(param_types[i] && param_types[i].mHeap && come_value.type.mHeap) {
                         come_value.c_value = increment_ref_count_object(come_value.type, come_value.c_value, info);
                     }
                     come_params.push_back(come_value);
@@ -572,11 +591,11 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
         
         come_value2.c_value = buf.to_string();
         
-        if(result_type->mHeap) {
+        if(result_type2->mHeap) {
             come_value2.c_value = append_object_to_right_values(buf.to_string(), result_type, info);
         }
         
-        come_value2.type = clone result_type;
+        come_value2.type = clone result_type2;
         come_value2.type->mStatic = false;
         come_value2.var = null;
         

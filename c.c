@@ -1,17 +1,15 @@
 #include <comelang2.h>
 
-struct sData<T>
-{
-    T a;
-};
-
 int main(int argc, char** argv)
 {
-    sData<string>*% data = new sData<string>;
+    char* a = "ABC";
     
-    data.a = string("ABC");
+    char* b = clone a;
     
-    var data2 = clone data;
+    char c = 'a';
+    char d = clone c;
+    
+    printf("b %s %c\n", b, d);
     
     return 0;
 }

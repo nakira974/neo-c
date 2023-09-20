@@ -1,15 +1,9 @@
-#include <comelang2.h>
 
-char*% str()
+struct __builtin_va_list
 {
-    char*% result = new char[123];
-    
-    return result;
-}
-
-
-int main(int argc, char** argv)
-{
-    
-    return 0;
-}
+    char* v1;
+    char* v2;
+    char* v3;
+    int v4;
+    int v5;
+};

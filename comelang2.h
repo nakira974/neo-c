@@ -863,7 +863,18 @@ impl map <T, T2>
             T2&| default_value;
             var it2 = self.at(it, default_value);
 
-            result.insert2(clone it, clone it2);
+            if(isheap(T) && !isheap(T2)) {
+                result.insert2(clone it, it2);
+            }
+            else if(isheap(T) && isheap(T2)) {
+                result.insert2(clone it, clone it2);
+            }
+            else if(!isheap(T) && isheap(T2)) {
+                result.insert2(it, clone it2);
+            }
+            else if(!isheap(T) && !isheap(T2)) {
+                result.insert2(it, it2);
+            }
         }
 
         return result;
@@ -1248,9 +1259,9 @@ static inline int int::clone(int self)
     return self;
 }
 
-static inline char* char*::clone(char* self)
+static inline string char*::clone(char* self)
 {
-    return self;
+    return string(self);
 }
 
 static inline string string::clone(char* self)
@@ -1321,13 +1332,13 @@ impl tuple2 <T, T2>
         return self;
     }
     
-    T& catch(tuple2<T, T2>* self, void* parent, void (*block)(void* parent))
+    T catch(tuple2<T, T2>* self, void* parent, void (*block)(void* parent))
     {
         if(!self.v2) {
             block(parent);
         }
         
-        return self.v1;
+        return clone self.v1;
     }
 }
 

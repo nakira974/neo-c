@@ -1965,8 +1965,20 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
             return false;
         }
         
-        sType*% result_type = clone fun->mResultType;
+        sType*% result_type = clone fun.mResultType;
         result_type->mStatic = false;
+        
+        list<sType*%>*% param_types = new list<sType*%>();
+        foreach(it, fun.mParamTypes) {
+            sType*% it2 = solve_generics(it, info.generics_type, info).catch {
+                exit(1);
+            }
+            param_types.push_back(clone it2);
+        }
+        
+        result_type = solve_generics(result_type, info.generics_type, info).catch {
+            exit(2);
+        }
         
         list<CVALUE*%>*% come_params = new list<CVALUE*%>();
         
@@ -1984,7 +1996,7 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
             if(fun.mVarArgs && fun.mParamTypes[i] == null) {
             }
             else {
-                if(i < fun.mParamTypes.length() && fun.mParamTypes[i].mHeap && come_value.type.mHeap) {
+                if(i < fun.mParamTypes.length() && param_types[i].mHeap && come_value.type.mHeap) {
                     come_value.c_value = increment_ref_count_object(come_value.type, come_value.c_value, info);
                 }
             }
@@ -2031,7 +2043,7 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
                     info.sline = sline;
             
                     CVALUE*% come_value = get_value_from_stack(-1, info);
-                    if(fun.mParamTypes[i].mHeap && come_value.type.mHeap) {
+                    if(param_types[i].mHeap && come_value.type.mHeap) {
                         come_value.c_value = increment_ref_count_object(come_value.type, come_value.c_value, info);
                     }
                     come_params.push_back(come_value);
@@ -2086,7 +2098,7 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
         CVALUE*% come_value = new CVALUE;
         come_value.c_value = buf.to_string();
         
-        if(fun->mResultType->mHeap) {
+        if(fun.mResultType->mHeap) {
             come_value.c_value = append_object_to_right_values(come_value.c_value, result_type, info);
         }
         
@@ -3344,7 +3356,7 @@ exception sNode*% expression_node(sInfo* info) version 99
     
     err_msg(info, "unexpected operator(%c)\n", *info->p);
     throw;
-    return (sNode*)null;
+    return (sNode*%)null;
 }
 
 exception sNode*% expression(sInfo* info) version 5
@@ -3447,16 +3459,6 @@ exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<s
     int block_level = info->block_level;
     if(!no_var_table) {
         info->block_level++;
-    }
-    
-    if(info.come_fun.mName === "main" && block_level == 0 && !no_var_table) {
-        foreach(it, info.funcs) {
-            sFun* it2 = info.funcs[it];
-            
-            if(memcmp(it, "__init_", strlen("__init_")) == 0) {
-                add_come_code(info, "%s();\n", it);
-            }
-        }
     }
     
     if(block->mNodes.length() == 0) {
@@ -3761,14 +3763,19 @@ bool sLambdaNode*::compile(sLambdaNode* self, sInfo* info)
 string create_method_name(sType* obj_type, bool no_pointer_name, char* fun_name, sInfo* info)
 {
     string struct_name;
-    if(obj_type->mOriginalTypeName !== "") {
+    buffer*% buf = new buffer();
+    if(obj_type->mOriginalTypeName !== "" && !obj_type->mNoHeap) {
         struct_name = string(obj_type->mOriginalTypeName);
     }
     else {
         struct_name = create_generics_name(obj_type, info);
+        for(int i=0; i<obj_type->mPointerNum; i++)
+        {
+            buf.append_str("p");
+        }
     }
     
-    return xsprintf("%s_%s", struct_name, fun_name);
+    return xsprintf("%s%s_%s", struct_name, buf.to_string(), fun_name);
 }
 
 bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* generics_type, sInfo* info)
@@ -4231,7 +4238,7 @@ exception sNode*% parse_function(sInfo* info)
         
         info.generics_funcs.insert(string(fun_name3), fun);
         
-        return (sNode*)null;
+        return (sNode*%)null;
     }
     else if(*info->p == '{') {
         sBlock*% block = parse_block(info) throws;
@@ -4320,7 +4327,7 @@ exception sNode*% parse_function(sInfo* info)
         throw;
     }
     
-    return (sNode*)null;
+    return (sNode*%)null;
 }
 
 exception sNode*% parse_global_variable(sInfo* info)
@@ -4408,7 +4415,7 @@ exception sNode*% parse_global_variable(sInfo* info)
         return new sNode(new sGlobalVariable(result_type, var_name, right_node, array_initializer, info));
     }
     
-    return (sNode*)null;
+    return (sNode*%)null;
 }
 
 exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 1
@@ -4416,7 +4423,7 @@ exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info)
     err_msg(info, "unexpected word(%s)(2)\n", buf);
     throw;
     
-    return (sNode*)null;
+    return (sNode*%)null;
 }
 
 bool is_type_name(char* buf, sInfo* info)

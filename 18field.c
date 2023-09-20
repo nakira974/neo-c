@@ -184,12 +184,15 @@ bool sStoreFieldNode*::compile(sStoreFieldNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-/*
-    if(!field_type->mHeap && right_type->mHeap) {
-        err_msg(info, "require field type to append %% (%s)", klass->mName);
-        return false;
+    if(field_type->mHeap && !right_type->mHeap) {
+        if(right_type->mClass->mName === "void" && right_type->mPointerNum == 1)
+        {
+        }
+        else {
+            err_msg(info, "require right value as heap object(%s)", name);
+            return false;
+        }
     }
-*/
     
     if(field_type->mHeap && right_type->mHeap && field_type->mPointerNum > 0 && right_type->mPointerNum > 0) 
     {
@@ -420,8 +423,8 @@ bool sStoreArrayNode*::compile(sStoreArrayNode* self, sInfo* info)
         CVALUE*% come_value = new CVALUE;
         
 /*
-        if(!left_type->mHeap && right_type->mHeap) {
-            err_msg(info, "require field type to append %% (%s)", klass->mName);
+        if(left_type->mHeap && !right_type->mHeap) {
+            err_msg(info, "require right value as heap object");
             return false;
         }
 */
@@ -602,7 +605,7 @@ string sLoadArrayNode*::sname(sLoadArrayNode* self, sInfo* info)
 
 exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 18
 {
-    return (sNode*)null;
+    return (sNode*%)null;
 }
 
 exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) version 18
@@ -610,7 +613,7 @@ exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) v
     err_msg(info, "parse_method_call is failed");
     throw;
     
-    return (sNode*)null;
+    return (sNode*%)null;
 }
 
 exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 18

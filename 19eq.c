@@ -966,5 +966,5 @@ exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 19
          return new sNode(new sExpEqualNode(node, right_node, info));
     }
     
-    return (sNode*)null;
+    return (sNode*%)null;
 }

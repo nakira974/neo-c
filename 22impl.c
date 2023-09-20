@@ -74,7 +74,7 @@ exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info)
         info.generics_type_names.reset();
         info->impl_type = null;
         
-        return (sNode*)null;
+        return (sNode*%)null;
     }
     
     return inherit(string(buf), head, head_sline, info) throws;

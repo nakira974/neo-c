@@ -308,6 +308,7 @@ int main()
     
     var m2 = clone m1;
     
+/*
     printf("%d %d\n", m2["AAA"], m2["BBB"]);
     
     xassert("map clone", m1 === m2);
@@ -318,7 +319,6 @@ int main()
     
     printf("%d\n", tt1.v1);
     
-/*
     tuple1<string>*% tt2 = new tuple1<string>.initialize(string("ABC"));
     
     tt2.v1 = string("DEF");

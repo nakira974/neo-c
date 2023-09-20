@@ -3357,7 +3357,7 @@ impl list <T>
         self.replace(position, item);
     }
     T& operator_load_element(list<T>* self, int index) {
-        T& default_value;
+        T&| default_value;
         memset(&default_value, 0, sizeof(T));
 
         return self.item(index, default_value);
@@ -3557,10 +3557,21 @@ impl map <T, T2>
         var result = new map<T,T2>.initialize();
 
         for(var it = self.begin(); !self.end(); it = self.next()) {
-            T2& default_value;
+            T2&| default_value;
             var it2 = self.at(it, default_value);
 
-            result.insert2(clone it, clone it2);
+            if(isheap(T) && !isheap(T2)) {
+                result.insert2(clone it, it2);
+            }
+            else if(isheap(T) && isheap(T2)) {
+                result.insert2(clone it, clone it2);
+            }
+            else if(!isheap(T) && isheap(T2)) {
+                result.insert2(it, clone it2);
+            }
+            else if(!isheap(T) && !isheap(T2)) {
+                result.insert2(it, it2);
+            }
         }
 
         return result;
@@ -3635,7 +3646,7 @@ impl map <T, T2>
         int len = 0;
 
         for(var it = self.begin(); !self.end(); it = self.next()) {
-            T2& default_value;
+            T2&| default_value;
             T2& it2 = self.at(it, default_value);
             int hash = it.get_hash_key() % size;
             int n = hash;
@@ -3650,9 +3661,9 @@ impl map <T, T2>
                     }
                     else if(n == hash) {
                         fprintf(
-# 955 "./comelang2.h" 3 4
+# 966 "./comelang2.h" 3 4
                                stderr
-# 955 "./comelang2.h"
+# 966 "./comelang2.h"
                                      , "unexpected error in map.rehash(1)\n");
                         exit(2);
                     }
@@ -3681,7 +3692,7 @@ impl map <T, T2>
         self.len = len;
     }
 
-    void insert(map<T,T2>* self, T& key, T2& item) {
+    void insert(map<T,T2>* self, T key, T2 item) {
         if(self.len*2 >= self.size) {
             self.rehash();
         }
@@ -3717,9 +3728,9 @@ impl map <T, T2>
                 }
                 else if(it == hash) {
                     fprintf(
-# 1018 "./comelang2.h" 3 4
+# 1029 "./comelang2.h" 3 4
                            stderr
-# 1018 "./comelang2.h"
+# 1029 "./comelang2.h"
                                  , "unexpected error in map.insert\n");
                     exit(2);
                 }
@@ -3727,14 +3738,12 @@ impl map <T, T2>
             else {
                 self.item_existance[it] = true;
                 if(isheap(T)) {
-                    delete borrow self.keys[it];
                     self.keys[it] = borrow gc_inc(key);
                 }
                 else {
                     self.keys[it] = borrow key;
                 }
                 if(isheap(T2)) {
-                    delete borrow self.items[it];
                     self.items[it] = borrow gc_inc(item);
                 }
                 else {
@@ -3763,7 +3772,6 @@ impl map <T, T2>
         if(self.len*2 >= self.size) {
             self.rehash();
         }
-
         int hash = key.get_hash_key() % self.size;
         int it = hash;
 
@@ -3796,9 +3804,9 @@ impl map <T, T2>
                 }
                 else if(it == hash) {
                     fprintf(
-# 1093 "./comelang2.h" 3 4
+# 1101 "./comelang2.h" 3 4
                            stderr
-# 1093 "./comelang2.h"
+# 1101 "./comelang2.h"
                                  , "unexpected error in map.insert\n");
                     exit(2);
                 }
@@ -3806,14 +3814,12 @@ impl map <T, T2>
             else {
                 self.item_existance[it] = true;
                 if(isheap(T)) {
-                    delete borrow self.keys[it];
                     self.keys[it] = borrow gc_inc(key);
                 }
                 else {
                     self.keys[it] = borrow key;
                 }
                 if(isheap(T2)) {
-                    delete borrow self.items[it];
                     self.items[it] = borrow gc_inc(item);
                 }
                 else {
@@ -3840,7 +3846,7 @@ impl map <T, T2>
     }
 
     T2& operator_load_element(map<T, T2>* self, T& key) {
-        T2& default_value;
+        T2&| default_value;
         memset(&default_value, 0, sizeof(T2));
 
         return self.at(key, default_value);
@@ -3860,11 +3866,11 @@ impl map <T, T2>
         bool result = true;
         for(var it = left.key_list.begin(); !left.key_list.end(); it = left.key_list.next())
         {
-            T default_value;
+            T| default_value;
             T& it2 = right.key_list.item(n, default_value);
 
             if(it.equals(it2)) {
-                T2 default_value2;
+                T2| default_value2;
                 T2& item = left.at(it, default_value2);
                 T2& item2 = left.at(it2, default_value2);
 
@@ -3962,9 +3968,9 @@ static inline int int::clone(int self)
     return self;
 }
 
-static inline char* char*::clone(char* self)
+static inline string char*::clone(char* self)
 {
-    return self;
+    return string(self);
 }
 
 static inline string string::clone(char* self)
@@ -4035,13 +4041,13 @@ impl tuple2 <T, T2>
         return self;
     }
 
-    T& catch(tuple2<T, T2>* self, void* parent, void (*block)(void* parent))
+    T catch(tuple2<T, T2>* self, void* parent, void (*block)(void* parent))
     {
         if(!self.v2) {
             block(parent);
         }
 
-        return self.v1;
+        return clone self.v1;
     }
 }
 
@@ -4282,35 +4288,35 @@ static inline string xsprintf(char* msg, ...)
 {
     va_list args;
     
-# 1575 "./comelang2.h" 3 4
+# 1581 "./comelang2.h" 3 4
    __builtin_va_start(
-# 1575 "./comelang2.h"
+# 1581 "./comelang2.h"
    args
-# 1575 "./comelang2.h" 3 4
+# 1581 "./comelang2.h" 3 4
    ,
-# 1575 "./comelang2.h"
+# 1581 "./comelang2.h"
    msg
-# 1575 "./comelang2.h" 3 4
+# 1581 "./comelang2.h" 3 4
    )
-# 1575 "./comelang2.h"
+# 1581 "./comelang2.h"
                       ;
     char* result;
     int len = vasprintf(&result, msg, args);
     
-# 1578 "./comelang2.h" 3 4
+# 1584 "./comelang2.h" 3 4
    __builtin_va_end(
-# 1578 "./comelang2.h"
+# 1584 "./comelang2.h"
    args
-# 1578 "./comelang2.h" 3 4
+# 1584 "./comelang2.h" 3 4
    )
-# 1578 "./comelang2.h"
+# 1584 "./comelang2.h"
                ;
 
     if(len < 0) {
         fprintf(
-# 1581 "./comelang2.h" 3 4
+# 1587 "./comelang2.h" 3 4
                stderr
-# 1581 "./comelang2.h"
+# 1587 "./comelang2.h"
                      , "vasprintf can't get heap memory.(msg %s)\n", msg);
         exit(2);
     }
@@ -4327,129 +4333,35 @@ static inline void FILE*::fclose(FILE* f)
     fclose(f);
 }
 
-static inline list<string>*% FILE::readlines(FILE* f)
-{
-    list<string>*% result = new list<string>.initialize();
-
-    while(1) {
-        char buf[
-# 1602 "./comelang2.h" 3 4
-                8192
-# 1602 "./comelang2.h"
-                      ];
-
-        if(fgets(buf, 
-# 1604 "./comelang2.h" 3 4
-                     8192
-# 1604 "./comelang2.h"
-                           , f) == 
-# 1604 "./comelang2.h" 3 4
-                                   ((void *)0)
-# 1604 "./comelang2.h"
-                                       ) {
-            break;
-        }
-
-        result.push_back(string(buf));
-    }
-
-    return result;
-}
-
-static inline string FILE::read(FILE* f)
-{
-    buffer*% buf = new buffer.initialize();
-
-    while(1) {
-        char buf2[
-# 1619 "./comelang2.h" 3 4
-                 8192
-# 1619 "./comelang2.h"
-                       ];
-
-        int size = fread(buf2, 1, 
-# 1621 "./comelang2.h" 3 4
-                                 8192
-# 1621 "./comelang2.h"
-                                       , f);
-
-        buf.append(buf2, size);
-
-        if(size < 
-# 1625 "./comelang2.h" 3 4
-                 8192
-# 1625 "./comelang2.h"
-                       ) {
-            break;
-        }
-    }
-
-    return buf.to_string();
-}
-
 static inline string FILE*::read(FILE* f)
 {
     buffer*% buf = new buffer.initialize();
 
     while(1) {
         char buf2[
-# 1638 "./comelang2.h" 3 4
+# 1608 "./comelang2.h" 3 4
                  8192
-# 1638 "./comelang2.h"
+# 1608 "./comelang2.h"
                        ];
 
         int size = fread(buf2, 1, 
-# 1640 "./comelang2.h" 3 4
+# 1610 "./comelang2.h" 3 4
                                  8192
-# 1640 "./comelang2.h"
+# 1610 "./comelang2.h"
                                        , f);
 
         buf.append(buf2, size);
 
         if(size < 
-# 1644 "./comelang2.h" 3 4
+# 1614 "./comelang2.h" 3 4
                  8192
-# 1644 "./comelang2.h"
+# 1614 "./comelang2.h"
                        ) {
             break;
         }
     }
 
     return buf.to_string();
-}
-
-static inline FILE* FILE::fprintf(FILE* f, const char* msg, ...)
-{
-    char msg2[1024];
-
-    va_list args;
-    
-# 1657 "./comelang2.h" 3 4
-   __builtin_va_start(
-# 1657 "./comelang2.h"
-   args
-# 1657 "./comelang2.h" 3 4
-   ,
-# 1657 "./comelang2.h"
-   msg
-# 1657 "./comelang2.h" 3 4
-   )
-# 1657 "./comelang2.h"
-                      ;
-    vsnprintf(msg2, 1024, msg, args);
-    
-# 1659 "./comelang2.h" 3 4
-   __builtin_va_end(
-# 1659 "./comelang2.h"
-   args
-# 1659 "./comelang2.h" 3 4
-   )
-# 1659 "./comelang2.h"
-               ;
-
-    (void)fprintf(f, "%s", msg2);
-
-    return f;
 }
 
 static inline FILE* FILE*::fprintf(FILE* f, const char* msg, ...)
@@ -4458,37 +4370,32 @@ static inline FILE* FILE*::fprintf(FILE* f, const char* msg, ...)
 
     va_list args;
     
-# 1671 "./comelang2.h" 3 4
+# 1627 "./comelang2.h" 3 4
    __builtin_va_start(
-# 1671 "./comelang2.h"
+# 1627 "./comelang2.h"
    args
-# 1671 "./comelang2.h" 3 4
+# 1627 "./comelang2.h" 3 4
    ,
-# 1671 "./comelang2.h"
+# 1627 "./comelang2.h"
    msg
-# 1671 "./comelang2.h" 3 4
+# 1627 "./comelang2.h" 3 4
    )
-# 1671 "./comelang2.h"
+# 1627 "./comelang2.h"
                       ;
     vsnprintf(msg2, 1024, msg, args);
     
-# 1673 "./comelang2.h" 3 4
+# 1629 "./comelang2.h" 3 4
    __builtin_va_end(
-# 1673 "./comelang2.h"
+# 1629 "./comelang2.h"
    args
-# 1673 "./comelang2.h" 3 4
+# 1629 "./comelang2.h" 3 4
    )
-# 1673 "./comelang2.h"
+# 1629 "./comelang2.h"
                ;
 
     (void)fprintf(f, "%s", msg2);
 
     return f;
-}
-
-static inline void FILE::fclose(FILE* f)
-{
-    fclose(f);
 }
 
 static inline string string::write(char* self, char* file_name, bool append=false)
@@ -4819,9 +4726,9 @@ static inline string string::read(char* file_name)
     FILE* f = fopen(file_name, "r");
 
     if(f == 
-# 2012 "./comelang2.h" 3 4
+# 1963 "./comelang2.h" 3 4
            ((void *)0)
-# 2012 "./comelang2.h"
+# 1963 "./comelang2.h"
                ) {
         return string("");
     }
@@ -4838,9 +4745,9 @@ static inline string char*::read(char* file_name)
     FILE* f = fopen(file_name, "r");
 
     if(f == 
-# 2027 "./comelang2.h" 3 4
+# 1978 "./comelang2.h" 3 4
            ((void *)0)
-# 2027 "./comelang2.h"
+# 1978 "./comelang2.h"
                ) {
         return string("");
     }
@@ -4871,34 +4778,6 @@ static inline string string::to_string(char* self)
     return string(self);
 }
 
-static inline list<string>*% FILE::readlines(FILE* f)
-{
-    list<string>*% result = new list<string>.initialize();
-
-    while(1) {
-        char buf[
-# 2062 "./comelang2.h" 3 4
-                8192
-# 2062 "./comelang2.h"
-                      ];
-
-        if(fgets(buf, 
-# 2064 "./comelang2.h" 3 4
-                     8192
-# 2064 "./comelang2.h"
-                           , f) == 
-# 2064 "./comelang2.h" 3 4
-                                   ((void *)0)
-# 2064 "./comelang2.h"
-                                       ) {
-            break;
-        }
-
-        result.push_back(string(buf));
-    }
-
-    return result;
-}
 
 static inline list<string>*% FILE*::readlines(FILE* f)
 {
@@ -4906,19 +4785,19 @@ static inline list<string>*% FILE*::readlines(FILE* f)
 
     while(1) {
         char buf[
-# 2079 "./comelang2.h" 3 4
+# 2014 "./comelang2.h" 3 4
                 8192
-# 2079 "./comelang2.h"
+# 2014 "./comelang2.h"
                       ];
 
         if(fgets(buf, 
-# 2081 "./comelang2.h" 3 4
+# 2016 "./comelang2.h" 3 4
                      8192
-# 2081 "./comelang2.h"
+# 2016 "./comelang2.h"
                            , f) == 
-# 2081 "./comelang2.h" 3 4
+# 2016 "./comelang2.h" 3 4
                                    ((void *)0)
-# 2081 "./comelang2.h"
+# 2016 "./comelang2.h"
                                        ) {
             break;
         }
@@ -4927,37 +4806,6 @@ static inline list<string>*% FILE*::readlines(FILE* f)
     }
 
     return result;
-}
-
-static inline string FILE::read(FILE* f)
-{
-    buffer*% buf = new buffer.initialize();
-
-    while(1) {
-        char buf2[
-# 2096 "./comelang2.h" 3 4
-                 8192
-# 2096 "./comelang2.h"
-                       ];
-
-        int size = fread(buf2, 1, 
-# 2098 "./comelang2.h" 3 4
-                                 8192
-# 2098 "./comelang2.h"
-                                       , f);
-
-        buf.append(buf2, size);
-
-        if(size < 
-# 2102 "./comelang2.h" 3 4
-                 8192
-# 2102 "./comelang2.h"
-                       ) {
-            break;
-        }
-    }
-
-    return buf.to_string();
 }
 
 static inline string FILE*::read(FILE* f)
@@ -4966,23 +4814,23 @@ static inline string FILE*::read(FILE* f)
 
     while(1) {
         char buf2[
-# 2115 "./comelang2.h" 3 4
+# 2031 "./comelang2.h" 3 4
                  8192
-# 2115 "./comelang2.h"
+# 2031 "./comelang2.h"
                        ];
 
         int size = fread(buf2, 1, 
-# 2117 "./comelang2.h" 3 4
+# 2033 "./comelang2.h" 3 4
                                  8192
-# 2117 "./comelang2.h"
+# 2033 "./comelang2.h"
                                        , f);
 
         buf.append(buf2, size);
 
         if(size < 
-# 2121 "./comelang2.h" 3 4
+# 2037 "./comelang2.h" 3 4
                  8192
-# 2121 "./comelang2.h"
+# 2037 "./comelang2.h"
                        ) {
             break;
         }
@@ -4991,107 +4839,38 @@ static inline string FILE*::read(FILE* f)
     return buf.to_string();
 }
 
-static inline FILE* FILE::fprintf(FILE* f, const char* msg, ...)
-{
-    char msg2[1024];
-
-    va_list args;
-    
-# 2134 "./comelang2.h" 3 4
-   __builtin_va_start(
-# 2134 "./comelang2.h"
-   args
-# 2134 "./comelang2.h" 3 4
-   ,
-# 2134 "./comelang2.h"
-   msg
-# 2134 "./comelang2.h" 3 4
-   )
-# 2134 "./comelang2.h"
-                      ;
-    vsnprintf(msg2, 1024, msg, args);
-    
-# 2136 "./comelang2.h" 3 4
-   __builtin_va_end(
-# 2136 "./comelang2.h"
-   args
-# 2136 "./comelang2.h" 3 4
-   )
-# 2136 "./comelang2.h"
-               ;
-
-    (void)fprintf(f, "%s", msg2);
-
-    return f;
-}
-
 static inline FILE* FILE*::fprintf(FILE* f, const char* msg, ...)
 {
     char msg2[1024];
 
     va_list args;
     
-# 2148 "./comelang2.h" 3 4
+# 2050 "./comelang2.h" 3 4
    __builtin_va_start(
-# 2148 "./comelang2.h"
+# 2050 "./comelang2.h"
    args
-# 2148 "./comelang2.h" 3 4
+# 2050 "./comelang2.h" 3 4
    ,
-# 2148 "./comelang2.h"
+# 2050 "./comelang2.h"
    msg
-# 2148 "./comelang2.h" 3 4
+# 2050 "./comelang2.h" 3 4
    )
-# 2148 "./comelang2.h"
+# 2050 "./comelang2.h"
                       ;
     vsnprintf(msg2, 1024, msg, args);
     
-# 2150 "./comelang2.h" 3 4
+# 2052 "./comelang2.h" 3 4
    __builtin_va_end(
-# 2150 "./comelang2.h"
+# 2052 "./comelang2.h"
    args
-# 2150 "./comelang2.h" 3 4
+# 2052 "./comelang2.h" 3 4
    )
-# 2150 "./comelang2.h"
+# 2052 "./comelang2.h"
                ;
 
     (void)fprintf(f, "%s", msg2);
 
     return f;
-}
-
-
-static inline string string::write(char* self, char* file_name, bool append=false)
-{
-    FILE* f;
-    if(append) {
-       f = fopen(file_name, "a");
-    }
-    else {
-       f = fopen(file_name, "w");
-    }
-
-    f.fprintf("%s", self);
-
-    f.fclose()
-
-    return string(self);
-}
-
-static inline string char*::write(char* self, char* file_name, bool append=false)
-{
-    FILE* f;
-    if(append) {
-       f = fopen(file_name, "a");
-    }
-    else {
-       f = fopen(file_name, "w");
-    }
-
-    f.fprintf("%s", self);
-
-    f.fclose()
-
-    return string(self);
 }
 # 2 "code2/HelloWorld2.c" 2
 
@@ -5402,16 +5181,6 @@ int main()
     printf("%d %d\n", m1["AAA"], m1["BBB"]);
 
     var m2 = clone m1;
-
-    printf("%d %d\n", m2["AAA"], m2["BBB"]);
-
-    xassert("map clone", m1 === m2);
-
-    tuple1<int>*% tt1 = new tuple1<int>.initialize(1);
-
-    tt1.v1 = 111;
-
-    printf("%d\n", tt1.v1);
 # 388 "code2/HelloWorld2.c"
     return 0;
 }

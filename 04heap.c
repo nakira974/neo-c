@@ -62,6 +62,7 @@ exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
                 result->mHeap = heap;
             }
             if(no_heap) {
+                result->mNoHeap = true;
                 result->mHeap = false;
             }
             if(no_calling_destructor) {
@@ -337,13 +338,14 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
     info.stack = stack_saved;
 }
 
-string clone_object(sType* type, char* obj, sInfo* info)
+sType*%, string clone_object(sType* type, char* obj, sInfo* info)
 {
     if(type->mNoSolvedGenericsType.v1) {
         type = type->mNoSolvedGenericsType.v1;
     }
     
     string result = null
+    sType*% result_type = null;
     var stack_saved = info.stack;
     var right_value_objects = info->right_value_objects;
     
@@ -354,9 +356,6 @@ string clone_object(sType* type, char* obj, sInfo* info)
     char* class_name = klass->mName;
 
     char* fun_name = "clone";
-    
-    sType*% type2 = clone type;
-    type2->mHeap = false;
     
     sFun* cloner = NULL;
     string fun_name2;
@@ -375,7 +374,7 @@ string clone_object(sType* type, char* obj, sInfo* info)
         
         if(generics_fun) {
             if(!create_generics_fun(string(fun_name2), generics_fun, obj_type, info)) {
-                return string("");
+                return (new sType("void", info), string(""));
             }
         }
         
@@ -412,15 +411,24 @@ string clone_object(sType* type, char* obj, sInfo* info)
     /// call cloner ///
     if(cloner != null) {
         result = xsprintf("%s(%s)", fun_name2, c_value);
+        result_type = cloner->mResultType;
+        result_type = solve_generics(result_type
+                    , type, info).catch 
+        {
+            exit(2);
+        }
     }
     else {
-        result = xsprintf("come_memdup(%s)", c_value);
+        type->mHeap = true;
+        string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
+        result = xsprintf("(%s)come_memdup(%s)", type_name, c_value);
+        result_type = clone type;
     }
     
     info.right_value_objects = right_value_objects;
     info.stack = stack_saved;
     
-    return result;
+    return (result_type, result);
 }
 
 bool create_equals_method(sType* type, sInfo* info)
@@ -707,10 +715,7 @@ void free_objects(sVarTable* table, sVar* ret_value, sInfo* info)
         sType* type = p->mType;
         sClass* klass = type->mClass;
         
-        if(ret_value != null && p->mCValueName != null && p->mCValueName === ret_value->mCValueName) 
-        {
-        }
-        else if(type->mHeap && ret_value != null && p->mCValueName != null) 
+        if(ret_value != null && p->mCValueName != null && p->mCValueName === ret_value->mCValueName && type->mHeap) 
         {
             free_object(p->mType, p->mCValueName, false@no_decrement, true@no_free, info);
 

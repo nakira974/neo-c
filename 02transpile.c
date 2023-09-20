@@ -384,7 +384,7 @@ int come_main(int argc, char** argv) version 2
     foreach(it, files) {
         sInfo info;
         
-        info.sname = clone it;
+        info.sname = string(it);
         info.sline = 1;
         info.err_num = 0;
         info.clang_option = clang_option.to_string();

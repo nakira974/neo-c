@@ -93,21 +93,22 @@ bool sNewNode*::compile(sNewNode* self, sInfo* info)
         exit(2);
     }
     
+/*
     if(type->mArrayNum.length() > 0) {
         type2->mPointerNum--;
     }
+*/
+    type2->mArrayNum.reset();
     
     string type_name = make_type_name_string(type2, false@in_header, true@array_cast_pointer, info);
     
     come_value.c_value = xsprintf("(%s*)come_calloc(1, sizeof(%s)*(%s))", type_name, type_name, num_string.to_string());
     
-    sType*% type3 = clone type2;
-    type3->mPointerNum++;
-    type3->mHeap = true;
     type2->mHeap = true;
+    type2->mPointerNum++;
+    
+    come_value.c_value = append_object_to_right_values(come_value.c_value, type2 ,info);
     come_value.type = clone type2;
-    come_value.c_value = append_object_to_right_values(come_value.c_value, type3 ,info);
-    come_value.type->mPointerNum ++;
     come_value.var = null;
     
     add_come_last_code(info, "%s;\n", come_value.c_value);
@@ -522,9 +523,19 @@ bool sCloneNode*::compile(sCloneNode* self, sInfo* info)
     sType*% left_type = clone left_value.type;
     
     CVALUE*% come_value = new CVALUE;
-    come_value.c_value = clone_object(left_type, left_value.c_value, info);
-    come_value.type = clone left_value.type;
+    
+    var result_type, c_value = clone_object(left_type, left_value.c_value, info);
+    come_value.c_value = c_value;
+    come_value.type = clone result_type;
     come_value.var = null;
+    
+    if(left_type->mClass->mStruct) {
+        come_value.type->mHeap = true;
+    }
+    
+    if(come_value.type->mHeap) {
+        come_value.c_value = append_object_to_right_values(come_value.c_value, left_type,info);
+    }
     
     info.stack.push_back(come_value);
     

@@ -1,4 +1,4 @@
-rm 0*.o 1*.o 2*.o
+#rm 0*.o 1*.o 2*.o
 make comelang2
 sudo make comelang2-install
 #make comelang2-test

@@ -61,13 +61,16 @@ bool sInterfaceNode*::compile(sInterfaceNode* self, sInfo* info)
     return true;
 }
 
-exception tuple2<sType*%, string>*% parse_interface_function(sInfo* info)
+sType*%, string parse_interface_function(sInfo* info)
 {
-    var result_type, var_name = parse_type(info) throws;
+    var result_type, var_name,err = parse_type(info);
+    if(!err) {
+        exit(2);
+    }
     
-    string fun_name = parse_word(info) throws;
+    string fun_name = parse_word(info);
     
-    var param_types, param_names, param_default_parametors, var_args = parse_params(info) throws;
+    var param_types, param_names, param_default_parametors, var_args = parse_params(info);
     
     param_types.insert(0, new sType("void*", info));
     param_names.insert(0, string("self"));
@@ -79,13 +82,13 @@ exception tuple2<sType*%, string>*% parse_interface_function(sInfo* info)
     type->mVarArgs = var_args;
     type->mResultType = new tuple1<sType*%>(clone result_type);
     
-    return (type, fun_name);
+    return new tuple2<sType*%,string>(type, fun_name);
 }
 
-exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 92
+sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 92
 {
     if(buf === "interface" || buf === "protocol") {
-        var type_name = parse_word(info) throws;
+        var type_name = parse_word(info);
         
         sClass*% klass;
         if(info.classes.at(type_name, null) == null) {
@@ -95,7 +98,7 @@ exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info)
             klass = clone info.classes.at(type_name, null);
         }
         
-        expected_next_character('{', info) throws;
+        expected_next_character('{', info);
     
         sType*% voidp = new sType("void", info);
         voidp->mPointerNum++;
@@ -122,8 +125,8 @@ exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info)
         
         while(true) {
             parse_sharp(info);
-            var type2, name = parse_interface_function(info) throws;
-            expected_next_character(';', info) throws;
+            var type2, name = parse_interface_function(info);
+            expected_next_character(';', info);
             
             klass.mFields.push_back(new tuple2<string, sType*%>(name, type2));
             
@@ -140,5 +143,5 @@ exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info)
         return new sNode(new sInterfaceNode(string(type_name), klass, info));
     }
     
-    return inherit(string(buf), head, head_sline, info) throws;
+    return inherit(string(buf), head, head_sline, info);
 }

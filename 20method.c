@@ -165,10 +165,7 @@ string sMethodCallNode*::sname(sMethodCallNode* self, sInfo* info)
 string make_generics_function(sType* type, string fun_name, sInfo* info)
 {
 /*
-    sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
-        err_msg(info, "solve generics error");
-        return string("");
-    }
+    sType*% obj_type = solve_generics(type, info.generics_type, info);
 */
     
     string none_generics_name = get_none_generics_name(type.mClass.mName);
@@ -208,10 +205,7 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
     dec_stack_ptr(1, info);
     
 /*
-    sType*% obj_type = solve_generics(obj_value.type, info.generics_type, info).catch 
-    {
-        return false;
-    }
+    sType*% obj_type = solve_generics(obj_value.type, info.generics_type, info);
 */
     sType*% obj_type = clone obj_value.type;
     
@@ -312,10 +306,7 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
         sType*% result_type = clone fun->mResultType;
         result_type->mStatic = false;
         
-        sType*% result_type2 = solve_generics(result_type, info.generics_type, info).catch 
-        {
-            exit(1);
-        }
+        sType*% result_type2 = solve_generics(result_type, info.generics_type, info);
         
         list<sType*%>*% param_types = new list<sType*%>();
         foreach(it, fun.mParamTypes) {
@@ -323,9 +314,7 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
                 param_types.push_back(it);
             }
             else {
-                sType*% it2 = solve_generics(it, info.generics_type, info).catch {
-                    exit(1);
-                }
+                sType*% it2 = solve_generics(it, info.generics_type, info);
                 
                 param_types.push_back(clone it2);
             }
@@ -387,9 +376,7 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
                     info.p = info.source.buf;
                     info.head = info.source.buf;
                     
-                    sNode*% node = expression(info).catch {
-                        exit(2);
-                    }
+                    sNode*% node = expression(info);
                     
                     if(!node.compile->(info)) {
                         return false;
@@ -518,9 +505,7 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
             info.head = info.source.buf;
             info.sline = method_block_sline;
             
-            sNode*% node = parse_function(info).catch {
-                exit(2);
-            }
+            sNode*% node = parse_function(info);
             
             if(!node.compile->(info)) {
                 return false;
@@ -607,7 +592,7 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
     return true;
 }
 
-exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) version 20
+sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) version 20
 {
     list<tuple2<string,sNode*%>*%>*% params = new list<tuple2<string,sNode*%>*%>();
     params.push_back(new tuple2<string,sNode*%>(null,obj));
@@ -618,7 +603,7 @@ exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) v
     }
     
     if(*info->p != '{') {
-        expected_next_character('(', info) throws;
+        expected_next_character('(', info);
         
         while(true) {
             if(*info->p == ')') {
@@ -631,8 +616,10 @@ exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) v
             int sline = info.sline;
             
             bool err_flag = false;
-            string label = parse_word(info, true@no_check_err).catch {
-                 err_flag = true 
+            string label;
+            if(xisalpha(*info->p) || *info->p == '_') {
+                label = parse_word(info);
+                err_flag = true;
             };
             
             if(err_flag == false && *info->p == ':') {
@@ -649,16 +636,9 @@ exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) v
             bool no_comma = info.no_comma;
             info.no_comma = true;
             
-            sNode*% node = expression(info) throws;
+            sNode*% node = expression(info);
             
-            bool throwing = false;
-            node = post_position_operator3(node, info).catch {
-                throwing = true;
-            }
-            
-            if(throwing) {
-                throw;
-            }
+            node = post_position_operator3(node, info);
             
             info.no_comma = no_comma;
             
@@ -682,7 +662,7 @@ exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) v
         char* head = info.p;
         method_block_sline = info.sline;
         
-        skip_block(info) throws;
+        skip_block(info);
         
         char* tail = info.p;
         
@@ -700,38 +680,17 @@ exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) v
     return new sNode(new sMethodCallNode(fun_name, obj, params, method_block!, method_block_sline, info));
 }
 
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 20
+sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 20
 {
     if(buf === "__current__") {
         return new sNode(new sCurrentNode(info));
     }
     
-    return inherit(buf, head, head_sline, info) throws;
+    return inherit(buf, head, head_sline, info);
 }
 
 
-exception sNode*% post_position_operator3(sNode*% node, sInfo* info) version 20
+sNode*% post_position_operator3(sNode*% node, sInfo* info) version 20
 {
-    if(memcmp(info->p, "throws", strlen("throws")) == 0) {
-        info->p += strlen("throws");
-        skip_spaces_and_lf(info);
-        
-        string fun_name = string("catch");
-        list<tuple2<string,sNode*%>*%>*% params = new list<tuple2<string,sNode*%>*%>();
-        /*
-        sNode*% current_stack_frame_node = new sNode(new sCurrentNode(info));
-        
-        params.push_back(new tuple2<string, sNode*%>(null, current_stack_frame_node));
-        */
-        params.push_back(new tuple2<string,sNode*%>(null,node));
-        
-        buffer*% method_block = new buffer();
-        
-        method_block.append_str(xsprintf("{ exit(2); }"));
-        int method_block_sline = info.sline;
-        
-        return new sNode(new sMethodCallNode(fun_name, node, params, method_block, method_block_sline, info));
-    }
-    
-    return inherit(node, info) throws;
+    return inherit(node, info);
 }

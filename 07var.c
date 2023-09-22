@@ -50,9 +50,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                 return false;
             }
             
-            var type = solve_generics(self.type, info->generics_type, info).catch {
-                exit(2);
-            }
+            var type = solve_generics(self.type, info->generics_type, info);
             
             add_variable_to_table(self.name, type, info);
         }
@@ -146,9 +144,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                     add_variable_to_table(self.name, right_type, info);
                 }
                 else {
-                    var type = solve_generics(self.type, info->generics_type, info).catch {
-                        exit(2);
-                    }
+                    var type = solve_generics(self.type, info->generics_type, info);
                     
                     add_variable_to_table(self.name, type, info);
                 }
@@ -562,7 +558,7 @@ void add_variable_to_global_table_with_int_value(char* name, sType* type, char* 
     info.gv_table.mVars.insert(string(name), self);
 }
 
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 7
+sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 7
 {
     bool is_type_name_flag = is_type_name(buf, info);
     
@@ -571,7 +567,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
     
     if(buf === "var") {
         parse_sharp(info);
-        var buf2 = parse_word(info) throws;
+        var buf2 = parse_word(info);
         parse_sharp(info);
         
         list<string>*% multiple_assign = null;
@@ -585,7 +581,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
                 skip_spaces_and_lf(info);
                 
                 parse_sharp(info);
-                var buf3 = parse_word(info) throws;
+                var buf3 = parse_word(info);
                 parse_sharp(info);
                 
                 multiple_assign.push_back(clone buf3);
@@ -598,17 +594,17 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
             skip_spaces_and_lf(info);
             
             parse_sharp(info);
-            sNode*% right_value = expression(info) throws;
+            sNode*% right_value = expression(info);
             parse_sharp(info);
             
-            right_value = post_position_operator3(right_value, info) throws;
+            right_value = post_position_operator3(right_value, info);
             parse_sharp(info);
             
             return new sNode(new sStoreNode(string(buf2)@name, multiple_assign, null!, true@alloc, right_value, info));
         }
         else {
             err_msg(info, "var requires a right value(%c)", *info->p);
-            throw;
+            exit(2);
         }
     }
     else if(!is_type_name_flag && *info->p == '=' && *(info->p+1) != '=') {
@@ -616,10 +612,10 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         skip_spaces_and_lf(info);
         
         parse_sharp(info);
-        sNode*% right_value = expression(info) throws;
+        sNode*% right_value = expression(info);
         parse_sharp(info);
         
-        right_value = post_position_operator3(right_value, info) throws;
+        right_value = post_position_operator3(right_value, info);
         
         parse_sharp(info);
         return new sNode(new sStoreNode(string(buf)@name, null!, null!, false@alloc, right_value, info));
@@ -628,7 +624,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
     else if(fun) {
         sNode*% node = new sNode(new sFunLoadNode(string(buf)@name, info));
         
-        node = post_position_operator(node, info) throws;
+        node = post_position_operator(node, info);
         
         return node;
     }
@@ -636,9 +632,9 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
     else if(!is_type_name_flag) {
         sNode*% node = new sNode(new sLoadNode(string(buf)@name, info));
         
-        node = post_position_operator(node, info) throws;
+        node = post_position_operator(node, info);
         
-        node = post_position_operator3(node, info) throws;
+        node = post_position_operator3(node, info);
         
         return node;
     }
@@ -646,9 +642,10 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         info.p = head;
         info.sline = head_sline;
         
-        info.no_output_err = true;
-        string word = parse_word(info).catch { }
-        info.no_output_err = false;
+        string word = string("");
+        if(xisalpha(*info->p) || *info->p == '_') {
+            word = parse_word(info);
+        }
         
         bool is_type_name_flag = is_type_name(word, info);
         
@@ -657,7 +654,11 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         
         if(is_type_name_flag) {
             parse_sharp(info);
-            var type, name = parse_type(info, true@parse_variable_name) throws;
+            var type, name, err = parse_type(info, true@parse_variable_name);
+            
+            if(!err) {
+                exit(2);
+            }
             parse_sharp(info);
             
             
@@ -666,10 +667,10 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
                 skip_spaces_and_lf(info);
                 
                 parse_sharp(info);
-                sNode*% right_value = expression(info) throws;
+                sNode*% right_value = expression(info);
                 parse_sharp(info);
                 
-                right_value = post_position_operator3(right_value, info) throws;
+                right_value = post_position_operator3(right_value, info);
                 
                 return new sNode(new sStoreNode(name, null!, type, true@alloc, right_value, info));
             }
@@ -679,6 +680,6 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         }
     }
     
-    return inherit(buf, head,head_sline, info) throws;
+    return inherit(buf, head,head_sline, info);
 }
 

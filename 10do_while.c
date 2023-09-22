@@ -32,9 +32,7 @@ bool sDoWhileNode*::compile(sDoWhileNode* self, sInfo* info)
     
     add_come_code(info, "do {\n");
 
-    transpile_block(block, null!, null!, info).catch {
-        exit(2);
-    }
+    transpile_block(block, null!, null!, info);
     
     /// compile expression ///
     sNode* expression_node = self.mExpressionNode;
@@ -65,30 +63,30 @@ string sDoWhileNode*::sname(sDoWhileNode* self, sInfo* info)
     return string(self.sname);
 }
 
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 10
+sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 10
 {
     if(buf === "do") {
         string sname = clone info->sname;
         int sline = info->sline;
     
-        sBlock*% block = parse_block(info) throws;
+        sBlock*% block = parse_block(info);
         
-        string buf2 = parse_word(info) throws;
+        string buf2 = parse_word(info);
         
         if(buf2 !== "while") {
             err_msg(info, "require while");
-            throw;
+            exit(2);
         }
     
-        expected_next_character('(', info) throws;
+        expected_next_character('(', info);
     
         /// expression ///
-        sNode*% expression_node = expression(info) throws;
+        sNode*% expression_node = expression(info);
         
-        expected_next_character(')', info) throws;
+        expected_next_character(')', info);
     
         return new sNode(new sDoWhileNode(expression_node, block, info));
     }
     
-    return inherit(buf, head,head_sline, info) throws;
+    return inherit(buf, head,head_sline, info);
 }

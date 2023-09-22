@@ -4929,9 +4929,9 @@ void fun_default_parametor(int x=1, int y=2)
     xassert("default parametor", x == 1 && y == 2);
 }
 
-exception int fun_exception(int x, int y)
+int,bool fun_exception(int x, int y)
 {
-    return x+y;
+    return (x+y, true);
 }
 
 int main()
@@ -5181,6 +5181,80 @@ int main()
     printf("%d %d\n", m1["AAA"], m1["BBB"]);
 
     var m2 = clone m1;
-# 388 "code2/HelloWorld2.c"
+
+    printf("%d %d\n", m2["AAA"], m2["BBB"]);
+
+    xassert("map clone", m1 === m2);
+
+    tuple1<int>*% tt1 = new tuple1<int>.initialize(1);
+
+    tt1.v1 = 111;
+
+    printf("%d\n", tt1.v1);
+
+    tuple1<string>*% tt2 = new tuple1<string>.initialize(string("ABC"));
+
+    tt2.v1 = string("DEF");
+
+    printf("%s\n", tt2.v1);
+
+    tuple1<string>*% tt3 = clone tt2;
+
+    printf("(%s)\n", tt3.v1);
+
+    tuple1<int>*% ttt1 = new tuple1<int>.initialize(1);
+
+    ttt1.v1 = 111;
+
+    printf("%d\n", ttt1.v1);
+
+    tuple1<string>*% ttt2 = new tuple1<string>.initialize(string("ABC"));
+
+    ttt2.v1 = string("DEF");
+
+    printf("%s\n", ttt2.v1);
+
+    tuple1<string>*% ttt3 = clone ttt2;
+
+    printf("(%s)\n", ttt3.v1);
+
+    xassert("tuple test", ttt2 === ttt3);
+
+    tuple2<string, int>*% t4 = (string("ABC"), 5);
+
+    xassert("tuple test", t4.v1 === string("ABC") && t4.v2 === 5);
+    xassert("tuple testX", ("AAA", 7) === ("AAA", 7));
+    xassert("tuple testX", ("AAA", 8) !== ("AAA", 7));
+
+    IA*% ia = new sDataA.initialize(111,222) implements IA;
+
+    printf("%d\n", ia.fun(0, 0));
+
+    list<IA*%>*% liIA = new list<IA*%>.initialize();
+
+    liIA.push_back(new sDataA.initialize(1, 1) implements IA);
+    liIA.push_back(new sDataA.initialize(2, 2) implements IA);
+    liIA.push_back(new sDataA.initialize(3, 3) implements IA);
+
+    for(var it = (liIA).begin(); !(liIA).end(); it = (liIA).next()) {
+        printf("%d\n", it.fun(0, 0));
+    }
+
+    var aZZZ, bZZZ = (1,2, false);
+
+    xassert("tuple test", aZZZ == 1 && bZZZ == 2);
+
+    fun_default_parametor();
+
+    list<string>*% li_str = new list<string>();
+
+    li_str.push_back(string("AAA"));
+    li_str.push_back(string("BBB"));
+    li_str.push_back(string("CCC"));
+
+    xassert("exception test", fun_exception(1,2).catch { puts("exception"); exit(2) } == 3);
+
+    xassert("list test", li_str === [string("AAA"), string("BBB"), string("CCC")]);
+
     return 0;
 }

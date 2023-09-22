@@ -82,22 +82,22 @@ string sEnumNode*::sname(sEnumNode* self, sInfo* info)
     return string(self.sname);
 }
 
-exception sNode*% parse_enum(string type_name, sInfo* info)
+sNode*% parse_enum(string type_name, sInfo* info)
 {
     info.classes.insert(type_name, new sClass(name:type_name, enum_:true));
     
-    expected_next_character('{', info) throws;
+    expected_next_character('{', info);
     
     list<tuple2<string,sNode*%>*%>*% elements = new list<tuple2<string,sNode*%>*%>();
     
     while(true) {
-        string element_name = parse_word(info) throws;
+        string element_name = parse_word(info);
         
         if(*info->p == '=') {
             info->p++;
             skip_spaces_and_lf(info);
             
-            sNode*% element_value = expression(info) throws;
+            sNode*% element_value = expression(info);
             
             elements.push_back(new tuple2<string,sNode*%>(element_name, element_value));
         }
@@ -120,7 +120,7 @@ exception sNode*% parse_enum(string type_name, sInfo* info)
     return new sNode(new sEnumNode(type_name, elements, info));
 }
 
-exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 96
+sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 96
 {
     if(buf === "enum") {
         string type_name = null;
@@ -128,17 +128,17 @@ exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info)
             type_name = string("");
         }
         else {
-            type_name = parse_word(info) throws;
+            type_name = parse_word(info);
             
             info.classes.insert(type_name, new sClass(name:type_name, enum_:true));
         }
         
-        expected_next_character('{', info) throws;
+        expected_next_character('{', info);
         
         list<tuple2<string,sNode*%>*%>*% elements = new list<tuple2<string,sNode*%>*%>();
         
         while(true) {
-            string element_name = parse_word(info) throws;
+            string element_name = parse_word(info);
             
             if(*info->p == '=') {
                 info->p++;
@@ -146,7 +146,7 @@ exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info)
                 
                 bool no_comma = info.no_comma;
                 info.no_comma = true;
-                sNode*% element_value = expression(info) throws;
+                sNode*% element_value = expression(info);
                 
                 info.no_comma = no_comma;
                 
@@ -171,5 +171,5 @@ exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info)
         return new sNode(new sEnumNode(type_name, elements, info));
     }
     
-    return inherit(string(buf), head, head_sline, info) throws;
+    return inherit(string(buf), head, head_sline, info);
 }

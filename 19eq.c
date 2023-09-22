@@ -863,7 +863,7 @@ string sExpEqualNode*::sname(sExpEqualNode* self, sInfo* info)
     return string(self.sname);
 }
 
-exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 19
+sNode*% post_position_operator2(sNode*% node, sInfo* info) version 19
 {
     if(*info->p == '+' && *(info->p+1) == '+') {
          info->p+=2;
@@ -881,7 +881,7 @@ exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 19
          info->p+=2;
          skip_spaces_and_lf(info);
          
-         sNode*% right_node = expression(info) throws;
+         sNode*% right_node = expression(info);
         
          return new sNode(new sPlusEqualNode(node, right_node, info));
     }
@@ -889,7 +889,7 @@ exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 19
          info->p+=2;
          skip_spaces_and_lf(info);
          
-         sNode*% right_node = expression(info) throws;
+         sNode*% right_node = expression(info);
         
          return new sNode(new sMinusEqualNode(node, right_node, info));
     }
@@ -897,7 +897,7 @@ exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 19
          info->p+=2;
          skip_spaces_and_lf(info);
          
-         sNode*% right_node = expression(info) throws;
+         sNode*% right_node = expression(info);
         
          return new sNode(new sMultEqualNode(node, right_node, info));
     }
@@ -905,7 +905,7 @@ exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 19
          info->p+=2;
          skip_spaces_and_lf(info);
          
-         sNode*% right_node = expression(info) throws;
+         sNode*% right_node = expression(info);
         
          return new sNode(new sDivEqualNode(node, right_node, info));
     }
@@ -913,7 +913,7 @@ exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 19
          info->p+=2;
          skip_spaces_and_lf(info);
          
-         sNode*% right_node = expression(info) throws;
+         sNode*% right_node = expression(info);
         
          return new sNode(new sModEqualNode(node, right_node, info));
     }
@@ -921,7 +921,7 @@ exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 19
          info->p+=3;
          skip_spaces_and_lf(info);
          
-         sNode*% right_node = expression(info) throws;
+         sNode*% right_node = expression(info);
         
          return new sNode(new sLShifEqualNode(node, right_node, info));
     }
@@ -929,7 +929,7 @@ exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 19
          info->p+=3;
          skip_spaces_and_lf(info);
          
-         sNode*% right_node = expression(info) throws;
+         sNode*% right_node = expression(info);
         
          return new sNode(new sRShiftEqualNode(node, right_node, info));
     }
@@ -937,7 +937,7 @@ exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 19
          info->p+=2;
          skip_spaces_and_lf(info);
          
-         sNode*% right_node = expression(info) throws;
+         sNode*% right_node = expression(info);
         
          return new sNode(new sXorEqualNode(node, right_node, info));
     }
@@ -945,7 +945,7 @@ exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 19
          info->p+=2;
          skip_spaces_and_lf(info);
          
-         sNode*% right_node = expression(info) throws;
+         sNode*% right_node = expression(info);
         
          return new sNode(new sAndEqualNode(node, right_node, info));
     }
@@ -953,7 +953,7 @@ exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 19
          info->p+=2;
          skip_spaces_and_lf(info);
          
-         sNode*% right_node = expression(info) throws;
+         sNode*% right_node = expression(info);
         
          return new sNode(new sOrEqualNode(node, right_node, info));
     }
@@ -961,7 +961,7 @@ exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 19
          info->p++;
          skip_spaces_and_lf(info);
          
-         sNode*% right_node = expression(info) throws;
+         sNode*% right_node = expression(info);
         
          return new sNode(new sExpEqualNode(node, right_node, info));
     }

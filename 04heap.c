@@ -1,7 +1,7 @@
 #include "common.h"
 
 
-exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
+sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
 {
     sType*% result = clone type;
     if(generics_type == null) {
@@ -14,14 +14,14 @@ exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
     sClass* klass = type->mClass;
 
     if(klass->mName === "lambda") {
-        var result_type = solve_generics(type->mResultType.v1, generics_type, info) throws;
+        var result_type = solve_generics(type->mResultType.v1, generics_type, info);
         
         result->mResultType = new tuple1<sType*%>(result_type);
         
         list<sType*%>*% new_param_types = new list<sType*%>();
 
         foreach(it, type->mParamTypes) {
-            sType*% new_param_type = solve_generics(it, generics_type, info) throws;
+            sType*% new_param_type = solve_generics(it, generics_type, info);
             
             new_param_types.push_back(new_param_type);
         }
@@ -83,7 +83,7 @@ exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
     else {
         result.mGenericsTypes.reset();
         foreach(it, type->mGenericsTypes) {
-            var type = solve_generics(it, generics_type, info) throws;
+            var type = solve_generics(it, generics_type, info);
             result->mGenericsTypes.push_back(clone type);
         }
         
@@ -98,17 +98,12 @@ exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info)
     return result;
 }
 
-exception sType*% solve_type(sType* type, sType* generics_type, list<sType*%>* method_generics_types, sInfo* info)
+sType*% solve_type(sType* type, sType* generics_type, list<sType*%>* method_generics_types, sInfo* info)
 {
     sType*% result = clone type;
 
     if(generics_type) {
-        result = solve_generics(result, generics_type, info).catch {
-            err_msg(info, "Can't solve generics types(3)");
-            show_type(type, info);
-            show_type(generics_type, info);
-            exit(2);
-        }
+        result = solve_generics(result, generics_type, info);
     }
     
     return result;
@@ -288,7 +283,7 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
         if(finalizer == NULL && !type->mClass->mProtocol && !type->mClass->mNumber 
             && gComelang)
         {
-            var fun,new_fun_name = create_finalizer_automatically(type, fun_name, info).catch { err_msg(info, "create_finalizer_automatically faield."); exit(1); }
+            var fun,new_fun_name = create_finalizer_automatically(type, fun_name, info);
             
             fun_name2 = new_fun_name;
             finalizer = fun;
@@ -362,10 +357,7 @@ sType*%, string clone_object(sType* type, char* obj, sInfo* info)
     if(type->mGenericsTypes.length() > 0) {
         string none_generics_name = get_none_generics_name(type.mClass.mName);
         
-        sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
-            err_msg(info, "solve generics error");
-            exit(1);
-        }
+        sType*% obj_type = solve_generics(type, info.generics_type, info);
         
         fun_name2 = create_method_name(obj_type, false@no_pointer_name, fun_name, info);
         string fun_name3 = xsprintf("%s_%s", none_generics_name, fun_name);
@@ -402,7 +394,7 @@ sType*%, string clone_object(sType* type, char* obj, sInfo* info)
     if(cloner == NULL && !type->mClass->mProtocol && !type->mClass->mNumber 
         && gComelang)
     {
-        var fun,new_fun_name = create_cloner_automatically(type, fun_name, info).catch { err_msg(info, "create_cloner failed"); exit(1); }
+        var fun,new_fun_name = create_cloner_automatically(type, fun_name, info);
         
         fun_name2 = new_fun_name;
         cloner = fun;
@@ -412,11 +404,7 @@ sType*%, string clone_object(sType* type, char* obj, sInfo* info)
     if(cloner != null) {
         result = xsprintf("%s(%s)", fun_name2, c_value);
         result_type = cloner->mResultType;
-        result_type = solve_generics(result_type
-                    , type, info).catch 
-        {
-            exit(2);
-        }
+        result_type = solve_generics(result_type, type, info);
     }
     else {
         type->mHeap = true;
@@ -454,10 +442,7 @@ bool create_equals_method(sType* type, sInfo* info)
     if(type->mGenericsTypes.length() > 0) {
         string none_generics_name = get_none_generics_name(type.mClass.mName);
         
-        sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
-            err_msg(info, "solve generics error");
-            exit(1);
-        }
+        sType*% obj_type = solve_generics(type, info.generics_type, info);
         
         fun_name2 = create_method_name(obj_type, false@no_pointer_name, fun_name, info);
         string fun_name3 = xsprintf("%s_%s", none_generics_name, fun_name);
@@ -494,7 +479,7 @@ bool create_equals_method(sType* type, sInfo* info)
     if(cloner == NULL && !type->mClass->mProtocol && !type->mClass->mNumber 
         && gComelang)
     {
-        var fun,new_fun_name = create_equals_automatically(type, fun_name, info).catch { err_msg(info, "create_equals_automatically faield"); exit(1); }
+        var fun,new_fun_name = create_equals_automatically(type, fun_name, info);
         
         fun_name2 = new_fun_name;
         cloner = fun;
@@ -529,10 +514,7 @@ bool create_operator_equals_method(sType* type, sInfo* info)
     if(type->mGenericsTypes.length() > 0) {
         string none_generics_name = get_none_generics_name(type.mClass.mName);
         
-        sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
-            err_msg(info, "solve generics error");
-            exit(1);
-        }
+        sType*% obj_type = solve_generics(type, info.generics_type, info);
         
         fun_name2 = create_method_name(obj_type, false@no_pointer_name, fun_name, info);
         string fun_name3 = xsprintf("%s_%s", none_generics_name, fun_name);
@@ -569,7 +551,7 @@ bool create_operator_equals_method(sType* type, sInfo* info)
     if(cloner == NULL && !type->mClass->mProtocol && !type->mClass->mNumber 
         && gComelang)
     {
-        var fun,new_fun_name = create_operator_equals_automatically(type, fun_name, info).catch { err_msg(info, "operator_equals faield"); exit(1); }
+        var fun,new_fun_name = create_operator_equals_automatically(type, fun_name, info);
         
         fun_name2 = new_fun_name;
         cloner = fun;
@@ -604,10 +586,7 @@ bool create_operator_not_equals_method(sType* type, sInfo* info)
     if(type->mGenericsTypes.length() > 0) {
         string none_generics_name = get_none_generics_name(type.mClass.mName);
         
-        sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
-            err_msg(info, "solve generics error");
-            exit(1);
-        }
+        sType*% obj_type = solve_generics(type, info.generics_type, info);
         
         fun_name2 = create_method_name(obj_type, false@no_pointer_name, fun_name, info);
         string fun_name3 = xsprintf("%s_%s", none_generics_name, fun_name);
@@ -644,7 +623,7 @@ bool create_operator_not_equals_method(sType* type, sInfo* info)
     if(cloner == NULL && !type->mClass->mProtocol && !type->mClass->mNumber 
         && gComelang)
     {
-        var fun,new_fun_name = create_operator_not_equals_automatically(type, fun_name, info).catch { err_msg(info, "not_equals operator faield"); exit(1); }
+        var fun,new_fun_name = create_operator_not_equals_automatically(type, fun_name, info);
         
         fun_name2 = new_fun_name;
         cloner = fun;
@@ -664,12 +643,7 @@ void free_right_value_objects(sInfo* info)
             if(it->mFunName === info->come_fun->mName && it->mBlockLevel == info->block_level) {
                 sType*% type = clone it->mType;
                 
-                type = solve_type(type, info->generics_type, info->method_generics_types, info).catch
-                {
-                    err_msg(info, "Can't solve type");
-                    show_type(type, info);
-                    exit(1);
-                }
+                type = solve_type(type, info->generics_type, info->method_generics_types, info);
 
                 free_object(type, it->mVarName, true@no_decrement, false@no_free, info);
                 

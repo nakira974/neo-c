@@ -89,9 +89,7 @@ bool sNewNode*::compile(sNewNode* self, sInfo* info)
         num_string.append_str(xsprintf("*(%s)", cvalue.c_value));
     }
     
-    sType*% type2 = solve_generics(type, info->generics_type, info).catch {
-        exit(2);
-    }
+    sType*% type2 = solve_generics(type, info->generics_type, info);
     
 /*
     if(type->mArrayNum.length() > 0) {
@@ -358,9 +356,7 @@ bool sSizeOfNode*::compile(sSizeOfNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    var type2 = solve_generics(type, info->generics_type, info).catch {
-        exit(2);
-    }
+    var type2 = solve_generics(type, info->generics_type, info);
     
     string type_name = make_type_name_string(type2, false@in_header, false@array_cast_pointer, info);
     
@@ -757,10 +753,13 @@ bool sIsHeap*::compile(sIsHeap* self, sInfo* info)
     return true;
 }
 
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 21
+sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 21
 {
     if(buf === "new") {
-        var type, name = parse_type(info) throws;
+        var type, name, err = parse_type(info);
+        if(!err) {
+            exit(2);
+        }
         
         if(*info->p == '(') {
             if(type->mClass->mProtocol) {
@@ -769,7 +768,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
                 
                 sType*% inf_type = clone type;
                 
-                sNode*% node = expression(info) throws;
+                sNode*% node = expression(info);
                 
                 expected_next_character(')', info);
                 
@@ -779,7 +778,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
                 sNode*% obj = new sNode(new sNewNode(type, info));
                 string fun_name = string("initialize");
                 
-                return parse_method_call(obj, fun_name, info) throws;
+                return parse_method_call(obj, fun_name, info);
             }
         }
         else {
@@ -793,23 +792,23 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         return new sNode(new sFalseNode(info));
     }
     else if(buf === "delete") {
-         sNode*% node = expression(info) throws;
+         sNode*% node = expression(info);
          
          return new sNode(new sDeleteNode(node, info));
         
     }
     else if(buf === "borrow") {
-         sNode*% node = expression(info) throws;
+         sNode*% node = expression(info);
          
          return new sNode(new sBorrowNode(node, info));
     }
     else if(buf === "clone") {
-         sNode*% node = expression(info) throws;
+         sNode*% node = expression(info);
          
          return new sNode(new sCloneNode(node, info));
     }
     else if(buf === "dummy_heap") {
-         sNode*% node = expression(info) throws;
+         sNode*% node = expression(info);
          
          return new sNode(new sDummyHeapNode(node, info));
     }
@@ -817,9 +816,9 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
          info->p++;
          skip_spaces_and_lf(info);
          
-         sNode*% node = expression(info) throws;
+         sNode*% node = expression(info);
          
-         expected_next_character(')', info) throws;
+         expected_next_character(')', info);
          
          return new sNode(new sGCIncNode(node, info));
     }
@@ -827,9 +826,9 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
          info->p++;
          skip_spaces_and_lf(info);
          
-         sNode*% node = expression(info) throws;
+         sNode*% node = expression(info);
          
-         expected_next_character(')', info) throws;
+         expected_next_character(')', info);
          
          return new sNode(new sGCDecNode(node, info));
     }
@@ -837,11 +836,14 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         info->p++;
         skip_spaces_and_lf(info);
         
-        var param_type, param_name = parse_type(info, parse_variable_name:false) throws;
+        var param_type, param_name,err = parse_type(info, parse_variable_name:false);
+        if(!err) {
+            exit(2);
+        }
         
-        var type2 = solve_generics(param_type, info->generics_type, info) throws;
+        var type2 = solve_generics(param_type, info->generics_type, info);
         
-        expected_next_character(')', info) throws;
+        expected_next_character(')', info);
         
         return new sNode(new sIsHeap(type2, info));
     }
@@ -879,11 +881,11 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         }
         else {
             err_msg(info, "invalid using");
-            throw;
+            exit(2);
         }
     }
     else if(buf === "sizeof") {
-        expected_next_character('(', info) throws;
+        expected_next_character('(', info);
         
         /// backtrace ///
         bool is_type_name_flag = false;
@@ -891,10 +893,12 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
             char* p = info.p;
             int sline = info.sline;
             
-            var word = parse_word(info, true) throws;
-            
-            if(is_type_name(word, info)) {
-                is_type_name_flag = true;
+            if(xisalpha(*info->p) || *info->p == '_') {
+                var word = parse_word(info);
+                
+                if(is_type_name(word, info)) {
+                    is_type_name_flag = true;
+                }
             }
             
             info.p = p;
@@ -902,18 +906,21 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         }
         
         if(is_type_name_flag) {
-            var type, name = parse_type(info, false) throws;
+            var type, name, err = parse_type(info, false);
+            if(!err) {
+                exit(2);
+            }
             
-            expected_next_character(')', info) throws;
+            expected_next_character(')', info);
             
             return new sNode(new sSizeOfNode(type, info));
         }
     }
     
-    return inherit(buf, head, head_sline, info) throws;
+    return inherit(buf, head, head_sline, info);
 }
 
-exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 94
+sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 94
 {
    if(buf === "using") {
         if(memcmp(info->p, "comelang", strlen("comelang")) == 0) {
@@ -949,22 +956,25 @@ exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info)
         }
         else {
             err_msg(info, "invalid using");
-            throw;
+            exit(2);
         }
         
         return new sNode(new sNullNodeX(info));
     }
     
-    return inherit(string(buf), head, head_sline, info) throws;
+    return inherit(string(buf), head, head_sline, info);
 }
 
-exception sNode*% post_position_operator3(sNode*% node, sInfo* info) version 21
+sNode*% post_position_operator3(sNode*% node, sInfo* info) version 21
 {
     if(memcmp(info->p, "implements", strlen("implements")) == 0) {
         info->p += strlen("implements");
         skip_spaces_and_lf(info);
         
-        var type3, name2 = parse_type(info) throws;
+        var type3, name2,err = parse_type(info);
+        if(!err) {
+            exit(2);
+        }
         
         sType*% inf_type = clone type3;
         
@@ -978,7 +988,7 @@ exception sNode*% post_position_operator3(sNode*% node, sInfo* info) version 21
         skip_spaces_and_lf(info);
     }
     
-    return inherit(node, info) throws;
+    return inherit(node, info);
 }
 
 

@@ -600,7 +600,7 @@ void add_come_code_at_source_head(sInfo* info, const char* msg, ...)
     info.module.mSourceHead.append_str(xsprintf("%s", msg2));
 }
 
-exception int transpile(sInfo* info) version 3
+int transpile(sInfo* info) version 3
 {
     var name = string("main");
     var result_type = new sType("int", info);

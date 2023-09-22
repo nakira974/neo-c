@@ -64,7 +64,7 @@ bool parsecmp(char* str, sInfo* info)
     return memcmp(info.p, str, strlen(str)) == 0;
 }
 
-exception string parse_word(sInfo* info, bool no_check_err=false)
+string parse_word(sInfo* info)
 {
     var buf = new buffer();
     parse_sharp(info);
@@ -76,9 +76,9 @@ exception string parse_word(sInfo* info, bool no_check_err=false)
     }
     skip_spaces_and_lf(info);
     
-    if(!no_check_err && buf.length() == 0) {
-        err_msg(info, "unexpected character(%c)\n", *info->p);
-//        throw;
+    if(buf.to_string().length() == 0) {
+        err_msg(info, "unexpected character(%c). expected word character", *info->p);
+        exit(2);
     }
     
     return buf.to_string();
@@ -115,14 +115,14 @@ bool is_contained_generics_class(sType* type, sInfo* info)
     return false;
 }
 
-exception list<sType*%>*%, list<string>*%, list<string>*%, bool parse_params(sInfo* info)
+list<sType*%>*%, list<string>*%, list<string>*%, bool parse_params(sInfo* info)
 {
     var param_types = new list<sType*%>();
     var param_names = new list<string>();
     var param_default_parametors = new list<string>();
     bool var_args = false;
     
-    expected_next_character('(', info) throws;
+    expected_next_character('(', info);
     
     /// backtrace ///
     bool void_param = false;
@@ -162,9 +162,13 @@ exception list<sType*%>*%, list<string>*%, list<string>*%, bool parse_params(sIn
                 break;
             }
             
-            var param_type, param_name = parse_type(info, true@parse_variable_name, false@parse_multiple_type) throws;
+            var param_type, param_name, err = parse_type(info, true@parse_variable_name, false@parse_multiple_type);
             
-            var param_type2 = solve_generics(param_type, info->generics_type, info) throws;
+            if(!err) {
+                exit(2);
+            }
+            
+            var param_type2 = solve_generics(param_type, info->generics_type, info);
             
             param_type2->mFunctionParam = true;
             
@@ -182,7 +186,7 @@ exception list<sType*%>*%, list<string>*%, list<string>*%, bool parse_params(sIn
                 bool no_comma = info.no_comma;
                 info.no_comma = true;
                 
-                sNode*% node = expression(info) throws;
+                sNode*% node = expression(info);
                 
                 info.no_comma = no_comma;
                 
@@ -219,22 +223,21 @@ exception list<sType*%>*%, list<string>*%, list<string>*%, bool parse_params(sIn
         }
     }
     
-    return new tuple4<list<sType*%>*%, list<string>*%, list<string>*%, bool>(param_types, param_names, param_default_parametors, var_args);
+    return (param_types, param_names, param_default_parametors, var_args);
 }
 
-exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_name=false, bool parse_multiple_type=true)
+sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool parse_multiple_type=true)
 {
     char* head = info.p;
     int head_sline = info.sline;
     info.define_struct = false;
     
-    string type_name = parse_word(info) throws;
+    string type_name = parse_word(info);
     
     bool constant = false;
     bool static_ = false;
     bool volatile_ = false;
     bool register_ = false;
-    bool exception_ = false;
     bool unsigned_ = false;
     bool long_ = false;
     bool long_long = false;
@@ -257,13 +260,14 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                 char* p = info.p;
                 int sline = info.sline;
                 
-                skip_block(info) throws;
+                skip_block(info);
                 
                 if(*info->p == ';') {
                     info.p = head;
                     info.sline = head_sline;
                     info.define_struct = true;
-                    throw;
+                    
+                    return new tuple3<sType*%,string,bool>((sType*%)null, (string)null, false);
                 } 
                 else {
                     anonymous_type = true;
@@ -274,7 +278,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                 }
             }
             
-            type_name = parse_word(info) throws;
+            type_name = parse_word(info);
             
             if(*info->p == '<') {
                 char* p = info.p;
@@ -298,7 +302,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                     }
                     else if(*info->p == '\0') {
                         err_msg(info, "invalid struct definition");
-                        throw;
+                        return new tuple3<sType*%,string,bool>((sType*%)null, (string)null, false);
                     }
                     else {
                         info->p++;
@@ -310,13 +314,13 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                 char* p = info.p;
                 int sline = info.sline;
                 
-                skip_block(info) throws;
+                skip_block(info);
                 
                 if(*info->p == ';') {
                     info.p = head;
                     info.sline = head_sline;
                     info.define_struct = true;
-                    throw;
+                    return new tuple3<sType*%,string,bool>((sType*%)null, (string)null, false);
                 }
                 else {
                     anonymous_type = true;
@@ -333,13 +337,13 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                 char* p = info.p;
                 int sline = info.sline;
                 
-                skip_block(info) throws;
+                skip_block(info);
                 
                 if(*info->p == ';') {
                     info.p = head;
                     info.sline = head_sline;
                     info.define_struct = true;
-                    throw;
+                    return new tuple3<sType*%,string,bool>((sType*%)null, (string)null, false);
                 }
                 else {
                     anonymous_type = true;
@@ -350,19 +354,19 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                 }
             }
             
-            type_name = parse_word(info) throws;
+            type_name = parse_word(info);
             
             if(*info->p == '{') {
                 char* p = info.p;
                 int sline = info.sline;
                 
-                skip_block(info) throws;
+                skip_block(info);
                 
                 if(*info->p == ';') {
                     info.p = head;
                     info.sline = head_sline;
                     info.define_struct = true;
-                    throw;
+                    return new tuple3<sType*%,string,bool>((sType*%)null, (string)null, false);
                 } 
                 else {
                     anonymous_type = true;
@@ -379,13 +383,13 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                 char* p = info.p;
                 int sline = info.sline;
                 
-                skip_block(info) throws;
+                skip_block(info);
                 
                 if(*info->p == ';') {
                     info.p = head;
                     info.sline = head_sline;
                     info.define_struct = true;
-                    throw;
+                    return new tuple3<sType*%,string,bool>((sType*%)null, (string)null, false);
                 }
                 else {
                     anonymous_type = true;
@@ -396,19 +400,19 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                 }
             }
             
-            type_name = parse_word(info) throws;
+            type_name = parse_word(info);
             
             if(*info->p == '{') {
                 char* p = info.p;
                 int sline = info.sline;
                 
-                skip_block(info) throws;
+                skip_block(info);
                 
                 if(*info->p == ';') {
                     info.p = head;
                     info.sline = head_sline;
                     info.define_struct = true;
-                    throw;
+                    return new tuple3<sType*%,string,bool>((sType*%)null, (string)null, false);
                 }
                 else {
                     anonymous_type = true;
@@ -421,27 +425,27 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         else if(type_name === "const") {
             constant = true;
             
-            type_name = parse_word(info) throws;
+            type_name = parse_word(info);
         }
         else if(type_name === "static") {
             static_ = true;
             
-            type_name = parse_word(info) throws;
+            type_name = parse_word(info);
         }
         else if(type_name === "extern") {
             extern_ = true;
             
-            type_name = parse_word(info) throws;
+            type_name = parse_word(info);
         }
         else if(type_name === "inline" || type_name === "__inline") {
             inline_ = true;
             
-            type_name = parse_word(info) throws;
+            type_name = parse_word(info);
         }
         else if(type_name === "volatile") {
             volatile_ = true;
             
-            type_name = parse_word(info) throws;
+            type_name = parse_word(info);
         }
         else if(type_name === "long") {
             /// backtrace ///
@@ -457,17 +461,17 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                     break;
                 }
                 else {
-                    type_name = parse_word(info, true) throws;
+                    type_name = parse_word(info);
                     
                     if(type_name === "unsigned") {
-                        type_name = parse_word(info, true) throws;
+                        type_name = parse_word(info);
                         
                         if(type_name === "int") {
                             break;
                         }
                     }
                     else if(type_name === "long") {
-                        type_name = parse_word(info, true) throws;
+                        type_name = parse_word(info);
                         
                         if(type_name === "int") {
                             break;
@@ -496,27 +500,22 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         else if(type_name === "unsigned") {
             unsigned_ = true;
             
-            type_name = parse_word(info) throws;
+            type_name = parse_word(info);
         }
         else if(type_name === "signed") {
             unsigned_ = false;
             
-            type_name = parse_word(info) throws;
+            type_name = parse_word(info);
         }
         else if(type_name === "register") {
             register_ = true;
             
-            type_name = parse_word(info) throws;
-        }
-        else if(type_name === "exception") {
-            exception_ = true;
-            
-            type_name = parse_word(info) throws;
+            type_name = parse_word(info);
         }
         else if(type_name === "restrict") {
             restrict_ = true;
             
-            type_name = parse_word(info) throws;
+            type_name = parse_word(info);
         }
         else if(type_name === "short") {
             short_ = true;
@@ -527,8 +526,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             else if(xisalnum(*info.p)) {
                 char* p = info.p;
                 int sline = info.sline;
-                type_name = parse_word(info).catch {
-                }
+                type_name = parse_word(info);
                 
                 if(type_name === "int") {
                     break;
@@ -563,7 +561,7 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         int slineX = info.sline;
         
         if(isalpha(*info->p)) {
-            (void)parse_word(info).catch {}
+            (void)parse_word(info);
             
             if(*info->p == '(' && info.in_typedef) {
                 lambda_flag = true;
@@ -584,12 +582,12 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                 type_name = xsprintf("anonymous_typeX%d", ++anonymous_num);
             }
             
-            sNode*% node = parse_struct(type_name, info) throws;
+            sNode*% node = parse_struct(type_name, info);
             
             if(!info.no_output_err) {
                 if(!node.compile->(info)) {
                     err_msg(info, "parse_struct is failed");
-                    throw;
+                    return new tuple3<sType*%,string,bool>((sType*%)null, (string)null, false);
                 }
             }
             
@@ -600,12 +598,12 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                 type_name = xsprintf("anonymous_typeY%d", ++anonymous_num);
             }
             
-            sNode*% node = parse_enum(type_name, info) throws;
+            sNode*% node = parse_enum(type_name, info);
             
             if(!info.no_output_err) {
                 if(!node.compile->(info)) {
                     err_msg(info, "enum compiling is faied");
-                    throw;
+                    return new tuple3<sType*%,string,bool>((sType*%)null, (string)null, false);
                 }
             }
             
@@ -616,12 +614,12 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                 type_name = xsprintf("anonymous_typeZ%d", ++anonymous_num);
             }
             
-            sNode*% node = parse_union(type_name, info) throws;
+            sNode*% node = parse_union(type_name, info);
             
             if(!info.no_output_err) {
                 if(!node.compile->(info)) {
                     err_msg(info, "union compiling is failed");
-                    throw;
+                    return new tuple3<sType*%,string,bool>((sType*%)null, (string)null, false);
                 }
             }
             
@@ -629,12 +627,12 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         }
         else {
             err_msg(info, "unexpected { character");
-            throw;
+            return new tuple3<sType*%,string,bool>((sType*%)null, (string)null, false);
         }
         
         if(parse_variable_name) {
             if(xisalnum(*info.p) || *info->p == '_') {
-                var_name = parse_word(info) throws;
+                var_name = parse_word(info);
             }
             else {
                 static int num_anonymous_var_name = 0;
@@ -671,9 +669,9 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         result_type->mLong = result_type->mLong || long_;
         result_type->mShort = result_type->mShort || short_;
         
-        var_name = parse_word(info) throws;
+        var_name = parse_word(info);
         
-        var param_types, param_names, param_default_parametors, var_args = parse_params(info) throws;
+        var param_types, param_names, param_default_parametors, var_args = parse_params(info);
         
         type = new sType("lambda", info);
         
@@ -714,10 +712,10 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
         result_type->mLong = result_type->mLong || long_;
         result_type->mShort = result_type->mShort || short_;
         
-        var_name = parse_word(info) throws;
+        var_name = parse_word(info);
         expected_next_character(')', info);
         
-        var param_types, param_names, param_default_parametors, var_args = parse_params(info) throws;
+        var param_types, param_names, param_default_parametors, var_args = parse_params(info);
         
         type = new sType("lambda", info);
         
@@ -768,13 +766,17 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             
             if(info.generics_classes[type_name] == null)
             {
-                throw;
+                return new tuple3<sType*%,string,bool>((sType*%)null, (string)null, false);
             }
             
             type = new sType(type_name, info);
             
             while(true) {
-                var generics_type, var_name = parse_type(info, false@parse_variable_name, false@parse_multiple_type) throws;
+                var generics_type, var_name, err = parse_type(info, false@parse_variable_name, false@parse_multiple_type)
+                
+                if(!err) {
+                    return new tuple3<sType*%,string,bool>((sType*%)null, (string)null, false);
+                }
                 
                 type->mGenericsTypes.push_back(generics_type);
                 
@@ -790,12 +792,12 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
                 }
                 else {
                     err_msg(info, "invalid generics type\n");
-                    throw;
+                    return new tuple3<sType*%,string,bool>((sType*%)null, (string)null, false);
                 }
             }
             
             if(is_contained_generics_class(type, info)) {
-                type = solve_generics(type, info.generics_type, info) throws;
+                type = solve_generics(type, info.generics_type, info);
             }
             else {
                 if(!output_generics_struct(type, type, info))
@@ -925,73 +927,50 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             skip_spaces_and_lf(info);
         }
         
-        if(parse_multiple_type && (*info->p == ',' || exception_)) {
-            if(*info->p == ',') {
-                list<sType*%>*% types = new list<sType*%>();
+        if(parse_multiple_type && *info->p == ',') {
+            list<sType*%>*% types = new list<sType*%>();
+            
+            types.push_back(clone type);
+            
+            while(*info->p == ',') {
+                info->p++;
+                skip_spaces_and_lf(info);
                 
-                types.push_back(clone type);
+                var type2, name, err = parse_type(info, false@parse_variable_name, false@parse_multiple_type);
                 
-                while(*info->p == ',') {
-                    info->p++;
-                    skip_spaces_and_lf(info);
+                if(!err) {
+                    return new tuple3<sType*%,string,bool>((sType*%)null, (string)null, false);
+                }
                     
-                    var type2, name = parse_type(info
-                        , false@parse_variable_name, false@parse_multiple_type) throws;
-                        
-                    types.push_back(clone type2);
-                }
-                
-                int num_tuples = types.length();
-                
-                type = new sType(xsprintf("tuple%d", num_tuples), info);
-                type->mPointerNum++;
-                type->mHeap = true;
-                
-                foreach(it, types) {
-                    type->mGenericsTypes.push_back(clone it);
-                }
-                
-                if(is_contained_generics_class(type, info)) {
-                    type = solve_generics(type, info.generics_type, info) throws;
-                }
-                else {
-                    if(!output_generics_struct(type, type, info))
-                    {
-                        string new_name = create_generics_name(type, info);
-                        err_msg(info, "output generics is failed(%s)", new_name);
-                        exit(1);
-                    }
-                }
+                types.push_back(clone type2);
             }
             
-            if(exception_) {
-                sType*% type2 = clone type;
-                
-                type = new sType("tuple2", info);
-                type->mPointerNum++;
-                type->mHeap = true;
-                type->mException = true;
-                
-                type->mGenericsTypes.push_back(clone type2);
-                type->mGenericsTypes.push_back(new sType("bool", info));
-                
-                if(is_contained_generics_class(type, info)) {
-                    type = solve_generics(type, info.generics_type, info) throws;
-                }
-                else {
-                    if(!output_generics_struct(type, type, info))
-                    {
-                        string new_name = create_generics_name(type, info);
-                        err_msg(info, "output generics is failed(%s)", new_name);
-                        exit(1);
-                    }
+            int num_tuples = types.length();
+            
+            type = new sType(xsprintf("tuple%d", num_tuples), info);
+            type->mPointerNum++;
+            type->mHeap = true;
+            
+            foreach(it, types) {
+                type->mGenericsTypes.push_back(clone it);
+            }
+            
+            if(is_contained_generics_class(type, info)) {
+                type = solve_generics(type, info.generics_type, info);
+            }
+            else {
+                if(!output_generics_struct(type, type, info))
+                {
+                    string new_name = create_generics_name(type, info);
+                    err_msg(info, "output generics is failed(%s)", new_name);
+                    exit(1);
                 }
             }
         }
 
         if(parse_variable_name) {
             if(xisalnum(*info.p) || *info->p == '_') {
-                var_name = parse_word(info) throws;
+                var_name = parse_word(info);
             }
             else {
                 static int num_anonymous_var_name = 0;
@@ -1013,13 +992,13 @@ exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_n
             break;
         }
         
-        sNode*% node = expression(info) throws;
+        sNode*% node = expression(info);
         type.mArrayNum.push_back(node);
         
-        expected_next_character(']', info) throws;
+        expected_next_character(']', info);
     }
     
-    return new tuple2<sType*%, string>(type, var_name);
+    return new tuple3<sType*%, string, bool>(type, var_name, true);
 }
 
 
@@ -1370,10 +1349,7 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
         
         sType*% result_type = clone come_fun.mResultType;
         
-        sType*% result_type2 = solve_generics(result_type, info.generics_type, info).catch
-        {
-            exit(2);
-        }
+        sType*% result_type2 = solve_generics(result_type, info.generics_type, info);
         
         sType* result_type3 = result_type2->mNoSolvedGenericsType.v1;
         if(result_type2->mNoSolvedGenericsType.v1) {
@@ -1447,10 +1423,7 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
             }
         }
         
-        sType*% come_value_type = solve_generics(come_value.type, info.generics_type, info).catch
-        {
-            exit(1);
-        }
+        sType*% come_value_type = solve_generics(come_value.type, info.generics_type, info);
         
         static int num_result = 0;
         add_come_code(info, "%s __result%d__ = %s;\n", make_type_name_string(result_type2, false@in_header, false@array_cast_pointer, info), ++num_result, come_value.c_value);
@@ -1466,143 +1439,6 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
         free_right_value_objects(info);
         add_come_code(info, "return;\n");
     }
-    
-    info->last_statment_is_return = true;
-    
-    return true;
-}
-
-struct sThrowNode
-{
-    int sline;
-    string sname;
-};
-
-sThrowNode*% sThrowNode*::initialize(sThrowNode*% self, sInfo* info)
-{
-    self.sline = info.sline;
-    self.sname = string(info.sname);
-    
-    return self;
-}
-
-int sThrowNode*::sline(sThrowNode* self, sInfo* info)
-{
-    return self.sline;
-}
-
-string sThrowNode*::sname(sThrowNode* self, sInfo* info)
-{
-    return string(self.sname);
-}
-
-bool sThrowNode*::terminated()
-{
-    return false;
-}
-
-bool sThrowNode*::compile(sThrowNode* self, sInfo* info)
-{
-    sFun* come_fun = info.come_fun;
-    
-    sType*% result_type = clone come_fun.mResultType;
-    
-    sType*% result_type2 = solve_generics(result_type, info.generics_type, info).catch
-    {
-        exit(2);
-    }
-    
-    sType* result_type3 = result_type2->mNoSolvedGenericsType.v1;
-    if(result_type2->mNoSolvedGenericsType.v1) {
-        result_type3 = result_type2->mNoSolvedGenericsType.v1;
-    }
-    else {
-        result_type3 = result_type2;
-    }
-    
-    if(result_type->mException) {
-        int stack_num_before = info->stack.length();
-        
-        sType*% result_type4 = clone result_type2;
-        result_type4->mPointerNum = 0;
-        
-        sNode*% obj_node = create_object(clone result_type4, info);
-        static int num_result_tuple = 0;
-        sNode*% store_node = store_var(xsprintf("result_tupleb%d", ++num_result_tuple)@name, null@multiple_assign, clone result_type2@type, true@alloc, clone obj_node@right_node, info);
-        
-        if(!store_node.compile->(info)) {
-            return false;
-        }
-        add_last_code_to_source(info);
-        arrange_stack(info, stack_num_before);
-        free_right_value_objects(info);
-        
-        sNode*% load_node = load_var(xsprintf("result_tupleb%d", num_result_tuple), info);
-        
-        sNode*% right_node;
-        if(result_type3->mGenericsTypes[0].mClass.mStruct) {
-            sType*% type = clone result_type3->mGenericsTypes[0];
-            type->mPointerNum = 0;
-            right_node = create_object(clone type, info);
-        }
-        else {
-            right_node = create_null_object(info);
-        }
-        
-        sNode*% store_field_node1 = store_field(load_node, clone right_node, string("v1"), info);
-        
-        if(!store_field_node1.compile->(info)) {
-            return false;
-        }
-        add_last_code_to_source(info);
-        arrange_stack(info, stack_num_before);
-        free_right_value_objects(info);
-        
-        sNode*% false_node = create_false_object(info);
-        
-        sNode*% store_field_node2 = store_field(load_node, clone false_node, string("v2"), info);
-        
-        if(!store_field_node2.compile->(info)) {
-            return false;
-        }
-        add_last_code_to_source(info);
-        arrange_stack(info, stack_num_before);
-        free_right_value_objects(info);
-        
-        if(!load_node.compile->(info)) {
-            return false;
-        }
-        add_last_code_to_source(info);
-        free_right_value_objects(info);
-    }
-    else {
-        err_msg(info, "There is not in exception function");
-        return false;
-    }
-    
-    CVALUE*% come_value = get_value_from_stack(-1, info);
-    dec_stack_ptr(1, info);
-    
-    if(come_value.type->mHeap && come_value.var == null) {
-        int right_value_id = get_right_value_id_from_obj(come_value.c_value);
-        
-        if(right_value_id != -1) {
-            remove_object_from_right_values(right_value_id, info);
-        }
-    }
-    
-    sType*% come_value_type = solve_generics(come_value.type, info.generics_type, info).catch
-    {
-        exit(2);
-    }
-    
-    static int num_result = 0;
-    add_come_code(info, "%s __result%d__ = %s;\n", make_type_name_string(result_type2, false@in_header, false@array_cast_pointer, info), ++num_result, come_value.c_value);
-    
-    free_objects_on_return(come_fun.mBlock, info, come_value.var, false@top_block);
-    free_right_value_objects(info);
-    
-    add_come_code(info, "return __result%d__;\n", num_result);
     
     info->last_statment_is_return = true;
     
@@ -1781,13 +1617,14 @@ bool sReverseNode*::compile(sReverseNode* self, sInfo* info)
     return true;
 }
 
-exception sNode*% expression_node(sInfo* info) version 1
+sNode*% expression_node(sInfo* info) version 1
 {
     skip_spaces_and_lf(info);
     parse_sharp(info);
     
     err_msg(info, "invalid character(%c)(1)\n", *info->p);
-    throw;
+    exit(3);
+    return (sNode*%)null;
 }
 
 struct sFunCallNode 
@@ -1970,15 +1807,11 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
         
         list<sType*%>*% param_types = new list<sType*%>();
         foreach(it, fun.mParamTypes) {
-            sType*% it2 = solve_generics(it, info.generics_type, info).catch {
-                exit(1);
-            }
+            sType*% it2 = solve_generics(it, info.generics_type, info);
             param_types.push_back(clone it2);
         }
         
-        result_type = solve_generics(result_type, info.generics_type, info).catch {
-            exit(2);
-        }
+        result_type = solve_generics(result_type, info.generics_type, info);
         
         list<CVALUE*%>*% come_params = new list<CVALUE*%>();
         
@@ -2029,9 +1862,7 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
                     info.p = info.source.buf;
                     info.head = info.source.buf;
                     
-                    sNode*% node = expression(info).catch {
-                        exit(2);
-                    }
+                    sNode*% node = expression(info);
                     
                     if(!node.compile->(info)) {
                         return false;
@@ -2158,9 +1989,7 @@ bool sCastNode*::compile(sCastNode* self, sInfo* info)
     CVALUE*% left_value = get_value_from_stack(-1, info);
     dec_stack_ptr(1, info);
     
-    sType*% type2 = solve_generics(type, info.generics_type, info).catch {
-        exit(2);
-    }
+    sType*% type2 = solve_generics(type, info.generics_type, info);
     
     CVALUE*% come_value = new CVALUE;
     
@@ -2229,9 +2058,9 @@ bool sParenNode*::compile(sParenNode* self, sInfo* info)
     return true;
 }
 
-exception sNode*% parse_function_call(char* fun_name, sInfo* info)
+sNode*% parse_function_call(char* fun_name, sInfo* info)
 {
-    expected_next_character('(', info) throws;
+    expected_next_character('(', info);
     
     list<tuple2<string,sNode*%>*%>*% params = new list<tuple2<string,sNode*%>*%>();
     
@@ -2246,7 +2075,11 @@ exception sNode*% parse_function_call(char* fun_name, sInfo* info)
         int sline = info.sline;
         
         bool err_flag = false;
-        string label = parse_word(info, true@no_check_err).catch { err_flag = true };
+        string label;
+        if(xisalpha(*info->p) || *info->p == '_') {
+            label = parse_word(info);
+            err_flag = true;
+        }
         
         if(err_flag == false && *info->p == ':') {
             info->p++;
@@ -2262,9 +2095,9 @@ exception sNode*% parse_function_call(char* fun_name, sInfo* info)
         bool no_comma = info.no_comma;
         info.no_comma = true;
         
-        sNode*% node = expression(info) throws;
+        sNode*% node = expression(info);
         
-        node = post_position_operator3(node, info) throws;
+        node = post_position_operator3(node, info);
         
         info.no_comma = no_comma;
         
@@ -2285,18 +2118,19 @@ exception sNode*% parse_function_call(char* fun_name, sInfo* info)
     return new sNode(new sFunCallNode(fun_name, params, info));
 }
 
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 5
+sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 5
 {
     err_msg(info, "unexpected word(%s)(1)\n", buf);
-    throw
+    exit(3);
+    return (sNode*%)null;
 }
 
-exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 5
+sNode*% post_position_operator(sNode*% node, sInfo* info) version 5
 {
     return node;
 }
 
-exception sNode*% get_number(bool minus, sInfo* info)
+sNode*% get_number(bool minus, sInfo* info)
 {
     const int buf_size = 128;
     char buf[128+1];
@@ -2319,7 +2153,7 @@ exception sNode*% get_number(bool minus, sInfo* info)
 
             if(p2 - buf >= buf_size) {
                 err_msg(info, "overflow node of number");
-                throw;
+                exit(1);
             }
         };
         *p2 = 0;
@@ -2332,7 +2166,7 @@ exception sNode*% get_number(bool minus, sInfo* info)
             
             if(p2 - buf >= buf_size) {
                 err_msg(info, "overflow node of number");
-                throw;
+                exit(1);
             }
             
             info->p++;
@@ -2349,7 +2183,7 @@ exception sNode*% get_number(bool minus, sInfo* info)
     
                 if(p2 - buf >= buf_size) {
                     err_msg(info, "overflow node of number");
-                    throw;
+                    exit(2);
                 }
             }
             
@@ -2359,7 +2193,7 @@ exception sNode*% get_number(bool minus, sInfo* info)
     
                 if(p2 - buf >= buf_size) {
                     err_msg(info, "overflow node of number");
-                    throw;
+                    exit(2);
                 }
                 
                 if(*info->p == '+') {
@@ -2368,7 +2202,7 @@ exception sNode*% get_number(bool minus, sInfo* info)
         
                     if(p2 - buf >= buf_size) {
                         err_msg(info, "overflow node of number");
-                        throw
+                        exit(2);
                     }
                 }
                 else if(*info->p == '-') {
@@ -2377,12 +2211,12 @@ exception sNode*% get_number(bool minus, sInfo* info)
         
                     if(p2 - buf >= buf_size) {
                         err_msg(info, "overflow node of number");
-                        throw;
+                        exit(2);
                     }
                 }
                 else {
                     err_msg(info, "invalid float value");
-                    throw;
+                    exit(2);
                 }
             
                 while(xisdigit(*info->p) || *info->p == '_') {
@@ -2396,7 +2230,7 @@ exception sNode*% get_number(bool minus, sInfo* info)
         
                     if(p2 - buf >= buf_size) {
                         err_msg(info, "overflow node of number");
-                        throw;
+                        exit(2);
                     }
                 };
             }
@@ -2482,7 +2316,7 @@ exception sNode*% get_number(bool minus, sInfo* info)
     }
     else {
         err_msg(info, "require digits after + or -");
-        throw
+        exit(2);
     }
     
     return (sNode*%)null;
@@ -2493,7 +2327,7 @@ sNode*% create_int_node(int value, sInfo* info)
     return new sNode(new sIntNode(value, info));
 }
 
-exception sNode*% get_hex_number(bool minus, sInfo* info)
+sNode*% get_hex_number(bool minus, sInfo* info)
 {
     int buf_size = 128;
     char buf[128+1];
@@ -2514,7 +2348,7 @@ exception sNode*% get_hex_number(bool minus, sInfo* info)
 
         if(p - buf >= buf_size-1) {
             err_msg(info, "overflow node of number");
-            throw;
+            exit(2);
         }
     };
     *p = 0;
@@ -2619,7 +2453,7 @@ exception sNode*% get_hex_number(bool minus, sInfo* info)
     return (sNode*%)null;
 }
 
-exception sNode*% get_oct_number(sInfo* info)
+sNode*% get_oct_number(sInfo* info)
 {
     int buf_size = 128;
     char buf[128+1];
@@ -2639,7 +2473,7 @@ exception sNode*% get_oct_number(sInfo* info)
 
         if(p - buf >= buf_size-1) {
             err_msg(info, "overflow node of number");
-            throw;
+            exit(2);
         }
     };
 
@@ -3008,9 +2842,7 @@ bool sNormalBlock*::compile(sNormalBlock* self, sInfo* info)
     
     add_come_code(info, "{\n");
 
-    transpile_block(block, null!, null!, info).catch {
-        exit(1);
-    }
+    transpile_block(block, null!, null!, info);
     
     add_come_code(info, "}\n");
     
@@ -3029,7 +2861,7 @@ string sNormalBlock*::sname(sNormalBlock* self, sInfo* info)
     return string(self.sname);
 }
 
-exception sNode*% expression_node(sInfo* info) version 99
+sNode*% expression_node(sInfo* info) version 99
 {
     skip_spaces_and_lf(info);
     
@@ -3037,7 +2869,7 @@ exception sNode*% expression_node(sInfo* info) version 99
     
     /// logical denial ///
     if(*info->p == '{') {
-        sBlock*% block = parse_block(info) throws;
+        sBlock*% block = parse_block(info);
         
         return new sNode(new sNormalBlock(block, info));
     }
@@ -3045,7 +2877,7 @@ exception sNode*% expression_node(sInfo* info) version 99
         info->p++;
         skip_spaces_and_lf(info);
 
-        sNode*% node = expression_node(info) throws;
+        sNode*% node = expression_node(info);
 
         return new sNode(new sLogicalDenial(node, info));
     }
@@ -3053,7 +2885,7 @@ exception sNode*% expression_node(sInfo* info) version 99
         info->p+=2;
         skip_spaces_and_lf(info);
 
-        sNode*% node = expression_node(info) throws;
+        sNode*% node = expression_node(info);
 
         return new sNode(new sMinusMinusNode2(node, info));
     }
@@ -3061,7 +2893,7 @@ exception sNode*% expression_node(sInfo* info) version 99
         info->p++;
         skip_spaces_and_lf(info);
 
-        sNode*% node = expression_node(info) throws;
+        sNode*% node = expression_node(info);
 
         return new sNode(new sMinusNode2(node, info));
     }
@@ -3069,7 +2901,7 @@ exception sNode*% expression_node(sInfo* info) version 99
         info->p+=2;
         skip_spaces_and_lf(info);
 
-        sNode*% node = expression_node(info) throws;
+        sNode*% node = expression_node(info);
 
         return new sNode(new sPlusPlusNode2(node, info));
     }
@@ -3077,7 +2909,7 @@ exception sNode*% expression_node(sInfo* info) version 99
         info->p++;
         skip_spaces_and_lf(info);
 
-        sNode*% node = expression_node(info) throws;
+        sNode*% node = expression_node(info);
 
         return new sNode(new sComplement(node, info));
     }
@@ -3086,9 +2918,9 @@ exception sNode*% expression_node(sInfo* info) version 99
     else if(*info->p == '0' && (*(info->p+1) == 'x' || *(info->p+1) == 'X')) {
         info->p += 2;
 
-        sNode*% node = get_hex_number(false@minus, info) throws;
+        sNode*% node = get_hex_number(false@minus, info);
         
-        node = post_position_operator(node, info) throws;
+        node = post_position_operator(node, info);
         
         return node;
     }
@@ -3096,25 +2928,25 @@ exception sNode*% expression_node(sInfo* info) version 99
     else if(*info->p == '0' && xisdigit(*(info->p+1))) {
         info->p++;
 
-        sNode*% node = get_oct_number(info) throws;
+        sNode*% node = get_oct_number(info);
         
-        node = post_position_operator(node, info) throws;
+        node = post_position_operator(node, info);
         
         return node;
     }
     else if(xisdigit(*info->p)) {
-        sNode*% node = get_number(false@minus, info) throws;
+        sNode*% node = get_number(false@minus, info);
         
-        node = post_position_operator(node, info) throws;
+        node = post_position_operator(node, info);
         
         return node;
     }
     else if(*info->p == '-' && xisdigit(*(info->p+1))) {
         info->p++;
         
-        sNode*% node = get_number(true@minus, info) throws;
+        sNode*% node = get_number(true@minus, info);
         
-        node = post_position_operator(node, info) throws;
+        node = post_position_operator(node, info);
         
         return node;
     }
@@ -3127,7 +2959,7 @@ exception sNode*% expression_node(sInfo* info) version 99
         }
         else {
             char* head = info.p;
-            sNode*% value = expression(info) throws;
+            sNode*% value = expression(info);
             char* tail = info.p;
             
             char buf[tail-head+1];
@@ -3137,17 +2969,11 @@ exception sNode*% expression_node(sInfo* info) version 99
             return new sNode(new sReturnNode(value, string(buf), info));
         }
     }
-    else if((parsecmp("throw;", info) || parsecmp("throw ", info) || parsecmp("throw\n", info)) && !parsecmp("throws", info)) {
-        info->p += strlen("throw");
-        skip_spaces_and_lf(info);
-        
-        return new sNode(new sThrowNode(info));
-    }
     else if(*info->p == '*') {
         info->p ++;
         skip_spaces_and_lf(info);
         
-        sNode*% value = expression_node(info) throws;
+        sNode*% value = expression_node(info);
         
         return new sNode(new sDerefferenceNode(value, info));
     }
@@ -3155,7 +2981,7 @@ exception sNode*% expression_node(sInfo* info) version 99
         info->p ++;
         skip_spaces_and_lf(info);
         
-        sNode*% value = expression_node(info) throws;
+        sNode*% value = expression_node(info);
         
         return new sNode(new sRefferenceNode(value, info));
     }
@@ -3163,7 +2989,7 @@ exception sNode*% expression_node(sInfo* info) version 99
         info->p ++;
         skip_spaces_and_lf(info);
         
-        sNode*% value = expression_node(info) throws;
+        sNode*% value = expression_node(info);
         
         return new sNode(new sReverseNode(value, info));
     }
@@ -3177,7 +3003,7 @@ exception sNode*% expression_node(sInfo* info) version 99
             int sline = info.sline;
             
             if(xisalpha(*info->p) || *info->p == '_') {
-                buf = parse_word(info) throws;
+                buf = parse_word(info);
             }
             else {
                 buf = string("");
@@ -3194,7 +3020,7 @@ exception sNode*% expression_node(sInfo* info) version 99
         if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && buf !== "gc_inc" && buf !== "gc_dec" && *info->p == '(' && *(info->p+1) != '*')
         {
             info.no_output_err = true;
-            parse_type(info).catch {}
+            parse_type(info);
             info.no_output_err = false;
             
             if(*info->p == '(') {
@@ -3222,12 +3048,12 @@ exception sNode*% expression_node(sInfo* info) version 99
             
             info.no_output_err = true;
             
-            (void)parse_type(info);
+            parse_type(info);
             
             if(xisalpha(*info.p) || *info.p == '_') {
-                var word2 = parse_word(info).catch {}
+                var word2 = parse_word(info);
                 
-                if(word2 != null && word2 === "lambda") {
+                if(word2 === "lambda") {
                     lambda_flag = true;
                 }
             }
@@ -3237,35 +3063,35 @@ exception sNode*% expression_node(sInfo* info) version 99
             info.sline = head_sline;
         }
         
-        buf = parse_word(info) throws;
+        buf = parse_word(info);
         
         if(lambda_flag) {
             info.p = head;
             info.sline = head_sline;
             
-            return parse_function(info) throws;
+            return parse_function(info);
         }
         else if((buf === "string" || buf === "wstring") && *info->p == '(') {
-            sNode*% node = parse_function_call(buf, info) throws;
+            sNode*% node = parse_function_call(buf, info);
             
-            node = post_position_operator(node, info) throws;
-            node = post_position_operator3(node, info) throws;
+            node = post_position_operator(node, info);
+            node = post_position_operator3(node, info);
             
             return node;
         }
         else if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && buf !== "gc_inc" && buf !== "gc_dec" && *info->p == '(' && !(*(info->p+1) == '*' && is_type_name_))
         {
-            sNode*% node = parse_function_call(buf, info) throws;
+            sNode*% node = parse_function_call(buf, info);
             
-            node = post_position_operator(node, info) throws;
-            node = post_position_operator3(node, info) throws;
+            node = post_position_operator(node, info);
+            node = post_position_operator3(node, info);
             
             return node;
         }
         else {
-            sNode*% node = string_node(buf, head, head_sline, info) throws;
+            sNode*% node = string_node(buf, head, head_sline, info);
             
-            node = post_position_operator(node, info) throws;
+            node = post_position_operator(node, info);
             
             return node;
         }
@@ -3280,7 +3106,10 @@ exception sNode*% expression_node(sInfo* info) version 99
             char* p = info.p;
             int sline = info.sline;
             
-            string word = parse_word(info, true) throws;
+            string word = string("");
+            if(isalpha(*info->p) || *info->p == '_') {
+                word = parse_word(info);
+            }
             
             if(is_type_name(word, info)) {
                 cast_expression_flag = true;
@@ -3303,7 +3132,7 @@ exception sNode*% expression_node(sInfo* info) version 99
             bool no_output_come_code = info.no_output_come_code;
             info.no_output_come_code = true;
             
-            sNode*% node = expression(info) throws;
+            sNode*% node = expression(info);
             
             info.no_comma = no_comma;
             info.no_output_err = no_output_err;
@@ -3318,22 +3147,26 @@ exception sNode*% expression_node(sInfo* info) version 99
         }
         
         if(tuple_expression_flag) {
-            return parse_tuple(info) throws;
+            return parse_tuple(info);
         }
         else if(cast_expression_flag) {
             parse_sharp(info);
-            var type, name = parse_type(info) throws;
+            var type, name, err = parse_type(info);
+            
+            if(!err) {
+                exit(2);
+            }
             
             parse_sharp(info);
             expected_next_character(')', info);
             
-            sNode*% node = expression_node(info) throws;
+            sNode*% node = expression_node(info);
             
             return new sNode(new sCastNode(type, node, info));
         }
         else {
             parse_sharp(info);
-            sNode*% node = expression(info) throws;
+            sNode*% node = expression(info);
             parse_sharp(info);
             
             expected_next_character(')', info);
@@ -3341,31 +3174,32 @@ exception sNode*% expression_node(sInfo* info) version 99
             
             node = new sNode(new sParenNode(node, info));
             
-            node = post_position_operator(node, info) throws;
+            node = post_position_operator(node, info);
             
             return node;
         }
     }
     else {
-        sNode*% node = inherit(info) throws;
+        sNode*% node = inherit(info);
         
-        node = post_position_operator(node, info) throws;
+        node = post_position_operator(node, info);
         
         return node;
     }
     
     err_msg(info, "unexpected operator(%c)\n", *info->p);
-    throw;
+    exit(2);
+    
     return (sNode*%)null;
 }
 
-exception sNode*% expression(sInfo* info) version 5
+sNode*% expression(sInfo* info) version 5
 {
-    return expression_node(info) throws;
+    return expression_node(info);
 }
 
 
-exception sBlock*% parse_block(sInfo* info, bool no_block_level=false)
+sBlock*% parse_block(sInfo* info, bool no_block_level=false)
 {
     var result = new sBlock(info);
     
@@ -3392,7 +3226,7 @@ exception sBlock*% parse_block(sInfo* info, bool no_block_level=false)
             
 //            add_come_code(info, xsprintf("# %d \"%s\"\n", info->sline, info->sname));
             
-            sNode*% node = expression(info) throws;
+            sNode*% node = expression(info);
             
             result.mNodes.push_back(node);
             
@@ -3417,7 +3251,7 @@ exception sBlock*% parse_block(sInfo* info, bool no_block_level=false)
     }
     else {
         parse_sharp(info);
-        sNode*% node = expression(info) throws;
+        sNode*% node = expression(info);
         parse_sharp(info);
         
         result.mNodes.push_back(node);
@@ -3428,7 +3262,7 @@ exception sBlock*% parse_block(sInfo* info, bool no_block_level=false)
     return result;
 }
 
-exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<string>*? param_names, sInfo* info, bool no_var_table=false)
+int transpile_block(sBlock* block, list<sType*%>*? param_types, list<string>*? param_names, sInfo* info, bool no_var_table=false)
 {
     sVarTable* old_table = info->lv_table;
     if(!no_var_table) {
@@ -3480,7 +3314,7 @@ exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<s
             
             if(!node.compile->(info)) {
                 err_msg(info, "compiling is failed(5)");
-                throw;
+                exit(2);
             }
             
             info.sline = sline;
@@ -3534,14 +3368,14 @@ void arrange_stack(sInfo* info, int top)
     }
 }
 
-exception int expected_next_character(char c, sInfo* info)
+int expected_next_character(char c, sInfo* info)
 {
     parse_sharp(info);
     if(*info->p != c) {
         err_msg(info, "expected next charaster is %c, but %c\n", c, *info->p);
 int* a = (void*)0;
 *a = 0;
-        throw;
+        exit(2);
     }
     
     info->p++;
@@ -3694,9 +3528,7 @@ bool sFunNode*::compile(sFunNode* self, sInfo* info)
     info.come_fun = self.mFun;
     
     if(self.mFun.mBlock) {
-        transpile_block(self.mFun.mBlock, self.mFun.mParamTypes, self.mFun.mParamNames, info).catch {
-            exit(2);
-        }
+        transpile_block(self.mFun.mBlock, self.mFun.mParamTypes, self.mFun.mParamNames, info);
     }
     
     info.come_fun = come_fun;
@@ -3740,9 +3572,7 @@ bool sLambdaNode*::compile(sLambdaNode* self, sInfo* info)
     info.come_fun = self.mFun;
     
     if(self.mFun.mBlock) {
-        transpile_block(self.mFun.mBlock, self.mFun.mParamTypes, self.mFun.mParamNames, info).catch {
-            exit(2);
-        }
+        transpile_block(self.mFun.mBlock, self.mFun.mParamTypes, self.mFun.mParamNames, info);
     }
     
     CVALUE*% come_value = new CVALUE;
@@ -3791,15 +3621,11 @@ bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* gen
         return true;
     }
 
-    sType*% result_type = solve_generics(generics_fun->mResultType, generics_type, info).catch {
-        exit(2);
-    }
+    sType*% result_type = solve_generics(generics_fun->mResultType, generics_type, info);
     
     list<sType*%>*% param_types = new list<sType*%>();
     foreach(it, generics_fun->mParamTypes) {
-        var param_type = solve_generics(it, generics_type, info).catch {
-            exit(2);
-        }
+        var param_type = solve_generics(it, generics_type, info);
         
         param_type->mFunctionParam = true;
 
@@ -3822,9 +3648,7 @@ bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* gen
     var generics_type_names_saved = clone info->generics_type_names;
     info->generics_type_names = clone generics_fun.mGenericsTypeNames;
     
-    sBlock*% block = parse_block(info).catch {
-        exit(1);
-    }
+    sBlock*% block = parse_block(info);
     
     info.source = source;
     info.p = p;
@@ -3856,7 +3680,7 @@ bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* gen
     return true;
 }
 
-exception string skip_block(sInfo* info)
+string skip_block(sInfo* info)
 {
     char* head = info.p;
     if(*info->p == '{') {
@@ -3872,7 +3696,7 @@ exception string skip_block(sInfo* info)
                     info->p++;
                     if(*info->p == '\0') {
                         err_msg(info, "%s %d: unexpected the source end. close single quote or double quote.", info->sname, sline);
-                        throw
+                        exit(2);
                     }
                     info->p++;
                 }
@@ -3885,7 +3709,7 @@ exception string skip_block(sInfo* info)
 
                     if(*info->p == '\0') {
                         err_msg(info, "%s %d: unexpected the source end. close single quote or double quote.", info->sname, sline);
-                        throw;
+                        exit(2);
                     }
                 }
             }
@@ -3894,7 +3718,7 @@ exception string skip_block(sInfo* info)
                     info->p++;
                     if(*info->p == '\0') {
                         err_msg(info, "%s %d: unexpected the source end. close single quote or double quote.", info->sname, sline);
-                        throw;
+                        exit(2);
                     }
                     info->p++;
                 }
@@ -3907,7 +3731,7 @@ exception string skip_block(sInfo* info)
 
                     if(*info->p == '\0') {
                         err_msg(info, "%s %d: unexpected the source end. close single quote or double quote.", info->sname, sline);
-                        throw;
+                        exit(2);
                     }
                 }
             }
@@ -3941,7 +3765,7 @@ exception string skip_block(sInfo* info)
             }
             else if(*info->p == '\0') {
                 err_msg(info, "The block requires } character for closing block");
-                throw
+                exit(2);
             }
             else if(*info->p == '\n') {
                 info->p++;
@@ -3965,7 +3789,7 @@ exception string skip_block(sInfo* info)
     return string(buf);
 }
 
-exception string parse_attribute(sInfo* info)
+string parse_attribute(sInfo* info)
 {
     buffer*% asm_fun_name = new buffer();
 
@@ -4125,10 +3949,14 @@ exception string parse_attribute(sInfo* info)
     return asm_fun_name.to_string();
 }
 
-exception sNode*% parse_function(sInfo* info)
+sNode*% parse_function(sInfo* info)
 {
     char* header_head = info.p;
-    var result_type, var_name = parse_type(info) throws;
+    var result_type, var_name, err = parse_type(info);
+    
+    if(!err) {
+        exit(2);
+    }
     
     /// backtrace ///
     bool method_definition = false;
@@ -4163,25 +3991,29 @@ exception sNode*% parse_function(sInfo* info)
     string fun_name;
     string base_fun_name;
     if(method_definition) {
-        var obj_type, name = parse_type(info) throws;
+        var obj_type, name, err = parse_type(info);
         
-        expected_next_character(':', info) throws;
-        expected_next_character(':', info) throws;
+        if(!err) {
+            exit(2);
+        }
         
-        base_fun_name = clone parse_word(info) throws;
+        expected_next_character(':', info);
+        expected_next_character(':', info);
+        
+        base_fun_name = clone parse_word(info);
         fun_name = clone create_method_name(obj_type, false@no_pointer_name, string(base_fun_name), info)
     }
     else if(info->impl_type) {
-        base_fun_name = clone parse_word(info) throws;
+        base_fun_name = clone parse_word(info);
     
         fun_name = clone create_method_name(info->impl_type, false@no_pointer_name, string(base_fun_name), info);
     }
     else {
-        fun_name = clone parse_word(info) throws;
+        fun_name = clone parse_word(info);
         base_fun_name = clone string(fun_name);
     }
     
-    var param_types, param_names, param_default_parametors, var_args = parse_params(info) throws;
+    var param_types, param_names, param_default_parametors, var_args = parse_params(info);
     char* header_tail = info.p;
     
     buffer*% header_buf = new buffer();
@@ -4205,7 +4037,7 @@ exception sNode*% parse_function(sInfo* info)
     }
     
     if(base_fun_name === "lambda") {
-        sBlock*% block = parse_block(info) throws;
+        sBlock*% block = parse_block(info);
         
         static int lambda_num = 0;
         lambda_num++;
@@ -4230,7 +4062,7 @@ exception sNode*% parse_function(sInfo* info)
     else if(info.impl_type && info.generics_type_names.length() > 0) {
         string none_generics_name = get_none_generics_name(info.impl_type.mClass.mName);
         
-        string block = skip_block(info) throws;
+        string block = skip_block(info);
         
         var fun = new sGenericsFun(info.impl_type, info.generics_type_names, string(fun_name), result_type, param_types, param_names, var_args, block, info);
         
@@ -4241,7 +4073,7 @@ exception sNode*% parse_function(sInfo* info)
         return (sNode*%)null;
     }
     else if(*info->p == '{') {
-        sBlock*% block = parse_block(info) throws;
+        sBlock*% block = parse_block(info);
         
         bool static_ = false;
         if(result_type->mStatic) {
@@ -4297,13 +4129,13 @@ exception sNode*% parse_function(sInfo* info)
             return new sNode(new sFunNode(fun, info));
         }
         else {
-            string asm_fun = parse_attribute(info) throws;
+            string asm_fun = parse_attribute(info);
             
             if(asm_fun !== "") {
                 fun_name = string(asm_fun);
             }
             
-            expected_next_character(';', info) throws;
+            expected_next_character(';', info);
             
             result_type->mStatic = false;
             
@@ -4324,15 +4156,19 @@ exception sNode*% parse_function(sInfo* info)
     }
     else {
         err_msg(info, "invalid character(%c)(2)\n", *info->p);
-        throw;
+        exit(2);
     }
     
     return (sNode*%)null;
 }
 
-exception sNode*% parse_global_variable(sInfo* info)
+sNode*% parse_global_variable(sInfo* info)
 {
-    var result_type, var_name = parse_type(info, true@parse_variable_name) throws;
+    var result_type, var_name,err = parse_type(info, true@parse_variable_name);
+    
+    if(!err) {
+        exit(2);
+    }
     
     sNode*% right_node = null;
     string array_initializer = null;
@@ -4353,7 +4189,7 @@ exception sNode*% parse_global_variable(sInfo* info)
             while(1) {
                 if(*info->p == '\0') {
                     err_msg(info, "unexpected source end in array initiailizer")
-                    throw;
+                    exit(2);
                 }
                 else if(*info->p == '\\') {
                     buf.append_char(*info->p);
@@ -4399,7 +4235,7 @@ exception sNode*% parse_global_variable(sInfo* info)
         }
         else {
             parse_sharp(info);
-            right_node = expression(info) throws;
+            right_node = expression(info);
             parse_sharp(info);
         }
     }
@@ -4407,7 +4243,7 @@ exception sNode*% parse_global_variable(sInfo* info)
     if(result_type->mExtern) {
         if(right_node) {
             err_msg(info, "invalid right value");
-            throw;
+            exit(2);
         }
         return new sNode(new sExternalGlobalVariable(result_type, var_name, info));
     }
@@ -4418,10 +4254,10 @@ exception sNode*% parse_global_variable(sInfo* info)
     return (sNode*%)null;
 }
 
-exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 1
+sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 1
 {
     err_msg(info, "unexpected word(%s)(2)\n", buf);
-    throw;
+    exit(2);
     
     return (sNode*%)null;
 }
@@ -4433,11 +4269,11 @@ bool is_type_name(char* buf, sInfo* info)
     sClass* generics_class = info.generics_classes[buf];
     bool generics_type_name = info.generics_type_names.contained(string(buf));
     
-    return generics_class || generics_type_name || klass || type || buf === "const" || buf === "register" || buf === "static" || buf === "volatile" || buf === "unsigned" || buf === "immutable" || buf === "mutable" || buf === "struct" || buf === "enum" || buf === "union" || buf === "extern" || buf === "inline" || buf === "__inline" || buf === "exception";
+    return generics_class || generics_type_name || klass || type || buf === "const" || buf === "register" || buf === "static" || buf === "volatile" || buf === "unsigned" || buf === "immutable" || buf === "mutable" || buf === "struct" || buf === "enum" || buf === "union" || buf === "extern" || buf === "inline" || buf === "__inline";
 
 }
 
-exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 99
+sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 99
 {
     bool is_type_name_flag = is_type_name(buf, info);
     int sline = info.sline;
@@ -4451,17 +4287,17 @@ exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info)
         
         bool invalid_type = false;
         info.no_output_err = true;
-        parse_type(info).catch {};
+        parse_type(info);
         info.no_output_err = false;
         
         if(!info.define_struct) {
             info.define_struct = false;
             string word = null;
             if(xisalnum(*info.p) || *info->p == '_') {
-                word = parse_word(info).catch {}
+                word = parse_word(info);
                 
                 if(word === "extern") {
-                    word = parse_word(info).catch {}
+                    word = parse_word(info);
                 }
             }
             else {
@@ -4488,7 +4324,7 @@ exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info)
                         skip_spaces_and_lf(info);
                     }
                     if(xisalnum(*info.p) || *info->p == '_') {
-                        word = parse_word(info).catch {}
+                        word = parse_word(info);
                     }
                 }
                 
@@ -4516,7 +4352,7 @@ exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info)
         }
         
         info.no_output_err = true;
-        parse_type(parse_variable_name:false, info).catch {};
+        parse_type(parse_variable_name:false, info);
         info.no_output_err = false;
         
         if(info.define_struct) {
@@ -4549,24 +4385,24 @@ exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info)
         info.p = head;
         info.sline = sline;
         
-        return parse_function(info) throws;
+        return parse_function(info);
     }
     else if(define_variable) {
         info.p = head;
         info.sline = sline;
         
-        return parse_global_variable(info) throws;
+        return parse_global_variable(info);
     }
     
     info.p = head;
     info.sline = sline;
     
-    string buf2 = parse_word(info) throws;
+    string buf2 = parse_word(info);
  
-    return inherit(buf2, head, head_sline, info) throws;
+    return inherit(buf2, head, head_sline, info);
 }
 
-exception int transpile(sInfo* info) version 5
+int transpile(sInfo* info) version 5
 {
     skip_spaces_and_lf(info);
     parse_sharp(info);
@@ -4576,11 +4412,11 @@ exception int transpile(sInfo* info) version 5
         
         char* head = info.p;
         int head_sline = info.sline;
-        string buf = parse_word(info) throws;
+        string buf = parse_word(info);
         
         parse_sharp(info);
         
-        sNode*% node = top_level(buf, head, head_sline, info) throws;
+        sNode*% node = top_level(buf, head, head_sline, info);
         parse_sharp(info);
         
         while(*info->p == ';') {
@@ -4592,7 +4428,7 @@ exception int transpile(sInfo* info) version 5
         if(node != null) {
             if(!node.compile->(info)) {
                 err_msg(info, "compiling is faield(X)");
-                throw;
+                exit(2);
             }
         }
         parse_sharp(info);
@@ -4603,13 +4439,13 @@ exception int transpile(sInfo* info) version 5
     return 0;
 }
 
-exception sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sInfo* info)
+sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sInfo* info)
 {
     sFun* finalizer = null;
     
     string real_fun_name = create_method_name(type, false@no_pointer_name, fun_name, info);
     
-    sType*% type2 = solve_generics(type, type, info) throws;
+    sType*% type2 = solve_generics(type, type, info);
     
     type = borrow type2;
     
@@ -4634,7 +4470,7 @@ exception sFun*,string create_finalizer_automatically(sType* type, char* fun_nam
                 if(type->mClass->mName === field_type->mClass->mName && type->mPointerNum == field_type->mPointerNum && field_type->mHeap)
                 {
                     err_msg(info, "Define recusively the finalizer. I recommanded tuple1<%s>*%.\n", type->mClass->mName);
-                    throw;
+                    exit(2);
                 }
                 
                 if(field_type->mHeap) {
@@ -4657,7 +4493,7 @@ exception sFun*,string create_finalizer_automatically(sType* type, char* fun_nam
         info.p = source.buf;
         info.head = source.buf;
         
-        sBlock*% block = parse_block(info) throws;
+        sBlock*% block = parse_block(info);
         
         var result_type = new sType("void", info);
         var name = clone real_fun_name;
@@ -4712,7 +4548,7 @@ exception sFun*,string create_finalizer_automatically(sType* type, char* fun_nam
         
         if(!node.compile->(info)) {
             err_msg(info, "compiling is failed(X)");
-            throw;
+            exit(2);
         }
         
         info.source = source3;
@@ -4724,13 +4560,13 @@ exception sFun*,string create_finalizer_automatically(sType* type, char* fun_nam
     return (finalizer, real_fun_name);
 }
 
-exception sFun*,string create_equals_automatically(sType* type, char* fun_name, sInfo* info)
+sFun*,string create_equals_automatically(sType* type, char* fun_name, sInfo* info)
 {
     sFun* equaler = null;
     
     string real_fun_name = create_method_name(type, false@no_pointer_name, fun_name, info);
     
-    sType*% type2 = solve_generics(type, type, info) throws;
+    sType*% type2 = solve_generics(type, type, info);
     
     type = borrow type2;
     
@@ -4754,7 +4590,7 @@ exception sFun*,string create_equals_automatically(sType* type, char* fun_name, 
                 if(type->mClass->mName === field_type->mClass->mName && type->mPointerNum == field_type->mPointerNum && field_type->mHeap)
                 {
                     err_msg(info, "Define recusively the equals. I recommanded tuple1<%s>*%.\n", type->mClass->mName);
-                    throw;
+                    exit(2);
                 }
                 
                 char source2[1024];
@@ -4776,7 +4612,7 @@ exception sFun*,string create_equals_automatically(sType* type, char* fun_name, 
         info.p = source.buf;
         info.head = source.buf;
         
-        sBlock*% block = parse_block(info) throws;
+        sBlock*% block = parse_block(info);
         
         var result_type = new sType("bool", info);
         var name = clone real_fun_name;
@@ -4830,7 +4666,7 @@ exception sFun*,string create_equals_automatically(sType* type, char* fun_name, 
         
         if(!node.compile->(info)) {
             err_msg(info, "compiling error");
-            throw;
+            exit(2);
         }
         
         info.source = source3;
@@ -4842,13 +4678,13 @@ exception sFun*,string create_equals_automatically(sType* type, char* fun_name, 
     return (equaler, real_fun_name);
 }
 
-exception sFun*,string create_operator_not_equals_automatically(sType* type, char* fun_name, sInfo* info)
+sFun*,string create_operator_not_equals_automatically(sType* type, char* fun_name, sInfo* info)
 {
     sFun* equaler = null;
     
     string real_fun_name = create_method_name(type, false@no_pointer_name, fun_name, info);
     
-    sType*% type2 = solve_generics(type, type, info) throws;
+    sType*% type2 = solve_generics(type, type, info);
     
     type = borrow type2;
     
@@ -4878,7 +4714,7 @@ exception sFun*,string create_operator_not_equals_automatically(sType* type, cha
                 if(type->mClass->mName === field_type->mClass->mName && type->mPointerNum == field_type->mPointerNum && field_type->mHeap)
                 {
                     err_msg(info, "Define recusively the equals. I recommanded tuple1<%s>*%.\n", type->mClass->mName);
-                    throw;
+                    exit(2);
                 }
                 
                 char source2[1024];
@@ -4911,7 +4747,7 @@ exception sFun*,string create_operator_not_equals_automatically(sType* type, cha
         info.p = source.buf;
         info.head = source.buf;
         
-        sBlock*% block = parse_block(info) throws;
+        sBlock*% block = parse_block(info);
         
         var result_type = new sType("bool", info);
         var name = clone real_fun_name;
@@ -4965,7 +4801,7 @@ exception sFun*,string create_operator_not_equals_automatically(sType* type, cha
         
         if(!node.compile->(info)) {
             err_msg(info, "compiling error");
-            throw;
+            exit(2);
         }
         
         info.source = source3;
@@ -4977,13 +4813,13 @@ exception sFun*,string create_operator_not_equals_automatically(sType* type, cha
     return (equaler, real_fun_name);
 }
 
-exception sFun*,string create_operator_equals_automatically(sType* type, char* fun_name, sInfo* info)
+sFun*,string create_operator_equals_automatically(sType* type, char* fun_name, sInfo* info)
 {
     sFun* equaler = null;
     
     string real_fun_name = create_method_name(type, false@no_pointer_name, fun_name, info);
     
-    sType*% type2 = solve_generics(type, type, info) throws;
+    sType*% type2 = solve_generics(type, type, info);
     
     type = borrow type2;
     
@@ -5007,7 +4843,7 @@ exception sFun*,string create_operator_equals_automatically(sType* type, char* f
                 if(type->mClass->mName === field_type->mClass->mName && type->mPointerNum == field_type->mPointerNum && field_type->mHeap)
                 {
                     err_msg(info, "Define recusively the equals. I recommanded tuple1<%s>*%.\n", type->mClass->mName);
-                    throw;
+                    exit(2);
                 }
                 
                 char source2[1024];
@@ -5029,7 +4865,7 @@ exception sFun*,string create_operator_equals_automatically(sType* type, char* f
         info.p = source.buf;
         info.head = source.buf;
         
-        sBlock*% block = parse_block(info) throws;
+        sBlock*% block = parse_block(info);
         
         var result_type = new sType("bool", info);
         var name = clone real_fun_name;
@@ -5083,7 +4919,7 @@ exception sFun*,string create_operator_equals_automatically(sType* type, char* f
         
         if(!node.compile->(info)) {
             err_msg(info, "compiling error(X)");
-            throw;
+            exit(2);
         }
         
         info.source = source3;
@@ -5095,13 +4931,13 @@ exception sFun*,string create_operator_equals_automatically(sType* type, char* f
     return (equaler, real_fun_name);
 }
 
-exception sFun*,string create_cloner_automatically(sType* type, char* fun_name, sInfo* info)
+sFun*,string create_cloner_automatically(sType* type, char* fun_name, sInfo* info)
 {
     sFun* cloner = null;
     
     string real_fun_name = create_method_name(type, false@no_pointer_name, fun_name, info);
     
-    sType*% type2 = solve_generics(type, type, info) throws;
+    sType*% type2 = solve_generics(type, type, info);
     
     type = borrow type2;
     
@@ -5127,12 +4963,18 @@ exception sFun*,string create_cloner_automatically(sType* type, char* fun_name, 
                 if(type->mClass->mName === field_type->mClass->mName && type->mPointerNum == field_type->mPointerNum && field_type->mHeap)
                 {
                     err_msg(info, "Define recusively the cloner. I recommanded tuple1<%s>*%.\n", type->mClass->mName);
-                    throw;
+                    exit(2);
                 }
                 
                 if(field_type->mHeap) {
                     char source2[1024];
                     snprintf(source2, 1024, "if(self != ((void*)0) && self.%s != ((void*)0)) { result.%s = clone self.%s; }\n", name, name, name);
+                    
+                    source.append_str(source2);
+                }
+                else {
+                    char source2[1024];
+                    snprintf(source2, 1024, "if(self != ((void*)0)) { result.%s = self.%s; }\n", name, name);
                     
                     source.append_str(source2);
                 }
@@ -5151,7 +4993,7 @@ exception sFun*,string create_cloner_automatically(sType* type, char* fun_name, 
         info.p = info.source.buf;
         info.head = info.source.buf;
         
-        sBlock*% block = parse_block(info) throws;
+        sBlock*% block = parse_block(info);
         
         var result_type = clone type;
         var name = clone real_fun_name;
@@ -5202,7 +5044,7 @@ exception sFun*,string create_cloner_automatically(sType* type, char* fun_name, 
         
         if(!node.compile->(info)) {
             err_msg(info, "compiling error(Y)");
-            throw;
+            exit(2);
         }
         
         info.source = source3;
@@ -5214,7 +5056,7 @@ exception sFun*,string create_cloner_automatically(sType* type, char* fun_name, 
     return (cloner, real_fun_name);
 }
 
-exception sNode*% post_position_operator3(sNode*% node, sInfo* info) version 5
+sNode*% post_position_operator3(sNode*% node, sInfo* info) version 5
 {
     return node;
 }

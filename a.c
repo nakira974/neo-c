@@ -1,9 +1,6 @@
 
-struct __builtin_va_list
+struct sData
 {
-    char* v1;
-    char* v2;
-    char* v3;
-    int v4;
-    int v5;
+    int a;
+    int b;
 };

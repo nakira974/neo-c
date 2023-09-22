@@ -44,9 +44,7 @@ bool sWhileNode*::compile(sWhileNode* self, sInfo* info)
     
     add_come_code(info, "while(%s) {\n", conditional_value.c_value);
 
-    transpile_block(block, null!, null!, info).catch {
-        exit(2);
-    }
+    transpile_block(block, null!, null!, info);
     
     add_come_code(info, "}\n");
     
@@ -65,23 +63,23 @@ string sWhileNode*::sname(sWhileNode* self, sInfo* info)
     return string(self.sname);
 }
 
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 9
+sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 9
 {
     if(buf === "while") {
         string sname = clone info->sname;
         int sline = info->sline;
     
-        expected_next_character('(', info) throws;
+        expected_next_character('(', info);
     
         /// expression ///
-        sNode*% expression_node = expression(info) throws;
+        sNode*% expression_node = expression(info);
         
-        expected_next_character(')', info) throws;
+        expected_next_character(')', info);
     
-        sBlock*% block = parse_block(info) throws;
+        sBlock*% block = parse_block(info);
     
         return new sNode(new sWhileNode(expression_node, block, info));
     }
     
-    return inherit(buf, head,head_sline, info) throws;
+    return inherit(buf, head,head_sline, info);
 }

@@ -62,19 +62,23 @@ string sUnionNode*::sname(sUnionNode* self, sInfo* info)
     return string(self.sname);
 }
 
-exception sNode*% parse_union(string type_name, sInfo* info)
+sNode*% parse_union(string type_name, sInfo* info)
 {
     info.classes.insert(type_name, new sClass(name:type_name, union_:true));
     
     sType*% type = new sType(type_name, info);
     
-    expected_next_character('{', info) throws;
+    expected_next_character('{', info);
     
     type.mClass.mFields.reset();
     
     while(true) {
-        var type2, name = parse_type(info, true@parse_variable_name) throws;
-        expected_next_character(';', info) throws;
+        var type2, name, err = parse_type(info, true@parse_variable_name);
+        
+        if(!err) {
+            exit(2);
+        }
+        expected_next_character(';', info);
         
         type.mClass.mFields.push_back(new tuple2<string, sType*%>(name, type2));
         
@@ -88,22 +92,25 @@ exception sNode*% parse_union(string type_name, sInfo* info)
     return new sNode(new sUnionNode(type, info));
 }
 
-exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 97
+sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 97
 {
     if(buf === "union") {
-        string type_name = parse_word(info) throws;
+        string type_name = parse_word(info);
         
         info.classes.insert(type_name, new sClass(name:type_name, union_:true));
         
         sType*% type = new sType(type_name, info);
         
-        expected_next_character('{', info) throws;
+        expected_next_character('{', info);
         
         type.mClass.mFields.reset();
         
         while(true) {
-            var type2, name = parse_type(info, true@parse_variable_name) throws;
-            expected_next_character(';', info) throws;
+            var type2, name, err = parse_type(info, true@parse_variable_name);
+            if(!err) {
+                exit(2);
+            }
+            expected_next_character(';', info);
             
             type.mClass.mFields.push_back(new tuple2<string, sType*%>(name, type2));
             
@@ -117,6 +124,6 @@ exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info)
         return new sNode(new sUnionNode(type, info));
     }
     
-    return inherit(string(buf), head, head_sline, info) throws;
+    return inherit(string(buf), head, head_sline, info);
 }
 

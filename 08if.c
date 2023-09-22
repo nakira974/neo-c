@@ -62,9 +62,7 @@ bool sIfNode*::compile(sIfNode* self, sInfo* info)
     
     add_come_code(info, "if(%s) {\n", conditional_value.c_value);
 
-    transpile_block(if_block, null!, null!, info).catch {
-        exit(2);
-    }
+    transpile_block(if_block, null!, null!, info);
     
     add_come_code(info, "}\n");
 
@@ -86,9 +84,7 @@ bool sIfNode*::compile(sIfNode* self, sInfo* info)
 
             add_come_code(info, "else if(%s) {\n", conditional_value.c_value);
             
-            transpile_block(elif_node_block, null!, null!, info).catch {
-                exit(2);
-            }
+            transpile_block(elif_node_block, null!, null!, info);
 
             add_come_code(info, "}\n");
         }
@@ -97,9 +93,7 @@ bool sIfNode*::compile(sIfNode* self, sInfo* info)
     if(else_block) {
         add_come_code(info, "else {\n");
 
-        transpile_block(else_block, null!, null!, info).catch {
-            exit(2);
-        }
+        transpile_block(else_block, null!, null!, info);
         
         add_come_code(info, "}\n");
     }
@@ -119,7 +113,7 @@ string sIfNode*::sname(sIfNode* self, sInfo* info)
     return string(self.sname);
 }
 
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 8
+sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 8
 {
     if(buf === "if") {
         string sname = clone info->sname;
@@ -127,15 +121,15 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         
         parse_sharp(info);
     
-        expected_next_character('(', info) throws;
+        expected_next_character('(', info);
     
         /// expression ///
-        sNode*% expression_node = expression(info) throws;
+        sNode*% expression_node = expression(info);
         
-        expected_next_character(')', info) throws;
+        expected_next_character(')', info);
         parse_sharp(info);
     
-        sBlock*% if_block = parse_block(info) throws;
+        sBlock*% if_block = parse_block(info);
         
         list<sNode*%>*% elif_expression_nodes = new list<sNode*%>();
     
@@ -155,7 +149,7 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
                 break;
             }
             parse_sharp(info);
-            string buf = parse_word(info) throws;
+            string buf = parse_word(info);
             parse_sharp(info);
     
             if(buf === "else") {
@@ -165,25 +159,25 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
                     skip_spaces_and_lf(info);
                     parse_sharp(info);
     
-                    expected_next_character('(', info) throws;
+                    expected_next_character('(', info);
     
                     /// expression ///
-                    sNode*% expression_node = expression(info) throws;
+                    sNode*% expression_node = expression(info);
                     
                     elif_expression_nodes.push_back(expression_node);
     
-                    expected_next_character(')', info) throws;
+                    expected_next_character(')', info);
                     parse_sharp(info);
     
                     
-                    sBlock*% elif_block = parse_block(info) throws;
+                    sBlock*% elif_block = parse_block(info);
                     
                     elif_blocks.push_back(elif_block);
     
                     elif_num++;
                 }
                 else {
-                    else_block = parse_block(info) throws;
+                    else_block = parse_block(info);
                     break;
                 }
             }
@@ -199,5 +193,5 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         return result;
     }
     
-    return inherit(buf, head,head_sline, info) throws;
+    return inherit(buf, head,head_sline, info);
 }

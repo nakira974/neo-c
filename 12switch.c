@@ -44,9 +44,7 @@ bool sSwitchNode*::compile(sSwitchNode* self, sInfo* info)
     
     add_come_code(info, "switch (%s) {\n", conditional_value.c_value);
 
-    transpile_block(block, null!, null!, info).catch {
-        exit(2);
-    }
+    transpile_block(block, null!, null!, info);
 
     add_come_code(info, "}\n");
     
@@ -195,16 +193,16 @@ string sBreakNode*::sname(sBreakNode* self, sInfo* info)
     return string(self.sname);
 }
 
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 12
+sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 12
 {
     if(buf === "case") {
-        sNode*% node = expression(info) throws;
-        expected_next_character(':', info) throws;
+        sNode*% node = expression(info);
+        expected_next_character(':', info);
         
         return new sNode(new sCaseNode(node, info));
     }
     else if(buf === "default") {
-        expected_next_character(':', info) throws;
+        expected_next_character(':', info);
         
         return new sNode(new sDefaultNode(info));
     }
@@ -212,16 +210,16 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
         return new sNode(new sBreakNode(info));
     }
     else if(buf === "switch") {
-        expected_next_character('(', info) throws;
+        expected_next_character('(', info);
         
         /// expression ///
-        sNode*% expression_node = expression(info) throws;
-        expected_next_character(')', info) throws;
+        sNode*% expression_node = expression(info);
+        expected_next_character(')', info);
         
-        sBlock*% block = parse_block(info) throws;
+        sBlock*% block = parse_block(info);
     
         return new sNode(new sSwitchNode(expression_node, block, info));
     }
     
-    return inherit(buf, head ,head_sline, info) throws;
+    return inherit(buf, head ,head_sline, info);
 }

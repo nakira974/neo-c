@@ -55,9 +55,9 @@ void fun_default_parametor(int x=1, int y=2)
     xassert("default parametor", x == 1 && y == 2);
 }
 
-exception int fun_exception(int x, int y)
+int,bool fun_exception(int x, int y)
 {
-    return x+y;
+    return (x+y, true);
 }
 
 int main()
@@ -308,7 +308,6 @@ int main()
     
     var m2 = clone m1;
     
-/*
     printf("%d %d\n", m2["AAA"], m2["BBB"]);
     
     xassert("map clone", m1 === m2);
@@ -372,9 +371,6 @@ int main()
     xassert("tuple test", aZZZ == 1 && bZZZ == 2);
     
     fun_default_parametor();
-    int xZZZZZZZZ = fun_exception(1,2).catch { fprintf(stderr, "exception\n"); }
-    
-    xassert("exception test", xZZZZZZZZ == 3);
     
     list<string>*% li_str = new list<string>();
     
@@ -382,8 +378,9 @@ int main()
     li_str.push_back(string("BBB"));
     li_str.push_back(string("CCC"));
     
+    xassert("exception test", fun_exception(1,2).catch { puts("exception"); exit(2) } == 3);
+    
     xassert("list test", li_str === [string("AAA"), string("BBB"), string("CCC")]);
-*/
     
     return 0;
 }

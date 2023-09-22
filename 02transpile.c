@@ -29,7 +29,7 @@ void err_msg(sInfo* info, char* msg, ...)
     }
 }
 
-exception int transpile(sInfo* info) version 2
+int transpile(sInfo* info) version 2
 {
     return 0;
 }
@@ -415,10 +415,7 @@ int come_main(int argc, char** argv) version 2
         info.head = info.source.buf;
         
         if(!output_cpp_file) {
-            transpile(&info).catch {
-                fprintf(stderr, "%s %d: transpile faild\n", info.sname, info.sline);
-                exit(2);
-            }
+            transpile(&info);
             
             if(!output_source_file(&info)) {
                 fprintf(stderr, "%s %d: output source file faield\n", info->sname, info->sline);

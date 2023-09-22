@@ -113,9 +113,7 @@ bool sForNode*::compile(sForNode* self, sInfo* info)
     
     add_come_code(info, "){\n");
 
-    transpile_block(block, null!, null!, info).catch {
-        exit(2);
-    }
+    transpile_block(block, null!, null!, info);
 
     add_come_code(info, "}\n");
     
@@ -135,10 +133,10 @@ string sForNode*::sname(sForNode* self, sInfo* info)
     return string(self.sname);
 }
 
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 11
+sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 11
 {
     if(buf === "for") {
-        expected_next_character('(', info) throws;
+        expected_next_character('(', info);
         
         /// expression ///
         parse_sharp(info);
@@ -147,36 +145,36 @@ exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info
             expression_node = null;
         }
         else {
-            expression_node = expression(info) throws;
+            expression_node = expression(info);
         }
         parse_sharp(info);
-        expected_next_character(';', info) throws;
+        expected_next_character(';', info);
         parse_sharp(info);
         sNode*% expression_node2;
         if(*info->p == ';') {
             expression_node2 = null;
         }
         else {
-            expression_node2 = expression(info) throws;
+            expression_node2 = expression(info);
         }
         parse_sharp(info);
-        expected_next_character(';', info) throws;
+        expected_next_character(';', info);
         parse_sharp(info);
         sNode*% expression_node3;
         if(*info->p == ')') {
             expression_node3 = null;
         }
         else {
-            expression_node3 = expression(info) throws;
+            expression_node3 = expression(info);
         }
         parse_sharp(info);
-        expected_next_character(')', info) throws;
+        expected_next_character(')', info);
         parse_sharp(info);
         
-        sBlock*% block = parse_block(info) throws;
+        sBlock*% block = parse_block(info);
         
         return new sNode(new sForNode(expression_node, expression_node2, expression_node3, block, info));
     }
     
-    return inherit(buf, head,head_sline,info) throws;
+    return inherit(buf, head,head_sline,info);
 }

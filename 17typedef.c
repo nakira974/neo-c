@@ -47,17 +47,20 @@ string sTypedefNode*::sname(sTypedefNode* self, sInfo* info)
     return string(self.sname);
 }
 
-exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 95
+sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 95
 {
     if(buf === "typedef") {
         bool in_typedef = info.in_typedef;
         info.in_typedef = true;
-        var type, type_name = parse_type(info, true@parse_variable_name) throws;
+        var type, type_name,err = parse_type(info, true@parse_variable_name);
+        if(!err) {
+            exit(2);
+        }
         info.in_typedef = false;
         info.in_typedef = in_typedef;
         
         return new sNode(new sTypedefNode(type_name, type, info));
     }
     
-    return inherit(string(buf), head, head_sline, info) throws;
+    return inherit(string(buf), head, head_sline, info);
 }

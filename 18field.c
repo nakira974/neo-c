@@ -18,10 +18,7 @@ bool operator_overload_fun2(sType* type, char* fun_name, CVALUE* left_value, CVA
     if(type->mGenericsTypes.length() > 0) {
         string none_generics_name = get_none_generics_name(type.mClass.mName);
         
-        sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
-            err_msg(info, "solve generics error");
-            exit(2);
-        }
+        sType*% obj_type = solve_generics(type, info.generics_type, info);
         
         fun_name2 = create_method_name(obj_type, false@no_pointer_name, fun_name, info);
         string fun_name3 = xsprintf("%s_%s", none_generics_name, fun_name);
@@ -156,10 +153,7 @@ bool sStoreFieldNode*::compile(sStoreFieldNode* self, sInfo* info)
     
     sType* left_type = left_value.type;
     
-    sType*% left_type2 = solve_generics(left_type, left_type, info).catch {
-        fprintf(stderr, "solve generics is failed\n");
-        exit(1);
-    }
+    sType*% left_type2 = solve_generics(left_type, left_type, info);
     
     sClass* klass = left_type2->mClass;
     klass = info.classes[klass->mName];
@@ -294,10 +288,7 @@ bool sLoadFieldNode*::compile(sLoadFieldNode* self, sInfo* info)
     
     sType* left_type = left_value.type;
     
-    sType*% left_type2 = solve_generics(left_type, left_type, info).catch {
-        fprintf(stderr, "solve generics is failed\n");
-        exit(1);
-    }
+    sType*% left_type2 = solve_generics(left_type, left_type, info);
     
     sClass* klass = left_type2->mClass;
     klass = info.classes[klass->mName];
@@ -603,20 +594,20 @@ string sLoadArrayNode*::sname(sLoadArrayNode* self, sInfo* info)
     return string(self.sname);
 }
 
-exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 18
+sNode*% post_position_operator2(sNode*% node, sInfo* info) version 18
 {
     return (sNode*%)null;
 }
 
-exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) version 18
+sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) version 18
 {
     err_msg(info, "parse_method_call is failed");
-    throw;
+    exit(2);
     
     return (sNode*%)null;
 }
 
-exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 18
+sNode*% post_position_operator(sNode*% node, sInfo* info) version 18
 {
     while(true){
         if(*info->p == '[') {
@@ -626,7 +617,7 @@ exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 18
                     info->p++;
                     skip_spaces_and_lf(info);
                     
-                    sNode*% node = expression(info) throws;
+                    sNode*% node = expression(info);
                     
                     array_num.push_back(node);
                     
@@ -636,7 +627,7 @@ exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 18
                     }
                     else {
                         err_msg(info, "require ] character");
-                        throw;
+                        exit(2);
                     }
                 }
                 else {
@@ -648,7 +639,7 @@ exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 18
                 info->p++;
                 skip_spaces_and_lf(info);
                 
-                sNode*% right_node = expression(info) throws;
+                sNode*% right_node = expression(info);
                 
                 node = new sNode(new sStoreArrayNode(node, right_node, array_num, info));
             }
@@ -671,25 +662,25 @@ exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 18
                 skip_spaces_and_lf(info);
             }
             
-            string field_name = parse_word(info) throws;
+            string field_name = parse_word(info);
             
             if(*info->p == '=' && *(info->p+1) != '=') {
                 info->p++;
                 skip_spaces_and_lf(info);
                 
-                sNode*% right_node = expression(info) throws;
+                sNode*% right_node = expression(info);
                 
                 node = new sNode(new sStoreFieldNode(node, right_node, field_name, info));
             }
             else if(*info->p == '(' || *info->p == '{' || (*info->p == '-' && *(info->p+1) == '>' && *(info->p+2) == '(')) {
-                node = parse_method_call(node, field_name, info) throws;
+                node = parse_method_call(node, field_name, info);
             }
             else {
                 node = new sNode(new sLoadFieldNode(node, field_name, info));
             }
         }
         else {
-            sNode*% node2 = post_position_operator2(node, info) throws;
+            sNode*% node2 = post_position_operator2(node, info);
             
             if(node2 == null) {
                 break;

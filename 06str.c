@@ -289,9 +289,7 @@ bool sListNode*::compile(sListNode* self, sInfo* info)
     
     num_string.append_str("1");
     
-    sType*% type2 = solve_generics(type, type, info).catch {
-        exit(2);
-    }
+    sType*% type2 = solve_generics(type, type, info);
     
     string type_name = make_type_name_string(type2, false@in_header, true@array_cast_pointer, info);
     
@@ -427,9 +425,7 @@ bool sTupleNode*::compile(sTupleNode* self, sInfo* info)
     
     num_string.append_str("1");
     
-    sType*% type2 = solve_generics(type, type, info).catch {
-        exit(2);
-    }
+    sType*% type2 = solve_generics(type, type, info);
     
     string type_name = make_type_name_string(type2, false@in_header, true@array_cast_pointer, info);
     
@@ -664,9 +660,7 @@ bool sMapNode*::compile(sMapNode* self, sInfo* info)
     
     num_string.append_str("1");
     
-    sType*% type2 = solve_generics(type, type, info).catch {
-        exit(2);
-    }
+    sType*% type2 = solve_generics(type, type, info);
     
     string type_name = make_type_name_string(type2, false@in_header, true@array_cast_pointer, info);
     
@@ -758,7 +752,7 @@ string sMapNode*::sname(sMapNode* self, sInfo* info)
     return string(self.sname);
 }
 
-exception sNode*% expression_node(sInfo* info) version 98
+sNode*% expression_node(sInfo* info) version 98
 {
     if(*info->p == '"') 
     {
@@ -806,7 +800,7 @@ exception sNode*% expression_node(sInfo* info) version 98
                 info->sline = sline;
                 err_msg(info, "close \" to make c string value");
                 info->sline = sline2;
-                throw;
+                exit(2);
             }
             else {
                 if(*info->p == '\n') info->sline++;
@@ -1189,7 +1183,7 @@ exception sNode*% expression_node(sInfo* info) version 98
                 int sline2 = info->sline;
                 info->sline = sline;
                 err_msg(info, "close \" to make c string value");
-                throw
+                exit(2);
             }
             else {
                 if(*info->p == '\n') info->sline++;
@@ -1225,7 +1219,7 @@ exception sNode*% expression_node(sInfo* info) version 98
         bool no_comma = info.no_comma;
         info.no_comma = true;
         
-        sNode*% node = expression(info) throws;
+        sNode*% node = expression(info);
         
         info.no_comma = no_comma;
         
@@ -1251,7 +1245,7 @@ exception sNode*% expression_node(sInfo* info) version 98
             bool no_comma = info.no_comma;
             info.no_comma = true;
             
-            sNode*% node2 = expression(info) throws;
+            sNode*% node2 = expression(info);
             
             info.no_comma = no_comma;
             
@@ -1264,24 +1258,24 @@ exception sNode*% expression_node(sInfo* info) version 98
                 return new sNode(new sMapNode(map_keys, map_elements, info));
             }
             else {
-                expected_next_character(',', info) throws;
+                expected_next_character(',', info);
                 
                 while(true) {
                     bool no_comma = info.no_comma;
                     info.no_comma = true;
                     
-                    sNode*% node2 = expression(info) throws;
+                    sNode*% node2 = expression(info);
                     
                     info.no_comma = no_comma;
                     
                     map_keys.push_back(node2);
                     
-                    expected_next_character(':', info) throws;
+                    expected_next_character(':', info);
                     
                     no_comma = info.no_comma;
                     info.no_comma = true;
                     
-                    sNode*% node3 = expression(info) throws;
+                    sNode*% node3 = expression(info);
                     
                     info.no_comma = no_comma;
                     
@@ -1289,7 +1283,7 @@ exception sNode*% expression_node(sInfo* info) version 98
                     
                     if(*info->p == '\0') {
                         err_msg(info, "invalid source end");
-                        throw;
+                        exit(2);
                     }
                     else if(*info->p == ',') {
                         info->p++;
@@ -1302,7 +1296,7 @@ exception sNode*% expression_node(sInfo* info) version 98
                     }
                     else {
                         err_msg(info, "invalid character(%c)(3)", *info->p);
-                        throw;
+                        exit(2);
                     }
                 }
                 
@@ -1326,7 +1320,7 @@ exception sNode*% expression_node(sInfo* info) version 98
                 bool no_comma = info.no_comma;
                 info.no_comma = true;
                 
-                sNode*% node2 = expression(info) throws;
+                sNode*% node2 = expression(info);
                 
                 info.no_comma = no_comma;
                 
@@ -1334,7 +1328,7 @@ exception sNode*% expression_node(sInfo* info) version 98
                 
                 if(*info->p == '\0') {
                     err_msg(info, "invalid source end");
-                    throw;
+                    exit(2);
                 }
                 else if(*info->p == ',') {
                     info->p++;
@@ -1347,13 +1341,13 @@ exception sNode*% expression_node(sInfo* info) version 98
                 }
                 else {
                     err_msg(info, "invalid character(%c)(4)", *info->p);
-                    throw;
+                    exit(2);
                 }
             }
         }
         else {
             err_msg(info, "invalid character(%c)(5)", *info->p);
-            throw;
+            exit(2);
         }
         
         if(list_elements.length() > 0) {
@@ -1363,13 +1357,13 @@ exception sNode*% expression_node(sInfo* info) version 98
         }
     }
     else {
-        inherit(info) throws;
+        inherit(info);
     }
     
     return (sNode*%)null;
 }
 
-exception sNode*% parse_tuple(sInfo* info)
+sNode*% parse_tuple(sInfo* info)
 {
     list<sNode*%>*% tuple_elements = new list<sNode*%>();
     while(true) {
@@ -1378,7 +1372,7 @@ exception sNode*% parse_tuple(sInfo* info)
         bool no_comma = info.no_comma;
         info.no_comma = true;
         
-        sNode*% node = expression(info) throws;
+        sNode*% node = expression(info);
         
         info.no_comma = no_comma;
         
@@ -1395,7 +1389,7 @@ exception sNode*% parse_tuple(sInfo* info)
         }
         else {
             err_msg(info, "invalid character(%c) in tuple expression", *info->p);
-            throw;
+            exit(2);
         }
     }
     

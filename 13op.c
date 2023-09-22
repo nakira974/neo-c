@@ -17,10 +17,7 @@ bool operator_overload_fun(sType* type, char* fun_name, CVALUE* left_value, CVAL
     if(type->mGenericsTypes.length() > 0) {
         string none_generics_name = get_none_generics_name(type.mClass.mName);
         
-        sType*% obj_type = solve_generics(type, info.generics_type, info).catch {
-            err_msg(info, "solve generics error");
-            exit(2);
-        }
+        sType*% obj_type = solve_generics(type, info.generics_type, info);
         
         fun_name2 = create_method_name(obj_type, false@no_pointer_name, fun_name, info);
         string fun_name3 = xsprintf("%s_%s", none_generics_name, fun_name);
@@ -37,22 +34,14 @@ bool operator_overload_fun(sType* type, char* fun_name, CVALUE* left_value, CVAL
         }
         else {
             if(fun_name === "operator_equals") {
-                var fun, fun_name = create_equals_automatically(obj_type, "equals", info).catch {
-                    exit(2);
-                }
-                var fun2, fun_name2 = create_operator_equals_automatically(obj_type, "operator_equals", info).catch { 
-                    exit(2);
-                }
+                var fun, fun_name = create_equals_automatically(obj_type, "equals", info);
+                var fun2, fun_name2 = create_operator_equals_automatically(obj_type, "operator_equals", info);
                 
                 operator_fun = fun2;
             }
             else if(fun_name === "operator_not_equals") {
-                var fun, fun_name = create_equals_automatically(obj_type, "not_equals", info).catch { 
-                    exit(2);
-                }
-                var fun2, fun_name2 = create_operator_not_equals_automatically(obj_type, "operator_not_equals", info).catch {
-                    exit(2);
-                }
+                var fun, fun_name = create_equals_automatically(obj_type, "not_equals", info);
+                var fun2, fun_name2 = create_operator_not_equals_automatically(obj_type, "operator_not_equals", info);
                 
                 operator_fun = fun2;
             }
@@ -1868,9 +1857,9 @@ string sConditionalNode*::sname(sConditionalNode* self, sInfo* info)
     return string(self.sname);
 }
 
-exception sNode*% mult_exp(sInfo* info)
+sNode*% mult_exp(sInfo* info)
 {
-    sNode*% node = expression_node(info) throws;
+    sNode*% node = expression_node(info);
     
     parse_sharp(info)
 
@@ -1879,7 +1868,7 @@ exception sNode*% mult_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% right = mult_exp(info) throws;
+            sNode*% right = mult_exp(info);
             
             return new sNode(new sMultNode(node, right, info));
         }
@@ -1887,7 +1876,7 @@ exception sNode*% mult_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% right = mult_exp(info) throws;
+            sNode*% right = mult_exp(info);
             
             return new sNode(new sDivNode(node, right, info));
         }
@@ -1895,7 +1884,7 @@ exception sNode*% mult_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% right = expression_node(info) throws;
+            sNode*% right = expression_node(info);
             
             return new sNode(new sModNode(node, right, info));
         }
@@ -1909,9 +1898,9 @@ exception sNode*% mult_exp(sInfo* info)
     return node;
 }
 
-exception sNode*% add_exp(sInfo* info)
+sNode*% add_exp(sInfo* info)
 {
-    sNode*% node = mult_exp(info) throws;
+    sNode*% node = mult_exp(info);
     
     parse_sharp(info)
 
@@ -1921,7 +1910,7 @@ exception sNode*% add_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% right = add_exp(info) throws;
+            sNode*% right = add_exp(info);
             
             return new sNode(new sAddNode(node, right, info));
         }
@@ -1930,7 +1919,7 @@ exception sNode*% add_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% right = add_exp(info) throws;
+            sNode*% right = add_exp(info);
             
             return new sNode(new sSubNode(node, right, info));
         }
@@ -1944,11 +1933,11 @@ exception sNode*% add_exp(sInfo* info)
     return node;
 }
 
-exception sNode*% shift_exp(sInfo* info)
+sNode*% shift_exp(sInfo* info)
 {
     parse_sharp(info);
     
-    sNode*% node = add_exp(info) throws;
+    sNode*% node = add_exp(info);
     
     parse_sharp(info)
 
@@ -1957,7 +1946,7 @@ exception sNode*% shift_exp(sInfo* info)
             info->p+=2;
             skip_spaces_and_lf(info);
 
-            sNode*% right = shift_exp(info) throws;
+            sNode*% right = shift_exp(info);
             
             return new sNode(new sLShiftNode(node, right, info));
         }
@@ -1965,7 +1954,7 @@ exception sNode*% shift_exp(sInfo* info)
             info->p+=2;
             skip_spaces_and_lf(info);
 
-            sNode*% right = shift_exp(info) throws;
+            sNode*% right = shift_exp(info);
             
             return new sNode(new sRShiftNode(node, right, info));
         }
@@ -1979,11 +1968,11 @@ exception sNode*% shift_exp(sInfo* info)
     return node;
 }
 
-exception sNode*% comparison_exp(sInfo* info)
+sNode*% comparison_exp(sInfo* info)
 {
     parse_sharp(info);
     
-    sNode*% node = shift_exp(info) throws;
+    sNode*% node = shift_exp(info);
     
     parse_sharp(info)
 
@@ -1992,7 +1981,7 @@ exception sNode*% comparison_exp(sInfo* info)
             info->p+=2;
             skip_spaces_and_lf(info);
 
-            sNode*% right = shift_exp(info) throws;
+            sNode*% right = shift_exp(info);
             
             return new sNode(new sGtEqNode(node, right, info));
         }
@@ -2000,7 +1989,7 @@ exception sNode*% comparison_exp(sInfo* info)
             info->p+=2;
             skip_spaces_and_lf(info);
 
-            sNode*% right = shift_exp(info) throws;
+            sNode*% right = shift_exp(info);
             
             return new sNode(new sLtEqNode(node, right, info));
         }
@@ -2008,7 +1997,7 @@ exception sNode*% comparison_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% right = shift_exp(info) throws;
+            sNode*% right = shift_exp(info);
             
             return new sNode(new sGtNode(node, right, info));
         }
@@ -2016,7 +2005,7 @@ exception sNode*% comparison_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% right = shift_exp(info) throws;
+            sNode*% right = shift_exp(info);
             
             return new sNode(new sLtNode(node, right, info));
         }
@@ -2030,11 +2019,11 @@ exception sNode*% comparison_exp(sInfo* info)
     return node;
 }
 
-exception sNode*% eq_exp(sInfo* info)
+sNode*% eq_exp(sInfo* info)
 {
     parse_sharp(info);
     
-    sNode*% node = comparison_exp(info) throws;
+    sNode*% node = comparison_exp(info);
     
     parse_sharp(info)
 
@@ -2043,7 +2032,7 @@ exception sNode*% eq_exp(sInfo* info)
             info->p+=3;
             skip_spaces_and_lf(info);
 
-            sNode*% right = eq_exp(info) throws;
+            sNode*% right = eq_exp(info);
             
             return new sNode(new sEq2Node(node, right, info));
         }
@@ -2051,7 +2040,7 @@ exception sNode*% eq_exp(sInfo* info)
             info->p+=2;
             skip_spaces_and_lf(info);
 
-            sNode*% right = eq_exp(info) throws;
+            sNode*% right = eq_exp(info);
             
             return new sNode(new sEqNode(node, right, info));
         }
@@ -2059,7 +2048,7 @@ exception sNode*% eq_exp(sInfo* info)
             info->p+=3;
             skip_spaces_and_lf(info);
 
-            sNode*% right = eq_exp(info) throws;
+            sNode*% right = eq_exp(info);
             
             return new sNode(new sNotEq2Node(node, right, info));
         }
@@ -2067,7 +2056,7 @@ exception sNode*% eq_exp(sInfo* info)
             info->p+=2;
             skip_spaces_and_lf(info);
 
-            sNode*% right = eq_exp(info) throws;
+            sNode*% right = eq_exp(info);
             
             return new sNode(new sNotEqNode(node, right, info));
         }
@@ -2081,11 +2070,11 @@ exception sNode*% eq_exp(sInfo* info)
     return node;
 }
 
-exception sNode*% and_exp(sInfo* info)
+sNode*% and_exp(sInfo* info)
 {
     parse_sharp(info);
     
-    sNode*% node = eq_exp(info) throws;
+    sNode*% node = eq_exp(info);
 
     parse_sharp(info);
 
@@ -2094,7 +2083,7 @@ exception sNode*% and_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% right = and_exp(info) throws;
+            sNode*% right = and_exp(info);
 
             return new sNode(new sAndNode(node, right, info));
         }
@@ -2108,11 +2097,11 @@ exception sNode*% and_exp(sInfo* info)
     return node;
 }
 
-exception sNode*% xor_exp(sInfo* info)
+sNode*% xor_exp(sInfo* info)
 {
     parse_sharp(info);
     
-    sNode*% node = and_exp(info) throws;
+    sNode*% node = and_exp(info);
 
     parse_sharp(info);
 
@@ -2121,7 +2110,7 @@ exception sNode*% xor_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% right = xor_exp(info) throws;
+            sNode*% right = xor_exp(info);
 
             return new sNode(new sXOrNode(node, right, info));
         }
@@ -2135,11 +2124,11 @@ exception sNode*% xor_exp(sInfo* info)
     return node;
 }
 
-exception sNode*% or_exp(sInfo* info)
+sNode*% or_exp(sInfo* info)
 {
     parse_sharp(info);
     
-    sNode*% node = xor_exp(info) throws;
+    sNode*% node = xor_exp(info);
 
     parse_sharp(info);
 
@@ -2148,7 +2137,7 @@ exception sNode*% or_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% right = or_exp(info) throws;
+            sNode*% right = or_exp(info);
 
             return new sNode(new sOrNode(node, right, info));
         }
@@ -2162,11 +2151,11 @@ exception sNode*% or_exp(sInfo* info)
     return node;
 }
 
-exception sNode*% andand_exp(sInfo* info)
+sNode*% andand_exp(sInfo* info)
 {
     parse_sharp(info);
     
-    sNode*% node = or_exp(info) throws;
+    sNode*% node = or_exp(info);
 
     parse_sharp(info);
 
@@ -2175,7 +2164,7 @@ exception sNode*% andand_exp(sInfo* info)
             info->p+=2;
             skip_spaces_and_lf(info);
 
-            sNode*% right = andand_exp(info) throws;
+            sNode*% right = andand_exp(info);
 
             return new sNode(new sAndAndNode(node, right, info));
         }
@@ -2189,11 +2178,11 @@ exception sNode*% andand_exp(sInfo* info)
     return node;
 }
 
-exception sNode*% oror_exp(sInfo* info)
+sNode*% oror_exp(sInfo* info)
 {
     parse_sharp(info);
     
-    sNode*% node = andand_exp(info) throws;
+    sNode*% node = andand_exp(info);
 
     parse_sharp(info);
 
@@ -2202,7 +2191,7 @@ exception sNode*% oror_exp(sInfo* info)
             info->p+=2;
             skip_spaces_and_lf(info);
 
-            sNode*% right = oror_exp(info) throws;
+            sNode*% right = oror_exp(info);
 
             return new sNode(new sOrOrNode(node, right, info));
         }
@@ -2216,11 +2205,11 @@ exception sNode*% oror_exp(sInfo* info)
     return node;
 }
 
-exception sNode*% comma_exp(sInfo* info)
+sNode*% comma_exp(sInfo* info)
 {
     parse_sharp(info);
     
-    sNode*% node = oror_exp(info) throws;
+    sNode*% node = oror_exp(info);
     
     parse_sharp(info);
 
@@ -2229,7 +2218,7 @@ exception sNode*% comma_exp(sInfo* info)
             info->p++;
             skip_spaces_and_lf(info);
 
-            sNode*% node2 = oror_exp(info) throws;
+            sNode*% node2 = oror_exp(info);
             
             return new sNode(new sCommaNode(node, node2, info));
         }
@@ -2243,11 +2232,11 @@ exception sNode*% comma_exp(sInfo* info)
     return node;
 }
 
-exception sNode*% conditional_exp(sInfo* info)
+sNode*% conditional_exp(sInfo* info)
 {
     parse_sharp(info);
     
-    sNode*% node = comma_exp(info) throws;
+    sNode*% node = comma_exp(info);
     
     parse_sharp(info);
 
@@ -2263,14 +2252,14 @@ exception sNode*% conditional_exp(sInfo* info)
                 value1 = new sNode(new sNullNode(info));
             }
             else {
-                value1 = comma_exp(info) throws;
+                value1 = comma_exp(info);
             }
 
             parse_sharp(info);
 
-            expected_next_character(':', info) throws;
+            expected_next_character(':', info);
 
-            sNode*% value2 = comma_exp(info) throws;
+            sNode*% value2 = comma_exp(info);
 
             parse_sharp(info);
 
@@ -2286,20 +2275,20 @@ exception sNode*% conditional_exp(sInfo* info)
     return node;
 }
 
-exception sNode*% expression(sInfo* info) version 13
+sNode*% expression(sInfo* info) version 13
 {
     parse_sharp(info);
 
-    sNode*% node = conditional_exp(info) throws;
+    sNode*% node = conditional_exp(info);
     
     return node;
 }
 
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 13
+sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 13
 {
     if(buf === "null") {
         return new sNode(new sNullNode(info));
     }
     
-    return inherit(buf, head,head_sline, info) throws;
+    return inherit(buf, head,head_sline, info);
 }

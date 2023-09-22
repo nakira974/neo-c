@@ -269,7 +269,7 @@ int come_main(int argc, char** argv) version 2;
 void come_init() version 2;
 void come_final() version 2;
 void err_msg(sInfo* info, char* msg, ...);
-exception int transpile(sInfo* info) version 2;
+int transpile(sInfo* info) version 2;
 bool output_source_file(sInfo* info) version 2;
 sModule*% sModule*::initialize(sModule*% self);
 sType*% sType*::initialize(sType*% self, char* name, sInfo* info, bool heap=false);
@@ -287,7 +287,7 @@ void come_init() version 3;
 void come_final() version 3;
 
 string header_function(sFun* fun, sInfo* info);
-exception int transpile(sInfo* info) version 3;
+int transpile(sInfo* info) version 3;
 bool output_source_file(sInfo* info) version 3;
 void show_type(sType* type, sInfo* info);
 string create_generics_name(sType* generics_type, sInfo* info);
@@ -310,7 +310,7 @@ void transpiler_clear_last_code(sInfo* info);
 bool create_equals_method(sType* type, sInfo* info);
 bool create_operator_equals_method(sType* type, sInfo* info);
 bool create_operator_not_equals_method(sType* type, sInfo* info);
-exception sType*% solve_generics(sType* type, sType* generics_type, sInfo* info);
+sType*% solve_generics(sType* type, sType* generics_type, sInfo* info);
 sVar* get_variable_from_table(sVarTable* table, char* name);
 void free_objects_on_return(sBlock* current_block, sInfo* info, sVar* ret_value, bool top_block);
 void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo* info);
@@ -328,54 +328,54 @@ void decrement_ref_count_object(sType* type, char* obj, sInfo* info);
 /// 05function.c ///
 /////////////////////////////////////////////////////////////////////
 sNode*% create_int_node(int value, sInfo* info);
-exception sNode*% post_position_operator3(sNode*% node, sInfo* info) version 5;
-exception list<sType*%>*%, list<string>*%, list<string>*%, bool parse_params(sInfo* info);
-exception sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sInfo* info);
-exception sFun*,string create_cloner_automatically(sType* type, char* fun_name, sInfo* info);
-exception sFun*,string create_equals_automatically(sType* type, char* fun_name, sInfo* info);
-exception sFun*,string create_operator_equals_automatically(sType* type, char* fun_name, sInfo* info);
-exception sFun*,string create_operator_not_equals_automatically(sType* type, char* fun_name, sInfo* info);
-exception string skip_block(sInfo* info);
+sNode*% post_position_operator3(sNode*% node, sInfo* info) version 5;
+list<sType*%>*%, list<string>*%, list<string>*%, bool parse_params(sInfo* info);
+sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sInfo* info);
+sFun*,string create_cloner_automatically(sType* type, char* fun_name, sInfo* info);
+sFun*,string create_equals_automatically(sType* type, char* fun_name, sInfo* info);
+sFun*,string create_operator_equals_automatically(sType* type, char* fun_name, sInfo* info);
+sFun*,string create_operator_not_equals_automatically(sType* type, char* fun_name, sInfo* info);
+string skip_block(sInfo* info);
 bool is_contained_generics_class(sType* type, sInfo* info);
 bool is_type_name(char* buf, sInfo* info);
 bool parsecmp(char* str, sInfo* info);
-exception string parse_word(sInfo* info, bool no_check_err=false);
+string parse_word(sInfo* info);
 void skip_spaces_and_lf(sInfo* info);
-exception int expected_next_character(char c, sInfo* info);
+int expected_next_character(char c, sInfo* info);
 sBlock*% sBlock*::initialize(sBlock*% self, sInfo* info);
 bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* generics_type, sInfo* info);
 
-exception tuple2<sType*%,string>*% parse_type(sInfo* info, bool parse_variable_name=false, bool parse_multiple_type=true);
-exception sBlock*% parse_block(sInfo* info, bool no_block_level=false);
-exception int transpile_block(sBlock* block, list<sType*%>*? param_types, list<string>*? param_names, sInfo* info, bool no_var_table=false);
+sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool parse_multiple_type=true);
+sBlock*% parse_block(sInfo* info, bool no_block_level=false);
+int transpile_block(sBlock* block, list<sType*%>*? param_types, list<string>*? param_names, sInfo* info, bool no_var_table=false);
 void arrange_stack(sInfo* info, int top);
-exception int expected_next_character(char c, sInfo* info);
-exception sNode*% parse_function(sInfo* info);
+int expected_next_character(char c, sInfo* info);
+sNode*% parse_function(sInfo* info);
 
-exception sNode*% expression(sInfo* info) version 5;
-exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 1;
-exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 99;
-exception sNode*% expression_node(sInfo* info) version 1;
-exception sNode*% expression_node(sInfo* info) version 99;
+sNode*% expression(sInfo* info) version 5;
+sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 1;
+sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 99;
+sNode*% expression_node(sInfo* info) version 1;
+sNode*% expression_node(sInfo* info) version 99;
 
-exception int transpile(sInfo* info) version 5;
+int transpile(sInfo* info) version 5;
 void parse_sharp(sInfo* info) version 5;
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 5;
-exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 5;
+sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 5;
+sNode*% post_position_operator(sNode*% node, sInfo* info) version 5;
 string create_method_name(sType* obj_type, bool no_pointer_name, char* fun_name, sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
 /// 06str.c ///
 /////////////////////////////////////////////////////////////////////
-exception sNode*% expression_node(sInfo* info) version 98;
-exception sNode*% parse_tuple(sInfo* info);
+sNode*% expression_node(sInfo* info) version 98;
+sNode*% parse_tuple(sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
 /// 07var.c
 /////////////////////////////////////////////////////////////////////
 sNode*% store_var(string name, list<string>*%? multiple_assign, sType*% type, bool alloc, sNode*%? right_node, sInfo* info);
 sNode*% load_var(string name, sInfo* info);
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 7;
+sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 7;
 void add_variable_to_table(char* name, sType* type, sInfo* info);
 void add_variable_to_global_table(char* name, sType* type, sInfo* info);
 void add_variable_to_global_table_with_int_value(char* name, sType* type, char* c_value, sInfo* info);
@@ -383,84 +383,84 @@ void add_variable_to_global_table_with_int_value(char* name, sType* type, char* 
 /////////////////////////////////////////////////////////////////////
 /// 08if.c
 /////////////////////////////////////////////////////////////////////
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 8;
+sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 8;
 
 /////////////////////////////////////////////////////////////////////
 /// 09while.c
 /////////////////////////////////////////////////////////////////////
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 9;
+ sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 9;
 
 /////////////////////////////////////////////////////////////////////
 /// 10do_while.c
 /////////////////////////////////////////////////////////////////////
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 10;
+ sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 10;
 
 /////////////////////////////////////////////////////////////////////
 /// 11for.c
 /////////////////////////////////////////////////////////////////////
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 11;
+ sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 11;
 
 /////////////////////////////////////////////////////////////////////
 /// 12switch.c
 /////////////////////////////////////////////////////////////////////
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 12;
+ sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 12;
 
 /////////////////////////////////////////////////////////////////////
 /// 13op.c
 /////////////////////////////////////////////////////////////////////
 bool operator_overload_fun(sType* type, char* fun_name, CVALUE* left_value, CVALUE* right_value, sInfo* info);
-exception sNode*% expression(sInfo* info) version 13;
-exception sNode*% post_op(sNode*% node, sInfo* info) version 13;
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 13;
+ sNode*% expression(sInfo* info) version 13;
+ sNode*% post_op(sNode*% node, sInfo* info) version 13;
+ sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 13;
 sNode*% create_null_object(sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
 /// 14struct.c
 /////////////////////////////////////////////////////////////////////
-exception sNode*% parse_struct(string type_name, sInfo* info);
+ sNode*% parse_struct(string type_name, sInfo* info);
 string get_none_generics_name(char* class_name);
-exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 98;
+ sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 98;
 bool output_generics_struct(sType* type, sType* generics_type, sInfo* info);
 void output_struct(sClass* klass, sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
 /// 15union.c
 /////////////////////////////////////////////////////////////////////
-exception sNode*% parse_union(string type_name, sInfo* info);
-exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 97;
+ sNode*% parse_union(string type_name, sInfo* info);
+ sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 97;
 
 /////////////////////////////////////////////////////////////////////
 /// 16enum.c
 /////////////////////////////////////////////////////////////////////
-exception sNode*% parse_enum(string type_name, sInfo* info);
-exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 96;
+ sNode*% parse_enum(string type_name, sInfo* info);
+ sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 96;
 
 /////////////////////////////////////////////////////////////////////
 /// 17typedef.c
 /////////////////////////////////////////////////////////////////////
-exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 95;
+ sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 95;
 
 /////////////////////////////////////////////////////////////////////
 /// 18field.c
 /////////////////////////////////////////////////////////////////////
 sNode*% store_field(sNode* left, sNode*% right, string name, sInfo* info);
 
-exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 18;
-exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 18;
-exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) version 18;
+ sNode*% post_position_operator(sNode*% node, sInfo* info) version 18;
+ sNode*% post_position_operator2(sNode*% node, sInfo* info) version 18;
+ sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) version 18;
 
 /////////////////////////////////////////////////////////////////////
 /// 19eq.c
 /////////////////////////////////////////////////////////////////////
-exception sNode*% post_position_operator2(sNode*% node, sInfo* info) version 19;
+ sNode*% post_position_operator2(sNode*% node, sInfo* info) version 19;
 
 /////////////////////////////////////////////////////////////////////
 /// 20method.c
 /////////////////////////////////////////////////////////////////////
 string make_generics_function(sType* type, string fun_name, sInfo* info);
-exception sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) version 20;
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 20;
-exception sNode*% post_position_operator3(sNode*% node, sInfo* info) version 20;
+ sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) version 20;
+ sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 20;
+ sNode*% post_position_operator3(sNode*% node, sInfo* info) version 20;
 
 /////////////////////////////////////////////////////////////////////
 /// 21obj.c
@@ -469,19 +469,18 @@ sNode*% create_object(sType*% type, sInfo* info);
 sNode*% create_true_object(sInfo* info);
 sNode*% create_false_object(sInfo* info);
 
-exception sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 21;
-exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 94;
-exception sNode*% post_position_operator3(sNode*% node, sInfo* info) version 21;
-//exception sNode*% post_position_operator(sNode*% node, sInfo* info) version 21;
+ sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 21;
+ sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 94;
+ sNode*% post_position_operator3(sNode*% node, sInfo* info) version 21;
 
 /////////////////////////////////////////////////////////////////////
 /// 22impl.c
 /////////////////////////////////////////////////////////////////////
-exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 93;
+ sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 93;
 
 /////////////////////////////////////////////////////////////////////
 /// 23interface.c
 /////////////////////////////////////////////////////////////////////
-exception sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 92;
+ sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 92;
 
 #endif

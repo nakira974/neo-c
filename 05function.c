@@ -2075,13 +2075,13 @@ sNode*% parse_function_call(char* fun_name, sInfo* info)
         int sline = info.sline;
         
         bool err_flag = false;
-        string label;
+        string label = string("");
         if(xisalpha(*info->p) || *info->p == '_') {
             label = parse_word(info);
             err_flag = true;
         }
         
-        if(err_flag == false && *info->p == ':') {
+        if(err_flag == true && *info->p == ':') {
             info->p++;
             skip_spaces_and_lf(info);
         }

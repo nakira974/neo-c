@@ -778,7 +778,7 @@ sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 
                 sNode*% obj = new sNode(new sNewNode(type, info));
                 string fun_name = string("initialize");
                 
-                return parse_method_call(obj, fun_name, info);
+                return parse_method_call(clone obj, fun_name, info);
             }
         }
         else {

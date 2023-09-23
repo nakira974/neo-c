@@ -216,7 +216,6 @@ static void free_protocol_object(sType* protocol_type, char* protocol_value_c_so
         else {
             string type_name = make_type_name_string(protocol_type, false@in_header, false@array_cast_pointer, info);
             add_come_code(info, "call_finalizer(((%s)%s)->finalize, ((%s)%s)->_protocol_obj,0, %d, %d);\n", type_name, protocol_value_c_source, type_name, protocol_value_c_source, no_decrement, no_free);
-//            add_come_code(info, "((%s)%s)->_protocol_obj = come_decrement_ref_count(((%s)%s)->_protocol_obj, %d, %d);\n", type_name, protocol_value_c_source, type_name, protocol_value_c_source, no_decrement, no_free);
         }
     }
 }
@@ -324,7 +323,7 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
             
             /// free memmory ///
             if(!type->mAllocaValue) {
-                if(c_value) add_come_code(info, "%s = come_decrement_ref_count(%s, %d, %d);\n", c_value, c_value, no_decrement, no_free);
+                if(c_value) add_come_code(info, "%s = come_decrement_ref_count2(%s, %d, %d);\n", c_value, c_value, no_decrement, no_free);
             }
         }
     }

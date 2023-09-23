@@ -673,7 +673,7 @@ sNode*% post_position_operator(sNode*% node, sInfo* info) version 18
                 node = new sNode(new sStoreFieldNode(node, right_node, field_name, info));
             }
             else if(*info->p == '(' || *info->p == '{' || (*info->p == '-' && *(info->p+1) == '>' && *(info->p+2) == '(')) {
-                node = parse_method_call(node, field_name, info);
+                node = parse_method_call(clone node, field_name, info);
             }
             else {
                 node = new sNode(new sLoadFieldNode(node, field_name, info));

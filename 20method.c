@@ -139,7 +139,7 @@ struct sMethodCallNode {
     int method_block_sline;
 };
 
-sMethodCallNode*% sMethodCallNode*::initialize(sMethodCallNode*% self, char* fun_name,sNode*% obj, list<tuple2<string,sNode*%>*%>* params, buffer* method_block, int method_block_sline, sInfo* info)
+sMethodCallNode*% sMethodCallNode*::initialize(sMethodCallNode*% self, char* fun_name,sNode*% obj, list<tuple2<string,sNode*%>*%>*% params, buffer* method_block, int method_block_sline, sInfo* info)
 {
     self.obj = clone obj;
     self.fun_name = string(fun_name);
@@ -616,13 +616,13 @@ sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) version 20
             int sline = info.sline;
             
             bool err_flag = false;
-            string label;
+            string label = string("");
             if(xisalpha(*info->p) || *info->p == '_') {
                 label = parse_word(info);
                 err_flag = true;
             };
             
-            if(err_flag == false && *info->p == ':') {
+            if(err_flag == true && *info->p == ':') {
                 info->p++;
                 skip_spaces_and_lf(info);
             }
@@ -677,7 +677,7 @@ sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) version 20
         method_block.append_str("\n");
     }
     
-    return new sNode(new sMethodCallNode(fun_name, obj, params, method_block!, method_block_sline, info));
+    return new sNode(new sMethodCallNode(fun_name, clone obj, clone params, method_block!, method_block_sline, info));
 }
 
 sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 20

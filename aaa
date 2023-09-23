@@ -1,195 +1,687 @@
-==84470== Memcheck, a memory error detector
-==84470== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
-==84470== Using Valgrind-3.19.0 and LibVEX; rerun with -h for copyright info
-==84470== Command: ./comelang2-sh a.c
-==84470== 
-### unhandled dwarf2 abbrev form code 0x25
-### unhandled dwarf2 abbrev form code 0x25
-### unhandled dwarf2 abbrev form code 0x25
-### unhandled dwarf2 abbrev form code 0x1b
-get_Form_szB: unhandled 27 (DW_FORM_addrx)
---84470-- WARNING: Serious error when reading debug info
---84470-- When reading debug info from /root/comelang/comelang2-sh:
---84470-- get_Form_contents: unhandled DW_FORM
-==84470== Conditional jump or move depends on uninitialised value(s)
-==84470==    at 0x10AB18: come_decrement_ref_count (in /root/comelang/comelang2-sh)
-==84470==    by 0x10D423: cpp (in /root/comelang/comelang2-sh)
-==84470==    by 0x109FC3: come_main_v2 (in /root/comelang/comelang2-sh)
-==84470==    by 0x1092AB: main (in /root/comelang/comelang2-sh)
-==84470== 
-==84470== Use of uninitialised value of size 8
-==84470==    at 0x10AB60: come_decrement_ref_count (in /root/comelang/comelang2-sh)
-==84470==    by 0x10D423: cpp (in /root/comelang/comelang2-sh)
-==84470==    by 0x109FC3: come_main_v2 (in /root/comelang/comelang2-sh)
-==84470==    by 0x1092AB: main (in /root/comelang/comelang2-sh)
-==84470== 
-==84470== Conditional jump or move depends on uninitialised value(s)
-==84470==    at 0x12ABD8: come_decrement_ref_count (05function.c.c:4945)
-==84470==    by 0x12CE9B: parse_type (05function.c.c:8221)
-==84470==    by 0x150003: top_level_v99 (05function.c.c:11249)
-==84470==    by 0x16242F: transpile_v5 (05function.c.c:13078)
-==84470==    by 0x10A16F: come_main_v2 (in /root/comelang/comelang2-sh)
-==84470==    by 0x1092AB: main (in /root/comelang/comelang2-sh)
-==84470== 
-==84470== Use of uninitialised value of size 8
-==84470==    at 0x12AC20: come_decrement_ref_count (05function.c.c:4953)
-==84470==    by 0x12CE9B: parse_type (05function.c.c:8221)
-==84470==    by 0x150003: top_level_v99 (05function.c.c:11249)
-==84470==    by 0x16242F: transpile_v5 (05function.c.c:13078)
-==84470==    by 0x10A16F: come_main_v2 (in /root/comelang/comelang2-sh)
-==84470==    by 0x1092AB: main (in /root/comelang/comelang2-sh)
-==84470== 
-==84470== Conditional jump or move depends on uninitialised value(s)
-==84470==    at 0x12A8CC: call_finalizer (05function.c.c:4982)
-==84470==    by 0x15005B: top_level_v99 (05function.c.c:11251)
-==84470==    by 0x16242F: transpile_v5 (05function.c.c:13078)
-==84470==    by 0x10A16F: come_main_v2 (in /root/comelang/comelang2-sh)
-==84470==    by 0x1092AB: main (in /root/comelang/comelang2-sh)
-==84470== 
-==84470== Use of uninitialised value of size 8
-==84470==    at 0x12A93C: call_finalizer (05function.c.c:4996)
-==84470==    by 0x15005B: top_level_v99 (05function.c.c:11251)
-==84470==    by 0x16242F: transpile_v5 (05function.c.c:13078)
-==84470==    by 0x10A16F: come_main_v2 (in /root/comelang/comelang2-sh)
-==84470==    by 0x1092AB: main (in /root/comelang/comelang2-sh)
-==84470== 
-==84470== Invalid read of size 4
-==84470==    at 0x12A93C: call_finalizer (05function.c.c:4996)
-==84470==    by 0x15005B: top_level_v99 (05function.c.c:11251)
-==84470==    by 0x16242F: transpile_v5 (05function.c.c:13078)
-==84470==    by 0x10A16F: come_main_v2 (in /root/comelang/comelang2-sh)
-==84470==    by 0x1092AB: main (in /root/comelang/comelang2-sh)
-==84470==  Address 0x4a8dec4 is 12 bytes before a block of size 28 free'd
-==84470==    at 0x4887B40: free (vg_replace_malloc.c:872)
-==84470==    by 0x16A24B: ncfree (05function.c.c:4908)
-==84470==    by 0x16A217: come_free_object (05function.c.c:4970)
-==84470==    by 0x12A997: call_finalizer (05function.c.c:5003)
-==84470==    by 0x1623CB: transpile_v5 (05function.c.c:13071)
-==84470==    by 0x10A16F: come_main_v2 (in /root/comelang/comelang2-sh)
-==84470==    by 0x1092AB: main (in /root/comelang/comelang2-sh)
-==84470==  Block was alloc'd at
-==84470==    at 0x4889F94: calloc (vg_replace_malloc.c:1328)
-==84470==    by 0x12A2A3: come_calloc (05function.c.c:4919)
-==84470==    by 0x140623: parse_word (05function.c.c:7342)
-==84470==    by 0x162377: transpile_v5 (05function.c.c:13070)
-==84470==    by 0x10A16F: come_main_v2 (in /root/comelang/comelang2-sh)
-==84470==    by 0x1092AB: main (in /root/comelang/comelang2-sh)
-==84470== 
-==84470== Conditional jump or move depends on uninitialised value(s)
-==84470==    at 0x12A964: call_finalizer (05function.c.c:4998)
-==84470==    by 0x15005B: top_level_v99 (05function.c.c:11251)
-==84470==    by 0x16242F: transpile_v5 (05function.c.c:13078)
-==84470==    by 0x10A16F: come_main_v2 (in /root/comelang/comelang2-sh)
-==84470==    by 0x1092AB: main (in /root/comelang/comelang2-sh)
-==84470== 
-==84470== Conditional jump or move depends on uninitialised value(s)
-==84470==    at 0x134ADC: tuple2$2sTypephcharphp_finalize (05function.c.c:13788)
-==84470==    by 0x12A98B: call_finalizer (05function.c.c:5001)
-==84470==    by 0x15005B: top_level_v99 (05function.c.c:11251)
-==84470==    by 0x16242F: transpile_v5 (05function.c.c:13078)
-==84470==    by 0x10A16F: come_main_v2 (in /root/comelang/comelang2-sh)
-==84470==    by 0x1092AB: main (in /root/comelang/comelang2-sh)
-==84470== 
-==84470== Use of uninitialised value of size 8
-==84470==    at 0x134AE8: tuple2$2sTypephcharphp_finalize (05function.c.c:13788)
-==84470==    by 0x12A98B: call_finalizer (05function.c.c:5001)
-==84470==    by 0x15005B: top_level_v99 (05function.c.c:11251)
-==84470==    by 0x16242F: transpile_v5 (05function.c.c:13078)
-==84470==    by 0x10A16F: come_main_v2 (in /root/comelang/comelang2-sh)
-==84470==    by 0x1092AB: main (in /root/comelang/comelang2-sh)
-==84470== 
-==84470== Invalid read of size 8
-==84470==    at 0x134AE8: tuple2$2sTypephcharphp_finalize (05function.c.c:13788)
-==84470==    by 0x12A98B: call_finalizer (05function.c.c:5001)
-==84470==    by 0x15005B: top_level_v99 (05function.c.c:11251)
-==84470==    by 0x16242F: transpile_v5 (05function.c.c:13078)
-==84470==    by 0x10A16F: come_main_v2 (in /root/comelang/comelang2-sh)
-==84470==    by 0x1092AB: main (in /root/comelang/comelang2-sh)
-==84470==  Address 0x4a8ded0 is 0 bytes inside a block of size 28 free'd
-==84470==    at 0x4887B40: free (vg_replace_malloc.c:872)
-==84470==    by 0x16A24B: ncfree (05function.c.c:4908)
-==84470==    by 0x16A217: come_free_object (05function.c.c:4970)
-==84470==    by 0x12A997: call_finalizer (05function.c.c:5003)
-==84470==    by 0x1623CB: transpile_v5 (05function.c.c:13071)
-==84470==    by 0x10A16F: come_main_v2 (in /root/comelang/comelang2-sh)
-==84470==    by 0x1092AB: main (in /root/comelang/comelang2-sh)
-==84470==  Block was alloc'd at
-==84470==    at 0x4889F94: calloc (vg_replace_malloc.c:1328)
-==84470==    by 0x12A2A3: come_calloc (05function.c.c:4919)
-==84470==    by 0x140623: parse_word (05function.c.c:7342)
-==84470==    by 0x162377: transpile_v5 (05function.c.c:13070)
-==84470==    by 0x10A16F: come_main_v2 (in /root/comelang/comelang2-sh)
-==84470==    by 0x1092AB: main (in /root/comelang/comelang2-sh)
-==84470== 
-==84470== Use of uninitialised value of size 8
-==84470==    at 0x134AF8: tuple2$2sTypephcharphp_finalize (05function.c.c:13789)
-==84470==    by 0x12A98B: call_finalizer (05function.c.c:5001)
-==84470==    by 0x15005B: top_level_v99 (05function.c.c:11251)
-==84470==    by 0x16242F: transpile_v5 (05function.c.c:13078)
-==84470==    by 0x10A16F: come_main_v2 (in /root/comelang/comelang2-sh)
-==84470==    by 0x1092AB: main (in /root/comelang/comelang2-sh)
-==84470== 
-==84470== Invalid read of size 8
-==84470==    at 0x134AF8: tuple2$2sTypephcharphp_finalize (05function.c.c:13789)
-==84470==    by 0x12A98B: call_finalizer (05function.c.c:5001)
-==84470==    by 0x15005B: top_level_v99 (05function.c.c:11251)
-==84470==    by 0x16242F: transpile_v5 (05function.c.c:13078)
-==84470==    by 0x10A16F: come_main_v2 (in /root/comelang/comelang2-sh)
-==84470==    by 0x1092AB: main (in /root/comelang/comelang2-sh)
-==84470==  Address 0x4a8ded0 is 0 bytes inside a block of size 28 free'd
-==84470==    at 0x4887B40: free (vg_replace_malloc.c:872)
-==84470==    by 0x16A24B: ncfree (05function.c.c:4908)
-==84470==    by 0x16A217: come_free_object (05function.c.c:4970)
-==84470==    by 0x12A997: call_finalizer (05function.c.c:5003)
-==84470==    by 0x1623CB: transpile_v5 (05function.c.c:13071)
-==84470==    by 0x10A16F: come_main_v2 (in /root/comelang/comelang2-sh)
-==84470==    by 0x1092AB: main (in /root/comelang/comelang2-sh)
-==84470==  Block was alloc'd at
-==84470==    at 0x4889F94: calloc (vg_replace_malloc.c:1328)
-==84470==    by 0x12A2A3: come_calloc (05function.c.c:4919)
-==84470==    by 0x140623: parse_word (05function.c.c:7342)
-==84470==    by 0x162377: transpile_v5 (05function.c.c:13070)
-==84470==    by 0x10A16F: come_main_v2 (in /root/comelang/comelang2-sh)
-==84470==    by 0x1092AB: main (in /root/comelang/comelang2-sh)
-==84470== 
-==84470== Invalid read of size 4
-==84470==    at 0x12A928: call_finalizer (05function.c.c:4994)
-==84470==    by 0x134B13: tuple2$2sTypephcharphp_finalize (05function.c.c:13789)
-==84470==    by 0x12A98B: call_finalizer (05function.c.c:5001)
-==84470==    by 0x15005B: top_level_v99 (05function.c.c:11251)
-==84470==    by 0x16242F: transpile_v5 (05function.c.c:13078)
-==84470==    by 0x10A16F: come_main_v2 (in /root/comelang/comelang2-sh)
-==84470==    by 0x1092AB: main (in /root/comelang/comelang2-sh)
-==84470==  Address 0x1bfffffff4 is not stack'd, malloc'd or (recently) free'd
-==84470== 
-==84470== 
-==84470== Process terminating with default action of signal 11 (SIGSEGV)
-==84470==  Access not within mapped region at address 0x1BFFFFFFF4
-==84470==    at 0x12A928: call_finalizer (05function.c.c:4994)
-==84470==    by 0x134B13: tuple2$2sTypephcharphp_finalize (05function.c.c:13789)
-==84470==    by 0x12A98B: call_finalizer (05function.c.c:5001)
-==84470==    by 0x15005B: top_level_v99 (05function.c.c:11251)
-==84470==    by 0x16242F: transpile_v5 (05function.c.c:13078)
-==84470==    by 0x10A16F: come_main_v2 (in /root/comelang/comelang2-sh)
-==84470==    by 0x1092AB: main (in /root/comelang/comelang2-sh)
-==84470==  If you believe this happened as a result of a stack
-==84470==  overflow in your program's main thread (unlikely but
-==84470==  possible), you can try to increase the size of the
-==84470==  main thread stack using the --main-stacksize= flag.
-==84470==  The main thread stack size used in this run was 8388608.
-==84470== 
-==84470== HEAP SUMMARY:
-==84470==     in use at exit: 22,796 bytes in 170 blocks
-==84470==   total heap usage: 800 allocs, 630 frees, 73,761 bytes allocated
-==84470== 
-==84470== LEAK SUMMARY:
-==84470==    definitely lost: 20,416 bytes in 149 blocks
-==84470==    indirectly lost: 0 bytes in 0 blocks
-==84470==      possibly lost: 1,356 bytes in 20 blocks
-==84470==    still reachable: 1,024 bytes in 1 blocks
-==84470==         suppressed: 0 bytes in 0 blocks
-==84470== Rerun with --leak-check=full to see details of leaked memory
-==84470== 
-==84470== Use --track-origins=yes to see where uninitialised values come from
-==84470== For lists of detected and suppressed errors, rerun with: -s
-==84470== ERROR SUMMARY: 170 errors from 14 contexts (suppressed: 0 from 0)
+==91576== Memcheck, a memory error detector
+==91576== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==91576== Using Valgrind-3.19.0 and LibVEX; rerun with -h for copyright info
+==91576== Command: comelang2 -g -c 02transpile.c
+==91576== 
+==91576== Invalid read of size 8
+==91576==    at 0x1D8DF8: ncmemdup (in /usr/local/bin/comelang2)
+==91576==    by 0x1C00DF: tuple2_clone_charph_sNodeph (in /usr/local/bin/comelang2)
+==91576==    by 0x1BFF4B: list_clone_tuple2ph_charph_sNodeph (in /usr/local/bin/comelang2)
+==91576==    by 0x1BBB2B: parse_method_call_v20 (20method.c:680)
+==91576==    by 0x1C7A47: string_node_v21 (21obj.c:781)
+==91576==    by 0x13BBD7: expression_node_v99 (05function.c:3092)
+==91576==    by 0x18A35B: mult_exp (13op.c:1862)
+==91576==    by 0x18B7E3: add_exp (13op.c:1903)
+==91576==    by 0x18C65B: shift_exp (13op.c:1940)
+==91576==    by 0x18D4C3: comparison_exp (13op.c:1975)
+==91576==    by 0x18EF77: eq_exp (13op.c:2026)
+==91576==    by 0x190AB3: and_exp (13op.c:2077)
+==91576==  Address 0x756a314 is 4 bytes inside a block of size 21 free'd
+==91576==    at 0x4887B40: free (vg_replace_malloc.c:872)
+==91576==    by 0x1D925F: ncfree (in /usr/local/bin/comelang2)
+==91576==    by 0x1D90AF: igc_decrement_ref_count (in /usr/local/bin/comelang2)
+==91576==    by 0x1BB58F: parse_method_call_v20 (20method.c:621)
+==91576==    by 0x1C7A47: string_node_v21 (21obj.c:781)
+==91576==    by 0x13BBD7: expression_node_v99 (05function.c:3092)
+==91576==    by 0x18A35B: mult_exp (13op.c:1862)
+==91576==    by 0x18B7E3: add_exp (13op.c:1903)
+==91576==    by 0x18C65B: shift_exp (13op.c:1940)
+==91576==    by 0x18D4C3: comparison_exp (13op.c:1975)
+==91576==    by 0x18EF77: eq_exp (13op.c:2026)
+==91576==    by 0x190AB3: and_exp (13op.c:2077)
+==91576==  Block was alloc'd at
+==91576==    at 0x4889F94: calloc (vg_replace_malloc.c:1328)
+==91576==    by 0x1D8F67: igc_calloc (in /usr/local/bin/comelang2)
+==91576==    by 0x1D940F: __builtin_string (in /usr/local/bin/comelang2)
+==91576==    by 0x1DB36B: bufferp_to_string (in /usr/local/bin/comelang2)
+==91576==    by 0x12DEA7: parse_word (05function.c:84)
+==91576==    by 0x1BB50F: parse_method_call_v20 (20method.c:621)
+==91576==    by 0x1C7A47: string_node_v21 (21obj.c:781)
+==91576==    by 0x13BBD7: expression_node_v99 (05function.c:3092)
+==91576==    by 0x18A35B: mult_exp (13op.c:1862)
+==91576==    by 0x18B7E3: add_exp (13op.c:1903)
+==91576==    by 0x18C65B: shift_exp (13op.c:1940)
+==91576==    by 0x18D4C3: comparison_exp (13op.c:1975)
+==91576== 
+==91576== Invalid read of size 1
+==91576==    at 0x1D8EA4: ncmemdup (in /usr/local/bin/comelang2)
+==91576==    by 0x1C00DF: tuple2_clone_charph_sNodeph (in /usr/local/bin/comelang2)
+==91576==    by 0x1BFF4B: list_clone_tuple2ph_charph_sNodeph (in /usr/local/bin/comelang2)
+==91576==    by 0x1BBB2B: parse_method_call_v20 (20method.c:680)
+==91576==    by 0x1C7A47: string_node_v21 (21obj.c:781)
+==91576==    by 0x13BBD7: expression_node_v99 (05function.c:3092)
+==91576==    by 0x18A35B: mult_exp (13op.c:1862)
+==91576==    by 0x18B7E3: add_exp (13op.c:1903)
+==91576==    by 0x18C65B: shift_exp (13op.c:1940)
+==91576==    by 0x18D4C3: comparison_exp (13op.c:1975)
+==91576==    by 0x18EF77: eq_exp (13op.c:2026)
+==91576==    by 0x190AB3: and_exp (13op.c:2077)
+==91576==  Address 0x756a310 is 0 bytes inside a block of size 21 free'd
+==91576==    at 0x4887B40: free (vg_replace_malloc.c:872)
+==91576==    by 0x1D925F: ncfree (in /usr/local/bin/comelang2)
+==91576==    by 0x1D90AF: igc_decrement_ref_count (in /usr/local/bin/comelang2)
+==91576==    by 0x1BB58F: parse_method_call_v20 (20method.c:621)
+==91576==    by 0x1C7A47: string_node_v21 (21obj.c:781)
+==91576==    by 0x13BBD7: expression_node_v99 (05function.c:3092)
+==91576==    by 0x18A35B: mult_exp (13op.c:1862)
+==91576==    by 0x18B7E3: add_exp (13op.c:1903)
+==91576==    by 0x18C65B: shift_exp (13op.c:1940)
+==91576==    by 0x18D4C3: comparison_exp (13op.c:1975)
+==91576==    by 0x18EF77: eq_exp (13op.c:2026)
+==91576==    by 0x190AB3: and_exp (13op.c:2077)
+==91576==  Block was alloc'd at
+==91576==    at 0x4889F94: calloc (vg_replace_malloc.c:1328)
+==91576==    by 0x1D8F67: igc_calloc (in /usr/local/bin/comelang2)
+==91576==    by 0x1D940F: __builtin_string (in /usr/local/bin/comelang2)
+==91576==    by 0x1DB36B: bufferp_to_string (in /usr/local/bin/comelang2)
+==91576==    by 0x12DEA7: parse_word (05function.c:84)
+==91576==    by 0x1BB50F: parse_method_call_v20 (20method.c:621)
+==91576==    by 0x1C7A47: string_node_v21 (21obj.c:781)
+==91576==    by 0x13BBD7: expression_node_v99 (05function.c:3092)
+==91576==    by 0x18A35B: mult_exp (13op.c:1862)
+==91576==    by 0x18B7E3: add_exp (13op.c:1903)
+==91576==    by 0x18C65B: shift_exp (13op.c:1940)
+==91576==    by 0x18D4C3: comparison_exp (13op.c:1975)
+==91576== 
+==91576== Invalid read of size 4
+==91576==    at 0x1D905C: igc_decrement_ref_count (in /usr/local/bin/comelang2)
+==91576==    by 0x1C05B3: tuple2_finalize_charph_sNodeph (in /usr/local/bin/comelang2)
+==91576==    by 0x1D8D67: call_finalizer (in /usr/local/bin/comelang2)
+==91576==    by 0x1C052F: list_finalize_tuple2ph_charph_sNodeph (in /usr/local/bin/comelang2)
+==91576==    by 0x1D8D67: call_finalizer (in /usr/local/bin/comelang2)
+==91576==    by 0x1BBC27: parse_method_call_v20 (20method.c:0)
+==91576==    by 0x1C7A47: string_node_v21 (21obj.c:781)
+==91576==    by 0x13BBD7: expression_node_v99 (05function.c:3092)
+==91576==    by 0x18A35B: mult_exp (13op.c:1862)
+==91576==    by 0x18B7E3: add_exp (13op.c:1903)
+==91576==    by 0x18C65B: shift_exp (13op.c:1940)
+==91576==    by 0x18D4C3: comparison_exp (13op.c:1975)
+==91576==  Address 0x756a310 is 0 bytes inside a block of size 21 free'd
+==91576==    at 0x4887B40: free (vg_replace_malloc.c:872)
+==91576==    by 0x1D925F: ncfree (in /usr/local/bin/comelang2)
+==91576==    by 0x1D90AF: igc_decrement_ref_count (in /usr/local/bin/comelang2)
+==91576==    by 0x1BB58F: parse_method_call_v20 (20method.c:621)
+==91576==    by 0x1C7A47: string_node_v21 (21obj.c:781)
+==91576==    by 0x13BBD7: expression_node_v99 (05function.c:3092)
+==91576==    by 0x18A35B: mult_exp (13op.c:1862)
+==91576==    by 0x18B7E3: add_exp (13op.c:1903)
+==91576==    by 0x18C65B: shift_exp (13op.c:1940)
+==91576==    by 0x18D4C3: comparison_exp (13op.c:1975)
+==91576==    by 0x18EF77: eq_exp (13op.c:2026)
+==91576==    by 0x190AB3: and_exp (13op.c:2077)
+==91576==  Block was alloc'd at
+==91576==    at 0x4889F94: calloc (vg_replace_malloc.c:1328)
+==91576==    by 0x1D8F67: igc_calloc (in /usr/local/bin/comelang2)
+==91576==    by 0x1D940F: __builtin_string (in /usr/local/bin/comelang2)
+==91576==    by 0x1DB36B: bufferp_to_string (in /usr/local/bin/comelang2)
+==91576==    by 0x12DEA7: parse_word (05function.c:84)
+==91576==    by 0x1BB50F: parse_method_call_v20 (20method.c:621)
+==91576==    by 0x1C7A47: string_node_v21 (21obj.c:781)
+==91576==    by 0x13BBD7: expression_node_v99 (05function.c:3092)
+==91576==    by 0x18A35B: mult_exp (13op.c:1862)
+==91576==    by 0x18B7E3: add_exp (13op.c:1903)
+==91576==    by 0x18C65B: shift_exp (13op.c:1940)
+==91576==    by 0x18D4C3: comparison_exp (13op.c:1975)
+==91576== 
+==91576== Invalid write of size 4
+==91576==    at 0x1D9064: igc_decrement_ref_count (in /usr/local/bin/comelang2)
+==91576==    by 0x1C05B3: tuple2_finalize_charph_sNodeph (in /usr/local/bin/comelang2)
+==91576==    by 0x1D8D67: call_finalizer (in /usr/local/bin/comelang2)
+==91576==    by 0x1C052F: list_finalize_tuple2ph_charph_sNodeph (in /usr/local/bin/comelang2)
+==91576==    by 0x1D8D67: call_finalizer (in /usr/local/bin/comelang2)
+==91576==    by 0x1BBC27: parse_method_call_v20 (20method.c:0)
+==91576==    by 0x1C7A47: string_node_v21 (21obj.c:781)
+==91576==    by 0x13BBD7: expression_node_v99 (05function.c:3092)
+==91576==    by 0x18A35B: mult_exp (13op.c:1862)
+==91576==    by 0x18B7E3: add_exp (13op.c:1903)
+==91576==    by 0x18C65B: shift_exp (13op.c:1940)
+==91576==    by 0x18D4C3: comparison_exp (13op.c:1975)
+==91576==  Address 0x756a310 is 0 bytes inside a block of size 21 free'd
+==91576==    at 0x4887B40: free (vg_replace_malloc.c:872)
+==91576==    by 0x1D925F: ncfree (in /usr/local/bin/comelang2)
+==91576==    by 0x1D90AF: igc_decrement_ref_count (in /usr/local/bin/comelang2)
+==91576==    by 0x1BB58F: parse_method_call_v20 (20method.c:621)
+==91576==    by 0x1C7A47: string_node_v21 (21obj.c:781)
+==91576==    by 0x13BBD7: expression_node_v99 (05function.c:3092)
+==91576==    by 0x18A35B: mult_exp (13op.c:1862)
+==91576==    by 0x18B7E3: add_exp (13op.c:1903)
+==91576==    by 0x18C65B: shift_exp (13op.c:1940)
+==91576==    by 0x18D4C3: comparison_exp (13op.c:1975)
+==91576==    by 0x18EF77: eq_exp (13op.c:2026)
+==91576==    by 0x190AB3: and_exp (13op.c:2077)
+==91576==  Block was alloc'd at
+==91576==    at 0x4889F94: calloc (vg_replace_malloc.c:1328)
+==91576==    by 0x1D8F67: igc_calloc (in /usr/local/bin/comelang2)
+==91576==    by 0x1D940F: __builtin_string (in /usr/local/bin/comelang2)
+==91576==    by 0x1DB36B: bufferp_to_string (in /usr/local/bin/comelang2)
+==91576==    by 0x12DEA7: parse_word (05function.c:84)
+==91576==    by 0x1BB50F: parse_method_call_v20 (20method.c:621)
+==91576==    by 0x1C7A47: string_node_v21 (21obj.c:781)
+==91576==    by 0x13BBD7: expression_node_v99 (05function.c:3092)
+==91576==    by 0x18A35B: mult_exp (13op.c:1862)
+==91576==    by 0x18B7E3: add_exp (13op.c:1903)
+==91576==    by 0x18C65B: shift_exp (13op.c:1940)
+==91576==    by 0x18D4C3: comparison_exp (13op.c:1975)
+==91576== 
+==91576== Invalid read of size 4
+==91576==    at 0x1D906C: igc_decrement_ref_count (in /usr/local/bin/comelang2)
+==91576==    by 0x1C05B3: tuple2_finalize_charph_sNodeph (in /usr/local/bin/comelang2)
+==91576==    by 0x1D8D67: call_finalizer (in /usr/local/bin/comelang2)
+==91576==    by 0x1C052F: list_finalize_tuple2ph_charph_sNodeph (in /usr/local/bin/comelang2)
+==91576==    by 0x1D8D67: call_finalizer (in /usr/local/bin/comelang2)
+==91576==    by 0x1BBC27: parse_method_call_v20 (20method.c:0)
+==91576==    by 0x1C7A47: string_node_v21 (21obj.c:781)
+==91576==    by 0x13BBD7: expression_node_v99 (05function.c:3092)
+==91576==    by 0x18A35B: mult_exp (13op.c:1862)
+==91576==    by 0x18B7E3: add_exp (13op.c:1903)
+==91576==    by 0x18C65B: shift_exp (13op.c:1940)
+==91576==    by 0x18D4C3: comparison_exp (13op.c:1975)
+==91576==  Address 0x756a310 is 0 bytes inside a block of size 21 free'd
+==91576==    at 0x4887B40: free (vg_replace_malloc.c:872)
+==91576==    by 0x1D925F: ncfree (in /usr/local/bin/comelang2)
+==91576==    by 0x1D90AF: igc_decrement_ref_count (in /usr/local/bin/comelang2)
+==91576==    by 0x1BB58F: parse_method_call_v20 (20method.c:621)
+==91576==    by 0x1C7A47: string_node_v21 (21obj.c:781)
+==91576==    by 0x13BBD7: expression_node_v99 (05function.c:3092)
+==91576==    by 0x18A35B: mult_exp (13op.c:1862)
+==91576==    by 0x18B7E3: add_exp (13op.c:1903)
+==91576==    by 0x18C65B: shift_exp (13op.c:1940)
+==91576==    by 0x18D4C3: comparison_exp (13op.c:1975)
+==91576==    by 0x18EF77: eq_exp (13op.c:2026)
+==91576==    by 0x190AB3: and_exp (13op.c:2077)
+==91576==  Block was alloc'd at
+==91576==    at 0x4889F94: calloc (vg_replace_malloc.c:1328)
+==91576==    by 0x1D8F67: igc_calloc (in /usr/local/bin/comelang2)
+==91576==    by 0x1D940F: __builtin_string (in /usr/local/bin/comelang2)
+==91576==    by 0x1DB36B: bufferp_to_string (in /usr/local/bin/comelang2)
+==91576==    by 0x12DEA7: parse_word (05function.c:84)
+==91576==    by 0x1BB50F: parse_method_call_v20 (20method.c:621)
+==91576==    by 0x1C7A47: string_node_v21 (21obj.c:781)
+==91576==    by 0x13BBD7: expression_node_v99 (05function.c:3092)
+==91576==    by 0x18A35B: mult_exp (13op.c:1862)
+==91576==    by 0x18B7E3: add_exp (13op.c:1903)
+==91576==    by 0x18C65B: shift_exp (13op.c:1940)
+==91576==    by 0x18D4C3: comparison_exp (13op.c:1975)
+==91576== 
+02transpile.c.c:130:20: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+    unsigned short short _cur_column;
+                   ^~~~~~
+02transpile.c.c:849:5: warning: incompatible redeclaration of library function 'snprintf' [-Wincompatible-library-redeclaration]
+int snprintf(char* __s, int __maxlen, const char* __format, ...);
+    ^
+02transpile.c.c:849:5: note: 'snprintf' is a builtin with type 'int (char *, unsigned long, const char *, ...)'
+02transpile.c.c:850:5: warning: incompatible redeclaration of library function 'vsnprintf' [-Wincompatible-library-redeclaration]
+int vsnprintf(char* __s, int __maxlen, const char* __format, va_list __arg);
+    ^
+02transpile.c.c:850:5: note: 'vsnprintf' is a builtin with type 'int (char *, unsigned long, const char *, __builtin_va_list)'
+02transpile.c.c:890:5: warning: incompatible redeclaration of library function 'fread' [-Wincompatible-library-redeclaration]
+int fread(void* __ptr, int __size, int __n, struct _IO_FILE* __stream);
+    ^
+02transpile.c.c:890:5: note: 'fread' is a builtin with type 'unsigned long (void *, unsigned long, unsigned long, FILE *)' (aka 'unsigned long (void *, unsigned long, unsigned long, struct _IO_FILE *)')
+02transpile.c.c:891:5: warning: incompatible redeclaration of library function 'fwrite' [-Wincompatible-library-redeclaration]
+int fwrite(const void* __ptr, int __size, int __n, struct _IO_FILE* __s);
+    ^
+02transpile.c.c:891:5: note: 'fwrite' is a builtin with type 'unsigned long (const void *, unsigned long, unsigned long, FILE *)' (aka 'unsigned long (const void *, unsigned long, unsigned long, struct _IO_FILE *)')
+02transpile.c.c:926:7: warning: incompatible redeclaration of library function 'memcpy' [-Wincompatible-library-redeclaration]
+void* memcpy(void* __dest, const void* __src, int __n);
+      ^
+02transpile.c.c:926:7: note: 'memcpy' is a builtin with type 'void *(void *, const void *, unsigned long)'
+02transpile.c.c:927:7: warning: incompatible redeclaration of library function 'memmove' [-Wincompatible-library-redeclaration]
+void* memmove(void* __dest, const void* __src, int __n);
+      ^
+02transpile.c.c:927:7: note: 'memmove' is a builtin with type 'void *(void *, const void *, unsigned long)'
+02transpile.c.c:928:7: warning: incompatible redeclaration of library function 'memccpy' [-Wincompatible-library-redeclaration]
+void* memccpy(void* __dest, const void* __src, int __c, int __n);
+      ^
+02transpile.c.c:928:7: note: 'memccpy' is a builtin with type 'void *(void *, const void *, int, unsigned long)'
+02transpile.c.c:929:7: warning: incompatible redeclaration of library function 'memset' [-Wincompatible-library-redeclaration]
+void* memset(void* __s, int __c, int __n);
+      ^
+02transpile.c.c:929:7: note: 'memset' is a builtin with type 'void *(void *, int, unsigned long)'
+02transpile.c.c:930:5: warning: incompatible redeclaration of library function 'memcmp' [-Wincompatible-library-redeclaration]
+int memcmp(const void* __s1, const void* __s2, int __n);
+    ^
+02transpile.c.c:930:5: note: 'memcmp' is a builtin with type 'int (const void *, const void *, unsigned long)'
+02transpile.c.c:932:7: warning: incompatible redeclaration of library function 'memchr' [-Wincompatible-library-redeclaration]
+void* memchr(const void* __s, int __c, int __n);
+      ^
+02transpile.c.c:932:7: note: 'memchr' is a builtin with type 'void *(const void *, int, unsigned long)'
+02transpile.c.c:936:7: warning: incompatible redeclaration of library function 'strncpy' [-Wincompatible-library-redeclaration]
+char* strncpy(char* __dest, const char* __src, int __n);
+      ^
+02transpile.c.c:936:7: note: 'strncpy' is a builtin with type 'char *(char *, const char *, unsigned long)'
+02transpile.c.c:938:7: warning: incompatible redeclaration of library function 'strncat' [-Wincompatible-library-redeclaration]
+char* strncat(char* __dest, const char* __src, int __n);
+      ^
+02transpile.c.c:938:7: note: 'strncat' is a builtin with type 'char *(char *, const char *, unsigned long)'
+02transpile.c.c:940:5: warning: incompatible redeclaration of library function 'strncmp' [-Wincompatible-library-redeclaration]
+int strncmp(const char* __s1, const char* __s2, int __n);
+    ^
+02transpile.c.c:940:5: note: 'strncmp' is a builtin with type 'int (const char *, const char *, unsigned long)'
+02transpile.c.c:942:5: warning: incompatible redeclaration of library function 'strxfrm' [-Wincompatible-library-redeclaration]
+int strxfrm(char* __dest, const char* __src, int __n);
+    ^
+02transpile.c.c:942:5: note: 'strxfrm' is a builtin with type 'unsigned long (char *, const char *, unsigned long)'
+02transpile.c.c:946:7: warning: incompatible redeclaration of library function 'strndup' [-Wincompatible-library-redeclaration]
+char* strndup(const char* __string, int __n);
+      ^
+02transpile.c.c:946:7: note: 'strndup' is a builtin with type 'char *(const char *, unsigned long)'
+02transpile.c.c:950:5: warning: incompatible redeclaration of library function 'strcspn' [-Wincompatible-library-redeclaration]
+int strcspn(const char* __s, const char* __reject);
+    ^
+02transpile.c.c:950:5: note: 'strcspn' is a builtin with type 'unsigned long (const char *, const char *)'
+02transpile.c.c:951:5: warning: incompatible redeclaration of library function 'strspn' [-Wincompatible-library-redeclaration]
+int strspn(const char* __s, const char* __accept);
+    ^
+02transpile.c.c:951:5: note: 'strspn' is a builtin with type 'unsigned long (const char *, const char *)'
+02transpile.c.c:960:7: warning: incompatible redeclaration of library function 'mempcpy' [-Wincompatible-library-redeclaration]
+void* mempcpy(void* __dest, const void* __src, int __n);
+      ^
+02transpile.c.c:960:7: note: 'mempcpy' is a builtin with type 'void *(void *, const void *, unsigned long)'
+02transpile.c.c:961:5: warning: incompatible redeclaration of library function 'strlen' [-Wincompatible-library-redeclaration]
+int strlen(const char* __s);
+    ^
+02transpile.c.c:961:5: note: 'strlen' is a builtin with type 'unsigned long (const char *)'
+02transpile.c.c:968:5: warning: incompatible redeclaration of library function 'bcmp' [-Wincompatible-library-redeclaration]
+int bcmp(const void* __s1, const void* __s2, int __n);
+    ^
+02transpile.c.c:968:5: note: 'bcmp' is a builtin with type 'int (const void *, const void *, unsigned long)'
+02transpile.c.c:970:6: warning: incompatible redeclaration of library function 'bzero' [-Wincompatible-library-redeclaration]
+void bzero(void* __s, int __n);
+     ^
+02transpile.c.c:970:6: note: 'bzero' is a builtin with type 'void (void *, unsigned long)'
+02transpile.c.c:977:5: warning: incompatible redeclaration of library function 'strncasecmp' [-Wincompatible-library-redeclaration]
+int strncasecmp(const char* __s1, const char* __s2, int __n);
+    ^
+02transpile.c.c:977:5: note: 'strncasecmp' is a builtin with type 'int (const char *, const char *, unsigned long)'
+02transpile.c.c:988:7: warning: incompatible redeclaration of library function 'stpncpy' [-Wincompatible-library-redeclaration]
+char* stpncpy(char* __dest, const char* __src, int __n);
+      ^
+02transpile.c.c:988:7: note: 'stpncpy' is a builtin with type 'char *(char *, const char *, unsigned long)'
+02transpile.c.c:1010:5: warning: incompatible redeclaration of library function 'strtoll' [-Wincompatible-library-redeclaration]
+int strtoll(const char* __nptr, char** __endptr, int __base);
+    ^
+02transpile.c.c:1010:5: note: 'strtoll' is a builtin with type 'long long (const char *, char **, int)'
+02transpile.c.c:1011:14: warning: incompatible redeclaration of library function 'strtoull' [-Wincompatible-library-redeclaration]
+unsigned int strtoull(const char* __nptr, char** __endptr, int __base);
+             ^
+02transpile.c.c:1011:14: note: 'strtoull' is a builtin with type 'unsigned long long (const char *, char **, int)'
+02transpile.c.c:1068:7: warning: incompatible redeclaration of library function 'malloc' [-Wincompatible-library-redeclaration]
+void* malloc(int __size);
+      ^
+02transpile.c.c:1068:7: note: 'malloc' is a builtin with type 'void *(unsigned long)'
+02transpile.c.c:1069:7: warning: incompatible redeclaration of library function 'calloc' [-Wincompatible-library-redeclaration]
+void* calloc(int __nmemb, int __size);
+      ^
+02transpile.c.c:1069:7: note: 'calloc' is a builtin with type 'void *(unsigned long, unsigned long)'
+02transpile.c.c:1070:7: warning: incompatible redeclaration of library function 'realloc' [-Wincompatible-library-redeclaration]
+void* realloc(void* __ptr, int __size);
+      ^
+02transpile.c.c:1070:7: note: 'realloc' is a builtin with type 'void *(void *, unsigned long)'
+02transpile.c.c:1073:7: warning: incompatible redeclaration of library function 'alloca' [-Wincompatible-library-redeclaration]
+void* alloca(int __size);
+      ^
+02transpile.c.c:1073:7: note: 'alloca' is a builtin with type 'void *(unsigned long)'
+02transpile.c.c:1076:7: warning: incompatible redeclaration of library function 'aligned_alloc' [-Wincompatible-library-redeclaration]
+void* aligned_alloc(int __alignment, int __size);
+      ^
+02transpile.c.c:1076:7: note: 'aligned_alloc' is a builtin with type 'void *(unsigned long, unsigned long)'
+02transpile.c.c:1108:5: warning: incompatible redeclaration of library function 'llabs' [-Wincompatible-library-redeclaration]
+int llabs(int __x);
+    ^
+02transpile.c.c:1108:5: note: 'llabs' is a builtin with type 'long long (long long)'
+02transpile.c.c:1389:48: warning: integer literal is too large to be represented in a signed integer type, interpreting as unsigned [-Wimplicitly-unsigned-literal]
+    unsigned long int __result3__ = ((((__bsx)&18374686479671623680)>>56)|(((__bsx)&71776119061217280)>>40)|(((__bsx)&280375465082880)>>24)|(((__bsx)&1095216660480)>>8)|(((__bsx)&4278190080)<<8)|(((__bsx)&16711680)<<24)|(((__bsx)&65280)<<40)|(((__bsx)&255)<<56));
+                                               ^
+02transpile.c.c:1449:40: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+static inline _Bool short_equals(short short self, short short right){
+                                       ^~~~~~
+02transpile.c.c:1449:58: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+static inline _Bool short_equals(short short self, short short right){
+                                                         ^~~~~~
+02transpile.c.c:1557:43: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+static inline short int short_clone(short short self){
+                                          ^~~~~~
+02transpile.c.c:1581:20: warning: expression result unused [-Wunused-value]
+    if(self->buf) {(char*)come_decrement_ref_count(self->buf,0,0); }
+                   ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:1602:25: warning: expression result unused [-Wunused-value]
+    if(result_33->buf) {(char*)come_decrement_ref_count(result_33->buf,0,0); }
+                        ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:1633:24: warning: expression result unused [-Wunused-value]
+        if(self->buf) {(char*)come_decrement_ref_count(self->buf,0,0); }
+                       ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:1651:24: warning: expression result unused [-Wunused-value]
+        if(self->buf) {(char*)come_decrement_ref_count(self->buf,0,0); }
+                       ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:1678:67: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+static inline void buffer_append_short(struct buffer* self, short short value){
+                                                                  ^~~~~~
+02transpile.c.c:1679:51: warning: duplicate 'short' declaration specifier [-Wduplicate-decl-specifier]
+    buffer_append(self,(char*)&value,sizeof(short short));
+                                                  ^~~~~
+02transpile.c.c:1693:24: warning: expression result unused [-Wunused-value]
+        if(self->buf) {(char*)come_decrement_ref_count(self->buf,0,0); }
+                       ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2539:37: warning: expression result unused [-Wunused-value]
+                if(litem_83->item) {(char*)come_decrement_ref_count(litem_83->item,0,0); }
+                                    ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2548:37: warning: expression result unused [-Wunused-value]
+                if(litem_84->item) {(char*)come_decrement_ref_count(litem_84->item,0,0); }
+                                    ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2557:37: warning: expression result unused [-Wunused-value]
+                if(litem_85->item) {(char*)come_decrement_ref_count(litem_85->item,0,0); }
+                                    ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2788:76: warning: incompatible function pointer types passing 'void (struct __current_stack1__ *)' to parameter of type 'void (*)(void *)' [-Wincompatible-function-pointer-types]
+        bool_expect(linker(&info_213,object_files_188),&__current_stack1__,method_block1_02transpilec);
+                                                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2203:65: note: passing argument to parameter 'block' here
+static inline void bool_expect(_Bool self, void* parent, void (*block)(void*)){
+                                                                ^
+02transpile.c.c:2649:39: warning: expression result unused [-Wunused-value]
+            if(output_file_name_192) {(char*)come_decrement_ref_count(output_file_name_192,0,0); }
+                                      ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2685:29: warning: expression result unused [-Wunused-value]
+        if(info_195.sname) {(char*)come_decrement_ref_count(info_195.sname,0,0); }
+                            ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2690:36: warning: expression result unused [-Wunused-value]
+        if(info_195.clang_option) {(char*)come_decrement_ref_count(info_195.clang_option,0,0); }
+                                   ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2694:29: warning: expression result unused [-Wunused-value]
+        if(info_195.funcs) {(struct map$2charphsFunph*)come_decrement_ref_count(info_195.funcs,0,0); }
+                            ^                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2697:38: warning: expression result unused [-Wunused-value]
+        if(info_195.generics_funcs) {(struct map$2charphsGenericsFunph*)come_decrement_ref_count(info_195.generics_funcs,0,0); }
+                                     ^                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2700:31: warning: expression result unused [-Wunused-value]
+        if(info_195.classes) {(struct map$2charphsClassph*)come_decrement_ref_count(info_195.classes,0,0); }
+                              ^                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2703:29: warning: expression result unused [-Wunused-value]
+        if(info_195.types) {(struct map$2charphsTypeph*)come_decrement_ref_count(info_195.types,0,0); }
+                            ^                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2706:30: warning: expression result unused [-Wunused-value]
+        if(info_195.module) {(struct sModule*)come_decrement_ref_count(info_195.module,0,0); }
+                             ^                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2710:43: warning: expression result unused [-Wunused-value]
+        if(info_195.right_value_objects) {(struct list$1sRightValueObjectph*)come_decrement_ref_count(info_195.right_value_objects,0,0); }
+                                          ^                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2713:29: warning: expression result unused [-Wunused-value]
+        if(info_195.stack) {(struct list$1CVALUEph*)come_decrement_ref_count(info_195.stack,0,0); }
+                            ^                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2716:32: warning: expression result unused [-Wunused-value]
+        if(info_195.gv_table) {(struct sVarTable*)come_decrement_ref_count(info_195.gv_table,0,0); }
+                               ^                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2724:43: warning: expression result unused [-Wunused-value]
+        if(info_195.generics_type_names) {(struct list$1charph*)come_decrement_ref_count(info_195.generics_type_names,0,0); }
+                                          ^                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2727:40: warning: expression result unused [-Wunused-value]
+        if(info_195.generics_classes) {(struct map$2charphsClassph*)come_decrement_ref_count(info_195.generics_classes,0,0); }
+                                       ^                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2736:30: warning: expression result unused [-Wunused-value]
+        if(info_195.source) {(struct buffer*)come_decrement_ref_count(info_195.source,0,0); }
+                             ^               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2764:29: warning: expression result unused [-Wunused-value]
+        if(info_213.sname) {(char*)come_decrement_ref_count(info_213.sname,0,0); }
+                            ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2767:36: warning: expression result unused [-Wunused-value]
+        if(info_213.clang_option) {(char*)come_decrement_ref_count(info_213.clang_option,0,0); }
+                                   ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2771:44: warning: expression result unused [-Wunused-value]
+            if(info_213.output_file_name) {(char*)come_decrement_ref_count(info_213.output_file_name,0,0); }
+                                           ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2849:28: warning: expression result unused [-Wunused-value]
+    if(self->mSourceHead) {(struct buffer*)come_decrement_ref_count(self->mSourceHead,0,0); }
+                           ^               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2853:24: warning: expression result unused [-Wunused-value]
+    if(self->mSource) {(struct buffer*)come_decrement_ref_count(self->mSource,0,0); }
+                       ^               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2916:34: warning: expression result unused [-Wunused-value]
+        if(self->mClass->mName) {(char*)come_decrement_ref_count(self->mClass->mName,0,0); }
+                                 ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2920:38: warning: expression result unused [-Wunused-value]
+    if(self->mNoSolvedGenericsType) {(struct tuple1$1sTypeph*)come_decrement_ref_count(self->mNoSolvedGenericsType,0,0); }
+                                     ^                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2923:31: warning: expression result unused [-Wunused-value]
+    if(self->mGenericsTypes) {(struct list$1sTypeph*)come_decrement_ref_count(self->mGenericsTypes,0,0); }
+                              ^                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2926:26: warning: expression result unused [-Wunused-value]
+    if(self->mArrayNum) {(struct list$1sNodeph*)come_decrement_ref_count(self->mArrayNum,0,0); }
+                         ^                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2930:28: warning: expression result unused [-Wunused-value]
+    if(self->mParamTypes) {(struct list$1sTypeph*)come_decrement_ref_count(self->mParamTypes,0,0); }
+                           ^                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2933:28: warning: expression result unused [-Wunused-value]
+    if(self->mParamNames) {(struct list$1charph*)come_decrement_ref_count(self->mParamNames,0,0); }
+                           ^                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2955:34: warning: expression result unused [-Wunused-value]
+    if(self->mOriginalTypeName) {(char*)come_decrement_ref_count(self->mOriginalTypeName,0,0); }
+                                 ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:2971:22: warning: expression result unused [-Wunused-value]
+    if(self->mVars) {(struct map$2charphsVarph*)come_decrement_ref_count(self->mVars,0,0); }
+                     ^                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3000:22: warning: expression result unused [-Wunused-value]
+    if(self->mName) {(char*)come_decrement_ref_count(self->mName,0,0); }
+                     ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3005:24: warning: expression result unused [-Wunused-value]
+    if(self->mFields) {(struct list$1tuple2$2charphsTypephph*)come_decrement_ref_count(self->mFields,0,0); }
+                       ^                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3032:22: warning: expression result unused [-Wunused-value]
+    if(self->mName) {(char*)come_decrement_ref_count(self->mName,0,0); }
+                     ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3034:28: warning: expression result unused [-Wunused-value]
+    if(self->mResultType) {(struct sType*)come_decrement_ref_count(self->mResultType,0,0); }
+                           ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3036:28: warning: expression result unused [-Wunused-value]
+    if(self->mParamTypes) {(struct list$1sTypeph*)come_decrement_ref_count(self->mParamTypes,0,0); }
+                           ^                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3038:28: warning: expression result unused [-Wunused-value]
+    if(self->mParamNames) {(struct list$1charph*)come_decrement_ref_count(self->mParamNames,0,0); }
+                           ^                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3040:40: warning: expression result unused [-Wunused-value]
+    if(self->mParamDefaultParametors) {(struct list$1charph*)come_decrement_ref_count(self->mParamDefaultParametors,0,0); }
+                                       ^                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3045:28: warning: expression result unused [-Wunused-value]
+    if(self->mLambdaType) {(struct sType*)come_decrement_ref_count(self->mLambdaType,0,0); }
+                           ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3065:41: warning: expression result unused [-Wunused-value]
+    if(self->mLambdaType->mResultType) {(struct tuple1$1sTypeph*)come_decrement_ref_count(self->mLambdaType->mResultType,0,0); }
+                                        ^                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3069:24: warning: expression result unused [-Wunused-value]
+    if(self->mSource) {(struct buffer*)come_decrement_ref_count(self->mSource,0,0); }
+                       ^               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3073:28: warning: expression result unused [-Wunused-value]
+    if(self->mSourceHead) {(struct buffer*)come_decrement_ref_count(self->mSourceHead,0,0); }
+                           ^               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3077:29: warning: expression result unused [-Wunused-value]
+    if(self->mSourceHead2) {(struct buffer*)come_decrement_ref_count(self->mSourceHead2,0,0); }
+                            ^               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3081:29: warning: expression result unused [-Wunused-value]
+    if(self->mSourceDefer) {(struct buffer*)come_decrement_ref_count(self->mSourceDefer,0,0); }
+                            ^               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3085:23: warning: expression result unused [-Wunused-value]
+    if(self->mBlock) {(struct sBlock*)come_decrement_ref_count(self->mBlock,0,0); }
+                      ^               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3087:28: warning: expression result unused [-Wunused-value]
+    if(self->mComeHeader) {(char*)come_decrement_ref_count(self->mComeHeader,0,0); }
+                           ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3151:19: warning: using the result of an assignment as a condition without parentheses [-Wparentheses]
+    while(entry_98=readdir(dir_97)) {
+          ~~~~~~~~^~~~~~~~~~~~~~~~
+02transpile.c.c:3151:19: note: place parentheses around the assignment to silence this warning
+    while(entry_98=readdir(dir_97)) {
+                  ^
+          (                       )
+02transpile.c.c:3151:19: note: use '==' to turn this assignment into an equality comparison
+    while(entry_98=readdir(dir_97)) {
+                  ^
+                  ==
+02transpile.c.c:3134:34: warning: expression result unused [-Wunused-value]
+        if(output_file_name_95) {(char*)come_decrement_ref_count(output_file_name_95,0,0); }
+                                 ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3139:34: warning: expression result unused [-Wunused-value]
+        if(output_file_name_95) {(char*)come_decrement_ref_count(output_file_name_95,0,0); }
+                                 ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3246:35: warning: expression result unused [-Wunused-value]
+        if(output_file_name_108) {(char*)come_decrement_ref_count(output_file_name_108,0,0); }
+                                  ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3251:35: warning: expression result unused [-Wunused-value]
+        if(output_file_name_108) {(char*)come_decrement_ref_count(output_file_name_108,0,0); }
+                                  ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3346:29: warning: expression result unused [-Wunused-value]
+        if(self->key_list) {(struct list$1charp*)come_decrement_ref_count(self->key_list,0,0); }
+                            ^                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3369:23: warning: incompatible pointer types assigning to 'struct list_item$1charp *' from 'struct list_item$1charph *' [-Wincompatible-pointer-types]
+                it_115=self->head;
+                      ^~~~~~~~~~~
+02transpile.c.c:3531:23: warning: expression result unused [-Wunused-value]
+        if(self->v1) {(struct sType*)come_decrement_ref_count(self->v1,0,0); }
+                      ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3674:38: warning: expression result unused [-Wunused-value]
+                if(litem_137->item) {(struct sType*)come_decrement_ref_count(litem_137->item,0,0); }
+                                     ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3683:38: warning: expression result unused [-Wunused-value]
+                if(litem_138->item) {(struct sType*)come_decrement_ref_count(litem_138->item,0,0); }
+                                     ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3692:38: warning: expression result unused [-Wunused-value]
+                if(litem_139->item) {(struct sType*)come_decrement_ref_count(litem_139->item,0,0); }
+                                     ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3719:56: warning: expression result unused [-Wunused-value]
+                if(result_140->mNoSolvedGenericsType) {(struct tuple1$1sTypeph*)come_decrement_ref_count(result_140->mNoSolvedGenericsType,0,0); }
+                                                       ^                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3724:48: warning: expression result unused [-Wunused-value]
+                if(result_140->mGenericsName) {(char*)come_decrement_ref_count(result_140->mGenericsName,0,0); }
+                                               ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3729:49: warning: expression result unused [-Wunused-value]
+                if(result_140->mGenericsTypes) {(struct list$1sTypeph*)come_decrement_ref_count(result_140->mGenericsTypes,0,0); }
+                                                ^                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3734:44: warning: expression result unused [-Wunused-value]
+                if(result_140->mArrayNum) {(struct list$1sNodeph*)come_decrement_ref_count(result_140->mArrayNum,0,0); }
+                                           ^                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3742:46: warning: expression result unused [-Wunused-value]
+                if(result_140->mParamTypes) {(struct list$1sTypeph*)come_decrement_ref_count(result_140->mParamTypes,0,0); }
+                                             ^                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3747:46: warning: expression result unused [-Wunused-value]
+                if(result_140->mParamNames) {(struct list$1charph*)come_decrement_ref_count(result_140->mParamNames,0,0); }
+                                             ^                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3752:46: warning: expression result unused [-Wunused-value]
+                if(result_140->mResultType) {(struct tuple1$1sTypeph*)come_decrement_ref_count(result_140->mResultType,0,0); }
+                                             ^                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3826:52: warning: expression result unused [-Wunused-value]
+                if(result_140->mOriginalTypeName) {(char*)come_decrement_ref_count(result_140->mOriginalTypeName,0,0); }
+                                                   ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3861:45: warning: expression result unused [-Wunused-value]
+                        if(result_141->v1) {(struct sType*)come_decrement_ref_count(result_141->v1,0,0); }
+                                            ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3920:54: warning: expression result unused [-Wunused-value]
+                                if(litem_145->item) {(struct sType*)come_decrement_ref_count(litem_145->item,0,0); }
+                                                     ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3929:54: warning: expression result unused [-Wunused-value]
+                                if(litem_146->item) {(struct sType*)come_decrement_ref_count(litem_146->item,0,0); }
+                                                     ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3938:54: warning: expression result unused [-Wunused-value]
+                                if(litem_147->item) {(struct sType*)come_decrement_ref_count(litem_147->item,0,0); }
+                                                     ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3964:37: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                        _inf_valueX4=(struct sNode*)come_increment_ref_count(((struct sNode*)(right_value143=(struct sNode*)come_memdup(it_149->item))));
+                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3966:62: warning: incompatible pointer types passing 'struct sNode **' to parameter of type 'struct sNode *'; dereference with * [-Wincompatible-pointer-types]
+                        list$1sNodephp_push_back2(result_148,_inf_valueX4);
+                                                             ^~~~~~~~~~~~
+                                                             *
+02transpile.c.c:1339:81: note: passing argument to parameter 'item' here
+static void list$1sNodephp_push_back2(struct list$1sNodeph* self, struct sNode* item);
+                                                                                ^
+02transpile.c.c:3994:45: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                                _inf_valueX1=(struct sNode*)come_increment_ref_count(item);
+                                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:3996:48: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+                                litem_150->item=_inf_valueX1;
+                                               ^~~~~~~~~~~~~
+                                                *
+02transpile.c.c:4005:45: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                                _inf_valueX2=(struct sNode*)come_increment_ref_count(item);
+                                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:4007:48: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+                                litem_151->item=_inf_valueX2;
+                                               ^~~~~~~~~~~~~
+                                                *
+02transpile.c.c:4016:45: warning: incompatible pointer types assigning to 'struct sNode **' from 'struct sNode *' [-Wincompatible-pointer-types]
+                                _inf_valueX3=(struct sNode*)come_increment_ref_count(item);
+                                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:4018:48: warning: incompatible pointer types assigning to 'struct sNode *' from 'struct sNode **'; dereference with * [-Wincompatible-pointer-types]
+                                litem_152->item=_inf_valueX3;
+                                               ^~~~~~~~~~~~~
+                                                *
+02transpile.c.c:3993:54: warning: left operand of comma operator has no effect [-Wunused-value]
+                                if(litem_150->item) {(struct sNode*)come_decrement_ref_count(litem_150->item,0,0), come_decrement_ref_count(((struct sNode*)litem_150->item)->_protocol_obj,0,0); }
+                                                     ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:4004:54: warning: left operand of comma operator has no effect [-Wunused-value]
+                                if(litem_151->item) {(struct sNode*)come_decrement_ref_count(litem_151->item,0,0), come_decrement_ref_count(((struct sNode*)litem_151->item)->_protocol_obj,0,0); }
+                                                     ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:4015:54: warning: left operand of comma operator has no effect [-Wunused-value]
+                                if(litem_152->item) {(struct sNode*)come_decrement_ref_count(litem_152->item,0,0), come_decrement_ref_count(((struct sNode*)litem_152->item)->_protocol_obj,0,0); }
+                                                     ^              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:4066:54: warning: expression result unused [-Wunused-value]
+                                if(litem_155->item) {(char*)come_decrement_ref_count(litem_155->item,0,0); }
+                                                     ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:4075:54: warning: expression result unused [-Wunused-value]
+                                if(litem_156->item) {(char*)come_decrement_ref_count(litem_156->item,0,0); }
+                                                     ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:4084:54: warning: expression result unused [-Wunused-value]
+                                if(litem_157->item) {(char*)come_decrement_ref_count(litem_157->item,0,0); }
+                                                     ^      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:4318:15: warning: incompatible pointer to integer conversion assigning to 'int' from 'char *' [-Wint-conversion]
+        it_173=list$1charpp_next(self->key_list)
+              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:4496:31: warning: incompatible pointer types assigning to 'struct list_item$1charph *' from 'struct list_item$1charp *' [-Wincompatible-pointer-types]
+                    self->tail=litem_178;
+                              ^~~~~~~~~~
+02transpile.c.c:4497:31: warning: incompatible pointer types assigning to 'struct list_item$1charph *' from 'struct list_item$1charp *' [-Wincompatible-pointer-types]
+                    self->head=litem_178;
+                              ^~~~~~~~~~
+02transpile.c.c:4501:36: warning: incompatible pointer types assigning to 'struct list_item$1charp *' from 'struct list_item$1charph *' [-Wincompatible-pointer-types]
+                    litem_179->prev=self->head;
+                                   ^~~~~~~~~~~
+02transpile.c.c:4504:31: warning: incompatible pointer types assigning to 'struct list_item$1charph *' from 'struct list_item$1charp *' [-Wincompatible-pointer-types]
+                    self->tail=litem_179;
+                              ^~~~~~~~~~
+02transpile.c.c:4505:37: warning: incompatible pointer types assigning to 'struct list_item$1charph *' from 'struct list_item$1charp *' [-Wincompatible-pointer-types]
+                    self->head->next=litem_179;
+                                    ^~~~~~~~~~
+02transpile.c.c:4509:36: warning: incompatible pointer types assigning to 'struct list_item$1charp *' from 'struct list_item$1charph *' [-Wincompatible-pointer-types]
+                    litem_180->prev=self->tail;
+                                   ^~~~~~~~~~~
+02transpile.c.c:4512:37: warning: incompatible pointer types assigning to 'struct list_item$1charph *' from 'struct list_item$1charp *' [-Wincompatible-pointer-types]
+                    self->tail->next=litem_180;
+                                    ^~~~~~~~~~
+02transpile.c.c:4513:31: warning: incompatible pointer types assigning to 'struct list_item$1charph *' from 'struct list_item$1charp *' [-Wincompatible-pointer-types]
+                    self->tail=litem_180;
+                              ^~~~~~~~~~
+02transpile.c.c:4559:33: warning: expression result unused [-Wunused-value]
+            if(self->key_list) {(struct list$1charp*)come_decrement_ref_count(self->key_list,0,0); }
+                                ^                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:4660:33: warning: expression result unused [-Wunused-value]
+            if(self->key_list) {(struct list$1charp*)come_decrement_ref_count(self->key_list,0,0); }
+                                ^                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:4746:33: warning: expression result unused [-Wunused-value]
+            if(self->key_list) {(struct list$1charp*)come_decrement_ref_count(self->key_list,0,0); }
+                                ^                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+02transpile.c.c:4808:33: warning: expression result unused [-Wunused-value]
+            if(self->key_list) {(struct list$1charp*)come_decrement_ref_count(self->key_list,0,0); }
+                                ^                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+139 warnings generated.
+==91576== 
+==91576== HEAP SUMMARY:
+==91576==     in use at exit: 6,632,205 bytes in 112,256 blocks
+==91576==   total heap usage: 1,135,659 allocs, 1,023,403 frees, 61,310,302 bytes allocated
+==91576== 
+==91576== LEAK SUMMARY:
+==91576==    definitely lost: 6,632,205 bytes in 112,256 blocks
+==91576==    indirectly lost: 0 bytes in 0 blocks
+==91576==      possibly lost: 0 bytes in 0 blocks
+==91576==    still reachable: 0 bytes in 0 blocks
+==91576==         suppressed: 0 bytes in 0 blocks
+==91576== Rerun with --leak-check=full to see details of leaked memory
+==91576== 
+==91576== For lists of detected and suppressed errors, rerun with: -s
+==91576== ERROR SUMMARY: 71 errors from 5 contexts (suppressed: 0 from 0)

@@ -84,10 +84,10 @@ comelang2-sh: 01main.c.o 02transpile.c.o 03transpile2.c.o 04heap.c.o 05function.
 	comelang2 -c 13op.c 
 
 14struct.c.o: 14struct.c
-	comelang2 -g -c 14struct.c 
+	comelang2 -c 14struct.c 
 
 15union.c.o: 15union.c
-	comelang2 -c 15union.c 
+	comelang2 -g -c 15union.c 
 
 16enum.c.o: 16enum.c
 	comelang2 -c 16enum.c 

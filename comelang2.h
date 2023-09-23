@@ -451,6 +451,19 @@ impl list <T>
 
         self.len = 0;
     }
+    void remove(list<T>* self, T item) {
+        int it2 = 0;
+        list_item<T>* it = self.head;
+        while(it != null) {
+            if(it.item.equals(item)) {
+                self.delete(it2, it2+1);
+                break;
+            }
+            it2++;
+            
+            it = it.next;
+        }
+    }
     void delete(list<T>* self, int head, int tail)
     {
         if(head < 0) {
@@ -1004,10 +1017,12 @@ impl map <T, T2>
                 if(self.keys[it].equals(key)) 
                 {
                     if(isheap(T)) {
+                        self.list_key.remove(self.keys[it]);
                         delete borrow self.keys[it];
                         self.keys[it] = borrow gc_inc(key);
                     }
                     else {
+                        self.list_key.remove(self.kes[it]);
                         self.keys[it] = borrow key;
                     }
                     if(isheap(T2)) {
@@ -1077,9 +1092,11 @@ impl map <T, T2>
                 {
                     if(isheap(T)) {
                         delete borrow self.keys[it];
+                        self.list_key.remove(self.keys[it]);
                         self.keys[it] = borrow gc_inc(key);
                     }
                     else {
+                        self.list_key.remove(self.keys[it]);
                         self.keys[it] = borrow key;
                     }
                     if(isheap(T2)) {

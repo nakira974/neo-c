@@ -1,7 +1,7 @@
 
-struct sData
+union sData
 {
     int a;
-    int b;
+    float b;
 };
 

@@ -1017,12 +1017,12 @@ impl map <T, T2>
                 if(self.keys[it].equals(key)) 
                 {
                     if(isheap(T)) {
-                        self.list_key.remove(self.keys[it]);
+                        self.key_list.remove(self.keys[it]);
                         delete borrow self.keys[it];
                         self.keys[it] = borrow gc_inc(key);
                     }
                     else {
-                        self.list_key.remove(self.kes[it]);
+                        self.key_list.remove(self.kes[it]);
                         self.keys[it] = borrow key;
                     }
                     if(isheap(T2)) {
@@ -1092,11 +1092,11 @@ impl map <T, T2>
                 {
                     if(isheap(T)) {
                         delete borrow self.keys[it];
-                        self.list_key.remove(self.keys[it]);
+                        self.key_list.remove(self.keys[it]);
                         self.keys[it] = borrow gc_inc(key);
                     }
                     else {
-                        self.list_key.remove(self.keys[it]);
+                        self.key_list.remove(self.keys[it]);
                         self.keys[it] = borrow key;
                     }
                     if(isheap(T2)) {

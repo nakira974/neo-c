@@ -293,7 +293,7 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
             if(klass->mProtocol && type->mPointerNum == 1) {
                 free_protocol_object(type, c_value, no_decrement, no_free, info);
             }
-            if(c_value) add_come_code(info, xsprintf("call_finalizer(%s,%s,%d, %d, %d);\n", fun_name2, c_value, type->mAllocaValue, no_decrement, no_free));
+            if(c_value) add_come_code(info, xsprintf("call_finalizer(%s,%s,%d, %d, %d); /* aaa */\n", fun_name2, c_value, type->mAllocaValue, no_decrement, no_free));
         }
         else {
             if(klass->mProtocol && type->mPointerNum == 1) {
@@ -323,7 +323,7 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
             
             /// free memmory ///
             if(!type->mAllocaValue) {
-                if(c_value) add_come_code(info, "%s = come_decrement_ref_count2(%s, %d, %d);\n", c_value, c_value, no_decrement, no_free);
+                if(c_value) add_come_code(info, "%s = come_decrement_ref_count(%s, %d, %d);\n", c_value, c_value, no_decrement, no_free);
             }
         }
     }

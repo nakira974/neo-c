@@ -93,7 +93,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         
         info.stack.push_back(come_value);
         
-        if(self.alloc && left_type->mClass->mStruct) {
+        if(self.alloc && !left_type->mClass->mNumber && left_type->mPointerNum == 0) {
             var_->mType->mAllocaValue = true;
         }
     }

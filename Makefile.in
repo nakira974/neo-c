@@ -45,73 +45,73 @@ comelang2-sh: 01main.c.o 02transpile.c.o 03transpile2.c.o 04heap.c.o 05function.
 	$(INSTALL) -m 644 ./comelang2.h $(DESTDIR)/include
 
 01main.c.o: 01main.c
-	comelang2 -g -c 01main.c 
+	comelang2 -c 01main.c 
 
 02transpile.c.o: 02transpile.c
-	comelang2 -g -c 02transpile.c 
+	comelang2 -c 02transpile.c 
 
 03transpile2.c.o: 03transpile2.c
-	comelang2 -g -c 03transpile2.c 
+	comelang2 -c 03transpile2.c 
 
 04heap.c.o: 04heap.c
-	comelang2 -g -c 04heap.c 
+	comelang2 -c 04heap.c 
 
 05function.c.o: 05function.c
-	comelang2 -g -c 05function.c 
+	comelang2 -c 05function.c 
 
 06str.c.o: 06str.c
-	comelang2 -g -c 06str.c 
+	comelang2 -c 06str.c 
 
 07var.c.o: 07var.c
-	comelang2 -g -c 07var.c 
+	comelang2 -c 07var.c 
 
 08if.c.o: 08if.c
-	comelang2 -g -c 08if.c 
+	comelang2 -c 08if.c 
 
 09while.c.o: 09while.c
-	comelang2 -g -c 09while.c 
+	comelang2 -c 09while.c 
 
 10do_while.c.o: 10do_while.c
-	comelang2 -g -c 10do_while.c 
+	comelang2 -c 10do_while.c 
 
 11for.c.o: 11for.c
-	comelang2 -g -c 11for.c 
+	comelang2 -c 11for.c 
 
 12switch.c.o: 12switch.c
-	comelang2 -g -c 12switch.c 
+	comelang2 -c 12switch.c 
 
 13op.c.o: 13op.c
-	comelang2 -g -c 13op.c 
+	comelang2 -c 13op.c 
 
 14struct.c.o: 14struct.c
 	comelang2 -g -c 14struct.c 
 
 15union.c.o: 15union.c
-	comelang2 -g -c 15union.c 
+	comelang2 -c 15union.c 
 
 16enum.c.o: 16enum.c
-	comelang2 -g -c 16enum.c 
+	comelang2 -c 16enum.c 
 
 17typedef.c.o: 17typedef.c
-	comelang2 -g -c 17typedef.c 
+	comelang2 -c 17typedef.c 
 
 18field.c.o: 18field.c
-	comelang2 -g -c 18field.c 
+	comelang2 -c 18field.c 
 
 19eq.c.o: 19eq.c
-	comelang2 -g -c 19eq.c 
+	comelang2 -c 19eq.c 
 
 20method.c.o: 20method.c
-	comelang2 -g -c 20method.c 
+	comelang2 -c 20method.c 
 
 21obj.c.o: 21obj.c
-	comelang2 -g -c 21obj.c 
+	comelang2 -c 21obj.c 
 
 22impl.c.o: 22impl.c
-	comelang2 -g -c 22impl.c 
+	comelang2 -c 22impl.c 
 
 23interface.c.o: 23interface.c
-	comelang2 -g -c 23interface.c 
+	comelang2 -c 23interface.c 
 
 comelang2-install: 
 	mkdir -p $(DESTDIR)/bin
@@ -124,7 +124,7 @@ comelang2: common.h 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 
 	mkdir -p "$(DESTDIR)/bin"
 
 01main.o: 01main.c common.h
-	./comelang -g -no-gc -c 01main.c
+	./comelang -no-gc -c 01main.c
 
 02transpile.o: 02transpile.c common.h
 	./comelang -no-gc -g -c 02transpile.c

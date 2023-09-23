@@ -1022,7 +1022,7 @@ impl map <T, T2>
                         self.keys[it] = borrow gc_inc(key);
                     }
                     else {
-                        self.key_list.remove(self.key[it]);
+                        self.key_list.remove(self.keys[it]);
                         self.keys[it] = borrow key;
                     }
                     if(isheap(T2)) {

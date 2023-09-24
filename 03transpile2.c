@@ -242,7 +242,7 @@ string make_define_var(sType* type, char* name, sInfo* info, bool in_header=fals
         foreach(it, type->mArrayNum) {
             if(!it.compile->(info)) {
                 err_msg(info, "invalid array number");
-                exit(1);
+                exit(2);
             }
             CVALUE*% cvalue = get_value_from_stack(-1, info);
             dec_stack_ptr(1, info);
@@ -308,7 +308,7 @@ string make_come_define_var(sType* type, char* name, sInfo* info)
         foreach(it, type->mArrayNum) {
             if(!it.compile->(info)) {
                 err_msg(info, "invalid array number");
-                exit(1);
+                exit(2);
             }
             CVALUE*% cvalue = get_value_from_stack(-1, info);
             dec_stack_ptr(1, info);
@@ -405,7 +405,7 @@ string output_function(sFun* fun, sInfo* info)
         
         if(!fun->mResultType->mArrayNum[0].compile->(info)) {
             err_msg(info, "invalid array number");
-            exit(1);
+            exit(2);
         }
         CVALUE*% cvalue = get_value_from_stack(-1, info);
         dec_stack_ptr(1, info);
@@ -520,7 +520,7 @@ string header_function(sFun* fun, sInfo* info)
         
         if(!fun->mResultType->mArrayNum[0].compile->(info)) {
             err_msg(info, "invalid array number");
-            exit(1);
+            exit(2);
         }
         CVALUE*% cvalue = get_value_from_stack(-1, info);
         dec_stack_ptr(1, info);

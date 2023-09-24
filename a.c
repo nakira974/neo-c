@@ -1,8 +1,7 @@
-
 union sData
 {
     int a;
-    float b;
+    double b;
 };
 
 struct sData2
@@ -10,4 +9,3 @@ struct sData2
     int a;
     double b;
 };
-

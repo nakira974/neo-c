@@ -160,6 +160,7 @@ bool sStoreFieldNode*::compile(sStoreFieldNode* self, sInfo* info)
     
     sType*% field_type = null;
     int index = 0;
+    string child_field_name = null;
     foreach(field, klass->mFields) {
         var field_name, field_type2 = field;
         
@@ -167,6 +168,27 @@ bool sStoreFieldNode*::compile(sStoreFieldNode* self, sInfo* info)
             field_type = clone field_type2;
             break;
         };
+        
+/*
+        /// comelang2 can access child field for anonymous union ///
+        sClass* klass3 = field_type2->mClass;
+        
+        if(klass3->mFields) {
+            foreach(field3, klass3->mFields) {
+                var field_name3, field_type3 = field3;
+                
+                if(field_name3 === name && field_type3->mClass.mName !== field_type2->mClass->mName) {
+                    child_field_name = clone field_name;
+                    field_type = clone field_type3;
+                    break;
+                }
+            }
+        }
+        
+        if(child_field_name != null) {
+            break;
+        }
+*/
         
         index++;
     }
@@ -191,16 +213,32 @@ bool sStoreFieldNode*::compile(sStoreFieldNode* self, sInfo* info)
     if(field_type->mHeap && right_type->mHeap && field_type->mPointerNum > 0 && right_type->mPointerNum > 0) 
     {
         if(left_value.type->mPointerNum == 1) {
-            string c_value = xsprintf("%s->%s", left_value.c_value, name);
-            decrement_ref_count_object(field_type, c_value, info);
-            right_value.c_value = increment_ref_count_object(right_value.type, right_value.c_value, info);
-            come_value.c_value = xsprintf("%s->%s=%s", left_value.c_value, name, right_value.c_value);
+            if(child_field_name) {
+                string c_value = xsprintf("%s->%s.%s", left_value.c_value, child_field_name, name);
+                decrement_ref_count_object(field_type, c_value, info);
+                right_value.c_value = increment_ref_count_object(right_value.type, right_value.c_value, info);
+                come_value.c_value = xsprintf("%s->%s.%s=%s", left_value.c_value, child_field_name, name, right_value.c_value);
+            }
+            else {
+                string c_value = xsprintf("%s->%s", left_value.c_value, name);
+                decrement_ref_count_object(field_type, c_value, info);
+                right_value.c_value = increment_ref_count_object(right_value.type, right_value.c_value, info);
+                come_value.c_value = xsprintf("%s->%s=%s", left_value.c_value, name, right_value.c_value);
+            }
         }
         else if(left_value.type->mPointerNum == 0) {
-            string c_value = xsprintf("%s.%s", left_value.c_value, name);
-            decrement_ref_count_object(field_type, c_value, info);
-            right_value.c_value = increment_ref_count_object(right_value.type, right_value.c_value, info);
-            come_value.c_value = xsprintf("%s.%s=%s", left_value.c_value, name, right_value.c_value);
+            if(child_field_name) {
+                string c_value = xsprintf("%s.%s.%s", left_value.c_value, child_field_name, name);
+                decrement_ref_count_object(field_type, c_value, info);
+                right_value.c_value = increment_ref_count_object(right_value.type, right_value.c_value, info);
+                come_value.c_value = xsprintf("%s.%s.%s=%s", left_value.c_value, child_field_name, name, right_value.c_value);
+            }
+            else {
+                string c_value = xsprintf("%s.%s", left_value.c_value, name);
+                decrement_ref_count_object(field_type, c_value, info);
+                right_value.c_value = increment_ref_count_object(right_value.type, right_value.c_value, info);
+                come_value.c_value = xsprintf("%s.%s=%s", left_value.c_value, name, right_value.c_value);
+            }
         }
         else {
             err_msg(info, "Invalid left_type. The field name is %s. The pointer num is %d.", name, left_value.type->mPointerNum);
@@ -214,10 +252,20 @@ bool sStoreFieldNode*::compile(sStoreFieldNode* self, sInfo* info)
     }
     else {
         if(left_value.type->mPointerNum == 1) {
-            come_value.c_value = xsprintf("%s->%s=%s", left_value.c_value, name, right_value.c_value);
+            if(child_field_name) {
+                come_value.c_value = xsprintf("%s->%s.%s=%s", left_value.c_value, child_field_name, name, right_value.c_value);
+            }
+            else {
+                come_value.c_value = xsprintf("%s->%s=%s", left_value.c_value, name, right_value.c_value);
+            }
         }
         else if(left_value.type->mPointerNum == 0) {
-            come_value.c_value = xsprintf("%s.%s=%s", left_value.c_value, name, right_value.c_value);
+            if(child_field_name) {
+                come_value.c_value = xsprintf("%s.%s.%s=%s", left_value.c_value, child_field_name, name, right_value.c_value);
+            }
+            else {
+                come_value.c_value = xsprintf("%s.%s=%s", left_value.c_value, name, right_value.c_value);
+            }
         }
         else {
             err_msg(info, "Invalid left_type. The field name is %s. The pointer num is %d.", name, left_value.type->mPointerNum);
@@ -292,9 +340,10 @@ bool sLoadFieldNode*::compile(sLoadFieldNode* self, sInfo* info)
     
     sClass* klass = left_type2->mClass;
     klass = info.classes[klass->mName];
-
+    
     sType*% field_type = null;
     int index = 0;
+    string child_field_name = null;
     foreach(field, klass->mFields) {
         var field_name, field_type2 = field;
         
@@ -302,6 +351,27 @@ bool sLoadFieldNode*::compile(sLoadFieldNode* self, sInfo* info)
             field_type = clone field_type2;
             break;
         }
+        
+/*
+        /// comelang2 can access child field for anonymous union ///
+        sClass* klass3 = field_type2->mClass;
+        
+        if(klass3->mFields) {
+            foreach(field3, klass3->mFields) {
+                var field_name3, field_type3 = field3;
+                
+                if(field_name3 === name && field_type3->mClass.mName !== field_type2->mClass->mName) {
+                    child_field_name = clone field_name;
+                    field_type = clone field_type3;
+                    break;
+                }
+            }
+        }
+        
+        if(child_field_name != null) {
+            break;
+        }
+*/
         
         index++;
     }
@@ -316,10 +386,20 @@ int* a = (int*)0;
     CVALUE*% come_value = new CVALUE;
     
     if(left_value.type->mPointerNum > 0) {
-        come_value.c_value = xsprintf("%s->%s", left_value.c_value, name);
+        if(child_field_name) {
+            come_value.c_value = xsprintf("%s->%s.%s", left_value.c_value, child_field_name, name);
+        }
+        else {
+            come_value.c_value = xsprintf("%s->%s", left_value.c_value, name);
+        }
     }
     else {
-        come_value.c_value = xsprintf("%s.%s", left_value.c_value, name);
+        if(child_field_name) {
+            come_value.c_value = xsprintf("%s.%s.%s", left_value.c_value, child_field_name, name);
+        }
+        else {
+            come_value.c_value = xsprintf("%s.%s", left_value.c_value, name);
+        }
     }
     come_value.type = clone field_type;
     come_value.var = null;

@@ -37,12 +37,12 @@ all: comelang no-self-host
 
 no-self-host: comelang lib lib-gc #lib-ts
 
-comelang2-sh: 01main.c.o 02transpile.c.o 03transpile2.c.o 04heap.c.o 05function.c.o 06str.c.o 07var.c.o 08if.c.o 09while.c.o 10do_while.c.o 11for.c.o 12switch.c.o 13op.c.o 14struct.c.o 15union.c.o 16enum.c.o 17typedef.c.o 18field.c.o 19eq.c.o 20method.c.o 21obj.c.o 22impl.c.o 23interface.c.o
-	comelang2 -o comelang2-sh 01main.c.o 02transpile.c.o 03transpile2.c.o 04heap.c.o 05function.c.o 06str.c.o 07var.c.o 08if.c.o 09while.c.o 10do_while.c.o 11for.c.o 12switch.c.o 13op.c.o 14struct.c.o 15union.c.o 16enum.c.o 17typedef.c.o 18field.c.o 19eq.c.o 20method.c.o 21obj.c.o 22impl.c.o 23interface.c.o
-	mkdir -p $(DESTDIR)/bin
-	$(INSTALL) -m 755 ./comelang2-sh "$(DESTDIR)/bin"
-	mkdir -p $(DESTDIR)/include
-	$(INSTALL) -m 644 ./comelang2.h $(DESTDIR)/include
+comelang2-sh: 01main.c.o 02transpile.c.o 03transpile2.c.o 04heap.c.o 05function.c.o 05function2.c.o 05function3.c.o 05function4.c.o 06str.c.o 07var.c.o 08if.c.o 09while.c.o 10do_while.c.o 11for.c.o 12switch.c.o 13op.c.o 14struct.c.o 15union.c.o 16enum.c.o 17typedef.c.o 18field.c.o 19eq.c.o 20method.c.o 21obj.c.o 22impl.c.o 23interface.c.o
+	comelang2 -o comelang2-sh 01main.c.o 02transpile.c.o 03transpile2.c.o 04heap.c.o 05function.c.o 05function2.c.o 05function3.c.o 05function4.c.o 06str.c.o 07var.c.o 08if.c.o 09while.c.o 10do_while.c.o 11for.c.o 12switch.c.o 13op.c.o 14struct.c.o 15union.c.o 16enum.c.o 17typedef.c.o 18field.c.o 19eq.c.o 20method.c.o 21obj.c.o 22impl.c.o 23interface.c.o
+	sudo mkdir -p $(DESTDIR)/bin
+	sudo $(INSTALL) -m 755 ./comelang2-sh "$(DESTDIR)/bin"
+	sudo mkdir -p $(DESTDIR)/include
+	sudo $(INSTALL) -m 644 ./comelang2.h $(DESTDIR)/include
 
 01main.c.o: 01main.c
 	comelang2 -c 01main.c 
@@ -58,6 +58,15 @@ comelang2-sh: 01main.c.o 02transpile.c.o 03transpile2.c.o 04heap.c.o 05function.
 
 05function.c.o: 05function.c
 	comelang2 -c 05function.c 
+
+05function2.c.o: 05function2.c
+	comelang2 -c 05function2.c 
+
+05function3.c.o: 05function3.c
+	comelang2 -c 05function3.c 
+
+05function4.c.o: 05function4.c
+	comelang2 -c 05function4.c 
 
 06str.c.o: 06str.c
 	comelang2 -c 06str.c 
@@ -119,78 +128,87 @@ comelang2-install:
 	mkdir -p $(DESTDIR)/include
 	$(INSTALL) -m 644 ./comelang2.h $(DESTDIR)/include
 
-comelang2: common.h 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 06str.o 07var.o 08if.o 09while.o 10do_while.o 11for.o 12switch.o 13op.o 14struct.o 15union.o 16enum.o 17typedef.o 18field.o 19eq.o 20method.o 21obj.o 22impl.o 23interface.o
-	./comelang -no-gc -g -o comelang2 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 06str.o 07var.o 08if.o 09while.o 10do_while.o 11for.o 12switch.o 13op.o 14struct.o 15union.o 16enum.o 17typedef.o 18field.o 19eq.o 20method.o 21obj.o 22impl.o 23interface.o
+comelang2: common.h 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 05function2.o 05function3.o 05function4.o 06str.o 07var.o 08if.o 09while.o 10do_while.o 11for.o 12switch.o 13op.o 14struct.o 15union.o 16enum.o 17typedef.o 18field.o 19eq.o 20method.o 21obj.o 22impl.o 23interface.o
+	./comelang -no-gc -o comelang2 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 05function2.o 05function3.o 05function4.o 06str.o 07var.o 08if.o 09while.o 10do_while.o 11for.o 12switch.o 13op.o 14struct.o 15union.o 16enum.o 17typedef.o 18field.o 19eq.o 20method.o 21obj.o 22impl.o 23interface.o
 	mkdir -p "$(DESTDIR)/bin"
 
 01main.o: 01main.c common.h
 	./comelang -no-gc -c 01main.c
 
 02transpile.o: 02transpile.c common.h
-	./comelang -no-gc -g -c 02transpile.c
+	./comelang -no-gc -c 02transpile.c
 
 03transpile2.o: 03transpile2.c common.h
-	./comelang -no-gc -g -c 03transpile2.c
+	./comelang -no-gc -c 03transpile2.c
 
 04heap.o: 04heap.c common.h
-	./comelang -no-gc -g -c 04heap.c
+	./comelang -no-gc -c 04heap.c
 
 05function.o: 05function.c common.h
-	./comelang -no-gc -g  -c 05function.c
+	./comelang -no-gc   -c 05function.c
+
+05function2.o: 05function2.c common.h
+	./comelang -no-gc   -c 05function2.c
+
+05function3.o: 05function3.c common.h
+	./comelang -no-gc   -c 05function3.c
+
+05function4.o: 05function4.c common.h
+	./comelang -no-gc   -c 05function4.c
 
 06str.o: 06str.c common.h
-	./comelang -no-gc -g -c 06str.c
+	./comelang -no-gc  -c 06str.c
 
 07var.o: 07var.c common.h
-	./comelang -no-gc -g -c 07var.c
+	./comelang -no-gc  -c 07var.c
 
 08if.o: 08if.c common.h
-	./comelang -no-gc -g -c 08if.c
+	./comelang -no-gc  -c 08if.c
 
 09while.o: 09while.c common.h
-	./comelang -no-gc -g -c 09while.c
+	./comelang -no-gc -c 09while.c
 
 10do_while.o: 10do_while.c common.h
-	./comelang -no-gc -g -c 10do_while.c
+	./comelang -no-gc  -c 10do_while.c
 
 11for.o: 11for.c common.h
-	./comelang -no-gc -g -c 11for.c
+	./comelang -no-gc  -c 11for.c
 
 12switch.o: 12switch.c common.h
-	./comelang -no-gc -g -c 12switch.c
+	./comelang -no-gc  -c 12switch.c
 
 13op.o: 13op.c common.h
-	./comelang -no-gc -g -c 13op.c
+	./comelang -no-gc  -c 13op.c
 
 14struct.o: 14struct.c common.h
 	./comelang -no-gc -g -c 14struct.c
 
 15union.o: 15union.c common.h
-	./comelang -no-gc -g -c 15union.c
+	./comelang -no-gc  -c 15union.c
 
 16enum.o: 16enum.c common.h
-	./comelang -no-gc -g -c 16enum.c
+	./comelang -no-gc  -c 16enum.c
 
 17typedef.o: 17typedef.c common.h
-	./comelang -no-gc -g -c 17typedef.c
+	./comelang -no-gc  -c 17typedef.c
 
 18field.o: 18field.c common.h
-	./comelang -no-gc -g -c 18field.c
+	./comelang -no-gc  -c 18field.c
 
 19eq.o: 19eq.c common.h
-	./comelang -no-gc -g -c 19eq.c
+	./comelang -no-gc  -c 19eq.c
 
 20method.o: 20method.c common.h
-	./comelang -no-gc -g -c 20method.c
+	./comelang -no-gc  -c 20method.c
 
 21obj.o: 21obj.c common.h
-	./comelang -no-gc -g -c 21obj.c
+	./comelang -no-gc  -c 21obj.c
 
 22impl.o: 22impl.c common.h
-	./comelang -no-gc -g -c 22impl.c
+	./comelang -no-gc  -c 22impl.c
 
 23interface.o: 23interface.c common.h
-	./comelang -no-gc -g -c 23interface.c
+	./comelang -no-gc  -c 23interface.c
 
 comelang2-clean:
 	rm -f 0*.o 1*.o 2*.o comelang2 comelang2-sh
@@ -501,16 +519,6 @@ ts-test:
 	PWD=`pwd` ./comelang -o code/HelloWorld19-ts -t code/HelloWorld19.c
 	PWD=`pwd` ./comelang -o code/HelloWorld20-ts -t code/HelloWorld20.c
 	./code/HelloWorld20-ts
-
-tcc-test:
-	PWD=`pwd` ./comelang -no-gc code/tcctest.c
-	./code/tcctest
-	PWD=`pwd` ./comelang -no-gc -g code/tcctest.c
-	./code/tcctest
-	PWD=`pwd` ./comelang -gc code/tcctest.c
-	./code/tcctest
-	PWD=`pwd` ./comelang -gc -g code/tcctest.c
-	./code/tcctest
 
 debug-test: 
 	@echo "Compile to test code..."

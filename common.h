@@ -10,6 +10,8 @@ using no-null-check;
 #include <comelang.h>
 #endif
 
+//#define exit(o); { int* a = (void*)0; *a = 1; exit(2); }
+
 #define COME_CODE_MAX 2048
 #define FUN_VERSION_MAX 128
 #define GENERICS_TYPE_MAX 12
@@ -327,6 +329,10 @@ void decrement_ref_count_object(sType* type, char* obj, sInfo* info);
 /////////////////////////////////////////////////////////////////////
 /// 05function.c ///
 /////////////////////////////////////////////////////////////////////
+sNode*% parse_global_variable(sInfo* info);
+sNode*% get_number(bool minus, sInfo* info);
+sNode*% get_oct_number(sInfo* info);
+sNode*% get_hex_number(bool minus, sInfo* info);
 sNode*% create_int_node(int value, sInfo* info);
 sNode*% post_position_operator3(sNode*% node, sInfo* info) version 5;
 list<sType*%>*%, list<string>*%, list<string>*%, bool parse_params(sInfo* info);
@@ -417,28 +423,28 @@ sNode*% create_null_object(sInfo* info);
 /////////////////////////////////////////////////////////////////////
 /// 14struct.c
 /////////////////////////////////////////////////////////////////////
- sNode*% parse_struct(string type_name, sInfo* info);
+sNode*% parse_struct(string type_name, sInfo* info);
 string get_none_generics_name(char* class_name);
- sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 98;
+sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 98;
 bool output_generics_struct(sType* type, sType* generics_type, sInfo* info);
 void output_struct(sClass* klass, sInfo* info);
 
 /////////////////////////////////////////////////////////////////////
 /// 15union.c
 /////////////////////////////////////////////////////////////////////
- sNode*% parse_union(string type_name, sInfo* info);
- sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 97;
+sNode*% parse_union(string type_name, sInfo* info);
+sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 97;
 
 /////////////////////////////////////////////////////////////////////
 /// 16enum.c
 /////////////////////////////////////////////////////////////////////
- sNode*% parse_enum(string type_name, sInfo* info);
- sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 96;
+sNode*% parse_enum(string type_name, sInfo* info);
+sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 96;
 
 /////////////////////////////////////////////////////////////////////
 /// 17typedef.c
 /////////////////////////////////////////////////////////////////////
- sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 95;
+sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 95;
 
 /////////////////////////////////////////////////////////////////////
 /// 18field.c
@@ -469,18 +475,18 @@ sNode*% create_object(sType*% type, sInfo* info);
 sNode*% create_true_object(sInfo* info);
 sNode*% create_false_object(sInfo* info);
 
- sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 21;
- sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 94;
- sNode*% post_position_operator3(sNode*% node, sInfo* info) version 21;
+sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 21;
+sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 94;
+sNode*% post_position_operator3(sNode*% node, sInfo* info) version 21;
 
 /////////////////////////////////////////////////////////////////////
 /// 22impl.c
 /////////////////////////////////////////////////////////////////////
- sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 93;
+sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 93;
 
 /////////////////////////////////////////////////////////////////////
 /// 23interface.c
 /////////////////////////////////////////////////////////////////////
- sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 92;
+sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 92;
 
 #endif

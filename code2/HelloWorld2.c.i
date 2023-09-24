@@ -1,8 +1,8 @@
-# 0 "code2/HelloWorld2.c"
-# 0 "<built-in>"
-# 0 "<command-line>"
+# 1 "code2/HelloWorld2.c"
+# 1 "<built-in>"
+# 1 "<command-line>"
 # 1 "/usr/include/stdc-predef.h" 1 3 4
-# 0 "<command-line>" 2
+# 1 "<command-line>" 2
 # 1 "code2/HelloWorld2.c"
 # 1 "./comelang2.h" 1
 using comelang;
@@ -23,64 +23,49 @@ void __builtin_va_end(char*);
 
 # 1 "/usr/include/stdio.h" 1 3 4
 # 27 "/usr/include/stdio.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/libc-header-start.h" 1 3 4
-# 33 "/usr/include/aarch64-linux-gnu/bits/libc-header-start.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/libc-header-start.h" 1 3 4
+# 33 "/usr/include/x86_64-linux-gnu/bits/libc-header-start.h" 3 4
 # 1 "/usr/include/features.h" 1 3 4
-# 392 "/usr/include/features.h" 3 4
-# 1 "/usr/include/features-time64.h" 1 3 4
-# 20 "/usr/include/features-time64.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/wordsize.h" 1 3 4
-# 21 "/usr/include/features-time64.h" 2 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/timesize.h" 1 3 4
-# 22 "/usr/include/features-time64.h" 2 3 4
-# 393 "/usr/include/features.h" 2 3 4
-# 489 "/usr/include/features.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/sys/cdefs.h" 1 3 4
-# 561 "/usr/include/aarch64-linux-gnu/sys/cdefs.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/wordsize.h" 1 3 4
-# 562 "/usr/include/aarch64-linux-gnu/sys/cdefs.h" 2 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/long-double.h" 1 3 4
-# 563 "/usr/include/aarch64-linux-gnu/sys/cdefs.h" 2 3 4
-# 490 "/usr/include/features.h" 2 3 4
-# 513 "/usr/include/features.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/gnu/stubs.h" 1 3 4
-
-
-
-
-# 1 "/usr/include/aarch64-linux-gnu/bits/wordsize.h" 1 3 4
-# 6 "/usr/include/aarch64-linux-gnu/gnu/stubs.h" 2 3 4
-
-
-# 1 "/usr/include/aarch64-linux-gnu/gnu/stubs-lp64.h" 1 3 4
-# 9 "/usr/include/aarch64-linux-gnu/gnu/stubs.h" 2 3 4
-# 514 "/usr/include/features.h" 2 3 4
-# 34 "/usr/include/aarch64-linux-gnu/bits/libc-header-start.h" 2 3 4
+# 461 "/usr/include/features.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/sys/cdefs.h" 1 3 4
+# 452 "/usr/include/x86_64-linux-gnu/sys/cdefs.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/wordsize.h" 1 3 4
+# 453 "/usr/include/x86_64-linux-gnu/sys/cdefs.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/long-double.h" 1 3 4
+# 454 "/usr/include/x86_64-linux-gnu/sys/cdefs.h" 2 3 4
+# 462 "/usr/include/features.h" 2 3 4
+# 485 "/usr/include/features.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/gnu/stubs.h" 1 3 4
+# 10 "/usr/include/x86_64-linux-gnu/gnu/stubs.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/gnu/stubs-64.h" 1 3 4
+# 11 "/usr/include/x86_64-linux-gnu/gnu/stubs.h" 2 3 4
+# 486 "/usr/include/features.h" 2 3 4
+# 34 "/usr/include/x86_64-linux-gnu/bits/libc-header-start.h" 2 3 4
 # 28 "/usr/include/stdio.h" 2 3 4
 
 
 
 
 
-# 1 "/usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h" 1 3 4
-# 214 "/usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h" 3 4
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/9/include/stddef.h" 1 3 4
+# 209 "/usr/lib/gcc/x86_64-linux-gnu/9/include/stddef.h" 3 4
 
-# 214 "/usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h" 3 4
+# 209 "/usr/lib/gcc/x86_64-linux-gnu/9/include/stddef.h" 3 4
 typedef long unsigned int size_t;
 # 34 "/usr/include/stdio.h" 2 3 4
 
 
-# 1 "/usr/lib/gcc/aarch64-linux-gnu/12/include/stdarg.h" 1 3 4
-# 40 "/usr/lib/gcc/aarch64-linux-gnu/12/include/stdarg.h" 3 4
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/9/include/stdarg.h" 1 3 4
+# 40 "/usr/lib/gcc/x86_64-linux-gnu/9/include/stdarg.h" 3 4
 typedef __builtin_va_list __gnuc_va_list;
 # 37 "/usr/include/stdio.h" 2 3 4
 
-# 1 "/usr/include/aarch64-linux-gnu/bits/types.h" 1 3 4
-# 27 "/usr/include/aarch64-linux-gnu/bits/types.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/wordsize.h" 1 3 4
-# 28 "/usr/include/aarch64-linux-gnu/bits/types.h" 2 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/timesize.h" 1 3 4
-# 29 "/usr/include/aarch64-linux-gnu/bits/types.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types.h" 1 3 4
+# 27 "/usr/include/x86_64-linux-gnu/bits/types.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/wordsize.h" 1 3 4
+# 28 "/usr/include/x86_64-linux-gnu/bits/types.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/timesize.h" 1 3 4
+# 29 "/usr/include/x86_64-linux-gnu/bits/types.h" 2 3 4
 
 
 typedef unsigned char __u_char;
@@ -126,11 +111,11 @@ typedef unsigned long int __u_quad_t;
 
 typedef long int __intmax_t;
 typedef unsigned long int __uintmax_t;
-# 141 "/usr/include/aarch64-linux-gnu/bits/types.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/typesizes.h" 1 3 4
-# 142 "/usr/include/aarch64-linux-gnu/bits/types.h" 2 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/time64.h" 1 3 4
-# 143 "/usr/include/aarch64-linux-gnu/bits/types.h" 2 3 4
+# 141 "/usr/include/x86_64-linux-gnu/bits/types.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/typesizes.h" 1 3 4
+# 142 "/usr/include/x86_64-linux-gnu/bits/types.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/time64.h" 1 3 4
+# 143 "/usr/include/x86_64-linux-gnu/bits/types.h" 2 3 4
 
 
 typedef unsigned long int __dev_t;
@@ -139,7 +124,7 @@ typedef unsigned int __gid_t;
 typedef unsigned long int __ino_t;
 typedef unsigned long int __ino64_t;
 typedef unsigned int __mode_t;
-typedef unsigned int __nlink_t;
+typedef unsigned long int __nlink_t;
 typedef long int __off_t;
 typedef long int __off64_t;
 typedef int __pid_t;
@@ -151,7 +136,6 @@ typedef unsigned int __id_t;
 typedef long int __time_t;
 typedef unsigned int __useconds_t;
 typedef long int __suseconds_t;
-typedef long int __suseconds64_t;
 
 typedef int __daddr_t;
 typedef int __key_t;
@@ -163,7 +147,7 @@ typedef int __clockid_t;
 typedef void * __timer_t;
 
 
-typedef int __blksize_t;
+typedef long int __blksize_t;
 
 
 
@@ -205,13 +189,13 @@ typedef unsigned int __socklen_t;
 
 typedef int __sig_atomic_t;
 # 39 "/usr/include/stdio.h" 2 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/types/__fpos_t.h" 1 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h" 1 3 4
 
 
 
 
-# 1 "/usr/include/aarch64-linux-gnu/bits/types/__mbstate_t.h" 1 3 4
-# 13 "/usr/include/aarch64-linux-gnu/bits/types/__mbstate_t.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h" 1 3 4
+# 13 "/usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h" 3 4
 typedef struct
 {
   int __count;
@@ -221,7 +205,7 @@ typedef struct
     char __wchb[4];
   } __value;
 } __mbstate_t;
-# 6 "/usr/include/aarch64-linux-gnu/bits/types/__fpos_t.h" 2 3 4
+# 6 "/usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h" 2 3 4
 
 
 
@@ -232,22 +216,22 @@ typedef struct _G_fpos_t
   __mbstate_t __state;
 } __fpos_t;
 # 40 "/usr/include/stdio.h" 2 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/types/__fpos64_t.h" 1 3 4
-# 10 "/usr/include/aarch64-linux-gnu/bits/types/__fpos64_t.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h" 1 3 4
+# 10 "/usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h" 3 4
 typedef struct _G_fpos64_t
 {
   __off64_t __pos;
   __mbstate_t __state;
 } __fpos64_t;
 # 41 "/usr/include/stdio.h" 2 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/types/__FILE.h" 1 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/__FILE.h" 1 3 4
 
 
 
 struct _IO_FILE;
 typedef struct _IO_FILE __FILE;
 # 42 "/usr/include/stdio.h" 2 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/types/FILE.h" 1 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/FILE.h" 1 3 4
 
 
 
@@ -256,8 +240,8 @@ struct _IO_FILE;
 
 typedef struct _IO_FILE FILE;
 # 43 "/usr/include/stdio.h" 2 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/types/struct_FILE.h" 1 3 4
-# 35 "/usr/include/aarch64-linux-gnu/bits/types/struct_FILE.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h" 1 3 4
+# 35 "/usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h" 3 4
 struct _IO_FILE;
 struct _IO_marker;
 struct _IO_codecvt;
@@ -326,8 +310,8 @@ struct _IO_FILE
 # 44 "/usr/include/stdio.h" 2 3 4
 
 
-# 1 "/usr/include/aarch64-linux-gnu/bits/types/cookie_io_functions_t.h" 1 3 4
-# 27 "/usr/include/aarch64-linux-gnu/bits/types/cookie_io_functions_t.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h" 1 3 4
+# 27 "/usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h" 3 4
 typedef __ssize_t cookie_read_function_t (void *__cookie, char *__buf,
                                           size_t __nbytes);
 
@@ -365,8 +349,8 @@ typedef struct _IO_cookie_io_functions_t
 } cookie_io_functions_t;
 # 47 "/usr/include/stdio.h" 2 3 4
 # 56 "/usr/include/stdio.h" 3 4
-# 1 "/usr/lib/gcc/aarch64-linux-gnu/12/include/stdarg.h" 1 3 4
-# 99 "/usr/lib/gcc/aarch64-linux-gnu/12/include/stdarg.h" 3 4
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/9/include/stdarg.h" 1 3 4
+# 99 "/usr/lib/gcc/x86_64-linux-gnu/9/include/stdarg.h" 3 4
 typedef __gnuc_va_list va_list;
 # 57 "/usr/include/stdio.h" 2 3 4
 
@@ -403,9 +387,11 @@ typedef __fpos_t fpos_t;
 
 typedef __fpos64_t fpos64_t;
 # 133 "/usr/include/stdio.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/stdio_lim.h" 1 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/stdio_lim.h" 1 3 4
 # 134 "/usr/include/stdio.h" 2 3 4
-# 143 "/usr/include/stdio.h" 3 4
+
+
+
 extern FILE *stdin;
 extern FILE *stdout;
 extern FILE *stderr;
@@ -423,7 +409,7 @@ extern int rename (const char *__old, const char *__new) ;
 
 extern int renameat (int __oldfd, const char *__old, int __newfd,
        const char *__new) ;
-# 170 "/usr/include/stdio.h" 3 4
+# 164 "/usr/include/stdio.h" 3 4
 extern int renameat2 (int __oldfd, const char *__old, int __newfd,
         const char *__new, unsigned int __flags) ;
 
@@ -432,40 +418,42 @@ extern int renameat2 (int __oldfd, const char *__old, int __newfd,
 
 
 
-extern int fclose (FILE *__stream);
-# 188 "/usr/include/stdio.h" 3 4
-extern FILE *tmpfile (void)
-  ;
-# 200 "/usr/include/stdio.h" 3 4
-extern FILE *tmpfile64 (void)
-   ;
+
+extern FILE *tmpfile (void) ;
+# 183 "/usr/include/stdio.h" 3 4
+extern FILE *tmpfile64 (void) ;
 
 
 
-extern char *tmpnam (char[20]) ;
+extern char *tmpnam (char *__s) ;
 
 
 
 
-extern char *tmpnam_r (char __s[20]) ;
-# 222 "/usr/include/stdio.h" 3 4
+extern char *tmpnam_r (char *__s) ;
+# 204 "/usr/include/stdio.h" 3 4
 extern char *tempnam (const char *__dir, const char *__pfx)
-   ;
+     ;
 
 
+
+
+
+
+
+extern int fclose (FILE *__stream);
 
 
 
 
 extern int fflush (FILE *__stream);
-# 239 "/usr/include/stdio.h" 3 4
+# 227 "/usr/include/stdio.h" 3 4
 extern int fflush_unlocked (FILE *__stream);
-# 249 "/usr/include/stdio.h" 3 4
+# 237 "/usr/include/stdio.h" 3 4
 extern int fcloseall (void);
-# 258 "/usr/include/stdio.h" 3 4
+# 246 "/usr/include/stdio.h" 3 4
 extern FILE *fopen (const char *restrict __filename,
-      const char *restrict __modes)
-  ;
+      const char *restrict __modes) ;
 
 
 
@@ -473,10 +461,9 @@ extern FILE *fopen (const char *restrict __filename,
 extern FILE *freopen (const char *restrict __filename,
         const char *restrict __modes,
         FILE *restrict __stream) ;
-# 283 "/usr/include/stdio.h" 3 4
+# 270 "/usr/include/stdio.h" 3 4
 extern FILE *fopen64 (const char *restrict __filename,
-        const char *restrict __modes)
-  ;
+        const char *restrict __modes) ;
 extern FILE *freopen64 (const char *restrict __filename,
    const char *restrict __modes,
    FILE *restrict __stream) ;
@@ -484,8 +471,7 @@ extern FILE *freopen64 (const char *restrict __filename,
 
 
 
-extern FILE *fdopen (int __fd, const char *__modes)
-  ;
+extern FILE *fdopen (int __fd, const char *__modes) ;
 
 
 
@@ -493,8 +479,7 @@ extern FILE *fdopen (int __fd, const char *__modes)
 
 extern FILE *fopencookie (void *restrict __magic_cookie,
      const char *restrict __modes,
-     cookie_io_functions_t __io_funcs)
-  ;
+     cookie_io_functions_t __io_funcs) ;
 
 
 
@@ -505,9 +490,12 @@ extern FILE *fmemopen (void *__s, size_t __len, const char *__modes)
 
 
 
-extern FILE *open_memstream (char **__bufloc, size_t *__sizeloc)
-  ;
-# 328 "/usr/include/stdio.h" 3 4
+extern FILE *open_memstream (char **__bufloc, size_t *__sizeloc) ;
+
+
+
+
+
 extern void setbuf (FILE *restrict __stream, char *restrict __buf) ;
 
 
@@ -605,39 +593,13 @@ extern int scanf (const char *restrict __format, ...) ;
 
 extern int sscanf (const char *restrict __s,
      const char *restrict __format, ...) ;
-
-
-
-
-
-# 1 "/usr/include/aarch64-linux-gnu/bits/floatn.h" 1 3 4
-# 23 "/usr/include/aarch64-linux-gnu/bits/floatn.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/long-double.h" 1 3 4
-# 24 "/usr/include/aarch64-linux-gnu/bits/floatn.h" 2 3 4
-# 80 "/usr/include/aarch64-linux-gnu/bits/floatn.h" 3 4
-typedef long double _Float128;
-# 95 "/usr/include/aarch64-linux-gnu/bits/floatn.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/floatn-common.h" 1 3 4
-# 24 "/usr/include/aarch64-linux-gnu/bits/floatn-common.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/long-double.h" 1 3 4
-# 25 "/usr/include/aarch64-linux-gnu/bits/floatn-common.h" 2 3 4
-# 214 "/usr/include/aarch64-linux-gnu/bits/floatn-common.h" 3 4
-typedef float _Float32;
-# 251 "/usr/include/aarch64-linux-gnu/bits/floatn-common.h" 3 4
-typedef double _Float64;
-# 268 "/usr/include/aarch64-linux-gnu/bits/floatn-common.h" 3 4
-typedef double _Float32x;
-# 285 "/usr/include/aarch64-linux-gnu/bits/floatn-common.h" 3 4
-typedef long double _Float64x;
-# 96 "/usr/include/aarch64-linux-gnu/bits/floatn.h" 2 3 4
-# 431 "/usr/include/stdio.h" 2 3 4
-# 443 "/usr/include/stdio.h" 3 4
+# 416 "/usr/include/stdio.h" 3 4
 extern int __isoc99_fscanf (FILE *restrict __stream,
        const char *restrict __format, ...) ;
 extern int __isoc99_scanf (const char *restrict __format, ...) ;
 extern int __isoc99_sscanf (const char *restrict __s,
        const char *restrict __format, ...) ;
-# 459 "/usr/include/stdio.h" 3 4
+# 432 "/usr/include/stdio.h" 3 4
 extern int vfscanf (FILE *restrict __s, const char *restrict __format,
       __gnuc_va_list __arg)
      ;
@@ -653,7 +615,7 @@ extern int vscanf (const char *restrict __format, __gnuc_va_list __arg)
 extern int vsscanf (const char *restrict __s,
       const char *restrict __format, __gnuc_va_list __arg)
      ;
-# 493 "/usr/include/stdio.h" 3 4
+# 465 "/usr/include/stdio.h" 3 4
 extern int __isoc99_vfscanf (FILE *restrict __s,
         const char *restrict __format,
         __gnuc_va_list __arg) ;
@@ -662,7 +624,7 @@ extern int __isoc99_vscanf (const char *restrict __format,
 extern int __isoc99_vsscanf (const char *restrict __s,
         const char *restrict __format,
         __gnuc_va_list __arg) ;
-# 513 "/usr/include/stdio.h" 3 4
+# 485 "/usr/include/stdio.h" 3 4
 extern int fgetc (FILE *__stream);
 extern int getc (FILE *__stream);
 
@@ -679,9 +641,9 @@ extern int getchar (void);
 
 extern int getc_unlocked (FILE *__stream);
 extern int getchar_unlocked (void);
-# 538 "/usr/include/stdio.h" 3 4
+# 510 "/usr/include/stdio.h" 3 4
 extern int fgetc_unlocked (FILE *__stream);
-# 549 "/usr/include/stdio.h" 3 4
+# 521 "/usr/include/stdio.h" 3 4
 extern int fputc (int __c, FILE *__stream);
 extern int putc (int __c, FILE *__stream);
 
@@ -690,7 +652,7 @@ extern int putc (int __c, FILE *__stream);
 
 
 extern int putchar (int __c);
-# 565 "/usr/include/stdio.h" 3 4
+# 537 "/usr/include/stdio.h" 3 4
 extern int fputc_unlocked (int __c, FILE *__stream);
 
 
@@ -720,11 +682,10 @@ extern int putw (int __w, FILE *__stream);
 
 extern char *fgets (char *restrict __s, int __n, FILE *restrict __stream)
      ;
-# 615 "/usr/include/stdio.h" 3 4
+# 587 "/usr/include/stdio.h" 3 4
 extern char *fgets_unlocked (char *restrict __s, int __n,
-        FILE *restrict __stream)
-    ;
-# 632 "/usr/include/stdio.h" 3 4
+        FILE *restrict __stream) ;
+# 603 "/usr/include/stdio.h" 3 4
 extern __ssize_t __getdelim (char **restrict __lineptr,
                              size_t *restrict __n, int __delimiter,
                              FILE *restrict __stream) ;
@@ -776,10 +737,10 @@ extern size_t fread (void *restrict __ptr, size_t __size,
 
 extern size_t fwrite (const void *restrict __ptr, size_t __size,
         size_t __n, FILE *restrict __s);
-# 691 "/usr/include/stdio.h" 3 4
+# 662 "/usr/include/stdio.h" 3 4
 extern int fputs_unlocked (const char *restrict __s,
       FILE *restrict __stream);
-# 702 "/usr/include/stdio.h" 3 4
+# 673 "/usr/include/stdio.h" 3 4
 extern size_t fread_unlocked (void *restrict __ptr, size_t __size,
          size_t __n, FILE *restrict __stream) ;
 extern size_t fwrite_unlocked (const void *restrict __ptr, size_t __size,
@@ -802,21 +763,21 @@ extern long int ftell (FILE *__stream) ;
 
 
 extern void rewind (FILE *__stream);
-# 736 "/usr/include/stdio.h" 3 4
+# 707 "/usr/include/stdio.h" 3 4
 extern int fseeko (FILE *__stream, __off_t __off, int __whence);
 
 
 
 
 extern __off_t ftello (FILE *__stream) ;
-# 760 "/usr/include/stdio.h" 3 4
+# 731 "/usr/include/stdio.h" 3 4
 extern int fgetpos (FILE *restrict __stream, fpos_t *restrict __pos);
 
 
 
 
 extern int fsetpos (FILE *__stream, const fpos_t *__pos);
-# 779 "/usr/include/stdio.h" 3 4
+# 750 "/usr/include/stdio.h" 3 4
 extern int fseeko64 (FILE *__stream, __off64_t __off, int __whence);
 extern __off64_t ftello64 (FILE *__stream) ;
 extern int fgetpos64 (FILE *restrict __stream, fpos64_t *restrict __pos);
@@ -847,36 +808,46 @@ extern void perror (const char *__s);
 
 
 
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/sys_errlist.h" 1 3 4
+# 26 "/usr/include/x86_64-linux-gnu/bits/sys_errlist.h" 3 4
+extern int sys_nerr;
+extern const char *const sys_errlist[];
+
+
+extern int _sys_nerr;
+extern const char *const _sys_errlist[];
+# 782 "/usr/include/stdio.h" 2 3 4
+
+
+
+
 extern int fileno (FILE *__stream) ;
 
 
 
 
 extern int fileno_unlocked (FILE *__stream) ;
-# 823 "/usr/include/stdio.h" 3 4
+# 800 "/usr/include/stdio.h" 3 4
+extern FILE *popen (const char *__command, const char *__modes) ;
+
+
+
+
+
 extern int pclose (FILE *__stream);
 
 
 
 
 
-extern FILE *popen (const char *__command, const char *__modes)
-  ;
+extern char *ctermid (char *__s) ;
 
 
 
 
 
-
-extern char *ctermid (char *__s)
-  ;
-
-
-
-
-
-extern char *cuserid (char *__s)
-  ;
+extern char *cuserid (char *__s);
 
 
 
@@ -906,15 +877,15 @@ extern int ftrylockfile (FILE *__stream) ;
 
 
 extern void funlockfile (FILE *__stream) ;
-# 885 "/usr/include/stdio.h" 3 4
+# 858 "/usr/include/stdio.h" 3 4
 extern int __uflow (FILE *);
 extern int __overflow (FILE *, int);
-# 909 "/usr/include/stdio.h" 3 4
+# 873 "/usr/include/stdio.h" 3 4
 
 # 18 "./comelang2.h" 2
 # 1 "/usr/include/string.h" 1 3 4
 # 26 "/usr/include/string.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/libc-header-start.h" 1 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/libc-header-start.h" 1 3 4
 # 27 "/usr/include/string.h" 2 3 4
 
 
@@ -922,7 +893,7 @@ extern int __overflow (FILE *, int);
 
 
 
-# 1 "/usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h" 1 3 4
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/9/include/stddef.h" 1 3 4
 # 34 "/usr/include/string.h" 2 3 4
 # 43 "/usr/include/string.h" 3 4
 extern void *memcpy (void *restrict __dest, const void *restrict __src,
@@ -938,7 +909,7 @@ extern void *memmove (void *__dest, const void *__src, size_t __n)
 
 extern void *memccpy (void *restrict __dest, const void *restrict __src,
         int __c, size_t __n)
-    ;
+     ;
 
 
 
@@ -948,18 +919,14 @@ extern void *memset (void *__s, int __c, size_t __n) ;
 
 extern int memcmp (const void *__s1, const void *__s2, size_t __n)
      ;
-# 80 "/usr/include/string.h" 3 4
-extern int __memcmpeq (const void *__s1, const void *__s2, size_t __n)
-     ;
-# 107 "/usr/include/string.h" 3 4
+# 91 "/usr/include/string.h" 3 4
 extern void *memchr (const void *__s, int __c, size_t __n)
       ;
-# 120 "/usr/include/string.h" 3 4
+# 104 "/usr/include/string.h" 3 4
 extern void *rawmemchr (const void *__s, int __c)
      ;
-# 133 "/usr/include/string.h" 3 4
+# 115 "/usr/include/string.h" 3 4
 extern void *memrchr (const void *__s, int __c, size_t __n)
-     
       ;
 
 
@@ -993,14 +960,14 @@ extern int strcoll (const char *__s1, const char *__s2)
 
 extern size_t strxfrm (char *restrict __dest,
          const char *restrict __src, size_t __n)
-    ;
+     ;
 
 
 
-# 1 "/usr/include/aarch64-linux-gnu/bits/types/locale_t.h" 1 3 4
-# 22 "/usr/include/aarch64-linux-gnu/bits/types/locale_t.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/types/__locale_t.h" 1 3 4
-# 27 "/usr/include/aarch64-linux-gnu/bits/types/__locale_t.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/locale_t.h" 1 3 4
+# 22 "/usr/include/x86_64-linux-gnu/bits/types/locale_t.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/__locale_t.h" 1 3 4
+# 28 "/usr/include/x86_64-linux-gnu/bits/types/__locale_t.h" 3 4
 struct __locale_struct
 {
 
@@ -1016,10 +983,10 @@ struct __locale_struct
 };
 
 typedef struct __locale_struct *__locale_t;
-# 23 "/usr/include/aarch64-linux-gnu/bits/types/locale_t.h" 2 3 4
+# 23 "/usr/include/x86_64-linux-gnu/bits/types/locale_t.h" 2 3 4
 
 typedef __locale_t locale_t;
-# 173 "/usr/include/string.h" 2 3 4
+# 154 "/usr/include/string.h" 2 3 4
 
 
 extern int strcoll_l (const char *__s1, const char *__s2, locale_t __l)
@@ -1027,8 +994,7 @@ extern int strcoll_l (const char *__s1, const char *__s2, locale_t __l)
 
 
 extern size_t strxfrm_l (char *__dest, const char *__src, size_t __n,
-    locale_t __l)
-     ;
+    locale_t __l) ;
 
 
 
@@ -1044,13 +1010,13 @@ extern char *strdup (const char *__s)
 
 extern char *strndup (const char *__string, size_t __n)
      ;
-# 246 "/usr/include/string.h" 3 4
+# 226 "/usr/include/string.h" 3 4
 extern char *strchr (const char *__s, int __c)
      ;
-# 273 "/usr/include/string.h" 3 4
+# 253 "/usr/include/string.h" 3 4
 extern char *strrchr (const char *__s, int __c)
      ;
-# 286 "/usr/include/string.h" 3 4
+# 266 "/usr/include/string.h" 3 4
 extern char *strchrnul (const char *__s, int __c)
      ;
 
@@ -1064,10 +1030,10 @@ extern size_t strcspn (const char *__s, const char *__reject)
 
 extern size_t strspn (const char *__s, const char *__accept)
      ;
-# 323 "/usr/include/string.h" 3 4
+# 303 "/usr/include/string.h" 3 4
 extern char *strpbrk (const char *__s, const char *__accept)
      ;
-# 350 "/usr/include/string.h" 3 4
+# 330 "/usr/include/string.h" 3 4
 extern char *strstr (const char *__haystack, const char *__needle)
      ;
 
@@ -1087,7 +1053,7 @@ extern char *__strtok_r (char *restrict __s,
 extern char *strtok_r (char *restrict __s, const char *restrict __delim,
          char **restrict __save_ptr)
      ;
-# 380 "/usr/include/string.h" 3 4
+# 360 "/usr/include/string.h" 3 4
 extern char *strcasestr (const char *__haystack, const char *__needle)
      ;
 
@@ -1099,9 +1065,7 @@ extern char *strcasestr (const char *__haystack, const char *__needle)
 
 extern void *memmem (const void *__haystack, size_t __haystacklen,
        const void *__needle, size_t __needlelen)
-    
-   
-    ;
+     ;
 
 
 
@@ -1128,16 +1092,9 @@ extern size_t strnlen (const char *__string, size_t __maxlen)
 
 
 extern char *strerror (int __errnum) ;
-# 444 "/usr/include/string.h" 3 4
+# 421 "/usr/include/string.h" 3 4
 extern char *strerror_r (int __errnum, char *__buf, size_t __buflen)
      ;
-
-
-
-
-extern const char *strerrordesc_np (int __err) ;
-
-extern const char *strerrorname_np (int __err) ;
 
 
 
@@ -1149,7 +1106,7 @@ extern char *strerror_l (int __errnum, locale_t __l) ;
 
 # 1 "/usr/include/strings.h" 1 3 4
 # 23 "/usr/include/strings.h" 3 4
-# 1 "/usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h" 1 3 4
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/9/include/stddef.h" 1 3 4
 # 24 "/usr/include/strings.h" 2 3 4
 
 
@@ -1217,12 +1174,11 @@ extern int strncasecmp_l (const char *__s1, const char *__s2,
 
 
 
-# 463 "/usr/include/string.h" 2 3 4
+# 433 "/usr/include/string.h" 2 3 4
 
 
 
-extern void explicit_bzero (void *__s, size_t __n)
-    ;
+extern void explicit_bzero (void *__s, size_t __n) ;
 
 
 
@@ -1234,14 +1190,6 @@ extern char *strsep (char **restrict __stringp,
 
 
 extern char *strsignal (int __sig) ;
-
-
-
-extern const char *sigabbrev_np (int __sig) ;
-
-
-extern const char *sigdescr_np (int __sig) ;
-
 
 
 extern char *__stpcpy (char *restrict __dest, const char *restrict __src)
@@ -1268,26 +1216,25 @@ extern int strverscmp (const char *__s1, const char *__s2)
 extern char *strfry (char *__string) ;
 
 
-extern void *memfrob (void *__s, size_t __n)
-    ;
-# 527 "/usr/include/string.h" 3 4
+extern void *memfrob (void *__s, size_t __n) ;
+# 487 "/usr/include/string.h" 3 4
 extern char *basename (const char *__filename) ;
-# 539 "/usr/include/string.h" 3 4
+# 499 "/usr/include/string.h" 3 4
 
 # 19 "./comelang2.h" 2
 # 1 "/usr/include/stdlib.h" 1 3 4
-# 26 "/usr/include/stdlib.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/libc-header-start.h" 1 3 4
-# 27 "/usr/include/stdlib.h" 2 3 4
+# 25 "/usr/include/stdlib.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/libc-header-start.h" 1 3 4
+# 26 "/usr/include/stdlib.h" 2 3 4
 
 
 
 
 
-# 1 "/usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h" 1 3 4
-# 329 "/usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h" 3 4
-typedef unsigned int wchar_t;
-# 33 "/usr/include/stdlib.h" 2 3 4
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/9/include/stddef.h" 1 3 4
+# 321 "/usr/lib/gcc/x86_64-linux-gnu/9/include/stddef.h" 3 4
+typedef int wchar_t;
+# 32 "/usr/include/stdlib.h" 2 3 4
 
 
 
@@ -1295,11 +1242,36 @@ typedef unsigned int wchar_t;
 
 
 
-# 1 "/usr/include/aarch64-linux-gnu/bits/waitflags.h" 1 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/waitflags.h" 1 3 4
+# 52 "/usr/include/x86_64-linux-gnu/bits/waitflags.h" 3 4
+typedef enum
+{
+  P_ALL,
+  P_PID,
+  P_PGID
+} idtype_t;
+# 40 "/usr/include/stdlib.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/waitstatus.h" 1 3 4
 # 41 "/usr/include/stdlib.h" 2 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/waitstatus.h" 1 3 4
-# 42 "/usr/include/stdlib.h" 2 3 4
-# 59 "/usr/include/stdlib.h" 3 4
+# 55 "/usr/include/stdlib.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/floatn.h" 1 3 4
+# 120 "/usr/include/x86_64-linux-gnu/bits/floatn.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/floatn-common.h" 1 3 4
+# 24 "/usr/include/x86_64-linux-gnu/bits/floatn-common.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/long-double.h" 1 3 4
+# 25 "/usr/include/x86_64-linux-gnu/bits/floatn-common.h" 2 3 4
+# 214 "/usr/include/x86_64-linux-gnu/bits/floatn-common.h" 3 4
+typedef float _Float32;
+# 251 "/usr/include/x86_64-linux-gnu/bits/floatn-common.h" 3 4
+typedef double _Float64;
+# 268 "/usr/include/x86_64-linux-gnu/bits/floatn-common.h" 3 4
+typedef double _Float32x;
+# 285 "/usr/include/x86_64-linux-gnu/bits/floatn-common.h" 3 4
+typedef long double _Float64x;
+# 121 "/usr/include/x86_64-linux-gnu/bits/floatn.h" 2 3 4
+# 56 "/usr/include/stdlib.h" 2 3 4
+
+
 typedef struct
   {
     int quot;
@@ -1323,7 +1295,7 @@ typedef struct
     long long int quot;
     long long int rem;
   } lldiv_t;
-# 98 "/usr/include/stdlib.h" 3 4
+# 97 "/usr/include/stdlib.h" 3 4
 extern size_t __ctype_get_mb_cur_max (void) ;
 
 
@@ -1356,7 +1328,7 @@ extern float strtof (const char *restrict __nptr,
 extern long double strtold (const char *restrict __nptr,
        char **restrict __endptr)
      ;
-# 141 "/usr/include/stdlib.h" 3 4
+# 140 "/usr/include/stdlib.h" 3 4
 extern _Float32 strtof32 (const char *restrict __nptr,
      char **restrict __endptr)
      ;
@@ -1366,15 +1338,7 @@ extern _Float32 strtof32 (const char *restrict __nptr,
 extern _Float64 strtof64 (const char *restrict __nptr,
      char **restrict __endptr)
      ;
-
-
-
-extern _Float128 strtof128 (const char *restrict __nptr,
-       char **restrict __endptr)
-     ;
-
-
-
+# 158 "/usr/include/stdlib.h" 3 4
 extern _Float32x strtof32x (const char *restrict __nptr,
        char **restrict __endptr)
      ;
@@ -1384,7 +1348,7 @@ extern _Float32x strtof32x (const char *restrict __nptr,
 extern _Float64x strtof64x (const char *restrict __nptr,
        char **restrict __endptr)
      ;
-# 177 "/usr/include/stdlib.h" 3 4
+# 176 "/usr/include/stdlib.h" 3 4
 extern long int strtol (const char *restrict __nptr,
    char **restrict __endptr, int __base)
      ;
@@ -1432,7 +1396,7 @@ extern int strfromf (char *__dest, size_t __size, const char *__format,
 extern int strfroml (char *__dest, size_t __size, const char *__format,
        long double __f)
      ;
-# 233 "/usr/include/stdlib.h" 3 4
+# 232 "/usr/include/stdlib.h" 3 4
 extern int strfromf32 (char *__dest, size_t __size, const char * __format,
          _Float32 __f)
      ;
@@ -1442,15 +1406,7 @@ extern int strfromf32 (char *__dest, size_t __size, const char * __format,
 extern int strfromf64 (char *__dest, size_t __size, const char * __format,
          _Float64 __f)
      ;
-
-
-
-extern int strfromf128 (char *__dest, size_t __size, const char * __format,
-   _Float128 __f)
-     ;
-
-
-
+# 250 "/usr/include/stdlib.h" 3 4
 extern int strfromf32x (char *__dest, size_t __size, const char * __format,
    _Float32x __f)
      ;
@@ -1460,7 +1416,7 @@ extern int strfromf32x (char *__dest, size_t __size, const char * __format,
 extern int strfromf64x (char *__dest, size_t __size, const char * __format,
    _Float64x __f)
      ;
-# 275 "/usr/include/stdlib.h" 3 4
+# 274 "/usr/include/stdlib.h" 3 4
 extern long int strtol_l (const char *restrict __nptr,
      char **restrict __endptr, int __base,
      locale_t __loc) ;
@@ -1494,7 +1450,7 @@ extern long double strtold_l (const char *restrict __nptr,
          char **restrict __endptr,
          locale_t __loc)
      ;
-# 317 "/usr/include/stdlib.h" 3 4
+# 316 "/usr/include/stdlib.h" 3 4
 extern _Float32 strtof32_l (const char *restrict __nptr,
        char **restrict __endptr,
        locale_t __loc)
@@ -1506,16 +1462,7 @@ extern _Float64 strtof64_l (const char *restrict __nptr,
        char **restrict __endptr,
        locale_t __loc)
      ;
-
-
-
-extern _Float128 strtof128_l (const char *restrict __nptr,
-         char **restrict __endptr,
-         locale_t __loc)
-     ;
-
-
-
+# 337 "/usr/include/stdlib.h" 3 4
 extern _Float32x strtof32x_l (const char *restrict __nptr,
          char **restrict __endptr,
          locale_t __loc)
@@ -1527,7 +1474,7 @@ extern _Float64x strtof64x_l (const char *restrict __nptr,
          char **restrict __endptr,
          locale_t __loc)
      ;
-# 386 "/usr/include/stdlib.h" 3 4
+# 385 "/usr/include/stdlib.h" 3 4
 extern char *l64a (long int __n) ;
 
 
@@ -1537,8 +1484,8 @@ extern long int a64l (const char *__s)
 
 
 
-# 1 "/usr/include/aarch64-linux-gnu/sys/types.h" 1 3 4
-# 27 "/usr/include/aarch64-linux-gnu/sys/types.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/sys/types.h" 1 3 4
+# 27 "/usr/include/x86_64-linux-gnu/sys/types.h" 3 4
 
 
 
@@ -1592,7 +1539,7 @@ typedef __nlink_t nlink_t;
 
 
 typedef __uid_t uid_t;
-# 97 "/usr/include/aarch64-linux-gnu/sys/types.h" 3 4
+# 97 "/usr/include/x86_64-linux-gnu/sys/types.h" 3 4
 typedef __pid_t pid_t;
 
 
@@ -1600,7 +1547,7 @@ typedef __pid_t pid_t;
 
 
 typedef __id_t id_t;
-# 114 "/usr/include/aarch64-linux-gnu/sys/types.h" 3 4
+# 114 "/usr/include/x86_64-linux-gnu/sys/types.h" 3 4
 typedef __daddr_t daddr_t;
 typedef __caddr_t caddr_t;
 
@@ -1613,7 +1560,7 @@ typedef __key_t key_t;
 
 
 
-# 1 "/usr/include/aarch64-linux-gnu/bits/types/clock_t.h" 1 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/clock_t.h" 1 3 4
 
 
 
@@ -1621,9 +1568,9 @@ typedef __key_t key_t;
 
 
 typedef __clock_t clock_t;
-# 127 "/usr/include/aarch64-linux-gnu/sys/types.h" 2 3 4
+# 127 "/usr/include/x86_64-linux-gnu/sys/types.h" 2 3 4
 
-# 1 "/usr/include/aarch64-linux-gnu/bits/types/clockid_t.h" 1 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/clockid_t.h" 1 3 4
 
 
 
@@ -1631,12 +1578,17 @@ typedef __clock_t clock_t;
 
 
 typedef __clockid_t clockid_t;
-# 129 "/usr/include/aarch64-linux-gnu/sys/types.h" 2 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/types/time_t.h" 1 3 4
-# 10 "/usr/include/aarch64-linux-gnu/bits/types/time_t.h" 3 4
+# 129 "/usr/include/x86_64-linux-gnu/sys/types.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/time_t.h" 1 3 4
+
+
+
+
+
+
 typedef __time_t time_t;
-# 130 "/usr/include/aarch64-linux-gnu/sys/types.h" 2 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/types/timer_t.h" 1 3 4
+# 130 "/usr/include/x86_64-linux-gnu/sys/types.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/timer_t.h" 1 3 4
 
 
 
@@ -1644,7 +1596,7 @@ typedef __time_t time_t;
 
 
 typedef __timer_t timer_t;
-# 131 "/usr/include/aarch64-linux-gnu/sys/types.h" 2 3 4
+# 131 "/usr/include/x86_64-linux-gnu/sys/types.h" 2 3 4
 
 
 
@@ -1658,8 +1610,8 @@ typedef __suseconds_t suseconds_t;
 
 
 
-# 1 "/usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h" 1 3 4
-# 145 "/usr/include/aarch64-linux-gnu/sys/types.h" 2 3 4
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/9/include/stddef.h" 1 3 4
+# 145 "/usr/include/x86_64-linux-gnu/sys/types.h" 2 3 4
 
 
 
@@ -1670,13 +1622,13 @@ typedef unsigned int uint;
 
 
 
-# 1 "/usr/include/aarch64-linux-gnu/bits/stdint-intn.h" 1 3 4
-# 24 "/usr/include/aarch64-linux-gnu/bits/stdint-intn.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/stdint-intn.h" 1 3 4
+# 24 "/usr/include/x86_64-linux-gnu/bits/stdint-intn.h" 3 4
 typedef __int8_t int8_t;
 typedef __int16_t int16_t;
 typedef __int32_t int32_t;
 typedef __int64_t int64_t;
-# 156 "/usr/include/aarch64-linux-gnu/sys/types.h" 2 3 4
+# 156 "/usr/include/x86_64-linux-gnu/sys/types.h" 2 3 4
 
 
 typedef __uint8_t u_int8_t;
@@ -1688,17 +1640,17 @@ typedef __uint64_t u_int64_t;
 
 
 typedef int register_t;
-# 176 "/usr/include/aarch64-linux-gnu/sys/types.h" 3 4
+# 176 "/usr/include/x86_64-linux-gnu/sys/types.h" 3 4
 # 1 "/usr/include/endian.h" 1 3 4
 # 24 "/usr/include/endian.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/endian.h" 1 3 4
-# 35 "/usr/include/aarch64-linux-gnu/bits/endian.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/endianness.h" 1 3 4
-# 36 "/usr/include/aarch64-linux-gnu/bits/endian.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/endian.h" 1 3 4
+# 35 "/usr/include/x86_64-linux-gnu/bits/endian.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/endianness.h" 1 3 4
+# 36 "/usr/include/x86_64-linux-gnu/bits/endian.h" 2 3 4
 # 25 "/usr/include/endian.h" 2 3 4
 # 35 "/usr/include/endian.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/byteswap.h" 1 3 4
-# 33 "/usr/include/aarch64-linux-gnu/bits/byteswap.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/byteswap.h" 1 3 4
+# 33 "/usr/include/x86_64-linux-gnu/bits/byteswap.h" 3 4
 static inline __uint16_t
 __bswap_16 (__uint16_t __bsx)
 {
@@ -1723,7 +1675,7 @@ __bswap_32 (__uint32_t __bsx)
   return ((((__bsx) & 0xff000000u) >> 24) | (((__bsx) & 0x00ff0000u) >> 8) | (((__bsx) & 0x0000ff00u) << 8) | (((__bsx) & 0x000000ffu) << 24));
 
 }
-# 69 "/usr/include/aarch64-linux-gnu/bits/byteswap.h" 3 4
+# 69 "/usr/include/x86_64-linux-gnu/bits/byteswap.h" 3 4
  static inline __uint64_t
 __bswap_64 (__uint64_t __bsx)
 {
@@ -1734,8 +1686,8 @@ __bswap_64 (__uint64_t __bsx)
 
 }
 # 36 "/usr/include/endian.h" 2 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/uintn-identity.h" 1 3 4
-# 32 "/usr/include/aarch64-linux-gnu/bits/uintn-identity.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/uintn-identity.h" 1 3 4
+# 32 "/usr/include/x86_64-linux-gnu/bits/uintn-identity.h" 3 4
 static inline __uint16_t
 __uint16_identity (__uint16_t __x)
 {
@@ -1754,20 +1706,23 @@ __uint64_identity (__uint64_t __x)
   return __x;
 }
 # 37 "/usr/include/endian.h" 2 3 4
-# 177 "/usr/include/aarch64-linux-gnu/sys/types.h" 2 3 4
+# 177 "/usr/include/x86_64-linux-gnu/sys/types.h" 2 3 4
 
 
-# 1 "/usr/include/aarch64-linux-gnu/sys/select.h" 1 3 4
-# 30 "/usr/include/aarch64-linux-gnu/sys/select.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/select.h" 1 3 4
-# 31 "/usr/include/aarch64-linux-gnu/sys/select.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/sys/select.h" 1 3 4
+# 30 "/usr/include/x86_64-linux-gnu/sys/select.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/select.h" 1 3 4
+# 22 "/usr/include/x86_64-linux-gnu/bits/select.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/wordsize.h" 1 3 4
+# 23 "/usr/include/x86_64-linux-gnu/bits/select.h" 2 3 4
+# 31 "/usr/include/x86_64-linux-gnu/sys/select.h" 2 3 4
 
 
-# 1 "/usr/include/aarch64-linux-gnu/bits/types/sigset_t.h" 1 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/sigset_t.h" 1 3 4
 
 
 
-# 1 "/usr/include/aarch64-linux-gnu/bits/types/__sigset_t.h" 1 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h" 1 3 4
 
 
 
@@ -1776,15 +1731,15 @@ typedef struct
 {
   unsigned long int __val[(1024 / (8 * sizeof (unsigned long int)))];
 } __sigset_t;
-# 5 "/usr/include/aarch64-linux-gnu/bits/types/sigset_t.h" 2 3 4
+# 5 "/usr/include/x86_64-linux-gnu/bits/types/sigset_t.h" 2 3 4
 
 
 typedef __sigset_t sigset_t;
-# 34 "/usr/include/aarch64-linux-gnu/sys/select.h" 2 3 4
+# 34 "/usr/include/x86_64-linux-gnu/sys/select.h" 2 3 4
 
 
 
-# 1 "/usr/include/aarch64-linux-gnu/bits/types/struct_timeval.h" 1 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/struct_timeval.h" 1 3 4
 
 
 
@@ -1794,35 +1749,26 @@ typedef __sigset_t sigset_t;
 
 struct timeval
 {
-
-
-
-
   __time_t tv_sec;
   __suseconds_t tv_usec;
-
 };
-# 38 "/usr/include/aarch64-linux-gnu/sys/select.h" 2 3 4
+# 38 "/usr/include/x86_64-linux-gnu/sys/select.h" 2 3 4
 
-# 1 "/usr/include/aarch64-linux-gnu/bits/types/struct_timespec.h" 1 3 4
-# 11 "/usr/include/aarch64-linux-gnu/bits/types/struct_timespec.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h" 1 3 4
+# 10 "/usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h" 3 4
 struct timespec
 {
-
-
-
   __time_t tv_sec;
-
 
 
 
   __syscall_slong_t tv_nsec;
-# 31 "/usr/include/aarch64-linux-gnu/bits/types/struct_timespec.h" 3 4
+# 26 "/usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h" 3 4
 };
-# 40 "/usr/include/aarch64-linux-gnu/sys/select.h" 2 3 4
-# 49 "/usr/include/aarch64-linux-gnu/sys/select.h" 3 4
+# 40 "/usr/include/x86_64-linux-gnu/sys/select.h" 2 3 4
+# 49 "/usr/include/x86_64-linux-gnu/sys/select.h" 3 4
 typedef long int __fd_mask;
-# 59 "/usr/include/aarch64-linux-gnu/sys/select.h" 3 4
+# 59 "/usr/include/x86_64-linux-gnu/sys/select.h" 3 4
 typedef struct
   {
 
@@ -1842,22 +1788,22 @@ typedef struct
 
 
 typedef __fd_mask fd_mask;
-# 91 "/usr/include/aarch64-linux-gnu/sys/select.h" 3 4
+# 91 "/usr/include/x86_64-linux-gnu/sys/select.h" 3 4
 
-# 102 "/usr/include/aarch64-linux-gnu/sys/select.h" 3 4
+# 101 "/usr/include/x86_64-linux-gnu/sys/select.h" 3 4
 extern int select (int __nfds, fd_set *restrict __readfds,
      fd_set *restrict __writefds,
      fd_set *restrict __exceptfds,
      struct timeval *restrict __timeout);
-# 127 "/usr/include/aarch64-linux-gnu/sys/select.h" 3 4
+# 113 "/usr/include/x86_64-linux-gnu/sys/select.h" 3 4
 extern int pselect (int __nfds, fd_set *restrict __readfds,
       fd_set *restrict __writefds,
       fd_set *restrict __exceptfds,
       const struct timespec *restrict __timeout,
       const __sigset_t *restrict __sigmask);
-# 153 "/usr/include/aarch64-linux-gnu/sys/select.h" 3 4
+# 126 "/usr/include/x86_64-linux-gnu/sys/select.h" 3 4
 
-# 180 "/usr/include/aarch64-linux-gnu/sys/types.h" 2 3 4
+# 180 "/usr/include/x86_64-linux-gnu/sys/types.h" 2 3 4
 
 
 
@@ -1879,7 +1825,7 @@ typedef __fsblkcnt_t fsblkcnt_t;
 
 
 typedef __fsfilcnt_t fsfilcnt_t;
-# 219 "/usr/include/aarch64-linux-gnu/sys/types.h" 3 4
+# 219 "/usr/include/x86_64-linux-gnu/sys/types.h" 3 4
 typedef __blkcnt64_t blkcnt64_t;
 typedef __fsblkcnt64_t fsblkcnt64_t;
 typedef __fsfilcnt64_t fsfilcnt64_t;
@@ -1888,25 +1834,15 @@ typedef __fsfilcnt64_t fsfilcnt64_t;
 
 
 
-# 1 "/usr/include/aarch64-linux-gnu/bits/pthreadtypes.h" 1 3 4
-# 23 "/usr/include/aarch64-linux-gnu/bits/pthreadtypes.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/thread-shared-types.h" 1 3 4
-# 44 "/usr/include/aarch64-linux-gnu/bits/thread-shared-types.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/pthreadtypes-arch.h" 1 3 4
-# 45 "/usr/include/aarch64-linux-gnu/bits/thread-shared-types.h" 2 3 4
-
-# 1 "/usr/include/aarch64-linux-gnu/bits/atomic_wide_counter.h" 1 3 4
-# 25 "/usr/include/aarch64-linux-gnu/bits/atomic_wide_counter.h" 3 4
-typedef union
-{
-  unsigned long long int __value64;
-  struct
-  {
-    unsigned int __low;
-    unsigned int __high;
-  } __value32;
-} __atomic_wide_counter;
-# 47 "/usr/include/aarch64-linux-gnu/bits/thread-shared-types.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/pthreadtypes.h" 1 3 4
+# 23 "/usr/include/x86_64-linux-gnu/bits/pthreadtypes.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/thread-shared-types.h" 1 3 4
+# 44 "/usr/include/x86_64-linux-gnu/bits/thread-shared-types.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h" 1 3 4
+# 21 "/usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/wordsize.h" 1 3 4
+# 22 "/usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h" 2 3 4
+# 45 "/usr/include/x86_64-linux-gnu/bits/thread-shared-types.h" 2 3 4
 
 
 
@@ -1921,30 +1857,30 @@ typedef struct __pthread_internal_slist
 {
   struct __pthread_internal_slist *__next;
 } __pthread_slist_t;
-# 76 "/usr/include/aarch64-linux-gnu/bits/thread-shared-types.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/struct_mutex.h" 1 3 4
-# 27 "/usr/include/aarch64-linux-gnu/bits/struct_mutex.h" 3 4
+# 74 "/usr/include/x86_64-linux-gnu/bits/thread-shared-types.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/struct_mutex.h" 1 3 4
+# 22 "/usr/include/x86_64-linux-gnu/bits/struct_mutex.h" 3 4
 struct __pthread_mutex_s
 {
-  int __lock ;
+  int __lock;
   unsigned int __count;
   int __owner;
 
   unsigned int __nusers;
-# 58 "/usr/include/aarch64-linux-gnu/bits/struct_mutex.h" 3 4
+
+
+
   int __kind;
 
-
-
-
-  int __spins;
+  short __spins;
+  short __elision;
   __pthread_list_t __list;
-# 74 "/usr/include/aarch64-linux-gnu/bits/struct_mutex.h" 3 4
+# 53 "/usr/include/x86_64-linux-gnu/bits/struct_mutex.h" 3 4
 };
-# 77 "/usr/include/aarch64-linux-gnu/bits/thread-shared-types.h" 2 3 4
-# 89 "/usr/include/aarch64-linux-gnu/bits/thread-shared-types.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/struct_rwlock.h" 1 3 4
-# 23 "/usr/include/aarch64-linux-gnu/bits/struct_rwlock.h" 3 4
+# 75 "/usr/include/x86_64-linux-gnu/bits/thread-shared-types.h" 2 3 4
+# 87 "/usr/include/x86_64-linux-gnu/bits/thread-shared-types.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/struct_rwlock.h" 1 3 4
+# 23 "/usr/include/x86_64-linux-gnu/bits/struct_rwlock.h" 3 4
 struct __pthread_rwlock_arch_t
 {
   unsigned int __readers;
@@ -1953,36 +1889,55 @@ struct __pthread_rwlock_arch_t
   unsigned int __writers_futex;
   unsigned int __pad3;
   unsigned int __pad4;
+
   int __cur_writer;
   int __shared;
-  unsigned long int __pad1;
+  signed char __rwelision;
+
+
+
+
+  unsigned char __pad1[7];
+
+
   unsigned long int __pad2;
+
+
   unsigned int __flags;
+# 55 "/usr/include/x86_64-linux-gnu/bits/struct_rwlock.h" 3 4
 };
-# 90 "/usr/include/aarch64-linux-gnu/bits/thread-shared-types.h" 2 3 4
+# 88 "/usr/include/x86_64-linux-gnu/bits/thread-shared-types.h" 2 3 4
 
 
 
 
 struct __pthread_cond_s
 {
-  __atomic_wide_counter __wseq;
-  __atomic_wide_counter __g1_start;
+  union
+  {
+    unsigned long long int __wseq;
+    struct
+    {
+      unsigned int __low;
+      unsigned int __high;
+    } __wseq32;
+  };
+  union
+  {
+    unsigned long long int __g1_start;
+    struct
+    {
+      unsigned int __low;
+      unsigned int __high;
+    } __g1_start32;
+  };
   unsigned int __g_refs[2] ;
   unsigned int __g_size[2];
   unsigned int __g1_orig_size;
   unsigned int __wrefs;
   unsigned int __g_signals[2];
 };
-
-typedef unsigned int __tss_t;
-typedef unsigned long int __thrd_t;
-
-typedef struct
-{
-  int __data ;
-} __once_flag;
-# 24 "/usr/include/aarch64-linux-gnu/bits/pthreadtypes.h" 2 3 4
+# 24 "/usr/include/x86_64-linux-gnu/bits/pthreadtypes.h" 2 3 4
 
 
 
@@ -1993,7 +1948,7 @@ typedef unsigned long int pthread_t;
 
 typedef union
 {
-  char __size[8];
+  char __size[4];
   int __align;
 } pthread_mutexattr_t;
 
@@ -2002,7 +1957,7 @@ typedef union
 
 typedef union
 {
-  char __size[8];
+  char __size[4];
   int __align;
 } pthread_condattr_t;
 
@@ -2017,7 +1972,7 @@ typedef int pthread_once_t;
 
 union pthread_attr_t
 {
-  char __size[64];
+  char __size[56];
   long int __align;
 };
 
@@ -2029,7 +1984,7 @@ typedef union pthread_attr_t pthread_attr_t;
 typedef union
 {
   struct __pthread_mutex_s __data;
-  char __size[48];
+  char __size[40];
   long int __align;
 } pthread_mutex_t;
 
@@ -2075,14 +2030,14 @@ typedef union
 
 typedef union
 {
-  char __size[8];
+  char __size[4];
   int __align;
 } pthread_barrierattr_t;
-# 228 "/usr/include/aarch64-linux-gnu/sys/types.h" 2 3 4
+# 228 "/usr/include/x86_64-linux-gnu/sys/types.h" 2 3 4
 
 
 
-# 396 "/usr/include/stdlib.h" 2 3 4
+# 395 "/usr/include/stdlib.h" 2 3 4
 
 
 
@@ -2225,19 +2180,6 @@ extern int lcong48_r (unsigned short int __param[7],
      ;
 
 
-extern __uint32_t arc4random (void)
-     ;
-
-
-extern void arc4random_buf (void *__buf, size_t __size)
-     ;
-
-
-
-extern __uint32_t arc4random_uniform (__uint32_t __upper_bound)
-     ;
-
-
 
 
 extern void *malloc (size_t __size)
@@ -2255,9 +2197,6 @@ extern void *realloc (void *__ptr, size_t __size)
      ;
 
 
-extern void free (void *__ptr) ;
-
-
 
 
 
@@ -2265,18 +2204,16 @@ extern void free (void *__ptr) ;
 
 extern void *reallocarray (void *__ptr, size_t __nmemb, size_t __size)
     
-    
-    ;
-
-
-extern void *reallocarray (void *__ptr, size_t __nmemb, size_t __size)
      ;
 
 
 
+extern void free (void *__ptr) ;
+
+
 # 1 "/usr/include/alloca.h" 1 3 4
 # 24 "/usr/include/alloca.h" 3 4
-# 1 "/usr/lib/gcc/aarch64-linux-gnu/12/include/stddef.h" 1 3 4
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/9/include/stddef.h" 1 3 4
 # 25 "/usr/include/alloca.h" 2 3 4
 
 
@@ -2292,7 +2229,7 @@ extern void *alloca (size_t __size) ;
 
 
 
-# 588 "/usr/include/stdlib.h" 2 3 4
+# 569 "/usr/include/stdlib.h" 2 3 4
 
 
 
@@ -2311,7 +2248,6 @@ extern int posix_memalign (void **__memptr, size_t __alignment, size_t __size)
 
 
 extern void *aligned_alloc (size_t __alignment, size_t __size)
-    
      ;
 
 
@@ -2390,30 +2326,30 @@ extern int unsetenv (const char *__name) ;
 
 
 extern int clearenv (void) ;
-# 695 "/usr/include/stdlib.h" 3 4
+# 675 "/usr/include/stdlib.h" 3 4
 extern char *mktemp (char *__template) ;
-# 708 "/usr/include/stdlib.h" 3 4
+# 688 "/usr/include/stdlib.h" 3 4
 extern int mkstemp (char *__template) ;
-# 718 "/usr/include/stdlib.h" 3 4
+# 698 "/usr/include/stdlib.h" 3 4
 extern int mkstemp64 (char *__template) ;
-# 730 "/usr/include/stdlib.h" 3 4
+# 710 "/usr/include/stdlib.h" 3 4
 extern int mkstemps (char *__template, int __suffixlen) ;
-# 740 "/usr/include/stdlib.h" 3 4
+# 720 "/usr/include/stdlib.h" 3 4
 extern int mkstemps64 (char *__template, int __suffixlen)
      ;
-# 751 "/usr/include/stdlib.h" 3 4
+# 731 "/usr/include/stdlib.h" 3 4
 extern char *mkdtemp (char *__template) ;
-# 762 "/usr/include/stdlib.h" 3 4
+# 742 "/usr/include/stdlib.h" 3 4
 extern int mkostemp (char *__template, int __flags) ;
-# 772 "/usr/include/stdlib.h" 3 4
+# 752 "/usr/include/stdlib.h" 3 4
 extern int mkostemp64 (char *__template, int __flags) ;
-# 782 "/usr/include/stdlib.h" 3 4
+# 762 "/usr/include/stdlib.h" 3 4
 extern int mkostemps (char *__template, int __suffixlen, int __flags)
      ;
-# 794 "/usr/include/stdlib.h" 3 4
+# 774 "/usr/include/stdlib.h" 3 4
 extern int mkostemps64 (char *__template, int __suffixlen, int __flags)
      ;
-# 804 "/usr/include/stdlib.h" 3 4
+# 784 "/usr/include/stdlib.h" 3 4
 extern int system (const char *__command) ;
 
 
@@ -2421,9 +2357,8 @@ extern int system (const char *__command) ;
 
 
 extern char *canonicalize_file_name (const char *__name)
-    
      ;
-# 821 "/usr/include/stdlib.h" 3 4
+# 800 "/usr/include/stdlib.h" 3 4
 extern char *realpath (const char *restrict __name,
          char *restrict __resolved) ;
 
@@ -2485,7 +2420,7 @@ extern ldiv_t ldiv (long int __numer, long int __denom)
  extern lldiv_t lldiv (long long int __numer,
         long long int __denom)
      ;
-# 893 "/usr/include/stdlib.h" 3 4
+# 872 "/usr/include/stdlib.h" 3 4
 extern char *ecvt (double __value, int __ndigit, int *restrict __decpt,
      int *restrict __sign) ;
 
@@ -2548,14 +2483,12 @@ extern int wctomb (char *__s, wchar_t __wchar) ;
 
 
 extern size_t mbstowcs (wchar_t *restrict __pwcs,
-   const char *restrict __s, size_t __n)
-    ;
+   const char *restrict __s, size_t __n) ;
 
 extern size_t wcstombs (char *restrict __s,
    const wchar_t *restrict __pwcs, size_t __n)
-    
- 
-  ;
+     ;
+
 
 
 
@@ -2563,7 +2496,7 @@ extern size_t wcstombs (char *restrict __s,
 
 
 extern int rpmatch (const char *__response) ;
-# 980 "/usr/include/stdlib.h" 3 4
+# 957 "/usr/include/stdlib.h" 3 4
 extern int getsubopt (char **restrict __optionp,
         char *const *restrict __tokens,
         char **restrict __valuep)
@@ -2612,10 +2545,10 @@ extern int getpt (void);
 
 extern int getloadavg (double __loadavg[], int __nelem)
      ;
-# 1036 "/usr/include/stdlib.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/stdlib-float.h" 1 3 4
-# 1037 "/usr/include/stdlib.h" 2 3 4
-# 1048 "/usr/include/stdlib.h" 3 4
+# 1013 "/usr/include/stdlib.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/stdlib-float.h" 1 3 4
+# 1014 "/usr/include/stdlib.h" 2 3 4
+# 1023 "/usr/include/stdlib.h" 3 4
 
 # 20 "./comelang2.h" 2
 # 1 "/usr/include/libgen.h" 1 3 4
@@ -2636,59 +2569,52 @@ extern char *__xpg_basename (char *__path) ;
 
 
 # 21 "./comelang2.h" 2
-# 1 "/usr/lib/gcc/aarch64-linux-gnu/12/include/limits.h" 1 3 4
-# 34 "/usr/lib/gcc/aarch64-linux-gnu/12/include/limits.h" 3 4
-# 1 "/usr/lib/gcc/aarch64-linux-gnu/12/include/syslimits.h" 1 3 4
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/9/include/limits.h" 1 3 4
+# 34 "/usr/lib/gcc/x86_64-linux-gnu/9/include/limits.h" 3 4
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/9/include/syslimits.h" 1 3 4
 
 
 
 
 
 
-# 1 "/usr/lib/gcc/aarch64-linux-gnu/12/include/limits.h" 1 3 4
-# 203 "/usr/lib/gcc/aarch64-linux-gnu/12/include/limits.h" 3 4
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/9/include/limits.h" 1 3 4
+# 194 "/usr/lib/gcc/x86_64-linux-gnu/9/include/limits.h" 3 4
 # 1 "/usr/include/limits.h" 1 3 4
 # 26 "/usr/include/limits.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/libc-header-start.h" 1 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/libc-header-start.h" 1 3 4
 # 27 "/usr/include/limits.h" 2 3 4
 # 45 "/usr/include/limits.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/wordsize.h" 1 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/wordsize.h" 1 3 4
 # 46 "/usr/include/limits.h" 2 3 4
-# 195 "/usr/include/limits.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/posix1_lim.h" 1 3 4
-# 27 "/usr/include/aarch64-linux-gnu/bits/posix1_lim.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/wordsize.h" 1 3 4
-# 28 "/usr/include/aarch64-linux-gnu/bits/posix1_lim.h" 2 3 4
-# 161 "/usr/include/aarch64-linux-gnu/bits/posix1_lim.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/local_lim.h" 1 3 4
-# 38 "/usr/include/aarch64-linux-gnu/bits/local_lim.h" 3 4
+# 183 "/usr/include/limits.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/posix1_lim.h" 1 3 4
+# 27 "/usr/include/x86_64-linux-gnu/bits/posix1_lim.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/wordsize.h" 1 3 4
+# 28 "/usr/include/x86_64-linux-gnu/bits/posix1_lim.h" 2 3 4
+# 161 "/usr/include/x86_64-linux-gnu/bits/posix1_lim.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/local_lim.h" 1 3 4
+# 38 "/usr/include/x86_64-linux-gnu/bits/local_lim.h" 3 4
 # 1 "/usr/include/linux/limits.h" 1 3 4
-# 39 "/usr/include/aarch64-linux-gnu/bits/local_lim.h" 2 3 4
-# 81 "/usr/include/aarch64-linux-gnu/bits/local_lim.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/pthread_stack_min-dynamic.h" 1 3 4
-# 23 "/usr/include/aarch64-linux-gnu/bits/pthread_stack_min-dynamic.h" 3 4
-
-extern long int __sysconf (int __name) ;
-
-# 82 "/usr/include/aarch64-linux-gnu/bits/local_lim.h" 2 3 4
-# 162 "/usr/include/aarch64-linux-gnu/bits/posix1_lim.h" 2 3 4
-# 196 "/usr/include/limits.h" 2 3 4
+# 39 "/usr/include/x86_64-linux-gnu/bits/local_lim.h" 2 3 4
+# 162 "/usr/include/x86_64-linux-gnu/bits/posix1_lim.h" 2 3 4
+# 184 "/usr/include/limits.h" 2 3 4
 
 
 
-# 1 "/usr/include/aarch64-linux-gnu/bits/posix2_lim.h" 1 3 4
-# 200 "/usr/include/limits.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/posix2_lim.h" 1 3 4
+# 188 "/usr/include/limits.h" 2 3 4
 
 
 
-# 1 "/usr/include/aarch64-linux-gnu/bits/xopen_lim.h" 1 3 4
-# 64 "/usr/include/aarch64-linux-gnu/bits/xopen_lim.h" 3 4
-# 1 "/usr/include/aarch64-linux-gnu/bits/uio_lim.h" 1 3 4
-# 65 "/usr/include/aarch64-linux-gnu/bits/xopen_lim.h" 2 3 4
-# 204 "/usr/include/limits.h" 2 3 4
-# 204 "/usr/lib/gcc/aarch64-linux-gnu/12/include/limits.h" 2 3 4
-# 8 "/usr/lib/gcc/aarch64-linux-gnu/12/include/syslimits.h" 2 3 4
-# 35 "/usr/lib/gcc/aarch64-linux-gnu/12/include/limits.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/xopen_lim.h" 1 3 4
+# 64 "/usr/include/x86_64-linux-gnu/bits/xopen_lim.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/uio_lim.h" 1 3 4
+# 65 "/usr/include/x86_64-linux-gnu/bits/xopen_lim.h" 2 3 4
+# 192 "/usr/include/limits.h" 2 3 4
+# 195 "/usr/lib/gcc/x86_64-linux-gnu/9/include/limits.h" 2 3 4
+# 8 "/usr/lib/gcc/x86_64-linux-gnu/9/include/syslimits.h" 2 3 4
+# 35 "/usr/lib/gcc/x86_64-linux-gnu/9/include/limits.h" 2 3 4
 # 22 "./comelang2.h" 2
 
 
@@ -3147,6 +3073,19 @@ impl list <T>
         self.tail = null;
 
         self.len = 0;
+    }
+    void remove(list<T>* self, T item) {
+        int it2 = 0;
+        list_item<T>* it = self.head;
+        while(it != null) {
+            if(it.item.equals(item)) {
+                self.delete(it2, it2+1);
+                break;
+            }
+            it2++;
+
+            it = it.next;
+        }
     }
     void delete(list<T>* self, int head, int tail)
     {
@@ -3661,9 +3600,9 @@ impl map <T, T2>
                     }
                     else if(n == hash) {
                         fprintf(
-# 966 "./comelang2.h" 3 4
+# 979 "./comelang2.h" 3 4
                                stderr
-# 966 "./comelang2.h"
+# 979 "./comelang2.h"
                                      , "unexpected error in map.rehash(1)\n");
                         exit(2);
                     }
@@ -3705,10 +3644,12 @@ impl map <T, T2>
                 if(self.keys[it].equals(key))
                 {
                     if(isheap(T)) {
+                        self.key_list.remove(self.keys[it]);
                         delete borrow self.keys[it];
                         self.keys[it] = borrow gc_inc(key);
                     }
                     else {
+                        self.key_list.remove(self.keys[it]);
                         self.keys[it] = borrow key;
                     }
                     if(isheap(T2)) {
@@ -3728,9 +3669,9 @@ impl map <T, T2>
                 }
                 else if(it == hash) {
                     fprintf(
-# 1029 "./comelang2.h" 3 4
+# 1044 "./comelang2.h" 3 4
                            stderr
-# 1029 "./comelang2.h"
+# 1044 "./comelang2.h"
                                  , "unexpected error in map.insert\n");
                     exit(2);
                 }
@@ -3782,9 +3723,11 @@ impl map <T, T2>
                 {
                     if(isheap(T)) {
                         delete borrow self.keys[it];
+                        self.key_list.remove(self.keys[it]);
                         self.keys[it] = borrow gc_inc(key);
                     }
                     else {
+                        self.key_list.remove(self.keys[it]);
                         self.keys[it] = borrow key;
                     }
                     if(isheap(T2)) {
@@ -3804,9 +3747,9 @@ impl map <T, T2>
                 }
                 else if(it == hash) {
                     fprintf(
-# 1101 "./comelang2.h" 3 4
+# 1118 "./comelang2.h" 3 4
                            stderr
-# 1101 "./comelang2.h"
+# 1118 "./comelang2.h"
                                  , "unexpected error in map.insert\n");
                     exit(2);
                 }
@@ -4288,35 +4231,35 @@ static inline string xsprintf(char* msg, ...)
 {
     va_list args;
     
-# 1581 "./comelang2.h" 3 4
+# 1598 "./comelang2.h" 3 4
    __builtin_va_start(
-# 1581 "./comelang2.h"
+# 1598 "./comelang2.h"
    args
-# 1581 "./comelang2.h" 3 4
+# 1598 "./comelang2.h" 3 4
    ,
-# 1581 "./comelang2.h"
+# 1598 "./comelang2.h"
    msg
-# 1581 "./comelang2.h" 3 4
+# 1598 "./comelang2.h" 3 4
    )
-# 1581 "./comelang2.h"
+# 1598 "./comelang2.h"
                       ;
     char* result;
     int len = vasprintf(&result, msg, args);
     
-# 1584 "./comelang2.h" 3 4
+# 1601 "./comelang2.h" 3 4
    __builtin_va_end(
-# 1584 "./comelang2.h"
+# 1601 "./comelang2.h"
    args
-# 1584 "./comelang2.h" 3 4
+# 1601 "./comelang2.h" 3 4
    )
-# 1584 "./comelang2.h"
+# 1601 "./comelang2.h"
                ;
 
     if(len < 0) {
         fprintf(
-# 1587 "./comelang2.h" 3 4
+# 1604 "./comelang2.h" 3 4
                stderr
-# 1587 "./comelang2.h"
+# 1604 "./comelang2.h"
                      , "vasprintf can't get heap memory.(msg %s)\n", msg);
         exit(2);
     }
@@ -4339,23 +4282,23 @@ static inline string FILE*::read(FILE* f)
 
     while(1) {
         char buf2[
-# 1608 "./comelang2.h" 3 4
+# 1625 "./comelang2.h" 3 4
                  8192
-# 1608 "./comelang2.h"
+# 1625 "./comelang2.h"
                        ];
 
         int size = fread(buf2, 1, 
-# 1610 "./comelang2.h" 3 4
+# 1627 "./comelang2.h" 3 4
                                  8192
-# 1610 "./comelang2.h"
+# 1627 "./comelang2.h"
                                        , f);
 
         buf.append(buf2, size);
 
         if(size < 
-# 1614 "./comelang2.h" 3 4
+# 1631 "./comelang2.h" 3 4
                  8192
-# 1614 "./comelang2.h"
+# 1631 "./comelang2.h"
                        ) {
             break;
         }
@@ -4370,27 +4313,27 @@ static inline FILE* FILE*::fprintf(FILE* f, const char* msg, ...)
 
     va_list args;
     
-# 1627 "./comelang2.h" 3 4
+# 1644 "./comelang2.h" 3 4
    __builtin_va_start(
-# 1627 "./comelang2.h"
+# 1644 "./comelang2.h"
    args
-# 1627 "./comelang2.h" 3 4
+# 1644 "./comelang2.h" 3 4
    ,
-# 1627 "./comelang2.h"
+# 1644 "./comelang2.h"
    msg
-# 1627 "./comelang2.h" 3 4
+# 1644 "./comelang2.h" 3 4
    )
-# 1627 "./comelang2.h"
+# 1644 "./comelang2.h"
                       ;
     vsnprintf(msg2, 1024, msg, args);
     
-# 1629 "./comelang2.h" 3 4
+# 1646 "./comelang2.h" 3 4
    __builtin_va_end(
-# 1629 "./comelang2.h"
+# 1646 "./comelang2.h"
    args
-# 1629 "./comelang2.h" 3 4
+# 1646 "./comelang2.h" 3 4
    )
-# 1629 "./comelang2.h"
+# 1646 "./comelang2.h"
                ;
 
     (void)fprintf(f, "%s", msg2);
@@ -4726,9 +4669,9 @@ static inline string string::read(char* file_name)
     FILE* f = fopen(file_name, "r");
 
     if(f == 
-# 1963 "./comelang2.h" 3 4
+# 1980 "./comelang2.h" 3 4
            ((void *)0)
-# 1963 "./comelang2.h"
+# 1980 "./comelang2.h"
                ) {
         return string("");
     }
@@ -4745,9 +4688,9 @@ static inline string char*::read(char* file_name)
     FILE* f = fopen(file_name, "r");
 
     if(f == 
-# 1978 "./comelang2.h" 3 4
+# 1995 "./comelang2.h" 3 4
            ((void *)0)
-# 1978 "./comelang2.h"
+# 1995 "./comelang2.h"
                ) {
         return string("");
     }
@@ -4785,19 +4728,19 @@ static inline list<string>*% FILE*::readlines(FILE* f)
 
     while(1) {
         char buf[
-# 2014 "./comelang2.h" 3 4
+# 2031 "./comelang2.h" 3 4
                 8192
-# 2014 "./comelang2.h"
+# 2031 "./comelang2.h"
                       ];
 
         if(fgets(buf, 
-# 2016 "./comelang2.h" 3 4
+# 2033 "./comelang2.h" 3 4
                      8192
-# 2016 "./comelang2.h"
+# 2033 "./comelang2.h"
                            , f) == 
-# 2016 "./comelang2.h" 3 4
+# 2033 "./comelang2.h" 3 4
                                    ((void *)0)
-# 2016 "./comelang2.h"
+# 2033 "./comelang2.h"
                                        ) {
             break;
         }
@@ -4814,23 +4757,23 @@ static inline string FILE*::read(FILE* f)
 
     while(1) {
         char buf2[
-# 2031 "./comelang2.h" 3 4
+# 2048 "./comelang2.h" 3 4
                  8192
-# 2031 "./comelang2.h"
+# 2048 "./comelang2.h"
                        ];
 
         int size = fread(buf2, 1, 
-# 2033 "./comelang2.h" 3 4
+# 2050 "./comelang2.h" 3 4
                                  8192
-# 2033 "./comelang2.h"
+# 2050 "./comelang2.h"
                                        , f);
 
         buf.append(buf2, size);
 
         if(size < 
-# 2037 "./comelang2.h" 3 4
+# 2054 "./comelang2.h" 3 4
                  8192
-# 2037 "./comelang2.h"
+# 2054 "./comelang2.h"
                        ) {
             break;
         }
@@ -4845,27 +4788,27 @@ static inline FILE* FILE*::fprintf(FILE* f, const char* msg, ...)
 
     va_list args;
     
-# 2050 "./comelang2.h" 3 4
+# 2067 "./comelang2.h" 3 4
    __builtin_va_start(
-# 2050 "./comelang2.h"
+# 2067 "./comelang2.h"
    args
-# 2050 "./comelang2.h" 3 4
+# 2067 "./comelang2.h" 3 4
    ,
-# 2050 "./comelang2.h"
+# 2067 "./comelang2.h"
    msg
-# 2050 "./comelang2.h" 3 4
+# 2067 "./comelang2.h" 3 4
    )
-# 2050 "./comelang2.h"
+# 2067 "./comelang2.h"
                       ;
     vsnprintf(msg2, 1024, msg, args);
     
-# 2052 "./comelang2.h" 3 4
+# 2069 "./comelang2.h" 3 4
    __builtin_va_end(
-# 2052 "./comelang2.h"
+# 2069 "./comelang2.h"
    args
-# 2052 "./comelang2.h" 3 4
+# 2069 "./comelang2.h" 3 4
    )
-# 2052 "./comelang2.h"
+# 2069 "./comelang2.h"
                ;
 
     (void)fprintf(f, "%s", msg2);

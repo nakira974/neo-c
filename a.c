@@ -1,11 +1,2 @@
-union sData
-{
-    int a;
-    double b;
-};
 
-struct sData2
-{
-    int a;
-    double b;
-};
+int fun(int x, int y);

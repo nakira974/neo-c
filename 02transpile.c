@@ -3,6 +3,7 @@
 
 bool gComelang;
 bool gGC;
+char* gProgramName = NULL;
 
 void come_init() version 2
 {
@@ -142,6 +143,15 @@ static bool linker(sInfo* info, list<string>* object_files)
     foreach(it, object_files) {
         command.append_str(xsprintf("%s ", it));
     }
+    
+#ifndef COMPILING_LIBRARY
+    if(gProgramName === "comelang2") {
+        command.append_str("-lcomelang2 ");
+    }
+    else {
+        command.append_str("-lcomelang2-sh ");
+    }
+#endif
     
     puts(command.to_string());
     int rc = system(command.to_string());
@@ -344,6 +354,8 @@ void init_module(sInfo* info)
                 
 int come_main(int argc, char** argv) version 2
 {
+    gProgramName = argv[0];
+    
     var clang_option = new buffer();
     var files = new list<string>();
     var object_files = new list<string>();

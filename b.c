@@ -1,12 +1,17 @@
-#include "common.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct sData
+{
+    int a;
+    int b;
+};
 
 int main(int argc, char** argv)
 {
-    string a = string("ABC");
-    
-    if(a.equals("ABC")) {
-        puts("AAA");
-    }
+    struct sData* a;
+    memset(&a, 0, sizeof(struct sData*));
     
     return 0;
 }

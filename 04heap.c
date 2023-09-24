@@ -175,6 +175,7 @@ void remove_object_from_right_values(int right_value_num, sInfo* info)
 
 string increment_ref_count_object(sType* type, char* obj, sInfo* info)
 {
+/*
     sClass* klass = type->mClass;
     
     string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
@@ -185,6 +186,24 @@ string increment_ref_count_object(sType* type, char* obj, sInfo* info)
         string inf_c_value = xsprintf("_inf_valueX%d", inf_num);
         add_come_code(info, xsprintf("%s=(%s)come_increment_ref_count(%s);\n", inf_c_value, type_name, obj));
         add_come_code(info, xsprintf("come_increment_ref_count(((%s)%s)->_protocol_obj);\n", type_name, obj));
+        return xsprintf("%s", inf_c_value);
+    }
+    
+    return xsprintf("(%s)come_increment_ref_count(%s)", type_name, obj);
+*/
+    sClass* klass = type->mClass;
+    
+    string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
+    if(klass->mProtocol && type->mPointerNum == 1) {
+        static int inf_num = 0;
+        string buf = xsprintf("%s* _inf_valueX%d;\n", type_name, ++inf_num);
+        add_come_code_at_function_head(info, buf);
+        string inf_c_value = xsprintf("_inf_valueX%d", inf_num);
+        string name = xsprintf("_inf_valueX_obj%d", inf_num);
+        add_come_code_at_function_head(info, "%s;\n", make_define_var(type, name, info));
+        add_come_code(info, "%s=%s;\n", name, obj);
+        add_come_code(info, xsprintf("%s=(%s)come_increment_ref_count(%s);\n", inf_c_value, type_name, name));
+        add_come_code(info, xsprintf("come_increment_ref_count(((%s)%s)->_protocol_obj);\n", type_name, name));
         return xsprintf("%s", inf_c_value);
     }
     

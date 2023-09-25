@@ -44,6 +44,7 @@ bool sInterfaceNode*::compile(sInterfaceNode* self, sInfo* info)
     
     buf.append_str(xsprintf("struct %s\n{\n", klass.mName));
     
+//    klass= info.classes[klass->mName];
     foreach(it, klass.mFields) {
         var name, type = it;
         

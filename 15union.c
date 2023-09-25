@@ -37,7 +37,8 @@ bool sUnionNode*::compile(sUnionNode* self, sInfo* info)
         
         buf.append_str(xsprintf("union %s\n{\n", type.mClass.mName));
         
-        foreach(it, type.mClass.mFields) {
+        //klass = info.classes[klass->mName];
+        foreach(it, klass.mFields) {
             var name, type = it;
             
             buf.append_str(make_define_var(type, name, info));

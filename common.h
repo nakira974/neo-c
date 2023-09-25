@@ -177,6 +177,7 @@ struct sModule
     buffer*% mSourceHead;
     buffer*% mSource;
     string mLastCode;
+    string mLastCode2;
 };
 
 struct sVarTable;
@@ -299,6 +300,7 @@ void add_come_code_at_function_head2(sInfo* info, char* code, ...);
 void add_come_code_at_source_head(sInfo* info, const char* msg, ...);
 void add_come_code(sInfo* info, const char* msg, ...);
 void add_come_last_code(sInfo* info, const char* msg, ...);
+void add_come_last_code2(sInfo* info, const char* msg, ...);
 void add_last_code_to_source_without_semicolon(sInfo* info);
 void dec_stack_ptr(int value, sInfo* info);
 CVALUE*% get_value_from_stack(int offset, sInfo* info);

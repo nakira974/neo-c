@@ -200,12 +200,19 @@ void decrement_ref_count_object(sType* type, char* obj, sInfo* info)
 {
     sClass* klass = type->mClass;
     
+    static int dec_num = 0;
+    
+    string name = xsprintf("__dec_obj%d", ++dec_num);
+    add_come_code_at_function_head(info, "%s;\n", make_define_var(type, name, info));
+    
+    add_come_code(info, "%s=%s;\n", name, obj);
+    
     if(klass->mProtocol && type->mPointerNum == 1) {
         string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
-        add_come_code(info, xsprintf("if(%s) { %s = come_decrement_ref_count(%s, ((%s)%s)->finalize, ((%s)%s)->_protocol_obj, 0,0); }\n", obj, obj, obj, type_name, obj, type_name, obj));
+        add_come_last_code2(info, xsprintf("if(%s) { %s = come_decrement_ref_count(%s, ((%s)%s)->finalize, ((%s)%s)->_protocol_obj, 0,0); }\n", name, name, name, type_name, name, type_name, name));
     }
     else {
-        add_come_code(info, xsprintf("if(%s) { %s = come_decrement_ref_count(%s, (void*)0, (void*)0, 0,0); }\n", obj, obj, obj));
+        add_come_last_code2(info, xsprintf("if(%s) { %s = come_decrement_ref_count(%s, (void*)0, (void*)0, 0,0); }\n", name, name, name));
     }
 }
 
@@ -293,6 +300,7 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
         }
         else {
             if(klass->mStruct && type->mPointerNum == 0) {
+                //klass = info.classes[klass->mName];
                 foreach(it, klass->mFields) {
                     var name, field_type = it;
                     
@@ -303,6 +311,7 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
                 }
             }
             else if(klass->mStruct && type->mPointerNum == 1) {
+                //klass = info.classes[klass->mName];
                 foreach(it, klass->mFields) {
                     var name, field_type = it;
                     

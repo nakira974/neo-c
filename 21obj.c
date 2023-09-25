@@ -197,6 +197,7 @@ bool sImplementsNode*::compile(sImplementsNode* self, sInfo* info)
     create_finalizer_automatically(typeX, "finalize", info);
     create_cloner_automatically(typeX, "clone", info);
     
+    //klass= info.classes[klass->mName];
     for(int i=1; i<klass->mFields.length(); i++) {
         var name, field_type = klass->mFields[i];
         

@@ -161,6 +161,7 @@ bool sStoreFieldNode*::compile(sStoreFieldNode* self, sInfo* info)
     sType*% field_type = null;
     int index = 0;
     string child_field_name = null;
+    klass = info.classes[klass->mName];
     foreach(field, klass->mFields) {
         var field_name, field_type2 = field;
         
@@ -168,27 +169,6 @@ bool sStoreFieldNode*::compile(sStoreFieldNode* self, sInfo* info)
             field_type = clone field_type2;
             break;
         };
-        
-/*
-        /// comelang2 can access child field for anonymous union ///
-        sClass* klass3 = field_type2->mClass;
-        
-        if(klass3->mFields) {
-            foreach(field3, klass3->mFields) {
-                var field_name3, field_type3 = field3;
-                
-                if(field_name3 === name && field_type3->mClass.mName !== field_type2->mClass->mName) {
-                    child_field_name = clone field_name;
-                    field_type = clone field_type3;
-                    break;
-                }
-            }
-        }
-        
-        if(child_field_name != null) {
-            break;
-        }
-*/
         
         index++;
     }
@@ -344,6 +324,7 @@ bool sLoadFieldNode*::compile(sLoadFieldNode* self, sInfo* info)
     sType*% field_type = null;
     int index = 0;
     string child_field_name = null;
+    klass = info.classes[klass->mName];
     foreach(field, klass->mFields) {
         var field_name, field_type2 = field;
         
@@ -351,27 +332,6 @@ bool sLoadFieldNode*::compile(sLoadFieldNode* self, sInfo* info)
             field_type = clone field_type2;
             break;
         }
-        
-/*
-        /// comelang2 can access child field for anonymous union ///
-        sClass* klass3 = field_type2->mClass;
-        
-        if(klass3->mFields) {
-            foreach(field3, klass3->mFields) {
-                var field_name3, field_type3 = field3;
-                
-                if(field_name3 === name && field_type3->mClass.mName !== field_type2->mClass->mName) {
-                    child_field_name = clone field_name;
-                    field_type = clone field_type3;
-                    break;
-                }
-            }
-        }
-        
-        if(child_field_name != null) {
-            break;
-        }
-*/
         
         index++;
     }

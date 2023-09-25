@@ -126,7 +126,7 @@ comelang2-sh: 01main.c.o 02transpile.c.o 03transpile2.c.o 04heap.c.o 05function.
 23interface.c.o: 23interface.c
 	comelang2 -c 23interface.c 
 
-comelang2-install: 
+comelang2-install: libcomelang2.a
 	mkdir -p $(DESTDIR)/bin
 	$(INSTALL) -m 755 ./comelang2 "$(DESTDIR)/bin"
 	mkdir -p $(DESTDIR)/include
@@ -134,11 +134,13 @@ comelang2-install:
 	mkdir -p $(DESTDIR)/lib
 	$(INSTALL) -m 644 ./libcomelang2.a $(DESTDIR)/lib
 
-comelang2: common.h 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 05function2.o 05function3.o 05function4.o 06str.o 07var.o 08if.o 09while.o 10do_while.o 11for.o 12switch.o 13op.o 14struct.o 15union.o 16enum.o 17typedef.o 18field.o 19eq.o 20method.o 21obj.o 22impl.o 23interface.o
-	./comelang -no-gc -o comelang2 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 05function2.o 05function3.o 05function4.o 06str.o 07var.o 08if.o 09while.o 10do_while.o 11for.o 12switch.o 13op.o 14struct.o 15union.o 16enum.o 17typedef.o 18field.o 19eq.o 20method.o 21obj.o 22impl.o 23interface.o
-	mkdir -p "$(DESTDIR)/bin"
+libcomelang2.a: libcomelang2.c
 	./comelang2 -o libcomelang2.c.o -c libcomelang2.c -DCOMPILING_LIBRARY
 	ar r libcomelang2.a libcomelang2.c.o
+
+comelang2: common.h 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 05function2.o 05function3.o 05function4.o 06str.o 07var.o 08if.o 09while.o 10do_while.o 11for.o 12switch.o 13op.o 14struct.o 15union.o 16enum.o 17typedef.o 18field.o 19eq.o 20method.o 21obj.o 22impl.o 23interface.o
+	./comelang -no-gc -o comelang2 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 05function2.o 05function3.o 05function4.o 06str.o 07var.o 08if.o 09while.o 10do_while.o 11for.o 12switch.o 13op.o 14struct.o 15union.o 16enum.o 17typedef.o 18field.o 19eq.o 20method.o 21obj.o 22impl.o 23interface.o
+
 
 01main.o: 01main.c common.h
 	./comelang -no-gc -c 01main.c

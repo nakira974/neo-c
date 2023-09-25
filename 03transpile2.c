@@ -578,6 +578,7 @@ void add_come_code(sInfo* info, const char* msg, ...)
         for(i=0; i<info->block_level; i++) {
             info.come_fun.mSource.append_str("    ");
         }
+        
         info.come_fun.mSource.append_str(xsprintf("%s", msg2));
     }
     else {
@@ -747,6 +748,10 @@ void add_last_code_to_source(sInfo* info)
        add_come_code(info, "%s", info.module.mLastCode);
        info.module.mLastCode = null;
     }
+    if(info.module.mLastCode2) {
+       add_come_code(info, "%s", info.module.mLastCode2);
+       info.module.mLastCode2 = null;
+    }
 }
 
 void add_last_code_to_source_without_semicolon(sInfo* info)
@@ -757,6 +762,10 @@ void add_last_code_to_source_without_semicolon(sInfo* info)
     if(info.module.mLastCode) {
        add_come_code(info, "%s\n", info.module.mLastCode.substring(0,-3));
        info.module.mLastCode = null;
+    }
+    if(info.module.mLastCode2) {
+       add_come_code(info, "%s\n", info.module.mLastCode2.substring(0,-3));
+       info.module.mLastCode2 = null;
     }
 }
 
@@ -775,6 +784,21 @@ void add_come_last_code(sInfo* info, const char* msg, ...)
     info.module.mLastCode = xsprintf("%s", msg2);
 }
 
+void add_come_last_code2(sInfo* info, const char* msg, ...)
+{
+    if(info->no_output_come_code) {
+        return;
+    }
+    char msg2[COME_CODE_MAX];
+
+    va_list args;
+    va_start(args, msg);
+    vsnprintf(msg2, COME_CODE_MAX, msg, args);
+    va_end(args);
+    
+    info.module.mLastCode2 = xsprintf("%s", msg2);
+}
+
 void dec_stack_ptr(int value, sInfo* info)
 {
     info.stack.delete(-value-1, -1);
@@ -783,10 +807,12 @@ void dec_stack_ptr(int value, sInfo* info)
 CVALUE*% get_value_from_stack(int offset, sInfo* info)
 {
     info.module.mLastCode = null;
+    info.module.mLastCode2 = null;
     return clone info.stack[offset];
 }
 
 void transpiler_clear_last_code(sInfo* info)
 {
     info.module.mLastCode = null;
+    info.module.mLastCode2 = null;
 }

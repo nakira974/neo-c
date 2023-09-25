@@ -182,6 +182,7 @@ int transpile_block(sBlock* block, list<sType*%>*? param_types, list<string>*? p
         int i;
         foreach(node, block->mNodes) {
             info.module.mLastCode = null;
+            info.module.mLastCode2 = null;
             
             int stack_num_before = info->stack.length();
             
@@ -952,6 +953,7 @@ sNode*% parse_function(sInfo* info)
     }
     else if(*info->p == '{') {
         sBlock*% block = parse_block(info);
+    
         
         bool static_ = false;
         if(result_type->mStatic) {
@@ -971,12 +973,13 @@ sNode*% parse_function(sInfo* info)
                                 , static_
                                 , header_buf.to_string()
                                 , info);
-        
+    
         var fun2 = info.funcs[string(fun_name)];
         if(fun2 == null || fun2.mExternal) {
     
             info.funcs.insert(clone fun_name, fun);
         }
+    
         
         return new sNode(new sFunNode(fun, info));
     }
@@ -1057,6 +1060,7 @@ sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sInfo* 
         
         source.append_char('{');
         
+        klass = info.classes[klass->mName];
         foreach(it, klass->mFields) {
             var name, field_type = it;
             
@@ -1176,6 +1180,7 @@ sFun*,string create_equals_automatically(sType* type, char* fun_name, sInfo* inf
             source.append_str(source2);
         }
         else {
+            klass = info.classes[klass->mName];
             foreach(it, klass->mFields) {
                 var name, field_type = it;
                 
@@ -1300,6 +1305,7 @@ sFun*,string create_operator_not_equals_automatically(sType* type, char* fun_nam
             source.append_str(source2);
             
             int i = 0;
+            klass = info.classes[klass->mName];
             foreach(it, klass->mFields) {
                 var name, field_type = it;
                 
@@ -1429,6 +1435,7 @@ sFun*,string create_operator_equals_automatically(sType* type, char* fun_name, s
             source.append_str(source2);
         }
         else {
+            klass = info.classes[klass->mName];
             foreach(it, klass->mFields) {
                 var name, field_type = it;
                 
@@ -1541,14 +1548,36 @@ sFun*,string create_cloner_automatically(sType* type, char* fun_name, sInfo* inf
         source.append_char('{');
         source.append_str(xsprintf("var result = new %s;\n", make_type_name_string(type, false@in_header, false@array_cast_pointer, info, true)));
         
+        
         if(klass->mProtocol) {
             char* name = "_protocol_obj";
             char source2[1024];
             snprintf(source2, 1024, "if(self != ((void*)0) && self.%s != ((void*)0) && self.%s != ((void*)0)) { self.%s = clone self.%s; }\n", name, name, name, name);
             
             source.append_str(source2);
+            
+            klass = info.classes[klass->mName];
+            foreach(it, klass->mFields) {
+                var name, field_type = it;
+                
+                if(type->mClass->mName === field_type->mClass->mName && type->mPointerNum == field_type->mPointerNum && field_type->mHeap)
+                {
+                    err_msg(info, "Define recusively the cloner. I recommanded tuple1<%s>*%.\n", type->mClass->mName);
+                    exit(2);
+                }
+                
+                if(name === "_protocol_obj") {
+                }
+                else {
+                    char source2[1024];
+                    snprintf(source2, 1024, "if(self != ((void*)0)) { result.%s = self.%s; }\n", name, name);
+                    
+                    source.append_str(source2);
+                }
+            }
         }
         else {
+            klass = info.classes[klass->mName];
             foreach(it, klass->mFields) {
                 var name, field_type = it;
                 

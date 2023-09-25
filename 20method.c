@@ -213,6 +213,7 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
     
     bool calling_dynamic_method = false;
     sType* lambda_type = null;
+    //klass= info.classes[klass->mName];
     foreach(it, klass.mFields) {
         var field_name, field_type = it;
         

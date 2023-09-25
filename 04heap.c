@@ -178,6 +178,7 @@ string increment_ref_count_object(sType* type, char* obj, sInfo* info)
     sClass* klass = type->mClass;
     
     string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
+/*
     if(klass->mProtocol && type->mPointerNum == 1) {
         static int inf_num = 0;
         string buf = xsprintf("%s* _inf_valueX%d;\n", type_name, ++inf_num);
@@ -190,6 +191,7 @@ string increment_ref_count_object(sType* type, char* obj, sInfo* info)
 //        add_come_code(info, xsprintf("if(%s) { come_increment_ref_count(((%s)%s)->_protocol_obj);}\n", name, type_name, name));
         return xsprintf("%s", inf_c_value);
     }
+*/
     
     return xsprintf("(%s)come_increment_ref_count(%s)", type_name, obj);
 }

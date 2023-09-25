@@ -2,16 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct sData
-{
-    int a;
-    int b;
-};
-
 int main(int argc, char** argv)
 {
-    struct sData* a;
-    memset(&a, 0, sizeof(struct sData*));
+    int a[128];
+    memset(a, 0, sizeof(a));
+    
+    
+    printf("%d\n", a[127]);
     
     return 0;
 }

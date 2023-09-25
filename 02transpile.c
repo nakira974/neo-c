@@ -145,12 +145,12 @@ static bool linker(sInfo* info, list<string>* object_files)
     }
     
 #ifndef COMPILING_LIBRARY
-    if(gProgramName === "comelang2") {
+    //if(gProgramName === "comelang2") {
         command.append_str("-lcomelang2 ");
-    }
-    else {
-        command.append_str("-lcomelang2-sh ");
-    }
+    //}
+    //else {
+    //    command.append_str("-lcomelang2-sh ");
+    //}
 #endif
     
     puts(command.to_string());

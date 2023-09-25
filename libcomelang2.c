@@ -46,7 +46,7 @@ void* come_increment_ref_count(void* mem)
     return mem;
 }
 
-void* come_decrement_ref_count(void* mem, bool no_decrement, bool no_free)
+void* come_decrement_ref_count(void* mem, void* protocol_fun, void* protocol_obj, bool no_decrement, bool no_free)
 {
     if(mem == NULL) {
         return NULL;
@@ -60,7 +60,13 @@ void* come_decrement_ref_count(void* mem, bool no_decrement, bool no_free)
     
     int count = *ref_count;
     if(!no_free && count <= 0) {
-        ncfree(ref_count);
+        if(protocol_obj && protocol_fun) {
+            void (*finalizer)(void*) = protocol_fun;
+            finalizer(protocol_obj);
+            
+            come_free_object(protocol_obj);
+        }
+        come_free_object(mem);
         return NULL;
     }
     
@@ -78,7 +84,7 @@ void come_free_object(void* mem)
     ncfree(ref_count);
 }
 
-void come_call_finalizer(void* fun, void* mem, int call_finalizer_only, int no_decrement, int no_free)
+void come_call_finalizer(void* fun, void* mem, void* protocol_fun, void* protocol_obj, int call_finalizer_only, int no_decrement, int no_free)
 {
     if(mem == NULL) {
         return;
@@ -86,6 +92,10 @@ void come_call_finalizer(void* fun, void* mem, int call_finalizer_only, int no_d
     
     if(call_finalizer_only) {
         if(fun) {
+            if(protocol_obj && protocol_fun) {
+                void (*finalizer)(void*) = protocol_fun;
+                finalizer(protocol_obj);
+            }
             void (*finalizer)(void*) = fun;
             finalizer(mem);
         }
@@ -100,6 +110,11 @@ void come_call_finalizer(void* fun, void* mem, int call_finalizer_only, int no_d
         int count = *ref_count;
         if(!no_free && count <= 0) {
             if(mem) {
+                if(protocol_obj && protocol_fun) {
+                    void (*finalizer)(void*) = protocol_fun;
+                    finalizer(protocol_obj);
+                    come_free_object(protocol_obj);
+                }
                 if(fun) {
                     void (*finalizer)(void*) = fun;
                     finalizer(mem);

@@ -1057,29 +1057,20 @@ sFun*,string create_finalizer_automatically(sType* type, char* fun_name, sInfo* 
         
         source.append_char('{');
         
-        if(klass->mProtocol) {
-            char* name = "_protocol_obj";
-            char source2[1024];
-            snprintf(source2, 1024, "if(self != ((void*)0) && self.%s != ((void*)0) && self.finalize) { void (*finalizer)(void*) = self.finalize; finalizer(self._protocol_obj); self.%s = come_decrement_ref_count(self.%s); }\n", name, name);
+        foreach(it, klass->mFields) {
+            var name, field_type = it;
             
-            source.append_str(source2);
-        }
-        else {
-            foreach(it, klass->mFields) {
-                var name, field_type = it;
+            if(type->mClass->mName === field_type->mClass->mName && type->mPointerNum == field_type->mPointerNum && field_type->mHeap)
+            {
+                err_msg(info, "Define recusively the finalizer. I recommanded tuple1<%s>*%.\n", type->mClass->mName);
+                exit(2);
+            }
+            
+            if(field_type->mHeap) {
+                char source2[1024];
+                snprintf(source2, 1024, "if(self != ((void*)0) && self.%s != ((void*)0)) { delete borrow self.%s; }\n", name, name);
                 
-                if(type->mClass->mName === field_type->mClass->mName && type->mPointerNum == field_type->mPointerNum && field_type->mHeap)
-                {
-                    err_msg(info, "Define recusively the finalizer. I recommanded tuple1<%s>*%.\n", type->mClass->mName);
-                    exit(2);
-                }
-                
-                if(field_type->mHeap) {
-                    char source2[1024];
-                    snprintf(source2, 1024, "if(self != ((void*)0) && self.%s != ((void*)0)) { delete borrow self.%s; }\n", name, name);
-                    
-                    source.append_str(source2);
-                }
+                source.append_str(source2);
             }
         }
         

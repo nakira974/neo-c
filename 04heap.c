@@ -175,22 +175,6 @@ void remove_object_from_right_values(int right_value_num, sInfo* info)
 
 string increment_ref_count_object(sType* type, char* obj, sInfo* info)
 {
-/*
-    sClass* klass = type->mClass;
-    
-    string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
-    if(klass->mProtocol && type->mPointerNum == 1) {
-        static int inf_num = 0;
-        string buf = xsprintf("%s* _inf_valueX%d;\n", type_name, ++inf_num);
-        add_come_code_at_function_head(info, buf);
-        string inf_c_value = xsprintf("_inf_valueX%d", inf_num);
-        add_come_code(info, xsprintf("%s=(%s)come_increment_ref_count(%s);\n", inf_c_value, type_name, obj));
-        add_come_code(info, xsprintf("come_increment_ref_count(((%s)%s)->_protocol_obj);\n", type_name, obj));
-        return xsprintf("%s", inf_c_value);
-    }
-    
-    return xsprintf("(%s)come_increment_ref_count(%s)", type_name, obj);
-*/
     sClass* klass = type->mClass;
     
     string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
@@ -203,7 +187,7 @@ string increment_ref_count_object(sType* type, char* obj, sInfo* info)
         add_come_code_at_function_head(info, "%s;\n", make_define_var(type, name, info));
         add_come_code(info, "%s=%s;\n", name, obj);
         add_come_code(info, xsprintf("%s=(%s)come_increment_ref_count(%s);\n", inf_c_value, type_name, name));
-        add_come_code(info, xsprintf("if(%s) { come_increment_ref_count(((%s)%s)->_protocol_obj);}\n", name, type_name, name));
+//        add_come_code(info, xsprintf("if(%s) { come_increment_ref_count(((%s)%s)->_protocol_obj);}\n", name, type_name, name));
         return xsprintf("%s", inf_c_value);
     }
     
@@ -214,28 +198,12 @@ void decrement_ref_count_object(sType* type, char* obj, sInfo* info)
 {
     sClass* klass = type->mClass;
     
-    string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
     if(klass->mProtocol && type->mPointerNum == 1) {
-        add_come_code(info, xsprintf("if(%s) {(%s)come_decrement_ref_count(%s,0,0), come_decrement_ref_count(((%s)%s)->_protocol_obj,0,0); }\n", obj, type_name, obj, type_name, obj));
-        return;
+        string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
+        add_come_code(info, xsprintf("if(%s) { %s = come_decrement_ref_count(%s, ((%s)%s)->finalize, ((%s)%s)->_protocol_obj, 0,0); }\n", obj, obj, obj, type_name, obj, type_name, obj));
     }
-    
-    add_come_code(info, xsprintf("if(%s) {(%s)come_decrement_ref_count(%s,0,0); }\n", obj, type_name, obj));
-}
-
-static void free_protocol_object(sType* protocol_type, char* protocol_value_c_source, bool no_decrement, bool no_free, sInfo* info)
-{
-    char* fun_name = "come_call_finalizer";
-    sFun* come_fun = info.funcs[fun_name];
-    
-    if(!gGC) {
-        if(come_fun == NULL) {
-            add_come_code(info, "if(%s) { %s._protocol_obj = come_decrement_ref_count(%s._porotocol_obj, %d, %d); }\n", protocol_value_c_source, protocol_value_c_source, no_decrement, no_free);
-        }
-        else {
-            string type_name = make_type_name_string(protocol_type, false@in_header, false@array_cast_pointer, info);
-            add_come_code(info, "if(%s) { come_call_finalizer(((%s)%s)->finalize, ((%s)%s)->_protocol_obj,0, %d, %d); }\n", protocol_value_c_source, type_name, protocol_value_c_source, type_name, protocol_value_c_source, no_decrement, no_free);
-        }
+    else {
+        add_come_code(info, xsprintf("if(%s) { %s = come_decrement_ref_count(%s, (void*)0, (void*)0, 0,0); }\n", obj, obj, obj));
     }
 }
 
@@ -310,15 +278,18 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
         /// call finalizer ///
         if(finalizer != null) {
             if(klass->mProtocol && type->mPointerNum == 1) {
-                free_protocol_object(type, c_value, no_decrement, no_free, info);
+                string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
+                if(c_value) {
+                    add_come_code(info, "if(%s) { come_call_finalizer(%s, %s, ((%s)%s)->finalize, ((%s)%s)->_protocol_obj, %d, %d, %d); }\n", c_value, fun_name2, c_value, type_name, c_value, type_name, c_value, type->mAllocaValue, no_decrement, no_free);
+                }
             }
-            if(c_value) add_come_code(info, xsprintf("come_call_finalizer(%s,%s,%d, %d, %d); /* aaa */\n", fun_name2, c_value, type->mAllocaValue, no_decrement, no_free));
+            else {
+                if(c_value) {
+                    add_come_code(info, xsprintf("if(%s) { come_call_finalizer(%s,%s, (void*)0, (void*)0, %d, %d, %d); }\n", c_value, fun_name2, c_value, type->mAllocaValue, no_decrement, no_free));
+                }
+            }
         }
         else {
-            if(klass->mProtocol && type->mPointerNum == 1) {
-                free_protocol_object(type, c_value, no_decrement, no_free, info);
-            }
-            
             if(klass->mStruct && type->mPointerNum == 0) {
                 foreach(it, klass->mFields) {
                     var name, field_type = it;
@@ -342,7 +313,17 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
             
             /// free memmory ///
             if(!type->mAllocaValue) {
-                if(c_value) add_come_code(info, "%s = come_decrement_ref_count(%s, %d, %d);\n", c_value, c_value, no_decrement, no_free);
+                if(klass->mProtocol && type->mPointerNum == 1) {
+                    if(c_value) {
+                        string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
+                        add_come_code(info, "if(%s) { %s = come_decrement_ref_count(%s, ((%s)%s)->finalize, ((%s)%s)->_protocol_obj, %d, %d); } \n", c_value, c_value, c_value, type_name, c_value, type_name, c_value, no_decrement, no_free);
+                    }
+                }
+                else {
+                    if(c_value) {
+                        add_come_code(info, "if(%s) { %s = come_decrement_ref_count(%s, (void*)0, (void*)0, %d, %d); }\n", c_value, c_value, c_value, no_decrement, no_free);
+                    }
+                }
             }
         }
     }

@@ -46,6 +46,19 @@ void* come_increment_ref_count(void* mem)
     return mem;
 }
 
+void* come_print_ref_count(void* mem)
+{
+    if(mem == NULL) {
+        return mem;
+    }
+    
+    int* ref_count = (int*)((char*)mem - sizeof(int) - sizeof(long));
+    
+    printf("ref_count %d\n", *ref_count);
+    
+    return mem;
+}
+
 void* come_decrement_ref_count(void* mem, void* protocol_fun, void* protocol_obj, bool no_decrement, bool no_free)
 {
     if(mem == NULL) {
@@ -301,11 +314,14 @@ int int::clone(int self)
 
 string char*::clone(char* self)
 {
+    if(self == null) { return null; }
     return string(self);
 }
 
 string string::clone(char* self)
 {
+    if(self == null) { return null; }
+    
     return string(self);
 }
 

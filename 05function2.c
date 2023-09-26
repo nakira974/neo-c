@@ -748,6 +748,7 @@ bool sFunNode*::compile(sFunNode* self, sInfo* info)
     info.come_fun = self.mFun;
     
     if(self.mFun.mBlock) {
+puts(self.mFun.mName);
         transpile_block(self.mFun.mBlock, self.mFun.mParamTypes, self.mFun.mParamNames, info);
     }
     
@@ -1545,14 +1546,15 @@ sFun*,string create_cloner_automatically(sType* type, char* fun_name, sInfo* inf
     if(type->mPointerNum > 0 && !klass->mNumber) {
         var source = new buffer();
         
-        source.append_char('{');
+        source.append_str("{\n");
+        source.append_str("if(self == (void*)0) { return (void*)0; }\n");
         source.append_str(xsprintf("var result = new %s;\n", make_type_name_string(type, false@in_header, false@array_cast_pointer, info, true)));
         
         
         if(klass->mProtocol) {
             char* name = "_protocol_obj";
             char source2[1024];
-            snprintf(source2, 1024, "if(self != ((void*)0) && self.%s != ((void*)0) && self.%s != ((void*)0)) { self.%s = clone self.%s; }\n", name, name, name, name);
+            snprintf(source2, 1024, "if(self != ((void*)0) && self->clone != ((void*)0)) { result._protocol_obj = self->clone(); }\n");
             
             source.append_str(source2);
             

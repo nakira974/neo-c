@@ -146,7 +146,7 @@ static bool linker(sInfo* info, list<string>* object_files)
     
 #ifndef COMPILING_LIBRARY
     //if(gProgramName === "comelang2") {
-        command.append_str("-lcomelang2 ");
+        command.append_str("-L/usr/local/lib -lcomelang2 ");
     //}
     //else {
     //    command.append_str("-lcomelang2-sh ");
@@ -281,7 +281,7 @@ sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool 
     return self;
 };
 
-sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, list<string>%* param_default_parametors, bool external, bool var_args, sBlock*% block, bool static_, string come_header, sInfo* info)
+sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, list<string>%* param_default_parametors, bool external, bool var_args, sBlock*%? block, bool static_, string come_header, sInfo* info)
 {
     self.mName = name;
     self.mResultType = result_type;
@@ -310,7 +310,7 @@ sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sTy
     self.mSourceHead2 = new buffer();
     self.mSourceDefer = new buffer();
     
-    self.mBlock = block;
+    self.mBlock = clone block;
     
     self.mComeHeader = come_header;
     

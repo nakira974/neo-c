@@ -279,7 +279,7 @@ sType*% sType*::initialize(sType*% self, char* name, sInfo* info, bool heap=fals
 sVarTable*% sVarTable*::initialize(sVarTable*% self, bool global, sVarTable* parent);
 void sVarTable*::finalize(sVarTable* self);
 sClass*% sClass*::initialize(sClass*% self, char* name, bool number=false, bool union_=false, bool generics=false, bool method_generics=false, bool protocol_=false, bool struct_=false, bool float_=false, int generics_num=-1, int method_generics_num=-1, bool enum_=false);
-sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, list<string>*% param_default_parametors, bool external, bool var_args, sBlock*% block, bool static_, string come_header, sInfo* info);
+sFun*% sFun*::initialize(sFun*% self, string name, sType*% result_type, list<sType*%>*% param_types, list<string>*% param_names, list<string>*% param_default_parametors, bool external, bool var_args, sBlock*%? block, bool static_, string come_header, sInfo* info);
 string make_type_name_string(sType* type, bool in_header, bool array_cast_pointer, sInfo* info, bool no_pointer=false);
 string make_come_type_name_string(sType* type, sInfo* info);
 

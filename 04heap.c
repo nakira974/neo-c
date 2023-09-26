@@ -401,8 +401,7 @@ sType*%, string clone_object(sType* type, char* obj, sInfo* info)
         }
     }
     
-    if(cloner == NULL && !type->mClass->mProtocol && !type->mClass->mNumber 
-        && gComelang)
+    if(cloner == NULL && !type->mClass->mNumber && gComelang)
     {
         var fun,new_fun_name = create_cloner_automatically(type, fun_name, info);
         

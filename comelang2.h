@@ -284,9 +284,6 @@ impl list <T>
         list_item<T>* it = self.head;
         while(it != null) {
             var prev_it = it;
-            if(isheap(T)) {
-                delete borrow it.item;
-            }
             it = it.next;
             delete borrow prev_it;
         }
@@ -1147,6 +1144,7 @@ void xassert(char* msg, bool test);
 void ncfree(void* mem);
 void* come_calloc(size_t count, size_t size);
 void* come_increment_ref_count(void* mem);
+void* come_print_ref_count(void* mem);
 void come_call_finalizer(void* fun, void* mem, void* protocol_fun, void* protocol_obj, int call_finalizer_only, int no_decrement, int no_free);
 void* come_decrement_ref_count(void* mem, void* protocol_fun, void* protocol_obj, bool no_decrement, bool no_free);
 void come_free_object(void* mem);

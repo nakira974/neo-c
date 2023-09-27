@@ -72,7 +72,9 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         
         if(left_type->mArrayNum.length() > 0) {
             add_come_code(info, "%s;\n", make_define_var(left_type, var_->mCValueName, info));
-            add_come_code(info, "memset(&%s, 0, sizeof(%s));\n", var_->mCValueName, var_->mCValueName);
+            if(!left_type->mStatic) {
+                add_come_code(info, "memset(&%s, 0, sizeof(%s)); /* aaa */\n", var_->mCValueName, var_->mCValueName);
+            }
         }
         else {
             add_come_code_at_function_head(info, "%s;\n", make_define_var(left_type, var_->mCValueName, info));
@@ -80,8 +82,8 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
             sType*% left_type2 = clone left_type;
             left_type2->mStatic = false;
             
-            if(!var_->mType->mConstant) {
-                add_come_code_at_function_head2(info, "memset(&%s, 0, sizeof(%s));\n", var_->mCValueName, make_type_name_string(left_type2, false@in_header, false@array_cast_pointer, info));
+            if(!var_->mType->mConstant && !var_->mType->mStatic) {
+                add_come_code_at_function_head2(info, "memset(&%s, 0, sizeof(%s)); /* bbb */\n", var_->mCValueName, make_type_name_string(left_type2, false@in_header, false@array_cast_pointer, info));
             }
         }
         
@@ -132,7 +134,8 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                         sType*% var_type = clone var_->mType;
                         var_type->mStatic = false;
                         
-                        if(!var_type->mConstant) {add_come_code_at_function_head2(info, "memset(&%s, 0, sizeof(%s));\n", var_->mCValueName, make_type_name_string(var_type, false@in_header, false@array_cast_pointer, info));
+                        if(!var_type->mConstant && !var_type->mStatic) {
+                            add_come_code_at_function_head2(info, "memset(&%s, 0, sizeof(%s)); /* ccc */\n", var_->mCValueName, make_type_name_string(var_type, false@in_header, false@array_cast_pointer, info));
                         }
                     }
                     
@@ -154,8 +157,8 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                 sType*% var_type = clone var_->mType;
                 var_type->mStatic = false;
                 
-                if(!var_type->mConstant && var_type->mArrayNum.length() == 0) {
-                    add_come_code_at_function_head2(info, "memset(&%s, 0, sizeof(%s));\n", var_->mCValueName, make_type_name_string(var_type, false@in_header, false@array_cast_pointer, info));
+                if(!var_->mType->mStatic && !var_type->mConstant && var_type->mArrayNum.length() == 0) {
+                    add_come_code_at_function_head2(info, "memset(&%s, 0, sizeof(%s)); /* ddd */\n", var_->mCValueName, make_type_name_string(var_type, false@in_header, false@array_cast_pointer, info));
                 }
             }
         }
@@ -218,7 +221,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                     var_type->mStatic = false;
                     
                     if(!var_type->mConstant) {
-                        add_come_code_at_function_head2(info, "memset(&%s, 0, sizeof(%s));\n", var_->mCValueName, make_type_name_string(var_type, false@in_header, false@array_cast_pointer, info));
+                        add_come_code_at_function_head2(info, "memset(&%s, 0, sizeof(%s)); /* eee */\n", var_->mCValueName, make_type_name_string(var_type, false@in_header, false@array_cast_pointer, info));
                     }
                     
                     sType*% left_type = clone var_->mType;
@@ -281,7 +284,15 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
             
             CVALUE*% come_value = new CVALUE;
             
-            if(var_->mType->mConstant) {
+            if(var_->mType->mStatic) {
+                add_come_code_at_function_head(info, "%s=%s;\n", make_define_var(left_type, var_->mCValueName, info), right_value.c_value);
+                come_value.c_value = string("");
+                
+                info.stack.push_back(come_value);
+                
+                transpiler_clear_last_code(info);
+            }
+            else if(var_->mType->mConstant) {
                 add_come_code_at_function_head(info, "%s=%s;\n", make_define_var(left_type, var_->mCValueName, info), right_value.c_value);
                 come_value.c_value = string("");
                 
@@ -322,7 +333,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                 add_come_last_code(info, "%s;\n", come_value.c_value);
             }
             
-            if(self.alloc && !left_type->mConstant) {
+            if(self.alloc && !left_type->mConstant && !left_type->mStatic) {
                 if(left_type->mArrayNum.length() > 0) {
                     add_come_code(info, "%s;\n", make_define_var(left_type, var_->mCValueName, info));
                 }

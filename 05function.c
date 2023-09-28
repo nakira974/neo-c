@@ -493,7 +493,7 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
         sFun* fun = info.funcs.at(fun_name, null!);
         
         if(fun == null) {
-            err_msg(info, "function not found(%s) at normal function call\n", fun_name);
+            err_msg(info, "function not found(%s) at normal function call(1)\n", fun_name);
             return false;
         }
         
@@ -756,6 +756,7 @@ bool sParenNode*::compile(sParenNode* self, sInfo* info)
 sNode*% parse_function_call(char* fun_name, sInfo* info)
 {
     expected_next_character('(', info);
+    
     
     list<tuple2<string,sNode*%>*%>*% params = new list<tuple2<string,sNode*%>*%>();
     
@@ -1360,6 +1361,13 @@ sNode*% expression_node(sInfo* info) version 99
             
             node = post_position_operator(node, info);
             node = post_position_operator3(node, info);
+            
+            return node;
+        }
+        else if(buf === "sizeof" && *info->p == '(') {
+            sNode*% node = string_node(buf, head, head_sline, info);
+            
+            node = post_position_operator(node, info);
             
             return node;
         }

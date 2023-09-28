@@ -66,6 +66,7 @@ void output_struct(sClass* klass, sInfo* info)
         foreach(it, klass.mFields) {
             var name, type = it;
             
+            
             type->mStatic = false;
             
             buf.append_str("    ");
@@ -141,8 +142,8 @@ sStructNode*% sStructNode*::initialize(sStructNode*% self, string name, sClass*%
     self.sname = string(info.sname);
 
     self.mName = string(name);
-    self.mClass = klass;
-
+    self.mClass = clone klass;
+    
     return self;
 }
 
@@ -153,12 +154,15 @@ bool sStructNode*::terminated()
 
 bool sStructNode*::compile(sStructNode* self, sInfo* info)
 {
-    sClass* klass = self.mClass;
+    sClass*% klass = clone self.mClass;
     string name = string(self.mName);
     
-    if((info.classes.at(name, null) == null || info.classes.at(name, null).mFields.length() == 0) && klass->mFields.length() > 0) 
-    {
+    if(info.classes.at(name, null) == null) {
         info.classes.insert(name, clone klass);
+    }
+    else if(info.classes.at(name, null).mFields.length() == 0 && klass->mFields.length() > 0) {
+        sClass* klass2 = info.classes.at(name, null);
+        klass2.mFields = clone klass.mFields;
     }
     
     sType*% type = new sType(name, info);

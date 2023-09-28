@@ -333,6 +333,16 @@ void init_classes(sInfo* info)
         string generics_type = xsprintf("generics_type%d", i);
         info.classes.insert(generics_type, new sClass(generics_type, generics:true, generics_num:i));
     }
+    
+    sClass*% klass = new sClass("__builtin_va_list", struct_:true);
+    
+    klass.mFields.push_back(new tuple2<string, sType*%>(string("v1"), new sType("char*", info)));
+    klass.mFields.push_back(new tuple2<string, sType*%>(string("v2"), new sType("char*", info)));
+    klass.mFields.push_back(new tuple2<string, sType*%>(string("v3"), new sType("char*", info)));
+    klass.mFields.push_back(new tuple2<string, sType*%>(string("v4"), new sType("int", info)));
+    klass.mFields.push_back(new tuple2<string, sType*%>(string("v5"), new sType("int", info)));
+    
+    info.classes.insert(string("__builtin_va_list"), klass);
 }
 
 void init_module(sInfo* info)

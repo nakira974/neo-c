@@ -1,5 +1,6 @@
 using comelang;
 
+/*
 struct __builtin_va_list
 {
     char* v1;
@@ -8,6 +9,7 @@ struct __builtin_va_list
     int v4;
     int v5;
 };
+*/
 
 void __builtin_va_start(char*);
 void __builtin_va_end(char*);

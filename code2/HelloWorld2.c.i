@@ -6,16 +6,7 @@
 # 1 "code2/HelloWorld2.c"
 # 1 "./comelang2.h" 1
 using comelang;
-
-struct __builtin_va_list
-{
-    char* v1;
-    char* v2;
-    char* v3;
-    int v4;
-    int v5;
-};
-
+# 14 "./comelang2.h"
 void __builtin_va_start(char*);
 void __builtin_va_end(char*);
 
@@ -911,7 +902,7 @@ extern int __uflow (FILE *);
 extern int __overflow (FILE *, int);
 # 909 "/usr/include/stdio.h" 3 4
 
-# 18 "./comelang2.h" 2
+# 20 "./comelang2.h" 2
 # 1 "/usr/include/string.h" 1 3 4
 # 26 "/usr/include/string.h" 3 4
 # 1 "/usr/include/aarch64-linux-gnu/bits/libc-header-start.h" 1 3 4
@@ -1274,7 +1265,7 @@ extern void *memfrob (void *__s, size_t __n)
 extern char *basename (const char *__filename) ;
 # 539 "/usr/include/string.h" 3 4
 
-# 19 "./comelang2.h" 2
+# 21 "./comelang2.h" 2
 # 1 "/usr/include/stdlib.h" 1 3 4
 # 26 "/usr/include/stdlib.h" 3 4
 # 1 "/usr/include/aarch64-linux-gnu/bits/libc-header-start.h" 1 3 4
@@ -2617,7 +2608,7 @@ extern int getloadavg (double __loadavg[], int __nelem)
 # 1037 "/usr/include/stdlib.h" 2 3 4
 # 1048 "/usr/include/stdlib.h" 3 4
 
-# 20 "./comelang2.h" 2
+# 22 "./comelang2.h" 2
 # 1 "/usr/include/libgen.h" 1 3 4
 # 23 "/usr/include/libgen.h" 3 4
 
@@ -2635,7 +2626,7 @@ extern char *__xpg_basename (char *__path) ;
 
 
 
-# 21 "./comelang2.h" 2
+# 23 "./comelang2.h" 2
 # 1 "/usr/lib/gcc/aarch64-linux-gnu/12/include/limits.h" 1 3 4
 # 34 "/usr/lib/gcc/aarch64-linux-gnu/12/include/limits.h" 3 4
 # 1 "/usr/lib/gcc/aarch64-linux-gnu/12/include/syslimits.h" 1 3 4
@@ -2689,10 +2680,10 @@ extern long int __sysconf (int __name) ;
 # 204 "/usr/lib/gcc/aarch64-linux-gnu/12/include/limits.h" 2 3 4
 # 8 "/usr/lib/gcc/aarch64-linux-gnu/12/include/syslimits.h" 2 3 4
 # 35 "/usr/lib/gcc/aarch64-linux-gnu/12/include/limits.h" 2 3 4
-# 22 "./comelang2.h" 2
+# 24 "./comelang2.h" 2
 
 
-# 23 "./comelang2.h"
+# 25 "./comelang2.h"
 struct list_item<T>
 {
     T item;
@@ -2957,9 +2948,6 @@ impl list <T>
         list_item<T>* it = self.head;
         while(it != null) {
             var prev_it = it;
-            if(isheap(T)) {
-                delete borrow it.item;
-            }
             it = it.next;
             delete borrow prev_it;
         }
@@ -3414,9 +3402,9 @@ impl map <T, T2>
                     }
                     else if(n == hash) {
                         fprintf(
-# 743 "./comelang2.h" 3 4
+# 742 "./comelang2.h" 3 4
                                stderr
-# 743 "./comelang2.h"
+# 742 "./comelang2.h"
                                      , "unexpected error in map.rehash(1)\n");
                         exit(2);
                     }
@@ -3483,9 +3471,9 @@ impl map <T, T2>
                 }
                 else if(it == hash) {
                     fprintf(
-# 808 "./comelang2.h" 3 4
+# 807 "./comelang2.h" 3 4
                            stderr
-# 808 "./comelang2.h"
+# 807 "./comelang2.h"
                                  , "unexpected error in map.insert\n");
                     exit(2);
                 }
@@ -3561,9 +3549,9 @@ impl map <T, T2>
                 }
                 else if(it == hash) {
                     fprintf(
-# 882 "./comelang2.h" 3 4
+# 881 "./comelang2.h" 3 4
                            stderr
-# 882 "./comelang2.h"
+# 881 "./comelang2.h"
                                  , "unexpected error in map.insert\n");
                     exit(2);
                 }
@@ -3832,6 +3820,7 @@ void xassert(char* msg, bool test);
 void ncfree(void* mem);
 void* come_calloc(size_t count, size_t size);
 void* come_increment_ref_count(void* mem);
+void* come_print_ref_count(void* mem);
 void come_call_finalizer(void* fun, void* mem, void* protocol_fun, void* protocol_obj, int call_finalizer_only, int no_decrement, int no_free);
 void* come_decrement_ref_count(void* mem, void* protocol_fun, void* protocol_obj, bool no_decrement, bool no_free);
 void come_free_object(void* mem);

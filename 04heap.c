@@ -156,6 +156,7 @@ string append_object_to_right_values(char* obj, sType*% type, sInfo* info)
     
     string buf = xsprintf("void* right_value%d;\n", gRightValueNum-1);
     add_come_code_at_function_head(info, buf);
+    add_come_code_at_function_head2(info, "memset(&right_value%d, 0, sizeof(void*));\n", gRightValueNum-1);
     
     return xsprintf("((%s)(%s=%s))", make_type_name_string(type, false@in_header, true@array_cast_pointer, info), new_value->mVarName, obj);
 }

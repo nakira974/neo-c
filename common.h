@@ -331,6 +331,8 @@ void decrement_ref_count_object(sType* type, char* obj, sInfo* info);
 /////////////////////////////////////////////////////////////////////
 /// 05function.c ///
 /////////////////////////////////////////////////////////////////////
+void come_init() version 5;
+void come_final() version 5;
 sNode*% parse_global_variable(sInfo* info);
 sNode*% get_number(bool minus, sInfo* info);
 sNode*% get_oct_number(sInfo* info);

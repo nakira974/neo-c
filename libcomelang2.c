@@ -236,6 +236,16 @@ bool char*::operator_equals(char* self, char* right)
     return strcmp(self, right) == 0;
 }
 
+bool string::operator_not_equals(char* self, char* right) 
+{
+    return strcmp(self, right) != 0;
+}
+
+bool char*::operator_not_equals(char* self, char* right) 
+{
+    return strcmp(self, right) != 0;
+}
+
 bool char*::equals(char* self, char* right) 
 {
     return strcmp(self, right) == 0;

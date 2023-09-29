@@ -540,6 +540,175 @@ int transpile(sInfo* info) version 5
     skip_spaces_and_lf(info);
     parse_sharp(info);
     
+    {
+        var name = string("come_calloc");
+        var result_type = new sType("void*", info);
+        var param_types = [new sType("int", info), new sType("int", info)];
+        var param_names = [string("count"), string("size")];
+        var param_default_parametors = new list<string>();
+        var main_fun = new sFun(name, result_type, param_types, param_names
+            , param_default_parametors, true@external, false@var_args
+            , null!@block, false@static_
+            , string("void* come_calloc(int count, int size)")
+            , info);
+        
+        info.funcs.insert(string(name), main_fun);
+    }
+    {
+        var name = string("come_increment_ref_count");
+        var result_type = new sType("void*", info);
+        var param_types = [new sType("void*", info)];
+        var param_names = [string("mem")];
+        var param_default_parametors = new list<string>();
+        var main_fun = new sFun(name, result_type, param_types, param_names
+            , param_default_parametors, true@external, false@var_args
+            , null!@block, false@static_
+            , string("void* come_increment_ref_count(void* mem)")
+            , info);
+        
+        info.funcs.insert(string(name), main_fun);
+    }
+    {
+        var name = string("ncfree");
+        var result_type = new sType("void", info);
+        var param_types = [new sType("void*", info)];
+        var param_names = [string("mem")];
+        var param_default_parametors = new list<string>();
+        var main_fun = new sFun(name, result_type, param_types, param_names
+            , param_default_parametors, true@external, false@var_args
+            , null!@block, false@static_
+            , string("void ncfree(void* mem)")
+            , info);
+        
+        info.funcs.insert(string(name), main_fun);
+    }
+    {
+        var name = string("come_calloc");
+        var result_type = new sType("void*", info);
+        var param_types = [new sType("int", info), new sType("int", info)];
+        var param_names = [string("count"), string("size")];
+        var param_default_parametors = new list<string>();
+        var main_fun = new sFun(name, result_type, param_types, param_names
+            , param_default_parametors, true@external, false@var_args
+            , null!@block, false@static_
+            , string("void* come_calloc(int count, int size)")
+            , info);
+        
+        info.funcs.insert(string(name), main_fun);
+    }
+    {
+        var name = string("come_calloc");
+        var result_type = new sType("void*", info);
+        var param_types = [new sType("int", info), new sType("int", info)];
+        var param_names = [string("count"), string("size")];
+        var param_default_parametors = new list<string>();
+        var main_fun = new sFun(name, result_type, param_types, param_names
+            , param_default_parametors, true@external, false@var_args
+            , null!@block, false@static_
+            , string("void* come_calloc(int count, int size)")
+            , info);
+        
+        info.funcs.insert(string(name), main_fun);
+    }
+    {
+        var name = string("come_increment_ref_count");
+        var result_type = new sType("void*", info);
+        var param_types = [new sType("void*", info)];
+        var param_names = [string("mem")];
+        var param_default_parametors = new list<string>();
+        var main_fun = new sFun(name, result_type, param_types, param_names
+            , param_default_parametors, true@external, false@var_args
+            , null!@block, false@static_
+            , string("void* come_increment_ref_count(void* mem)")
+            , info);
+        
+        info.funcs.insert(string(name), main_fun);
+    }
+    {
+        var name = string("come_call_finzlier");
+        var result_type = new sType("void", info);
+        var param_types = [new sType("void*", info), new sType("void*", info), new sType("void*", info), new sType("void*", info), new sType("int", info), new sType("int", info), new sType("int", info)];
+        var param_names = [string("fun"), string("mem"), string("protocol_fun"), string("protocol_obj"), string("call_finalizer_only"), string("no_decrement"), string("no_free")];
+        var param_default_parametors = new list<string>();
+        var main_fun = new sFun(name, result_type, param_types, param_names
+            , param_default_parametors, true@external, false@var_args
+            , null!@block, false@static_
+            , string("void come_call_finalizer(void* fun, void* mem, void* protocol_fun, void* protocol_obj, int call_finalizer_only, int no_decrement, int no_free)")
+            , info);
+        
+        info.funcs.insert(string(name), main_fun);
+    }
+    {
+        var name = string("come_decrement_ref_count");
+        var result_type = new sType("void*", info);
+        var param_types = [new sType("void*", info), new sType("void*", info), new sType("void*", info), new sType("bool", info), new sType("bool", info)];
+        var param_names = [string("mem"), string("protocol_fun"), string("protocol_obj"), string("no_decrement"), string("no_free")];
+        var param_default_parametors = new list<string>();
+        var main_fun = new sFun(name, result_type, param_types, param_names
+            , param_default_parametors, true@external, false@var_args
+            , null!@block, false@static_
+            , string("void* come_decrement_ref_count(void* mem, void* protocol_fun, void* protocol_obj, _Bool no_decrement, _Bool no_free)")
+            , info);
+        
+        info.funcs.insert(string(name), main_fun);
+    }
+    {
+        var name = string("come_free_object");
+        var result_type = new sType("void", info);
+        var param_types = [new sType("void*", info)];
+        var param_names = [string("mem")];
+        var param_default_parametors = new list<string>();
+        var main_fun = new sFun(name, result_type, param_types, param_names
+            , param_default_parametors, true@external, false@var_args
+            , null!@block, false@static_
+            , string("void come_free_object(void* mem)")
+            , info);
+        
+        info.funcs.insert(string(name), main_fun);
+    }
+    {
+        var name = string("nccalloc");
+        var result_type = new sType("void*", info);
+        var param_types = [new sType("int", info), new sType("int", info)];
+        var param_names = [string("nmemb"), string("size")];
+        var param_default_parametors = new list<string>();
+        var main_fun = new sFun(name, result_type, param_types, param_names
+            , param_default_parametors, true@external, false@var_args
+            , null!@block, false@static_
+            , string("void* nccalloc(int nmemb, int size)")
+            , info);
+        
+        info.funcs.insert(string(name), main_fun);
+    }
+    {
+        var name = string("come_memdup");
+        var result_type = new sType("void*", info);
+        var param_types = [new sType("void*", info)];
+        var param_names = [string("block")];
+        var param_default_parametors = new list<string>();
+        var main_fun = new sFun(name, result_type, param_types, param_names
+            , param_default_parametors, true@external, false@var_args
+            , null!@block, false@static_
+            , string("void* come_memdup(void* block)")
+            , info);
+        
+        info.funcs.insert(string(name), main_fun);
+    }
+    {
+        var name = string("__builtin_string");
+        var result_type = new sType("char*", info);
+        var param_types = [new sType("char*", info)];
+        var param_names = [string("str")];
+        var param_default_parametors = new list<string>();
+        var main_fun = new sFun(name, result_type, param_types, param_names
+            , param_default_parametors, true@external, false@var_args
+            , null!@block, false@static_
+            , string("char* __builtin_string(char* str)")
+            , info);
+        
+        info.funcs.insert(string(name), main_fun);
+    }
+    
     while(*info->p) {
         parse_sharp(info);
         

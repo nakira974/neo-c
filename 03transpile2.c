@@ -652,7 +652,7 @@ bool output_source_file(sInfo* info) version 3
         else if(it2->mResultType->mInline) {
         }
         else if(it !== "__builtin_va_start" && it !== "__builtin_va_end") {
-            fprintf(f, "%s", header);
+            fprintf(f, "%s\n", header, it);
         }
     }
     

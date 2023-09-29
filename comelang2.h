@@ -1,19 +1,5 @@
 using comelang;
 
-/*
-struct __builtin_va_list
-{
-    char* v1;
-    char* v2;
-    char* v3;
-    int v4;
-    int v5;
-};
-*/
-
-void __builtin_va_start(char*);
-void __builtin_va_end(char*);
-
 #define _GNU_SOURCE
 
 #include <stdio.h>
@@ -21,6 +7,10 @@ void __builtin_va_end(char*);
 #include <stdlib.h>
 #include <libgen.h>
 #include <limits.h>
+#include <stdarg.h>
+
+void __builtin_va_start(char*);
+void __builtin_va_end(char*);
 
 struct list_item<T>
 {
@@ -1160,9 +1150,11 @@ bool char::equals(char self, char right);
 bool short::equals(short self, short right);
 bool long::equals(long self, long right);
 bool string::equals(char* self, char* right);
+bool char*::equals(char* self, char* right);
 bool string::operator_equals(char* self, char* right);
 bool char*::operator_equals(char* self, char* right);
-bool char*::equals(char* self, char* right);
+bool string::operator_not_equals(char* self, char* right);
+bool char*::operator_not_equals(char* self, char* right);
 string char*::operator_add(char* self, char* right);
 string string::operator_add(char* self, char* right);
 unsigned int int::get_hash_key(int value);

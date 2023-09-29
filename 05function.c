@@ -1,7 +1,13 @@
 #include "common.h"
 #include <ctype.h>
 
+void come_init() version 5
+{
+}
 
+void come_final() version 5
+{
+}
 
 struct sReturnNode
 {

@@ -1,6 +1,53 @@
 #include "common.h"
 #include <libgen.h>
 
+static int gHeapInit = 0;
+
+#define HEAP_POOL_PAGE_SIZE 4096
+
+struct sFreeMem
+{
+    void* mem;
+    bool mallocated;
+    struct sFreeMem* next;
+};
+
+struct sHeapPool
+{
+    void** mem_pages;
+    
+    int size_pages;
+    int num_pages;
+    void* top;
+    
+    struct sFreeMem* free_mem_head;
+    struct sFreeMem* malloced_free_mem_head;
+};
+
+struct sHeapPool gHeapPool;
+
+static void heap_pool_init()
+{
+    memset(&gHeapPool, 0, sizeof(struct sHeapPool));
+    
+    const int size_pages = 4;
+    
+    gHeapPool.size_pages = size_pages;
+    gHeapPool.mem_pages = calloc(1, sizeof(void*)*size_pages);
+}
+
+static void heap_pool_final()
+{
+    for(int i=0; i<gHeapPool.size_pages; i++) {
+        free(gHeapPool.mem_pages[i]);
+    }
+    free(gHeapPool.mem_pages);
+}
+
+static void* come_alloc_mem_from_heap_pool(int size)
+{
+}
+
 void xassert(char* msg, bool test)
 {
     printf("%s...", msg);

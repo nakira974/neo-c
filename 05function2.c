@@ -163,7 +163,7 @@ int transpile_block(sBlock* block, list<sType*%>*? param_types, list<string>*? p
             sType*% type = clone param_types[i];
             type->mFunctionParam = true;
             type->mAllocaValue = false;
-            add_variable_to_table(name, type, info);
+            add_variable_to_table(name, clone type, info);
             i++;
         }
     }

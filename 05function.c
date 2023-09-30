@@ -1543,7 +1543,7 @@ bool sGlobalVariable*::compile(sGlobalVariable* self, sInfo* info)
     sNode* right_node = self.right_node;
     string array_initializer = self.array_initializer;
     
-    add_variable_to_global_table(name, type, info);
+    add_variable_to_global_table(name, clone type, info);
     
     if(array_initializer) {
         add_come_code_at_source_head(info, "%s=%s;\n", make_define_var(type, name, info), array_initializer);
@@ -1598,7 +1598,7 @@ bool sExternalGlobalVariable*::compile(sExternalGlobalVariable* self, sInfo* inf
     sType* type = self.type;
     string name = self.name;
     
-    add_variable_to_global_table(name, type, info);
+    add_variable_to_global_table(name, clone type, info);
     
     add_come_code_at_source_head(info, "extern %s;\n", make_define_var(type, name, info));
     

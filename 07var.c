@@ -51,7 +51,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         
         var type = solve_generics(self.type, info->generics_type, info);
         
-        add_variable_to_table(self.name, type, info);
+        add_variable_to_table(self.name, clone type, info);
     
         var_ = get_variable_from_table(info.lv_table, self.name);
         
@@ -127,7 +127,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                     if(i < right_type.mGenericsTypes.length()) {
                         sType* right_type2 = right_type.mGenericsTypes[i];
                         
-                        add_variable_to_table(it, right_type2, info);
+                        add_variable_to_table(it, clone right_type2, info);
                         
                         var_ = get_variable_from_table(info.lv_table, it);
                         
@@ -144,12 +144,12 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
             }
             else {
                 if(self.type == null) {
-                    add_variable_to_table(self.name, right_type, info);
+                    add_variable_to_table(self.name, clone right_type, info);
                 }
                 else {
                     var type = solve_generics(self.type, info->generics_type, info);
                     
-                    add_variable_to_table(self.name, type, info);
+                    add_variable_to_table(self.name, clone type, info);
                 }
                 
                 var_ = get_variable_from_table(info.lv_table, self.name);
@@ -514,7 +514,7 @@ string sFunLoadNode*::sname(sFunLoadNode* self, sInfo* info)
 }
 
 
-void add_variable_to_table(char* name, sType* type, sInfo* info)
+void add_variable_to_table(char* name, sType*% type, sInfo* info)
 {
     sVar*% self = new sVar;
     
@@ -537,7 +537,7 @@ void add_variable_to_table(char* name, sType* type, sInfo* info)
     info.lv_table.mVars.insert(string(name), self);
 }
 
-void add_variable_to_global_table(char* name, sType* type, sInfo* info)
+void add_variable_to_global_table(char* name, sType*% type, sInfo* info)
 {
     sVar*% self = new sVar;
     
@@ -556,7 +556,7 @@ void add_variable_to_global_table(char* name, sType* type, sInfo* info)
     info.gv_table.mVars.insert(string(name), self);
 }
 
-void add_variable_to_global_table_with_int_value(char* name, sType* type, char* c_value, sInfo* info)
+void add_variable_to_global_table_with_int_value(char* name, sType*% type, char* c_value, sInfo* info)
 {
     sVar*% self = new sVar;
     

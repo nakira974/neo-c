@@ -306,7 +306,7 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
                     var name, field_type = it;
                     
                     if(field_type->mHeap && field_type->mPointerNum > 0) {
-                        string obj = xsprintf("(%s.%s)", c_value, name);
+                        string obj = xsprintf("(((%s)%s).%s)", make_type_name_string(type, false@in_header, false@array_cast_pointer, info), c_value, name);
                         free_object(field_type, obj, no_decrement, no_free, info);
                     }
                 }
@@ -317,13 +317,13 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
                     var name, field_type = it;
                     
                     if(field_type->mHeap && field_type->mPointerNum > 0) {
-                        string obj = xsprintf("(%s->%s)", c_value, name);
+                        string obj = xsprintf("(((%s)%s)->%s)", make_type_name_string(type, false@in_header, false@array_cast_pointer, info), c_value, name);
                         free_object(field_type, obj, no_decrement, no_free, info);
                     }
                 }
             }
             
-            /// free memmory ///
+            /// free memory ///
             if(!type->mAllocaValue) {
                 if(klass->mProtocol && type->mPointerNum == 1) {
                     if(c_value) {

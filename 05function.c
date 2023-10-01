@@ -60,57 +60,8 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
             result_type3 = result_type2;
         }
         
-        if(result_type->mException) {
-            int stack_num_before = info->stack.length();
-            
-            sType*% result_type4 = clone result_type2;
-            result_type4->mPointerNum = 0;
-            
-            sNode*% obj_node = create_object(clone result_type4, info);
-            static int num_result_tuple = 0;
-            sNode*% store_node = store_var(xsprintf("result_tuplea%d", ++num_result_tuple)@name, null@multiple_assign, clone result_type2@type, true@alloc, clone obj_node@right_node, info);
-            
-            if(!store_node.compile->(info)) {
-                return false;
-            }
-            add_last_code_to_source(info);
-            arrange_stack(info, stack_num_before);
-            free_right_value_objects(info);
-            
-            sNode*% load_node = load_var(xsprintf("result_tuplea%d", num_result_tuple), info);
-            
-            sNode*% right_node = clone self.value;
-            
-            sNode*% store_field_node1 = store_field(load_node, clone right_node, string("v1"), info);
-            
-            if(!store_field_node1.compile->(info)) {
-                return false;
-            }
-            add_last_code_to_source(info);
-            arrange_stack(info, stack_num_before);
-            free_right_value_objects(info);
-            
-            sNode*% true_node = create_true_object(info);
-            
-            sNode*% store_field_node2 = store_field(load_node, clone true_node, string("v2"), info);
-            
-            if(!store_field_node2.compile->(info)) {
-                return false;
-            }
-            add_last_code_to_source(info);
-            arrange_stack(info, stack_num_before);
-            free_right_value_objects(info);
-            
-            if(!load_node.compile->(info)) {
-                return false;
-            }
-            add_last_code_to_source(info);
-            free_right_value_objects(info);
-        }
-        else {
-            if(!self.value->compile->(info)) {
-                return false;
-            }
+        if(!self.value->compile->(info)) {
+            return false;
         }
         
         CVALUE*% come_value = get_value_from_stack(-1, info);
@@ -132,12 +83,25 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
         free_objects_on_return(come_fun.mBlock, info, come_value.var, false@top_block);
         free_right_value_objects(info);
         
+        if(info.come_fun.mName !== "come_release_malloced_mem") {
+            add_come_code(info, "come_release_malloced_mem();\n");
+        }
+        if(info.come_fun.mName === "main") {
+            add_come_code(info, "come_heap_pool_final();\n");
+        }
+        
         add_come_code(info, "return __result%d__;\n", num_result);
     }
     else {
         sFun* come_fun = info.come_fun;
         free_objects_on_return(come_fun.mBlock, info, null!, false@top_block);
         free_right_value_objects(info);
+        if(info.come_fun.mName !== "come_release_malloced_mem") {
+            add_come_code(info, "come_release_malloced_mem();\n");
+        }
+        if(info.come_fun.mName === "main") {
+            add_come_code(info, "come_heap_pool_final();\n");
+        }
         add_come_code(info, "return;\n");
     }
     

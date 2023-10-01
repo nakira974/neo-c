@@ -1,32 +1,30 @@
 #include "common.h"
 #include <libgen.h>
 
-static int gHeapInit = 0;
-
 #define HEAP_POOL_PAGE_SIZE 4096
 
-struct sFreeMem
+struct sMem
 {
-    void* mem;
-    bool mallocated;
-    struct sFreeMem* next;
+    char* mem;
+    size_t size;
+    struct sMem* next;
 };
 
 struct sHeapPool
 {
-    void** mem_pages;
+    char** mem_pages;
     
     int size_pages;
     int num_pages;
-    void* top;
+    char* top;
     
-    struct sFreeMem* free_mem_head;
-    struct sFreeMem* malloced_free_mem_head;
+    struct sMem* free_mem;
+    struct sMem* malloced_free_mem;
 };
 
 struct sHeapPool gHeapPool;
 
-static void heap_pool_init()
+void come_heap_pool_init()
 {
     memset(&gHeapPool, 0, sizeof(struct sHeapPool));
     
@@ -34,40 +32,199 @@ static void heap_pool_init()
     
     gHeapPool.size_pages = size_pages;
     gHeapPool.mem_pages = calloc(1, sizeof(void*)*size_pages);
+    
+    for(int i=0; i<size_pages; i++) {
+        gHeapPool.mem_pages[i] = calloc(1, sizeof(char)*HEAP_POOL_PAGE_SIZE);
+    }
+    
+    gHeapPool.top = gHeapPool.mem_pages[0];
 }
 
-static void heap_pool_final()
+void come_heap_pool_final()
 {
     for(int i=0; i<gHeapPool.size_pages; i++) {
         free(gHeapPool.mem_pages[i]);
     }
     free(gHeapPool.mem_pages);
-}
-
-static void* come_alloc_mem_from_heap_pool(int size)
-{
-}
-
-void xassert(char* msg, bool test)
-{
-    printf("%s...", msg);
-    if(!test) {
-        puts("false");
-        exit(2);
+    
+    sMem* it = gHeapPool.malloced_free_mem;
+    while(it) {
+        sMem* prev_it = it;
+        
+        free(it->mem);
+        
+        it = it.next;
+        
+        free(prev_it);
     }
-    puts("ok");
+    it = gHeapPool.free_mem;
+    while(it) {
+        sMem* prev_it = it;
+        it = it.next;
+        free(prev_it);
+    }
+}
+
+void come_release_malloced_mem()
+{
+    sMem* it = gHeapPool.malloced_free_mem;
+    while(it) {
+        sMem* prev_it = it;
+        
+        free(it->mem);
+        
+        it = it.next;
+        
+        free(prev_it);
+    }
+    gHeapPool.malloced_free_mem = null;
+}
+
+static void* come_alloc_mem_from_heap_pool(size_t size)
+{
+    void* result = null;
+    
+    if(size + sizeof(size_t) >= HEAP_POOL_PAGE_SIZE) {
+        result = (char*)calloc(1, size+sizeof(size_t)) + sizeof(size_t);
+        *(size_t*)(result - sizeof(size_t)) = size;
+        
+        return result;
+    }
+    
+    struct sMem* it = gHeapPool.free_mem;
+    struct sMem* prev_it = it;
+    
+    while(it) {
+        if(size <= it.size) {
+            result = it.mem + sizeof(size_t);
+            
+            if(it == gHeapPool.free_mem) {
+                if(it.next == null) {
+                    gHeapPool.free_mem = null;
+                    free(it);
+                }
+                else {
+                    gHeapPool.free_mem = it.next;
+                    free(it);
+                }
+            }
+            else {
+                prev_it.next = it.next;
+                free(it);
+            }
+            
+            memset(result, 0, size);
+            
+            return result;
+        }
+        
+        prev_it = it;
+        it = it.next;
+    }
+    
+    if(gHeapPool.top + size + sizeof(size_t) - gHeapPool.mem_pages[gHeapPool.num_pages] >= HEAP_POOL_PAGE_SIZE) {
+        gHeapPool.num_pages++;
+        
+        if(gHeapPool.num_pages == gHeapPool.size_pages) {
+            int new_size_pages = gHeapPool.size_pages + 4;
+            
+            char** new_mem_pages = calloc(1, sizeof(char*)*new_size_pages);
+            
+            for(int i=0; i< gHeapPool.size_pages; i++) {
+                new_mem_pages[i] = gHeapPool.mem_pages[i];
+            }
+            
+            for(int i=gHeapPool.size_pages; i<new_size_pages; i++) {
+                new_mem_pages[i] = calloc(1, sizeof(char)*HEAP_POOL_PAGE_SIZE);
+            }
+            
+            free(gHeapPool.mem_pages);
+            
+            gHeapPool.mem_pages = new_mem_pages;
+            gHeapPool.size_pages = new_size_pages;
+        }
+        
+        gHeapPool.top = gHeapPool.mem_pages[gHeapPool.num_pages];
+    }
+    
+    result = gHeapPool.top + sizeof(size_t);
+    *(size_t*)(result - sizeof(size_t)) = size;
+    gHeapPool.top += size + sizeof(size_t);
+    
+    memset(result, 0, size);
+    
+    return result;
+}
+
+static void* my_calloc(size_t a, size_t b)
+{
+return calloc(a, b);
+}
+
+static void come_free_mem_of_heap_pool(char* mem)
+{
+    size_t size = *(size_t*)(mem - sizeof(size_t));
+    
+    if(size + sizeof(size_t) >= HEAP_POOL_PAGE_SIZE) {
+        /// prevent from double free ///
+        struct sMem* it = gHeapPool.malloced_free_mem;
+        
+        while(it) {
+            if(it.mem == mem - sizeof(size_t)) {
+                return;
+            }
+            
+            it = it.next;
+        }
+        
+        /// go ///
+        struct sMem* malloced_free_mem = calloc(1, sizeof(struct sMem));
+        
+        malloced_free_mem.mem = mem - sizeof(size_t);
+        malloced_free_mem.size = size;
+        malloced_free_mem.next = gHeapPool.malloced_free_mem;
+        
+        gHeapPool.malloced_free_mem = malloced_free_mem;
+    }
+    else {
+        /// prevent from double free ///
+        struct sMem* it = gHeapPool.free_mem;
+        
+        while(it) {
+            if(it.mem == mem - sizeof(size_t)) {
+                return;
+            }
+            
+            it = it.next;
+        }
+        
+        /// go ///
+        struct sMem* free_mem = my_calloc(1, sizeof(struct sMem));
+        
+        free_mem.mem = mem - sizeof(size_t);
+        free_mem.size = size;
+        free_mem.next = gHeapPool.free_mem;
+        
+        gHeapPool.free_mem = free_mem;
+    }
+}
+
+void* nccalloc(size_t nmemb, size_t size)
+{
+    void* result = come_alloc_mem_from_heap_pool(nmemb*size);
+    return result;
 }
 
 void ncfree(void* mem)
 {
     if(mem) {
-        free(mem);
+        come_free_mem_of_heap_pool(mem);
     }
 }
 
 void* come_calloc(size_t count, size_t size)
 {
-    char* mem = calloc(1, sizeof(int)+sizeof(long)+count*size);
+    char* mem = come_alloc_mem_from_heap_pool(sizeof(int)+sizeof(long)+count*size);
     
     int* ref_count = (int*)mem;
     
@@ -78,6 +235,60 @@ void* come_calloc(size_t count, size_t size)
     *size2 = size*count + sizeof(long) + sizeof(int);
     
     return mem + sizeof(int) + sizeof(long);
+}
+
+void come_free_object(void* mem)
+{
+    if(mem == NULL) {
+        return;
+    }
+    
+    int* ref_count = (int*)((char*)mem - sizeof(int) - sizeof(long));
+    
+    come_free_mem_of_heap_pool(ref_count);
+}
+
+void* come_memdup(void* block)
+{
+    if(!block) {
+        return null;
+    }
+    char* mem = (char*)block - sizeof(int) - sizeof(long);
+    
+    long* size_p = (long*)(mem + sizeof(int));
+
+    size_t size = *size_p;
+
+    char* ret = come_alloc_mem_from_heap_pool(size);
+
+    int* ref_count = ret;
+    
+    if (ret) {
+        char* p = ret;
+        char* p2 = mem;
+        while(p - (char*)ret < size) {
+            *p = *p2;
+            p++;
+            p2++;
+        }
+    }
+
+//    (*ref_count) = 1;
+    
+    long* size_p2 = (long*)((char*)ret + sizeof(int));
+    *size_p2 = size;
+    
+    return (char*)ret + sizeof(int) + sizeof(long);
+}
+
+void xassert(char* msg, bool test)
+{
+    printf("%s...", msg);
+    if(!test) {
+        puts("false");
+        exit(2);
+    }
+    puts("ok");
 }
 
 void* come_increment_ref_count(void* mem)
@@ -133,17 +344,6 @@ void* come_decrement_ref_count(void* mem, void* protocol_fun, void* protocol_obj
     return mem;
 }
 
-void come_free_object(void* mem)
-{
-    if(mem == NULL) {
-        return;
-    }
-    
-    int* ref_count = (int*)((char*)mem - sizeof(int) - sizeof(long));
-    
-    ncfree(ref_count);
-}
-
 void come_call_finalizer(void* fun, void* mem, void* protocol_fun, void* protocol_obj, int call_finalizer_only, int no_decrement, int no_free)
 {
     if(mem == NULL) {
@@ -183,45 +383,6 @@ void come_call_finalizer(void* fun, void* mem, void* protocol_fun, void* protoco
             }
         }
     }
-}
-
-void* nccalloc(size_t nmemb, size_t size)
-{
-    void* result = calloc(nmemb, size);
-    return result;
-}
-
-void* come_memdup(void* block)
-{
-    if(!block) {
-        return null;
-    }
-    char* mem = (char*)block - sizeof(int) - sizeof(long);
-    
-    long* size_p = (long*)(mem + sizeof(int));
-
-    size_t size = *size_p;
-
-    void* ret = calloc(1, size);
-
-    int* ref_count = ret;
-    
-    if (ret) {
-        char* p = ret;
-        char* p2 = mem;
-        while(p - (char*)ret < size) {
-            *p = *p2;
-            p++;
-            p2++;
-        }
-    }
-
-//    (*ref_count) = 1;
-    
-    long* size_p2 = (long*)((char*)ret + sizeof(int));
-    *size_p2 = size;
-    
-    return (char*)ret + sizeof(int) + sizeof(long);
 }
 
 void int::times(int self, void* parent, void (*block)(void* parent))

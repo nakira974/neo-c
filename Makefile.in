@@ -103,7 +103,7 @@ comelang2-sh: 01main.c.o 02transpile.c.o 03transpile2.c.o 04heap.c.o 05function.
 	comelang2 -c 15union.c 
 
 16enum.c.o: 16enum.c
-	comelang2 -g -c 16enum.c 
+	comelang2 -c 16enum.c 
 
 17typedef.c.o: 17typedef.c
 	comelang2 -c 17typedef.c 

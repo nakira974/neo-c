@@ -209,16 +209,6 @@ int transpile_block(sBlock* block, list<sType*%>*? param_types, list<string>*? p
             free_right_value_objects(info);
         }
     }
-    
-    if(info.come_fun.mName === "main" && block_level == 0 && !no_var_table) {
-        foreach(it, info.funcs) {
-            sFun* it2 = info.funcs[it];
-            
-            if(memcmp(it, "__final_", strlen("__final_")) == 0) {
-                add_come_code(info, "%s();\n", it);
-            }
-        }
-    }
 
     if(!info->last_statment_is_return && !no_var_table) {
         free_objects(info->lv_table, null!, info);
@@ -625,7 +615,7 @@ int transpile(sInfo* info) version 5
         info.funcs.insert(string(name), main_fun);
     }
     {
-        var name = string("come_call_finzlier");
+        var name = string("come_call_finalizer");
         var result_type = new sType("void", info);
         var param_types = [new sType("void*", info), new sType("void*", info), new sType("void*", info), new sType("void*", info), new sType("int", info), new sType("int", info), new sType("int", info)];
         var param_names = [string("fun"), string("mem"), string("protocol_fun"), string("protocol_obj"), string("call_finalizer_only"), string("no_decrement"), string("no_free")];
@@ -704,6 +694,48 @@ int transpile(sInfo* info) version 5
             , param_default_parametors, true@external, false@var_args
             , null!@block, false@static_
             , string("char* __builtin_string(char* str)")
+            , info);
+        
+        info.funcs.insert(string(name), main_fun);
+    }
+    {
+        var name = string("come_release_malloced_mem");
+        var result_type = new sType("void", info);
+        var param_types = new list<sType*%>();
+        var param_names = new list<string>();
+        var param_default_parametors = new list<string>();
+        var main_fun = new sFun(name, result_type, param_types, param_names
+            , param_default_parametors, true@external, false@var_args
+            , null!@block, false@static_
+            , string("void come_release_malloced_mem()")
+            , info);
+        
+        info.funcs.insert(string(name), main_fun);
+    }
+    {
+        var name = string("come_heap_pool_init");
+        var result_type = new sType("void", info);
+        var param_types = new list<sType*%>();
+        var param_names = new list<string>();
+        var param_default_parametors = new list<string>();
+        var main_fun = new sFun(name, result_type, param_types, param_names
+            , param_default_parametors, true@external, false@var_args
+            , null!@block, false@static_
+            , string("come_heap_pool_init()")
+            , info);
+        
+        info.funcs.insert(string(name), main_fun);
+    }
+    {
+        var name = string("come_heap_pool_final");
+        var result_type = new sType("void", info);
+        var param_types = new list<sType*%>();
+        var param_names = new list<string>();
+        var param_default_parametors = new list<string>();
+        var main_fun = new sFun(name, result_type, param_types, param_names
+            , param_default_parametors, true@external, false@var_args
+            , null!@block, false@static_
+            , string("void come_heap_pool_final()")
             , info);
         
         info.funcs.insert(string(name), main_fun);
@@ -917,7 +949,16 @@ bool sFunNode*::compile(sFunNode* self, sInfo* info)
     info.come_fun = self.mFun;
     
     if(self.mFun.mBlock) {
+        if(info.come_fun.mName === "main") {
+            add_come_code(info, "come_heap_pool_init();\n");
+        }
         transpile_block(self.mFun.mBlock, self.mFun.mParamTypes, self.mFun.mParamNames, info);
+        if(info.come_fun.mName !== "come_release_malloced_mem") {
+            add_come_code(info, "come_release_malloced_mem();\n");
+        }
+        if(info.come_fun.mName === "main") {
+            add_come_code(info, "come_heap_pool_final();\n");
+        }
     }
     
     info.come_fun = come_fun;

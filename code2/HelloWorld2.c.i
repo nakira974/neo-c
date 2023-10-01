@@ -6,9 +6,6 @@
 # 1 "code2/HelloWorld2.c"
 # 1 "./comelang2.h" 1
 using comelang;
-# 14 "./comelang2.h"
-void __builtin_va_start(char*);
-void __builtin_va_end(char*);
 
 
 
@@ -902,7 +899,7 @@ extern int __uflow (FILE *);
 extern int __overflow (FILE *, int);
 # 909 "/usr/include/stdio.h" 3 4
 
-# 20 "./comelang2.h" 2
+# 6 "./comelang2.h" 2
 # 1 "/usr/include/string.h" 1 3 4
 # 26 "/usr/include/string.h" 3 4
 # 1 "/usr/include/aarch64-linux-gnu/bits/libc-header-start.h" 1 3 4
@@ -1265,7 +1262,7 @@ extern void *memfrob (void *__s, size_t __n)
 extern char *basename (const char *__filename) ;
 # 539 "/usr/include/string.h" 3 4
 
-# 21 "./comelang2.h" 2
+# 7 "./comelang2.h" 2
 # 1 "/usr/include/stdlib.h" 1 3 4
 # 26 "/usr/include/stdlib.h" 3 4
 # 1 "/usr/include/aarch64-linux-gnu/bits/libc-header-start.h" 1 3 4
@@ -2608,7 +2605,7 @@ extern int getloadavg (double __loadavg[], int __nelem)
 # 1037 "/usr/include/stdlib.h" 2 3 4
 # 1048 "/usr/include/stdlib.h" 3 4
 
-# 22 "./comelang2.h" 2
+# 8 "./comelang2.h" 2
 # 1 "/usr/include/libgen.h" 1 3 4
 # 23 "/usr/include/libgen.h" 3 4
 
@@ -2626,7 +2623,7 @@ extern char *__xpg_basename (char *__path) ;
 
 
 
-# 23 "./comelang2.h" 2
+# 9 "./comelang2.h" 2
 # 1 "/usr/lib/gcc/aarch64-linux-gnu/12/include/limits.h" 1 3 4
 # 34 "/usr/lib/gcc/aarch64-linux-gnu/12/include/limits.h" 3 4
 # 1 "/usr/lib/gcc/aarch64-linux-gnu/12/include/syslimits.h" 1 3 4
@@ -2680,10 +2677,14 @@ extern long int __sysconf (int __name) ;
 # 204 "/usr/lib/gcc/aarch64-linux-gnu/12/include/limits.h" 2 3 4
 # 8 "/usr/lib/gcc/aarch64-linux-gnu/12/include/syslimits.h" 2 3 4
 # 35 "/usr/lib/gcc/aarch64-linux-gnu/12/include/limits.h" 2 3 4
-# 24 "./comelang2.h" 2
+# 10 "./comelang2.h" 2
 
 
-# 25 "./comelang2.h"
+
+# 12 "./comelang2.h"
+void __builtin_va_start(char*);
+void __builtin_va_end(char*);
+
 struct list_item<T>
 {
     T item;
@@ -3402,9 +3403,9 @@ impl map <T, T2>
                     }
                     else if(n == hash) {
                         fprintf(
-# 742 "./comelang2.h" 3 4
+# 732 "./comelang2.h" 3 4
                                stderr
-# 742 "./comelang2.h"
+# 732 "./comelang2.h"
                                      , "unexpected error in map.rehash(1)\n");
                         exit(2);
                     }
@@ -3471,9 +3472,9 @@ impl map <T, T2>
                 }
                 else if(it == hash) {
                     fprintf(
-# 807 "./comelang2.h" 3 4
+# 797 "./comelang2.h" 3 4
                            stderr
-# 807 "./comelang2.h"
+# 797 "./comelang2.h"
                                  , "unexpected error in map.insert\n");
                     exit(2);
                 }
@@ -3549,9 +3550,9 @@ impl map <T, T2>
                 }
                 else if(it == hash) {
                     fprintf(
-# 881 "./comelang2.h" 3 4
+# 871 "./comelang2.h" 3 4
                            stderr
-# 881 "./comelang2.h"
+# 871 "./comelang2.h"
                                  , "unexpected error in map.insert\n");
                     exit(2);
                 }
@@ -3834,9 +3835,11 @@ bool char::equals(char self, char right);
 bool short::equals(short self, short right);
 bool long::equals(long self, long right);
 bool string::equals(char* self, char* right);
+bool char*::equals(char* self, char* right);
 bool string::operator_equals(char* self, char* right);
 bool char*::operator_equals(char* self, char* right);
-bool char*::equals(char* self, char* right);
+bool string::operator_not_equals(char* self, char* right);
+bool char*::operator_not_equals(char* self, char* right);
 string char*::operator_add(char* self, char* right);
 string string::operator_add(char* self, char* right);
 unsigned int int::get_hash_key(int value);

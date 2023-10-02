@@ -106,8 +106,15 @@ static bool cpp(sInfo* info)
 
 static bool compile(sInfo* info, bool output_object_file, list<string>* object_files)
 {
-    string output_file_name = info.sname + ".o";
     string input_file_name = info.sname + ".c";
+    
+    string output_file_name = null;
+    if(info.output_file_name) {
+        output_file_name = string(info.output_file_name);
+    }
+    else {
+        output_file_name = info.sname + ".o";
+    }
     
     var command = xsprintf("clang -o %s -c %s %s", output_file_name, input_file_name, info.clang_option);
     
@@ -436,6 +443,13 @@ int come_main(int argc, char** argv) version 2
         info.source = xsprintf("%s.i", it).read().to_buffer();
         info.p = info.source.buf;
         info.head = info.source.buf;
+        
+        if(output_file_name) {
+            info.output_file_name = string(output_file_name);
+        }
+        else {
+            info.output_file_name = null;
+        }
         
         if(!output_cpp_file) {
             transpile(&info);

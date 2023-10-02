@@ -425,6 +425,11 @@ impl list <T>
         if(position < 0) {
             position += self.len;
         }
+        
+        if(position >= self.len) {
+            self.push_back(item);
+            return;
+        }
 
         list_item<T>* it = self.head;
         int i = 0;

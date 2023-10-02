@@ -556,6 +556,7 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
                 }
             }
         }
+        
         if(label_params.length() > 0) {
             for(i=0; i<fun.mParamNames.length(); i++) {
                 char* param_name = fun.mParamNames[i];

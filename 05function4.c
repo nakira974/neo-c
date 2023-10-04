@@ -701,6 +701,11 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
         info->p++;
         expected_next_character('*', info);
         
+        if(memcmp(info->p, "_Nullable", strlen("_Nullable")) == 0) {
+            info->p += strlen("_Nullable");
+            skip_spaces_and_lf(info);
+        }
+        
         sType*% result_type;
         if(info.types[type_name]) {
             result_type = clone info.types[type_name];

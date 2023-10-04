@@ -1,7 +1,7 @@
 #include <comelang2.h>
 
 struct sData {
-    long long a;
+int (* _Nullable _close)(void *);
 };
 
 int main(int argc, char** argv)

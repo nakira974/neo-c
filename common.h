@@ -10,6 +10,8 @@ using no-null-check;
 #include <comelang.h>
 #endif
 
+#include "config.h"
+
 //#define exit(o); { int* a = (void*)0; *a = 1; exit(2); }
 
 #define COME_CODE_MAX 2048

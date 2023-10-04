@@ -1,5 +1,5 @@
 #include "common.h"
-#include <ctype.h>
+//#include <ctype.h>
 
 void come_init() version 5
 {
@@ -1370,7 +1370,7 @@ sNode*% expression_node(sInfo* info) version 99
             int sline = info.sline;
             
             string word = string("");
-            if(isalpha(*info->p) || *info->p == '_') {
+            if(xisalpha(*info->p) || *info->p == '_') {
                 word = parse_word(info);
             }
             

@@ -1,5 +1,5 @@
 #include "common.h"
-#include <ctype.h>
+//#include <ctype.h>
 
 void parse_sharp(sInfo* info) version 5
 {
@@ -569,7 +569,7 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
         char* pX = info.p;
         int slineX = info.sline;
         
-        if(isalpha(*info->p)) {
+        if(xisalpha(*info->p)) {
             (void)parse_word(info);
             
             if(*info->p == '(' && info.in_typedef) {

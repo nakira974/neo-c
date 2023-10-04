@@ -3099,6 +3099,11 @@ impl list <T>
             position += self.len;
         }
 
+        if(position >= self.len) {
+            self.push_back(item);
+            return;
+        }
+
         list_item<T>* it = self.head;
         int i = 0;
         while(it != null) {
@@ -3403,9 +3408,9 @@ impl map <T, T2>
                     }
                     else if(n == hash) {
                         fprintf(
-# 732 "./comelang2.h" 3 4
+# 737 "./comelang2.h" 3 4
                                stderr
-# 732 "./comelang2.h"
+# 737 "./comelang2.h"
                                      , "unexpected error in map.rehash(1)\n");
                         exit(2);
                     }
@@ -3472,9 +3477,9 @@ impl map <T, T2>
                 }
                 else if(it == hash) {
                     fprintf(
-# 797 "./comelang2.h" 3 4
+# 802 "./comelang2.h" 3 4
                            stderr
-# 797 "./comelang2.h"
+# 802 "./comelang2.h"
                                  , "unexpected error in map.insert\n");
                     exit(2);
                 }
@@ -3550,9 +3555,9 @@ impl map <T, T2>
                 }
                 else if(it == hash) {
                     fprintf(
-# 871 "./comelang2.h" 3 4
+# 876 "./comelang2.h" 3 4
                            stderr
-# 871 "./comelang2.h"
+# 876 "./comelang2.h"
                                  , "unexpected error in map.insert\n");
                     exit(2);
                 }

@@ -199,6 +199,15 @@ string increment_ref_count_object(sType* type, char* obj, sInfo* info)
 
 void decrement_ref_count_object(sType* type, char* obj, sInfo* info)
 {
+    var stack_saved = info.stack;
+    var right_value_objects = info->right_value_objects;
+    
+/*
+    if(type->mNoSolvedGenericsType.v1) {
+        type = type->mNoSolvedGenericsType.v1;
+    }
+*/
+    
     sClass* klass = type->mClass;
     
     static int dec_num = 0;
@@ -208,6 +217,11 @@ void decrement_ref_count_object(sType* type, char* obj, sInfo* info)
     
     add_come_code(info, "%s=%s;\n", name, obj);
     
+    obj = name;
+    bool no_decrement = false;
+    bool no_free = false;
+    
+/*
     if(klass->mProtocol && type->mPointerNum == 1) {
         string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
         add_come_last_code2(info, xsprintf("if(%s) { %s = come_decrement_ref_count(%s, ((%s)%s)->finalize, ((%s)%s)->_protocol_obj, 0,0); }\n", name, name, name, type_name, name, type_name, name));
@@ -215,6 +229,94 @@ void decrement_ref_count_object(sType* type, char* obj, sInfo* info)
     else {
         add_come_last_code2(info, xsprintf("if(%s) { %s = come_decrement_ref_count(%s, (void*)0, (void*)0, 0,0); }\n", name, name, name));
     }
+*/
+    if(type->mPointerNum > 0) {
+        string c_value = string(obj);
+        
+        sClass* klass = type->mClass;
+        
+        char* class_name = klass->mName;
+
+        char* fun_name = "finalize";
+        
+        sType*% type2 = clone type;
+        type2->mHeap = false;
+        
+        string fun_name2 = create_method_name(type, false@no_pointer_name, fun_name, info);
+        
+        sFun* finalizer = NULL;
+        if(type->mGenericsTypes.length() > 0) {
+            finalizer = info->funcs[fun_name2];
+            
+            if(finalizer == NULL) {
+                string none_generics_name = get_none_generics_name(type2.mClass.mName);
+                
+                string generics_fun_name = xsprintf("%s_%s", none_generics_name, fun_name);
+                sGenericsFun* generics_fun = info->generics_funcs[generics_fun_name];
+                
+                if(generics_fun) {
+                    if(!create_generics_fun(fun_name2, generics_fun, type, info))
+                    {
+                        fprintf(stderr, "%s %d: can't create generics finalizer\n", info->sname, info->sline);
+                        exit(2);
+                    }
+                    finalizer = info->funcs[fun_name2];
+                }
+            }
+        }
+        else {
+            int i;
+            for(i=FUN_VERSION_MAX-1; i>=1; i--) {
+                string new_fun_name = xsprintf("%s_v%d", fun_name2, i);
+                finalizer = info->funcs[new_fun_name];
+                
+                if(finalizer) {
+                    fun_name2 = string(new_fun_name);
+                    break;
+                }
+            }
+            
+            if(finalizer == NULL) {
+                finalizer = info->funcs[fun_name2];
+            }
+        }
+        
+        if(finalizer == NULL && !type->mClass->mProtocol && !type->mClass->mNumber 
+            && gComelang)
+        {
+            var fun,new_fun_name = create_finalizer_automatically(type, fun_name, info);
+            
+            fun_name2 = new_fun_name;
+            finalizer = fun;
+        }
+
+        /// call finalizer ///
+        if(finalizer != null) {
+            if(klass->mProtocol && type->mPointerNum == 1) {
+                string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
+                if(c_value) {
+                    add_come_last_code2(info, "if(%s) { come_call_finalizer(%s, %s, ((%s)%s)->finalize, ((%s)%s)->_protocol_obj, %d, %d, %d); }\n", c_value, fun_name2, c_value, type_name, c_value, type_name, c_value, type->mAllocaValue, no_decrement, no_free);
+                }
+            }
+            else {
+                if(c_value) {
+                    add_come_last_code2(info, xsprintf("if(%s) { come_call_finalizer(%s,%s, (void*)0, (void*)0, %d, %d, %d); }\n", c_value, fun_name2, c_value, type->mAllocaValue, no_decrement, no_free));
+                }
+            }
+        }
+        else {
+            if(klass->mProtocol && type->mPointerNum == 1) {
+                string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
+                add_come_last_code2(info, xsprintf("if(%s) { %s = come_decrement_ref_count(%s, ((%s)%s)->finalize, ((%s)%s)->_protocol_obj, 0,0); }\n", name, name, name, type_name, name, type_name, name));
+            }
+            else {
+                add_come_last_code2(info, xsprintf("if(%s) { %s = come_decrement_ref_count(%s, (void*)0, (void*)0, 0,0); }\n", name, name, name));
+            }
+        }
+    }
+    
+    info.right_value_objects = right_value_objects;
+    info.stack = stack_saved;
 }
 
 void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo* info)

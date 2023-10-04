@@ -3379,6 +3379,11 @@ memset(&i_85, 0, sizeof(int)); /* ddd */
         if(position<0) {
             position+=self->len;
         }
+        if(position>=self->len) {
+            list$1charphp_push_back(self,(char*)come_increment_ref_count(item));
+            come_release_malloced_mem();
+            return;
+        }
         it_84=self->head;
         i_85=0;
         while(it_84!=((void*)0)) {
@@ -3503,6 +3508,11 @@ memset(&i_100, 0, sizeof(int)); /* ddd */
             if(position<0) {
                 position+=self->len;
             }
+            if(position>=self->len) {
+                list$1intp_push_back(self,item);
+                come_release_malloced_mem();
+                return;
+            }
             it_99=self->head;
             i_100=0;
             while(it_99!=((void*)0)) {
@@ -3589,7 +3599,7 @@ memset(&i_112, 0, sizeof(int)); /* ddd */
         self->it=0;
         __dec_obj12=self->key_list;
         self->key_list=(struct list$1charp*)come_increment_ref_count(((struct list$1charp*)(right_value76=list$1charpp_initialize((struct list$1charp*)come_increment_ref_count(((struct list$1charp*)(right_value75=(struct list$1charp*)come_calloc(1, sizeof(struct list$1charp)*(1)))))))));
-        if(__dec_obj12) { __dec_obj12 = come_decrement_ref_count(__dec_obj12, (void*)0, (void*)0, 0,0); }
+        if(__dec_obj12) { come_call_finalizer(list$1charpp_finalize,__dec_obj12, (void*)0, (void*)0, 0, 0, 0); }
         if(right_value76) { come_call_finalizer(list$1charpp_finalize,right_value76, (void*)0, (void*)0, 0, 1, 0); }
         for(
         i_112=0;
@@ -4306,7 +4316,7 @@ memset(&right_value94, 0, sizeof(void*));
             self->len=0;
             __dec_obj13=self->key_list;
             self->key_list=(struct list$1charp*)come_increment_ref_count(((struct list$1charp*)(right_value94=list$1charpp_initialize((struct list$1charp*)come_increment_ref_count(((struct list$1charp*)(right_value93=(struct list$1charp*)come_calloc(1, sizeof(struct list$1charp)*(1)))))))));
-            if(__dec_obj13) { __dec_obj13 = come_decrement_ref_count(__dec_obj13, (void*)0, (void*)0, 0,0); }
+            if(__dec_obj13) { come_call_finalizer(list$1charpp_finalize,__dec_obj13, (void*)0, (void*)0, 0, 0, 0); }
             if(right_value94) { come_call_finalizer(list$1charpp_finalize,right_value94, (void*)0, (void*)0, 0, 1, 0); }
             self->it=0;
             struct map$2charpint* __result63__ = self;

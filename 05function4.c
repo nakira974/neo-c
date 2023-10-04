@@ -1,8 +1,39 @@
 #include "common.h"
 //#include <ctype.h>
 
+void skip_paren(sInfo* info)
+{
+    int nest = 0;
+    while(true) {
+        if(*info->p == '(') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            nest++;
+        }
+        else if(*info->p == ')') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            nest--;
+            if(nest == 0) {
+                break;
+            }
+        }
+        else {
+            info->p++;
+        }
+    }
+}
+
 void parse_sharp(sInfo* info) version 5
 {
+    while(memcmp(info.p, "__attribute__", strlen("__attribute__")) == 0) {
+        info->p += strlen("__attribute__");
+        skip_spaces_and_lf(info);
+        skip_paren(info);
+    }
+
     while(*info->p == '#') {
         skip_spaces_and_lf(info);
     
@@ -56,6 +87,12 @@ void parse_sharp(sInfo* info) version 5
         }
     
         skip_spaces_and_lf(info);
+    }
+    
+    while(memcmp(info.p, "__attribute__", strlen("__attribute__")) == 0) {
+        info->p += strlen("__attribute__");
+        skip_spaces_and_lf(info);
+        skip_paren(info);
     }
 }
 

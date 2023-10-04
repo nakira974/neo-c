@@ -80,24 +80,27 @@ static bool cpp(sInfo* info)
     closedir(dir);
     
     char cmd[1024];
-#ifdef __DARWIN_ARM__
     snprintf(cmd, 1024, "/opt/homebrew/opt/llvm/bin/clang-cpp -lang-c -I. -I/usr/local/include -DCOMELANG2 -D__DARWIN_ARM__ -U__GNUC__ %s %s > %s", include_files.to_string(), input_file_name, output_file_name);
-#else
-    snprintf(cmd, 1024, "cpp -lang-c -I. -DCOMELANG2 -U__GNUC__ %s %s > %s", include_files.to_string(), input_file_name, output_file_name);
-#endif
     puts(cmd);
 
     int rc = system(cmd);
     if(rc != 0) {
-        char cmd[1024];
-        snprintf(cmd, 1024, "cpp %s -I. -C %s > %s", include_files.to_string(), input_file_name, output_file_name);
-
+        snprintf(cmd, 1024, "cpp -lang-c -I. -DCOMELANG2 -U__GNUC__ %s %s > %s", include_files.to_string(), input_file_name, output_file_name);
+        
         puts(cmd);
         rc = system(cmd);
-
+        
         if(rc != 0) {
-            printf("failed to cpp(2) (%s)\n", cmd);
-            exit(5);
+            char cmd[1024];
+            snprintf(cmd, 1024, "cpp %s -I. -C %s > %s", include_files.to_string(), input_file_name, output_file_name);
+    
+            puts(cmd);
+            rc = system(cmd);
+    
+            if(rc != 0) {
+                printf("failed to cpp(2) (%s)\n", cmd);
+                exit(5);
+            }
         }
     }
     

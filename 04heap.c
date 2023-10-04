@@ -257,7 +257,7 @@ void decrement_ref_count_object(sType* type, char* obj, sInfo* info)
                 if(generics_fun) {
                     if(!create_generics_fun(fun_name2, generics_fun, type, info))
                     {
-                        fprintf(stderr, "%s %d: can't create generics finalizer\n", info->sname, info->sline);
+                        printf("%s %d: can't create generics finalizer\n", info->sname, info->sline);
                         exit(2);
                     }
                     finalizer = info->funcs[fun_name2];
@@ -354,7 +354,7 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
                 if(generics_fun) {
                     if(!create_generics_fun(fun_name2, generics_fun, type, info))
                     {
-                        fprintf(stderr, "%s %d: can't create generics finalizer\n", info->sname, info->sline);
+                        printf("%s %d: can't create generics finalizer\n", info->sname, info->sline);
                         exit(2);
                     }
                     finalizer = info->funcs[fun_name2];

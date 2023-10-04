@@ -232,7 +232,7 @@ void arrange_stack(sInfo* info, int top)
         dec_stack_ptr(info->stack.length()-top, info);
     }
     if(info->stack.length() < top) {
-        fprintf(stderr, "%s %d: unexpected stack value. The stack num is %d. top is %d\n", info->sname, info->sline, info->stack.length(), top);
+        printf("%s %d: unexpected stack value. The stack num is %d. top is %d\n", info->sname, info->sline, info->stack.length(), top);
         int a = 0;
         int b = 1;
         int c = b/a;

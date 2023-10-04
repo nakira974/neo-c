@@ -96,7 +96,7 @@ static bool cpp(sInfo* info)
         rc = system(cmd);
 
         if(rc != 0) {
-            fprintf(stderr, "failed to cpp(2) (%s)\n", cmd);
+            printf("failed to cpp(2) (%s)\n", cmd);
             exit(5);
         }
     }
@@ -436,7 +436,7 @@ int come_main(int argc, char** argv) version 2
         init_module(&info);
         
         if(!cpp(&info)) {
-            fprintf(stderr, "%s %d: transpile failed\n", info.sname, info.sline);
+            printf("%s %d: transpile failed\n", info.sname, info.sline);
             exit(2);
         }
         
@@ -455,18 +455,18 @@ int come_main(int argc, char** argv) version 2
             transpile(&info);
             
             if(!output_source_file(&info)) {
-                fprintf(stderr, "%s %d: output source file faield\n", info->sname, info->sline);
+                printf("%s %d: output source file faield\n", info->sname, info->sline);
                 exit(2);
             }
             
             if(info.err_num > 0) {
-                fprintf(stderr, "transpile error. err num %d\n", info->err_num);
+                printf("transpile error. err num %d\n", info->err_num);
                 
                 exit(2);
             }
             else {
                 if(!compile(&info, output_object_file, object_files)) {
-                    fprintf(stderr, "%s %d: compile faield\n", info.sname, info.sline);
+                    printf("%s %d: compile faield\n", info.sname, info.sline);
                     exit(1);
                 }
                 
@@ -488,7 +488,7 @@ int come_main(int argc, char** argv) version 2
         }
         
         linker(&info, object_files).expect {
-            fprintf(stderr, "%s %d: linker faield\n", info.sname, info.sline);
+            printf("%s %d: linker faield\n", info.sname, info.sline);
             exit(1);
         }
     }

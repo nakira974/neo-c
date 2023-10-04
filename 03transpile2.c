@@ -77,6 +77,9 @@ string make_type_name_string(sType* type, bool in_header, bool array_cast_pointe
     else if(class_name === "long") {
         buf.append_str("long");
     }
+    else if(class_name === "__uint128_t") {
+        buf.append_str("__uint128_t");
+    }
     else if(class_name === "bool") {
         buf.append_str("_Bool");
     }

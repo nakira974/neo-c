@@ -485,6 +485,9 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
                         if(type_name === "int") {
                             break;
                         }
+                        else if(!is_type_name(type_name, info)) {
+                            break;
+                        }
                     }
                     else if(is_type_name(type_name, info)) {
                         if(long_) {

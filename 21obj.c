@@ -759,6 +759,7 @@ sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 
     if(buf === "new") {
         var type, name, err = parse_type(info);
         if(!err) {
+            printf("%s %d: parse_type failed\n", info->sname, info->sline);
             exit(2);
         }
         
@@ -839,6 +840,7 @@ sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 
         
         var param_type, param_name,err = parse_type(info, parse_variable_name:false);
         if(!err) {
+            printf("%s %d: parse_type failed\n", info->sname, info->sline);
             exit(2);
         }
         
@@ -909,6 +911,7 @@ sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 
         if(is_type_name_flag) {
             var type, name, err = parse_type(info, false);
             if(!err) {
+                printf("%s %d: parse_type failed\n", info->sname, info->sline);
                 exit(2);
             }
             
@@ -974,6 +977,7 @@ sNode*% post_position_operator3(sNode*% node, sInfo* info) version 21
         
         var type3, name2,err = parse_type(info);
         if(!err) {
+            printf("%s %d: parse_type failed\n", info->sname, info->sline);
             exit(2);
         }
         

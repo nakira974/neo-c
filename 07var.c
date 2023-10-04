@@ -674,6 +674,7 @@ sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 
             var type, name, err = parse_type(info, true@parse_variable_name);
             
             if(!err) {
+                printf("%s %d: parse_type failed\n", info->sname, info->sline);
                 exit(2);
             }
             parse_sharp(info);

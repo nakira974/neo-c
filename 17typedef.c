@@ -54,6 +54,7 @@ sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 9
         info.in_typedef = true;
         var type, type_name,err = parse_type(info, true@parse_variable_name);
         if(!err) {
+            printf("%s %d: parse_type failed\n", info->sname, info->sline);
             exit(2);
         }
         info.in_typedef = false;

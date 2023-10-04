@@ -202,6 +202,7 @@ list<sType*%>*%, list<string>*%, list<string>*%, bool parse_params(sInfo* info)
             var param_type, param_name, err = parse_type(info, true@parse_variable_name, false@parse_multiple_type);
             
             if(!err) {
+                printf("%s %d: failed to function parametor\n", info->sname, info->sline);
                 exit(2);
             }
             
@@ -771,7 +772,14 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
         result_type->mLong = result_type->mLong || long_;
         result_type->mShort = result_type->mShort || short_;
         
-        var_name = parse_word(info);
+        if(xisalnum(*info.p) || *info->p == '_') {
+            var_name = parse_word(info);
+        }
+        else {
+            static int num_anonymous_var_name = 0;
+            num_anonymous_var_name++;
+            var_name = xsprintf("anonymous_lambda_var_name%d", num_anonymous_var_name);
+        }
         expected_next_character(')', info);
         
         var param_types, param_names, param_default_parametors, var_args = parse_params(info);

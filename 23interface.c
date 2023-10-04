@@ -66,6 +66,7 @@ sType*%, string parse_interface_function(sInfo* info)
 {
     var result_type, var_name,err = parse_type(info);
     if(!err) {
+        printf("%s %d: parse_type failed\n", info->sname, info->sline);
         exit(2);
     }
     

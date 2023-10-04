@@ -288,6 +288,7 @@ sNode*% parse_struct(string type_name, sInfo* info)
         parse_sharp(info);
         var type2, name, err = parse_type(info, true@parse_variable_name);
         if(!err) {
+            printf("%s %d: parse_type failed\n", info->sname, info->sline);
             exit(2);
         }
         expected_next_character(';', info) ;
@@ -375,6 +376,7 @@ sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 9
                     var type2, name, err = parse_type(info, true@parse_variable_name);
                     
                     if(!err) {
+                        printf("%s %d: parse_type failed\n", info->sname, info->sline);
                         exit(2);
                     }
                     expected_next_character(';', info) ;
@@ -411,6 +413,7 @@ sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 9
                     
                     var type2, name, err = parse_type(info, true@parse_variable_name);
                     if(!err) {
+                        printf("%s %d: parse_type failed\n", info->sname, info->sline);
                         exit(2);
                     }
                     expected_next_character(';', info) ;

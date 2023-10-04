@@ -1417,6 +1417,7 @@ sNode*% expression_node(sInfo* info) version 99
             var type, name, err = parse_type(info);
             
             if(!err) {
+                printf("%s %d: parse_type failed\n", info->sname, info->sline);
                 exit(2);
             }
             
@@ -1595,6 +1596,7 @@ sNode*% parse_global_variable(sInfo* info)
     var result_type, var_name,err = parse_type(info, true@parse_variable_name);
     
     if(!err) {
+        printf("%s %d: parse_type failed\n", info->sname, info->sline);
         exit(2);
     }
     

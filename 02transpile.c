@@ -80,26 +80,40 @@ static bool cpp(sInfo* info)
     closedir(dir);
     
     char cmd[1024];
-    snprintf(cmd, 1024, "/opt/homebrew/opt/llvm/bin/clang-cpp -lang-c -I. -I/usr/local/include -DCOMELANG2 -D__DARWIN_ARM__ -U__GNUC__ %s %s > %s", include_files.to_string(), input_file_name, output_file_name);
-    puts(cmd);
+    snprintf(cmd, 1024, "which /opt/homebrew/opt/llvm/bin/clang-cpp 1> /dev/null 2>/dev/null");
 
     int rc = system(cmd);
-    if(rc != 0) {
-        snprintf(cmd, 1024, "cpp -lang-c -I. -DCOMELANG2 -U__GNUC__ %s %s > %s", include_files.to_string(), input_file_name, output_file_name);
-        
+    if(rc == 0) {
+        char cmd[4048];
+        snprintf(cmd, 4048, "/opt/homebrew/opt/llvm/bin/clang-cpp -lang-c -I. -I/usr/local/include -DCOMELANG2 -D__DARWIN_ARM__ -U__GNUC__ %s %s > %s", include_files.to_string(), input_file_name, output_file_name);
         puts(cmd);
-        rc = system(cmd);
+        
+        int rc = system(cmd);
         
         if(rc != 0) {
-            char cmd[1024];
-            snprintf(cmd, 1024, "cpp %s -I. -C %s > %s", include_files.to_string(), input_file_name, output_file_name);
-    
+            printf("failed to cpp(2) (%s)\n", cmd);
+            exit(5);
+        }
+    }
+    else {
+        int rc = system(cmd);
+        if(rc != 0) {
+            snprintf(cmd, 1024, "cpp -lang-c -I. -DCOMELANG2 -U__GNUC__ %s %s > %s", include_files.to_string(), input_file_name, output_file_name);
+            
             puts(cmd);
             rc = system(cmd);
-    
+            
             if(rc != 0) {
-                printf("failed to cpp(2) (%s)\n", cmd);
-                exit(5);
+                char cmd[1024];
+                snprintf(cmd, 1024, "cpp %s -I. -C %s > %s", include_files.to_string(), input_file_name, output_file_name);
+        
+                puts(cmd);
+                rc = system(cmd);
+        
+                if(rc != 0) {
+                    printf("failed to cpp(2) (%s)\n", cmd);
+                    exit(5);
+                }
             }
         }
     }
@@ -345,15 +359,30 @@ void init_classes(sInfo* info)
         info.classes.insert(generics_type, new sClass(generics_type, generics:true, generics_num:i));
     }
     
-    sClass*% klass = new sClass("__builtin_va_list", struct_:true);
-    
-    klass.mFields.push_back(new tuple2<string, sType*%>(string("v1"), new sType("char*", info)));
-    klass.mFields.push_back(new tuple2<string, sType*%>(string("v2"), new sType("char*", info)));
-    klass.mFields.push_back(new tuple2<string, sType*%>(string("v3"), new sType("char*", info)));
-    klass.mFields.push_back(new tuple2<string, sType*%>(string("v4"), new sType("int", info)));
-    klass.mFields.push_back(new tuple2<string, sType*%>(string("v5"), new sType("int", info)));
-    
-    info.classes.insert(string("__builtin_va_list"), klass);
+    char cmd[1024];
+    snprintf(cmd, 1024, "which /opt/homebrew/opt/llvm/bin/clang-cpp 1> /dev/null 2>/dev/null");
+
+    int rc = system(cmd);
+    if(rc == 0) {
+        string type_name = string("__builtin_va_list");
+        
+        sType*% type = new sType("char*", info);
+        
+        info.types.insert(string(type_name), type);
+        
+        add_come_code_at_source_head(info, "typedef %s;\n", make_define_var(type, type_name, info, true@in_header));
+    }
+    else {
+        sClass*% klass = new sClass("__builtin_va_list", struct_:true);
+        
+        klass.mFields.push_back(new tuple2<string, sType*%>(string("v1"), new sType("char*", info)));
+        klass.mFields.push_back(new tuple2<string, sType*%>(string("v2"), new sType("char*", info)));
+        klass.mFields.push_back(new tuple2<string, sType*%>(string("v3"), new sType("char*", info)));
+        klass.mFields.push_back(new tuple2<string, sType*%>(string("v4"), new sType("int", info)));
+        klass.mFields.push_back(new tuple2<string, sType*%>(string("v5"), new sType("int", info)));
+        
+        info.classes.insert(string("__builtin_va_list"), klass);
+    }
 }
 
 void init_module(sInfo* info)

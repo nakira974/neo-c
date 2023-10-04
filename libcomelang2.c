@@ -708,7 +708,7 @@ string xsprintf(char* msg, ...)
     va_end(args);
 
     if(len < 0) {
-        fprintf(stderr, "vasprintf can't get heap memory.(msg %s)\n", msg);
+        printf("vasprintf can't get heap memory.(msg %s)\n", msg);
         exit(2);
     }
     

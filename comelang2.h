@@ -734,7 +734,7 @@ impl map <T, T2>
                         n = 0;
                     }
                     else if(n == hash) {
-                        fprintf(stderr, "unexpected error in map.rehash(1)\n");
+                        printf("unexpected error in map.rehash(1)\n");
                         exit(2);
                     }
                 }
@@ -799,7 +799,7 @@ impl map <T, T2>
                     it = 0;
                 }
                 else if(it == hash) {
-                    fprintf(stderr, "unexpected error in map.insert\n");
+                    printf("unexpected error in map.insert\n");
                     exit(2);
                 }
             }
@@ -873,7 +873,7 @@ impl map <T, T2>
                     it = 0;
                 }
                 else if(it == hash) {
-                    fprintf(stderr, "unexpected error in map.insert\n");
+                    printf("unexpected error in map.insert\n");
                     exit(2);
                 }
             }

@@ -215,7 +215,8 @@ string make_define_var(sType* type, char* name, sInfo* info, bool in_header=fals
         buf.append_str(str);
     }
     else if(type->mSizeNum > 0) {
-        buf.append_str("int ");
+        var type_str = make_type_name_string(type, in_header, false@array_cast_pointer, info);
+        buf.append_str(xsprintf("%s ", type_str));
         buf.append_str(xsprintf("%s:%d", name, type->mSizeNum));
     }
     else if(type->mOmitArrayNum) {

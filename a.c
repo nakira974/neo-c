@@ -1,7 +1,10 @@
 #include <comelang2.h>
 
+struct sData
+{
+    long a:7;
+};
 
-void(*signal(int, void (*)(int)))(int);
 
 int main(int argc, char** argv)
 {

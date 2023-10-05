@@ -699,6 +699,20 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
                 num_anonymous_var_name++;
                 var_name = xsprintf("anonymous_var_name%d", num_anonymous_var_name);
             }
+            
+            if(*info->p == ':') {
+                info->p++;
+                skip_spaces_and_lf(info);
+                
+                int n = 0;
+                while(xisdigit(*info->p)) {
+                    n = n * 10 + *info->p - '0';
+                    info->p++;
+                    skip_spaces_and_lf(info);
+                }
+                
+                type->mSizeNum = n;
+            }
         }
     }
     else if(lambda_flag) {
@@ -1051,6 +1065,20 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
                 static int num_anonymous_var_name = 0;
                 num_anonymous_var_name++;
                 var_name = xsprintf("anonymous_var_name%d", num_anonymous_var_name);
+            }
+            
+            if(*info->p == ':') {
+                info->p++;
+                skip_spaces_and_lf(info);
+                
+                int n = 0;
+                while(xisdigit(*info->p)) {
+                    n = n * 10 + *info->p - '0';
+                    info->p++;
+                    skip_spaces_and_lf(info);
+                }
+                
+                type->mSizeNum = n;
             }
         }
     }

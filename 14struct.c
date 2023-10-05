@@ -66,7 +66,6 @@ void output_struct(sClass* klass, sInfo* info)
         foreach(it, klass.mFields) {
             var name, type = it;
             
-            
             type->mStatic = false;
             
             buf.append_str("    ");

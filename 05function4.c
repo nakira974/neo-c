@@ -779,6 +779,9 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
         
         if(xisalnum(*info.p) || *info->p == '_') {
             var_name = parse_word(info);
+            if(*info->p == '(') { // function pointer result function
+                return new tuple3<sType*%,string,bool>(result_type,var_name, false);
+            }
         }
         else {
             static int num_anonymous_var_name = 0;

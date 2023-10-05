@@ -55,6 +55,59 @@ bool sLambdaNode*::compile(sLambdaNode* self, sInfo* info)
     return true;
 }
 
+struct sFunNode {
+    sFun*% mFun;
+    int sline;
+    string sname;
+};
+
+sFunNode*% sFunNode*::initialize(sFunNode*% self, sFun*% fun, sInfo* info)
+{
+    self.mFun = fun;
+    self.sline = info.sline;
+    self.sname = info.sname;
+    
+    return self;
+}
+
+int sFunNode*::sline(sFunNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sFunNode*::sname(sFunNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
+bool sFunNode*::terminated()
+{
+    return false;
+}
+
+bool sFunNode*::compile(sFunNode* self, sInfo* info)
+{
+    sFun* come_fun = info.come_fun;
+    info.come_fun = self.mFun;
+    
+    if(self.mFun.mBlock) {
+        if(info.come_fun.mName === "main") {
+            add_come_code(info, "come_heap_pool_init();\n");
+        }
+        transpile_block(self.mFun.mBlock, self.mFun.mParamTypes, self.mFun.mParamNames, info);
+        if(info.come_fun.mName !== "come_release_malloced_mem") {
+            add_come_code(info, "come_release_malloced_mem();\n");
+        }
+        if(info.come_fun.mName === "main") {
+            add_come_code(info, "come_heap_pool_final();\n");
+        }
+    }
+    
+    info.come_fun = come_fun;
+    
+    return true;
+}
+
 sBlock*% sBlock*::initialize(sBlock*% self, sInfo* info)
 {
     self.mNodes = new list<sNode*%>();
@@ -233,9 +286,6 @@ void arrange_stack(sInfo* info, int top)
     }
     if(info->stack.length() < top) {
         printf("%s %d: unexpected stack value. The stack num is %d. top is %d\n", info->sname, info->sline, info->stack.length(), top);
-        int a = 0;
-        int b = 1;
-        int c = b/a;
         exit(2);
     }
 }
@@ -244,10 +294,10 @@ int expected_next_character(char c, sInfo* info)
 {
     parse_sharp(info);
     if(*info->p != c) {
-        err_msg(info, "expected next charaster is %c, but %c\n", c, *info->p);
-int* a = (void*)0;
-*a = 0;
-        exit(2);
+        if(!info.no_output_err) {
+            err_msg(info, "expected next charaster is %c, but %c\n", c, *info->p);
+            exit(2);
+        }
     }
     
     info->p++;
@@ -778,10 +828,33 @@ sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 9
     bool is_type_name_flag = is_type_name(buf, info);
     int sline = info.sline;
     
+    /// backtrace ///
+    bool define_function_pointer_result_function = false;
+    if(is_type_name_flag)
+    {
+        char* p = info.p;
+        info.p = head;
+        
+        if(xisalpha(*info->p) || *info->p == '_') {
+            info.no_output_err = true;
+            parse_type(parse_variable_name:false, info);
+            info.no_output_err = false;
+            
+            if(*info->p == '(') {
+                info->p ++;
+                skip_spaces_and_lf(info);
+                
+                define_function_pointer_result_function = true;
+            }
+        }
+        
+        info.p = head;
+        info.sline = sline;
+    }
     
     /// backtrace ///
     bool define_function_flag = false;
-    if(is_type_name_flag)
+    if(is_type_name_flag && !define_function_pointer_result_function)
     {
         char* p = info.p;
         info.p = head;
@@ -841,9 +914,10 @@ sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 9
         info.p = p;
         info.sline = sline;
     }
+    
     /// backtrace2 ///
     bool define_variable = true;
-    if(is_type_name_flag)
+    if(is_type_name_flag && !define_function_pointer_result_function)
     {
         char* p = info.p;
         info.p = head;
@@ -882,7 +956,133 @@ sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 9
         define_variable = false;
     }
     
-    if(define_function_flag) {
+    if(define_function_pointer_result_function) {
+        char* header_head = info.p;
+        var result_type, fun_name, err = parse_type(parse_variable_name:false, info);
+        
+        if(*info->p == '(') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            var param_types = new list<sType*%>();
+            var param_names = new list<string>();
+            
+            if(*info->p == ')') {
+                info->p++;
+                skip_spaces_and_lf(info);
+            }
+            else {
+                while(true) {
+                    var param_type, param_name, err = parse_type(parse_variable_name:false, parse_multiple_type:false, info);
+                    
+                    if(!err) {
+                        err_msg(info, "parse_type is failed");
+                        exit(2);
+                    }
+                    
+                    param_types.push_back(param_type);
+                    
+                    static int num_function_pointer_result_var_name_a = 0;
+                    param_names.push_back(xsprintf("_function_pointer_result_var_name_a%d", ++num_function_pointer_result_var_name_a));
+                    
+                    if(*info->p == ',') {
+                        info->p++;
+                        skip_spaces_and_lf(info);
+                    }
+                    else if(*info->p == ')') {
+                        info->p++;
+                        skip_spaces_and_lf(info);
+                        break;
+                    }
+                    else {
+                        err_msg(info, "require , or )");
+                        exit(2);
+                    }
+                }
+            }
+            
+            expected_next_character(')', info);
+            
+            if(*info->p == '(') {
+                info->p++;
+                skip_spaces_and_lf(info);
+                
+                var param_types2 = new list<sType*%>();
+                var param_names2 = new list<string>();
+                
+                if(*info->p == ')') {
+                    info->p++;
+                    skip_spaces_and_lf(info);
+                }
+                else {
+                    while(true) {
+                        var param_type, param_name, err = parse_type(parse_variable_name:false, parse_multiple_type:false, info);
+                        
+                        if(!err) {
+                            err_msg(info, "parse_type is failed");
+                            exit(2);
+                        }
+                        
+                        param_types2.push_back(param_type);
+                        
+                        static int num_function_pointer_result_var_name_b = 0;
+                        param_names2.push_back(xsprintf("_function_pointer_result_var_name_b%d", ++num_function_pointer_result_var_name_b));
+                        
+                        if(*info->p == ',') {
+                            info->p++;
+                            skip_spaces_and_lf(info);
+                        }
+                        else if(*info->p == ')') {
+                            info->p++;
+                            skip_spaces_and_lf(info);
+                            break;
+                        }
+                        else {
+                            err_msg(info, "require , or )");
+                            exit(2);
+                        }
+                    }
+                }
+                
+                char* header_tail = info.p;
+                
+                sType*% result_type2 = new sType("lambda", info);
+                
+                result_type2->mResultType = new tuple1<sType*%>(result_type);
+                result_type2->mParamTypes = clone param_types2;
+                result_type2->mParamNames = clone param_names2;
+                result_type2->mVarArgs = false;
+                result_type2->mStatic = false;
+                
+                bool var_args = false;
+                
+                buffer*% header_buf = new buffer();
+                header_buf.append(header_head, header_tail - header_head);
+                header_buf.append_char('\0');
+                
+                var param_default_parametors = new list<string>();
+                
+                var fun = new sFun(string(fun_name), result_type2
+                                    , param_types, param_names
+                                    , param_default_parametors
+                                    , true@external, var_args, null!@block
+                                    , false@static_, header_buf.to_string(), info);
+                
+                var fun2 = info.funcs[string(fun_name)];
+                if(fun2 == null || fun2.mExternal) {
+        
+                    info.funcs.insert(clone fun_name, fun);
+                }
+                
+                return new sNode(new sFunNode(fun, info));
+            }
+            else {
+                err_msg(info, "require (");
+                exit(2);
+            }
+        }
+    }
+    else if(define_function_flag) {
         info.p = head;
         info.sline = sline;
         
@@ -912,58 +1112,6 @@ bool is_type_name(char* buf, sInfo* info)
     
     return generics_class || generics_type_name || klass || type || buf === "const" || buf === "register" || buf === "static" || buf === "volatile" || buf === "unsigned" || buf === "immutable" || buf === "mutable" || buf === "struct" || buf === "enum" || buf === "union" || buf === "extern" || buf === "inline" || buf === "__inline" || buf === "__extension__";
 
-}
-struct sFunNode {
-    sFun*% mFun;
-    int sline;
-    string sname;
-};
-
-sFunNode*% sFunNode*::initialize(sFunNode*% self, sFun*% fun, sInfo* info)
-{
-    self.mFun = fun;
-    self.sline = info.sline;
-    self.sname = info.sname;
-    
-    return self;
-}
-
-int sFunNode*::sline(sFunNode* self, sInfo* info)
-{
-    return self.sline;
-}
-
-string sFunNode*::sname(sFunNode* self, sInfo* info)
-{
-    return string(self.sname);
-}
-
-bool sFunNode*::terminated()
-{
-    return false;
-}
-
-bool sFunNode*::compile(sFunNode* self, sInfo* info)
-{
-    sFun* come_fun = info.come_fun;
-    info.come_fun = self.mFun;
-    
-    if(self.mFun.mBlock) {
-        if(info.come_fun.mName === "main") {
-            add_come_code(info, "come_heap_pool_init();\n");
-        }
-        transpile_block(self.mFun.mBlock, self.mFun.mParamTypes, self.mFun.mParamNames, info);
-        if(info.come_fun.mName !== "come_release_malloced_mem") {
-            add_come_code(info, "come_release_malloced_mem();\n");
-        }
-        if(info.come_fun.mName === "main") {
-            add_come_code(info, "come_heap_pool_final();\n");
-        }
-    }
-    
-    info.come_fun = come_fun;
-    
-    return true;
 }
 
 bool create_generics_fun(string fun_name, sGenericsFun* generics_fun, sType* generics_type, sInfo* info)

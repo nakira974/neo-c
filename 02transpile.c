@@ -25,7 +25,7 @@ void err_msg(sInfo* info, char* msg, ...)
         vsnprintf(msg2, COME_CODE_MAX, msg, args);
         va_end(args);
         
-        printf("%s %d: %s\n", info.sname, info.sline, msg2);
+        fprintf(stderr, "%s %d: %s\n", info.sname, info.sline, msg2);
         info.err_num++;
     }
 }

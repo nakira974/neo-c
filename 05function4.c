@@ -199,6 +199,8 @@ list<sType*%>*%, list<string>*%, list<string>*%, bool parse_params(sInfo* info)
                 break;
             }
             
+            parse_sharp(info);
+            
             var param_type, param_name, err = parse_type(info, true@parse_variable_name, false@parse_multiple_type);
             
             if(!err) {
@@ -239,6 +241,8 @@ list<sType*%>*%, list<string>*%, list<string>*%, bool parse_params(sInfo* info)
             else {
                 param_default_parametors.push_back(null);
             }
+            
+            parse_sharp(info);
             
             if(*info->p == ',') {
                 info->p++;

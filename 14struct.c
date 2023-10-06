@@ -290,9 +290,38 @@ sNode*% parse_struct(string type_name, sInfo* info)
             printf("%s %d: parse_type failed\n", info->sname, info->sline);
             exit(2);
         }
+        if(*info->p == ',') {
+            klass.mFields.push_back(new tuple2<string, sType*%>(name, type2));
+            
+            while(*info->p == ',') {
+                info->p++;
+                skip_spaces_and_lf(info);
+                
+                string name2 = parse_word(info);
+                
+                var type3 = clone type2;
+                
+                if(*info->p == ':') {
+                    info->p++;
+                    skip_spaces_and_lf(info);
+                    
+                    int n = 0;
+                    while(xisdigit(*info->p)) {
+                        n = n * 10 + *info->p - '0';
+                        info->p++;
+                        skip_spaces_and_lf(info);
+                    }
+                    
+                    type3->mSizeNum = n;
+                }
+                
+                klass.mFields.push_back(new tuple2<string, sType*%>(name2, type3));
+            }
+        }
+        else {
+            klass.mFields.push_back(new tuple2<string, sType*%>(name, type2));
+        }
         expected_next_character(';', info) ;
-        
-        klass.mFields.push_back(new tuple2<string, sType*%>(name, type2));
         
         parse_sharp(info);
         
@@ -378,9 +407,40 @@ sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 9
                         printf("%s %d: parse_type failed\n", info->sname, info->sline);
                         exit(2);
                     }
-                    expected_next_character(';', info) ;
                     
-                    generics_class.mFields.push_back(new tuple2<string, sType*%>(name, type2));
+                    if(*info->p == ',') {
+                        generics_class.mFields.push_back(new tuple2<string, sType*%>(name, type2));
+                        
+                        while(*info->p == ',') {
+                            info->p++;
+                            skip_spaces_and_lf(info);
+                            
+                            string name2 = parse_word(info);
+                            
+                            var type3 = clone type2;
+                            
+                            if(*info->p == ':') {
+                                info->p++;
+                                skip_spaces_and_lf(info);
+                                
+                                int n = 0;
+                                while(xisdigit(*info->p)) {
+                                    n = n * 10 + *info->p - '0';
+                                    info->p++;
+                                    skip_spaces_and_lf(info);
+                                }
+                                
+                                type3->mSizeNum = n;
+                            }
+                            
+                            generics_class.mFields.push_back(new tuple2<string, sType*%>(name2, type3));
+                        }
+                    }
+                    else {
+                        generics_class.mFields.push_back(new tuple2<string, sType*%>(name, type2));
+                    }
+                    
+                    expected_next_character(';', info) ;
                     
                     parse_sharp(info);
                     
@@ -415,9 +475,41 @@ sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 9
                         printf("%s %d: parse_type failed\n", info->sname, info->sline);
                         exit(2);
                     }
+                    
+                    if(*info->p == ',') {
+                        struct_class.mFields.push_back(new tuple2<string, sType*%>(name, type2));
+                        
+                        while(*info->p == ',') {
+                            info->p++;
+                            skip_spaces_and_lf(info);
+                            
+                            string name2 = parse_word(info);
+                            
+                            var type3 = clone type2;
+                            
+                            if(*info->p == ':') {
+                                info->p++;
+                                skip_spaces_and_lf(info);
+                                
+                                int n = 0;
+                                while(xisdigit(*info->p)) {
+                                    n = n * 10 + *info->p - '0';
+                                    info->p++;
+                                    skip_spaces_and_lf(info);
+                                }
+                                
+                                type3->mSizeNum = n;
+                            }
+                            
+                            struct_class.mFields.push_back(new tuple2<string, sType*%>(name2, type3));
+                        }
+                    }
+                    else {
+                        struct_class.mFields.push_back(new tuple2<string, sType*%>(name, type2));
+                    }
+                    
                     expected_next_character(';', info) ;
                     
-                    struct_class.mFields.push_back(new tuple2<string, sType*%>(name, type2));
                     
                     parse_sharp(info);
                     

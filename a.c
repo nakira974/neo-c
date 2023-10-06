@@ -2,7 +2,7 @@
 
 struct sData
 {
-    long a:7;
+    long a:7, b:1;
 };
 
 

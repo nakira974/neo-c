@@ -364,13 +364,13 @@ void init_classes(sInfo* info)
 
     int rc = system(cmd);
     if(rc == 0) {
-/*
         string type_name = string("__builtin_va_list");
         
         sType*% type = new sType("char*", info);
         
         info.types.insert(string(type_name), type);
         
+/*
         add_come_code_at_source_head(info, "typedef %s;\n", make_define_var(type, type_name, info, true@in_header));
 */
     }

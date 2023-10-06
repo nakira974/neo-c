@@ -728,6 +728,7 @@ sNode*% parse_function_call(char* fun_name, sInfo* info)
 {
     expected_next_character('(', info);
     
+    parse_sharp(info);
     
     list<tuple2<string,sNode*%>*%>*% params = new list<tuple2<string,sNode*%>*%>();
     
@@ -770,6 +771,8 @@ sNode*% parse_function_call(char* fun_name, sInfo* info)
         
         params.push_back(new tuple2<string,sNode*%>(label, node));
         
+        parse_sharp(info);
+        
         if(*info->p == ',') {
             info->p++;
             skip_spaces_and_lf(info);
@@ -781,6 +784,8 @@ sNode*% parse_function_call(char* fun_name, sInfo* info)
             break;
         }
     }
+    
+    parse_sharp(info);
     
     return new sNode(new sFunCallNode(fun_name, params, info));
 }

@@ -777,9 +777,12 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
         type->mParamNames = param_names;
         type->mVarArgs = var_args;
     }
-    else if(*info->p == '(' && *(info->p+1) == '*') {
+    else if(*info->p == '(' && (*(info->p+1) == '*' || *(info->p+1) == '^')) {
         info->p++;
-        expected_next_character('*', info);
+        if(*info->p == '*' || *info->p == '^') {
+            info->p++;
+            skip_spaces_and_lf(info);
+        }
         
         if(memcmp(info->p, "_Nullable", strlen("_Nullable")) == 0) {
             info->p += strlen("_Nullable");

@@ -560,7 +560,30 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
         else if(type_name === "unsigned") {
             unsigned_ = true;
             
-            type_name = parse_word(info);
+            if(xisalpha(*info->p) || *info->p == '_') {
+                type_name = parse_word(info);
+                
+                if(type_name === "short") {
+                    if(xisalpha(*info->p) || *info->p == '_') {
+                    }
+                    else {
+                        type_name = string("int");
+                        break;
+                    }
+                }
+                else if(type_name === "long") {
+                    if(xisalpha(*info->p) || *info->p == '_') {
+                    }
+                    else {
+                        type_name = string("int");
+                        break;
+                    }
+                }
+            }
+            else {
+                type_name = string("int");
+                break;
+            }
         }
         else if(type_name === "signed") {
             unsigned_ = false;

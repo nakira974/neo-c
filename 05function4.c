@@ -569,6 +569,19 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
                 
                 if(type_name === "short") {
                     if(xisalpha(*info->p) || *info->p == '_') {
+                        char* p = info.p;
+                        int sline = info.sline;
+                        
+                        type_name = parse_word(info);
+                        
+                        if(is_type_name(type_name, info)) {
+                        }
+                        else {
+                            type_name = string("int");
+                            
+                            info.p = p;
+                            info.sline = sline;
+                        }
                     }
                     else {
                         type_name = string("int");
@@ -577,6 +590,19 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
                 }
                 else if(type_name === "long") {
                     if(xisalpha(*info->p) || *info->p == '_') {
+                        char* p = info.p;
+                        int sline = info.sline;
+                        
+                        type_name = parse_word(info);
+                        
+                        if(is_type_name(type_name, info)) {
+                        }
+                        else {
+                            type_name = string("int");
+                            
+                            info.p = p;
+                            info.sline = sline;
+                        }
                     }
                     else {
                         type_name = string("int");

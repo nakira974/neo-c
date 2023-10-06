@@ -13,6 +13,7 @@ void *bsearch_b(const void *__key, const void *__base, size_t __nel,
 
 int main(int argc, char** argv)
 {
+    unsigned XXX;
     
     return 0;
 }

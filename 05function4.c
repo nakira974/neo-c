@@ -762,6 +762,10 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
             info->p += strlen("_Nullable");
             skip_spaces_and_lf(info);
         }
+        if(memcmp(info->p, "_Nonnull", strlen("_Nonnull")) == 0) {
+            info->p += strlen("_Nonnull");
+            skip_spaces_and_lf(info);
+        }
         
         sType*% result_type;
         if(info.types[type_name]) {

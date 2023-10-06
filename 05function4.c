@@ -565,6 +565,9 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
             unsigned_ = true;
             
             if(xisalpha(*info->p) || *info->p == '_') {
+                char* p = info.p;
+                int sline = info.sline;
+                
                 type_name = parse_word(info);
                 
                 if(type_name === "short") {
@@ -608,6 +611,11 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
                         type_name = string("int");
                         break;
                     }
+                }
+                else if(!is_type_name(type_name, info)) {
+                    info.p = p;
+                    info.sline = sline;
+                    break;
                 }
             }
             else {

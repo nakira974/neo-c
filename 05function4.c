@@ -613,6 +613,7 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
                     }
                 }
                 else if(!is_type_name(type_name, info)) {
+                    type_name = string("int");
                     info.p = p;
                     info.sline = sline;
                     break;

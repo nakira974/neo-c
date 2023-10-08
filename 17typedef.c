@@ -28,11 +28,24 @@ bool sTypedefNode*::terminated()
 bool sTypedefNode*::compile(sTypedefNode* self, sInfo* info)
 {
     string type_name = string(self.mTypeName);
-    sType*% type = clone self.mType;
     
-    info.types.insert(string(type_name), clone type);
-    
-    add_come_code_at_source_head(info, "typedef %s;\n", make_define_var(type, type_name, info, true@in_header));
+    if(type_name === "__darwin_va_list") {
+        info.classes.insert(string("__darwin_va_list"), new sClass("__darwin_va_list", number:true));
+        
+        sType*% type = new sType("__darwin_va_list", info);
+        type->mOriginalTypeName = string("__darwin_va_list");
+        
+        info.types.insert(string(type_name), clone type);
+        
+        add_come_code_at_source_head(info, "typedef __builtin_va_list __darwin_va_list;\n");
+    }
+    else {
+        sType*% type = clone self.mType;
+        
+        info.types.insert(string(type_name), clone type);
+        
+        add_come_code_at_source_head(info, "typedef %s;\n", make_define_var(type, type_name, info, true@in_header));
+    }
 
     return true;
 }

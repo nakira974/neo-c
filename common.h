@@ -100,6 +100,7 @@ struct sType
     bool mAllocaValue;
     bool mGenericsStruct;
     bool mSolvedGenericsName;
+    bool mComeMemCore;
     
     bool mInline;
 };

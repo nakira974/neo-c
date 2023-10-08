@@ -39,8 +39,19 @@ void parse_sharp(sInfo* info) version 5
     
         info->p++;
         skip_spaces_and_lf(info);
-
-        if(xisdigit(*info->p)) {
+        
+        if(memcmp(info->p, "pragma", strlen("pragma")) == 0) {
+            while(*info->p) {
+                if(*info->p == '\n') {
+                    skip_spaces_and_lf(info);
+                    break;
+                }
+                else {
+                    info->p++;
+                }
+            }
+        }
+        else if(xisdigit(*info->p)) {
             int line = 0;
             char fname[PATH_MAX];
 
@@ -294,6 +305,7 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
     bool no_heap = false;
     bool extern_ = false;
     bool inline_ = false;
+    bool come_mem_core_ = false;
     
     bool anonymous_type = false;
     
@@ -480,6 +492,11 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
         }
         else if(type_name === "static") {
             static_ = true;
+            
+            type_name = parse_word(info);
+        }
+        else if(type_name === "come_mem_core") {
+            come_mem_core_ = true;
             
             type_name = parse_word(info);
         }
@@ -794,6 +811,7 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
         }
         
         result_type->mConstant = result_type->mConstant || constant;
+        result_type->mComeMemCore = result_type->mComeMemCore || come_mem_core_;
         result_type->mRegister = register_;
         result_type->mUnsigned = result_type->mUnsigned || unsigned_;
         result_type->mVolatile = volatile_;
@@ -849,6 +867,7 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
         }
         
         result_type->mConstant = result_type->mConstant || constant;
+        result_type->mComeMemCore = result_type->mComeMemCore || come_mem_core_;
         result_type->mRegister = register_;
         result_type->mUnsigned = result_type->mUnsigned || unsigned_;
         result_type->mVolatile = volatile_;
@@ -888,6 +907,7 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
             type.mOriginalTypeName = string(type_name);
             
             type->mConstant = type->mConstant || constant;
+            type->mComeMemCore = type->mComeMemCore || come_mem_core_;
             type->mRegister = register_;
             type->mUnsigned = type->mUnsigned || unsigned_;
             type->mVolatile = volatile_;
@@ -907,6 +927,7 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
             }
             
             type->mConstant = type->mConstant || constant;
+            type->mComeMemCore = type->mComeMemCore || come_mem_core_;
             type->mRegister = register_;
             type->mUnsigned = type->mUnsigned || unsigned_;
             type->mVolatile = volatile_;
@@ -967,6 +988,7 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
             }
             
             type->mConstant = type->mConstant || constant;
+            type->mComeMemCore = type->mComeMemCore || come_mem_core_;
             type->mRegister = register_;
             type->mUnsigned = type->mUnsigned || unsigned_;
             type->mVolatile = volatile_;
@@ -990,6 +1012,7 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
             type = new sType(type_name, info);
             
             type->mConstant = type->mConstant || constant;
+            type->mComeMemCore = type->mComeMemCore || come_mem_core_;
             type->mRegister = register_;
             type->mUnsigned = type->mUnsigned || unsigned_;
             type->mVolatile = volatile_;

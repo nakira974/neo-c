@@ -364,13 +364,16 @@ void init_classes(sInfo* info)
 
     int rc = system(cmd);
     if(rc == 0) {
+        info.classes.insert(string("__builtin_va_list"), new sClass("__builtin_va_list", number:true));
+        
         string type_name = string("__builtin_va_list");
         
-        sType*% type = new sType("void*", info);
+        sType*% type = new sType("__builtin_va_list", info);
+        type->mOriginalTypeName = string("__builtin_va_list");
         
         info.types.insert(string(type_name), type);
         
-        add_come_code_at_source_head(info, "typedef %s;\n", make_define_var(type, type_name, info, true@in_header));
+//        add_come_code_at_source_head(info, "typedef %s;\n", make_define_var(type, type_name, info, true@in_header));
     }
     else {
         sClass*% klass = new sClass("__builtin_va_list", struct_:true);

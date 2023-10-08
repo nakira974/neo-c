@@ -33,19 +33,23 @@ string make_type_name_string(sType* type, bool in_header, bool array_cast_pointe
         buf.append_str("short ");
     }
     
-    if(type->mClass->mStruct) {
-        if(class_name === "__builtin_va_list") {
-            if(in_header) {
-                buf.append_str(class_name);
-            }
-            else {
-                buf.append_str("va_list");
-            }
-        }
-        else {
-            buf.append_str("struct ");
+    if(type->mOriginalTypeName === "va_list") {
+        buf.append_str("va_list");
+    }
+    else if(type->mOriginalTypeName === "__builtin_va_list") {
+        buf.append_str("__builtin_va_list");
+    }
+    else if(class_name === "__builtin_va_list") {
+        if(in_header) {
             buf.append_str(class_name);
         }
+        else {
+            buf.append_str("va_list");
+        }
+    }
+    else if(type->mClass->mStruct) {
+        buf.append_str("struct ");
+        buf.append_str(class_name);
     }
     else if(type->mClass->mUnion) {
         buf.append_str("union ");
@@ -105,13 +109,13 @@ string make_type_name_string(sType* type, bool in_header, bool array_cast_pointe
         buf.append_str(class_name);
     }
     
-    if(type->mNoArrayPointerNum == 0 && class_name !== "lambda" && !no_pointer) {
+    if(type->mNoArrayPointerNum == 0 && class_name !== "lambda" && !no_pointer && type->mOriginalTypeName !== "va_list" && type->mOriginalTypeName !== "__builtin_va_list") {
         for(int i=0; i<type->mPointerNum; i++) {
             buf.append_str("*");
         }
     }
     
-    if(array_cast_pointer && type->mArrayNum.length() > 0 && !no_pointer) {
+    if(array_cast_pointer && type->mArrayNum.length() > 0 && !no_pointer && type->mOriginalTypeName !== "va_list" && type->mOriginalTypeName !== "__builtin_va_list") {
         buf.append_str("*");
     }
     

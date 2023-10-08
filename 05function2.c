@@ -95,9 +95,11 @@ bool sFunNode*::compile(sFunNode* self, sInfo* info)
             add_come_code(info, "come_heap_pool_init();\n");
         }
         transpile_block(self.mFun.mBlock, self.mFun.mParamTypes, self.mFun.mParamNames, info);
-        if(info.come_fun.mName !== "come_release_malloced_mem") {
+/*
+        if(!info.come_fun.mResultType.mComeMemCore) {
             add_come_code(info, "come_release_malloced_mem();\n");
         }
+*/
         if(info.come_fun.mName === "main") {
             add_come_code(info, "come_heap_pool_final();\n");
         }
@@ -748,6 +750,7 @@ int transpile(sInfo* info) version 5
         
         info.funcs.insert(string(name), main_fun);
     }
+/*
     {
         var name = string("come_release_malloced_mem");
         var result_type = new sType("void", info);
@@ -762,6 +765,7 @@ int transpile(sInfo* info) version 5
         
         info.funcs.insert(string(name), main_fun);
     }
+*/
     {
         var name = string("come_heap_pool_init");
         var result_type = new sType("void", info);
@@ -1110,7 +1114,7 @@ bool is_type_name(char* buf, sInfo* info)
     sClass* generics_class = info.generics_classes[buf];
     bool generics_type_name = info.generics_type_names.contained(string(buf));
     
-    return generics_class || generics_type_name || klass || type || buf === "const" || buf === "register" || buf === "static" || buf === "volatile" || buf === "unsigned" || buf === "immutable" || buf === "mutable" || buf === "struct" || buf === "enum" || buf === "union" || buf === "extern" || buf === "inline" || buf === "__inline" || buf === "__extension__";
+    return generics_class || generics_type_name || klass || type || buf === "const" || buf === "register" || buf === "static" || buf === "volatile" || buf === "unsigned" || buf === "immutable" || buf === "mutable" || buf === "struct" || buf === "enum" || buf === "union" || buf === "extern" || buf === "inline" || buf === "__inline" || buf === "__extension__" || buf === "come_mem_core";
 
 }
 

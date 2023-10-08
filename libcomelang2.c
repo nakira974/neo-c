@@ -1,13 +1,14 @@
 #include "common.h"
 #include <libgen.h>
 
-#define HEAP_POOL_PAGE_SIZE 4096
+#define HEAP_POOL_PAGE_SIZE 4048*2
+#define HANDLE_POOL_PAGE_SIZE 4048*2
 
-struct sMem
+struct sHandle
 {
     char* mem;
     size_t size;
-    struct sMem* next;
+    struct sHandle* next;
 };
 
 struct sHeapPool
@@ -18,8 +19,14 @@ struct sHeapPool
     int num_pages;
     char* top;
     
-    struct sMem* free_mem;
-    struct sMem* malloced_free_mem;
+    struct sHandle* free_mem;
+    struct sHandle* malloced_free_mem;
+    
+    struct sHandle** handle_pages;
+    
+    int size_handle_pages;
+    
+    sHandle* free_handles;
 };
 
 struct sHeapPool gHeapPool;
@@ -38,6 +45,20 @@ void come_heap_pool_init()
     }
     
     gHeapPool.top = gHeapPool.mem_pages[0];
+    
+    gHeapPool.size_handle_pages = 4;
+    
+    gHeapPool.handle_pages = calloc(1, sizeof(sHandle*)*gHeapPool.size_handle_pages);
+    
+    for(int i=0; i<gHeapPool.size_handle_pages; i++) {
+        gHeapPool.handle_pages[i] = calloc(1, sizeof(sHandle)*HANDLE_POOL_PAGE_SIZE);
+        
+        for(int j=0; j<HANDLE_POOL_PAGE_SIZE; j++) {
+            sHandle* top = gHeapPool.free_handles;
+            gHeapPool.free_handles = gHeapPool.handle_pages[i] + j;
+            gHeapPool.free_handles.next = top;
+        }
+    }
 }
 
 void come_heap_pool_final()
@@ -47,73 +68,155 @@ void come_heap_pool_final()
     }
     free(gHeapPool.mem_pages);
     
-    sMem* it = gHeapPool.malloced_free_mem;
+    sHandle* it = gHeapPool.malloced_free_mem;
     while(it) {
-        sMem* prev_it = it;
+        sHandle* prev_it = it;
         
         free(it->mem);
         
         it = it.next;
-        
-        free(prev_it);
     }
     it = gHeapPool.free_mem;
     while(it) {
-        sMem* prev_it = it;
+        sHandle* prev_it = it;
         it = it.next;
-        free(prev_it);
     }
+    
+    for(int i=0; i<gHeapPool.size_handle_pages; i++) {
+        free(gHeapPool.handle_pages[i]);
+    }
+    
+    free(gHeapPool.handle_pages);
 }
 
+sHandle* alloc_mem_handle()
+{
+    sHandle* handle = gHeapPool.free_handles;
+    
+    if(handle == NULL) {
+        const int new_size_handle_pages = gHeapPool.size_handle_pages * 2;
+        sHandle** new_handle_pages = calloc(1, sizeof(sHandle*)*new_size_handle_pages);
+        
+        for(int i=0; i<gHeapPool.size_handle_pages; i++) {
+            new_handle_pages[i] = gHeapPool.handle_pages[i];
+        }
+        
+        for(int i=gHeapPool.size_handle_pages; i<new_size_handle_pages; i++) {
+            new_handle_pages[i] = calloc(1, sizeof(sHandle)*HANDLE_POOL_PAGE_SIZE);
+            
+            for(int j=0; j<HANDLE_POOL_PAGE_SIZE; j++) {
+                sHandle* top = gHeapPool.free_handles;
+                gHeapPool.free_handles = new_handle_pages[i] + j;
+                gHeapPool.free_handles.next = top;
+            }
+        }
+        
+        free(gHeapPool.handle_pages);
+        
+        gHeapPool.handle_pages = new_handle_pages;
+        gHeapPool.size_handle_pages = new_size_handle_pages;
+        
+        handle = gHeapPool.free_handles;
+    }
+
+    gHeapPool.free_handles = gHeapPool.free_handles.next;
+    
+    return handle;
+}
+
+void free_mem_handle(sHandle* handle)
+{
+    handle.next = gHeapPool.free_handles;
+    gHeapPool.free_handles = handle;
+}
+
+/*
 void come_release_malloced_mem()
 {
-    sMem* it = gHeapPool.malloced_free_mem;
+    sHandle* it = gHeapPool.malloced_free_mem;
     while(it) {
-        sMem* prev_it = it;
+        sHandle* prev_it = it;
         
         free(it->mem);
         
         it = it.next;
         
-        free(prev_it);
+        free_mem_handle(prev_it);
     }
     gHeapPool.malloced_free_mem = null;
 }
+*/
 
 static void* come_alloc_mem_from_heap_pool(size_t size)
 {
     void* result = null;
     
-    if(size + sizeof(size_t) >= HEAP_POOL_PAGE_SIZE) {
-        result = (char*)calloc(1, size+sizeof(size_t)) + sizeof(size_t);
-        *(size_t*)(result - sizeof(size_t)) = size;
+    if(size + sizeof(size_t) + sizeof(int) >= HEAP_POOL_PAGE_SIZE) {
+        struct sHandle* it = gHeapPool.malloced_free_mem;
+        struct sHandle* prev_it = it;
+        
+        while(it) {
+            if(size <= it.size) {
+                result = it.mem + sizeof(size_t) + sizeof(int);
+                
+                if(it == gHeapPool.malloced_free_mem) {
+                    if(it.next == null) {
+                        gHeapPool.malloced_free_mem = null;
+                        free_mem_handle(it);
+                    }
+                    else {
+                        gHeapPool.malloced_free_mem = it.next;
+                        free_mem_handle(it);
+                    }
+                }
+                else {
+                    prev_it.next = it.next;
+                    free_mem_handle(it);
+                }
+                
+                memset(result, 0, size);
+                
+                *(int*)(result - sizeof(int)) = false;
+                
+                return result;
+            }
+            
+            prev_it = it;
+            it = it.next;
+        }
+        
+        result = (char*)calloc(1, size+sizeof(size_t)+sizeof(int)) + sizeof(size_t) + sizeof(int);
+        *(size_t*)(result - sizeof(size_t)-sizeof(int)) = size;
+        *(int*)(result - sizeof(int)) = false;
         
         return result;
     }
     
-    struct sMem* it = gHeapPool.free_mem;
-    struct sMem* prev_it = it;
+    struct sHandle* it = gHeapPool.free_mem;
+    struct sHandle* prev_it = it;
     
     while(it) {
         if(size <= it.size) {
-            result = it.mem + sizeof(size_t);
+            result = it.mem + sizeof(size_t) + sizeof(int);
             
             if(it == gHeapPool.free_mem) {
                 if(it.next == null) {
                     gHeapPool.free_mem = null;
-                    free(it);
+                    free_mem_handle(it);
                 }
                 else {
                     gHeapPool.free_mem = it.next;
-                    free(it);
+                    free_mem_handle(it);
                 }
             }
             else {
                 prev_it.next = it.next;
-                free(it);
+                free_mem_handle(it);
             }
             
             memset(result, 0, size);
+            
+            *(int*)(result - sizeof(int)) = false;
             
             return result;
         }
@@ -122,11 +225,11 @@ static void* come_alloc_mem_from_heap_pool(size_t size)
         it = it.next;
     }
     
-    if(gHeapPool.top + size + sizeof(size_t) - gHeapPool.mem_pages[gHeapPool.num_pages] >= HEAP_POOL_PAGE_SIZE) {
+    if(gHeapPool.top + size + sizeof(size_t) + sizeof(int) - gHeapPool.mem_pages[gHeapPool.num_pages] >= HEAP_POOL_PAGE_SIZE) {
         gHeapPool.num_pages++;
         
         if(gHeapPool.num_pages == gHeapPool.size_pages) {
-            int new_size_pages = gHeapPool.size_pages + 4;
+            int new_size_pages = gHeapPool.size_pages * 2;
             
             char** new_mem_pages = calloc(1, sizeof(char*)*new_size_pages);
             
@@ -147,65 +250,52 @@ static void* come_alloc_mem_from_heap_pool(size_t size)
         gHeapPool.top = gHeapPool.mem_pages[gHeapPool.num_pages];
     }
     
-    result = gHeapPool.top + sizeof(size_t);
-    *(size_t*)(result - sizeof(size_t)) = size;
-    gHeapPool.top += size + sizeof(size_t);
+    result = gHeapPool.top + sizeof(size_t) + sizeof(int);
+    *(size_t*)(result - sizeof(size_t) - sizeof(int)) = size;
+    *(int*)(result - sizeof(int)) = false;
+    gHeapPool.top += size + sizeof(size_t) + sizeof(int);
     
     memset(result, 0, size);
     
     return result;
 }
 
-static void* my_calloc(size_t a, size_t b)
-{
-return calloc(a, b);
-}
-
 static void come_free_mem_of_heap_pool(char* mem)
 {
-    size_t size = *(size_t*)(mem - sizeof(size_t));
+    size_t size = *(size_t*)(mem - sizeof(size_t) - sizeof(int));
+    int freed = *(int*)(mem - sizeof(int));
     
-    if(size + sizeof(size_t) >= HEAP_POOL_PAGE_SIZE) {
+    if(size + sizeof(size_t) + sizeof(int) >= HEAP_POOL_PAGE_SIZE) {
         /// prevent from double free ///
-        struct sMem* it = gHeapPool.malloced_free_mem;
-        
-        while(it) {
-            if(it.mem == mem - sizeof(size_t)) {
-                return;
-            }
-            
-            it = it.next;
+        if(freed) {
+            return ;
         }
         
         /// go ///
-        struct sMem* malloced_free_mem = calloc(1, sizeof(struct sMem));
+        struct sHandle* malloced_free_mem = alloc_mem_handle();
         
-        malloced_free_mem.mem = mem - sizeof(size_t);
+        malloced_free_mem.mem = mem - sizeof(size_t) - sizeof(int);
         malloced_free_mem.size = size;
         malloced_free_mem.next = gHeapPool.malloced_free_mem;
         
         gHeapPool.malloced_free_mem = malloced_free_mem;
+        
+        *(int*)(mem - sizeof(int)) = true;
     }
     else {
-        /// prevent from double free ///
-        struct sMem* it = gHeapPool.free_mem;
-        
-        while(it) {
-            if(it.mem == mem - sizeof(size_t)) {
-                return;
-            }
-            
-            it = it.next;
+        if(freed) {
+            return;
         }
         
         /// go ///
-        struct sMem* free_mem = my_calloc(1, sizeof(struct sMem));
+        struct sHandle* free_mem = alloc_mem_handle();
         
-        free_mem.mem = mem - sizeof(size_t);
+        free_mem.mem = mem - sizeof(size_t) - sizeof(int);
         free_mem.size = size;
         free_mem.next = gHeapPool.free_mem;
         
         gHeapPool.free_mem = free_mem;
+        *(int*)(mem - sizeof(int)) = true;
     }
 }
 
@@ -708,7 +798,7 @@ string xsprintf(char* msg, ...)
     va_end(args);
 
     if(len < 0) {
-        printf("vasprintf can't get heap memory.(msg %s)\n", msg);
+        fprintf(stderr, "vasprintf can't get heap memory.(msg %s)\n", msg);
         exit(2);
     }
     

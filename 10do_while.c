@@ -32,7 +32,7 @@ bool sDoWhileNode*::compile(sDoWhileNode* self, sInfo* info)
     
     add_come_code(info, "do {\n");
 
-    transpile_block(block, null!, null!, info);
+    transpile_block(block, null, null, info);
     
     /// compile expression ///
     sNode* expression_node = self.mExpressionNode;

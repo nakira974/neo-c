@@ -172,7 +172,7 @@ string make_generics_function(sType* type, string fun_name, sInfo* info)
     string fun_name2 = create_method_name(type, false@no_pointer_name, fun_name, info);
     string fun_name3 = xsprintf("%s_%s", none_generics_name, fun_name);
     
-    sGenericsFun* generics_fun = info.generics_funcs.at(fun_name3, null!);
+    sGenericsFun* generics_fun = info.generics_funcs.at(fun_name3, null);
     
     if(generics_fun) {
         if(!create_generics_fun(string(fun_name2), generics_fun, type, info)) {
@@ -297,7 +297,7 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
     else {
         string generics_fun_name = make_generics_function(obj_type, string(fun_name), info).to_string();
         
-        sFun* fun = info.funcs.at(generics_fun_name, null!);
+        sFun* fun = info.funcs.at(generics_fun_name, null);
         
         if(fun == null) {
             err_msg(info, "function not found(%s) at method(%s)\n", generics_fun_name, info.come_fun.mName);

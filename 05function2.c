@@ -261,7 +261,7 @@ int transpile_block(sBlock* block, list<sType*%>*? param_types, list<string>*? p
     }
 
     if(!info->last_statment_is_return && !no_var_table) {
-        free_objects(info->lv_table, null!, info);
+        free_objects(info->lv_table, null, info);
     }
     
     info->lv_table = old_table;
@@ -583,13 +583,13 @@ int transpile(sInfo* info) version 5
         var param_types = [new sType("int", info), new sType("int", info), new sType("char*", info), new sType("int", info)];
         var param_names = [string("count"), string("size"), string("sname"), string("sline")];
         var param_default_parametors = new list<string>();
-        param_default_parametors.push_back(null!);
-        param_default_parametors.push_back(null!);
+        param_default_parametors.push_back(null);
+        param_default_parametors.push_back(null);
         param_default_parametors.push_back(string("null"));
         param_default_parametors.push_back(string("0"));
         var main_fun = new sFun(name, result_type, param_types, param_names
             , param_default_parametors, true@external, false@var_args
-            , null!@block, false@static_
+            , null@block, false@static_
             , string("void* come_calloc(int count, int size, char* sname, int sline)")
             , info);
         
@@ -603,7 +603,7 @@ int transpile(sInfo* info) version 5
         var param_default_parametors = new list<string>();
         var main_fun = new sFun(name, result_type, param_types, param_names
             , param_default_parametors, true@external, false@var_args
-            , null!@block, false@static_
+            , null@block, false@static_
             , string("void* come_increment_ref_count(void* mem)")
             , info);
         
@@ -617,7 +617,7 @@ int transpile(sInfo* info) version 5
         var param_default_parametors = new list<string>();
         var main_fun = new sFun(name, result_type, param_types, param_names
             , param_default_parametors, true@external, false@var_args
-            , null!@block, false@static_
+            , null@block, false@static_
             , string("void come_call_finalizer(void* fun, void* mem, void* protocol_fun, void* protocol_obj, int call_finalizer_only, int no_decrement, int no_free)")
             , info);
         
@@ -631,7 +631,7 @@ int transpile(sInfo* info) version 5
         var param_default_parametors = new list<string>();
         var main_fun = new sFun(name, result_type, param_types, param_names
             , param_default_parametors, true@external, false@var_args
-            , null!@block, false@static_
+            , null@block, false@static_
             , string("void* come_decrement_ref_count(void* mem, void* protocol_fun, void* protocol_obj, _Bool no_decrement, _Bool no_free)")
             , info);
         
@@ -645,7 +645,7 @@ int transpile(sInfo* info) version 5
         var param_default_parametors = new list<string>();
         var main_fun = new sFun(name, result_type, param_types, param_names
             , param_default_parametors, true@external, false@var_args
-            , null!@block, false@static_
+            , null@block, false@static_
             , string("void come_free_object(void* mem)")
             , info);
         
@@ -657,12 +657,12 @@ int transpile(sInfo* info) version 5
         var param_types = [new sType("void*", info), new sType("char*", info), new sType("int", info)];
         var param_names = [string("block"), string("sname"), string("sline")];
         var param_default_parametors = new list<string>();
-        param_default_parametors.push_back(null!);
+        param_default_parametors.push_back(null);
         param_default_parametors.push_back(string("null"));
         param_default_parametors.push_back(string("0"));
         var main_fun = new sFun(name, result_type, param_types, param_names
             , param_default_parametors, true@external, false@var_args
-            , null!@block, false@static_
+            , null@block, false@static_
             , string("void* come_memdup(void* block, char* sname, int sline)")
             , info);
         
@@ -676,7 +676,7 @@ int transpile(sInfo* info) version 5
         var param_default_parametors = new list<string>();
         var main_fun = new sFun(name, result_type, param_types, param_names
             , param_default_parametors, true@external, false@var_args
-            , null!@block, false@static_
+            , null@block, false@static_
             , string("char* __builtin_string(char* str)")
             , info);
         
@@ -690,7 +690,7 @@ int transpile(sInfo* info) version 5
         var param_default_parametors = new list<string>();
         var main_fun = new sFun(name, result_type, param_types, param_names
             , param_default_parametors, true@external, false@var_args
-            , null!@block, false@static_
+            , null@block, false@static_
             , string("come_heap_init()")
             , info);
         
@@ -704,7 +704,7 @@ int transpile(sInfo* info) version 5
         var param_default_parametors = new list<string>();
         var main_fun = new sFun(name, result_type, param_types, param_names
             , param_default_parametors, true@external, false@var_args
-            , null!@block, false@static_
+            , null@block, false@static_
             , string("void come_heap_final(bool check_mem_leak)")
             , info);
         
@@ -718,7 +718,7 @@ int transpile(sInfo* info) version 5
         var param_default_parametors = new list<string>();
         var main_fun = new sFun(name, result_type, param_types, param_names
             , param_default_parametors, true@external, false@var_args
-            , null!@block, false@static_
+            , null@block, false@static_
             , string("void* come_null_check(void* mem, char* sname, int sline)")
             , info);
         
@@ -999,7 +999,7 @@ sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 9
                 var fun = new sFun(string(fun_name), result_type2
                                     , param_types, param_names
                                     , param_default_parametors
-                                    , true@external, var_args, null!@block
+                                    , true@external, var_args, null@block
                                     , false@static_, header_buf.to_string(), info);
                 
                 var fun2 = info.funcs[string(fun_name)];
@@ -1292,7 +1292,7 @@ sNode*% parse_function(sInfo* info)
             var fun = new sFun(string(fun_name), result_type
                                 , param_types, param_names
                                 , param_default_parametors
-                                , true@external, var_args, null!@block
+                                , true@external, var_args, null@block
                                 , false@static_, header_buf.to_string(), info);
             
             var fun2 = info.funcs[string(fun_name)];
@@ -1317,7 +1317,7 @@ sNode*% parse_function(sInfo* info)
             var fun = new sFun(string(fun_name), result_type, param_types
                                 , param_names
                                 , param_default_parametors
-                                , true@external, var_args, null!@block
+                                , true@external, var_args, null@block
                                 , false@static_, header_buf.to_string(), info);
             
             var fun2 = info.funcs[string(fun_name)];

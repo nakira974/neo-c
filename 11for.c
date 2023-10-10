@@ -113,7 +113,7 @@ bool sForNode*::compile(sForNode* self, sInfo* info)
     
     add_come_code(info, "){\n");
 
-    transpile_block(block, null!, null!, info);
+    transpile_block(block, null, null, info);
 
     add_come_code(info, "}\n");
     

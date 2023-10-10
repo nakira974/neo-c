@@ -287,10 +287,7 @@ void* come_null_check(void* mem, char* sname, int sline)
 {
     if(mem == null) {
         printf("%s %d: null check error\n", sname, sline);
-        exit(2);
     }
-    
-    return mem;
 }
 
 void xassert(char* msg, bool test)

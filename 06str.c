@@ -271,7 +271,7 @@ bool sListNode*::compile(sListNode* self, sInfo* info)
     
     string generics_fun_name = make_generics_function(obj_type, string(fun_name), info).to_string();
     
-    sFun* fun = info.funcs.at(generics_fun_name, null!);
+    sFun* fun = info.funcs.at(generics_fun_name, null);
     
     if(fun == null) {
         err_msg(info, "function not found(%s) at method(%s)\n", generics_fun_name, info.come_fun.mName);
@@ -445,7 +445,7 @@ bool sTupleNode*::compile(sTupleNode* self, sInfo* info)
     
     string generics_fun_name = make_generics_function(obj_type, string(fun_name), info).to_string();
     
-    sFun* fun = info.funcs.at(generics_fun_name, null!);
+    sFun* fun = info.funcs.at(generics_fun_name, null);
     
     if(fun == null) {
         err_msg(info, "function not found(%s) at method(%s)\n", generics_fun_name, info.come_fun.mName);
@@ -642,7 +642,7 @@ bool sMapNode*::compile(sMapNode* self, sInfo* info)
     
     string generics_fun_name = make_generics_function(obj_type, string(fun_name), info).to_string();
     
-    sFun* fun = info.funcs.at(generics_fun_name, null!);
+    sFun* fun = info.funcs.at(generics_fun_name, null);
     
     if(fun == null) {
         err_msg(info, "function not found(%s) at method(%s)\n", generics_fun_name, info.come_fun.mName);

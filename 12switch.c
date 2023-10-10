@@ -44,7 +44,7 @@ bool sSwitchNode*::compile(sSwitchNode* self, sInfo* info)
     
     add_come_code(info, "switch (%s) {\n", conditional_value.c_value);
 
-    transpile_block(block, null!, null!, info);
+    transpile_block(block, null, null, info);
 
     add_come_code(info, "}\n");
     

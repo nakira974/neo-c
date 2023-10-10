@@ -102,7 +102,7 @@ sNode*% parse_enum(string type_name, sInfo* info)
             elements.push_back(new tuple2<string,sNode*%>(element_name, element_value));
         }
         else {
-            elements.push_back(new tuple2<string,sNode*%>(element_name, null!));
+            elements.push_back(new tuple2<string,sNode*%>(element_name, null));
         }
         
         if(*info->p == ',') {
@@ -153,7 +153,7 @@ sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 9
                 elements.push_back(new tuple2<string,sNode*%>(element_name, element_value));
             }
             else {
-                elements.push_back(new tuple2<string,sNode*%>(element_name, null!));
+                elements.push_back(new tuple2<string,sNode*%>(element_name, null));
             }
             
             if(*info->p == ',') {

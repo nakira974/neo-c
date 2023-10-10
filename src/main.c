@@ -3,7 +3,7 @@
 
 char* gVersion;
 BOOL gNCGC = TRUE;
-BOOL gNCNoNullCheck = FALSE;
+BOOL gNCNoNullCheck = TRUE;
 BOOL gNCDebug = FALSE;
 char gFName[PATH_MAX];
 sVarTable* gModuleVarTable;

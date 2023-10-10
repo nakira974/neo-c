@@ -272,6 +272,63 @@ string sStoreFieldNode*::sname(sStoreFieldNode* self, sInfo* info)
     return string(self.sname);
 }
 
+struct sNullCheckNode
+{
+    sNode*% mLeft;
+  
+    int sline;
+    string sname;
+};
+
+sNullCheckNode*% sNullCheckNode*::initialize(sNullCheckNode*% self, sNode* left, sInfo* info)
+{
+    self.sline = info.sline;
+    self.sname = string(info.sname);
+
+    self.mLeft = clone left;
+
+    return self;
+}
+
+bool sNullCheckNode*::terminated()
+{
+    return false;
+}
+
+bool sNullCheckNode*::compile(sNullCheckNode* self, sInfo* info)
+{
+    sNode* left = self.mLeft;
+    
+    if(!left.compile->(info)) {
+        return false;
+    }
+    
+    CVALUE*% left_value = get_value_from_stack(-1, info);
+    dec_stack_ptr(1, info);
+    
+    CVALUE*% come_value = new CVALUE;
+    
+    come_value.c_value = xsprintf("come_null_check(%s, \"%s\", %d)", left_value.c_value, info->sname, info->sline);
+    come_value.type = clone left_value.type;
+    come_value.var = null;
+    
+    info.stack.push_back(come_value);
+    
+    add_come_last_code(info, "%s;\n", come_value.c_value);
+
+    return true;
+}
+
+int sNullCheckNode*::sline(sNullCheckNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sNullCheckNode*::sname(sNullCheckNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
 sNode*% store_field(sNode* left, sNode*% right, string name, sInfo* info)
 {
     return new sNode(new sStoreFieldNode(left, right, name, info));
@@ -690,6 +747,8 @@ sNode*% post_position_operator(sNode*% node, sInfo* info) version 18
         else if(*info->p == '!' && *(info->p+1) != '=') {
             info->p++;
             skip_spaces_and_lf(info);
+            
+            node = new sNode(new sNullCheckNode(node, info));
         }
         else if(*info->p == '.' || (*info->p == '-' && *(info->p+1) == '>')) 
         {

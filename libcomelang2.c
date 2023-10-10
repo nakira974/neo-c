@@ -283,6 +283,16 @@ void* come_memdup(void* block, char* sname=null, int sline=0)
     return (char*)ret + sizeof(int) + sizeof(long);
 }
 
+void* come_null_check(void* mem, char* sname, int sline)
+{
+    if(mem == null) {
+        printf("%s %d: null check error\n", sname, sline);
+        exit(2);
+    }
+    
+    return mem;
+}
+
 void xassert(char* msg, bool test)
 {
     printf("%s...", msg);

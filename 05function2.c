@@ -710,6 +710,20 @@ int transpile(sInfo* info) version 5
         
         info.funcs.insert(string(name), main_fun);
     }
+    {
+        var name = string("come_null_check");
+        var result_type = new sType("void*", info);
+        var param_types = [new sType("void*", info), new sType("char*", info), new sType("int", info) ];
+        var param_names = [string("mem"), string("sname"), string("sline")];
+        var param_default_parametors = new list<string>();
+        var main_fun = new sFun(name, result_type, param_types, param_names
+            , param_default_parametors, true@external, false@var_args
+            , null!@block, false@static_
+            , string("void* come_null_check(void* mem, char* sname, int sline)")
+            , info);
+        
+        info.funcs.insert(string(name), main_fun);
+    }
     
     while(*info->p) {
         parse_sharp(info);

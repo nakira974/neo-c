@@ -92,16 +92,11 @@ bool sFunNode*::compile(sFunNode* self, sInfo* info)
     
     if(self.mFun.mBlock) {
         if(info.come_fun.mName === "main") {
-            add_come_code(info, "come_heap_pool_init();\n");
+            add_come_code(info, "come_heap_init();\n");
         }
         transpile_block(self.mFun.mBlock, self.mFun.mParamTypes, self.mFun.mParamNames, info);
-/*
-        if(!info.come_fun.mResultType.mComeMemCore) {
-            add_come_code(info, "come_release_malloced_mem();\n");
-        }
-*/
         if(info.come_fun.mName === "main") {
-            add_come_code(info, "come_heap_pool_final();\n");
+            add_come_code(info, xsprintf("come_heap_final(%d);\n", gComeDebug));
         }
     }
     
@@ -585,69 +580,17 @@ int transpile(sInfo* info) version 5
     {
         var name = string("come_calloc");
         var result_type = new sType("void*", info);
-        var param_types = [new sType("int", info), new sType("int", info)];
-        var param_names = [string("count"), string("size")];
+        var param_types = [new sType("int", info), new sType("int", info), new sType("char*", info), new sType("int", info)];
+        var param_names = [string("count"), string("size"), string("sname"), string("sline")];
         var param_default_parametors = new list<string>();
+        param_default_parametors.push_back(null!);
+        param_default_parametors.push_back(null!);
+        param_default_parametors.push_back(string("null"));
+        param_default_parametors.push_back(string("0"));
         var main_fun = new sFun(name, result_type, param_types, param_names
             , param_default_parametors, true@external, false@var_args
             , null!@block, false@static_
-            , string("void* come_calloc(int count, int size)")
-            , info);
-        
-        info.funcs.insert(string(name), main_fun);
-    }
-    {
-        var name = string("come_increment_ref_count");
-        var result_type = new sType("void*", info);
-        var param_types = [new sType("void*", info)];
-        var param_names = [string("mem")];
-        var param_default_parametors = new list<string>();
-        var main_fun = new sFun(name, result_type, param_types, param_names
-            , param_default_parametors, true@external, false@var_args
-            , null!@block, false@static_
-            , string("void* come_increment_ref_count(void* mem)")
-            , info);
-        
-        info.funcs.insert(string(name), main_fun);
-    }
-    {
-        var name = string("ncfree");
-        var result_type = new sType("void", info);
-        var param_types = [new sType("void*", info)];
-        var param_names = [string("mem")];
-        var param_default_parametors = new list<string>();
-        var main_fun = new sFun(name, result_type, param_types, param_names
-            , param_default_parametors, true@external, false@var_args
-            , null!@block, false@static_
-            , string("void ncfree(void* mem)")
-            , info);
-        
-        info.funcs.insert(string(name), main_fun);
-    }
-    {
-        var name = string("come_calloc");
-        var result_type = new sType("void*", info);
-        var param_types = [new sType("int", info), new sType("int", info)];
-        var param_names = [string("count"), string("size")];
-        var param_default_parametors = new list<string>();
-        var main_fun = new sFun(name, result_type, param_types, param_names
-            , param_default_parametors, true@external, false@var_args
-            , null!@block, false@static_
-            , string("void* come_calloc(int count, int size)")
-            , info);
-        
-        info.funcs.insert(string(name), main_fun);
-    }
-    {
-        var name = string("come_calloc");
-        var result_type = new sType("void*", info);
-        var param_types = [new sType("int", info), new sType("int", info)];
-        var param_names = [string("count"), string("size")];
-        var param_default_parametors = new list<string>();
-        var main_fun = new sFun(name, result_type, param_types, param_names
-            , param_default_parametors, true@external, false@var_args
-            , null!@block, false@static_
-            , string("void* come_calloc(int count, int size)")
+            , string("void* come_calloc(int count, int size, char* sname, int sline)")
             , info);
         
         info.funcs.insert(string(name), main_fun);
@@ -709,29 +652,18 @@ int transpile(sInfo* info) version 5
         info.funcs.insert(string(name), main_fun);
     }
     {
-        var name = string("nccalloc");
-        var result_type = new sType("void*", info);
-        var param_types = [new sType("int", info), new sType("int", info)];
-        var param_names = [string("nmemb"), string("size")];
-        var param_default_parametors = new list<string>();
-        var main_fun = new sFun(name, result_type, param_types, param_names
-            , param_default_parametors, true@external, false@var_args
-            , null!@block, false@static_
-            , string("void* nccalloc(int nmemb, int size)")
-            , info);
-        
-        info.funcs.insert(string(name), main_fun);
-    }
-    {
         var name = string("come_memdup");
         var result_type = new sType("void*", info);
-        var param_types = [new sType("void*", info)];
-        var param_names = [string("block")];
+        var param_types = [new sType("void*", info), new sType("char*", info), new sType("int", info)];
+        var param_names = [string("block"), string("sname"), string("sline")];
         var param_default_parametors = new list<string>();
+        param_default_parametors.push_back(null!);
+        param_default_parametors.push_back(string("null"));
+        param_default_parametors.push_back(string("0"));
         var main_fun = new sFun(name, result_type, param_types, param_names
             , param_default_parametors, true@external, false@var_args
             , null!@block, false@static_
-            , string("void* come_memdup(void* block)")
+            , string("void* come_memdup(void* block, char* sname, int sline)")
             , info);
         
         info.funcs.insert(string(name), main_fun);
@@ -750,9 +682,8 @@ int transpile(sInfo* info) version 5
         
         info.funcs.insert(string(name), main_fun);
     }
-/*
     {
-        var name = string("come_release_malloced_mem");
+        var name = string("come_heap_init");
         var result_type = new sType("void", info);
         var param_types = new list<sType*%>();
         var param_names = new list<string>();
@@ -760,36 +691,21 @@ int transpile(sInfo* info) version 5
         var main_fun = new sFun(name, result_type, param_types, param_names
             , param_default_parametors, true@external, false@var_args
             , null!@block, false@static_
-            , string("void come_release_malloced_mem()")
-            , info);
-        
-        info.funcs.insert(string(name), main_fun);
-    }
-*/
-    {
-        var name = string("come_heap_pool_init");
-        var result_type = new sType("void", info);
-        var param_types = new list<sType*%>();
-        var param_names = new list<string>();
-        var param_default_parametors = new list<string>();
-        var main_fun = new sFun(name, result_type, param_types, param_names
-            , param_default_parametors, true@external, false@var_args
-            , null!@block, false@static_
-            , string("come_heap_pool_init()")
+            , string("come_heap_init()")
             , info);
         
         info.funcs.insert(string(name), main_fun);
     }
     {
-        var name = string("come_heap_pool_final");
+        var name = string("come_heap_final");
         var result_type = new sType("void", info);
-        var param_types = new list<sType*%>();
-        var param_names = new list<string>();
+        var param_types = [new sType("bool", info) ];
+        var param_names = [string("check_mem_leak")];
         var param_default_parametors = new list<string>();
         var main_fun = new sFun(name, result_type, param_types, param_names
             , param_default_parametors, true@external, false@var_args
             , null!@block, false@static_
-            , string("void come_heap_pool_final()")
+            , string("void come_heap_final(bool check_mem_leak)")
             , info);
         
         info.funcs.insert(string(name), main_fun);

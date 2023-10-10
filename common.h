@@ -18,6 +18,7 @@ using no-null-check;
 
 extern bool gComelang;
 extern bool gGC;
+extern bool gComeDebug;
 
 struct sType;
 

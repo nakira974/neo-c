@@ -83,13 +83,8 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
         free_objects_on_return(come_fun.mBlock, info, come_value.var, false@top_block);
         free_right_value_objects(info);
         
-/*
-        if(!info.come_fun.mResultType.mComeMemCore) {
-            add_come_code(info, "come_release_malloced_mem();\n");
-        }
-*/
         if(info.come_fun.mName === "main") {
-            add_come_code(info, "come_heap_pool_final();\n");
+            add_come_code(info, xsprintf("come_heap_final(%d);\n", gComeDebug));
         }
         
         add_come_code(info, "return __result%d__;\n", num_result);
@@ -98,13 +93,9 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
         sFun* come_fun = info.come_fun;
         free_objects_on_return(come_fun.mBlock, info, null!, false@top_block);
         free_right_value_objects(info);
-/*
-        if(!info.come_fun.mResultType.mComeMemCore) {
-            add_come_code(info, "come_release_malloced_mem();\n");
-        }
-*/
+        
         if(info.come_fun.mName === "main") {
-            add_come_code(info, "come_heap_pool_final();\n");
+            add_come_code(info, xsprintf("come_heap_final(%d);\n", gComeDebug));
         }
         add_come_code(info, "return;\n");
     }

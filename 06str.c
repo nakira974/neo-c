@@ -293,7 +293,7 @@ bool sListNode*::compile(sListNode* self, sInfo* info)
     
     string type_name = make_type_name_string(type2, false@in_header, true@array_cast_pointer, info);
     
-    obj_value.c_value = xsprintf("(%s*)come_calloc(1, sizeof(%s)*(%s))", type_name, type_name, num_string.to_string());
+    obj_value.c_value = xsprintf("(%s*)come_calloc(1, sizeof(%s)*(%s), \"%s\", %d)", type_name, type_name, num_string.to_string(), info.sname, info.sline);
     
     sType*% type3 = clone type2;
     type3->mPointerNum++;
@@ -429,7 +429,7 @@ bool sTupleNode*::compile(sTupleNode* self, sInfo* info)
     
     string type_name = make_type_name_string(type2, false@in_header, true@array_cast_pointer, info);
     
-    obj_value.c_value = xsprintf("(%s*)come_calloc(1, sizeof(%s)*(%s))", type_name, type_name, num_string.to_string());
+    obj_value.c_value = xsprintf("(%s*)come_calloc(1, sizeof(%s)*(%s), \"%s\", %d)", type_name, type_name, num_string.to_string(), info.sname, info.sline);
     
     sType*% type3 = clone type2;
     type3->mPointerNum++;
@@ -664,7 +664,7 @@ bool sMapNode*::compile(sMapNode* self, sInfo* info)
     
     string type_name = make_type_name_string(type2, false@in_header, true@array_cast_pointer, info);
     
-    obj_value.c_value = xsprintf("(%s*)come_calloc(1, sizeof(%s)*(%s))", type_name, type_name, num_string.to_string());
+    obj_value.c_value = xsprintf("(%s*)come_calloc(1, sizeof(%s)*(%s), \"%s\", %d)", type_name, type_name, num_string.to_string(), info.sname, info.sline);
     
     sType*% type3 = clone type2;
     type3->mPointerNum++;

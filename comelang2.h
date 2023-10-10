@@ -553,7 +553,7 @@ struct map<T, T2>
     int it;
 };
 
-#define MAP_TABLE_DEFAULT_SIZE 128
+#define MAP_TABLE_DEFAULT_SIZE 1024
 
 impl map <T, T2>
 {
@@ -712,7 +712,7 @@ impl map <T, T2>
     }
     
     void rehash(map<T,T2>* self) {
-        int size = self.size * 3;
+        int size = self.size * 10;
         T&* keys = borrow new T[size];
         T2&* items = borrow new T2[size];
         bool* item_existance = borrow new bool[size];
@@ -763,7 +763,7 @@ impl map <T, T2>
     }
     
     void insert(map<T,T2>* self, T key, T2 item) {
-        if(self.len*2 >= self.size) {
+        if(self.len*10 >= self.size) {
             self.rehash();
         }
         int hash = key.get_hash_key() % self.size;
@@ -1138,15 +1138,13 @@ struct buffer {
 };
 
 void xassert(char* msg, bool test);
-void ncfree(void* mem);
-void* come_calloc(size_t count, size_t size);
+void* come_calloc(size_t count, size_t size, char* sname=null, int sline=0);
 void* come_increment_ref_count(void* mem);
 void* come_print_ref_count(void* mem);
 void come_call_finalizer(void* fun, void* mem, void* protocol_fun, void* protocol_obj, int call_finalizer_only, int no_decrement, int no_free);
 void* come_decrement_ref_count(void* mem, void* protocol_fun, void* protocol_obj, bool no_decrement, bool no_free);
 void come_free_object(void* mem);
-void* nccalloc(size_t nmemb, size_t size);
-void* come_memdup(void* block);
+void* come_memdup(void* block, char* sname=null, int sline=0);
 void int::times(int self, void* parent, void (*block)(void* parent));
 string __builtin_string(char* str);
 bool int::equals(int self, int right);

@@ -521,7 +521,7 @@ sType*%, string clone_object(sType* type, char* obj, sInfo* info)
     else {
         type->mHeap = true;
         string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
-        result = xsprintf("(%s)come_memdup(%s)", type_name, c_value);
+        result = xsprintf("(%s)come_memdup(%s, \"%s\", %d)", type_name, c_value, info.sname, info.sline);
         result_type = clone type;
     }
     

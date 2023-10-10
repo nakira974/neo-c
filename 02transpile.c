@@ -3,6 +3,7 @@
 
 bool gComelang;
 bool gGC;
+bool gComeDebug = false;
 char* gProgramName = NULL;
 
 void come_init() version 2
@@ -423,6 +424,7 @@ int come_main(int argc, char** argv) version 2
             i++;
         }
         else if(argv[i] === "-g") {
+            gComeDebug = true;
             clang_option.append_str("-g ");
         }
         else if(argv[i] === "-s" || argv[i] === "-S") {

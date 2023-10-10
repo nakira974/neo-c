@@ -100,7 +100,7 @@ bool sNewNode*::compile(sNewNode* self, sInfo* info)
     
     string type_name = make_type_name_string(type2, false@in_header, true@array_cast_pointer, info);
     
-    come_value.c_value = xsprintf("(%s*)come_calloc(1, sizeof(%s)*(%s))", type_name, type_name, num_string.to_string());
+    come_value.c_value = xsprintf("(%s*)come_calloc(1, sizeof(%s)*(%s), \"%s\", %d)", type_name, type_name, num_string.to_string(), info.sname, info.sline);
     
     type2->mHeap = true;
     type2->mPointerNum++;
@@ -187,7 +187,7 @@ bool sImplementsNode*::compile(sImplementsNode* self, sInfo* info)
     string buf2 = xsprintf("%s* _inf_obj_value%d;\n", type_name2, inf_num);
     add_come_code_at_function_head(info, buf2);
     
-    add_come_code(info, "_inf_value%d=(%s*)come_calloc(1, sizeof(%s));\n", inf_num, type_name, type_name);
+    add_come_code(info, "_inf_value%d=(%s*)come_calloc(1, sizeof(%s), \"%s\", %d);\n", inf_num, type_name, type_name, info.sname, info.sline);
     add_come_code(info, "_inf_obj_value%d=come_increment_ref_count(%s);\n", inf_num, come_value.c_value);
     add_come_code(info, "_inf_value%d->_protocol_obj=_inf_obj_value%d;\n", inf_num, inf_num);
     

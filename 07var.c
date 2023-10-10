@@ -158,7 +158,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                 var_type->mStatic = false;
                 
                 if(!var_->mType->mStatic && !var_type->mConstant && var_type->mArrayNum.length() == 0) {
-                    add_come_code_at_function_head2(info, "memset(&%s, 0, sizeof(%s)); /* ddd */\n", var_->mCValueName, make_type_name_string(var_type, false@in_header, false@array_cast_pointer, info));
+                    add_come_code_at_function_head2(info, "memset(&%s, 0, sizeof(%s));\n", var_->mCValueName, make_type_name_string(var_type, false@in_header, false@array_cast_pointer, info));
                 }
             }
         }

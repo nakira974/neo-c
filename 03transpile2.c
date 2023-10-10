@@ -618,7 +618,7 @@ int transpile(sInfo* info) version 3
     var param_default_parametors = new list<string>();
     var main_fun = new sFun(name, result_type, param_types, param_names
         , param_default_parametors, false@external, false@var_args
-        , null!@block, false@static_
+        , null@block, false@static_
         , string("int main(int argc, char** argv)")
         , info);
     

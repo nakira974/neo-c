@@ -91,7 +91,7 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
     }
     else {
         sFun* come_fun = info.come_fun;
-        free_objects_on_return(come_fun.mBlock, info, null!, false@top_block);
+        free_objects_on_return(come_fun.mBlock, info, null, false@top_block);
         free_right_value_objects(info);
         
         if(info.come_fun.mName === "main") {
@@ -455,7 +455,7 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
             }
         }
         
-        sFun* fun = info.funcs.at(fun_name, null!);
+        sFun* fun = info.funcs.at(fun_name, null);
         
         if(fun == null) {
             err_msg(info, "function not found(%s) at normal function call(1)\n", fun_name);
@@ -1098,7 +1098,7 @@ bool sNormalBlock*::compile(sNormalBlock* self, sInfo* info)
     
     add_come_code(info, "{\n");
 
-    transpile_block(block, null!, null!, info);
+    transpile_block(block, null, null, info);
     
     add_come_code(info, "}\n");
     
@@ -1211,7 +1211,7 @@ sNode*% expression_node(sInfo* info) version 99
         skip_spaces_and_lf(info);
         
         if(*info->p == ';') {
-            return new sNode(new sReturnNode(null!, string("0"), info));
+            return new sNode(new sReturnNode(null, string("0"), info));
         }
         else {
             char* head = info.p;

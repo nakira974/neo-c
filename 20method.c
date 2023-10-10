@@ -678,7 +678,7 @@ sNode*% parse_method_call(sNode*% obj, string fun_name, sInfo* info) version 20
         method_block.append_str("\n");
     }
     
-    return new sNode(new sMethodCallNode(fun_name, clone obj, clone params, method_block!, method_block_sline, info));
+    return new sNode(new sMethodCallNode(fun_name, clone obj, clone params, method_block, method_block_sline, info));
 }
 
 sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 20

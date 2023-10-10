@@ -188,7 +188,7 @@ sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 
             }
         };
     
-        sNode*% result = new sNode(new sIfNode(expression_node, if_block, elif_expression_nodes, elif_blocks, elif_num, else_block!, info));
+        sNode*% result = new sNode(new sIfNode(expression_node, if_block, elif_expression_nodes, elif_blocks, elif_num, else_block, info));
         
         return result;
     }

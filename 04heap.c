@@ -475,7 +475,7 @@ sType*%, string clone_object(sType* type, char* obj, sInfo* info)
         fun_name2 = create_method_name(obj_type, false@no_pointer_name, fun_name, info);
         string fun_name3 = xsprintf("%s_%s", none_generics_name, fun_name);
         
-        sGenericsFun* generics_fun = info.generics_funcs.at(fun_name3, null!);
+        sGenericsFun* generics_fun = info.generics_funcs.at(fun_name3, null);
         
         if(generics_fun) {
             if(!create_generics_fun(string(fun_name2), generics_fun, obj_type, info)) {
@@ -559,7 +559,7 @@ bool create_equals_method(sType* type, sInfo* info)
         fun_name2 = create_method_name(obj_type, false@no_pointer_name, fun_name, info);
         string fun_name3 = xsprintf("%s_%s", none_generics_name, fun_name);
         
-        sGenericsFun* generics_fun = info.generics_funcs.at(fun_name3, null!);
+        sGenericsFun* generics_fun = info.generics_funcs.at(fun_name3, null);
         
         if(generics_fun) {
             if(!create_generics_fun(string(fun_name2), generics_fun, obj_type, info)) {
@@ -631,7 +631,7 @@ bool create_operator_equals_method(sType* type, sInfo* info)
         fun_name2 = create_method_name(obj_type, false@no_pointer_name, fun_name, info);
         string fun_name3 = xsprintf("%s_%s", none_generics_name, fun_name);
         
-        sGenericsFun* generics_fun = info.generics_funcs.at(fun_name3, null!);
+        sGenericsFun* generics_fun = info.generics_funcs.at(fun_name3, null);
         
         if(generics_fun) {
             if(!create_generics_fun(string(fun_name2), generics_fun, obj_type, info)) {
@@ -703,7 +703,7 @@ bool create_operator_not_equals_method(sType* type, sInfo* info)
         fun_name2 = create_method_name(obj_type, false@no_pointer_name, fun_name, info);
         string fun_name3 = xsprintf("%s_%s", none_generics_name, fun_name);
         
-        sGenericsFun* generics_fun = info.generics_funcs.at(fun_name3, null!);
+        sGenericsFun* generics_fun = info.generics_funcs.at(fun_name3, null);
         
         if(generics_fun) {
             if(!create_generics_fun(string(fun_name2), generics_fun, obj_type, info)) {
@@ -833,11 +833,11 @@ void free_objects_on_return(sBlock* current_block, sInfo* info, sVar* ret_value,
     sVarTable* it = info->lv_table;
     
     if(it == info->come_fun->mBlock->mVarTable) {
-        free_objects(it, ret_value!, info);
+        free_objects(it, ret_value, info);
     }
     else {
         while(it != info->come_fun->mBlock->mVarTable) {
-            free_objects(it, ret_value!, info);
+            free_objects(it, ret_value, info);
     
             it = it->mParent;
         }

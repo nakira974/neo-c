@@ -52,7 +52,7 @@ void come_heap_final(bool check_mem_leak)
             sMemHeader* next_it = it.alloc_next;
             
             if(!it->freed) {
-                printf("%s %d: memory leak\n", it->sname, it->sline);
+                printf("%s %d: detecting memory leak\n", it->sname, it->sline);
             }
             
             it = next_it;
@@ -287,6 +287,7 @@ void* come_null_check(void* mem, char* sname, int sline)
 {
     if(mem == null) {
         printf("%s %d: null check error\n", sname, sline);
+        exit(2);
     }
 }
 
@@ -923,28 +924,6 @@ string string::substring(char* str, int head, int tail)
     return result;
 }
 
-string string::chomp(char* str)
-{
-    string result = string(str);
-    
-    if(result[result.length()-1] == '\n') {
-        return result.substring(0, -2);
-    }
-    
-    return result;
-}
-
-string char*::chomp(char* str)
-{
-    string result = string(str);
-    
-    if(result[result.length()-1] == '\n') {
-        return result.substring(0, -2);
-    }
-    
-    return result;
-}
-
 string xbasename(char* path)
 {
     char* p = path + strlen(path);
@@ -1031,8 +1010,6 @@ string xrealpath(char* path)
 
     return result2;
 }
-
-
 
 bool xiswalpha(wchar_t c)
 {

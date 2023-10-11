@@ -1342,6 +1342,57 @@ sNode*% expression_node(sInfo* info) version 99
             
             return node;
         }
+/*
+        else if(*info->p == '*') {
+            buffer*% fun_name = new buffer();
+            
+            fun_name.append_str(buf);
+            
+            while(*info->p == '*') {
+                info->p++;
+                skip_spaces_and_lf(info);
+                
+                fun_name.append_str("p");
+            }
+            
+            expected_next_character(':', info);
+            expected_next_character(':', info);
+            
+            fun_name.append_str("_");
+            
+            string buf2 = parse_word(info);
+            
+            fun_name.append_str(buf2);
+            
+            sNode*% node = parse_function_call(fun_name.to_string(), info);
+            
+            node = post_position_operator(node, info);
+            node = post_position_operator3(node, info);
+            
+            return node;
+        }
+*/
+        else if(*info->p == ':' && *(info->p+1) == ':') {
+            info->p+=2;
+            skip_spaces_and_lf(info);
+            
+            buffer*% fun_name = new buffer();
+            
+            fun_name.append_str(buf);
+            
+            fun_name.append_str("_");
+            
+            string buf2 = parse_word(info);
+            
+            fun_name.append_str(buf2);
+            
+            sNode*% node = parse_function_call(fun_name.to_string(), info);
+            
+            node = post_position_operator(node, info);
+            node = post_position_operator3(node, info);
+            
+            return node;
+        }
         else if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && buf !== "gc_inc" && buf !== "gc_dec" && *info->p == '(' && !(*(info->p+1) == '*' && is_type_name_))
         {
             sNode*% node = parse_function_call(buf, info);

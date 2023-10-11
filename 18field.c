@@ -308,7 +308,7 @@ bool sNullCheckNode*::compile(sNullCheckNode* self, sInfo* info)
     
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("come_null_check(%s, \"%s\", %d)", left_value.c_value, info->sname, info->sline);
+    come_value.c_value = xsprintf("(%s)come_null_check(%s, \"%s\", %d)", make_type_name_string(left_value.type,false@in_header, false@array_cast_pointer,info), left_value.c_value, info->sname, info->sline);
     come_value.type = clone left_value.type;
     come_value.var = null;
     

@@ -1319,6 +1319,36 @@ sNode*% expression_node(sInfo* info) version 99
             info.sline = head_sline;
         }
         
+        /// backtrace3 ///
+        bool fun_name_with_type_name = false;
+        if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && buf !== "gc_inc" && buf !== "gc_dec")
+        {
+            info.p = head;
+            info.sline = head_sline;
+            
+            info.no_output_err = true;
+            
+            if(xisalpha(*info.p) || *info.p == '_') {
+                var word2 = parse_word(info);
+            }
+            while(*info->p == '*') {
+                info->p++;
+                skip_spaces_and_lf(info);
+            }
+            if(*info->p == ':' && *(info->p+1) == ':') {
+                info->p += 2;
+                skip_spaces_and_lf(info);
+                if(xisalpha(*info->p) || *info.p == '_') {
+                    fun_name_with_type_name = true;
+                }
+            }
+            
+            info.no_output_err = false;
+            
+            info.p = head;
+            info.sline = head_sline;
+        }
+        
         buf = parse_word(info);
         
         if(lambda_flag) {
@@ -1342,8 +1372,7 @@ sNode*% expression_node(sInfo* info) version 99
             
             return node;
         }
-/*
-        else if(*info->p == '*') {
+        else if(fun_name_with_type_name) {
             buffer*% fun_name = new buffer();
             
             fun_name.append_str(buf);
@@ -1371,7 +1400,6 @@ sNode*% expression_node(sInfo* info) version 99
             
             return node;
         }
-*/
         else if(*info->p == ':' && *(info->p+1) == ':') {
             info->p+=2;
             skip_spaces_and_lf(info);

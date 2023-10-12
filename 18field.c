@@ -252,6 +252,7 @@ bool sStoreFieldNode*::compile(sStoreFieldNode* self, sInfo* info)
             return false;
         }
     }
+    
     come_value.type = clone field_type;
     come_value.var = null;
     

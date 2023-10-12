@@ -360,6 +360,7 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
                     come_value.c_value = increment_ref_count_object(come_value.type, come_value.c_value, info);
                 }
             }
+            
             come_params.push_back(come_value);
             dec_stack_ptr(1, info);
             
@@ -565,6 +566,9 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
                 
                 CVALUE* come_value = label_params[param_name];
                 
+                if(param_types[i].mHeap && come_value.type.mHeap) {
+                    come_value.c_value = increment_ref_count_object(come_value.type, come_value.c_value, info);
+                }
                 if(come_value) {
                     come_params.replace(i, clone come_value);
                 }

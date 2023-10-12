@@ -855,32 +855,44 @@ sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 
             info->p += strlen("comelang");
             skip_spaces_and_lf(info);
             gComelang = true;
+        
+            return new sNode(new sNullNodeX(info));
         }
         else if(memcmp(info->p, "c", strlen("c")) == 0) {
             info->p += strlen("c");
             skip_spaces_and_lf(info);
             
             gComelang = false;
+        
+            return new sNode(new sNullNodeX(info));
         }
         else if(memcmp(info->p, "gc", strlen("gc")) == 0) {
             info->p += strlen("gc");
             skip_spaces_and_lf(info);
             
             gGC = true;
+        
+            return new sNode(new sNullNodeX(info));
         }
         else if(memcmp(info->p, "no-gc", strlen("no-gc")) == 0) {
             info->p += strlen("no-gc");
             skip_spaces_and_lf(info);
             
+        
+            return new sNode(new sNullNodeX(info));
             gGC = false;
         }
         else if(memcmp(info->p, "unsafe", strlen("unsafe")) == 0) {
             info->p += strlen("unsafe");
             skip_spaces_and_lf(info);
+        
+            return new sNode(new sNullNodeX(info));
         }
         else if(memcmp(info->p, "no-null-check", strlen("no-null-check")) == 0) {
             info->p += strlen("no-null-check");
             skip_spaces_and_lf(info);
+        
+            return new sNode(new sNullNodeX(info));
         }
         else {
             err_msg(info, "invalid using");

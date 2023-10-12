@@ -43,10 +43,15 @@ comelang2-sh: 01main.c.o 02transpile.c.o 03transpile2.c.o 04heap.c.o 05function.
 	sudo $(INSTALL) -m 755 ./comelang2-sh "$(DESTDIR)/bin"
 	sudo mkdir -p $(DESTDIR)/include
 	sudo $(INSTALL) -m 644 ./comelang2.h $(DESTDIR)/include
+	sudo $(INSTALL) -m 644 ./comelang2-str.h $(DESTDIR)/include
 	comelang2 -c libcomelang2.c
 	ar r libcomelang2-sh.a libcomelang2.c.o
 	sudo mkdir -p $(DESTDIR)/lib
 	sudo $(INSTALL) -m 644 ./libcomelang2-sh.a $(DESTDIR)/lib
+	comelang2 -c libcomelang2-str.c
+	ar r libcomelang2-str-sh.a libcomelang2-str.c.o
+	sudo mkdir -p $(DESTDIR)/lib
+	sudo $(INSTALL) -m 644 ./libcomelang2-str-sh.a $(DESTDIR)/lib
 
 01main.c.o: 01main.c
 	comelang2 -c 01main.c 
@@ -70,7 +75,7 @@ comelang2-sh: 01main.c.o 02transpile.c.o 03transpile2.c.o 04heap.c.o 05function.
 	comelang2 -c 05function3.c 
 
 05function4.c.o: 05function4.c
-	comelang2 -c 05function4.c 
+	comelang2 -g -c 05function4.c 
 
 06str.c.o: 06str.c
 	comelang2 -c 06str.c 
@@ -131,18 +136,25 @@ comelang2-install: libcomelang2.a
 	$(INSTALL) -m 755 ./comelang2 "$(DESTDIR)/bin"
 	mkdir -p $(DESTDIR)/include
 	$(INSTALL) -m 644 ./comelang2.h $(DESTDIR)/include
+	$(INSTALL) -m 644 ./comelang2-str.h $(DESTDIR)/include
 	mkdir -p $(DESTDIR)/lib
 	$(INSTALL) -m 644 ./libcomelang2.a $(DESTDIR)/lib
+	$(INSTALL) -m 644 ./libcomelang2-str.a $(DESTDIR)/lib
 
-libcomelang2.a: libcomelang2.c
+libcomelang2.a: libcomelang2.c libcomelang2-str.c
 	./comelang2 -o libcomelang2.c.o -c libcomelang2.c -DCOMPILING_LIBRARY
 	ar r libcomelang2.a libcomelang2.c.o
+	./comelang2 -o libcomelang2-str.c.o -c libcomelang2-str.c -DCOMPILING_LIBRARY
+	ar r libcomelang2-str.a libcomelang2-str.c.o
 
 comelang2: common.h 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 05function2.o 05function3.o 05function4.o 06str.o 07var.o 08if.o 09while.o 10do_while.o 11for.o 12switch.o 13op.o 14struct.o 15union.o 16enum.o 17typedef.o 18field.o 19eq.o 20method.o 21obj.o 22impl.o 23interface.o
 	./comelang -no-gc -o comelang2 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 05function2.o 05function3.o 05function4.o 06str.o 07var.o 08if.o 09while.o 10do_while.o 11for.o 12switch.o 13op.o 14struct.o 15union.o 16enum.o 17typedef.o 18field.o 19eq.o 20method.o 21obj.o 22impl.o 23interface.o
 
 
 01main.o: 01main.c common.h
+	sudo mkdir -p $(DESTDIR)/include
+	sudo $(INSTALL) -m 644 ./comelang2.h $(DESTDIR)/include
+	sudo $(INSTALL) -m 644 ./comelang2-str.h $(DESTDIR)/include
 	./comelang -no-gc -c 01main.c
 
 02transpile.o: 02transpile.c common.h
@@ -158,13 +170,13 @@ comelang2: common.h 01main.o 02transpile.o 03transpile2.o 04heap.o 05function.o 
 	./comelang -no-gc -c 05function.c
 
 05function2.o: 05function2.c common.h
-	./comelang -no-gc  -c 05function2.c
+	./comelang -no-gc -g -c 05function2.c
 
 05function3.o: 05function3.c common.h
 	./comelang -no-gc  -c 05function3.c
 
 05function4.o: 05function4.c common.h
-	./comelang -no-gc  -c 05function4.c
+	./comelang -g -no-gc  -c 05function4.c
 
 06str.o: 06str.c common.h
 	./comelang -no-gc  -c 06str.c

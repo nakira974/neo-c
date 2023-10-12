@@ -327,6 +327,10 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
     
     sVar* var_ = get_variable_from_table(info.lv_table, fun_name);
     
+    if(var_ == null) {
+        var_ = get_variable_from_table(info.gv_table, fun_name);
+    }
+    
     if(var_) {
         sType* lambda_type = var_->mType;
         
@@ -397,6 +401,9 @@ bool sFunCallNode*::compile(sFunCallNode* self, sInfo* info)
     else {
         if(fun_name === "string") {
             fun_name = string("__builtin_string");
+        }
+        else if(fun_name === "wstring") {
+            fun_name = string("__builtin_wstring");
         }
         else if(fun_name === "inherit") {
             char* p = info.come_fun.mName;
@@ -1377,11 +1384,20 @@ sNode*% expression_node(sInfo* info) version 99
             
             fun_name.append_str(buf);
             
+            sType* type = info.types[fun_name.to_string()];
+            
+            if(type == null) {
+                err_msg(info, "null type(%s)", buf);
+                exit(2);
+            }
+            
             while(*info->p == '*') {
                 info->p++;
                 skip_spaces_and_lf(info);
                 
-                fun_name.append_str("p");
+                if(type->mOriginalTypeName === "") {
+                    fun_name.append_str("p");
+                }
             }
             
             expected_next_character(':', info);

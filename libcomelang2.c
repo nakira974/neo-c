@@ -493,14 +493,29 @@ string string::operator_add(char* self, char* right)
     return result;
 }
 
+unsigned int bool::get_hash_key(bool value)
+{
+    return (((int)value).get_hash_key());
+}
+
 unsigned int int::get_hash_key(int value)
 {
     return value;
 }
 
-unsigned int bool::get_hash_key(bool value)
+unsigned int short::get_hash_key(short int value)
 {
-    return (((int)value).get_hash_key());
+    return value;
+}
+
+unsigned int long::get_hash_key(long value)
+{
+    return value;
+}
+
+unsigned int char::get_hash_key(char value)
+{
+    return value;
 }
 
 unsigned int string::get_hash_key(char* value)
@@ -523,11 +538,6 @@ unsigned int char*::get_hash_key(char* value)
         p++;
     }
     return result;
-}
-
-unsigned int bool::get_hash_key(bool value)
-{
-    return (((int)value).get_hash_key());
 }
 
 char char::clone(char self)
@@ -1165,4 +1175,142 @@ FILE* FILE*::fprintf(FILE* f, const char* msg, ...)
     return f;
 }
 
+int char::compare(char left, char right) 
+{
+    if(left < right) {
+        return -1;
+    }
+    else if(left > right) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+    
+    return 0;
+}
 
+int short::compare(short left, short right) 
+{
+    if(left < right) {
+        return -1;
+    }
+    else if(left > right) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+    
+    return 0;
+}
+
+int int::compare(int left, int right) 
+{
+    if(left < right) {
+        return -1;
+    }
+    else if(left > right) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+    
+    return 0;
+}
+
+int long::compare(long left, long right) 
+{
+    if(left < right) {
+        return -1;
+    }
+    else if(left > right) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+    
+    return 0;
+}
+
+int string::compare(char* left, char* right) 
+{
+    return strcmp(left,right);
+}
+
+int char*::compare(char* left, char* right) 
+{
+    return strcmp(left,right);
+}
+
+int int::except(int self, void* parent, void (*block)(void* parent))
+{
+    if(self < 0) {
+        block(parent);
+    }
+
+    return self;
+}
+
+bool bool::except(bool self, void* parent, void (*block)(void* parent))
+{
+    if(!self) {
+        block(parent);
+    }
+
+    return self;
+}
+
+bool bool::if(bool self, void* parent, void (*block)(void* parent))
+{
+    if(self) {
+        block(parent);
+    }
+
+    return self;
+}
+
+void char*::puts(char* self)
+{
+    (void)puts(self);
+}
+
+void char*::print(char* self)
+{
+    printf("%s", self);
+}
+
+void fopen_block(const char* path, const char* mode, void* parent, void (*block)(void* parent, FILE* f))
+{
+    FILE* f = fopen(path, mode);
+    
+    if(f) {
+        block(parent, f);
+        
+        fclose(f);
+    }
+}
+
+char char::putc(char self)
+{
+    (void)putc(self, stdout);
+    
+    return self;
+}
+
+int int::compare(int left, int right) 
+{
+    if(left < right) {
+        return -1;
+    }
+    else if(left > right) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+    
+    return 0;
+}

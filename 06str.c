@@ -189,6 +189,61 @@ string sWStringNode*::sname(sWStringNode* self, sInfo* info)
     return string(self.sname);
 }
 
+struct sRegexNode
+{
+    string str;
+    bool global;
+    bool ignore_case;
+    
+    int sline;
+    string sname;
+};
+
+sRegexNode*% sRegexNode*::initialize(sRegexNode*% self, string str, bool global, bool ignore_case, int sline, sInfo* info)
+{
+    self.str = string(str);
+    self.global = global;
+    self.ignore_case = ignore_case;
+    
+    self.sline = sline;
+    self.sname = string(info->sname);
+    
+    return self;
+}
+
+bool sRegexNode*::terminated()
+{
+    return false;
+}
+
+bool sRegexNode*::compile(sRegexNode* self, sInfo* info)
+{
+    CVALUE*% come_value = new CVALUE;
+    
+    come_value.c_value = xsprintf("\"%s\".to_regex(global:%s, ignore_case:%s)", self.str, self.global ? string("true"):string("false"), self.ignore_case ? string("true"):string("false"));
+    come_value.type = new sType("come_regex*", info);
+    come_value.type.mHeap = true;
+    come_value.var = null;
+    
+    info.stack.push_back(come_value);
+    
+    add_come_last_code(info, "%s;\n", come_value.c_value);
+    
+    come_value.c_value = append_object_to_right_values(come_value.c_value, come_value.type, info);
+    
+    return true;
+}
+
+int sRegexNode*::sline(sRegexNode* self, sInfo* info)
+{
+    return self.sline;
+}
+
+string sRegexNode*::sname(sRegexNode* self, sInfo* info)
+{
+    return string(self.sname);
+}
+
 struct sListNode
 {
     list<sNode*%>*% list_elements;
@@ -813,6 +868,50 @@ sNode*% expression_node(sInfo* info) version 98
         skip_spaces_and_lf(info);
         
         return new sNode(new sStrNode(value.to_string(), sline, info));
+    }
+    else if(*info->p == '/') {
+        int sline = info->sline;
+        
+        buffer*% buf = new buffer();
+        while(true) {
+            if(*info->p == '\\' && *(info->p+1) == '/') {
+                info->p++;
+                buf.append_char(*info->p);
+                info->p++;
+            }
+            else if(*info->p == '/') {
+                info->p++;
+                break;
+            }
+            else if(*info->p == '\0') {
+                err_msg(info, "require closing / for regex");
+                exit(1);
+            }
+            else {
+                buf.append_char(*info->p);
+                info->p++;
+            }
+        }
+        
+        bool global = false;
+        bool ignore_case = false;
+        while(*info->p == 'g' || *info->p == 'i') {
+            if(*info->p == 'g') {
+                info->p++;
+                global = true;
+            }
+            else if(*info->p == 'i') {
+                info->p++;
+                ignore_case = true;
+            }
+            else {
+                break;
+            }
+        }
+        
+        skip_spaces_and_lf(info);
+        
+        return new sNode(new sRegexNode(buf.to_string(), global, ignore_case, sline, info));
     }
     else if(*info->p == '\'') {
         info->p++;

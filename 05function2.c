@@ -763,6 +763,26 @@ sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 9
     int sline = info.sline;
     
     /// backtrace ///
+    bool define_struct_nobody = false;
+    {
+        char* p = info.p;
+        int sline = info.sline;
+        
+        if(buf === "struct") {
+            if(xisalpha(*info->p) || *info->p == '_') {
+                string word = parse_word(info);
+                
+                if(*info->p == ';') {
+                    define_struct_nobody = true;
+                }
+            }
+        }
+        
+        info.p = head;
+        info.sline = sline;
+    }
+    
+    /// backtrace ///
     bool define_function_pointer_result_function = false;
     if(is_type_name_flag)
     {
@@ -778,7 +798,9 @@ sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 9
                 info->p ++;
                 skip_spaces_and_lf(info);
                 
-                define_function_pointer_result_function = true;
+                if(*info->p != '*') {
+                    define_function_pointer_result_function = true;
+                }
             }
         }
         
@@ -795,7 +817,9 @@ sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 9
         
         bool invalid_type = false;
         info.no_output_err = true;
-        parse_type(info);
+        if(xisalpha(*info->p) || *info->p == '_') {
+            parse_type(info);
+        }
         info.no_output_err = false;
         
         if(!info.define_struct) {
@@ -860,13 +884,40 @@ sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 9
             define_variable = false;
         }
         
-        info.no_output_err = true;
-        parse_type(parse_variable_name:false, info);
-        info.no_output_err = false;
+        if(xisalpha(*info->p) || *info->p == '_') {
+            info.no_output_err = true;
+            parse_type(parse_variable_name:false, info);
+            info.no_output_err = false;
+            
+            if(*info->p == '(') {
+                info->p ++;
+                skip_spaces_and_lf(info);
+                
+                if(*info->p == '*') {
+                    info->p++;
+                    skip_spaces_and_lf(info);
+                    
+                    if(xisalpha(*info->p) || *info->p == '_') {
+                        string word = parse_word(info);
+                        
+                        if(*info->p == ')') {
+                            info->p++;
+                            skip_spaces_and_lf(info);
+                            
+                            if(*info->p == '(') {
+                                define_variable = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         
         if(info.define_struct) {
             info.define_struct = false;
             define_variable = false;
+        }
+        else if(define_variable) {
         }
         else {
             if(!(xisalpha(*info->p) || *info->p == '_')) {
@@ -890,7 +941,9 @@ sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 9
         define_variable = false;
     }
     
-    if(define_function_pointer_result_function) {
+    if(define_struct_nobody) {
+    }
+    else if(define_function_pointer_result_function) {
         char* header_head = info.p;
         var result_type, fun_name, err = parse_type(parse_variable_name:false, info);
         

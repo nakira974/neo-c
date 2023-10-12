@@ -694,6 +694,19 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
         }
     }
     
+    int pointer_num = 0;
+    while(*info->p == '*') {
+        info->p++;
+        skip_spaces_and_lf(info);
+        
+        if(memcmp(info->p, "const ", strlen("const ")) == 0) {
+            info->p += strlen("const ");
+            skip_spaces_and_lf(info);
+        }
+        
+        pointer_num++;
+    }
+    
     bool lambda_flag = false;
     {
         char* pX = info.p;
@@ -776,7 +789,7 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
             else {
                 static int num_anonymous_var_name = 0;
                 num_anonymous_var_name++;
-                var_name = xsprintf("anonymous_var_name%d", num_anonymous_var_name);
+                var_name = xsprintf("anonymous_var_nameY%d", num_anonymous_var_name);
             }
             
             if(*info->p == ':') {
@@ -878,6 +891,7 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
         result_type->mLongLong = result_type->mLongLong || long_long;
         result_type->mLong = result_type->mLong || long_;
         result_type->mShort = result_type->mShort || short_;
+        result_type->mPointerNum += pointer_num;
         
         if(xisalnum(*info.p) || *info->p == '_') {
             var_name = parse_word(info);
@@ -888,7 +902,7 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
         else {
             static int num_anonymous_var_name = 0;
             num_anonymous_var_name++;
-            var_name = xsprintf("anonymous_lambda_var_name%d", num_anonymous_var_name);
+            var_name = xsprintf("anonymous_lambda_var_nameZ%d", num_anonymous_var_name);
         }
         expected_next_character(')', info);
         
@@ -918,6 +932,7 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
             type->mLongLong = type->mLongLong || long_long;
             type->mLong = type->mLong || long_;
             type->mShort = type->mShort || short_;
+            type->mPointerNum += pointer_num;
         }
         else if(info.generics_type_names.contained(type_name)) {
             for(int i=0; i<info.generics_type_names.length(); i++) {
@@ -938,6 +953,7 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
             type->mLongLong = type->mLongLong || long_long;
             type->mLong = type->mLong || long_;
             type->mShort = type->mShort || short_;
+            type->mPointerNum += pointer_num;
         }
         else if(*info->p == '<') {
             info->p++;
@@ -999,6 +1015,7 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
             type->mLongLong = type->mLongLong || long_long;
             type->mLong = type->mLong || long_;
             type->mShort = type->mShort || short_;
+            type->mPointerNum += pointer_num;
         }
         else {
             if(struct_) {
@@ -1023,6 +1040,7 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
             type->mLongLong = type->mLongLong || long_long;
             type->mLong = type->mLong || long_;
             type->mShort = type->mShort || short_;
+            type->mPointerNum += pointer_num;
         }
         
         if(memcmp(info->p, "const ", strlen("const ")) == 0) {
@@ -1156,7 +1174,7 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
             else {
                 static int num_anonymous_var_name = 0;
                 num_anonymous_var_name++;
-                var_name = xsprintf("anonymous_var_name%d", num_anonymous_var_name);
+                var_name = xsprintf("anonymous_var_nameX%d", num_anonymous_var_name);
             }
             
             if(*info->p == ':') {

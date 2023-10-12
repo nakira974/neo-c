@@ -1,3 +1,6 @@
+#ifndef COMELANG2_H
+#define COMELANG2_H
+
 using comelang;
 
 #define _GNU_SOURCE
@@ -1161,10 +1164,12 @@ bool char*::operator_not_equals(char* self, char* right);
 string char*::operator_add(char* self, char* right);
 string string::operator_add(char* self, char* right);
 unsigned int int::get_hash_key(int value);
+unsigned int short::get_hash_key(short value);
+unsigned int long::get_hash_key(long value);
+unsigned int char::get_hash_key(char value);
 unsigned int bool::get_hash_key(bool value);
 unsigned int string::get_hash_key(char* value);
 unsigned int char*::get_hash_key(char* value);
-unsigned int bool::get_hash_key(bool value);
 int int::clone(int self);
 string char*::clone(char* self);
 string string::clone(char* self);
@@ -1223,3 +1228,22 @@ string buffer*::to_string(buffer* self);
 bool xisalpha(char c);
 string char*::reverse(char* str) ;
 string string::reverse(char* str) ;
+int char::compare(char left, char right);
+int short::compare(short left, short right);
+int int::compare(int left, int right);
+int long::compare(long left, long right);
+int string::compare(char* left, char* right);
+int char*::compare(char* left, char* right);
+int int::except(int self, void* parent, void (*block)(void* parent));
+bool bool::except(bool self, void* parent, void (*block)(void* parent));
+bool bool::if(bool self, void* parent, void (*block)(void* parent));
+bool bool::equals(bool left, bool right);
+void char*::puts(char* self);
+void char*::print(char* self);
+void char*::printf(char* self, const char* msg);
+int int::printf(int self, const char* msg);
+void fopen_block(const char* path, const char* mode, void* parent, void (*block)(void* parent, FILE* f));
+char char::putc(char self);
+
+
+#endif

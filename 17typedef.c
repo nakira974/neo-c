@@ -42,6 +42,10 @@ bool sTypedefNode*::compile(sTypedefNode* self, sInfo* info)
     else {
         sType*% type = clone self.mType;
         
+        if(type_name !== "va_list") {
+            type->mOriginalTypeName = string(type_name);
+        }
+        
         info.types.insert(string(type_name), clone type);
         
         add_come_code_at_source_head(info, "typedef %s;\n", make_define_var(type, type_name, info, true@in_header));

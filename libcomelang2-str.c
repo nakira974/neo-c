@@ -28,7 +28,7 @@ come_regex*% come_regex*::initialize(come_regex*% self, char* str, bool ignore_c
         exit(1);
     }
 
-    return self;
+    return result;
 }
 
 come_regex*% char*::to_regex(bool ignore_case=false, bool multiline=false, bool global=false, bool extended=false, bool dotall=false, bool anchored=false, bool dollar_endonly=false, bool ungreedy=false)
@@ -202,7 +202,7 @@ wstring wchar_t*::substring(wchar_t* str, int head, int tail)
     return result;
 }
 
-wstring __builtin_wstring(char* str)
+wstring wstring(char* str)
 {
     int len = strlen(str);
 
@@ -912,11 +912,6 @@ int wchar_t*::length(wchar_t* str)
     return wcslen(str);
 }
 
-int wstring::length(wchar_t* str)
-{
-    return wcslen(str);
-}
-
 wstring wchar_t*::delete(wchar_t* str, int head, int tail) 
 {
     using unsafe;
@@ -1155,12 +1150,12 @@ string string::operator_mult(char* str, int n)
 
 wstring wchar_t*::operator_mult(wchar_t* str, int n)
 {
-    return wchar_t*::multiply(str, n);
+    return wchar_tp_multiply(str, n);
 }
 
 wstring wstring::operator_mult(wchar_t* str, int n)
 {
-    return wchar_t*::multiply(str, n);
+    return wchar_tp_multiply(str, n);
 }
 
 bool wchar_t*::operator_equals(wchar_t* left, wchar_t* right)
@@ -2162,14 +2157,4 @@ bool wstring::equals(wchar_t* left, wchar_t* right)
 unsigned int come_regex*::get_hash_key(come_regex* self)
 {
     return self.str.get_hash_key();
-}
-
-wstring string::to_wstring(char* str)
-{
-    return wstring(str);
-}
-
-wstring char*::to_wstring(char* str)
-{
-    return wstring(str);
 }

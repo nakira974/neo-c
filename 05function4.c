@@ -126,6 +126,8 @@ string parse_word(sInfo* info)
     
     if(buf.to_string().length() == 0) {
         err_msg(info, "unexpected character(%c). expected word character", *info->p);
+int* a = (void*)0;
+*a = 0;
         exit(2);
     }
     

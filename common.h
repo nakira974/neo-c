@@ -12,7 +12,7 @@ using no-null-check;
 
 //#define exit(o); { int* a = (void*)0; *a = 1; exit(2); }
 
-#define COME_CODE_MAX 2048
+#define COME_CODE_MAX 2048*2*2*2
 #define FUN_VERSION_MAX 128
 #define GENERICS_TYPE_MAX 12
 

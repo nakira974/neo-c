@@ -46,6 +46,11 @@ bool sEnumNode*::compile(sEnumNode* self, sInfo* info)
         
         if(value == null) {
             buf.append_str(name);
+            buf.append_str("\n");
+            
+            if(i != elements.length()-1) {
+                buf.append_str(",");
+            }
             
             string c_value = xsprintf("%d", n);
             
@@ -63,11 +68,13 @@ bool sEnumNode*::compile(sEnumNode* self, sInfo* info)
             
             buf.append_str(xsprintf("%s=%s", name, right_value.c_value));
             
+            if(i != elements.length()-1) {
+                buf.append_str(",");
+            }
+            
+            buf.append_str("\n");
+            
             n = atoi(right_value.c_value);
-        }
-        
-        if(i != elements.length()-1) {
-            buf.append_str(",");
         }
         
         i++;

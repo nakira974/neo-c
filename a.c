@@ -1,14 +1,5 @@
-#include <comelang2.h>
-#include <comelang2-str.h>
-
-void wchar_t*::fun(char* aaa)
-{
-}
-
-void fun2(char* aaa)
-{
-    wchar_t*::fun(aaa);
-}
+#include <unistd.h>
+#include <curses.h>
 
 int main(int argc, char** argv)
 {

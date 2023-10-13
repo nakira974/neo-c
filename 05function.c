@@ -1388,11 +1388,18 @@ sNode*% expression_node(sInfo* info) version 99
             
             fun_name.append_str(buf);
             
-            sType* type = info.types[fun_name.to_string()];
+            sType*% type = clone info.types[fun_name.to_string()];
             
             if(type == null) {
-                err_msg(info, "null type(%s)", buf);
-                exit(2);
+                sClass* klass = info.classes[fun_name.to_string()];
+                
+                if(klass) {
+                    type = new sType(buf, info);
+                }
+                else {
+                    err_msg(info, "null type(%s)", buf);
+                    exit(2);
+                }
             }
             
             while(*info->p == '*') {
@@ -1675,8 +1682,11 @@ string create_method_name(sType* obj_type, bool no_pointer_name, char* fun_name,
 {
     string struct_name;
     buffer*% buf = new buffer();
-    if(obj_type->mOriginalTypeName !== "" && !obj_type->mNoHeap) {
+    if(obj_type->mOriginalTypeName !== "") {
         struct_name = string(obj_type->mOriginalTypeName);
+    }
+    else if(obj_type->mClass->mStruct) {
+        struct_name = string(obj_type->mClass->mName);
     }
     else {
         struct_name = create_generics_name(obj_type, info);

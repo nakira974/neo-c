@@ -297,11 +297,26 @@ bool sMethodCallNode*::compile(sMethodCallNode* self, sInfo* info)
     else {
         string generics_fun_name = make_generics_function(obj_type, string(fun_name), info).to_string();
         
-        sFun* fun = info.funcs.at(generics_fun_name, null);
+        sFun* fun = null;
+        
+        for(int i=FUN_VERSION_MAX; i>=1; i--) {
+            string new_fun_name = xsprintf("%s_v%d", generics_fun_name, i);
+        
+            fun = info.funcs[new_fun_name];
+            
+            if(fun != null) {
+                generics_fun_name = string(new_fun_name);
+                break;
+            }
+        }
         
         if(fun == null) {
-            err_msg(info, "function not found(%s) at method(%s)\n", generics_fun_name, info.come_fun.mName);
-            return false;
+            fun = info.funcs.at(generics_fun_name, null);
+        
+            if(fun == null) {
+                err_msg(info, "function not found(%s) at method(%s)\n", generics_fun_name, info.come_fun.mName);
+                return false;
+            }
         }
         
         sType*% result_type = clone fun->mResultType;

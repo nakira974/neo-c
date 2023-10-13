@@ -126,8 +126,6 @@ string parse_word(sInfo* info)
     
     if(buf.to_string().length() == 0) {
         err_msg(info, "unexpected character(%c). expected word character", *info->p);
-int* a = (void*)0;
-*a = 0;
         exit(2);
     }
     
@@ -785,6 +783,7 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
         }
         
         if(parse_variable_name) {
+            parse_sharp(info);
             if(xisalnum(*info.p) || *info->p == '_') {
                 var_name = parse_word(info);
             }
@@ -1170,6 +1169,7 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
         }
 
         if(parse_variable_name) {
+            parse_sharp(info);
             if(xisalnum(*info.p) || *info->p == '_') {
                 var_name = parse_word(info);
             }
@@ -1194,10 +1194,12 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
             }
         }
     }
+    parse_sharp(info);
     
     while(*info->p == '[') {
         info->p++;
         skip_spaces_and_lf(info);
+        parse_sharp(info);
         
         if(*info->p == ']') {
             info->p++;
@@ -1206,12 +1208,16 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
             type->mPointerNum++;
             break;
         }
+        parse_sharp(info);
         
         sNode*% node = expression(info);
         type.mArrayNum.push_back(node);
+        parse_sharp(info);
         
         expected_next_character(']', info);
     }
+    
+    parse_sharp(info);
     
     return new tuple3<sType*%, string, bool>(type, var_name, true);
 }

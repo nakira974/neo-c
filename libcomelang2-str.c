@@ -390,7 +390,7 @@ int char*::rindex_count(char* str, char* search_str, int count, int default_valu
     return default_value;
 }
 
-list<string>*% string::scan_block(char* self, come_regex* reg, void* parent, string (*block)(void* parent, char* match_string, list<string>* group_strings))
+list<string>*% char*::scan_block(char* self, come_regex* reg, void* parent, string (*block)(void* parent, char* match_string, list<string>* group_strings))
 {
     auto result = new list<string>.initialize();
 
@@ -1122,7 +1122,7 @@ bool char*::match_group_strings(char* self, come_regex* reg, int count, list<str
     return false;
 }
 
-bool wchar_t*::comapre(wchar_t* left, wchar_t* right)
+bool wchar_t*::compare(wchar_t* left, wchar_t* right)
 {
     return wcscmp(left, right) == 0;
 }
@@ -1159,11 +1159,6 @@ wstring wstring::operator_mult(wchar_t* str, int n)
 }
 
 bool wchar_t*::operator_equals(wchar_t* left, wchar_t* right)
-{
-    return wcscmp(left, right) == 0;
-}
-
-bool wstring::operator_equals(wchar_t* left, wchar_t* right)
 {
     return wcscmp(left, right) == 0;
 }
@@ -2118,19 +2113,6 @@ int wstring::compare(wchar_t* left, wchar_t* right)
 }
 
 unsigned int wchar_t*::get_hash_key(wchar_t* value)
-{
-    using unsafe;
-    
-    int result = 0;
-    wchar_t* p = value;
-    while(*p) {
-        result += (*p);
-        p++;
-    }
-    return result;
-}
-
-unsigned int wstring::get_hash_key(wchar_t* value)
 {
     using unsafe;
     

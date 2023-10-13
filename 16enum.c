@@ -40,11 +40,16 @@ bool sEnumNode*::compile(sEnumNode* self, sInfo* info)
     }
     
     int i = 0;
+    int n = 0;
     foreach(it, elements) {
         var name, value = it;
         
         if(value == null) {
             buf.append_str(name);
+            
+            string c_value = xsprintf("%d", n);
+            
+            add_variable_to_global_table_with_int_value(name, new sType("int", info), c_value, info);
         }
         else {
             if(!value.compile->(info)) {
@@ -57,6 +62,8 @@ bool sEnumNode*::compile(sEnumNode* self, sInfo* info)
             add_variable_to_global_table_with_int_value(name, new sType("int", info), right_value.c_value, info);
             
             buf.append_str(xsprintf("%s=%s", name, right_value.c_value));
+            
+            n = atoi(right_value.c_value);
         }
         
         if(i != elements.length()-1) {
@@ -64,6 +71,7 @@ bool sEnumNode*::compile(sEnumNode* self, sInfo* info)
         }
         
         i++;
+        n++;
     }
     buf.append_str(xsprintf("};\n", type_name));
     

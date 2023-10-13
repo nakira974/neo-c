@@ -28,7 +28,7 @@ come_regex*% come_regex*::initialize(come_regex*% self, char* str, bool ignore_c
         exit(1);
     }
 
-    return result;
+    return self;
 }
 
 come_regex*% char*::to_regex(bool ignore_case=false, bool multiline=false, bool global=false, bool extended=false, bool dotall=false, bool anchored=false, bool dollar_endonly=false, bool ungreedy=false)
@@ -202,7 +202,7 @@ wstring wchar_t*::substring(wchar_t* str, int head, int tail)
     return result;
 }
 
-wstring wstring(char* str)
+wstring __builtin_wstring(char* str)
 {
     int len = strlen(str);
 
@@ -1150,12 +1150,12 @@ string string::operator_mult(char* str, int n)
 
 wstring wchar_t*::operator_mult(wchar_t* str, int n)
 {
-    return wchar_tp_multiply(str, n);
+    return wchar_t*::multiply(str, n);
 }
 
 wstring wstring::operator_mult(wchar_t* str, int n)
 {
-    return wchar_tp_multiply(str, n);
+    return wchar_t*::multiply(str, n);
 }
 
 bool wchar_t*::operator_equals(wchar_t* left, wchar_t* right)

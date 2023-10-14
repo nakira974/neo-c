@@ -109,7 +109,8 @@ void parse_sharp(sInfo* info) version 5
 
 bool parsecmp(char* str, sInfo* info) 
 {
-    return memcmp(info.p, str, strlen(str)) == 0;
+    char c = *(info->p+strlen(str));
+    return memcmp(info.p, str, strlen(str)) == 0 && (c == ';' || c == ' ' || c == '\t' || c == '\n' || c == '\n');
 }
 
 string parse_word(sInfo* info)
@@ -259,7 +260,7 @@ list<sType*%>*%, list<string>*%, list<string>*%, bool parse_params(sInfo* info)
                 info->p++;
                 skip_spaces_and_lf(info);
                 
-                if(parsecmp("...", info)) {
+                if(memcmp(info->p, "...", strlen("...")) == 0) {
                     info->p += strlen("...");
                     skip_spaces_and_lf(info);
                     var_args = true;

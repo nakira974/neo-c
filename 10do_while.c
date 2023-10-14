@@ -43,10 +43,13 @@ bool sDoWhileNode*::compile(sDoWhileNode* self, sInfo* info)
 
     CVALUE*% conditional_value = get_value_from_stack(-1, info);
     dec_stack_ptr(1, info);
+    
+    static int num_while_condtional = 0;
+    add_come_code_at_function_head(info, "_Bool _do_while_condtional%d;\n", ++num_while_condtional);
 
-    free_right_value_objects(info);
-
-    add_come_code(info, "} while(%s);\n", conditional_value.c_value);
+    add_come_code(info, "} while(_do_while_condtional%d=%s,", num_while_condtional, conditional_value.c_value);
+    free_right_value_objects(info, comma:true);
+    add_come_code(info, "_do_while_condtional%d);\n", num_while_condtional);
     
     transpiler_clear_last_code(info);
 

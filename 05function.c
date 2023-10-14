@@ -1308,14 +1308,15 @@ sNode*% expression_node(sInfo* info) version 99
         
         /// backtrace2 ///
         bool lambda_flag = false;
-        if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && buf !== "gc_inc" && buf !== "gc_dec" && *info->p == '(' && *(info->p+1) != '*')
+        if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && buf !== "gc_inc" && buf !== "gc_dec" && is_type_name_)
+        //if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && buf !== "gc_inc" && buf !== "gc_dec" && *info->p == '(' && *(info->p+1) != '*')
         {
             info.p = head;
             info.sline = head_sline;
             
             info.no_output_err = true;
-            
             parse_type(info);
+            info.no_output_err = false;
             
             if(xisalpha(*info.p) || *info.p == '_') {
                 var word2 = parse_word(info);
@@ -1324,7 +1325,6 @@ sNode*% expression_node(sInfo* info) version 99
                     lambda_flag = true;
                 }
             }
-            info.no_output_err = false;
             
             info.p = head;
             info.sline = head_sline;

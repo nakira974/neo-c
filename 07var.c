@@ -45,7 +45,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
     if(self.right_value == null) {
         sVar* var_ = info.lv_table.mVars[self.name];
         if(var_) {
-            err_msg(info, "Already appended this var name(%s)", self.name);
+            err_msg(info, "Already appended this var name(%s)(1)", self.name);
             return false;
         }
         
@@ -117,7 +117,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         if(self.alloc) {
             sVar* var_ = info.lv_table.mVars[self.name];
             if(var_) {
-                err_msg(info, "Already appended this var name(%s)", self.name);
+                err_msg(info, "Already appended this var name(%s)(2)", self.name);
                 return false;
             }
             

@@ -375,7 +375,7 @@ string output_function(sFun* fun, sInfo* info)
         
         output.append_str(str);
         
-        output.append_str(")");
+//        output.append_str(")");
         
         info.module.mSourceHead.append_str(output.to_string());
         info.module.mSourceHead.append_str(";\n");

@@ -56,11 +56,14 @@ bool sIfNode*::compile(sIfNode* self, sInfo* info)
     CVALUE*% conditional_value = get_value_from_stack(-1, info);
     dec_stack_ptr(1, info);
 
-//    free_right_value_objects(info);
-
     sBlock* if_block = self.mIfBlock;
     
-    add_come_code(info, "if(%s) {\n", conditional_value.c_value);
+    static int num_if_conditional = 0;
+    add_come_code_at_function_head(info, "_Bool _if_conditional%d;\n", ++num_if_conditional);
+    
+    add_come_code(info, "if(_if_conditional%d=%s,", num_if_conditional, conditional_value.c_value);
+    free_right_value_objects(info, comma:true);
+    add_come_code(info, "_if_conditional%d) {\n", num_if_conditional);
 
     transpile_block(if_block, null, null, info);
     
@@ -78,11 +81,14 @@ bool sIfNode*::compile(sIfNode* self, sInfo* info)
             CVALUE*% conditional_value = get_value_from_stack(-1, info);
             dec_stack_ptr(1, info);
 
-            //free_right_value_objects(info);
-
             sBlock* elif_node_block = self.mElifBlocks[i];
+            
+            static int num_elif_conditional = 0;
+            add_come_code_at_function_head(info, "_Bool _elif_conditional%d;\n", ++num_elif_conditional);
 
-            add_come_code(info, "else if(%s) {\n", conditional_value.c_value);
+            add_come_code(info, "else if(_elif_conditional%d=%s,", num_elif_conditional, conditional_value.c_value);
+            free_right_value_objects(info, comma:true);
+            add_come_code(info, "_elif_conditional%d) {\n", num_elif_conditional);
             
             transpile_block(elif_node_block, null, null, info);
 

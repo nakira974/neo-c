@@ -37,7 +37,12 @@ string come_regex*::to_string(come_regex* regex);
 string string::lower_case(char* str);
 string string::upper_case(char* str);
 string char*::delete(char* str, int head, int tail) ;
+
 wstring wchar_t*::substring(wchar_t* str, int head, int tail);
+inline wstring wstring::substring(wchar_t* str, int head, int tail) 
+{
+    return wchar_t*::substring(str, head, tail);
+}
 
 int char*::index_count(char* str, char* search_str, int count=1, int default_value=-1);
 inline int string::index_count(char* str, char* search_str, int count=1, int default_value=-1)

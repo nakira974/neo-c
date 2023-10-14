@@ -38,11 +38,14 @@ bool sWhileNode*::compile(sWhileNode* self, sInfo* info)
     CVALUE*% conditional_value = get_value_from_stack(-1, info);
     dec_stack_ptr(1, info);
 
-    free_right_value_objects(info);
-
     sBlock* block = self.mBlock;
     
-    add_come_code(info, "while(%s) {\n", conditional_value.c_value);
+    static int num_while_condtional = 0;
+    add_come_code_at_function_head(info, "_Bool _while_condtional%d;\n", ++num_while_condtional);
+    
+    add_come_code(info, "while(_while_condtional%d=%s,", num_while_condtional, conditional_value.c_value);
+    free_right_value_objects(info, comma:true);
+    add_come_code(info, "_while_condtional%d) {\n", num_while_condtional);
 
     transpile_block(block, null, null, info);
     

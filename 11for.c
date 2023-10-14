@@ -63,13 +63,15 @@ bool sForNode*::compile(sForNode* self, sInfo* info)
         if(!expression_node.compile->(info)) {
             return false;
         }
-        
-        add_last_code_to_source(info);
+        add_last_code_to_source_without_semicolon(info);
+        add_come_code(info, ",");
         
         conditional_value = get_value_from_stack(-1, info);
         dec_stack_ptr(1, info);
     
-        free_right_value_objects(info);
+        free_right_value_objects(info, comma:true);
+        
+        add_come_code(info, "0;");
     }
     else {
         add_come_code(info, ";");
@@ -84,12 +86,20 @@ bool sForNode*::compile(sForNode* self, sInfo* info)
             return false;
         }
         
-        add_last_code_to_source(info);
+        static int num_for_condtionalA = 0;
+        add_come_code_at_function_head(info, "_Bool _for_condtionalA%d;\n", ++num_for_condtionalA);
+        
+        add_come_code(info, "_for_condtionalA%d=", num_for_condtionalA);
+        
+        add_last_code_to_source_without_semicolon(info);
+        add_come_code(info, ",");
         
         conditional_value2 = get_value_from_stack(-1, info);
         dec_stack_ptr(1, info);
     
-        free_right_value_objects(info);
+        free_right_value_objects(info, comma:true);
+        
+        add_come_code(info, "_for_condtionalA%d;", num_for_condtionalA);
     }
     else {
         add_come_code(info, ";");
@@ -104,11 +114,14 @@ bool sForNode*::compile(sForNode* self, sInfo* info)
         }
         
         add_last_code_to_source_without_semicolon(info);
+        add_come_code(info, ",");
         
         CVALUE*% conditional_value3 = get_value_from_stack(-1, info);
         dec_stack_ptr(1, info);
     
-        free_right_value_objects(info);
+        free_right_value_objects(info, comma:true);
+        
+        add_come_code(info, "0");
     }
     
     add_come_code(info, "){\n");

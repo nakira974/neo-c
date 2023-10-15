@@ -2,14 +2,16 @@
 
 bool operator_overload_fun(sType* type, char* fun_name, CVALUE* left_value, CVALUE* right_value, sInfo* info)
 {
+    sType*% generics_type = clone type;
+    if(generics_type->mNoSolvedGenericsType.v1) {
+        generics_type = generics_type->mNoSolvedGenericsType.v1;
+    }
+    
     if(type->mNoSolvedGenericsType.v1) {
         type = type->mNoSolvedGenericsType.v1;
     }
     sClass* klass = type->mClass;
     char* class_name = klass->mName;
-    
-    sType*% type2 = clone type;
-    type2->mHeap = false;
     
     sFun* operator_fun = null;
     
@@ -92,13 +94,15 @@ bool operator_overload_fun(sType* type, char* fun_name, CVALUE* left_value, CVAL
         
         come_value.c_value = xsprintf("%s(%s,%s)", fun_name2, left_value2, right_value2);
         
-        sType*% type = clone operator_fun->mResultType;
+        sType*% type2 = clone operator_fun->mResultType;
         
-        if(operator_fun->mResultType->mHeap) {
-            come_value.c_value = append_object_to_right_values(come_value.c_value, type, info);
+        sType*% type3 = solve_generics(type2, generics_type, info);
+        
+        if(type3->mHeap) {
+            come_value.c_value = append_object_to_right_values(come_value.c_value, type3, info);
         }
         
-        come_value.type = clone type;
+        come_value.type = clone type3;
         come_value.var = null;
         
         add_come_last_code(info, "%s;\n", come_value.c_value);

@@ -411,7 +411,9 @@ string output_function(sFun* fun, sInfo* info)
             i++;
         }
         
-        if(!fun->mResultType->mArrayNum[0].compile->(info)) {
+        sNode* node = fun->mResultType->mArrayNum[0];
+        
+        if(!node.compile->(info)) {
             err_msg(info, "invalid array number");
             exit(2);
         }
@@ -526,7 +528,8 @@ string header_function(sFun* fun, sInfo* info)
             i++;
         }
         
-        if(!fun->mResultType->mArrayNum[0].compile->(info)) {
+        sNode* node = fun->mResultType->mArrayNum[0];
+        if(!node.compile->(info)) {
             err_msg(info, "invalid array number");
             exit(2);
         }

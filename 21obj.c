@@ -523,10 +523,10 @@ bool sCloneNode*::compile(sCloneNode* self, sInfo* info)
     
     var result_type, c_value = clone_object(left_type, left_value.c_value, info);
     come_value.c_value = c_value;
-    come_value.type = clone result_type;
+    come_value.type = clone left_type;
     come_value.var = null;
     
-    if(left_type->mClass->mStruct) {
+    if(left_type->mClass->mStruct || left_type->mPointerNum > 0) {
         come_value.type->mHeap = true;
     }
     

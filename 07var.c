@@ -50,6 +50,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         }
         
         var type = solve_generics(self.type, info->generics_type, info);
+        type->mFunctionParam = false;
         
         add_variable_to_table(self.name, clone type, info);
     
@@ -126,6 +127,7 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
                 foreach(it, self.multiple_assign) {
                     if(i < right_type.mGenericsTypes.length()) {
                         sType* right_type2 = right_type.mGenericsTypes[i];
+                        right_type2->mFunctionParam = false;
                         
                         add_variable_to_table(it, clone right_type2, info);
                         
@@ -144,11 +146,13 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
             }
             else {
                 if(self.type == null) {
+                    right_type->mFunctionParam = false;
                     add_variable_to_table(self.name, clone right_type, info);
                 }
                 else {
                     var type = solve_generics(self.type, info->generics_type, info);
                     
+                    type->mFunctionParam = false;
                     add_variable_to_table(self.name, clone type, info);
                 }
                 
@@ -611,7 +615,9 @@ sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 
             skip_spaces_and_lf(info);
             
             parse_sharp(info);
+            info.no_comma = true;
             sNode*% right_value = expression(info);
+            info.no_comma = false;
             parse_sharp(info);
             
             right_value = post_position_operator3(right_value, info);

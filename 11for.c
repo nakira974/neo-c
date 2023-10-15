@@ -130,6 +130,8 @@ bool sForNode*::compile(sForNode* self, sInfo* info)
 
     add_come_code(info, "}\n");
     
+    free_objects(for_var_table, null, info);
+    
     transpiler_clear_last_code(info);
     info->lv_table = lv_table;
 

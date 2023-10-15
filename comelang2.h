@@ -804,7 +804,7 @@ impl list <T>
     }
 }
 
-#define foreach(o1, o2) for(var o1 = (o2).begin(); !(o2).end(); o1 = (o2).next())
+#define foreach(o1, o2) for(var o2_saved = (o2), var o1 = (o2_saved).begin(); !(o2_saved).end(); o1 = (o2_saved).next())
 
 typedef char*% string;
 
@@ -946,6 +946,45 @@ impl map <T, T2>
         }
 
         return default_value;
+    }
+    void remove(map<T, T2>* self, T& key) {
+        int hash = ((T)key).get_hash_key() % self.size;
+        int it = hash;
+        
+        while(true) {
+            if(self.item_existance[it])
+            {
+                if(self.keys[it].equals(key))
+                {
+                    self.key_list.remove(self.keys[it]);
+                    
+                    self.item_existance[it] = false;
+                    if(isheap(T)) {
+                        delete borrow self.keys[it];
+                    }
+                    self.keys[it] = null;
+                    if(isheap(T2)) {
+                        delete borrow self.items[it];
+                    }
+                    self.items[it] = null;
+                    
+                    self.len--;
+                    break;
+                }
+
+                it++;
+
+                if(it >= self.size) {
+                    it = 0;
+                }
+                else if(it == hash) {
+                    break;
+                }
+            }
+            else {
+                break;
+            }
+        }
     }
     int length(map<T, T2>* self) {
         return self.len;

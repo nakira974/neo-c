@@ -468,6 +468,7 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
 
 sType*%, string clone_object(sType* type, char* obj, sInfo* info)
 {
+    sType*% type2 = clone type;
     if(type->mNoSolvedGenericsType.v1) {
         type = type->mNoSolvedGenericsType.v1;
     }
@@ -539,8 +540,8 @@ sType*%, string clone_object(sType* type, char* obj, sInfo* info)
         result_type = solve_generics(result_type, type, info);
     }
     else {
-        type->mHeap = true;
-        string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
+        type2->mHeap = true;
+        string type_name = make_type_name_string(type2, false@in_header, false@array_cast_pointer, info);
         result = xsprintf("(%s)come_memdup(%s, \"%s\", %d)", type_name, c_value, info.sname, info.sline);
         result_type = clone type;
     }

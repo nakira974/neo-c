@@ -2,11 +2,14 @@
 
 bool operator_overload_fun2(sType* type, char* fun_name, CVALUE* left_value, CVALUE* middle_value, CVALUE* right_value, sInfo* info)
 {
+    sType*% generics_type = clone type;
+    
+    if(generics_type->mNoSolvedGenericsType.v1) {
+        generics_type = generics_type->mNoSolvedGenericsType.v1;
+    }
+    
     sClass* klass = type->mClass;
     char* class_name = klass->mName;
-    
-    sType*% type2 = clone type;
-    type2->mHeap = false;
     
     string fun_name2;
     sFun* operator_fun = null;
@@ -83,13 +86,15 @@ bool operator_overload_fun2(sType* type, char* fun_name, CVALUE* left_value, CVA
         
         come_value.c_value = xsprintf("%s(%s,%s,%s)", fun_name2, left_value2, middle_value2, right_value2);
         
-        sType*% type = clone operator_fun->mResultType;
+        sType*% result_type1 = clone operator_fun->mResultType;
         
-        if(operator_fun->mResultType->mHeap) {
-            come_value.c_value = append_object_to_right_values(come_value.c_value, type, info);
+        sType*% result_type2 = solve_generics(result_type1, generics_type, info);
+        
+        if(result_type2->mHeap) {
+            come_value.c_value = append_object_to_right_values(come_value.c_value, result_type2, info);
         }
         
-        come_value.type = clone type;
+        come_value.type = clone result_type2;
         come_value.var = null;
         
         add_come_last_code(info, "%s;\n", come_value.c_value);
@@ -396,8 +401,6 @@ bool sLoadFieldNode*::compile(sLoadFieldNode* self, sInfo* info)
     
     if(index == klass->mFields.length()) {
         err_msg(info, "field not found(%s) in %s(2)", name, klass->mName);
-int* a = (int*)0;
-*a = 0;
         return false;
     }
     

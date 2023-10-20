@@ -425,6 +425,11 @@ bool sLoadFieldNode*::compile(sLoadFieldNode* self, sInfo* info)
     come_value.type = clone field_type;
     come_value.var = null;
     
+    if(come_value.type->mArrayNum.length() == 1) {
+        come_value.type->mArrayNum.reset();
+        come_value.type->mPointerNum = 1;
+    }
+    
     info.stack.push_back(come_value);
 
     return true;
@@ -663,7 +668,7 @@ bool sLoadArrayNode*::compile(sLoadArrayNode* self, sInfo* info)
         
         sType*% result_type = clone left_type;
         
-        result_type.mArrayNum = new list<sNode*%>();
+        //result_type.mArrayNum = new list<sNode*%>();
         
         if(result_type.mArrayNum.length() > 0) {
             for(int i=0; i<array_num.length(); i++) {
@@ -676,6 +681,11 @@ bool sLoadArrayNode*::compile(sLoadArrayNode* self, sInfo* info)
         
         come_value.type = result_type;
         come_value.var = null;
+        
+        if(come_value.type->mArrayNum.length() == 1) {
+            come_value.type->mArrayNum.reset();
+            come_value.type->mPointerNum = 1;
+        }
         
         info.stack.push_back(come_value);
         

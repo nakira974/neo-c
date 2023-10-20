@@ -4,6 +4,7 @@ struct sStoreNode
 {
     string name;
     list<string>*% multiple_assign;
+    list<string>*% multiple_declare;
     sNode*% right_value;
     sType*% type;
     bool alloc;
@@ -11,7 +12,7 @@ struct sStoreNode
     string sname;
 };
 
-sStoreNode*% sStoreNode*::initialize(sStoreNode*% self, string name, list<string>*%? multiple_assign, sType*% type, bool alloc, sNode*%? right_value, sInfo* info)
+sStoreNode*% sStoreNode*::initialize(sStoreNode*% self, string name, list<string>*%? multiple_assign, list<string>*%? multiple_declare, sType*% type, bool alloc, sNode*%? right_value, sInfo* info)
 {
     self.name = string(name);
     self.alloc = alloc;
@@ -27,6 +28,12 @@ sStoreNode*% sStoreNode*::initialize(sStoreNode*% self, string name, list<string
     }
     else {
         self.multiple_assign = null;
+    }
+    if(multiple_declare) {
+        self.multiple_declare = clone multiple_declare;
+    }
+    else {
+        self.multiple_declare = null;
     }
     
     self.sline = info->sline;
@@ -49,55 +56,80 @@ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
             return false;
         }
         
+        if(self.type == null) {
+            err_msg(info, "Require concrete variable type(%s)", self.name);
+            return false;
+        }
+        
         var type = solve_generics(self.type, info->generics_type, info);
         type->mFunctionParam = false;
         
-        add_variable_to_table(self.name, clone type, info);
-    
-        var_ = get_variable_from_table(info.lv_table, self.name);
-        
-        if(var_ == null) {
-            var_ = get_variable_from_table(info.gv_table, self.name);
-            
-            if(var_ == null) {
-                err_msg(info, "var not found(%s)(Y) at definition of variable\n", self.name);
-                return false;
-            }
-        }
-        
-        if(var_->mType == null) {
-            err_msg(info, "require varible type(%s)\n", self.name);
-            return false;
-        }
-        sType*% left_type = clone var_->mType;
-        
-        if(left_type->mArrayNum.length() > 0) {
-            add_come_code(info, "%s;\n", make_define_var(left_type, var_->mCValueName, info));
-            if(!left_type->mStatic) {
-                add_come_code(info, "memset(&%s, 0, sizeof(%s)); /* aaa */\n", var_->mCValueName, var_->mCValueName);
+        if(self.multiple_declare) {
+            foreach(it, self.multiple_declare) {
+                add_variable_to_table(it, clone type, info);
+                
+                var_ = get_variable_from_table(info.lv_table, it);
+                
+                if(var_ == null) {
+                    err_msg(info, "var not found(%s)(ZY) at definition of variable\n", it);
+                    return false;
+                }
+                
+                sType*% left_type = clone var_->mType;
+                
+                add_come_code_at_function_head(info, "%s;\n", make_define_var(left_type, var_->mCValueName, info));
+                
+                sType*% left_type2 = clone left_type;
+                left_type2->mStatic = false;
+                
+                if(!var_->mType->mConstant && !var_->mType->mStatic) {
+                    add_come_code_at_function_head2(info, "memset(&%s, 0, sizeof(%s)); /* bbb */\n", var_->mCValueName, make_type_name_string(left_type2, false@in_header, false@array_cast_pointer, info));
+                }
             }
         }
         else {
-            add_come_code_at_function_head(info, "%s;\n", make_define_var(left_type, var_->mCValueName, info));
+            add_variable_to_table(self.name, clone type, info);
+        
+            var_ = get_variable_from_table(info.lv_table, self.name);
             
-            sType*% left_type2 = clone left_type;
-            left_type2->mStatic = false;
-            
-            if(!var_->mType->mConstant && !var_->mType->mStatic) {
-                add_come_code_at_function_head2(info, "memset(&%s, 0, sizeof(%s)); /* bbb */\n", var_->mCValueName, make_type_name_string(left_type2, false@in_header, false@array_cast_pointer, info));
+            if(var_ == null) {
+                var_ = get_variable_from_table(info.gv_table, self.name);
+                
+                if(var_ == null) {
+                    err_msg(info, "var not found(%s)(Y) at definition of variable\n", self.name);
+                    return false;
+                }
             }
-        }
-        
-        CVALUE*% come_value = new CVALUE;
-        
-        come_value.c_value = xsprintf("%s", var_->mCValueName);
-        come_value.type = clone left_type;
-        come_value.var = var_;
-        
-        info.stack.push_back(come_value);
-        
-        if(self.alloc && !left_type->mClass->mNumber && left_type->mPointerNum == 0) {
-            var_->mType->mAllocaValue = true;
+            
+            sType*% left_type = clone var_->mType;
+            if(left_type->mArrayNum.length() > 0) {
+                add_come_code(info, "%s;\n", make_define_var(left_type, var_->mCValueName, info));
+                if(!left_type->mStatic) {
+                    add_come_code(info, "memset(&%s, 0, sizeof(%s)); /* aaa */\n", var_->mCValueName, var_->mCValueName);
+                }
+            }
+            else {
+                add_come_code_at_function_head(info, "%s;\n", make_define_var(left_type, var_->mCValueName, info));
+                
+                sType*% left_type2 = clone left_type;
+                left_type2->mStatic = false;
+                
+                if(!var_->mType->mConstant && !var_->mType->mStatic) {
+                    add_come_code_at_function_head2(info, "memset(&%s, 0, sizeof(%s)); /* bbb */\n", var_->mCValueName, make_type_name_string(left_type2, false@in_header, false@array_cast_pointer, info));
+                }
+            }
+            
+            CVALUE*% come_value = new CVALUE;
+            
+            come_value.c_value = xsprintf("%s", var_->mCValueName);
+            come_value.type = clone left_type;
+            come_value.var = var_;
+            
+            info.stack.push_back(come_value);
+            
+            if(self.alloc && !left_type->mClass->mNumber && left_type->mPointerNum == 0) {
+                var_->mType->mAllocaValue = true;
+            }
         }
     }
     else {
@@ -363,7 +395,7 @@ string sStoreNode*::sname(sStoreNode* self, sInfo* info)
 
 sNode*% store_var(string name, list<string>*%? multiple_assign, sType*% type, bool alloc, sNode*%? right_node, sInfo* info)
 {
-    return new sNode(new sStoreNode(name, multiple_assign, type, alloc, right_node, info));
+    return new sNode(new sStoreNode(name, multiple_assign, null@multiple_declare, type, alloc, right_node, info));
 }
 
 struct sLoadNode
@@ -445,6 +477,11 @@ bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
     come_value.var = var_;
     
     info.stack.push_back(come_value);
+    
+    if(come_value.type->mArrayNum.length() == 1) {
+        come_value.type->mArrayNum.reset();
+        come_value.type->mPointerNum = 1;
+    }
     
     return true;
 }
@@ -583,6 +620,25 @@ sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 
 {
     bool is_type_name_flag = is_type_name(buf, info);
     
+    /// back trace ///
+    bool multiple_declare = false;
+    if(is_type_name_flag)
+    {
+        char* p = info.p;
+        int sline = info.sline;
+        
+        if(xisalpha(*info->p) || *info->p == '_') {
+            string word = parse_word(info);
+            
+            if(!is_type_name(word, info) && *info->p == ',') {
+                multiple_declare = true;
+            }
+        }
+        
+        info.p = p;
+        info.sline = sline;
+    }
+    
     parse_sharp(info);
     sFun* fun = info.funcs[buf]
     
@@ -623,12 +679,39 @@ sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 
             right_value = post_position_operator3(right_value, info);
             parse_sharp(info);
             
-            return new sNode(new sStoreNode(string(buf2)@name, multiple_assign, null, true@alloc, right_value, info));
+            return new sNode(new sStoreNode(string(buf2)@name, multiple_assign, null@multiple_declare, null@type, true@alloc, right_value, info));
         }
         else {
             err_msg(info, "var requires a right value(%c)", *info->p);
             exit(2);
         }
+    }
+    else if(multiple_declare) {
+	info.p = head;
+	info.sline = head_sline;
+
+        list<string>*% multiple_declare = new list<string>();
+        
+        var type, name, err = parse_type(info, false@parse_variable_name);
+        
+        parse_sharp(info);
+        string word = parse_word(info);
+        parse_sharp(info);
+        
+        multiple_declare.push_back(clone word);
+        
+        while(*info->p == ',') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            parse_sharp(info);
+            var buf3 = parse_word(info);
+            parse_sharp(info);
+            
+            multiple_declare.push_back(clone buf3);
+        }
+        
+        return new sNode(new sStoreNode(string(buf)@name, null@multiple_assign, multiple_declare, type@type, true@alloc, null, info));
     }
     else if(!is_type_name_flag && *info->p == '=' && *(info->p+1) != '=') {
         info.p++;
@@ -641,7 +724,7 @@ sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 
         right_value = post_position_operator3(right_value, info);
         
         parse_sharp(info);
-        return new sNode(new sStoreNode(string(buf)@name, null, null, false@alloc, right_value, info));
+        return new sNode(new sStoreNode(string(buf)@name, null@multiple_assign, null@multiple_declare, null@type, false@alloc, right_value, info));
     }
 /*
     else if(fun) {
@@ -696,10 +779,10 @@ sNode*% string_node(char* buf, char* head, int head_sline, sInfo* info) version 
                 
                 right_value = post_position_operator3(right_value, info);
                 
-                return new sNode(new sStoreNode(name, null, type, true@alloc, right_value, info));
+                return new sNode(new sStoreNode(name, null@multiple_assign, null@multiple_declare, type, true@alloc, right_value, info));
             }
             else {
-                return new sNode(new sStoreNode(name, null, type, true@alloc, null, info));
+                return new sNode(new sStoreNode(name, null@multiple_assign, null@multiple_declare, type, true@alloc, null@right_value, info));
             }
         }
     }

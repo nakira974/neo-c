@@ -44,7 +44,7 @@ void come_heap_init()
     gHeapPool.top = gHeapPool.mem_pages[0];
 }
 
-void come_heap_final(bool check_mem_leak)
+void come_heap_final(int check_mem_leak)
 {
     if(check_mem_leak) {
         sMemHeader* it = gHeapPool.alloc_mem;
@@ -645,8 +645,13 @@ void buffer*::append(buffer* self, char* mem, size_t size)
 void buffer*::append_char(buffer* self, char c)
 {
     if(self.len + 1 + 1 + 1 >= self.size) {
+        char*% old_buf = clone self.buf;
+        int old_len = self.len;
+        
         int new_size = (self.size + 10 + 1) * 2;
         self.buf = new char[new_size];
+        memcpy(self.buf, old_buf, old_len);
+        self.buf[old_len] = '\0';
         self.size = new_size;
     }
 
@@ -726,7 +731,7 @@ string xsprintf(char* msg, ...)
     char* result;
     int len = vasprintf(&result, msg, args);
     va_end(args);
-
+    
     if(len < 0) {
         printf("vasprintf can't get heap memory.(msg %s)\n", msg);
         exit(2);
@@ -1124,6 +1129,10 @@ string string::to_string(char* self)
     return string(self);
 }
 
+string char*::to_string(char* self)
+{
+    return string(self);
+}
 
 list<string>*% FILE*::readlines(FILE* f)
 {
@@ -1291,13 +1300,6 @@ void fopen_block(const char* path, const char* mode, void* parent, void (*block)
         
         fclose(f);
     }
-}
-
-char char::putc(char self)
-{
-    (void)putc(self, stdout);
-    
-    return self;
 }
 
 int int::compare(int left, int right) 

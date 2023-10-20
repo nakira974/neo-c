@@ -22,6 +22,26 @@ bool sStrNode*::terminated()
     return false;
 }
 
+static string double_quoted_string(char* str)
+{
+    buffer*% buf = new buffer();
+    char* p = str;
+    while(*p) {
+        if(*p == '"') {
+            p++;
+            
+            buf.append_char('\\');
+            buf.append_char('"');
+        }
+        else {
+            buf.append_char(*p);
+            p++;
+        }
+    }
+    
+    return buf.to_string();
+}
+
 bool sStrNode*::compile(sStrNode* self, sInfo* info)
 {
     CVALUE*% come_value = new CVALUE;
@@ -220,8 +240,9 @@ bool sRegexNode*::compile(sRegexNode* self, sInfo* info)
 {
     CVALUE*% come_value = new CVALUE;
     
-    come_value.c_value = xsprintf("\"%s\".to_regex(global:%s, ignore_case:%s)", self.str, self.global ? string("true"):string("false"), self.ignore_case ? string("true"):string("false"));
-    come_value.type = new sType("come_regex*", info);
+    come_value.c_value = xsprintf("charp_to_regex(\"%s\", %s, 0, %s, 0, 0, 0, 0, 0)", self.str, self.ignore_case ? string("1"):string("0"), self.global ? string("1"):string("0"));
+    come_value.type = new sType("come_regex", info);
+    come_value.type->mPointerNum = 1;
     come_value.type.mHeap = true;
     come_value.var = null;
     
@@ -870,6 +891,8 @@ sNode*% expression_node(sInfo* info) version 98
         return new sNode(new sStrNode(value.to_string(), sline, info));
     }
     else if(*info->p == '/') {
+        info->p++;
+        
         int sline = info->sline;
         
         buffer*% buf = new buffer();

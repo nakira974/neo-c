@@ -802,6 +802,56 @@ impl list <T>
 
         return result;
     }
+    list<T>*% reverse(list<T>* self) {
+        list<T>%* result = new list<T>();
+
+        list_item<T>*? it = self.tail;
+        while(it != null) {
+            if(isheap(T)) {
+                result.push_back(clone it.item);
+            }
+            else {
+                result.push_back(dummy_heap it.item);
+            }
+            it = it.prev;
+        };
+
+        return result;
+    }
+    list<T>*% uniq(list<T>* self) {
+        list<T>*% result = new list<T>.initialize();
+
+        if(self.length() > 0) {
+            T& default_value;
+            T& item_before = self.item(0, default_value);
+
+            if(isheap(T)) {
+                result.push_back(clone item_before);
+            }
+            else {
+                result.push_back(dummy_heap item_before);
+            }
+
+            list_item<T>*? it = self.head;
+            it = it.next;
+            while(it != null) {
+                if(!it.item.equals(item_before)) {
+                    if(isheap(T)) {
+                        result.push_back(clone it.item);
+                    }
+                    else {
+                        result.push_back(dummy_heap it.item);
+                    }
+                }
+
+                item_before = it.item;
+                
+                it = it.next;
+            }
+        }
+
+        return result;
+    }
 }
 
 #define foreach(o1, o2) for(var o2_saved = (o2), var o1 = (o2_saved).begin(); !(o2_saved).end(); o1 = (o2_saved).next())
@@ -1523,6 +1573,7 @@ bool xisalnum(char c);
 bool xisascii(char c);
 list<string>*% FILE*::readlines(FILE* f);
 string string::to_string(char* self);
+string char*::to_string(char* self);
 void bool::expect(bool self, void* parent, void (*block)(void* parent)) ;
 void bool::catch(bool self, void* parent, void (*block)(void* parent));
 string char*::read(char* file_name) ;
@@ -1547,7 +1598,6 @@ void char*::print(char* self);
 void char*::printf(char* self, const char* msg);
 int int::printf(int self, const char* msg);
 void fopen_block(const char* path, const char* mode, void* parent, void (*block)(void* parent, FILE* f));
-char char::putc(char self);
 
 
 #endif

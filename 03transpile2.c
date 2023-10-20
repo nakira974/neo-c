@@ -577,11 +577,11 @@ void add_come_code(sInfo* info, const char* msg, ...)
     if(info->no_output_come_code) {
         return;
     }
-    char msg2[COME_CODE_MAX];
+    char* msg2;
 
     va_list args;
     va_start(args, msg);
-    vsnprintf(msg2, COME_CODE_MAX, msg, args);
+    int len = vasprintf(&msg2, msg, args);
     va_end(args);
     
     if(info->come_fun) {
@@ -595,6 +595,8 @@ void add_come_code(sInfo* info, const char* msg, ...)
     else {
         info.module.mSourceHead.append_str(xsprintf("%s", msg2));
     }
+    
+    free(msg2);
 }
 
 void add_come_code_at_source_head(sInfo* info, const char* msg, ...)
@@ -602,14 +604,16 @@ void add_come_code_at_source_head(sInfo* info, const char* msg, ...)
     if(info->no_output_come_code) {
         return;
     }
-    char msg2[COME_CODE_MAX];
+    char* msg2;
 
     va_list args;
     va_start(args, msg);
-    vsnprintf(msg2, COME_CODE_MAX, msg, args);
+    int len = vasprintf(&msg2, msg, args);
     va_end(args);
     
     info.module.mSourceHead.append_str(xsprintf("%s", msg2));
+    
+    free(msg2);
 }
 
 int transpile(sInfo* info) version 3
@@ -721,16 +725,18 @@ void add_come_code_at_function_head(sInfo* info, char* code, ...)
     if(info->no_output_come_code) {
         return;
     }
-    char msg2[COME_CODE_MAX];
+    char* msg2;
 
     va_list args;
     va_start(args, code);
-    vsnprintf(msg2, COME_CODE_MAX, code, args);
+    int len = vasprintf(&msg2, code, args);
     va_end(args);
     
     if(info.come_fun) {
         info->come_fun->mSourceHead.append_str(msg2);
     }
+    
+    free(msg2);
 }
 
 void add_come_code_at_function_head2(sInfo* info, char* code, ...)
@@ -738,16 +744,18 @@ void add_come_code_at_function_head2(sInfo* info, char* code, ...)
     if(info->no_output_come_code) {
         return;
     }
-    char msg2[COME_CODE_MAX];
+    char* msg2;
 
     va_list args;
     va_start(args, code);
-    vsnprintf(msg2, COME_CODE_MAX, code, args);
+    int len = vasprintf(&msg2, code, args);
     va_end(args);
     
     if(info.come_fun) {
         info->come_fun->mSourceHead2.append_str(msg2);
     }
+    
+    free(msg2);
 }
 
 void add_last_code_to_source(sInfo* info)
@@ -785,14 +793,16 @@ void add_come_last_code(sInfo* info, const char* msg, ...)
     if(info->no_output_come_code) {
         return;
     }
-    char msg2[COME_CODE_MAX];
+    char* msg2;
 
     va_list args;
     va_start(args, msg);
-    vsnprintf(msg2, COME_CODE_MAX, msg, args);
+    int len = vasprintf(&msg2, msg, args);
     va_end(args);
     
     info.module.mLastCode = xsprintf("%s", msg2);
+    
+    free(msg2);
 }
 
 void add_come_last_code2(sInfo* info, const char* msg, ...)
@@ -800,14 +810,16 @@ void add_come_last_code2(sInfo* info, const char* msg, ...)
     if(info->no_output_come_code) {
         return;
     }
-    char msg2[COME_CODE_MAX];
+    char* msg2;
 
     va_list args;
     va_start(args, msg);
-    vsnprintf(msg2, COME_CODE_MAX, msg, args);
+    int len = vasprintf(&msg2, msg, args);
     va_end(args);
     
     info.module.mLastCode2 = xsprintf("%s", msg2);
+    
+    free(msg2);
 }
 
 void dec_stack_ptr(int value, sInfo* info)

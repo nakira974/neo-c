@@ -392,21 +392,41 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
             if(klass->mProtocol && type->mPointerNum == 1) {
                 string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
                 if(c_value) {
-                    if(comma) {
-                        add_come_code(info, "%s ? come_call_finalizer(%s, %s, ((%s)%s)->finalize, ((%s)%s)->_protocol_obj, %d, %d, %d):0,\n", c_value, fun_name2, c_value, type_name, c_value, type_name, c_value, type->mAllocaValue, no_decrement, no_free);
+                    if(no_decrement) {
+                        if(comma) {
+                            add_come_code(info, "(%s && %s != __result_obj__) ? come_call_finalizer(%s, %s, ((%s)%s)->finalize, ((%s)%s)->_protocol_obj, %d, %d, %d):0,\n", c_value, c_value, fun_name2, c_value, type_name, c_value, type_name, c_value, type->mAllocaValue, no_decrement, no_free);
+                        }
+                        else {
+                            add_come_code(info, "if(%s && %s != __result_obj__) { come_call_finalizer(%s, %s, ((%s)%s)->finalize, ((%s)%s)->_protocol_obj, %d, %d, %d); }\n", c_value, c_value, fun_name2, c_value, type_name, c_value, type_name, c_value, type->mAllocaValue, no_decrement, no_free);
+                        }
                     }
                     else {
-                        add_come_code(info, "if(%s) { come_call_finalizer(%s, %s, ((%s)%s)->finalize, ((%s)%s)->_protocol_obj, %d, %d, %d); }\n", c_value, fun_name2, c_value, type_name, c_value, type_name, c_value, type->mAllocaValue, no_decrement, no_free);
+                        if(comma) {
+                            add_come_code(info, "(%s) ? come_call_finalizer(%s, %s, ((%s)%s)->finalize, ((%s)%s)->_protocol_obj, %d, %d, %d):0,\n", c_value, fun_name2, c_value, type_name, c_value, type_name, c_value, type->mAllocaValue, no_decrement, no_free);
+                        }
+                        else {
+                            add_come_code(info, "if(%s) { come_call_finalizer(%s, %s, ((%s)%s)->finalize, ((%s)%s)->_protocol_obj, %d, %d, %d); }\n", c_value, fun_name2, c_value, type_name, c_value, type_name, c_value, type->mAllocaValue, no_decrement, no_free);
+                        }
                     }
                 }
             }
             else {
                 if(c_value) {
-                    if(comma) {
-                        add_come_code(info, xsprintf("%s ? come_call_finalizer(%s,%s, (void*)0, (void*)0, %d, %d, %d):0,\n", c_value, fun_name2, c_value, type->mAllocaValue, no_decrement, no_free));
+                    if(no_decrement) {
+                        if(comma) {
+                            add_come_code(info, xsprintf("(%s && %s != __result_obj__) ? come_call_finalizer(%s,%s, (void*)0, (void*)0, %d, %d, %d):0,\n", c_value, c_value, fun_name2, c_value, type->mAllocaValue, no_decrement, no_free));
+                        }
+                        else {
+                            add_come_code(info, xsprintf("if(%s && %s != __result_obj__) { come_call_finalizer(%s,%s, (void*)0, (void*)0, %d, %d, %d); }\n", c_value, c_value, fun_name2, c_value, type->mAllocaValue, no_decrement, no_free));
+                        }
                     }
                     else {
-                        add_come_code(info, xsprintf("if(%s) { come_call_finalizer(%s,%s, (void*)0, (void*)0, %d, %d, %d); }\n", c_value, fun_name2, c_value, type->mAllocaValue, no_decrement, no_free));
+                        if(comma) {
+                            add_come_code(info, xsprintf("(%s) ? come_call_finalizer(%s,%s, (void*)0, (void*)0, %d, %d, %d):0,\n", c_value, fun_name2, c_value, type->mAllocaValue, no_decrement, no_free));
+                        }
+                        else {
+                            add_come_code(info, xsprintf("if(%s) { come_call_finalizer(%s,%s, (void*)0, (void*)0, %d, %d, %d); }\n", c_value, fun_name2, c_value, type->mAllocaValue, no_decrement, no_free));
+                        }
                     }
                 }
             }
@@ -440,21 +460,41 @@ void free_object(sType* type, char* obj, bool no_decrement, bool no_free, sInfo*
                 if(klass->mProtocol && type->mPointerNum == 1) {
                     if(c_value) {
                         string type_name = make_type_name_string(type, false@in_header, false@array_cast_pointer, info);
-                        if(comma) {
-                            add_come_code(info, "%s ? %s = come_decrement_ref_count(%s, ((%s)%s)->finalize, ((%s)%s)->_protocol_obj, %d, %d):0,\n", c_value, c_value, c_value, type_name, c_value, type_name, c_value, no_decrement, no_free);
+                        if(no_decrement) {
+                            if(comma) {
+                                add_come_code(info, "(%s && %s != __result_obj__) ? %s = come_decrement_ref_count(%s, ((%s)%s)->finalize, ((%s)%s)->_protocol_obj, %d, %d):0,\n", c_value, c_value, c_value, c_value, type_name, c_value, type_name, c_value, no_decrement, no_free);
+                            }
+                            else {
+                                add_come_code(info, "if(%s && %s != __result_obj__) { %s = come_decrement_ref_count(%s, ((%s)%s)->finalize, ((%s)%s)->_protocol_obj, %d, %d); } \n", c_value, c_value, c_value, c_value, type_name, c_value, type_name, c_value, no_decrement, no_free);
+                            }
                         }
                         else {
-                            add_come_code(info, "if(%s) { %s = come_decrement_ref_count(%s, ((%s)%s)->finalize, ((%s)%s)->_protocol_obj, %d, %d); } \n", c_value, c_value, c_value, type_name, c_value, type_name, c_value, no_decrement, no_free);
+                            if(comma) {
+                                add_come_code(info, "(%s) ? %s = come_decrement_ref_count(%s, ((%s)%s)->finalize, ((%s)%s)->_protocol_obj, %d, %d):0,\n", c_value, c_value, c_value, type_name, c_value, type_name, c_value, no_decrement, no_free);
+                            }
+                            else {
+                                add_come_code(info, "if(%s) { %s = come_decrement_ref_count(%s, ((%s)%s)->finalize, ((%s)%s)->_protocol_obj, %d, %d); } \n", c_value, c_value, c_value, type_name, c_value, type_name, c_value, no_decrement, no_free);
+                            }
                         }
                     }
                 }
                 else {
                     if(c_value) {
-                        if(comma) {
-                            add_come_code(info, "%s ? %s = come_decrement_ref_count(%s, (void*)0, (void*)0, %d, %d):0,\n", c_value, c_value, c_value, no_decrement, no_free);
+                        if(no_decrement) {
+                            if(comma) {
+                                add_come_code(info, "(%s && %s != __result_obj__) ? %s = come_decrement_ref_count(%s, (void*)0, (void*)0, %d, %d):0,\n", c_value, c_value, c_value, c_value, no_decrement, no_free);
+                            }
+                            else {
+                                add_come_code(info, "if(%s && %s != __result_obj__) { %s = come_decrement_ref_count(%s, (void*)0, (void*)0, %d, %d); }\n", c_value, c_value, c_value, c_value, no_decrement, no_free);
+                            }
                         }
                         else {
-                            add_come_code(info, "if(%s) { %s = come_decrement_ref_count(%s, (void*)0, (void*)0, %d, %d); }\n", c_value, c_value, c_value, no_decrement, no_free);
+                            if(comma) {
+                                add_come_code(info, "(%s) ? %s = come_decrement_ref_count(%s, (void*)0, (void*)0, %d, %d):0,\n", c_value, c_value, c_value, no_decrement, no_free);
+                            }
+                            else {
+                                add_come_code(info, "if(%s) { %s = come_decrement_ref_count(%s, (void*)0, (void*)0, %d, %d); }\n", c_value, c_value, c_value, no_decrement, no_free);
+                            }
                         }
                     }
                 }

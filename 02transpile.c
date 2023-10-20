@@ -1,9 +1,8 @@
 #include "common.h"
-#include <dirent.h>
 
 bool gComelang;
 bool gGC;
-bool gComeDebug = true;
+bool gComeDebug = false;
 char* gProgramName = NULL;
 
 void come_init() version 2
@@ -19,15 +18,17 @@ void come_final() version 2
 void err_msg(sInfo* info, char* msg, ...)
 {
     if(!info.no_output_err) {
-        char msg2[COME_CODE_MAX];
+        char* msg2;
     
         va_list args;
         va_start(args, msg);
-        vsnprintf(msg2, COME_CODE_MAX, msg, args);
+        vasprintf(&msg2,msg,args);
         va_end(args);
         
         printf("%s %d: %s\n", info.sname, info.sline, msg2);
         info.err_num++;
+
+        free(msg2);
     }
 }
 
@@ -59,62 +60,36 @@ static bool cpp(sInfo* info)
         output_file_name = info.sname + ".i";
     }
     
-    buffer*% include_files = new buffer();
-
-    DIR* dir = opendir(".");
-
-    if(dir == null) {
-        return false;
-    }
-    
-    struct dirent* entry;
-    while(entry = readdir(dir)) {
-        string ext = xextname(entry->d_name);
-        string dname = xdirname(entry->d_name);
-        
-        if(ext === "ach" && entry->d_name !== xsprintf("%s.ach", info.sname) && dname === "")
-        {
-            include_files.append_str(xsprintf("-include %s ", entry->d_name));
-        }
-    }
-
-    closedir(dir);
-    
-    char cmd[1024];
-    snprintf(cmd, 1024, "which /opt/homebrew/opt/llvm/bin/clang-cpp 1> /dev/null 2>/dev/null");
+    string cmd = xsprintf("which /opt/homebrew/opt/llvm/bin/clang-cpp 1> /dev/null 2>/dev/null");
 
     int rc = system(cmd);
     if(rc == 0) {
-        char cmd[4048];
-        snprintf(cmd, 4048, "/opt/homebrew/opt/llvm/bin/clang-cpp -lang-c -I. -I/usr/local/include -DCOMELANG2 -D__DARWIN_ARM__ -U__GNUC__ %s %s > %s", include_files.to_string(), input_file_name, output_file_name);
-        puts(cmd);
+        //string cmd2 = xsprintf("/opt/homebrew/opt/llvm/bin/clang-cpp -lang-c -I. -I/usr/local/include -DCOMELANG2 -D__DARWIN_ARM__ -U__GNUC__ %s > %s", input_file_name, output_file_name);
+        string cmd2 = xsprintf("/opt/homebrew/opt/llvm/bin/clang-cpp -lang-c -I. -I/usr/local/include -DCOMELANG2 -D__DARWIN_ARM__ -I/opt/homebrew/opt/pcre/include -U__GNUC__ %s > %s", input_file_name, output_file_name);
+        puts(cmd2);
         
-        int rc = system(cmd);
+        int rc = system(cmd2);
         
         if(rc != 0) {
-            printf("failed to cpp(2) (%s)\n", cmd);
+            printf("failed to cpp(2) (%s)\n", cmd2);
             exit(5);
         }
     }
     else {
-        int rc = system(cmd);
+        string cmd3 = xsprintf("cpp -lang-c -I. -DCOMELANG2 -U__GNUC__ %s > %s", input_file_name, output_file_name);
+        
+        puts(cmd3);
+        rc = system(cmd3);
+        
         if(rc != 0) {
-            snprintf(cmd, 1024, "cpp -lang-c -I. -DCOMELANG2 -U__GNUC__ %s %s > %s", include_files.to_string(), input_file_name, output_file_name);
-            
-            puts(cmd);
-            rc = system(cmd);
-            
+            string cmd4 = xsprintf("cpp -I. -C %s > %s", input_file_name, output_file_name);
+    
+            puts(cmd4);
+            rc = system(cmd4);
+    
             if(rc != 0) {
-                char cmd[1024];
-                snprintf(cmd, 1024, "cpp %s -I. -C %s > %s", include_files.to_string(), input_file_name, output_file_name);
-        
-                puts(cmd);
-                rc = system(cmd);
-        
-                if(rc != 0) {
-                    printf("failed to cpp(2) (%s)\n", cmd);
-                    exit(5);
-                }
+                printf("failed to cpp(2) (%s)\n", cmd4);
+                exit(5);
             }
         }
     }
@@ -163,7 +138,7 @@ static bool linker(sInfo* info, list<string>* object_files)
     
     var command = new buffer();
     
-    command.append_str(xsprintf("clang -o %s %s ", output_file_name, info.clang_option));
+    command.append_str(xsprintf("clang -o %s ", output_file_name));
     
     foreach(it, object_files) {
         command.append_str(xsprintf("%s ", it));
@@ -177,6 +152,7 @@ static bool linker(sInfo* info, list<string>* object_files)
     //    command.append_str("-lcomelang2-sh ");
     //}
 #endif
+    command.append_str(xsprintf("%s ", info.clang_option));
     
     puts(command.to_string());
     int rc = system(command.to_string());
@@ -425,6 +401,7 @@ int come_main(int argc, char** argv) version 2
         }
         else if(argv[i] === "-g") {
             clang_option.append_str("-g ");
+            gComeDebug = true;
         }
         else if(argv[i] === "-s" || argv[i] === "-S") {
             output_source_file_flag = true;

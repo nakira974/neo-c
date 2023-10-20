@@ -21,7 +21,7 @@ come_regex*% come_regex*::initialize(come_regex*% self, char* str, bool ignore_c
     self.ungreedy;
     self.options = options;
 
-    self.re = pcre_compile(str, options, &err, &erro_ofs, NULL!);
+    self.re = pcre_compile(str, options, &err, &erro_ofs, NULL);
 
     if(self.re == null) {
         fprintf(stderr, "regex error (%s)\n", str);
@@ -31,9 +31,9 @@ come_regex*% come_regex*::initialize(come_regex*% self, char* str, bool ignore_c
     return self;
 }
 
-come_regex*% char*::to_regex(bool ignore_case=false, bool multiline=false, bool global=false, bool extended=false, bool dotall=false, bool anchored=false, bool dollar_endonly=false, bool ungreedy=false)
+come_regex*% char*::to_regex(char* self, bool ignore_case=false, bool multiline=false, bool global=false, bool extended=false, bool dotall=false, bool anchored=false, bool dollar_endonly=false, bool ungreedy=false)
 {
-    return new come_regex(ignore_case, multiline, global, extended, dotall, anchored, dollar_endonly, ungreedy);
+    return new come_regex(self, ignore_case, multiline, global, extended, dotall, anchored, dollar_endonly, ungreedy);
 }
 
 void come_regex*::finalize(come_regex* reg)
@@ -70,7 +70,7 @@ come_regex*% come_regex*::clone(come_regex* reg)
     const char* err;
     int erro_ofs;
 
-    result.re = pcre_compile(result.str, result.options, &err, &erro_ofs, NULL!);
+    result.re = pcre_compile(result.str, result.options, &err, &erro_ofs, NULL);
 
     if(result.re == null) {
         fprintf(stderr, "regex compile error(%s)\n", result.str);
@@ -267,7 +267,7 @@ int char*::index_regex_count(char* self, come_regex* reg, int count, int default
     while(true) {
         int options = PCRE_NEWLINE_LF;
         int len = strlen(self);
-        int regex_result = pcre_exec(re, (pcre_extra*)0!, self, len, offset, options, ovec_value, ovec_max*3);
+        int regex_result = pcre_exec(re, (pcre_extra*)0, self, len, offset, options, ovec_value, ovec_max*3);
 
         for(int i=0; i<ovec_max; i++) {
             start[i] = ovec_value[i*2];
@@ -343,7 +343,7 @@ int char*::rindex_regex(char* self, come_regex* reg, int default_value)
     while(true) {
         int options = PCRE_NEWLINE_LF;
         int len = strlen(self2);
-        int regex_result = pcre_exec(re, (pcre_extra*)0!, self2, len, offset, options, ovec_value, ovec_max*3);
+        int regex_result = pcre_exec(re, (pcre_extra*)0, self2, len, offset, options, ovec_value, ovec_max*3);
 
         for(int i=0; i<ovec_max; i++) {
             start[i] = ovec_value[i*2];
@@ -412,7 +412,7 @@ list<string>*% char*::scan_block(char* self, come_regex* reg, void* parent, stri
     while(true) {
         int options = PCRE_NEWLINE_LF;
         int len = strlen(self);
-        int regex_result = pcre_exec(re, (pcre_extra*)0!, self, len, offset, options, ovec_value, ovec_max*3);
+        int regex_result = pcre_exec(re, (pcre_extra*)0, self, len, offset, options, ovec_value, ovec_max*3);
 
         for(int i=0; i<ovec_max; i++) {
             start[i] = ovec_value[i*2];
@@ -495,7 +495,7 @@ list<string>*% char*::scan_block_count(char* self, come_regex* reg, int count, v
     while(true) {
         int options = PCRE_NEWLINE_LF;
         int len = strlen(self);
-        int regex_result = pcre_exec(re, (pcre_extra*)0!, self, len, offset, options, ovec_value, ovec_max*3);
+        int regex_result = pcre_exec(re, (pcre_extra*)0, self, len, offset, options, ovec_value, ovec_max*3);
 
         for(int i=0; i<ovec_max; i++) {
             start[i] = ovec_value[i*2];
@@ -586,7 +586,7 @@ list<string>*% char*::split_block(char* self, come_regex* reg, void* parent, str
         int options = PCRE_NEWLINE_LF;
         int len = strlen(self);
 
-        int regex_result = pcre_exec(re, (pcre_extra*)0!, self, len, offset, options, ovec_value, ovec_max*3);
+        int regex_result = pcre_exec(re, (pcre_extra*)0, self, len, offset, options, ovec_value, ovec_max*3);
 
         for(int i=0; i<ovec_max; i++) {
             start[i] = ovec_value[i*2];
@@ -673,7 +673,7 @@ list<string>*% char*::split_block_count(char* self, come_regex* reg, int count, 
         int options = PCRE_NEWLINE_LF;
         int len = strlen(self);
 
-        int regex_result = pcre_exec(re, (pcre_extra*)0!, self, len, offset, options, ovec_value, ovec_max*3);
+        int regex_result = pcre_exec(re, (pcre_extra*)0, self, len, offset, options, ovec_value, ovec_max*3);
 
         for(int i=0; i<ovec_max; i++) {
             start[i] = ovec_value[i*2];
@@ -794,7 +794,7 @@ list<string>*% char*::scan_group_strings(char* self, come_regex* reg, list<strin
     while(true) {
         int options = PCRE_NEWLINE_LF;
         int len = strlen(self);
-        int regex_result = pcre_exec(re, (pcre_extra*)0!, self, len, offset, options, ovec_value, ovec_max*3);
+        int regex_result = pcre_exec(re, (pcre_extra*)0, self, len, offset, options, ovec_value, ovec_max*3);
 
         for(int i=0; i<ovec_max; i++) {
             start[i] = ovec_value[i*2];
@@ -1239,7 +1239,7 @@ int char*::index_regex(char* self, come_regex* reg, int default_value)
     while(true) {
         int options = PCRE_NEWLINE_LF;
         int len = strlen(self);
-        int regex_result = pcre_exec(re, (pcre_extra*)0!, self, len, offset, options, ovec_value, ovec_max*3);
+        int regex_result = pcre_exec(re, (pcre_extra*)0, self, len, offset, options, ovec_value, ovec_max*3);
 
         for(int i=0; i<ovec_max; i++) {
             start[i] = ovec_value[i*2];
@@ -1326,7 +1326,7 @@ string char*::sub(char* self, come_regex* reg, char* replace)
     while(true) {
         int options = PCRE_NEWLINE_LF;
         int len = strlen(self);
-        int regex_result = pcre_exec(re, (pcre_extra*)0!, self, len, offset, options, ovec_value, ovec_max*3);
+        int regex_result = pcre_exec(re, (pcre_extra*)0, self, len, offset, options, ovec_value, ovec_max*3);
 
         for(int i=0; i<ovec_max; i++) {
             start[i] = ovec_value[i*2];
@@ -1391,7 +1391,7 @@ string char*::sub_count(char* self, come_regex* reg, char* replace, int count)
     while(true) {
         int options = PCRE_NEWLINE_LF;
         int len = strlen(self);
-        int regex_result = pcre_exec(re, (pcre_extra*)0!, self, len, offset, options, ovec_value, ovec_max*3);
+        int regex_result = pcre_exec(re, (pcre_extra*)0, self, len, offset, options, ovec_value, ovec_max*3);
 
         for(int i=0; i<ovec_max; i++) {
             start[i] = ovec_value[i*2];
@@ -1509,7 +1509,7 @@ list<string>*% char*::scan(char* self, come_regex* reg)
     while(true) {
         int options = PCRE_NEWLINE_LF;
         int len = strlen(self);
-        int regex_result = pcre_exec(re, (pcre_extra*)0!, self, len, offset, options, ovec_value, ovec_max*3);
+        int regex_result = pcre_exec(re, (pcre_extra*)0, self, len, offset, options, ovec_value, ovec_max*3);
 
         for(int i=0; i<ovec_max; i++) {
             start[i] = ovec_value[i*2];
@@ -1582,7 +1582,7 @@ list<string>*% char*::split(char* self, come_regex* reg)
         int options = PCRE_NEWLINE_LF;
         int len = strlen(self);
 
-        int regex_result = pcre_exec(re, (pcre_extra*)0!, self, len, offset, options, ovec_value, ovec_max*3);
+        int regex_result = pcre_exec(re, (pcre_extra*)0, self, len, offset, options, ovec_value, ovec_max*3);
 
         for(int i=0; i<ovec_max; i++) {
             start[i] = ovec_value[i*2];
@@ -1657,7 +1657,7 @@ bool char*::match(char* self, come_regex* reg)
         int options = PCRE_NEWLINE_LF;
         int len = strlen(self);
 
-        int regex_result = pcre_exec(re, (pcre_extra*)0!, self, len, offset, options, ovec_value, ovec_max*3);
+        int regex_result = pcre_exec(re, (pcre_extra*)0, self, len, offset, options, ovec_value, ovec_max*3);
 
         for(int i=0; i<ovec_max; i++) {
             start[i] = ovec_value[i*2];
@@ -1706,7 +1706,7 @@ list<string>*% char*::split_maxsplit(char* self, come_regex* reg, int maxsplit)
         int options = PCRE_NEWLINE_LF;
         int len = strlen(self);
 
-        int regex_result = pcre_exec(re, (pcre_extra*)0!, self, len, offset, options, ovec_value, ovec_max*3);
+        int regex_result = pcre_exec(re, (pcre_extra*)0, self, len, offset, options, ovec_value, ovec_max*3);
 
         for(int i=0; i<ovec_max; i++) {
             start[i] = ovec_value[i*2];
@@ -1792,7 +1792,7 @@ int char*::rindex_regex_count(char* self, come_regex* reg, int count, int defaul
     while(true) {
         int options = PCRE_NEWLINE_LF;
         int len = strlen(self2);
-        int regex_result = pcre_exec(re, (pcre_extra*)0!, self2, len, offset, options, ovec_value, ovec_max*3);
+        int regex_result = pcre_exec(re, (pcre_extra*)0, self2, len, offset, options, ovec_value, ovec_max*3);
 
         for(int i=0; i<ovec_max; i++) {
             start[i] = ovec_value[i*2];
@@ -1851,7 +1851,7 @@ bool char*::match_count(char* self, come_regex* reg, int count)
         int options = PCRE_NEWLINE_LF;
         int len = strlen(self);
 
-        int regex_result = pcre_exec(re, (pcre_extra*)0!, self, len, offset, options, ovec_value, ovec_max*3);
+        int regex_result = pcre_exec(re, (pcre_extra*)0, self, len, offset, options, ovec_value, ovec_max*3);
 
         for(int i=0; i<ovec_max; i++) {
             start[i] = ovec_value[i*2];
@@ -1908,7 +1908,7 @@ string char*::sub_block(char* self, come_regex* reg, void* parent, string (*bloc
     while(true) {
         int options = PCRE_NEWLINE_LF;
         int len = strlen(self);
-        int regex_result = pcre_exec(re, (pcre_extra*)0!, self, len, offset, options, ovec_value, ovec_max*3);
+        int regex_result = pcre_exec(re, (pcre_extra*)0, self, len, offset, options, ovec_value, ovec_max*3);
 
         for(int i=0; i<ovec_max; i++) {
             start[i] = ovec_value[i*2];
@@ -2009,7 +2009,7 @@ string char*::sub_block_count(char* self, come_regex* reg, int count, void* pare
     while(true) {
         int options = PCRE_NEWLINE_LF;
         int len = strlen(self);
-        int regex_result = pcre_exec(re, (pcre_extra*)0!, self, len, offset, options, ovec_value, ovec_max*3);
+        int regex_result = pcre_exec(re, (pcre_extra*)0, self, len, offset, options, ovec_value, ovec_max*3);
 
         for(int i=0; i<ovec_max; i++) {
             start[i] = ovec_value[i*2];

@@ -106,24 +106,36 @@ sNode*% parse_enum(string type_name, sInfo* info)
     list<tuple2<string,sNode*%>*%>*% elements = new list<tuple2<string,sNode*%>*%>();
     
     while(true) {
+	parse_sharp(info);
+
         string element_name = parse_word(info);
+
+	parse_sharp(info);
         
         if(*info->p == '=') {
             info->p++;
             skip_spaces_and_lf(info);
             
+	    bool no_comma = info.no_comma;
+	    info.no_comma = true;
             sNode*% element_value = expression(info);
+                
+            info.no_comma = no_comma;
             
             elements.push_back(new tuple2<string,sNode*%>(element_name, element_value));
         }
         else {
             elements.push_back(new tuple2<string,sNode*%>(element_name, null));
         }
+
+	parse_sharp(info);
         
         if(*info->p == ',') {
             info->p++;
             skip_spaces_and_lf(info);
         }
+
+	parse_sharp(info);
         
         if(*info->p == '}') {
             info->p++;
@@ -153,12 +165,14 @@ sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 9
         list<tuple2<string,sNode*%>*%>*% elements = new list<tuple2<string,sNode*%>*%>();
         
         while(true) {
+            parse_sharp(info);
             string element_name = parse_word(info);
-            
+            parse_sharp(info);
+
             if(*info->p == '=') {
                 info->p++;
                 skip_spaces_and_lf(info);
-                
+
                 bool no_comma = info.no_comma;
                 info.no_comma = true;
                 sNode*% element_value = expression(info);
@@ -170,12 +184,14 @@ sNode*% top_level(string buf, char* head, int head_sline, sInfo* info) version 9
             else {
                 elements.push_back(new tuple2<string,sNode*%>(element_name, null));
             }
-            
+            parse_sharp(info);
+
             if(*info->p == ',') {
                 info->p++;
                 skip_spaces_and_lf(info);
             }
-            
+            parse_sharp(info);
+
             if(*info->p == '}') {
                 info->p++;
                 skip_spaces_and_lf(info);

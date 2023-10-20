@@ -33,6 +33,11 @@ void parse_sharp(sInfo* info) version 5
         skip_spaces_and_lf(info);
         skip_paren(info);
     }
+    while(memcmp(info.p, "__asm", strlen("__asm")) == 0) {
+        info->p += strlen("__asm");
+        skip_spaces_and_lf(info);
+        skip_paren(info);
+    }
 
     while(*info->p == '#') {
         skip_spaces_and_lf(info);
@@ -102,6 +107,11 @@ void parse_sharp(sInfo* info) version 5
     
     while(memcmp(info.p, "__attribute__", strlen("__attribute__")) == 0) {
         info->p += strlen("__attribute__");
+        skip_spaces_and_lf(info);
+        skip_paren(info);
+    }
+    while(memcmp(info.p, "__asm", strlen("__asm")) == 0) {
+        info->p += strlen("__asm");
         skip_spaces_and_lf(info);
         skip_paren(info);
     }
@@ -335,8 +345,12 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
                     break;
                 }
             }
+
+	    parse_sharp(info);
             
             type_name = parse_word(info);
+
+	    parse_sharp(info);
             
             if(*info->p == '<') {
                 char* p = info.p;
@@ -417,8 +431,12 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
                     break;
                 }
             }
+
+	    parse_sharp(info);
             
             type_name = parse_word(info);
+
+	    parse_sharp(info);
             
             if(*info->p == '{') {
                 char* p = info.p;
@@ -442,6 +460,8 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
         }
         else if(type_name === "enum") {
             enum_ = true;
+
+	    parse_sharp(info);
             
             if(*info->p == '{') {
                 char* p = info.p;
@@ -463,8 +483,12 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
                     break;
                 }
             }
+
+	    parse_sharp(info);
             
             type_name = parse_word(info);
+
+	    parse_sharp(info);
             
             if(*info->p == '{') {
                 char* p = info.p;
@@ -536,6 +560,7 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
                         type_name = parse_word(info);
                         
                         if(type_name === "int") {
+                            long_ = true;
                             break;
                         }
                     }
@@ -550,6 +575,7 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
                         }
                         
                         if(type_name === "int") {
+                            long_ = true;
                             break;
                         }
                         else if(!is_type_name(type_name, info)) {
@@ -596,8 +622,10 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
                         type_name = parse_word(info);
                         
                         if(is_type_name(type_name, info)) {
+                            short_ = true;
                         }
                         else {
+                            short_ = true;
                             type_name = string("int");
                             
                             info.p = p;
@@ -605,6 +633,7 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
                         }
                     }
                     else {
+                        short_ = true;
                         type_name = string("int");
                         break;
                     }
@@ -617,8 +646,10 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
                         type_name = parse_word(info);
                         
                         if(is_type_name(type_name, info)) {
+                            long_ = true;
                         }
                         else {
+                            long_ = true;
                             type_name = string("int");
                             
                             info.p = p;
@@ -626,6 +657,7 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
                         }
                     }
                     else {
+                        long_ = true;
                         type_name = string("int");
                         break;
                     }
@@ -642,7 +674,7 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
                 break;
             }
         }
-        else if(type_name === "signed") {
+        else if(type_name === "signed" || type_name === "__signed__") {
             unsigned_ = false;
             
             type_name = parse_word(info);
@@ -848,6 +880,7 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
         type->mParamTypes = param_types;
         type->mParamNames = param_names;
         type->mVarArgs = var_args;
+        type->mExtern = extern_;
     }
     else if(*info->p == '(' && (*(info->p+1) == '*' || *(info->p+1) == '^')) {
         info->p++;
@@ -916,6 +949,7 @@ sType*%,string,bool parse_type(sInfo* info, bool parse_variable_name=false, bool
         type->mParamTypes = param_types;
         type->mParamNames = param_names;
         type->mVarArgs = var_args;
+        type->mExtern = extern_;
     }
     else {
         if(info.types[type_name]) {

@@ -94,9 +94,20 @@ bool sFunNode*::compile(sFunNode* self, sInfo* info)
         if(info.come_fun.mName === "main") {
             add_come_code(info, "come_heap_init();\n");
         }
+        
+        sType*% result_type = new sType("void*", info);
+        
+        add_come_code_at_function_head(info, "%s;\n", make_define_var(result_type, "__result_obj__", info));
+        add_come_code_at_function_head2(info, "memset(&__result_obj__, 0, sizeof(%s));\n", make_type_name_string(result_type, false@in_header, false@array_cast_pointer, info));
+        
         transpile_block(self.mFun.mBlock, self.mFun.mParamTypes, self.mFun.mParamNames, info);
         if(info.come_fun.mName === "main") {
-            add_come_code(info, xsprintf("come_heap_final(%d);\n", gComeDebug));
+            if(gComeDebug) {
+                add_come_code(info, xsprintf("come_heap_final(1);\n"));
+            }
+            else {
+                add_come_code(info, xsprintf("come_heap_final(0);\n"));
+            }
         }
     }
     
@@ -699,13 +710,13 @@ int transpile(sInfo* info) version 5
     {
         var name = string("come_heap_final");
         var result_type = new sType("void", info);
-        var param_types = [new sType("bool", info) ];
+        var param_types = [new sType("int", info) ];
         var param_names = [string("check_mem_leak")];
         var param_default_parametors = new list<string>();
         var main_fun = new sFun(name, result_type, param_types, param_names
             , param_default_parametors, true@external, false@var_args
             , null@block, false@static_
-            , string("void come_heap_final(bool check_mem_leak)")
+            , string("void come_heap_final(int check_mem_leak)")
             , info);
         
         info.funcs.insert(string(name), main_fun);

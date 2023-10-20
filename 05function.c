@@ -78,16 +78,28 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
         sType*% come_value_type = solve_generics(come_value.type, info.generics_type, info);
         
         static int num_result = 0;
-        add_come_code(info, "%s __result%d__ = %s;\n", make_type_name_string(result_type2, false@in_header, false@array_cast_pointer, info), ++num_result, come_value.c_value);
+        string var_name = xsprintf("__result%d__", ++num_result);
+        int num_result_stack = num_result;
+        if(result_type2->mPointerNum > 0) {
+            add_come_code(info, "%s = __result_obj__ = %s;\n", make_define_var(result_type2, var_name, info), come_value.c_value);
+        }
+        else {
+            add_come_code(info, "%s = %s;\n", make_define_var(result_type2, var_name, info), come_value.c_value);
+        }
         
         free_objects_on_return(come_fun.mBlock, info, come_value.var, false@top_block);
         free_right_value_objects(info);
         
         if(info.come_fun.mName === "main") {
-            add_come_code(info, xsprintf("come_heap_final(%d);\n", gComeDebug));
+            if(gComeDebug) {
+                add_come_code(info, xsprintf("come_heap_final(1);\n"));
+            }
+            else {
+                add_come_code(info, xsprintf("come_heap_final(0);\n"));
+            }
         }
         
-        add_come_code(info, "return __result%d__;\n", num_result);
+        add_come_code(info, "return __result%d__;\n", num_result_stack);
     }
     else {
         sFun* come_fun = info.come_fun;
@@ -95,7 +107,12 @@ bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
         free_right_value_objects(info);
         
         if(info.come_fun.mName === "main") {
-            add_come_code(info, xsprintf("come_heap_final(%d);\n", gComeDebug));
+            if(gComeDebug) {
+                add_come_code(info, xsprintf("come_heap_final(1);\n"));
+            }
+            else {
+                add_come_code(info, xsprintf("come_heap_final(0);\n"));
+            }
         }
         add_come_code(info, "return;\n");
     }
@@ -1284,7 +1301,7 @@ sNode*% expression_node(sInfo* info) version 99
         
         /// backtrace ///
         bool define_function_pointer_flag = false;
-        if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && buf !== "gc_inc" && buf !== "gc_dec" && *info->p == '(' && *(info->p+1) != '*')
+        if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && buf !== "gc_inc" && buf !== "gc_dec" && buf !== "case" && *info->p == '(' && *(info->p+1) != '*')
         {
             info.no_output_err = true;
             parse_type(info);
@@ -1308,7 +1325,7 @@ sNode*% expression_node(sInfo* info) version 99
         
         /// backtrace2 ///
         bool lambda_flag = false;
-        if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && buf !== "gc_inc" && buf !== "gc_dec" && is_type_name_)
+        if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && buf !== "gc_inc" && buf !== "gc_dec" && buf !== "case" && is_type_name_)
         //if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && buf !== "gc_inc" && buf !== "gc_dec" && *info->p == '(' && *(info->p+1) != '*')
         {
             info.p = head;
@@ -1332,7 +1349,7 @@ sNode*% expression_node(sInfo* info) version 99
         
         /// backtrace3 ///
         bool fun_name_with_type_name = false;
-        if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && buf !== "gc_inc" && buf !== "gc_dec")
+        if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && buf !== "gc_inc" && buf !== "gc_dec"&& buf !== "case" )
         {
             info.p = head;
             info.sline = head_sline;
@@ -1448,7 +1465,7 @@ sNode*% expression_node(sInfo* info) version 99
             
             return node;
         }
-        else if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && buf !== "gc_inc" && buf !== "gc_dec" && *info->p == '(' && !(*(info->p+1) == '*' && is_type_name_))
+        else if(buf !== "if" && buf !== "while" && buf !== "for" && buf !== "switch" && buf !== "return" && buf !== "sizeof" && buf !== "isheap" && buf !== "gc_inc" && buf !== "gc_dec"&& buf !== "case"  && *info->p == '(' && !(*(info->p+1) == '*' && is_type_name_))
         {
             sNode*% node = parse_function_call(buf, info);
             
@@ -1578,9 +1595,11 @@ struct sGlobalVariable {
     string sname;
     
     string array_initializer;
+    
+    list<string>*% multiple_declare;
 };
 
-sGlobalVariable*% sGlobalVariable*::initialize(sGlobalVariable*% self, sType* type, string name, sNode*% right_node, string array_initializer, sInfo* info)
+sGlobalVariable*% sGlobalVariable*::initialize(sGlobalVariable*% self, list<string>*% multiple_declare, sType* type, string name, sNode*% right_node, string array_initializer, sInfo* info)
 {
     self.sline = info.sline;
     self.sname = info.sname;
@@ -1589,6 +1608,13 @@ sGlobalVariable*% sGlobalVariable*::initialize(sGlobalVariable*% self, sType* ty
     self.name = string(name);
     self.right_node = right_node;
     self.array_initializer = array_initializer;
+    
+    if(multiple_declare) {
+        self.multiple_declare = clone multiple_declare;
+    }
+    else {
+        self.multiple_declare = null;
+    }
     
     return self;
 }
@@ -1615,17 +1641,24 @@ bool sGlobalVariable*::compile(sGlobalVariable* self, sInfo* info)
     sNode* right_node = self.right_node;
     string array_initializer = self.array_initializer;
     
-    add_variable_to_global_table(name, clone type, info);
-    
-    if(array_initializer) {
-        add_come_code_at_source_head(info, "%s=%s;\n", make_define_var(type, name, info), array_initializer);
-    }
-    else if(right_node) {
-        add_come_code_at_source_head(info, "%s;\n", make_define_var(type, name, info));
-        var name2 = borrow string(name);
+    if(self.multiple_declare) {
+        foreach(it, self.multiple_declare) {
+            add_come_code_at_source_head(info, "%s;\n", make_define_var(type, it, info));
+        }
     }
     else {
-        add_come_code_at_source_head(info, "%s;\n", make_define_var(type, name, info));
+        add_variable_to_global_table(name, clone type, info);
+        
+        if(array_initializer) {
+            add_come_code_at_source_head(info, "%s=%s;\n", make_define_var(type, name, info), array_initializer);
+        }
+        else if(right_node) {
+            add_come_code_at_source_head(info, "%s;\n", make_define_var(type, name, info));
+            var name2 = borrow string(name);
+        }
+        else {
+            add_come_code_at_source_head(info, "%s;\n", make_define_var(type, name, info));
+        }
     }
     
     return true;
@@ -1637,15 +1670,24 @@ struct sExternalGlobalVariable {
     
     int sline;
     string sname;
+    
+    list<string>*% multiple_declare;
 };
 
-sExternalGlobalVariable*% sExternalGlobalVariable*::initialize(sExternalGlobalVariable*% self, sType* type, string name, sInfo* info)
+sExternalGlobalVariable*% sExternalGlobalVariable*::initialize(sExternalGlobalVariable*% self, list<string>*% multiple_declare, sType* type, string name, sInfo* info)
 {
     self.type = clone type;
     self.name = string(name);
 
     self.sline = info.sline;
     self.sname = info.sname;
+    
+    if(multiple_declare) {
+        self.multiple_declare = clone multiple_declare;
+    }
+    else {
+        self.multiple_declare = null;
+    }
     
     return self;
 }
@@ -1670,9 +1712,16 @@ bool sExternalGlobalVariable*::compile(sExternalGlobalVariable* self, sInfo* inf
     sType* type = self.type;
     string name = self.name;
     
-    add_variable_to_global_table(name, clone type, info);
-    
-    add_come_code_at_source_head(info, "extern %s;\n", make_define_var(type, name, info));
+    if(self.multiple_declare) {
+        foreach(it, self.multiple_declare) {
+            add_variable_to_global_table(it, clone type, info);
+            add_come_code_at_source_head(info, "extern %s;\n", make_define_var(type, it, info));
+        }
+    }
+    else {
+        add_variable_to_global_table(name, clone type, info);
+        add_come_code_at_source_head(info, "extern %s;\n", make_define_var(type, name, info));
+    }
     
     return true;
 }
@@ -1702,92 +1751,159 @@ string create_method_name(sType* obj_type, bool no_pointer_name, char* fun_name,
 
 sNode*% parse_global_variable(sInfo* info)
 {
-    var result_type, var_name,err = parse_type(info, true@parse_variable_name);
-    
-    if(!err) {
-        printf("%s %d: parse_type failed\n", info->sname, info->sline);
-        exit(2);
-    }
-    
-    sNode*% right_node = null;
-    string array_initializer = null;
-    
-    if(*info->p == '=') {
-        info->p++;
-        skip_spaces_and_lf(info);
+    bool multiple_declare = false;
+    {
+        char* p = info.p;
+        int sline = info.sline;
         
-        if(*info->p == '{') {
-            buffer*% buf = new buffer();
+        if(xisalpha(*info->p) || *info->p == '_') {
+            string word = parse_word(info);
             
-            buf.append_char(*info->p);
-            info->p++;
-            
-            bool squort = false;
-            bool dquort = false;
-            int nest = 1;
-            while(1) {
-                if(*info->p == '\0') {
-                    err_msg(info, "unexpected source end in array initiailizer");
-                    exit(2);
-                }
-                else if(*info->p == '\\') {
-                    buf.append_char(*info->p);
-                    info->p++;
-                    buf.append_char(*info->p);
-                    info->p++;
-                }
-                else if(!squort && *info->p == '"') {
-                    buf.append_char(*info->p);
-                    info->p++;
-                    dquort = !dquort;
-                }
-                else if(!dquort && *info->p == '\'') {
-                    buf.append_char(*info->p);
-                    info->p++;
-                    squort = !squort;
-                }
-                else if(squort || dquort) {
-                    buf.append_char(*info->p);
-                    info->p++;
-                }
-                else if(*info->p == '{') {
-                    nest++;
-                    buf.append_char(*info->p);
-                    info->p++;
-                }
-                else if(*info->p == '}') {
-                    nest--;
-                    buf.append_char(*info->p);
-                    info->p++;
+            if(is_type_name(word, info)) {
+                if(xisalpha(*info->p) || *info->p == '_') {
+                    string word2 = parse_word(info);
                     
-                    if(nest == 0) {
-                        skip_spaces_and_lf(info);
-                        break;
+                    if(!is_type_name(word2, info) && *info->p == ',') {
+                        multiple_declare = true;
                     }
                 }
-                else {
-                    buf.append_char(*info->p);
-                    info->p++;
-                }
             }
-            array_initializer = buf.to_string();
         }
-        else {
-            parse_sharp(info);
-            right_node = expression(info);
-            parse_sharp(info);
-        }
+        
+        info.p = p;
+        info.sline = sline;
     }
     
-    if(result_type->mExtern) {
-        if(right_node) {
-            err_msg(info, "invalid right value");
+    if(multiple_declare) {
+        list<string>*% multiple_declare = new list<string>();
+        
+        var type, name, err = parse_type(info, false@parse_variable_name);
+        
+        if(!err) {
+            printf("%s %d: parse_type failed\n", info->sname, info->sline);
             exit(2);
         }
-        return new sNode(new sExternalGlobalVariable(result_type, var_name, info));
+        
+        parse_sharp(info);
+        string word = parse_word(info);
+        parse_sharp(info);
+        
+        multiple_declare.push_back(clone word);
+        
+        while(*info->p == ',') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            parse_sharp(info);
+            var buf3 = parse_word(info);
+            parse_sharp(info);
+            
+            multiple_declare.push_back(clone buf3);
+        }
+        
+        sNode*% right_node = null;
+        string array_initializer = null;
+        string var_name = string("");
+        
+        if(type->mExtern) {
+            if(right_node) {
+                err_msg(info, "invalid right value");
+                exit(2);
+            }
+            return new sNode(new sExternalGlobalVariable(multiple_declare, type, var_name, info));
+        }
+        else {
+            return new sNode(new sGlobalVariable(multiple_declare, type, var_name, right_node, array_initializer, info));
+        }
     }
     else {
-        return new sNode(new sGlobalVariable(result_type, var_name, right_node, array_initializer, info));
+        var result_type, var_name,err = parse_type(info, true@parse_variable_name);
+        
+        if(!err) {
+            printf("%s %d: parse_type failed\n", info->sname, info->sline);
+            exit(2);
+        }
+        
+        sNode*% right_node = null;
+        string array_initializer = null;
+        
+        if(*info->p == '=') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            if(*info->p == '{') {
+                buffer*% buf = new buffer();
+                
+                buf.append_char(*info->p);
+                info->p++;
+                
+                bool squort = false;
+                bool dquort = false;
+                int nest = 1;
+                while(1) {
+                    if(*info->p == '\0') {
+                        err_msg(info, "unexpected source end in array initiailizer");
+                        exit(2);
+                    }
+                    else if(*info->p == '\\') {
+                        buf.append_char(*info->p);
+                        info->p++;
+                        buf.append_char(*info->p);
+                        info->p++;
+                    }
+                    else if(!squort && *info->p == '"') {
+                        buf.append_char(*info->p);
+                        info->p++;
+                        dquort = !dquort;
+                    }
+                    else if(!dquort && *info->p == '\'') {
+                        buf.append_char(*info->p);
+                        info->p++;
+                        squort = !squort;
+                    }
+                    else if(squort || dquort) {
+                        buf.append_char(*info->p);
+                        info->p++;
+                    }
+                    else if(*info->p == '{') {
+                        nest++;
+                        buf.append_char(*info->p);
+                        info->p++;
+                    }
+                    else if(*info->p == '}') {
+                        nest--;
+                        buf.append_char(*info->p);
+                        info->p++;
+                        
+                        if(nest == 0) {
+                            skip_spaces_and_lf(info);
+                            break;
+                        }
+                    }
+                    else {
+                        buf.append_char(*info->p);
+                        info->p++;
+                    }
+                }
+                array_initializer = buf.to_string();
+            }
+            else {
+                parse_sharp(info);
+                right_node = expression(info);
+                parse_sharp(info);
+            }
+        }
+        
+        if(result_type->mExtern) {
+            if(right_node) {
+                err_msg(info, "invalid right value");
+                exit(2);
+            }
+            return new sNode(new sExternalGlobalVariable(null@multiple_declare, result_type, var_name, info));
+        }
+        else {
+            return new sNode(new sGlobalVariable(null@multiple_declare, result_type, var_name, right_node, array_initializer, info));
+        }
     }
     
     return (sNode*%)null;

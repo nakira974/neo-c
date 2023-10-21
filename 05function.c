@@ -1757,9 +1757,9 @@ sNode*% parse_global_variable(sInfo* info)
         int sline = info.sline;
         
         if(xisalpha(*info->p) || *info->p == '_') {
-            string word = parse_word(info);
+            var type, name, err = parse_type(info, false@parse_variable_name);
             
-            if(is_type_name(word, info)) {
+            if(err) {
                 if(xisalpha(*info->p) || *info->p == '_') {
                     string word2 = parse_word(info);
                     

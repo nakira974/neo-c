@@ -2,9 +2,9 @@
 
 BOOL compile(unsigned int node, sCompileInfo* info)
 {
-    if(gNCHeader) {
-        return TRUE;
-    }
+    gSLine = info->sline;
+    gSName = info->sname;
+    
     if(node == 0) {
         return TRUE;
     }
@@ -14,12 +14,6 @@ BOOL compile(unsigned int node, sCompileInfo* info)
     }
     
     switch(gNodes[node].mNodeType) {
-        case kNodeTypeMacro:
-            if(!compile_macro(node, info)) {
-                return FALSE;
-            }
-            break;
-            
         case kNodeTypeVaArg:
             if(!compile_va_arg(node, info)) {
                 return FALSE;
@@ -193,7 +187,13 @@ BOOL compile(unsigned int node, sCompileInfo* info)
                 return FALSE;
             }
             break;
-
+            
+        case kNodeTypeTuple:
+            if(!compile_tuple_value(node, info)) 
+            {
+                return FALSE;
+            }
+            break;
 
         case kNodeTypeStoreVariable:
             if(!compile_store_variable(node, info)) {
@@ -218,15 +218,9 @@ BOOL compile(unsigned int node, sCompileInfo* info)
                 return FALSE;
             }
             break;
-
-        case kNodeTypeComeFunctionCall:
-            if(!compile_come_function_call(node, info)) {
-                return FALSE;
-            }
-            break;
-
-        case kNodeTypeJoin:
-            if(!compile_join(node, info)) {
+            
+        case kNodeTypeDefineArrayWithInitializer:
+            if(!compile_define_array_with_initializer(node, info)) {
                 return FALSE;
             }
             break;
@@ -243,12 +237,6 @@ BOOL compile(unsigned int node, sCompileInfo* info)
             }
             break;
             
-        case kNodeTypeGuard:
-            if(!compile_guard_expression(node, info)) {
-                return FALSE;
-            }
-            break;
-
         case kNodeTypeObject:
             if(!compile_object(node, info)) {
                 return FALSE;
@@ -267,12 +255,6 @@ BOOL compile(unsigned int node, sCompileInfo* info)
             }
             break;
             
-        case kNodeTypeStoreFieldOfProtocol:
-            if(!compile_store_field_of_protocol(node, info)) {
-                return FALSE;
-            }
-            break;
-
         case kNodeTypeLoadField:
             if(!compile_load_field(node, info)) {
                 return FALSE;
@@ -366,14 +348,14 @@ BOOL compile(unsigned int node, sCompileInfo* info)
             break;
 
         case kNodeTypeRefference:
-            if(!compile_reffernce(node, info))
+            if(!compile_refference(node, info))
             {
                 return FALSE;
             }
             break;
             
         case kNodeTypeRefferenceLoadField:
-            if(!compile_reffernce_load_field(node, info))
+            if(!compile_refference_load_field(node, info))
             {
                 return FALSE;
             }
@@ -393,8 +375,36 @@ BOOL compile(unsigned int node, sCompileInfo* info)
             }
             break;
             
+        case kNodeTypeShallowClone:
+            if(!compile_shallow_clone(node, info))
+            { 
+                return FALSE;
+            }
+            break;
+            
         case kNodeTypeIsHeap:
             if(!compile_is_heap(node, info))
+            { 
+                return FALSE;
+            }
+            break;
+            
+        case kNodeTypeGCInc:
+            if(!compile_gc_inc(node, info))
+            { 
+                return FALSE;
+            }
+            break;
+            
+        case kNodeTypeGCDec:
+            if(!compile_gc_dec(node, info))
+            { 
+                return FALSE;
+            }
+            break;
+            
+        case kNodeTypeIsGC:
+            if(!compile_is_gc(node, info))
             { 
                 return FALSE;
             }
@@ -435,24 +445,6 @@ BOOL compile(unsigned int node, sCompileInfo* info)
 
         case kNodeTypeCast:
             if(!compile_cast(node, info)) {
-                return FALSE;
-            }
-            break;
-
-        case kNodeTypeLoadChannelElement:
-            if(!compile_load_channel_element(node, info)) {
-                return FALSE;
-            }
-            break;
-
-        case kNodeTypeReadChannel:
-            if(!compile_read_channel(node, info)) {
-                return FALSE;
-            }
-            break;
-
-        case kNodeTypeWriteChannel:
-            if(!compile_write_channel(node, info)) {
                 return FALSE;
             }
             break;
@@ -551,19 +543,6 @@ BOOL compile(unsigned int node, sCompileInfo* info)
                 return FALSE;
             }
             break;
-
-        case kNodeTypeSelect:
-            if(!compile_select(node, info)) {
-                return FALSE;
-            }
-            break;
-
-        case kNodeTypePSelect:
-            if(!compile_pselect(node, info)) {
-                return FALSE;
-            }
-            break;
-
 
         case kNodeTypeStructInitializer:
             if(!compile_struct_initializer(node, info))
@@ -865,6 +844,20 @@ BOOL compile(unsigned int node, sCompileInfo* info)
 
         case kNodeTypeDelete:
             if(!compile_delete(node, info))
+            {
+                return FALSE;
+            }
+            break;
+            
+        case kNodeTypeParen: 
+            if(!compile_paren(node, info))
+            {
+                return FALSE;
+            }
+            break;
+            
+        case kNodeTypeThrowNullValue:
+            if(!compile_throw_null_value(node, info))
             {
                 return FALSE;
             }

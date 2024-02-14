@@ -1,4 +1,6 @@
-#include <neo-c.h>
+#include <comelang.h>
+
+using unsafe;
 
 /// type.c ///
 struct sPyClass {
@@ -149,6 +151,8 @@ struct sVar
 #define OP_IS 38
 #define OP_IS_NOT 39
 
+struct sVMInfo;
+
 typedef bool (*fNativeFun)(map<string, ZVALUE>* params, sVMInfo* info);
 
 struct sFunction
@@ -177,8 +181,8 @@ struct sModule
     map<char*, sClass*>* classes;
 };
 
-sModule* sModule*::initialize(sModule* self, char* module_name);
-sClass* sClass*::initialize(sClass* self, char* name, buffer* codes, char* module_name);
+//sModule* sModule*::initialize(sModule* self, char* module_name);
+//sClass* sClass*::initialize(sClass* self, char* name, buffer* codes, char* module_name);
 
 struct sObject
 {
@@ -219,28 +223,6 @@ unsigned int sNode*::get_hash_key(sNode* self);
 bool expression(sNode** node, sParserInfo* info) version 1;
 sNode* exp_node(sParserInfo* info) version 1;
 
-class sIntNode(int value)
-{
-    int self.intValue = value;
-    
-    bool compile(sIntNode* self, buffer* codes, sParserInfo* info)
-    {
-        codes.append_int(OP_INT_VALUE);
-        codes.append_int(self.intValue);
-        
-        info->stack_num++;
-        
-        return true;
-    }
-    
-    unsigned int self.id = gNodeID++;
-    
-    unsigned int get_hash_key(sIntNode* self)
-    {
-        return self.id;
-    }
-};
-
 inline bool sNode*::equals(sNode* left, sNode* right)
 {
     return left == right;
@@ -254,8 +236,18 @@ extern ZVALUE gUndefined;
 extern map<char*, sModule*>* gModules;
 
 void add_module(char* module_name);
-sClass* add_class(char* class_name, char* class_module_name, char* module_name)
-;
+sClass* add_class(char* class_name, char* class_module_name, char* module_name);
+
+struct sIntNode
+{
+    int intValue;
+    unsigned int id;
+};
+
+sIntNode* sIntNode*::initialize(sIntNode* self, int value);
+bool sIntNode*::compile(sIntNode* self, buffer* codes, sParserInfo* info);
+unsigned int sIntNode*::get_hash_key(sIntNode* self);
+
 struct sVMInfo 
 {
     ZVALUE exception;

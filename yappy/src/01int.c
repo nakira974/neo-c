@@ -3,6 +3,36 @@
 
 int gNodeID = 0;
 
+struct sIntNode
+{
+    int intValue;
+    unsigned int id;
+};
+
+sIntNode* sIntNode*::initialize(sIntNode* self, int value)
+{
+    self.intValue = value;
+    
+    self.id = gNodeID++;
+    
+    return self;
+};
+
+bool sIntNode*::compile(sIntNode* self, buffer* codes, sParserInfo* info)
+{
+    codes.append_int(OP_INT_VALUE);
+    codes.append_int(self.intValue);
+    
+    info->stack_num++;
+    
+    return true;
+}
+
+unsigned int sIntNode*::get_hash_key(sIntNode* self)
+{
+    return self.id;
+}
+
 unsigned int sNode*::get_hash_key(sNode* self)
 {
     return self.get_hash_key->();
@@ -21,7 +51,7 @@ sNode* exp_node(sParserInfo* info) version 1
         return new sNode(new sIntNode(n));
     }
     
-    return nonullable null;
+    return null;
 }
 
 bool expression(sNode** node, sParserInfo* info) version 1
@@ -37,6 +67,36 @@ bool expression(sNode** node, sParserInfo* info) version 1
 
 ZVALUE gNoneValue;
 ZVALUE gUndefined;
+
+sModule* sModule*::initialize(sModule* self, char* module_name)
+{
+    self.name = string(module_name);
+    
+    self.funcs = new map<char*, sFunction*>();
+    self.global_vars = new map<char*, ZVALUE>();
+    self.classes = new map<char*, sClass*>();
+    
+    return self;
+}
+
+
+sClass* sClass*::initialize(sClass* self, char* name, buffer* codes, char* module_name)
+{
+    self.name = string(name);
+    self.module_name = string(module_name);
+    
+    if(codes) {
+        self.codes = clone codes;
+    }
+    else {
+        self.codes = null;
+    }
+    
+    self.class_vars = new map<string, ZVALUE>();
+    self.funcs = new map<string, sFunction*%>();
+    
+    return self;
+}
 
 void initialize_modules() version 1
 {
@@ -71,35 +131,6 @@ void initialize_modules() version 1
     add_class("exception", "", "__main__");
 }
 
-sModule* sModule*::initialize(sModule* self, char* module_name)
-{
-    self.name = string(module_name);
-    
-    self.funcs = new map<char*, sFunction*>();
-    self.global_vars = new map<char*, ZVALUE>();
-    self.classes = new map<char*, sClass*>();
-    
-    return self;
-}
-
-sClass* sClass*::initialize(sClass* self, char* name, buffer* codes, char* module_name)
-{
-    self.name = string(name);
-    self.module_name = string(module_name);
-    
-    if(codes) {
-        self.codes = clone codes;
-    }
-    else {
-        self.codes = null;
-    }
-    
-    self.class_vars = new map<string, ZVALUE>();
-    self.funcs = new map<string, sFunction*%>();
-    
-    return self;
-}
-
 void finalize_modules() version 1
 {
 }
@@ -115,10 +146,10 @@ void add_module(char* module_name)
 
 sClass* add_class(char* class_name, char* class_module_name, char* module_name)
 {
-    sModule* module = gModules.at(module_name, null);
+    sModule* module = gModules.at(module_name, null!);
     
     if(module) {
-        sClass* klass = new  sClass(class_name, null, class_module_name);
+        sClass* klass = new  sClass(class_name, null!, class_module_name);
         module.classes.insert(string(class_name), klass);
         
         return klass;
@@ -335,7 +366,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 98
                 break;
                 
             default: {
-                bool result = inherit(codes, params, info);
+                bool result = inherit(codes, params!, info);
                 if(!result) {
                     return false;
                 }

@@ -1,4 +1,4 @@
-#include <neo-c.h>
+#include <comelang.h>
 #include "common.h"
 
 struct sVar {
@@ -71,13 +71,13 @@ sVar*? get_variable_from_table(sVarTable* table, char* name)
     sVarTable*? it = table;
 
     while(it) {
-        sVar*? var_ = it!.get_variable_from_this_table_only(name);
+        sVar*? var_ = it.get_variable_from_this_table_only(name);
 
         if(var_) {
             return var_;
         }
 
-        it = it!->parent;
+        it = it->parent;
     }
 
     return null;
@@ -85,11 +85,11 @@ sVar*? get_variable_from_table(sVarTable* table, char* name)
 
 sVarTable* init_block_vtable(sVarTable*? lv_table)
 {
-    sVarTable* new_table = new sVarTable(lv_table);
+    sVarTable* new_table = new sVarTable(lv_table!);
 
     if(lv_table) {
-        new_table->block_level = lv_table!->block_level + 1;
-        new_table->parent = lv_table!;
+        new_table->block_level = lv_table->block_level + 1;
+        new_table->parent = lv_table;
     }
     else {
         new_table->block_level = 0;
@@ -99,7 +99,7 @@ sVarTable* init_block_vtable(sVarTable*? lv_table)
     return new_table;
 }
 
-private struct sStoreNode
+struct sStoreNode
 {
     int id;
     string name;
@@ -111,7 +111,7 @@ private struct sStoreNode
     char* sname;
 };
 
-private sStoreNode* sStoreNode*::initialize(sStoreNode* self, string name, sType*? type, sNode*? right_node, bool alloc, sInfo* info)
+sStoreNode* sStoreNode*::initialize(sStoreNode* self, string name, sType*? type, sNode*? right_node, bool alloc, sInfo* info)
 {
     self.id = gNodeID++;
     self.name = name;
@@ -129,12 +129,12 @@ private sStoreNode* sStoreNode*::initialize(sStoreNode* self, string name, sType
     return self;
 }
 
-private unsigned int sStoreNode*::id(sStoreNode* self)
+unsigned int sStoreNode*::id(sStoreNode* self)
 {
     return self.id;
 }
 
-private bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
+bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
 {
     int sline = self.sline;
     char* sname = self.sname; 
@@ -150,14 +150,14 @@ private bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
         return true;
     }
     
-    sVar* var2 = nonullable var_;
+    sVar* var2 = var_;
     
     sType* left_type = null;
     sType* right_type = null;
     LVALUE rvalue;
     
     if(self.right_node) {
-        if(!self.right_node!.compile->(info)) {
+        if(!self.right_node.compile->(info)) {
             return false;
         }
     
@@ -169,7 +169,7 @@ private bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
             left_type = clone right_type;
         }
         else {
-            left_type = var2->type!;
+            left_type = var2->type;
         }
         
         rvalue = *get_value_from_stack(info, -1);
@@ -195,10 +195,10 @@ private bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
             return true;
         }
         
-        left_type = var2->type!;
+        left_type = var2->type;
     }
 
-    bool constant = var2->type!->constant_;
+    bool constant = var2->type->constant_;
     
     if(alloc) {
         if(right_type == null) {
@@ -265,7 +265,7 @@ private bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
     return true;
 }
 
-private struct sLoadNode
+struct sLoadNode
 {
     int id;
     string name;
@@ -274,7 +274,7 @@ private struct sLoadNode
     char* sname;
 };
 
-private sLoadNode* sLoadNode*::initialize(sLoadNode* self, string name, sInfo* info)
+sLoadNode* sLoadNode*::initialize(sLoadNode* self, string name, sInfo* info)
 {
     self.id = gNodeID++;
     self.name = name;
@@ -285,12 +285,12 @@ private sLoadNode* sLoadNode*::initialize(sLoadNode* self, string name, sInfo* i
     return self;
 }
 
-private unsigned int sLoadNode*::id(sLoadNode* self)
+unsigned int sLoadNode*::id(sLoadNode* self)
 {
     return self.id;
 }
 
-private bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
+bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
 {
     char* sname = self.sname;
     int sline = self.sline;
@@ -301,17 +301,17 @@ private bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
 
     sVar*? var_ = get_variable_from_table(info->lv_table, var_name);
     
-    if(var_ == null || var_!->type! == null) {
+    if(var_ == null || var_->type == null) {
         fprintf(stderr, "%s %d: var(%s) not found\n", var_name);
         return true;
     }
     
-    sVar* var2 = nonullable var_;
+    sVar* var2 = var_;
 
-    bool global = var2->type!->global_;
-    bool constant = var2->type!->constant_;
+    bool global = var2->type->global_;
+    bool constant = var2->type->constant_;
 
-    sType* var_type = clone var2->type!;
+    sType* var_type = clone var2->type;
 
     LLVMValueRef var_address = var2->llvm_value;
 
@@ -334,7 +334,9 @@ private bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
         info->type = clone var_type;
     }
     else {
-        llvm_value.value = LLVMBuildLoad(gBuilder, var_address, var_name);
+        LLVMTypeRef llvm_type = create_llvm_type_from_node_type(var_type);
+        
+        llvm_value.value = LLVMBuildLoad2(gBuilder, llvm_type, var_address, var_name);
         llvm_value.type = var_type;
         llvm_value.address = var_address;
         llvm_value.var = var2;
@@ -382,7 +384,7 @@ sNode*? word_expression(string word, sInfo* info) version 3
             return new sNode(new sStoreNode(name, type, right_node, alloc:true, info))
         }
         else {
-            return new sNode(new sStoreNode(name, type, null, alloc:true, info))
+            return new sNode(new sStoreNode(name, type, null!, alloc:true, info))
         }
     }
     else if(get_variable_from_table(info.lv_table, word)) {
@@ -397,7 +399,7 @@ sNode*? word_expression(string word, sInfo* info) version 3
                 return null;
             }
             
-            return new sNode(new sStoreNode(word, null, right_node, alloc:false, info));
+            return new sNode(new sStoreNode(word, null!, right_node, alloc:false, info));
         }
         else {
             return new sNode(new sLoadNode(word, info));

@@ -135,6 +135,11 @@ bool ZVALUE*::operator_equals(ZVALUE* self, ZVALUE* right)
     return self.equals(right);
 }
 
+bool ZVALUE*::operator_not_equals(ZVALUE* self, ZVALUE* right)
+{
+    return !self.equals(right);
+}
+
 string ZVALUE*::to_string(ZVALUE* self)
 {
     switch(self.kind) {
@@ -185,14 +190,14 @@ string ZVALUE*::to_string(ZVALUE* self)
             
             buf.append_str("[");
             
-            list<ZVALUE*%>* list = self.listValue;
+            list<ZVALUE*%>* list_ = self.listValue;
             int n = 0;
-            foreach(it, list) {
+            foreach(it, list_) {
                 buf.append_str(it.to_string());
                 
                 n++;
                 
-                if(n < list.length()) {
+                if(n < list_.length()) {
                     buf.append_str(",");
                 }
             }
@@ -208,10 +213,10 @@ string ZVALUE*::to_string(ZVALUE* self)
             
             buf.append_str("[");
             
-            map<ZVALUE*%, ZVALUE*%>* map = self.mapValue;
+            map<ZVALUE*%, ZVALUE*%>* map_ = self.mapValue;
             int n = 0;
-            foreach(it, map) {
-                ZVALUE* item = map[it];
+            foreach(it, map_) {
+                ZVALUE* item = map_[it];
                 buf.append_str(it.to_string());
                 buf.append_str(":");
                 if(item == null) {
@@ -223,7 +228,7 @@ string ZVALUE*::to_string(ZVALUE* self)
                 
                 n++;
                 
-                if(n < map.length()) {
+                if(n < map_.length()) {
                     buf.append_str(",");
                 }
             }
@@ -240,13 +245,15 @@ string ZVALUE*::to_string(ZVALUE* self)
 
 int main(int argc, char** argv)
 {
+    setlocale(LC_ALL, "");
+    
     string? command = null;
     for(int i=1; i<argc; i++) {
         if(argv[i][0] == '-') {
         }
         else {
             if(command == null) {
-                command = nullable string(argv[i]);
+                command = string(argv[i]);
             }
         }
     }

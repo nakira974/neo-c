@@ -3,25 +3,19 @@
 
 char* gVersion;
 BOOL gNCGC = TRUE;
+BOOL gNCNoNullCheck = TRUE;
 BOOL gNCDebug = FALSE;
-BOOL gExternC = TRUE;
-BOOL gNCClang = TRUE;
 char gFName[PATH_MAX];
 sVarTable* gModuleVarTable;
-BOOL gNCType = FALSE;
-BOOL gNCHeader = FALSE;
-BOOL gNCGlobal = FALSE;
-BOOL gNCFunction = FALSE;
-BOOL gNCClass = FALSE;
-BOOL gNCTypedef = FALSE;
-BOOL gNCNoMacro = FALSE;
 BOOL gNCSafeMode = FALSE;
 BOOL gNCCome = FALSE;
-
-sBuf gHeader;
+BOOL gNCTranspile = FALSE;
+int gSLine = 0;
+char* gSName = NULL;
 
 static void compiler_init(char* sname)
 {
+    transpiler_init();
     node_var_init();
     node_function_init();
     node_loop_init();
@@ -35,6 +29,7 @@ static void compiler_init(char* sname)
 
 static void compiler_final(char* sname)
 {
+    transpiler_final();
     final_vtable();
     class_final();
     free_node_types();
@@ -45,7 +40,7 @@ static void compiler_final(char* sname)
     node_loop_final();
 }
 
-static BOOL compiler(char* fname, BOOL optimize, sVarTable* module_var_table, BOOL neo_c_header, char* macro_definition, char* include_path, BOOL output_cpp_souce, BOOL output_assembler_source)
+BOOL compiler(char* fname, BOOL optimize, sVarTable* module_var_table, BOOL neo_c_header, char* macro_definition, char* include_path, BOOL output_cpp_souce, BOOL output_assembler_source)
 {
     if(access(fname, F_OK) != 0) {
         fprintf(stderr, "%s doesn't exist\n", fname);
@@ -78,61 +73,49 @@ static BOOL compiler(char* fname, BOOL optimize, sVarTable* module_var_table, BO
     
     char cpp_fname[PATH_MAX];
 
-/*
-    if(gNCHeader) {
-        xstrncpy(cpp_fname, fname, PATH_MAX);
-    
-        if(!read_source_and_delete_comment(cpp_fname, &source)) {
-            free(source.mBuf);
-            return FALSE;
+    xstrncpy(cpp_fname, fname, PATH_MAX);
+    xstrncat(cpp_fname, ".i", PATH_MAX);
+
+    char cmd[1024];
+#ifdef __DARWIN_ARM__
+    snprintf(cmd, 1024, "/opt/homebrew/opt/llvm/bin/clang-cpp %s -I. -I/usr/local/include -I%s/include %s -I/opt/homebrew/opt/llvm@16/include -I/opt/homebrew/opt/libgc/include -I/opt/homebrew/opt/pcre/include -D__DARWIN_ARM__ -U__GNUC__ %s %s > %s", include_path, PREFIX, cflags, fname, macro_definition, cpp_fname);
+#else
+    snprintf(cmd, 1024, "cpp %s -I. -I%s/include %s -U__GNUC__ %s %s > %s", include_path, PREFIX,cflags, fname, macro_definition, cpp_fname);
+#endif
+    //puts(cmd);
+
+    int rc = system(cmd);
+    if(rc != 0) {
+        char cmd[1024];
+        snprintf(cmd, 1024, "cpp -I. -I%s/include %s -C %s %s > %s", PREFIX, cflags, fname, macro_definition ? macro_definition : "", cpp_fname);
+
+        //puts(cmd);
+        rc = system(cmd);
+
+        if(rc != 0) {
+            fprintf(stderr, "failed to cpp(2) (%s)\n", cmd);
+            exit(5);
         }
     }
-    else {
-*/
-        xstrncpy(cpp_fname, fname, PATH_MAX);
-        xstrncat(cpp_fname, ".i", PATH_MAX);
-    
-        char cmd[1024];
-#ifdef __DARWIN_ARM__
-        snprintf(cmd, 1024, "/opt/homebrew/opt/llvm/bin/clang-cpp %s -I. -I/usr/local/include -I%s/include %s -I/opt/homebrew/opt/llvm@15/include -I/opt/homebrew/opt/libgc/include -I/opt/homebrew/opt/pcre/include -D__DARWIN__ -U__GNUC__ %s %s > %s", include_path, PREFIX, cflags, fname, macro_definition, cpp_fname);
-#else
-        snprintf(cmd, 1024, "cpp %s -I. -I%s/include %s -U__GNUC__ %s %s > %s", include_path, PREFIX,cflags, fname, macro_definition, cpp_fname);
-#endif
-        //puts(cmd);
-    
-        int rc = system(cmd);
-        if(rc != 0) {
-            char cmd[1024];
-            snprintf(cmd, 1024, "cpp -I. -I%s/include %s -C %s %s > %s", PREFIX, cflags, fname, macro_definition, cpp_fname);
-    
-            //puts(cmd);
-            rc = system(cmd);
-    
-            if(rc != 0) {
-                fprintf(stderr, "failed to cpp(2) (%s)\n", cmd);
-                exit(2);
-            }
-        }
-    
-        if(!read_source(cpp_fname, &source)) {
-            free(source.mBuf);
-            return FALSE;
-        }
-//    }
+
+    if(!read_source(cpp_fname, &source)) {
+        fprintf(stderr, "read_source result is FALSE\n");
+        free(source.mBuf);
+        return FALSE;
+    }
     
     if(!compile_source(fname, &source.mBuf, optimize, module_var_table)) 
     {
+        fprintf(stderr, "compile_source result is FALSE\n");
         free(source.mBuf);
         return FALSE;
     }
     
     if(!output_cpp_souce) {
-//    if(!output_cpp_souce && !gNCHeader) {
         char cmd[1024];
         snprintf(cmd, 1024, "rm -f %s", cpp_fname);
 
         (void)system(cmd);
-        //puts(cmd);
     }
     
     free(source.mBuf);
@@ -179,16 +162,78 @@ static BOOL compile_ll_file(char* fname, char* bname, char* clang_optiones, BOOL
     char cmd[1024];
     
 #ifdef __DARWIN_ARM__
-    snprintf(cmd, 1024, "%s -o %s -c %s.ll %s -fPIC -I/opt/homebrew/opt/llvm@15/include -L/opt/homebrew/opt/llvm@15/lib -L/opt/homebrew/lib -I/opt/homebrew/include -L/usr/local/opt/libgc/lib -L/opt/homebrew/opt/boehmgc/lib -I/opt/homebrew/opt/pcre/include -fPIC -L/opt/homebrew/opt/boehmgc/lib ", CLANG, bname2, fname, clang_optiones);
+    snprintf(cmd, 1024, "%s -o %s -c %s.ll %s -fPIC -I/opt/homebrew/opt/llvm@16/include -L/opt/homebrew/opt/llvm@16/lib -L/opt/homebrew/lib -I/opt/homebrew/include -L/usr/local/opt/libgc/lib -L/opt/homebrew/opt/boehmgc/lib -I/opt/homebrew/opt/pcre/include -fPIC -L/opt/homebrew/opt/boehmgc/lib ", CLANG, bname2, fname, clang_optiones);
 #else
-    snprintf(cmd, 1024, "%s -o %s -c %s.ll %s -fPIC -L/opt/homebrew/lib -I/opt/homebrew/include -L/usr/local/opt/libgc/lib -L/opt/homebrew/opt/boehmgc/lib -fPIC -L/opt/homebrew/opt/boehmgc/lib ", CLANG, bname2, fname, clang_optiones);
+    snprintf(cmd, 1024, "%s -o %s -c %s.ll %s -fPIC -fPIC ", CLANG, bname2, fname, clang_optiones);
 #endif
     
     int rc = system(cmd);
     //puts(cmd);
     if(rc != 0) {
         fprintf(stderr, "return code is error on clang\n");
-        exit(2);
+        exit(6);
+    }
+    
+    if(!output_assembler_source) {
+        char cmd[1024];
+        snprintf(cmd, 1024, "rm -f %s.ll", fname);
+        
+        //puts(cmd);
+        (void)system(cmd);
+    }
+    
+    snprintf(cmd, 1024, "rm -f %s.bc", fname);
+    
+    //puts(cmd);
+    (void)system(cmd);
+    
+    return TRUE;
+}
+
+static BOOL compile_c_file(char* fname, char* bname, char* clang_optiones, BOOL output_assembler_source)
+{
+    char bname2[PATH_MAX];
+    
+    if(bname[0] == '\0') {
+        char* p = fname + strlen(fname);
+        
+        while(p >= fname) {
+            if(*p == '.') {
+                break;
+            }
+            else {
+                p--;
+            }
+        }
+        
+        if(p == fname) {
+            fprintf(stderr, "invalid file name. require extension name(%s)", fname);
+            return FALSE;
+        }
+        
+        memcpy(bname2, fname, p - fname);
+        bname2[p-fname] = '\0';
+        xstrncat(bname2, ".o", PATH_MAX);
+    }
+    else {
+        xstrncpy(bname2, bname, PATH_MAX);
+    }
+    
+    if(!output_assembler_source) {
+        char cmd[1024];
+    
+#ifdef __DARWIN_ARM__
+        snprintf(cmd, 1024, "%s -o %s -c %s.c %s -fPIC -I/opt/homebrew/opt/llvm@16/include -L/opt/homebrew/opt/llvm@16/lib -L/opt/homebrew/lib -I/opt/homebrew/include -L/usr/local/opt/libgc/lib -L/opt/homebrew/opt/boehmgc/lib -I/opt/homebrew/opt/pcre/include -fPIC -L/opt/homebrew/opt/boehmgc/lib ", CLANG, bname2, fname, clang_optiones);
+#else
+        snprintf(cmd, 1024, "%s -o %s -c %s.c %s -fPIC -fPIC ", CLANG, bname2, fname, clang_optiones);
+#endif
+        
+        int rc = system(cmd);
+        //puts(cmd);
+        if(rc != 0) {
+            fprintf(stderr, "return code is error on clang\n");
+            exit(6);
+        }
     }
     
     if(!output_assembler_source) {
@@ -232,17 +277,65 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
     
     if(strcmp(fname, "") != 0) {
         char cmd[1024];
+        
+        if(gNCTranspile) {
 #ifdef __DARWIN_ARM__
-        snprintf(cmd, 1024, "%s -c -o %s.o %s.ll -fPIC -I/opt/homebrew/opt/llvm@15/include -L/opt/homebrew/opt/llvm@15/lib -I/opt/homebrew/opt/pcre/include ", CLANG, fname, fname);
+            snprintf(cmd, 1024, "%s -c -o %s.o %s.c -fPIC -I/opt/homebrew/opt/llvm@16/include -L/opt/homebrew/opt/llvm@16/lib -I/opt/homebrew/opt/pcre/include %s", CLANG, fname, fname, clang_optiones);
+        
+            int rc = system(cmd);
+            if(rc != 0) {
+                fprintf(stderr, "return code is error on clang\n");
+                exit(7);
+            }
+        
 #else
-        snprintf(cmd, 1024, "%s -c -o %s.o %s.ll -fPIC ", CLANG, fname, fname);
+            int rc;
+            snprintf(cmd, 1024, "%s -c -o %s.o %s.c -fPIC %s", CLANG, fname, fname, clang_optiones);
 #endif
-        //puts(cmd);
-    
-        int rc = system(cmd);
-        if(rc != 0) {
-            fprintf(stderr, "return code is error on clang\n");
-            exit(2);
+            //puts(cmd);
+        
+            rc = system(cmd);
+            if(rc != 0) {
+                fprintf(stderr, "return code is error on clang\n");
+                exit(9);
+            }
+            
+            snprintf(cmd, 1024, "rm -f %s.bc", fname);
+            
+            (void)system(cmd);
+        }
+        else {
+#ifdef __DARWIN_ARM__
+            snprintf(cmd, 1024, "%s -c -o %s.o %s.ll -fPIC -I/opt/homebrew/opt/llvm@16/include -L/opt/homebrew/opt/llvm@16/lib -I/opt/homebrew/opt/pcre/include ", CLANG, fname, fname);
+        
+            int rc = system(cmd);
+            if(rc != 0) {
+                fprintf(stderr, "return code is error on clang\n");
+                exit(7);
+            }
+            
+#else
+            snprintf(cmd, 1024, "opt -o %s.bc %s.ll  ", fname, fname);
+            //puts(cmd);
+        
+            int rc = system(cmd);
+            if(rc != 0) {
+                fprintf(stderr, "return code is error on clang\n");
+                exit(8);
+            }
+            snprintf(cmd, 1024, "%s -c -o %s.o %s.bc -fPIC ", CLANG, fname, fname);
+#endif
+            //puts(cmd);
+        
+            rc = system(cmd);
+            if(rc != 0) {
+                fprintf(stderr, "return code is error on clang\n");
+                exit(9);
+            }
+            
+            snprintf(cmd, 1024, "rm -f %s.bc", fname);
+            
+            (void)system(cmd);
         }
     }
     
@@ -267,13 +360,19 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
         
         if(gNCGC) {
             char buf[128];
-            snprintf(buf, 128, "%slib/libneo-c-gc.a", PREFIX);
+            snprintf(buf, 128, "%slib/libcomelang-gc.a", PREFIX);
+            xstrncat(cmd, buf, 1024);
+            xstrncat(cmd, " ", 1024);
+        }
+        else if(gNCTranspile) {
+            char buf[128];
+            snprintf(buf, 128, "%slib/libcomelang-ts.a", PREFIX);
             xstrncat(cmd, buf, 1024);
             xstrncat(cmd, " ", 1024);
         }
         else {
             char buf[128];
-            snprintf(buf, 128, "%slib/libneo-c.a", PREFIX);
+            snprintf(buf, 128, "%slib/libcomelang.a", PREFIX);
             xstrncat(cmd, buf, 1024);
             xstrncat(cmd, " ", 1024);
         }
@@ -281,7 +380,7 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
         int rc = system(cmd);
         if(rc != 0) {
             fprintf(stderr, "return code is error on clang\n");
-            exit(2);
+            exit(10);
         }
     }
     else {
@@ -298,6 +397,12 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
             if(!gNCGC) {
                 snprintf(cmd, 1024, "%s -o %s %s -lgc -lpcre -lpthread -fPIC -L/opt/homebrew/lib -I/opt/homebrew/include -fPIC -L/usr/local/opt/libgc/lib -L/opt/homebrew/opt/boehmgc/lib %s.o ", GCC, bname, clang_optiones, fname);
             }
+            else if(gNCTranspile) {
+                char buf[128];
+                snprintf(buf, 128, "%slib/libcomelang-ts.a", PREFIX);
+                xstrncat(cmd, buf, 1024);
+                xstrncat(cmd, " ", 1024);
+            }
             else {
                 snprintf(cmd, 1024, "%s -o %s %s -lgc -lpcre -lpthread -fPIC -L/opt/homebrew/lib -I/opt/homebrew/include -L/usr/local/opt/libgc/lib -L/opt/homebrew/opt/boehmgc/lib %s.o ", GCC, bname, clang_optiones, fname);
             }
@@ -311,13 +416,19 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
         
         if(gNCGC) {
             char buf[128];
-            snprintf(buf, 128, "%slib/libneo-c-gc.a", PREFIX);
+            snprintf(buf, 128, "%slib/libcomelang-gc.a", PREFIX);
+            xstrncat(cmd, buf, 1024);
+            xstrncat(cmd, " ", 1024);
+        }
+        else if(gNCTranspile) {
+            char buf[128];
+            snprintf(buf, 128, "%slib/libcomelang-ts.a", PREFIX);
             xstrncat(cmd, buf, 1024);
             xstrncat(cmd, " ", 1024);
         }
         else {
             char buf[128];
-            snprintf(buf, 128, "%slib/libneo-c.a", PREFIX);
+            snprintf(buf, 128, "%slib/libcomelang.a", PREFIX);
             xstrncat(cmd, buf, 1024);
             xstrncat(cmd, " ", 1024);
         }
@@ -325,15 +436,15 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
         int rc = system(cmd);
         if(rc != 0) {
             fprintf(stderr, "return code is error on clang\n");
-            exit(2);
+            exit(11);
         }
+    }
+    
+    if(!output_assembler_source) {
+        char cmd[1024];
+        snprintf(cmd, 1024, "rm -f %s.ll %s.o %s.bc ", fname, fname, fname);
         
-        if(!output_assembler_source) {
-            char cmd[1024];
-            snprintf(cmd, 1024, "rm -f %s.ll %s.o", fname, fname);
-            
-            (void)system(cmd);
-        }
+        (void)system(cmd);
     }
     
     return TRUE;
@@ -341,7 +452,7 @@ static BOOL linker(char* fname, int num_obj_files, char** obj_files, char* clang
 
 int main(int argc, char** argv)
 {
-    gVersion = "1.0.7";
+    gVersion = "1.3.6";
     
     setlocale(LC_ALL, "");
     
@@ -387,8 +498,8 @@ int main(int argc, char** argv)
     for(i=1; i<argc; i++) {
         if(strcmp(argv[i], "--version") == 0 || strcmp(argv[i], "-version") == 0 || strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "-V") == 0)
         {
-            printf("neo-c version %s\n", gVersion);
-            exit(0);
+            printf("comelang version %s\n", gVersion);
+            exit(12);
         }
         else if(strcmp(argv[i], "-g") == 0)
         {
@@ -414,78 +525,32 @@ int main(int argc, char** argv)
             gNCGC = FALSE;
             xstrncat(optiones, "-no-gc ", 1024);
         }
-        else if(strcmp(argv[i], "-clang") == 0)
-        {
-            gNCClang = TRUE;
-            xstrncat(optiones, "-clang ", 1024);
-        }
         else if(strcmp(argv[i], "-c") == 0) {
             no_linker = TRUE;
             xstrncat(optiones, "-c ", 1024);
             xstrncat(clang_optiones, "-c ", 1024);
         }
-        else if(strcmp(argv[i], "header") == 0)
-        {
-            if(i + 1 < argc) {
-                xstrncpy(header_name, argv[i+1], PATH_MAX);
-                i++;
-                
-                char buf[PATH_MAX+128];
-                snprintf(buf, PATH_MAX+128, "rm %s; touch %s", header_name, header_name);
-                
-                (void)system(buf);
-            }
-            
-            gNCHeader = TRUE;
-            header = TRUE;
+        else if(strcmp(argv[i], "-t") == 0) {
+            fprintf(stderr, "No support to traspile\n");
+            exit(2);
+            /*
+            gNCTranspile = TRUE;
+            gNCGC = FALSE;
+            */
         }
         else if(strcmp(argv[i], "libs") == 0)
         {
-            printf("-lgc -lpcre -lpthread %slib/libneo-c.a -L/usr/local/lib/libgc/lib \n", PREFIX);
+            printf("-lgc -lpcre -lpthread %slib/libcomelang.a -L/usr/local/lib/libgc/lib \n", PREFIX);
             return 0;
         }
         else if(strcmp(argv[i], "libs-gc") == 0)
         {
-            printf("-lgc -lpcre -lpthread %s/lib/libneo-c-gc.a -L/usr/local/opt/libgc/lib \n", PREFIX);
+            printf("-lgc -lpcre -lpthread %s/lib/libcomelang-gc.a -L/usr/local/opt/libgc/lib \n", PREFIX);
             return 0;
         }
         else if(strcmp(argv[i], "type") == 0)
         {
-            gNCType = TRUE;
             xstrncat(optiones, "type ", 1024);
-        }
-        else if(strcmp(argv[i], "global") == 0)
-        {
-            gNCGlobal = TRUE;
-            gNCType = TRUE;
-            xstrncat(optiones, "global ", 1024);
-        }
-        else if(strcmp(argv[i], "class") == 0)
-        {
-            gNCClass = TRUE;
-            gNCType = TRUE;
-
-            xstrncat(optiones, "class ", 1024);
-        }
-        else if(strcmp(argv[i], "typedef") == 0)
-        {
-            gNCTypedef = TRUE;
-            gNCType = TRUE;
-
-            xstrncat(optiones, "typedef ", 1024);
-        }
-        else if(strcmp(argv[i], "function") == 0)
-        {
-            gNCFunction = TRUE;
-            gNCType = TRUE;
-
-            xstrncat(optiones, "function ", 1024);
-        }
-        else if(strcmp(argv[i], "-n") == 0) 
-        {
-            gNCNoMacro = TRUE;
-
-            xstrncat(optiones, "-n ", 1024);
         }
         else if(strcmp(argv[i], "-e") == 0 && i + 1 < argc) 
         {
@@ -632,7 +697,7 @@ int main(int argc, char** argv)
                 
                 if(num_obj_files >= 128) {
                     fprintf(stderr, "overflow obj files number\n");
-                    exit(2);
+                    exit(13);
                 }
             }
             else {
@@ -642,7 +707,7 @@ int main(int argc, char** argv)
                 
                 if(num_snames >= 128) {
                     fprintf(stderr, "overflow source file number\n");
-                    exit(2);
+                    exit(14);
                 }
             }
         }
@@ -669,11 +734,11 @@ int main(int argc, char** argv)
         
         char* sname2 = "_eval.c";
         FILE* f = fopen(sname2, "w");
-        fprintf(f, "#include <neo-c.h>\n int main(int argc, char** argv) { %s; return 0; }\n", cmdline);
+        fprintf(f, "#include <comelang.h>\n int main(int argc, char** argv) { %s; return 0; }\n", cmdline);
         fclose(f);
         
         char run_cmdline[BUFSIZ];
-        snprintf(run_cmdline, BUFSIZ, "neo-c _eval.c 2>/dev/null");
+        snprintf(run_cmdline, BUFSIZ, "comelang _eval.c 2>/dev/null");
         
         sBuf command_result;
         sBuf_init(&command_result);
@@ -691,18 +756,9 @@ int main(int argc, char** argv)
         return rc;
     }
     else {
-        sBuf_init(&gHeader);
-        
         int n;
         for(n=0; n<num_snames; n++) {
             char buf[128];
-            
-            snprintf(buf, 128, "\n////////////////////////////\n");
-            sBuf_append_str(&gHeader, buf);
-            snprintf(buf, 128, "// %s\n", sname[n]);
-            sBuf_append_str(&gHeader, buf);
-            snprintf(buf, 128, "////////////////////////////\n");
-            sBuf_append_str(&gHeader, buf);
             
             xstrncpy(gFName, sname[n], PATH_MAX);
             
@@ -726,6 +782,7 @@ int main(int argc, char** argv)
                 
                 if(!compiler(sname[n], optimize, gModuleVarTable, FALSE, macro_definition, include_paths2, output_cpp_souce, output_assembler_source))
                 {
+                    fprintf(stderr, "compiler result is FALSE\n");
                     return 1;
                 }
             }
@@ -735,85 +792,26 @@ int main(int argc, char** argv)
             }
             
             if(no_linker && !header) {
-                if(!compile_ll_file(sname[n], exec_fname, clang_optiones, output_assembler_source)) {
-                    return 1;
+                if(gNCTranspile) {
+                    if(!compile_c_file(sname[n], exec_fname, clang_optiones, output_assembler_source)) {
+                        return 1;
+                    }
+                }
+                else {
+                    if(!compile_ll_file(sname[n], exec_fname, clang_optiones, output_assembler_source)) {
+                        return 1;
+                    }
                 }
             }
             else {
                 if((no_linker || header) && !output_assembler_source) {
                     char cmd[1024];
-                    snprintf(cmd, 1024, "rm -f %s.ll", sname[n]);
+                    snprintf(cmd, 1024, "rm -f %s.ll %s.c", sname[n], sname[n]);
                     
                     (void)system(cmd);
                 }
             }
         }
-        
-        if(header) {
-            if(header_name[0] == '\0') {
-                xstrncpy(header_name, "common.h", PATH_MAX);
-            }
-            
-            sBuf header;
-            sBuf_init(&header);
-            
-            char* p = gHeader.mBuf;
-            
-            int new_line = TRUE;
-            write_open_struct_to_header(&header);
-            
-            while(*p) {
-                if(new_line && *p == '#') {
-                    char* p2 = p;
-                    
-                    p++;
-                    while(*p == ' ' || *p == '\t') {
-                        p++;
-                    }
-                    
-                    if(xisdigit(*p)) {
-                        while(*p != '\n' && *p != '\0') {
-                            p++;
-                        }
-                        
-                        if(*p != '\0') {
-                            p++;
-                        }
-                    }
-                    else {
-                        while(*p != '\n' && *p != '\0') {
-                            p++;
-                        }
-                        
-                        if(*p != '\0') {
-                            p++;
-                        }
-                        sBuf_append(&header, p2, p-p2);
-                    }
-                }
-                else if(*p == '\n') {
-                    new_line = TRUE;
-                    sBuf_append_char(&header, *p);
-                    p++;
-                }
-                else {
-                    new_line = FALSE;
-                    sBuf_append_char(&header, *p);
-                    p++;
-                }
-            }
-            
-            FILE* f = fopen(header_name, "w");
-            
-            if(f) {
-                fprintf(f, "%s\n", header.mBuf);
-                fclose(f);
-            }
-            
-            free(header.mBuf);
-        }
-        
-        free(gHeader.mBuf);
     }
     
     char* obj_files2[128];
@@ -822,9 +820,9 @@ int main(int argc, char** argv)
         obj_files2[k] = obj_files[k];
     }
     
-    if(!gNCType && !gNCGlobal && !gNCFunction && !gNCClass && !gNCTypedef && !gNCNoMacro && !no_linker && !header) {
+    if(!no_linker && !header) {
         if(!linker(sname[0], num_obj_files, obj_files2, clang_optiones, exec_fname, output_assembler_source)) {
-            fprintf(stderr, "neo-c can't compile(2)\n");
+            fprintf(stderr, "comelang can't compile(2)\n");
             return 1;
         }
     }

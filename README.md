@@ -1,15 +1,17 @@
 
-# neo-c
+# comelang
 
-Modern C compiler. It has a collection and string library using Boehm GC or Refference count GC heap system. 
+come together!
 
-モダンなCコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
+Yet another modern compiler. It has a collection and string library using Boehm GC or Refference count GC heap system. 
+
+もう一つのモダンコンパイラ。boehm GC もしくはリファレンスカウントを使ったコレクション、文字列ライブラリを備えます。
 
 
-version 1.0.7
+version 1.3.6
 
 ``` C
-#include <neo-c.h>
+#include <comelang.h>
 
 int fun(int x=123, int y = 234, int z = 345) 
 {
@@ -85,7 +87,7 @@ int main()
         printf("%d\n", it);       // 2\n3\n
     }
     
-    list<char*>* li2 = ["1", "2", "3", "4", "5"]
+    var li2 = ["1", "2", "3", "4", "5"]
 
     li2.map { atoi(it); }.filter { it > 3; }.each { printf("%d\n", it); }  // 4\n5\n
     
@@ -123,7 +125,7 @@ int main()
     xassert("operator overload test2", [1,2] + [3] === [1,2,3]);
     xassert("operator overload test3", [1,2] * 2 === [1,2,1,2]);
     
-    list<int>* z = [1,2,3];
+    var z = [1,2,3];
     
     xassert("operator overload test", z[0] == 1 && z[1] == 2 && z[2] == 3);
     
@@ -131,7 +133,7 @@ int main()
     
     xassert("operator overload test", z[0] == 1 && z[1] == 22 && z[2] == 3);
     
-    map<char*, int>* zz = ["AAA":1, "BBB":2, "CCC":3];
+    var zz = ["AAA":1, "BBB":2, "CCC":3];
     
     xassert("operator overload test", zz["AAA"] == 1 && z["BBB"] == 22 && z["CCC"] == 3);
     
@@ -152,16 +154,8 @@ int main()
     
     printf("AAA".read());  // print out 12345\n12345\n
     
-    int*? a = null;
-    
-    guard(a) {
-        fprintf(stderr, "a is null\n");
-        return 1;
-    }
-    
-    //printf("%d\n", *a!);  // exception. printout source code file name and source code line number
-    
-    int* b = a;         /// no compile error
+    //puts(null);          // exception. print out source file name and line
+    //puts(null!);         // segmentaion fault
 
     var data = new sData(3,5);
     
@@ -170,9 +164,8 @@ int main()
     var z = [new sData(1,2), new sData(3,4)];
     
     //printf("%d\n", *z[5]!.a);  // exception. printout source code file name and source code line number
-    var buf = "ABC".to_buffer();
     
-    var p = buf.to_pointer();
+    var p = "ABC".to_buffer().to_pointer();
     
     p++;
     p++;
@@ -197,27 +190,27 @@ int main()
 In pipes filter or command lines.
 
 ```
-> neo-c -e 'puts("HELLO WORLD");'
+> comelang -e 'puts("HELLO WORLD");'
 HELLO WORLD
-> neo-c -e 'puts("HO! * 3);'
+> comelang -e 'puts("HO! * 3);'
 HO!HO!HO!
 > ls
 a.c
 b.c
 c.c
-> ls | neo-c -e 'stdin.read().split(/\n/).join(",").puts();'
+> ls | comelang -e 'stdin.read().split(/\n/).join(",").puts();'
 a.c,b.c,c.c
-> echo "aaa bbb" | neo-c 'stdin.read().chomp().spit(/ /).to_string().puts()'
+> echo "aaa bbb" | comelang 'stdin.read().chomp().spit(/ /).to_string().puts()'
 [aaa,bbb]
 ```
 
-1. It is compatible with C language. The C preprocessor also works.
+1. It is compatible with C language in some content. The C preprocessor also works.
 
-2. The default heap system is using Boehm GC with reffrece count.
+2. The default heap system is boehm GC with reffrence count, optionally my original refference count heap system with -no-gc option.
 
 3. It has Generics, Method Generics, inline function, debug info (-g option), and lambda.
 
-4. It has a mixin-layers system. You can implement your application in layers. Each layer is complete and useful for debugging and porting. A vi clone called vin is implemented as an editor implemented in mixin-layers. Please refer to it because it is in a directory called vin. Also I'm creating a text processing interpreter(zed), 1000 lines shell(shsh) and 1000 lines filer(mf).
+4. It has a mixin-layers system. You can implement your application in layers. Each layer is complete and useful for debugging and porting. A vi clone called vin is implemented as an editor implemented in mixin-layers. Please refer to it because it is in a directory called vin. Also I'm creating a text processing interpreter(zed), 1000 lines shell(shsh), 1000 lines filer(mf) and constructing python3 clone(yappy).
 
 5. Protocol(Interface)
 
@@ -225,29 +218,29 @@ a.c,b.c,c.c
 
 7. It has using regex library(pcre) string libraries.
 
-8. For command line pipes, neo-c can run C code with -e command option.
+8. defer
 
-10. defer
+9. Default parametor values, and label parametor are supported.
 
-11. Default parametor values, and label parametor are supported.
+10. operator overload.
 
-12. operator overload.
+11. Guard from the segmentation of null pointer.
 
-13. Guard from the segmentation of null pointer.
+12. Smart pointer
 
-14. Smart pointer
+13. Simple exception statment
 
-15. Simple exception statment
+14. Detect dangling pointer in some content.
 
-16. Detect dangling pointer
+15 In safe mode, runtime is memory safe. no segmention fault in some content.
 
-1. C言語と互換性があります。Cプリプロセッサーも動きます。
+1. C言語とある程度の互換性があります。Cプリプロセッサーも動きます。
 
-2. boehmGCを使ったヒープ管理をします。
+2. boehmGCを使ったヒープ管理をします。オプションとして-no-gcとするとオリジナルのリファレンスカウントGCが使えます。
 
 3. ジェネリクス、メソッドジェネリクス、インライン関数、デバッグ情報、ラムダをサポートします。
 
-4. mixin-layersシステムを備えます。アプリケーションをレイヤーを重ねるように実装できます。各レイヤーは完結しており、デバッグや移植作業でも有効です。mixin-layersで実装されたエディッタとしてvinというviクローンを実装しています。vinというディレクトリの中に入っているので参考にしてください。またテキスト処理系をzedというディレクトリに作っています。shshという1000行シェルもあります。
+4. mixin-layersシステムを備えます。アプリケーションをレイヤーを重ねるように実装できます。各レイヤーは完結しており、デバッグや移植作業でも有効です。mixin-layersで実装されたエディッタとしてvinというviクローンを実装しています。vinというディレクトリの中に入っているので参考にしてください。またテキスト処理系をzedというディレクトリに作っています。shshという1000行シェルもあります。mfという1000行ファイルマネージャー。yappyという作りかけのPython3クローンもあります。
 
 5. プロトコル（インターフェース）
 
@@ -255,35 +248,35 @@ a.c,b.c,c.c
 
 7. 正規表現を使った文字列ライブラリがあります。
 
-8. コマンドラインのパイプのためにneo-cは-eコマンドオプションによってCコードを実行できます。
+8. 遅延評価(defer)があります。
 
-10. 遅延評価(defer)があります。
+9. デフォルト引数、引数のラベルをサポートします。
 
-11. デフォルト引数、引数のラベルをサポートします。
+10. 演算子オーバーロードがあります。
 
-12. 演算子オーバーロードがあります。
+11. null pointerのセグメンテーションを防ぐ機能があります。
 
-13. null pointerのセグメンテーションを防ぐ機能があります。
+12. 範囲チェックするポインターがあります
 
-14. 範囲チェックするポインターがあります
+13. 簡易な例外処理があります。
 
-15. 簡易な例外処理があります。
+14. できる限りダンジリングポインタを検出する機能があります。
 
-16. できる限りダンジリングポインタを検出する機能があります。
+15. セーフモードではできるかぎりメモリセーフです。
 
 # INSTALL
 
 Required libraries are clang, g++, gcc, llvm-dev, pcre-dev, gc-dev, readline-dev, ncurses-dev, make, autoconf, valgrind, gdb, lldb, musl-dev(alpine linux)
 
-For Linux, WSL, MacOS(Darwin), userland(android)
+For Linux, WSL, MacOS(Darwin), userland(android), raspiberry pi, iSH(iPhone)
 
 Fast Build. No self host
 
 速いビルドです。
 
 ```
-git clone https://github.com/ab25cq/neo-c
-cd neo-c
+git clone https://github.com/ab25cq/comelang
+cd comelang
 bash fast_build.sh
 ```
 
@@ -292,9 +285,9 @@ With debug info.
 デバッグ情報を入れたビルドは以下です。
 
 ```
-git clone https://github.com/ab25cq/neo-c
+git clone https://github.com/ab25cq/comelang
 
-cd neo-c
+cd comelang
 bash debug_build.sh
 ```
 
@@ -303,18 +296,18 @@ with self hosting.
 セルフホストするビルドは以下です。
 
 ```
-git clone https://github.com/ab25cq/neo-c
+git clone https://github.com/ab25cq/comelang
 
-cd neo-c
+cd comelang
 bash self_host.sh
 ```
 
 For termux.
 
 ```
-git clone https://github.com/ab25cq/neo-c
+git clone https://github.com/ab25cq/comelang
 
-cd neo-c
+cd comelang
 bash home_build.sh
 ```
 
@@ -333,12 +326,102 @@ in termux
 bash xhome_build.sh
 ```
 
+# Histories
+
+From version 1.0.2 The default GC system is boehmGC. I think it's easier than my original heap system. Let's enjoy easy programing.
+
+バージョン1.0.2よりデフォルトのGCシステムがboehmGCになりました。こっちのほうが簡単なんで。簡単なプログラミングを楽しみましょう。
+
+From version 1.0.3 push_backがselfを返さなくなりました。[1,2,3,4].push_back(5).push_back(6)はうごきません。コスト的な問題です。あとオリジナルのリファレンスカウントGCでライブラリにバグがあったため修正しています。boehmGCの方は特に問題がないです。オリジナルのリファレンスカウントGCは難しいですが利点は小さなメモリで動く点です。オリジナルのリファレンスカウントGCで作ったvinとzed2はラズパイZEROでも動くと思います。
+
+From version 1.0.4 ラズパイで動作確認しました。bash xfast_build.shでcomelangで作ったソフトウェアも動いてます。
+
+From version 1.0.5 iPhone(iSH)で動作確認しました。bash xfast_build.shですべてコンパイルできます。
+
+From version 1.0.6 パフォーマンス上問題となるselfを返すメソッドがselfを返さなくなってます。buffer*::append_str(char*)など。using no-null-check;が入ってます。これもパフォーマンスのためです。iSHやラズパイでvinが遅かったためです。
+
+From version 1.0.6 A method that returns self does not return self, which is a performance problem~
+It's getting buffer*::append_str(char*), etc. It contains using no-null-check;
+. This is also for performance. Because vin was slow on iSH and Raspberry Pi.
+
+From version 1.1.0 -tオプションでトランパイルします。
+
+From version 1.1.0 With -t option, traspiled to C code.
+
+From vresion 1.1.1 smart_pointerが1.1.0でバグがでてました。修正。
+
+From version 1.1.1 There is a bug with smart pointer. At version 1.1.1 repaire it.
+
+From version 1.1.2 例外のバグを修正しました。
+
+From version 1.1.2 Fixed a bug with exception.
+
+From version 1.1.3 例外とヒープとのバグを修正しました。
+
+From version 1.1.3 Fixed a heap bug with exception.
+
+From version 1.1.4 例外とヒープとマルチアサインのバグを修正しました。
+
+From version 1.1.4 Fixed a multi-assign, heap, exception bug.
+
+From version 1.1.5 例外とヒープとマルチアサインのバグを修正しました。
+
+From version 1.1.5 Fixed a multi-assign, heap, exception bug.
+
+From version 1.1.6 例外とヒープとマルチアサインのバグを修正しました。
+
+From version 1.1.6 Fixed a multi-assign, heap, exception bug.
+
+From version 1.1.8 例外のバグを修正しました。
+
+From version 1.1.8 Fixed exception bug.
+
+From version 1.2.0 プロトコルと例外のバグを修正しました。
+
+From version 1.2.0 Fixed exception and protocol bug.
+
+From version 1.2.1 リファレンスカウントを+1するgc_incとリファレンスカウントを-1するgc_decが入りました。浅いコピーをするshallow_cloneが入りました。マルチディフィニションと例外とヒープの3使った場合のバグを修正。
+
+From version 1.2.1 gc_inc to +1 the reference count and the reference count to -1 gc_dec entered. shallow_clone for shallow copying is included. Fixed a bug when using multi-definition, exceptions and heap 3.
+
+From version 1.2.3 stringの!==が定義されてませんでした。定義しました。
+
+From version 1.2.3 appended string !==
+
+From version 1.2.4 Fixed bug with map::finalize
+
+From version 1.2.4 mapのファイナライザのバグを修正しました。
+
+From version 1.2.5 int a = 0; a(); --> segmentation fault. This bug has been fixed.
+
+From version 1.2.6 Fixed exception heap bug.
+
+From version 1.2.7 Fixed exception heap bug. No support to transpile mode, -t option.
+
+From version 1.2.8 !==, ===, operator overloads has been null-checked.
+
+From version 1.2.9 Detected invalid inherit
+
+From version 1.3.0 Default is unsafe mode.
+
+From version 1.3.1 multiple result values and exception bug has been fixed.
+
+From version 1.3.2 type name limits was exteneded. some case , it occured problem.(segmentation fault)
+
+From version 1.3.3 void* operand had occured segmentation fault. Fixed. Multidifinition of struct is detected.
+
+From version 1.3.4 map expression bug has been fixed.
+
+From version 1.3.5 map foreach bug has been fixed.
+
+From version 1.3.6 fun().catch { throws } ==> fun() throws;
+
 # Language specifications
 
-It is almost the same as C language. Since it is not POSIX compliant, it is not compatible with C language in every detail, but I think that anyone who can use C language can use it immediately. If you don't use the heap system and do #include <neo-c.h>, you can just use it as a C compiler. 
+It is almost the same as C language. Since it is not POSIX compliant, it is not compatible with C language in every detail, but I think that anyone who can use C language can use it immediately. If you don't use the heap system and do #include <comelang.h>, you can just use it as a C compiler. 
 
 C言語とほぼ一緒です。POSIX準拠じゃないため、あまり細部までC言語とは互換性がありませんが、C言語を使える人ならすぐ使えると思います。
-ヒープシステムを使わずに#include <neo-c.h>をしなければ、単なるCコンパイラとして使えます。
+ヒープシステムを使わずに#include <comelang.h>をしなければ、単なるCコンパイラとして使えます。
 
 # HELLO WORLD
 
@@ -351,7 +434,7 @@ int main()
     puts("HELLO WORLD");
     return 0;
 }
-> neo-c a.c
+> comelang a.c
 > ./a
 HELLO WORLD
 ```
@@ -367,12 +450,11 @@ If you want to object file only, use -c option.
 
 # Boehm GC libraries
 
-With -no-gc option for neo-c, disable boehm GC and enable original refference count GC heap system. The default heap system is boehm GC.
+With -no-gc option for my orignal refference count gc, enable my original refference count GC and disable boehmGC. The default heap system is boehm GC.
 
-boehmGCはデフォルトです。オリジナルのヒープシステムを使うには-no-gcをオプションに加えてください。
+boehmGCはデフォルトです。オリジナルのリファレンスカウントGCを使うには-no-gcをオプションに加えてください。
 
-neo-c uses boethm gc with reffrence count, so no stop the world in your application.
-
+comelang uses boethm gc with reffrence count, so no stop the world in your application.
 
 boehmGCはリファレンスカウントをデフォルトにしているため、画面が固まることもないとおもいます。
 
@@ -414,7 +496,9 @@ listの使い方は以下です。
 ```
     list<char*>*% li = new list<char*>();
     
-    li.push_back("AAA").push_back("BBB").push_back("CCC");
+    li.push_back("AAA");
+    li.push_back("BBB");
+    li.push_back("CCC");
     
     if(li === ["AAA", "BBB", "CCC"]) {
         puts("OK");
@@ -491,7 +575,7 @@ Returns the sum of 1,2,3,4,5,6.
 ```
 
 ```
-    immutalbe list<char*>* li = ["AAA", "BBB"];
+    immutalbe list<char*>*% li = ["AAA", "BBB"];
     
     li.push_back("CCC");  /// compile error
 ```
@@ -506,12 +590,26 @@ each accesses all elements with an iterator
 eachは全ての要素にイテレータでアクセスします。
 
 ```
-    int sun = 0;
+    int sum = 0;
     [1,2,3,4,5].each {
         sum += it;
     }
     sum.printf("sum %d\n");
 ```
+
+```
+    int sum = 0;
+    var m = [1,2,3,4,5,6];
+    foreach(it, m) {
+        if(it > 3) {
+            break;
+        }
+        sum += it;
+    }
+    sum.to_string().puts();
+```
+
+foreach can be breaking the loop
 
 ```
     [1,2,3,4,5].to_string().puts();
@@ -611,7 +709,9 @@ mapもあります。
 ```
     var m = new map<char*,int>();
     
-    m.insert("AAA", 1).insert("BBB", 2).insert("CCC", 3);
+    m.insert("AAA", 1)
+    m.insert("BBB", 2)
+    m.insert("CCC", 3);
     
     if(m === ["AAA":1, "BBB":2, "CCC":3]) {
         puts("OK");
@@ -663,10 +763,6 @@ mapの要素になる為には型にハッシュ値の計算の為にget_hash_ke
     ["A":1, "B":2, "C":3].keys() === ["A", "B", "C"]
 ```
 
-However, this is not always true. Because the map is in no particular order, the return value may be ["B", "A", "C"], etc.
-
-ただしこれはtrueになるとは限りません。mapは順不同に入っているため戻り値が["B", "A", "C"]などとなるかもしれないからです。
-
 ```
     ["A":1, "B":2, "C":3].values() === [1,2,3]
 ```
@@ -704,7 +800,7 @@ bufferもあります。
 sample
 
 ``` C
-#include <neo-c.h>
+#include <comelang.h>
 
 int main()
 {
@@ -774,7 +870,10 @@ int main()
     
     xassert("scan test", li8[0] === "A" && li8[1] === "B" && li8[2] === "C");
     
-    xassert("to_buffer test", "ABC".to_buffer().append_str("DEF").to_string() === "ABCDEF");
+    var bufX = "ABC".to_buffer();
+    bufX.append_str("DEF");
+    
+    xassert("to_buffer test", bufX.to_string() === "ABCDEF");
     xassert("split block test", "ABC,DEF,GHI".split_block(/,/) { it.substring(0,1); }.join("") === "ADG");
     xassert("split block test", "ABC,DEF,GHI".split_block_count(/,/, 2) { it.substring(0,1); }.join("") === "AD");
     xassert("regex test", "ABC".scan(/./).join("") === "ABC");
@@ -913,11 +1012,11 @@ fun finish
 a.c
 b.c
 c.c
-> ls | neo-c -e 'stdin.readlines().map { it.strip(); }.join(",").printf("[%s]\n")'
+> ls | comelang -e 'stdin.readlines().map { it.strip(); }.join(",").printf("[%s]\n")'
 [a.c,b.c,c.c]
-> ls | neo-c -e 'stdin.readlines().map { it.strip(); }.join(",").puts()'
+> ls | comelang -e 'stdin.readlines().map { it.strip(); }.join(",").puts()'
 a.c,b.c,c.c
-> ls | neo-c -e 'stdin.readlines().map { it.strip(); }.join(",").print()'
+> ls | comelang -e 'stdin.readlines().map { it.strip(); }.join(",").print()'
 a.c,b.c,c.c
 ```
 
@@ -965,7 +1064,7 @@ You can be assured that the state of that argument will not change.
 immutable and mutable can be assigned to each other. However, the function specified by mutalbe cannot be called for the variable specified by immutable.
 
 変数はimmutableを指定することができます。immutableを指定された変数はmutable指定されたメソッドを呼び出すことができません。
-例えばlist<T>::push_backはmutable指定されています。そのためimmutable list<int>*などと宣言された変数にpush_backを呼び出すとコンパイルエラーとなります。
+例えばlist<T>::push_backはmutable指定されています。そのためimmutable list<int>*%などと宣言された変数にpush_backを呼び出すとコンパイルエラーとなります。
 
 immutableの意味ですが、immutable指定された変数は状態が変わらないことを保証します。equalsの結果は変化しません。
 list, vector, map, bufferもそのように設計されています。immutableのメリットですが関数の引数にオブジェクトを渡す場合immutable指定しておけば
@@ -1053,42 +1152,40 @@ bool string::operator_equals(char* left, char* right);
 # Guarding from the segmetation of null poiner
 
 ``` C
-    //int* a = null;   /// compile error
-    
-    int*? a = null;
-    
-    //printf("%d\n", *a!);   // exception. print out the file name of source code and the line number
-    
-    int b = 123;
-    
-    // a = &b;  // compile error
-    
-    a = nullable &b;
-    
-    printf("%d\n", *a!);  // null check and get the value of a
-    
-    // b = *a;  /// compile error
-    
-    b = *(nonullable a);
-```
+#include <comelang.h>
 
-``` C
-#include <neo-c.h>
+int fun(int* p)
+{
+    if(p != null) {
+        puts(a);
+    }
+}
 
 int main(int argc, char** argv)
 {
-    int*? a = null;
+    int* a = null;
     
-    guard(a) {
-        fprintf(stderr, "a is null\n");
-        return 1;
-    }
+    //puts(a);   /// exception print out source file name and lines;
     
-    int* b = a;
+    //puts(a!);  // segmentaion fault;
+    
+    // fun(a);   // exception print out source file name and lines
+    
+    fun(a!);     // ok
     
     return 0;
 }
 ```
+
+Cで書かれた関数にはNULLを渡すことがありますが、普通はNULL!とすればわたすことができます。しかし、cursesのattron(A_REVERSE)などはNULL!を渡すことができないため実行時エラーとなります。防ぐためにはusing c {attron(A_REVERSE); }としてください。NULLチェックが実行時には行われません。
+
+NULL may be passed to a function written in C, but normally it can be passed with NULL!. However, attron (A_REVERSE) of curses cannot pass NULL!, so a runtime error occurs. use c { attron(A_REVERSE); } to prevent it. No null checking is done at runtime.
+
+using no-null-check; とすると以降のコードでnullチェックが行われません。パフォーマンスが問題になる場合は使ってみてください。
+
+If using no-null-check; is used, null checks will not be performed in the subsequent code. Performance~
+If performance is an issue, try using it.
+
 
 # mixin-layers system
 
@@ -1144,139 +1241,18 @@ int fun(bool flag)
 
 int main()
 {
-    fun(false`flag);
+    fun(false@flag);
 
     return 0;
 }
 ```
 
-`[a-zA-Z][a-zA-Z_0-9]* is a comment of expression.
-
-# Reflection
-
-``` C
-> vim a.c
-struct sB {
-    int a;
-    char* b;
-    struct sB* c;
-};
-
-int main() {
-    sB b;
-    b;
-> neo-c type a.c
-struct sB
-#0 int a
-#1 char* b
-#2 struct sB*
-```
-
-neo-c type file name outputs the type of last expression and the type inner contents. It's useful for reflection. You will make a program output a program with any script languaged or neo-c its self.
-
-neo-c type ファイル名で最後の式の型とその内容を出力することができます。これはリフレクションで便利です。プログラムを生成するプログラムを任意のスクリプト言語やneo-c自身で作ることができるでしょう。
-
-``` C
-> vim a.c
-int gGlobal1;
-int gGlobal2;
-> neo-c global a.c
-gGlobal1 int
-gGlobal2 int
-```
-
-``` C
-> vim a.c
-int fun(int a, int b)
-{
-    return a + b;
-}
-
-int fun2()
-{
-    return 123;
-}
-> neo-c function a.c
-fun extern 0 var args 0 gnerics function 0 num params 2
-a int
-b int
-result type int
-fun2 extern 0 var args 0 gnerics function 0 num params 0
-result type int
-```
-
-``` C
-> vim a.c
-struct sA 
-{
-    int a;
-    int b;
-};
-
-enum eEnumA { kA, kB };
-> neo-c class a.c
-struct sA
-#0 int a
-#1 int b
-enum eEnumA
-kA 0
-kB 1
-```
-
-``` C
-> vim a.c
-typedef int tType;
-typedef int tType2;
-> neo-c typedef a.c
-tType int
-tType2 int
-```
-
-9. MACRO
-
-~~~ C
-```
-ruby <<EOS
-    puts("int gGlobal2;");
-EOS
-```
-~~~
-
-The output of the enclosed code is pasted into the source code. With this and reflection, you'll be able to generate code with reflection at compile time.
-
-囲まれたコードの出力がソースコードに貼り付けます。これとリフレクションを使えばコンパイルタイムにリフレクションでコードを生成できるでしょう。
-
-Do not expand macros with the -n option.
-
--nオプションを使うとマクロを展開しません。
-
-Compile Time Reflection and code generation is below:
-
-~~~ shell
-> vim g.c
-~~~
-
-``` C
-int gGlobal;
-
-
-ruby <<EOS
-    type = "`neo-c -n global $SOURCE_NAME | grep gGlobal`".split()[1];
-    puts(type + " gGlobal2;");
-EOS
-```
-~~~ shell
-> neo-c global g.c
-gGlobal int
-gGlobal2 int
-~~~
-
-SOURCE_NAMEという環境変数にコンパイル中のソースファイル名が入ってます。
+@[a-zA-Z][a-zA-Z_0-9]* is a comment of expression.
 
 # BoehmGC
 
-The default heap system is boehmGC. And incremental GC is enabled.
- It's faster then my original heap system. If you write char*% as type name, ignored % and it's char*.
+comelang with -gc enable boehmGC. And incremental GC is enabled.
+If you write char*% as type name, ignored % and it's char*.
  
 
 # Original Heap System(Incremental GC)
@@ -1437,8 +1413,15 @@ int main(int argc, char** argv)
 ```
 
 sData*::cloneも自動的に定義されます。浅いコピーでなく深いコピーです。
+浅いコピーはshallow_copyとしてください。sData*::shallow_copyがもし定義されていれば呼ばれます。
 
 構造体やunionも普通の変数と同じルールです。
+
+sData*::clone is also defined automatically. It's a deep copy, not a shallow copy.
+Use shallow_copy for shallow copies. At this time, if sData*::shallow_copy is defined ~
+is called.
+
+Structures and unions follow the same rules as ordinary variables.
 
 ``` C
 struct sA {
@@ -1447,6 +1430,8 @@ struct sA {
 
 int main()
 {
+    using unsafe;
+    
     int*% a = new int;
     *a = 5;
 
@@ -1459,11 +1444,44 @@ int main()
 
 aのリファレンスカウントは２なので、aがfreeされるのはブロックをぬけだしたときです。
 
+リファレンスカウントを+1するにはgc_incを使います。リファレンスカウントを-1するにはgc_decを使います。
+
+``` C
+struct sA {
+   int*% a;
+};
+
+int main()
+{
+    sA*% data = new sA;
+    
+    gc_inc data; // no free data, memory leak
+
+    return 0;
+}
+```
+
+``` C
+struct sA {
+   int*% a;
+};
+
+int main()
+{
+    sA*% data = new sA;
+    
+    gc_inc data;
+    gc_dec data;  // free object, calling finalizer
+
+    return 0;
+}
+```
+
 
 finalizeとcloneメソッドとequalsメソッドは自動的に定義されます。
 
 ``` C
-#include <neo-c.h>
+#include <comelang.h>
 
 struct sInfo
 {
@@ -1489,7 +1507,7 @@ int main()
 
 # Generics(Original Heap version)
 
-Generics is a code generation method. I have implemented it, but basically I am making it for the collection library of the basic library. We do not recommend using Generics for your own application code. This is because the code be neo-c complicated. If you want to make your own library, you can use it. The vector is defined as follows.
+Generics is a code generation method. I have implemented it, but basically I am making it for the collection library of the basic library. We do not recommend using Generics for your own application code. This is because the code be comelang complicated. If you want to make your own library, you can use it. The vector is defined as follows.
 
 Genericsはコード生成方式です。実装してますが、基本的に基本ライブラリのコレクションライブラリ用に作っています。
 自作のアプリケーションコードにGenericsを使うことはお勧めしません。コードが複雑になるためです。
@@ -1936,7 +1954,7 @@ template <R> R fun(R a, int b)
 
 int main() 
 {
-    sStruct<int>* data = new sStruct<int>;
+    sStruct<int>*% data = new sStruct<int>;
 
     xassert("method generics test", fun(1,2) == 3);
     xassert("method generics test", data.fun2(1,2) == 3);
@@ -1973,101 +1991,10 @@ int main()
 }
 ```
 
-# automatically output to common header
-
-neo-c header common.h a.c b.c, ...
-
-とするとcommon.hにa.c b.c, ...の宣言が出力されます。
-
-public { #include <neo-c.h> }
-
-とするとcommon.hに#include <neo-c.h>が追加されます。
-
-ファイル内だけの宣言はprivate int A;などとします。static int A;でも同じです。関数、union, struct, typedefも同様です。
-
-``` C
-> vim a.c
-#include "common.h"
-
-public {#include <neo-c.h>}
-
-private int gA;
-public {int gB;}
-
-open_struct sA
-{
-    int a;
-    int b;
-};
-
-int main(int argc, char** argv)
-{
-    sA a;
-    a.a = 111;
-    a.b = 222;
-    a.c = 333;
-    a.d = 444;
-    
-    printf("%d %d %d %d\n", a.a, a.b, a.c, a.d);
-    
-    gA = 222;
-    gB = 333;
-    gC = 444;
-    
-    printf("%d %d %d\n", gA, gB, gC);
-    
-    printf("%d\n", fun());
-    
-    return 0;
-}
-
-> vim b.c
-#include "common.h"
-
-public {int gC};
-
-open_struct sA
-{
-    int c;
-    int d;
-};
-
-int fun() { return 123 }
-
-> neo-c header common.h a.c b.c
-> cat common.h
-struct sA
-{
-    /// a.c ///
-    int a;
-    int b;
-
-    /// b.c ///
-    int c;
-    int d;
-};
-////////////////////////////
-// a.c
-////////////////////////////
-#include <neo-c.h>
-
-int gB;
-
-int main(int argc, char** argv);
-
-////////////////////////////
-// b.c
-////////////////////////////
-int gC
-
-int fun();
-
-```
-
 # multiple assign
 
 ``` C
-#include <neo-c.h>
+#include <comelang.h>
 
 int, string fun(int n, string m) 
 {
@@ -2143,7 +2070,7 @@ int main()
 # smart pointer
 
 ``` C
-#include <neo-c.h>
+#include <comelang.h>
 
 int main(int argc, char** argv)
 {
@@ -2162,16 +2089,43 @@ int main(int argc, char** argv)
 ```
 
 ``` shell
-> neo-c a.c
+> comelang a.c
 > ./a
 a.c 12: out of range of smart pointer
 ```
 
 ``` C
-#include <neo-c.h>
+#include <comelang.h>
 
 int main(int argc, char** argv)
 {
+    buffer*% buf = new buffer();
+    
+    buf.append_int(1);
+    buf.append_int(2);
+    buf.append_int(3);
+    
+    smart_pointer<int>*% p = buf.to_int_pointer();
+    
+    printf("%d\n", *p); // 1;
+    p++;
+    printf("%d\n", *p); // 2;
+    p++;
+    printf("%d\n", *p); // 3;
+    p++;
+    //p++;              // exception. print out source file name and line.
+    
+    return 0;
+}
+```
+
+``` C
+#include <comelang.h>
+
+int main(int argc, char** argv)
+{
+    using unsafe;
+    
     int a[10];
     for(int i=0; i<10; i++) {
         a[i] = i;
@@ -2190,7 +2144,7 @@ int main(int argc, char** argv)
 # exception
 
 ``` C
-#include <neo-c.h>
+#include <comelang.h>
 
 exception int div_op(int left, int right)
 {
@@ -2202,9 +2156,14 @@ exception int div_op(int left, int right)
 
 exception int test(int left, int right)
 {
+    return div_op(left, right) throws;
+/*
+    <=>
+    
     return div_op(left, right).catch {
         throw;
     }
+*/
 }
 
 int main()
@@ -2223,21 +2182,49 @@ int main()
 # unsafe, safe
 
 ``` C
-#include <neo-c.h>
-
-using safe;
+#include <comelang.h>
 
 void fun(char* p)
 {
+    printf("%c\n", *p);   // compile error
+    
+    p++;                  // compile error
+    p--;                  // compile error
+    
+    var p2 = "ABC".to_buffer().to_pointer();
+    
+    p2++;                 // no compile error
+    
+    printf("%c\n", *p2);  // no compile error
+    
     using unsafe;
     
-    printf("%c\n", *p);
+    printf("%c\n", *p);   // no compile error
 }
 ```
+
+ポインタのデリファレンスとインクリメント、デクリメントは、safeモードでは許されていません。safeモードはデフォルトです。ポインタのデリファレンスとインクリメント、デクリメントをしたい場合はusing unsafeとしてください。関数の外で宣言するとそれ以降全てのソースでunsafeとなります。関数内で宣言すると、その関数の中でunsafeとなります。ポインタの操作はsafeモードでは原則禁止です。スマートポインタを使ってください。スマートポインタでは範囲チェックを行います。セグメンテーションフォルトが起こりません。
+
+Pointer dereference and increment/decrement are allowed in safe mode~
+Is not ... safe mode is the default. Dereferencing and incrementing pointers~
+If you want to decrement, use using unsafe. When declared outside a function ~
+After that, all sources will be unsafe. Declaring it inside a function makes it unsafe inside that function. Pointer manipulation is prohibited in principle in safe mode. smart pointer ~
+please use it. Smart pointers do bounds checking. Segmentation~
+no faults.
+
+配列もセーフモードでは宣言禁止です。配列を使う場合はusing unsafeしてください。
+
+Arrays are also not allowed to be declared in safe mode. Use unsafe when using arrays.
+
+From version 1.3.0, unsafe mode is default.
+
+1.3.0よりアンセーフモードがデフォルトになりました。
 
 # fn
 
 ``` C
+#include <comelang.h>
+
 fn fun(a:int, b:int*) -> int
 {
     return a + b[0];
@@ -2250,22 +2237,41 @@ int main()
     int i;
     for(i=0; i<10; i++) {
         a[i] = fun(1, a);
-printf("%d %d\n", i, a[i]);
     }
     
     return 0;
 }
 ```
 
+# post derefference
+
+```C
+#include <comelang.h>
+
+int main()
+{
+    using unsafe;
+    
+    char* p = "ABC";
+    
+    printf("%c\n", p>>>); // put A
+    
+    return 0;
+}
+
 # as
 
 ``` C
+#include <comelang.h>
+
 int main()
 {
+    using unsafe;
+    
     var a = 123;
     void* b = &a;
     
-    printf("%d\n", *(b as int*));
+    printf("%d\n", b as int*>>>); // put 123
     
     return 0;
 }
@@ -2313,7 +2319,7 @@ int main()
 # Protocol, interface
 
 ``` C
-#include <neo-c.h>
+#include <comelang.h>
 
 interface sBase
 {
@@ -2360,3 +2366,69 @@ int main(int argc, char** argv)
 }
 
 ```
+
+# Reflection
+
+removed.
+
+# MACRO
+
+removed.
+
+# あとがき
+
+ダンジリングポインタについては僕は防ぐのは自明なので、あんまどうでもいいですね
+。
+あれがわかってないとC言語わかっているとは言えないような。
+というかCPUとメモリについて。
+まあ、一応今防ぐ仕組み入ってますが、消すかもしれません。
+自明すぎて。
+ダンジリングポインタでセグってC言語嫌いになられては嫌ですが。
+やっぱ入れとくか。
+一応ある程度はメモリセーフです。comelang。
+コンパイラ自体がセグることは論外ですがたまにあります。
+実行時の実行ファイルはあまりセグらないと思います.
+まあリファクタリングとメモリセーフが課題ですかね
+メモリの管理については慣れが必要です
+まあ、結局メモリとCPUがわかってないと無理かもしれません
+ただ、STWも起きないですし、それなりのパフォーマンスはでてます
+puts(null)がセグらないのはまだましじゃないでしょうか
+かなりコストかかりますが
+まあ、RubyとPythonよりは速いでしょ
+あと成果物のzedはかなり良いです
+僕的にはテキスト処理はzedで事足りると思います
+zedで遊んでて飽きないくらい面白いですよ
+echo HELLO WORLD | zed '.scan_block(/./) { if it == " " { it } else { it + "B" }' => HBEBLBLBOB WBOBRBLBDB
+って動き面白くないですか？
+マニュアルはソース読めと言いたいところですが、また書きます
+ソースはmixin-layersで書いてあるのでVMのサンプルとしても良いと思います
+読みやすいですよ。mixin-layersは。
+mixin-layersとはレイヤーを重ねるようにソフトウェアを作っていく技法です
+photoshopのレイヤーと同じです
+あれは可読性も良く、また移植も簡単です。
+デバッグも小さいレイヤーから、動かして、バグを突き止めることができます
+複数のレイヤーがあっても、どのレイヤーの時点でもソフトウェアは完結しているので
+zedはきれいなソースですよ。多分初心者が読んでも読めると思います
+まあ、可読性といえばboehmGCをデフォルトにしたほうが良い気はしますが
+borrow , dummy_heapあたりは難しいと思います
+ただ慣れれば割と楽にかけるとは思います
+まあ、あとはリファクタリングとメモリセーフを追求します。
+
+C言語については思い残すところがありません。30年間楽しみをありがとう。
+UNIX, C, vi, sed, awk, perl, ruby, pythonあたりの製作者に深く感謝です。
+30年間楽しませてもらいました。まだまだ楽しみたいと思います。
+
+comelangは嫁の結花と飼い犬の柴犬ハチに捧げます。
+嫁はパソコンオタクの僕にも広い心で接してくれて、結婚生活が順調だったため
+comelangが作れました。割と良いものが作れたと思います。
+まだまだ楽しみます。
+一緒に楽しみましょう。
+come together!
+
+
+# Postscript
+
+As for the dangling pointer, it's self-evident for me to prevent it, so I don't care. If you don't understand that, you can't say you understand the C language. About CPU and memory. Well, I have a mechanism to prevent it now, but I might delete it. is. It's out of the question that the comelang compiler itself segregates, but it happens sometimes.I don't think the executable file at runtime will segregate much.I guess refactoring and memory safety are issues.It's necessary to get used to managing memory.Well, after all, memory and CPU It may be impossible if you don't understand it However, STW does not occur, and the performance is reasonable. And it's faster than Python, isn't it? Also, zed is pretty good as a result. I think zed is enough for text processing. /) { if it == " " { it } else { it + "B" }' => HBEBBLLBOB WBOBBRBLBDB Isn't it fun? I would like to say that you should read the source manual, but I will write it again. The source is written in mixin-layers, so I think it can be used as a VM sample. mixin-layers. Mixin-layers is a technique to create software layer by layer, which is the same as photoshop layers. Debugging can also be started from a small layer, and bugs can be found. Even if there are multiple layers, the software is complete at any layer, so zed is a clean source. I think even beginners can read it. Well, I think it's better to use boehmGC as the default when it comes to readability, but I think borrow and dummy_heap are difficult. Pursue refactoring and memory safety. I have no regrets about the C language. Thank you for 30 years of fun. I am deeply grateful to the creators of UNIX, C, vi, sed, awk, perl, ruby, and python. I have enjoyed it for 30 years. I still want to enjoy it.
+
+comelang is dedicated to his wife, Yuka, and his dog, Hachi, a Shiba Inu. My wife treated me with a big heart, even though I'm a computer geek, and my marriage was going well, so I was able to create comelang. I think I made something pretty good. I still enjoy it. Let's have fun together. come together!
+

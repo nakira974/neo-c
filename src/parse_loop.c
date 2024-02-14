@@ -120,11 +120,11 @@ BOOL parse_if(unsigned int* node, sParserInfo* info)
 
 BOOL parse_throw(unsigned int* node, sParserInfo* info)
 {
-    *node = sNodeTree_create_int_value(0, info);
+    *node = sNodeTree_create_throw_null_value(info);
     
     create_exception_result_value(node, TRUE, info);
     
-    *node = sNodeTree_create_return(*node, info);
+    *node = sNodeTree_create_return(*node, FALSE, info);
     
     return TRUE;
 }
@@ -150,16 +150,16 @@ BOOL parse_catch(unsigned int* node, sParserInfo* info)
     snprintf(var_names[1], VAR_NAME_MAX, "catchb%d", n);
     
     check_already_added_variable(info->lv_table, var_names[0], info);
-    if(!add_variable_to_table(info->lv_table, var_names[0], NULL, FALSE, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
+    if(!add_variable_to_table(info->lv_table, var_names[0], "", NULL, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
     {
-        fprintf(stderr, "overflow variable table\n");
+        fprintf(stderr, "%s %d: overflow variable table\n", gSName, gSLine);
         exit(2);
     }
     
     check_already_added_variable(info->lv_table, var_names[1], info);
-    if(!add_variable_to_table(info->lv_table, var_names[1], NULL, FALSE, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
+    if(!add_variable_to_table(info->lv_table, var_names[1], "", NULL, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
     {
-        fprintf(stderr, "overflow variable table\n");
+        fprintf(stderr, "%s %d: overflow variable table\n", gSName, gSLine);
         exit(2);
     }
     
@@ -168,7 +168,7 @@ BOOL parse_catch(unsigned int* node, sParserInfo* info)
     nodes[num_nodes] = sNodeTree_create_store_variable_multiple(num_vars, var_names2, *node, alloc, info);
     num_nodes++;
     
-    unsigned int node2 = sNodeTree_create_load_variable(var_names[1], info);
+    unsigned int node2 = sNodeTree_create_load_variable(var_names[1], FALSE, info);
     
     unsigned int expression_node = sNodeTree_create_logical_denial(node2, 0, 0, info);
 
@@ -192,7 +192,7 @@ BOOL parse_catch(unsigned int* node, sParserInfo* info)
     nodes[num_nodes] = sNodeTree_if_expression(expression_node, MANAGED if_node_block, elif_expression_nodes, elif_node_blocks, elif_num, MANAGED else_node_block, info, sname, sline);
     num_nodes++;
     
-    nodes[num_nodes] = sNodeTree_create_load_variable(var_names[0], info);
+    nodes[num_nodes] = sNodeTree_create_load_variable(var_names[0], TRUE, info);
     num_nodes++;
     
     BOOL result_type_is_void2 = FALSE;
@@ -202,29 +202,66 @@ BOOL parse_catch(unsigned int* node, sParserInfo* info)
     }
     
     *node = sNodeTree_create_normal_block(node_block, info);
+/*
+    BOOL in_macro = FALSE;
+    *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
+*/
     
     return TRUE;
 }
 
-BOOL parse_guard(unsigned int* node, sParserInfo* info)
+BOOL parse_throws(unsigned int* node, sParserInfo* info)
 {
+    gNodes[*node].uValue.sFunctionCall.mParseCatch = TRUE;
+    
     char sname[PATH_MAX];
     xstrncpy(sname, info->sname, PATH_MAX);
     int sline = info->sline;
-
-    expect_next_character_with_one_forward("(", info);
     
-    char buf[VAR_NAME_MAX];
-    if(!parse_word(buf, VAR_NAME_MAX, info, TRUE, FALSE)) {
-        return FALSE;
-    }
+    unsigned int nodes[128];
+    int num_nodes = 0;
 
     /// expression ///
-    expect_next_character_with_one_forward(")", info);
+    static int n = 0;
+    n++;
+    
+    int num_vars = 2;
+    char var_names[2][VAR_NAME_MAX];
+    snprintf(var_names[0], VAR_NAME_MAX, "catcha%d", n);
+    snprintf(var_names[1], VAR_NAME_MAX, "catchb%d", n);
+    
+    check_already_added_variable(info->lv_table, var_names[0], info);
+    if(!add_variable_to_table(info->lv_table, var_names[0], "", NULL, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
+    {
+        fprintf(stderr, "%s %d: overflow variable table\n", gSName, gSLine);
+        exit(2);
+    }
+    
+    check_already_added_variable(info->lv_table, var_names[1], info);
+    if(!add_variable_to_table(info->lv_table, var_names[1], "", NULL, gNullLVALUE, -1, info->mBlockLevel == 0, FALSE, FALSE))
+    {
+        fprintf(stderr, "%s %d: overflow variable table\n", gSName, gSLine);
+        exit(2);
+    }
+    
+    BOOL alloc = TRUE;
+    char* var_names2[2] = { var_names[0], var_names[1] };
+    nodes[num_nodes] = sNodeTree_create_store_variable_multiple(num_vars, var_names2, *node, alloc, info);
+    num_nodes++;
+    
+    unsigned int node2 = sNodeTree_create_load_variable(var_names[1], FALSE, info);
+    
+    unsigned int expression_node = sNodeTree_create_logical_denial(node2, 0, 0, info);
 
     sNodeBlock* if_node_block = NULL;
     BOOL result_type_is_void = TRUE;
-    if(!parse_block_easy(ALLOC &if_node_block, FALSE, result_type_is_void, FALSE, info))
+    
+    sParserInfo pinfo;
+
+    pinfo = *info;
+    pinfo.p = "{ throw; }";
+
+    if(!parse_block_easy(ALLOC &if_node_block, FALSE, result_type_is_void, FALSE, &pinfo))
     {
         return FALSE;
     }
@@ -239,8 +276,24 @@ BOOL parse_guard(unsigned int* node, sParserInfo* info)
 
     sNodeBlock* else_node_block = NULL;
 
-    *node = sNodeTree_guard_expression(buf,  MANAGED if_node_block, info, sname, sline);
-
+    nodes[num_nodes] = sNodeTree_if_expression(expression_node, MANAGED if_node_block, elif_expression_nodes, elif_node_blocks, elif_num, MANAGED else_node_block, info, sname, sline);
+    num_nodes++;
+    
+    nodes[num_nodes] = sNodeTree_create_load_variable(var_names[0], TRUE, info);
+    num_nodes++;
+    
+    BOOL result_type_is_void2 = FALSE;
+    sNodeBlock* node_block = NULL;
+    if(!create_block(&node_block, num_nodes, nodes, result_type_is_void2, info)) {
+        return FALSE;
+    }
+    
+    *node = sNodeTree_create_normal_block(node_block, info);
+/*
+    BOOL in_macro = FALSE;
+    *node = sNodeTree_create_nodes(nodes, num_nodes, in_macro, info);
+*/
+    
     return TRUE;
 }
 
@@ -442,114 +495,12 @@ BOOL parse_for(unsigned int* node, sParserInfo* info)
     }
 
     if(!single_expression) {
-        if(gNCType) {
-            if(*info->p != '\0') {
-                expect_next_character_with_one_forward("}", info);
-            }
-        }
-        else {
-            expect_next_character_with_one_forward("}", info);
-        }
+        expect_next_character_with_one_forward("}", info);
     }
 
     *node = sNodeTree_for_expression(expression_node, expression_node2, expression_node3, MANAGED for_node_block, info);
 
     info->lv_table = old_vtable;
-
-    return TRUE;
-}
-
-BOOL parse_select(unsigned int* node, sParserInfo* info)
-{
-    int num_pipes = 0;
-    char pipes[SELECT_MAX][VAR_NAME_MAX+1];
-    sNodeBlock* pipe_blocks[SELECT_MAX];
-
-    expect_next_character_with_one_forward("{", info);
-
-    while(TRUE) {
-        if(!parse_word(pipes[num_pipes], VAR_NAME_MAX, info, TRUE, FALSE))
-        {
-            return FALSE;
-        }
-
-        BOOL result_type_is_void = TRUE;
-        if(!parse_block_easy(ALLOC &pipe_blocks[num_pipes], FALSE, result_type_is_void, FALSE, info))
-        {
-            return FALSE;
-        }
-
-        num_pipes++;
-
-        if(*info->p == '}') {
-            info->p++;
-            skip_spaces_and_lf(info);
-            break;
-        }
-    }
-
-    char* pipes2[SELECT_MAX];
-
-    int i;
-    for(i=0; i<num_pipes; i++) {
-        pipes2[i] = pipes[i];
-    }
-
-    *node = sNodeTree_create_select(num_pipes, pipes2, pipe_blocks, info);
-
-    return TRUE;
-}
-
-BOOL parse_pselect(unsigned int* node, sParserInfo* info)
-{
-    int num_pipes = 0;
-    char pipes[SELECT_MAX][VAR_NAME_MAX+1];
-    sNodeBlock* pipe_blocks[SELECT_MAX];
-    sNodeBlock* default_block = NULL;
-
-    expect_next_character_with_one_forward("{", info);
-
-    while(TRUE) {
-        char buf[VAR_NAME_MAX];
-        if(!parse_word(buf, VAR_NAME_MAX, info, TRUE, FALSE))
-        {
-            return FALSE;
-        }
-
-        if(strcmp(buf, "default") == 0) {
-            BOOL result_type_is_void = TRUE;
-            if(!parse_block_easy(ALLOC &default_block, FALSE, result_type_is_void, FALSE, info))
-            {
-                return FALSE;
-            }
-        }
-        else {
-            xstrncpy(pipes[num_pipes], buf, VAR_NAME_MAX);
-
-            BOOL result_type_is_void = TRUE;
-            if(!parse_block_easy(ALLOC &pipe_blocks[num_pipes], FALSE, result_type_is_void, FALSE, info))
-            {
-                return FALSE;
-            }
-
-            num_pipes++;
-        }
-
-        if(*info->p == '}') {
-            info->p++;
-            skip_spaces_and_lf(info);
-            break;
-        }
-    }
-
-    char* pipes2[SELECT_MAX];
-
-    int i;
-    for(i=0; i<num_pipes; i++) {
-        pipes2[i] = pipes[i];
-    }
-
-    *node = sNodeTree_create_pselect(num_pipes, pipes2, pipe_blocks, default_block, info);
 
     return TRUE;
 }

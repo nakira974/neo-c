@@ -1,40 +1,29 @@
-#include <neo-c.h>
+#include <comelang.h>
 #include "common.h"
-
-struct sParam
-{
-    string mName;
-    sType* mType;
-};
 
 sParam* sParam*::initialize(sParam* self, string name, sType* type)
 {
-    self.mName = name;
+    self.mName = string(name);
     self.mType = type;
     
     return self;
-}
-
-struct sFunction {
-    string name;
-    sType* result_type;
-    list<sParam*>* params;
-    LLVMValueRef llvm_fun;
 };
 
 map<string,sFunction*>* gFuncs;
 
 sFunction* sFunction*::initialize(sFunction* self, string name, sType* result_type, list<sParam*>* params, LLVMValueRef llvm_fun)
 {
-    self.name = string(name);
+    self.mName = string(name);
     self.result_type = result_type;
     self.params = params;
     self.llvm_fun = llvm_fun;
+    self.mVarArgs = false;
     
     gFuncs.insert(name, self);
     
     return self;
-}
+};
+
 
 void func_init()
 {
@@ -125,7 +114,7 @@ sNodeBlock*, bool parse_block(sInfo* info)
     expect_next_character_with_one_forward("{", info);
     
     sVarTable* lv_table = info.lv_table;
-    node_block.lv_table = init_block_vtable(info->lv_table);
+    node_block.lv_table = init_block_vtable(info->lv_table!);
     info.lv_table = node_block.lv_table;
     
     while(true) {
@@ -150,7 +139,7 @@ sNodeBlock*, bool parse_block(sInfo* info)
     (node_block, true);
 }
 
-private struct sFunNode
+struct sFunNode
 {
     int id;
     
@@ -160,7 +149,7 @@ private struct sFunNode
     sNodeBlock* node_block
 };
 
-private sFunNode* sFunNode*::initialize(sFunNode* self, string name, list<sParam*>* params, sType* result_type, sNodeBlock* node_block)
+sFunNode* sFunNode*::initialize(sFunNode* self, string name, list<sParam*>* params, sType* result_type, sNodeBlock* node_block)
 {
     self.id = gNodeID++;
     
@@ -172,7 +161,7 @@ private sFunNode* sFunNode*::initialize(sFunNode* self, string name, list<sParam
     return self;
 }
 
-private unsigned int sFunNode*::id(sFunNode* self)
+unsigned int sFunNode*::id(sFunNode* self)
 {
     return self.id;
 }
@@ -199,7 +188,7 @@ bool compile_block(sNodeBlock* node_block, sInfo* info)
     return true;
 }
 
-private bool sFunNode*::compile(sFunNode* self, sInfo* info)
+bool sFunNode*::compile(sFunNode* self, sInfo* info)
 {
     sType* result_type = self.result_type;
     char* fun_name = self.name;
@@ -217,7 +206,7 @@ private bool sFunNode*::compile(sFunNode* self, sInfo* info)
     int i = 0;
     foreach(it, params) {
         llvm_param_types[i] = create_llvm_type_from_node_type(it.mType);
-        info.lv_table.add_variable(it.mName, nullable it.mType);
+        info.lv_table.add_variable(it.mName, it.mType);
         
         i++;
     }
@@ -225,7 +214,7 @@ private bool sFunNode*::compile(sFunNode* self, sInfo* info)
     LLVMTypeRef llvm_result_type = create_llvm_type_from_node_type(result_type);
     LLVMTypeRef llvm_fun_type;
     if(params.length() == 0) {
-        llvm_fun_type = LLVMFunctionType(llvm_result_type, NULL, 0, var_arg);
+        llvm_fun_type = LLVMFunctionType(llvm_result_type, NULL!, 0, var_arg);
     }
     else {
         llvm_fun_type = LLVMFunctionType(llvm_result_type, llvm_param_types, num_params, var_arg);
@@ -271,7 +260,7 @@ private bool sFunNode*::compile(sFunNode* self, sInfo* info)
         
         LLVMBuildStore(gBuilder, param, llvm_value.value);
 
-        var_!->llvm_value = llvm_value.value;
+        var_->llvm_value = llvm_value.value;
     }
 
     if(!compile_block(node_block, info)) {
@@ -289,13 +278,13 @@ private bool sFunNode*::compile(sFunNode* self, sInfo* info)
     return true;
 }
 
-private struct sPackageNode
+struct sPackageNode
 {
     int id;
     string name;
 };
 
-private sPackageNode* sPackageNode*::initialize(sPackageNode* self, char* name)
+sPackageNode* sPackageNode*::initialize(sPackageNode* self, char* name)
 {
     self.id = gNodeID++;
     self.name = string(name);
@@ -303,24 +292,24 @@ private sPackageNode* sPackageNode*::initialize(sPackageNode* self, char* name)
     return self;
 }
 
-private unsigned int sPackageNode*::id(sPackageNode* self)
+unsigned int sPackageNode*::id(sPackageNode* self)
 {
     return self.id;
 }
 
-private bool sPackageNode*::compile(sPackageNode* self, sInfo* info)
+bool sPackageNode*::compile(sPackageNode* self, sInfo* info)
 {
     info->last_expression_is_return = false;
     return true;
 }
 
-private struct sReturnNode
+struct sReturnNode
 {
     int id;
     sNode*? value;
 };
 
-private sReturnNode* sReturnNode*::initialize(sReturnNode* self, sNode*? value, sInfo* info)
+sReturnNode* sReturnNode*::initialize(sReturnNode* self, sNode*? value, sInfo* info)
 {
     self.id = gNodeID++;
     self.value = value;
@@ -330,14 +319,14 @@ private sReturnNode* sReturnNode*::initialize(sReturnNode* self, sNode*? value, 
     return self;
 }
 
-private unsigned int sReturnNode*::id(sReturnNode* self)
+unsigned int sReturnNode*::id(sReturnNode* self)
 {
     return self.id;
 }
 
-private bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
+bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
 {
-    if(!self.value!.compile->(info)) {
+    if(!self.value.compile->(info)) {
         return false;
     }
     
@@ -350,14 +339,14 @@ private bool sReturnNode*::compile(sReturnNode* self, sInfo* info)
     return true;
 }
 
-private struct sFunCall
+struct sFunCall
 {
     int id;
     string name;
     list<sNode*>* params;
 };
 
-private sFunCall* sFunCall*::initialize(sFunCall* self, string name, list<sNode*>* params)
+sFunCall* sFunCall*::initialize(sFunCall* self, string name, list<sNode*>* params)
 {
     self.id = gNodeID++;
     self.name = string(name);
@@ -366,12 +355,12 @@ private sFunCall* sFunCall*::initialize(sFunCall* self, string name, list<sNode*
     return self;
 }
 
-private unsigned int sFunCall*::id(sFunCall* self)
+unsigned int sFunCall*::id(sFunCall* self)
 {
     return self.id;
 }
 
-private bool sFunCall*::compile(sFunCall* self, sInfo* info)
+bool sFunCall*::compile(sFunCall* self, sInfo* info)
 {
     int num_params = self.params.length();
     
@@ -406,7 +395,24 @@ private bool sFunCall*::compile(sFunCall* self, sInfo* info)
     
     if(type_identify_with_class_name(result_type, "void") && result_type->pointer_num == 0)
     {
+        sType* result_type = fun->result_type;
+        
+        LLVMTypeRef llvm_param_types[PARAMS_MAX];
+        
+        for(i=0; i<num_params; i++) {
+            sType* fun_param_type = fun->params[i].mType;
+            
+            llvm_param_types[i] = create_llvm_type_from_node_type(fun_param_type);
+        }
+
+        LLVMTypeRef llvm_result_type = create_llvm_type_from_node_type(result_type);
+    
+        //bool var_arg = fun->mVarArgs;
+        
+        //LLVMTypeRef function_type = LLVMFunctionType(llvm_result_type, llvm_param_types, fun->mNumParams, var_arg);
+        
         LLVMBuildCall(gBuilder, llvm_fun, llvm_params, num_params, "");
+        //LLVMBuildCall2(gBuilder, function_type, llvm_fun, llvm_params, num_params, "");
 
         info->type = clone result_type;
     }
@@ -505,7 +511,7 @@ sNode*? expression(sInfo* info) version 2
                 return null;
             }
             
-            return new sNode(new sFunNode(name, params, result_type!, node_block));
+            return new sNode(new sFunNode(name, params, result_type, node_block));
         }
         else if(*info->p == '(') {
             string name = string(word);

@@ -1,15 +1,8 @@
-#include <neo-c.h>
 
-struct sData 
-{
-    int a;
-    string b;
-};
+char _unused2[sizeof (int) - 4 + sizeof (void *) - sizeof (size_t)];
 
-int main()
+int main(int argc, char** argv)
 {
-    sData*% data = new sData;
-    data.b = string("AAA");
     
     return 0;
 }

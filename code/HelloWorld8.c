@@ -1,4 +1,4 @@
-#include <neo-c.h>
+#include <comelang.h>
 
 struct sStruct<T>
 {
@@ -24,6 +24,8 @@ template <R> R fun(R a, int b)
 
 int main(int argc, char** argv)
 {
+    using unsafe;
+    
     int a = 1;
     
 /*
@@ -42,8 +44,9 @@ int main(int argc, char** argv)
 */
 
     3.times() {
+        using unsafe;
         puts("HELLO METHOD BLOCK");
-        printf("a %d\n", *parent.a);
+        printf("a %d\n", a);
     }
 
     sStruct<int>*% data = new sStruct<int>;

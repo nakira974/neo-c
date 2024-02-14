@@ -196,7 +196,7 @@ fi
 
 AC_SUBST(LIBS)
 
-CC=neo-c
+CC=comelang
 
 AC_SUBST(CC)
 

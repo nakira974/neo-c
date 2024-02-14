@@ -3891,8 +3891,8 @@ fi
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking Operating System" >&5
 printf %s "checking Operating System... " >&6; }
 
-CFLAGS='-DPREFIX="\"${DESTDIR}/\""'
-CFLAGS="-fPIC -rdynamic $CFLAGS"
+CFLAGS='-DPREFIX="\"${DESTDIR}/\"" -gc'
+CFLAGS="-fPIC $CFLAGS"
 
 AR_LIB=
 
@@ -3917,7 +3917,7 @@ elif test `uname -s` = "FreeBSD"; then
     printf "%s\n" "#define __FREEBSD__ 1" >>confdefs.h
 
 
-    CFLAGS="-Isrc/ -I. -L . -I$myprefix/include -L$myprefix/lib $CFLAGS"
+    CFLAGS="-Isrc/ -I. -I$myprefix/include -L$myprefix/lib $CFLAGS"
 elif uname -s | grep -q CYGWIN_NT; then
     echo CYGWIN
 
@@ -3927,9 +3927,9 @@ elif uname -s | grep -q CYGWIN_NT; then
 
 
     if test $myprefix = /usr/local; then
-        CFLAGS="-Isrc/ -I. -L . $CFLAGS"
+        CFLAGS="-Isrc/ -I. $CFLAGS"
     else
-        CFLAGS="-Isrc/ -I. -L . -I$myprefix/include -L$myprefix/lib $CFLAGS"
+        CFLAGS="-Isrc/ -I. -I$myprefix/include -L$myprefix/lib $CFLAGS"
     fi
 else
     echo "Linux"
@@ -3940,9 +3940,9 @@ else
 
 
     if test $myprefix = /usr/local; then
-        CFLAGS="-Isrc/ -I. -L . $CFLAGS"
+        CFLAGS="-Isrc/ -I. $CFLAGS"
     else
-        CFLAGS="-Isrc/ -I. -L . -I$myprefix/include -L$myprefix/lib $CFLAGS"
+        CFLAGS="-Isrc/ -I. -I$myprefix/include -L$myprefix/lib $CFLAGS"
     fi
 
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for main in -lutil" >&5
@@ -3993,10 +3993,10 @@ then
     CFLAGS="$CFLAGS -I/usr/local/include"
 fi
 
-if test -d /usr/local/lib
-then
-    CFLAGS="$CFLAGS -L /usr/local/lib"
-fi
+#if test -d /usr/local/lib
+#then
+#    CFLAGS="$CFLAGS -L /usr/local/lib"
+#fi
 
 if test -d /opt/local/include
 then
@@ -4038,56 +4038,6 @@ export CFLAGS
 CC=clang
 
 INSTALL="$(which install) -c"
-
-ac_fn_c_check_header_compile "$LINENO" "readline/readline.h" "ac_cv_header_readline_readline_h" "$ac_includes_default"
-if test "x$ac_cv_header_readline_readline_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_READLINE_H 1" >>confdefs.h
-
-else $as_nop
-  exit
-fi
-
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for main in -lreadline" >&5
-printf %s "checking for main in -lreadline... " >&6; }
-if test ${ac_cv_lib_readline_main+y}
-then :
-  printf %s "(cached) " >&6
-else $as_nop
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lreadline  $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-
-int
-main (void)
-{
-return main ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"
-then :
-  ac_cv_lib_readline_main=yes
-else $as_nop
-  ac_cv_lib_readline_main=no
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_readline_main" >&5
-printf "%s\n" "$ac_cv_lib_readline_main" >&6; }
-if test "x$ac_cv_lib_readline_main" = xyes
-then :
-   LIBS="$LIBS -lreadline";
-else $as_nop
-  exit
-fi
-ac_cv_lib_readline=ac_cv_lib_readline_main
-
 
 ac_fn_c_check_header_compile "$LINENO" "bsd/stdlib.h" "ac_cv_header_bsd_stdlib_h" "$ac_includes_default"
 if test "x$ac_cv_header_bsd_stdlib_h" = xyes
@@ -4200,7 +4150,7 @@ ac_cv_lib_pcre=ac_cv_lib_pcre_main
 
 
 
-CC=neo-c
+CC=comelang
 
 
 

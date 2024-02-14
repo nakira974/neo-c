@@ -55,65 +55,7 @@ BOOL parse_param(sParserParam* param, sParserInfo* info)
         char* p2 = info->p;
         
         if(p2 - p >= METHOD_DEFAULT_PARAM_MAX) {
-            fprintf(stderr, "overflow default parametor value\n");
-            exit(2);
-        }
-        
-        memcpy(param->mDefaultValue, p, p2 - p);
-        param->mDefaultValue[p2-p] = '\0';
-    }
-
-    return TRUE;
-}
-
-BOOL parse_come_param(sParserParam* param, sParserInfo* info)
-{
-    char asm_fname[VAR_NAME_MAX];
-    asm_fname[0] = '\0';
-    BOOL flag_asm_fun_name = FALSE;
-    
-    if(*info->p == '_' && (*(info->p+1) == ' ' || *(info->p+1) == '\t' || *(info->p+1) == '\n')) {
-        info->p++;
-        skip_spaces_and_lf(info);
-        
-        param->mLabel = TRUE;
-    }
-
-    if(param->mName[0] == '\0') {
-        if(!parse_variable_name(param->mName, VAR_NAME_MAX, info, param->mType, FALSE, TRUE))
-        {
-            return FALSE;
-        }
-    }
-    
-    if(*info->p == ':') {
-        info->p++;
-        skip_spaces_and_lf(info);
-    }
-    
-    if(!parse_type(&param->mType, info, NULL, FALSE, FALSE, NULL, FALSE, FALSE, TRUE, FALSE, FALSE)) {
-        return FALSE;
-    }
-    
-    if(*info->p == '=') {
-        info->p++;
-        skip_spaces_and_lf(info);
-        
-        if(!parse_sharp(info)) {
-            return FALSE;
-        }
-        
-        char* p = info->p;
-        
-        unsigned int node = 0;
-        if(!expression(&node, FALSE, info)) {
-            return FALSE;
-        }
-        
-        char* p2 = info->p;
-        
-        if(p2 - p >= METHOD_DEFAULT_PARAM_MAX) {
-            fprintf(stderr, "overflow default parametor value\n");
+            fprintf(stderr, "%s %d: overflow default parametor value\n", gSName, gSLine);
             exit(2);
         }
         
@@ -309,6 +251,64 @@ BOOL parse_params(sParserParam* params, int* num_params, sParserInfo* info, int 
             }
             info->p++;
         }
+    }
+
+    return TRUE;
+}
+
+BOOL parse_come_param(sParserParam* param, sParserInfo* info)
+{
+    char asm_fname[VAR_NAME_MAX];
+    asm_fname[0] = '\0';
+    BOOL flag_asm_fun_name = FALSE;
+    
+    if(*info->p == '_' && (*(info->p+1) == ' ' || *(info->p+1) == '\t' || *(info->p+1) == '\n')) {
+        info->p++;
+        skip_spaces_and_lf(info);
+        
+        param->mLabel = TRUE;
+    }
+
+    if(param->mName[0] == '\0') {
+        if(!parse_variable_name(param->mName, VAR_NAME_MAX, info, param->mType, FALSE, TRUE))
+        {
+            return FALSE;
+        }
+    }
+    
+    if(*info->p == ':') {
+        info->p++;
+        skip_spaces_and_lf(info);
+    }
+    
+    if(!parse_type(&param->mType, info, NULL, FALSE, FALSE, NULL, FALSE, FALSE, TRUE, FALSE, FALSE)) {
+        return FALSE;
+    }
+    
+    if(*info->p == '=') {
+        info->p++;
+        skip_spaces_and_lf(info);
+        
+        if(!parse_sharp(info)) {
+            return FALSE;
+        }
+        
+        char* p = info->p;
+        
+        unsigned int node = 0;
+        if(!expression(&node, FALSE, info)) {
+            return FALSE;
+        }
+        
+        char* p2 = info->p;
+        
+        if(p2 - p >= METHOD_DEFAULT_PARAM_MAX) {
+            fprintf(stderr, "%s %d: overflow default parametor value\n", gSName, gSLine);
+            exit(2);
+        }
+        
+        memcpy(param->mDefaultValue, p, p2 - p);
+        param->mDefaultValue[p2-p] = '\0';
     }
 
     return TRUE;
@@ -567,7 +567,7 @@ void parse_version(int* version, sParserInfo* info)
         }
         
         if(*version >= FUNCTION_VERSION_MAX) {
-            fprintf(stderr, "overflow function version max");
+            fprintf(stderr, "%s %d: overflow function version max", gSName, gSLine);
             exit(2);
         }
 
@@ -655,14 +655,6 @@ BOOL parse_come_function(unsigned int* node, char* struct_name, sParserInfo* inf
         *node = sNodeTree_create_external_function(fun_name, asm_fname, params, num_params, var_arg, result_type, struct_name, operator_fun, version, immutable_, flag_asm_fun_name, info);
     }
     else {
-        if(strcmp(info->sname, gFName) == 0) {
-            if(!result_type->mStatic) {
-                sBuf_append_str(&gHeader, "fn ");
-                sBuf_append(&gHeader, definition_top, info->p - definition_top-1);
-                sBuf_append_str(&gHeader, ";\n");
-            }
-        }
-        
         int i;
         for(i=0; i<num_params; i++) {
             char* name = params[i].mName;
@@ -683,8 +675,7 @@ BOOL parse_come_function(unsigned int* node, char* struct_name, sParserInfo* inf
         for(i=0; i<num_params; i++) {
             sParserParam* param = params + i;
 
-            BOOL readonly = FALSE;
-            if(!add_variable_to_table(info->lv_table, param->mName, param->mType, readonly, gNullLVALUE, -1, FALSE, FALSE, TRUE))
+            if(!add_variable_to_table(info->lv_table, param->mName, "", param->mType, gNullLVALUE, -1, FALSE, FALSE, TRUE))
             {
                 return FALSE;
             }
@@ -703,30 +694,12 @@ BOOL parse_come_function(unsigned int* node, char* struct_name, sParserInfo* inf
         }
         info->function_result_type = clone_node_type(result_type);
 
-        if(gNCHeader) {
-            while(*info->p != '{') {
-                info->p--;
-            }
-            if(!skip_block(info)) {
-                sNodeBlock_free(node_block);
-                return FALSE;
-            }
+        if(!parse_block(node_block, FALSE, FALSE, result_type_is_void, FALSE, TRUE, info)) {
+            sNodeBlock_free(node_block);
+            return FALSE;
         }
-        else {
-            if(!parse_block(node_block, FALSE, FALSE, result_type_is_void, FALSE, TRUE, info)) {
-                sNodeBlock_free(node_block);
-                return FALSE;
-            }
-    
-            if(gNCType) {
-                if(*info->p != '\0') {
-                    expect_next_character_with_one_forward("}", info);
-                }
-            }
-            else {
-                expect_next_character_with_one_forward("}", info);
-            }
-        }
+
+        expect_next_character_with_one_forward("}", info);
 
         info->lv_table = old_table;
 
@@ -741,8 +714,6 @@ BOOL parse_come_function(unsigned int* node, char* struct_name, sParserInfo* inf
 
     info->mNumMethodGenerics = 0;
     gNCSafeMode = safe_mode;
-
-    return TRUE;
 
     return TRUE;
 }
@@ -820,6 +791,7 @@ BOOL parse_function(unsigned int* node, sNodeType* result_type, char* fun_name, 
             result_type->mArrayDimentionNum = 1;
             result_type->mArrayNum[0] = n;
             result_type->mArrayPointer = TRUE;
+            result_type->mNoArrayPointerNum++;
         }
         else {
             int nest = 0;
@@ -862,13 +834,6 @@ BOOL parse_function(unsigned int* node, sNodeType* result_type, char* fun_name, 
         *node = sNodeTree_create_external_function(fun_name, asm_fname, params, num_params, var_arg, result_type, struct_name, operator_fun, version, immutable_, flag_asm_fun_name, info);
     }
     else {
-        if(strcmp(info->sname, gFName) == 0) {
-            if(!result_type->mStatic) {
-                sBuf_append(&gHeader, definition_top, info->p - definition_top-1);
-                sBuf_append_str(&gHeader, ";\n");
-            }
-        }
-        
         int i;
         for(i=0; i<num_params; i++) {
             char* name = params[i].mName;
@@ -885,12 +850,11 @@ BOOL parse_function(unsigned int* node, sNodeType* result_type, char* fun_name, 
         info->lv_table = init_block_vtable(old_table, FALSE);
 
         sVarTable* block_var_table = info->lv_table;
-
+        
         for(i=0; i<num_params; i++) {
             sParserParam* param = params + i;
-
-            BOOL readonly = FALSE;
-            if(!add_variable_to_table(info->lv_table, param->mName, param->mType, readonly, gNullLVALUE, -1, FALSE, FALSE, TRUE))
+            
+            if(!add_variable_to_table(info->lv_table, param->mName, "", param->mType, gNullLVALUE, -1, FALSE, FALSE, TRUE))
             {
                 return FALSE;
             }
@@ -909,30 +873,12 @@ BOOL parse_function(unsigned int* node, sNodeType* result_type, char* fun_name, 
         }
         info->function_result_type = clone_node_type(result_type);
 
-        if(gNCHeader) {
-            while(*info->p != '{') {
-                info->p--;
-            }
-            if(!skip_block(info)) {
-                sNodeBlock_free(node_block);
-                return FALSE;
-            }
+        if(!parse_block(node_block, FALSE, FALSE, result_type_is_void, FALSE, TRUE, info)) {
+            sNodeBlock_free(node_block);
+            return FALSE;
         }
-        else {
-            if(!parse_block(node_block, FALSE, FALSE, result_type_is_void, FALSE, TRUE, info)) {
-                sNodeBlock_free(node_block);
-                return FALSE;
-            }
-    
-            if(gNCType) {
-                if(*info->p != '\0') {
-                    expect_next_character_with_one_forward("}", info);
-                }
-            }
-            else {
-                expect_next_character_with_one_forward("}", info);
-            }
-        }
+
+        expect_next_character_with_one_forward("}", info);
 
         info->lv_table = old_table;
 
@@ -958,162 +904,187 @@ BOOL parse_class(unsigned int* node, sParserInfo* info)
     BOOL safe_mode = gNCSafeMode;
     int sline = info->sline;
     
+    char* head = info->p;
+    
     char struct_name[VAR_NAME_MAX+1];
     if(!parse_word(struct_name, VAR_NAME_MAX, info, TRUE, FALSE))
     {
         return FALSE;
     }
-
-    char* p2 = info->p;
-    int sline2 = info->sline;
     
-    BOOL omit_params = FALSE;
-    if(*info->p == '(') {
-        info->p++;
-        skip_spaces_and_lf(info);
-        
-        if(*info->p == ')') {
+    if(get_class(struct_name)) {
+        if(*info->p == '(') {
             info->p++;
             skip_spaces_and_lf(info);
-            omit_params = TRUE;
+            
+            while(*info->p && *info->p != ')') {
+                info->p++;
+            }
+            if(*info->p == ')') {
+                info->p++;
+                skip_spaces_and_lf(info);
+            }
         }
-        else {
-            info->p = p2;
-            info->sline = sline2;
+        
+        if(!skip_block(info)) {
+            return FALSE;
         }
+        
+        *node = sNodeTree_create_null(info);
     }
     else {
-        omit_params = TRUE;
-    }
-
-    /// params ///
-    sParserParam params[PARAMS_MAX];
-    memset(params, 0, sizeof(sParserParam)*PARAMS_MAX);
-
-    BOOL anonymous = FALSE;
-    BOOL protocol_ = FALSE;
-    sCLClass* struct_class = alloc_struct(struct_name, anonymous, TRUE, NULL, FALSE);
-
-    sNodeType* result_type = create_node_type_with_class_pointer(struct_class);
-    result_type->mPointerNum = TRUE;
-    
-    if(!gNCGC) {
-        result_type->mHeap = TRUE;
-    }
-    
-    xstrncpy(params[0].mName, "self", VAR_NAME_MAX);
-    params[0].mType = clone_node_type(result_type);
-
-    /// parse_params ///
-    int num_params = 1;
-    BOOL var_arg = FALSE;
-    
-    if(!omit_params) {
-        expect_next_character_with_one_forward("(", info);
+        char* p2 = info->p;
+        int sline2 = info->sline;
         
-        if(!parse_params(params, &num_params, info, 0, &var_arg))
-        {
+        BOOL omit_params = FALSE;
+        if(*info->p == '(') {
+            info->p++;
+            skip_spaces_and_lf(info);
+            
+            if(*info->p == ')') {
+                info->p++;
+                skip_spaces_and_lf(info);
+                omit_params = TRUE;
+            }
+            else {
+                info->p = p2;
+                info->sline = sline2;
+            }
+        }
+        else {
+            omit_params = TRUE;
+        }
+    
+        /// params ///
+        sParserParam params[PARAMS_MAX];
+        memset(params, 0, sizeof(sParserParam)*PARAMS_MAX);
+    
+        BOOL anonymous = FALSE;
+        BOOL protocol_ = FALSE;
+        sCLClass* struct_class = alloc_struct(struct_name, anonymous, TRUE, NULL, FALSE);
+    
+        sNodeType* result_type = create_node_type_with_class_pointer(struct_class);
+        result_type->mPointerNum = TRUE;
+        
+        if(!gNCGC) {
+            result_type->mHeap = TRUE;
+        }
+        
+        xstrncpy(params[0].mName, "self", VAR_NAME_MAX);
+        params[0].mType = clone_node_type(result_type);
+    
+        /// parse_params ///
+        int num_params = 1;
+        BOOL var_arg = FALSE;
+        
+        if(!omit_params) {
+            expect_next_character_with_one_forward("(", info);
+            
+            if(!parse_params(params, &num_params, info, 0, &var_arg))
+            {
+                return FALSE;
+            }
+        }
+    
+        int i;
+        for(i=0; i<num_params; i++) {
+            char* name = params[i].mName;
+    
+            if(name[0] == '\0') {
+                parser_err_msg(info, "Require parametor variable names");
+            }
+        }
+    
+        sNodeBlock* node_block = ALLOC sNodeBlock_alloc();
+        expect_next_character_with_one_forward("{", info);
+        sVarTable* old_table = info->lv_table;
+    
+        info->lv_table = init_block_vtable(old_table, FALSE);
+    
+        sVarTable* block_var_table = info->lv_table;
+    
+        for(i=0; i<num_params; i++) {
+            sParserParam* param = params + i;
+    
+            if(!add_variable_to_table(info->lv_table, param->mName, "", param->mType, gNullLVALUE, -1, FALSE, FALSE, TRUE))
+            {
+                return FALSE;
+            }
+        }
+        
+        BOOL in_class = info->mInClass;
+        info->mInClass = TRUE;
+        
+        info->mNumClassFields = 0;
+        memset((void*)info->mClassFields, 0, sizeof(sNodeType*)*CLASS_FIELD_MAX);
+        memset((void*)info->mClassFieldsNames, 0, sizeof(char*)*CLASS_FIELD_MAX);
+        memset((void*)info->mClassFieldsRightValue, 0, sizeof(unsigned int)*CLASS_FIELD_MAX);
+        
+        BOOL result_type_is_void = FALSE;
+        BOOL return_self = TRUE;
+        
+        char base_struct_name[VAR_NAME_MAX];
+        xstrncpy(base_struct_name, struct_name, VAR_NAME_MAX);
+        xstrncat(base_struct_name, "p", VAR_NAME_MAX);
+        
+        xstrncpy(info->impl_struct_name, struct_name, VAR_NAME_MAX);
+        xstrncpy(info->impl_struct_name2, base_struct_name, VAR_NAME_MAX);
+        
+        if(!parse_block(node_block, FALSE, FALSE, result_type_is_void, return_self, FALSE, info)) {
+            sNodeBlock_free(node_block);
             return FALSE;
         }
-    }
-
-    int i;
-    for(i=0; i<num_params; i++) {
-        char* name = params[i].mName;
-
-        if(name[0] == '\0') {
-            parser_err_msg(info, "Require parametor variable names");
+        
+        expect_next_character_with_one_forward("}", info);
+        parse_impl_end(info);
+    
+        info->lv_table = old_table;
+    
+        BOOL simple_lambda_param = FALSE;
+        BOOL construct_fun = FALSE;
+        
+        char* fun_name = "initialize";
+        
+        char* asm_fname = "";
+        BOOL lambda_ = FALSE;
+        BOOL operator_fun = FALSE;
+        BOOL constructor_fun = TRUE;
+        int version = -1;
+        BOOL immutable_ = FALSE;
+        
+        int num_fields = info->mNumClassFields;
+        sNodeType* fields[STRUCT_FIELD_MAX];
+        
+        for(i=0; i<num_fields; i++) {
+            fields[i] = info->mClassFields[i];
         }
-    }
-
-    sNodeBlock* node_block = ALLOC sNodeBlock_alloc();
-    expect_next_character_with_one_forward("{", info);
-    sVarTable* old_table = info->lv_table;
-
-    info->lv_table = init_block_vtable(old_table, FALSE);
-
-    sVarTable* block_var_table = info->lv_table;
-
-    for(i=0; i<num_params; i++) {
-        sParserParam* param = params + i;
-
-        BOOL readonly = FALSE;
-        if(!add_variable_to_table(info->lv_table, param->mName, param->mType, readonly, gNullLVALUE, -1, FALSE, FALSE, TRUE))
-        {
-            return FALSE;
+        
+        char* fields_names[STRUCT_FIELD_MAX];
+        for(i=0; i<num_fields; i++) {
+            fields_names[i] = info->mClassFieldsNames[i];
         }
+        
+        add_fields_to_struct(struct_class, num_fields, fields_names, fields);
+        BOOL undefined_body = FALSE;
+        sNodeType* node_type = clone_node_type(result_type);
+        node_type->mHeap = FALSE;
+        create_llvm_struct_type(struct_name, node_type, NULL, undefined_body);
+        
+        char struct_name2[VAR_NAME_MAX];
+        
+        xstrncpy(struct_name2, struct_name, VAR_NAME_MAX);
+        xstrncat(struct_name2, "p", VAR_NAME_MAX);
+        
+        char real_fun_name[REAL_FUN_NAME_MAX];
+        create_real_fun_name(real_fun_name, REAL_FUN_NAME_MAX, fun_name, struct_name2);
+    
+        *node = sNodeTree_create_function(real_fun_name, asm_fname, params, num_params, result_type, MANAGED node_block, lambda_, block_var_table, struct_name, operator_fun, construct_fun, simple_lambda_param, info, FALSE, var_arg, version, FALSE, -1, fun_name, sline, immutable_);
+        
+        info->mInClass = in_class;
+        gNCSafeMode = safe_mode;
+            
+        char* tail = info->p;
     }
-    
-    BOOL in_class = info->mInClass;
-    info->mInClass = TRUE;
-    
-    info->mNumClassFields = 0;
-    memset((void*)info->mClassFields, 0, sizeof(sNodeType*)*CLASS_FIELD_MAX);
-    memset((void*)info->mClassFieldsNames, 0, sizeof(char*)*CLASS_FIELD_MAX);
-    memset((void*)info->mClassFieldsRightValue, 0, sizeof(unsigned int)*CLASS_FIELD_MAX);
-    
-    BOOL result_type_is_void = FALSE;
-    BOOL return_self = TRUE;
-    
-    char base_struct_name[VAR_NAME_MAX];
-    xstrncpy(base_struct_name, struct_name, VAR_NAME_MAX);
-    xstrncat(base_struct_name, "p", VAR_NAME_MAX);
-    
-    xstrncpy(info->impl_struct_name, struct_name, VAR_NAME_MAX);
-    xstrncpy(info->impl_struct_name2, base_struct_name, VAR_NAME_MAX);
-    
-    if(!parse_block(node_block, FALSE, FALSE, result_type_is_void, return_self, FALSE, info)) {
-        sNodeBlock_free(node_block);
-        return FALSE;
-    }
-    
-    expect_next_character_with_one_forward("}", info);
-    parse_impl_end(info);
-
-    info->lv_table = old_table;
-
-    BOOL simple_lambda_param = FALSE;
-    BOOL construct_fun = FALSE;
-    
-    char* fun_name = "initialize";
-    
-    char* asm_fname = "";
-    BOOL lambda_ = FALSE;
-    BOOL operator_fun = FALSE;
-    BOOL constructor_fun = TRUE;
-    int version = -1;
-    BOOL immutable_ = FALSE;
-    
-    int num_fields = info->mNumClassFields;
-    sNodeType* fields[STRUCT_FIELD_MAX];
-    
-    for(i=0; i<num_fields; i++) {
-        fields[i] = info->mClassFields[i];
-    }
-    
-    char* fields_names[STRUCT_FIELD_MAX];
-    for(i=0; i<num_fields; i++) {
-        fields_names[i] = info->mClassFieldsNames[i];
-    }
-    
-    add_fields_to_struct(struct_class, num_fields, fields_names, fields);
-    BOOL undefined_body = FALSE;
-    sNodeType* node_type = clone_node_type(result_type);
-    node_type->mHeap = FALSE;
-    create_llvm_struct_type(struct_name, node_type, NULL, undefined_body);
-    
-    char struct_name2[VAR_NAME_MAX];
-    
-    xstrncpy(struct_name2, struct_name, VAR_NAME_MAX);
-    xstrncat(struct_name2, "p", VAR_NAME_MAX);
-    
-    char real_fun_name[REAL_FUN_NAME_MAX];
-    create_real_fun_name(real_fun_name, REAL_FUN_NAME_MAX, fun_name, struct_name2);
-
-    *node = sNodeTree_create_function(real_fun_name, asm_fname, params, num_params, result_type, MANAGED node_block, lambda_, block_var_table, struct_name, operator_fun, construct_fun, simple_lambda_param, info, FALSE, var_arg, version, FALSE, -1, fun_name, sline, immutable_);
-    
-    info->mInClass = in_class;
-    gNCSafeMode = safe_mode;
     
     return TRUE;
 }
@@ -1166,7 +1137,7 @@ BOOL parse_inline_function(unsigned int* node, sParserInfo* info)
             return FALSE;
         }
         
-        if(strcmp(fun_name, "finalize") != 0 && strcmp(fun_name, "clone") != 0) {
+        if(strcmp(fun_name, "finalize") != 0 && strcmp(fun_name, "clone") != 0 && strcmp(fun_name, "shallow_clone") != 0) {
             int k;
             for(k=0; k<pointer_num; k++) {
                 xstrncat(struct_name, "p", VAR_NAME_MAX);
@@ -1262,7 +1233,7 @@ BOOL parse_inline_function(unsigned int* node, sParserInfo* info)
     return TRUE;
 }
 
-BOOL parse_funcation_call_params(int* num_params, unsigned int* params, sParserInfo* info)
+BOOL parse_function_call_params(int* num_params, unsigned int* params, sParserInfo* info)
 {
     if(*info->p == '(') {
         info->p++;
@@ -1312,16 +1283,47 @@ BOOL parse_funcation_call_params(int* num_params, unsigned int* params, sParserI
                     parser_err_msg(info, "require expression");
                     break;
                 }
-                
-                //gNodes[node].mLabel = GC_strdup(label);
-                xstrncpy(gNodes[node].mLabel, label, VAR_NAME_MAX);
 
-                params[*num_params] = node;
-                (*num_params)++;
+                if(*info->p == '#') {
+                    if(!parse_sharp(info)) {
+                        return FALSE;
+                    }
+                }
+                
+                BOOL null_value = FALSE;
+                
+                if(!gNCCome || label[0] != 0) {
+                    null_value = TRUE;
+                }
+                else {
+                    if(*info->p == '!' && *(info->p +1) != '=') {
+                        info->p++;
+                        skip_spaces_and_lf(info);
+                        null_value = TRUE;
+                    }
+                }
+                
+                xstrncpy(gNodes[node].mLabel, label, VAR_NAME_MAX);
+                
+                if(null_value) {
+                    params[*num_params] = node;
+                    (*num_params)++;
+                }
+                else {
+                    unsigned int node2 = sNodeTree_create_unwrap(node, FALSE, info);
+                    params[*num_params] = node2;
+                    (*num_params)++;
+                }
 
                 if(*num_params >= PARAMS_MAX) {
                     parser_err_msg(info, "overflow parametor number for method call");
                     return FALSE;
+                }
+
+                if(*info->p == '#') {
+                    if(!parse_sharp(info)) {
+                        return FALSE;
+                    }
                 }
 
                 if(*info->p == '@') {
@@ -1353,7 +1355,7 @@ BOOL parse_funcation_call_params(int* num_params, unsigned int* params, sParserI
                 }
                 else {
                     char msg[1024];
-                    snprintf(msg, 1024, "neo-c requires , or ) for method call. it is %c", *info->p);
+                    snprintf(msg, 1024, "comelang requires , or ) for method call. it is %c", *info->p);
                     parser_err_msg(info, msg);
                     break;
                 }
@@ -1431,7 +1433,7 @@ BOOL parse_inherit(unsigned int* node, sParserInfo* info)
         unsigned int params[PARAMS_MAX];
         int num_params = 0;
 
-        if(!parse_funcation_call_params(&num_params, params, info)) 
+        if(!parse_function_call_params(&num_params, params, info)) 
         {
             return FALSE;
         }
@@ -1439,94 +1441,11 @@ BOOL parse_inherit(unsigned int* node, sParserInfo* info)
         char* fun_name = "inherit";
 
         *node = sNodeTree_create_function_call(fun_name, params, num_params, FALSE, TRUE, 0, info);
-        
-        if(*info->p == '!' && *(info->p+1) != '=') {
-            info->p++;
-            skip_spaces_and_lf(info);
-            
-            *node = sNodeTree_create_unwrap(*node, info);
-        }
     }
 
     return TRUE;
 }
 
-BOOL parse_come(unsigned int* node, sParserInfo* info)
-{
-    char buf[VAR_NAME_MAX+1];
-    if(!parse_word(buf, VAR_NAME_MAX, info, TRUE, FALSE))
-    {
-        return FALSE;
-    }
-
-    if(strcmp(buf, "join") == 0) {
-        *node = sNodeTree_create_join(info);
-    }
-    else if(strcmp(buf, "select") == 0) {
-        if(!parse_select(node, info)) {
-            return FALSE;
-        }
-    }
-    else if(strcmp(buf, "pselect") == 0) {
-        if(!parse_pselect(node, info)) {
-            return FALSE;
-        }
-    }
-    else {
-        char* fun_name = buf;
-
-        unsigned int params[PARAMS_MAX];
-        int num_params = 0;
-
-        if(!parse_funcation_call_params(&num_params, params, info)) 
-        {
-            return FALSE;
-        }
-
-        *node = sNodeTree_create_come_function_call(fun_name, params, num_params, info);
-        
-        if(*info->p == '!' && *(info->p+1) != '=') {
-            info->p++;
-            skip_spaces_and_lf(info);
-            
-            *node = sNodeTree_create_unwrap(*node, info);
-        }
-    }
-    
-    return TRUE;
-}
-
-BOOL parse_macro(unsigned int* node, sParserInfo* info)
-{
-    BOOL safe_mode = gNCSafeMode;
-    char buf[VAR_NAME_MAX+1];
-    if(!parse_word(buf, VAR_NAME_MAX, info, TRUE, FALSE))
-    {
-        return FALSE;
-    }
-
-    char* p = info->p + 1;
-
-    if(!skip_block(info)) {
-        return FALSE;
-    }
-
-    sBuf body;
-    sBuf_init(&body);
-
-    sBuf_append(&body, p, info->p-p-3);
-
-    append_macro(buf, body.mBuf);
-
-    free(body.mBuf);
-
-    *node = sNodeTree_create_null(info);
-
-    skip_spaces_and_lf(info);
-    gNCSafeMode = safe_mode;
-
-    return TRUE;
-}
 
 BOOL parse_impl(unsigned int* node, sParserInfo* info)
 {
@@ -1607,54 +1526,6 @@ void parse_impl_end(sParserInfo* info)
 {
     strcpy(info->impl_struct_name, "");
     info->mNumGenerics = 0;
-}
-
-BOOL parse_call_macro(unsigned int* node, char* name, sParserInfo* info)
-{
-    char name2[VAR_NAME_MAX];
-    xstrncpy(name2, name, VAR_NAME_MAX);
-
-    char* p = info->p + 1;
-
-    if(*info->p == '(') {
-        if(!skip_paren('(', ')', info)) {
-            return FALSE;
-        }
-    }
-    else if(*info->p == '{') {
-        if(!skip_paren('{', '}', info)) {
-            return FALSE;
-        }
-    }
-    else if(*info->p == '[') {
-        if(!skip_paren('[', ']', info)) {
-            return FALSE;
-        }
-    }
-    else if(*info->p == '<') {
-        if(!skip_paren('<', '>', info)) {
-            return FALSE;
-        }
-    }
-    else {
-        parser_err_msg(info, "Require (,{,[ or <");
-        return TRUE;
-    }
-
-    sBuf params;
-    sBuf_init(&params);
-
-    sBuf_append(&params, p, info->p-p-1);
-
-    skip_spaces_and_lf(info);
-
-    if(!call_macro(node, name2, params.mBuf, info)) {
-        return FALSE;
-    }
-
-    free(params.mBuf);
-
-    return TRUE;
 }
 
 BOOL parse_function_pointer_result_function(unsigned int* node, BOOL* array_pointer_result_function_type, sParserInfo* info)
@@ -1777,8 +1648,7 @@ BOOL parse_function_pointer_result_function(unsigned int* node, BOOL* array_poin
             for(i=0; i<num_params; i++) {
                 sParserParam* param = params + i;
     
-                BOOL readonly = FALSE;
-                if(!add_variable_to_table(info->lv_table, param->mName, param->mType, readonly, gNullLVALUE, -1, FALSE, FALSE, TRUE))
+                if(!add_variable_to_table(info->lv_table, param->mName, "", param->mType, gNullLVALUE, -1, FALSE, FALSE, TRUE))
                 {
                     return FALSE;
                 }
@@ -1794,14 +1664,7 @@ BOOL parse_function_pointer_result_function(unsigned int* node, BOOL* array_poin
                 return FALSE;
             }
     
-            if(gNCType) {
-                if(*info->p != '\0') {
-                    expect_next_character_with_one_forward("}", info);
-                }
-            }
-            else {
-                expect_next_character_with_one_forward("}", info);
-            }
+            expect_next_character_with_one_forward("}", info);
     
             info->lv_table = old_table;
     

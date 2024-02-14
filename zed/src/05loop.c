@@ -1,14 +1,14 @@
-#include <neo-c.h>
+#include <comelang.h>
 #include "common.h"
 
-private struct sWhileNode
+ struct sWhileNode
 {
     int id;
     sNode*% while_exp;
     sNodeBlock while_block;
 };
 
-private sWhileNode*% sWhileNode*::initialize(sWhileNode*% self, sNode*% while_exp, sNodeBlock while_block)
+ sWhileNode*% sWhileNode*::initialize(sWhileNode*% self, sNode*% while_exp, sNodeBlock while_block)
 {
     self.id = gNodeID++;
     self.while_exp = while_exp;
@@ -17,12 +17,12 @@ private sWhileNode*% sWhileNode*::initialize(sWhileNode*% self, sNode*% while_ex
     return self;
 }
 
-private unsigned int sWhileNode*::id(sWhileNode* self)
+ unsigned int sWhileNode*::id(sWhileNode* self)
 {
     return self.id;
 }
 
-private bool sWhileNode*::compile(sWhileNode* self, sInfo* info)
+ bool sWhileNode*::compile(sWhileNode* self, sInfo* info)
 {
     sNode* while_exp = self.while_exp;
     sNodeBlock& while_block = self.while_block;
@@ -33,7 +33,7 @@ private bool sWhileNode*::compile(sWhileNode* self, sInfo* info)
     info.loop_head = head;
     
     vector<int>*? breaks_before = info.breaks;
-    info.breaks = nullable new vector<int>();
+    info.breaks = new vector<int>();
     
     if(!while_exp.compile->(info)) {
         return false;
@@ -55,8 +55,8 @@ private bool sWhileNode*::compile(sWhileNode* self, sInfo* info)
     int* p = (int*)(info.codes.buf + end_point);
     *p = info.codes.len;
     
-    for(int i=0; i<info->breaks!.length(); i++) {
-        int break_point = info->breaks![i];
+    for(int i=0; i<info->breaks.length(); i++) {
+        int break_point = info->breaks[i];
         
         int* p = (int*)(info.codes.buf + break_point);
         
@@ -69,24 +69,24 @@ private bool sWhileNode*::compile(sWhileNode* self, sInfo* info)
     return true;
 }
 
-private struct sBreakNode
+ struct sBreakNode
 {
     int id;
     bool dummy;
 };
 
-private sBreakNode*% sBreakNode*::initialize(sBreakNode*% self)
+ sBreakNode*% sBreakNode*::initialize(sBreakNode*% self)
 {
     self.id = gNodeID++;
     return self;
 }
 
-private unsigned int sBreakNode*::id(sBreakNode* self)
+ unsigned int sBreakNode*::id(sBreakNode* self)
 {
     return self.id;
 }
 
-private bool sBreakNode*::compile(sBreakNode* self, sInfo* info)
+ bool sBreakNode*::compile(sBreakNode* self, sInfo* info)
 {
     if(info->breaks == null) {
         fprintf(stderr, "not in aloop for break\n");
@@ -96,7 +96,7 @@ private bool sBreakNode*::compile(sBreakNode* self, sInfo* info)
     info.codes.append_int(OP_GOTO);
     
     int break_point = info.codes.len;
-    info->breaks!.push_back(break_point);
+    info->breaks.push_back(break_point);
     
     info.codes.append_int(0);
     

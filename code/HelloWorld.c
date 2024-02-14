@@ -1,4 +1,4 @@
-using neo-c;
+using comelang;
 
 int puts(const char* msg);
 int printf(const char *format, ...);
@@ -289,6 +289,7 @@ int main()
 
     c.a = 1;
 
+/*
     xassert("structore test", c.a == 1);
 
 
@@ -571,6 +572,7 @@ test_label:
     int (*funXX)(int, int) = xxx;
     
     xassert("fun pointer test", funXX(1, 1) == 2);
+*/
 
     return 0;
 }

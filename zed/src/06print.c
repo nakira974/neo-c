@@ -1,13 +1,13 @@
-#include <neo-c.h>
+#include <comelang.h>
 #include "common.h"
 
-private struct sPrintNode
+ struct sPrintNode
 {
     int id;
     sNode*% print_exp;
 };
 
-private sPrintNode*% sPrintNode*::initialize(sPrintNode*% self, sNode*% print_exp)
+ sPrintNode*% sPrintNode*::initialize(sPrintNode*% self, sNode*% print_exp)
 {
     self.id = gNodeID++;
     self.print_exp = print_exp;
@@ -15,12 +15,12 @@ private sPrintNode*% sPrintNode*::initialize(sPrintNode*% self, sNode*% print_ex
     return self;
 }
 
-private unsigned int sPrintNode*::id(sPrintNode* self)
+ unsigned int sPrintNode*::id(sPrintNode* self)
 {
     return self.id;
 }
 
-private bool sPrintNode*::compile(sPrintNode* self, sInfo* info)
+ bool sPrintNode*::compile(sPrintNode* self, sInfo* info)
 {
     sNode* print_exp = self.print_exp;
     
@@ -35,24 +35,24 @@ private bool sPrintNode*::compile(sPrintNode* self, sInfo* info)
     return true;
 }
 
-private struct sStdinNode
+ struct sStdinNode
 {
     int id;
     int dummy;
 };
 
-private sStdinNode*% sStdinNode*::initialize(sStdinNode*% self)
+ sStdinNode*% sStdinNode*::initialize(sStdinNode*% self)
 {
     self.id = gNodeID++;
     return self;
 }
 
-private unsigned int sStdinNode*::id(sStdinNode* self)
+ unsigned int sStdinNode*::id(sStdinNode* self)
 {
     return self.id;
 }
 
-private bool sStdinNode*::compile(sStdinNode* self, sInfo* info)
+ bool sStdinNode*::compile(sStdinNode* self, sInfo* info)
 {
     info.codes.append_int(OP_STDIN);
     
@@ -61,24 +61,24 @@ private bool sStdinNode*::compile(sStdinNode* self, sInfo* info)
     return true;
 }
 
-private struct sStdoutNode
+ struct sStdoutNode
 {
     int id;
     int dummy;
 };
 
-private sStdoutNode*% sStdoutNode*::initialize(sStdoutNode*% self)
+ sStdoutNode*% sStdoutNode*::initialize(sStdoutNode*% self)
 {
     self.id = gNodeID++;
     return self;
 }
 
-private unsigned int sStdoutNode*::id(sStdoutNode* self)
+ unsigned int sStdoutNode*::id(sStdoutNode* self)
 {
     return self.id;
 }
 
-private bool sStdoutNode*::compile(sStdoutNode* self, sInfo* info)
+ bool sStdoutNode*::compile(sStdoutNode* self, sInfo* info)
 {
     info.codes.append_int(OP_STDOUT);
     
@@ -87,24 +87,24 @@ private bool sStdoutNode*::compile(sStdoutNode* self, sInfo* info)
     return true;
 }
 
-private struct sStderrNode
+ struct sStderrNode
 {
     int id;
     int dummy;
 };
 
-private sStderrNode*% sStderrNode*::initialize(sStderrNode*% self)
+ sStderrNode*% sStderrNode*::initialize(sStderrNode*% self)
 {
     self.id = gNodeID++;
     return self;
 }
 
-private unsigned int sStderrNode*::id(sStderrNode* self)
+ unsigned int sStderrNode*::id(sStderrNode* self)
 {
     return self.id;
 }
 
-private bool sStderrNode*::compile(sStderrNode* self, sInfo* info)
+ bool sStderrNode*::compile(sStderrNode* self, sInfo* info)
 {
     info.codes.append_int(OP_STDERR);
     
@@ -122,9 +122,9 @@ bool vm(sInfo* info) version 5
         case OP_PRINT: {
             info->op++;
             
-            ZVALUE*? value = nullable info.stack[-1];
+            ZVALUE*? value = info.stack[-1];
             
-            puts(value!.to_string());
+            puts(value.to_string());
             
             info.stack.delete_back();
             }
@@ -172,7 +172,7 @@ sNode*? exp_node(sInfo* info) version 6
             exit(2);
         }
         
-        sNode*% print_exp = dummy_heap node!;
+        sNode*% print_exp = dummy_heap node;
         
         return borrow new sNode(new sPrintNode(print_exp));
     }

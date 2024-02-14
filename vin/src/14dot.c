@@ -72,11 +72,11 @@ void ViWin*::finalize(ViWin* self) version 14
 {
     inherit(self);
 
-    delete self.inputedKeys;
+    delete borrow self.inputedKeys;
     if(self.savedInputedKeys) {
-        delete self.savedInputedKeys;
+        delete borrow self.savedInputedKeys;
     }
-    delete self.macro;
+    delete borrow self.macro;
 }
 
 bool ViWin*::saveDotToFile(ViWin* self, Vi* nvi) version 14
@@ -149,7 +149,7 @@ int ViWin*::getKey(ViWin* self, bool head) version 14
             self.runningMacroIndex2 = 0;
         }
         else {
-            auto inputed_key_vec = self.runningMacro.item(self.runningMacroIndex1, null);
+            auto inputed_key_vec = self.runningMacro.item(self.runningMacroIndex1, null!);
             
             if(self.runningMacroIndex2 < inputed_key_vec.length())
             {
@@ -324,7 +324,7 @@ void ViWin*::runMacro(ViWin* self)
 {
     int key = self.getKey(false);
     
-    auto macro_ = self.macro.at(key, null);
+    auto macro_ = self.macro.at(key, null!);
     
     if(macro_) {
         self.runningMacro = clone macro_;

@@ -45,9 +45,9 @@ void ViWin*::horizonVisualModeView(ViWin* self, Vi* nvi)
                         
                         auto line2 = line.substring(self.cursorX
                                 , self.visualModeHorizonHeadX+1);
-                        wattron(self.win, A_REVERSE);
-                        mvwprintw(self.win, it2, x, "%ls", line2);
-                        wattroff(self.win, A_REVERSE);
+			using c { wattron(self.win, A_REVERSE); }
+			mvwprintw(self.win, it2, x, "%ls", line2);
+			using c { wattroff(self.win, A_REVERSE); }
                         
                         x += line2.length();
                         
@@ -60,22 +60,22 @@ void ViWin*::horizonVisualModeView(ViWin* self, Vi* nvi)
                         
                         auto line1 = line.substring(0
                                 , self.visualModeHorizonHeadX);
-                        mvwprintw(self.win, it2, x, "%ls", line1);
+			mvwprintw(self.win, it2, x, "%ls", line1);
                         
                         x += line1.length();
                         
                         auto line2 = line.substring(
                                 self.visualModeHorizonHeadX
                                 , self.cursorX+1);
-                        wattron(self.win, A_REVERSE);
-                        mvwprintw(self.win, it2, x, "%ls", line2);
-                        wattroff(self.win, A_REVERSE);
+			using c { wattron(self.win, A_REVERSE); }
+			mvwprintw(self.win, it2, x, "%ls", line2);
+			using c { wattroff(self.win, A_REVERSE); }
                         
                         x += line2.length();
                         
                         auto line3 = line.substring(
                                     self.cursorX+1, -1);
-                        mvwprintw(self.win, it2, x, "%ls", line3);
+			mvwprintw(self.win, it2, x, "%ls", line3);
                     }
                 }
                 else {
@@ -83,16 +83,16 @@ void ViWin*::horizonVisualModeView(ViWin* self, Vi* nvi)
                     
                     auto line1 = line.substring(0
                             , self.visualModeHorizonHeadX);
-                    mvwprintw(self.win, it2, x, "%ls", line1);
+		    mvwprintw(self.win, it2, x, "%ls", line1);
                     
                     x += line1.length();
                     
                     auto line2 = line.substring(
                             self.visualModeHorizonHeadX
                             , -1);
-                    wattron(self.win, A_REVERSE);
-                    mvwprintw(self.win, it2, x, "%ls", line2);
-                    wattroff(self.win, A_REVERSE);
+		    using c { wattron(self.win, A_REVERSE); }
+		    mvwprintw(self.win, it2, x, "%ls", line2);
+		    using c { wattroff(self.win, A_REVERSE); }
                 }
             }
             else if(y == (self.cursorY + self.scroll))
@@ -100,26 +100,26 @@ void ViWin*::horizonVisualModeView(ViWin* self, Vi* nvi)
                 auto x = 0;
                 
                 auto line1 = line.substring(0, self.cursorX+1);
-                wattron(self.win, A_REVERSE);
-                mvwprintw(self.win, it2, x, "%ls", line1);
-                wattroff(self.win, A_REVERSE);
+		using c { wattron(self.win, A_REVERSE); }
+		mvwprintw(self.win, it2, x, "%ls", line1);
+		using c { wattroff(self.win, A_REVERSE); }
                 
                 x += line1.length();
                 
                 auto line2 = line.substring(self.cursorX+1
                         , -1);
-                mvwprintw(self.win, it2, x, "%ls", line2);
+		mvwprintw(self.win, it2, x, "%ls", line2);
             }
             else if(y > (self.visualModeHorizonHeadScroll 
                             +self.visualModeHorizonHeadY)
                     && y < self.scroll+self.cursorY) 
             {
-                wattron(self.win, A_REVERSE);
-                mvwprintw(self.win, it2, 0, "%s", line.to_string());
-                wattroff(self.win, A_REVERSE);
+		using c { wattron(self.win, A_REVERSE); }
+		mvwprintw(self.win, it2, 0, "%s", line.to_string());
+		using c { wattroff(self.win, A_REVERSE); }
             }
             else {
-                mvwprintw(self.win, it2, 0, "%s", line.to_string());
+		mvwprintw(self.win, it2, 0, "%s", line.to_string());
             }
 
             it2++;
@@ -140,9 +140,9 @@ void ViWin*::horizonVisualModeView(ViWin* self, Vi* nvi)
                 
                 auto line1 = line.substring(0
                         , self.visualModeHorizonHeadX+1);
-                wattron(self.win, A_REVERSE);
-                mvwprintw(self.win, it2, x, "%ls", line1);
-                wattroff(self.win, A_REVERSE);
+		using c { wattron(self.win, A_REVERSE); }
+		mvwprintw(self.win, it2, x, "%ls", line1);
+		using c { wattroff(self.win, A_REVERSE); }
                 
                 x += line1.length();
                 
@@ -156,37 +156,38 @@ void ViWin*::horizonVisualModeView(ViWin* self, Vi* nvi)
                 auto x = 0;
                 
                 auto line1 = line.substring(0, self.cursorX+1);
-                mvwprintw(self.win, it2, x, "%ls", line1);
+		mvwprintw(self.win, it2, x, "%ls", line1);
                 
                 x += line1.length();
                 
                 auto line2 = line.substring(self.cursorX+1
                         , -1);
-                wattron(self.win, A_REVERSE);
-                mvwprintw(self.win, it2, x, "%ls", line2);
-                wattroff(self.win, A_REVERSE);
+
+		using c { wattron(self.win, A_REVERSE); }
+		mvwprintw(self.win, it2, x, "%ls", line2);
+		using c { wattroff(self.win, A_REVERSE); }
             }
             else if(y < (self.visualModeHorizonHeadScroll 
                             +self.visualModeHorizonHeadY)
                     && y > self.scroll+self.cursorY) 
             {
-                wattron(self.win, A_REVERSE);
-                mvwprintw(self.win, it2, 0, "%s", line.to_string());
-                wattroff(self.win, A_REVERSE);
+		using c { wattron(self.win, A_REVERSE); }
+		mvwprintw(self.win, it2, 0, "%s", line.to_string());
+		using c { wattroff(self.win, A_REVERSE); }
             }
             else {
-                mvwprintw(self.win, it2, 0, "%s", line.to_string());
+		mvwprintw(self.win, it2, 0, "%s", line.to_string());
             }
 
             it2++;
         }
     }
 
-    wattron(self.win, A_REVERSE);
-    mvwprintw(self.win, self.height-1, 0, "VISUAL MODE x %d y %d", self.cursorX, self.cursorY);
-    wattroff(self.win, A_REVERSE);
+	    using c { wattron(self.win, A_REVERSE); }
+	    mvwprintw(self.win, self.height-1, 0, "VISUAL MODE x %d y %d", self.cursorX, self.cursorY);
+	    using c { wattroff(self.win, A_REVERSE); }
 
-    wrefresh(self.win);
+	    using c { wrefresh(self.win); }
 }
 
 void ViWin*::view(ViWin* self, Vi* nvi) version 17
@@ -209,14 +210,14 @@ void ViWin*::yankOnHorizonVisualMode(ViWin* self, Vi* nvi)
     
     if(y < hv_y) {
         nvi.yank.reset();
-        auto first_line = self.texts.item(y, null).substring(self.cursorX, -1);
+        auto first_line = self.texts.item(y, null!).substring(self.cursorX, -1);
         
         nvi.yank.push_back(clone first_line);
         
         foreach(it, self.texts.sublist(y+1, hv_y)) {
             nvi.yank.push_back(clone it);
         }
-        auto last_line = self.texts.item(hv_y, null).substring(0, self.visualModeHorizonHeadX+1);
+        auto last_line = self.texts.item(hv_y, null!).substring(0, self.visualModeHorizonHeadX+1);
         
         nvi.yank.push_back(clone last_line);
         
@@ -230,12 +231,12 @@ void ViWin*::yankOnHorizonVisualMode(ViWin* self, Vi* nvi)
         int tail = self.cursorX;
         
         if(head < tail) {
-            auto line = self.texts.item(y, null).substring(head, tail+1);
+            auto line = self.texts.item(y, null!).substring(head, tail+1);
 
             nvi.yank.push_back(clone line);
         }
         else {
-            auto line = self.texts.item(y, null).substring(tail, head+1);
+            auto line = self.texts.item(y, null!).substring(tail, head+1);
             
             nvi.yank.push_back(clone line);
         }
@@ -245,14 +246,14 @@ void ViWin*::yankOnHorizonVisualMode(ViWin* self, Vi* nvi)
     }
     else {
         nvi.yank.reset();
-        auto first_line = self.texts.item(hv_y, null).substring(self.visualModeHorizonHeadX, -1);
+        auto first_line = self.texts.item(hv_y, null!).substring(self.visualModeHorizonHeadX, -1);
         
         nvi.yank.push_back(clone first_line);
         
         foreach(it, self.texts.sublist(hv_y+1, y)) {
             nvi.yank.push_back(clone it);
         }
-        auto last_line = self.texts.item(y, null).substring(0, self.cursorX+1);
+        auto last_line = self.texts.item(y, null!).substring(0, self.cursorX+1);
         
         nvi.yank.push_back(clone last_line);
         nvi.yankKind = kYankKindNoLine;
@@ -269,9 +270,9 @@ void ViWin*::deleteOnHorizonVisualMode(ViWin* self, Vi* nvi)
               + self.visualModeHorizonHeadY;
     
     if(y < hv_y) {
-        self.texts.item(y, null).delete(self.cursorX, -1);
-        self.texts.item(hv_y, null).delete(0, self.visualModeHorizonHeadX+1);
-        auto new_line = xsprintf("%ls%ls", self.texts.item(y, null), self.texts.item(hv_y, null)).to_wstring();
+        self.texts.item(y, null!).delete(self.cursorX, -1);
+        self.texts.item(hv_y, null!).delete(0, self.visualModeHorizonHeadX+1);
+        auto new_line = xsprintf("%ls%ls", self.texts.item(y, null!), self.texts.item(hv_y, null!)).to_wstring();
         self.texts.replace(y, clone new_line);
 
         self.texts.delete(y+1, hv_y+1);
@@ -282,10 +283,10 @@ void ViWin*::deleteOnHorizonVisualMode(ViWin* self, Vi* nvi)
         int tail = self.cursorX;
         
         if(head < tail) {
-            auto line = self.texts.item(y, null).delete(head, tail+1);
+            auto line = self.texts.item(y, null!).delete(head, tail+1);
         }
         else {
-            auto line = self.texts.item(y, null).delete(tail, head+1);
+            auto line = self.texts.item(y, null!).delete(tail, head+1);
         }
 
         self.cursorX = self.visualModeHorizonHeadX;
@@ -294,10 +295,10 @@ void ViWin*::deleteOnHorizonVisualMode(ViWin* self, Vi* nvi)
     }
     else {
         nvi.yank.reset();
-        self.texts.item(hv_y, null).delete(self.visualModeHorizonHeadX, -1);
-        self.texts.item(y, null).delete(0, self.cursorX+1);
+        self.texts.item(hv_y, null!).delete(self.visualModeHorizonHeadX, -1);
+        self.texts.item(y, null!).delete(0, self.cursorX+1);
 
-        auto new_line = xsprintf("%ls%ls", self.texts.item(hv_y, null), self.texts.item(y, null)).to_wstring();
+        auto new_line = xsprintf("%ls%ls", self.texts.item(hv_y, null!), self.texts.item(y, null!)).to_wstring();
         self.texts.replace(hv_y, clone new_line);
 
         self.texts.delete(hv_y+1, y+1);
@@ -326,7 +327,7 @@ void ViWin*::changeCaseHorizonVisualMode(ViWin* self, Vi* nvi)
     }
               
     if(y < hv_y) {
-        auto first_line = self.texts.item(y, null);
+        auto first_line = self.texts.item(y, null!);
         auto head_first_line = first_line.substring(0, x);
         auto tail_first_line = first_line.substring(x, -1);
         for(int i=0; i<tail_first_line.length(); i++) {
@@ -366,7 +367,7 @@ void ViWin*::changeCaseHorizonVisualMode(ViWin* self, Vi* nvi)
             self.texts.replace(y+1+it2, clone new_line);
             it2++;
         }
-        auto last_line = self.texts.item(hv_y, null);
+        auto last_line = self.texts.item(hv_y, null!);
         
         auto head_last_line = last_line.substring(0,hv_x+1);
         for(int i=0; i<head_last_line.length(); i++) {
@@ -398,7 +399,7 @@ void ViWin*::changeCaseHorizonVisualMode(ViWin* self, Vi* nvi)
         
         tail++;
         
-        auto line = self.texts.item(y, null);
+        auto line = self.texts.item(y, null!);
         auto head_line = line.substring(0, head);
         auto middle_line = line.substring(head, tail);
         for(int i=0; i<middle_line.length(); i++) {
@@ -440,7 +441,7 @@ void ViWin*::rewriteOnHorizonVisualMode(ViWin* self, Vi* nvi)
     wchar_t key = self.getKey(false);
     
     if(y < hv_y) {
-        auto first_line = self.texts.item(y, null);
+        auto first_line = self.texts.item(y, null!);
         auto head_first_line = first_line.substring(0, x);
         auto tail_first_line = xsprintf("%lc", key).multiply(first_line.length() - x).to_wstring();
         
@@ -455,7 +456,7 @@ void ViWin*::rewriteOnHorizonVisualMode(ViWin* self, Vi* nvi)
             self.texts.replace(y+1+it2, clone new_line);
             it2++;
         }
-        auto last_line = self.texts.item(hv_y, null);
+        auto last_line = self.texts.item(hv_y, null!);
         
         auto head_last_line = xsprintf("%lc", key).multiply(hv_x+1).to_wstring();
         auto tail_last_line = last_line.substring(hv_x+1, -1);
@@ -475,7 +476,7 @@ void ViWin*::rewriteOnHorizonVisualMode(ViWin* self, Vi* nvi)
         
         tail++;
         
-        auto line = self.texts.item(y, null);
+        auto line = self.texts.item(y, null!);
         auto head_line = line.substring(0, head);
         auto middle_line = xsprintf("%lc", key).multiply(tail-head).to_wstring();
         auto tail_line = line.substring(tail, -1);

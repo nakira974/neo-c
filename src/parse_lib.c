@@ -107,9 +107,6 @@ BOOL parse_word(char* buf, int buf_size, sParserInfo* info, BOOL print_out_err_m
         if(print_out_err_msg) {
             char buf[1024];
             snprintf(buf, 1024, "require word(alphabet or _ or number). this is (%c)", *info->p);
-int a = 0;
-int b = 1;
-int c = b/a;
             parser_err_msg(info, buf);
         }
 
@@ -532,7 +529,7 @@ BOOL parse_variable_name(char* buf, int buf_size, sParserInfo* info, sNodeType* 
                 return FALSE;
             }
             
-            if(strcmp(buf2, "finalize") != 0 && strcmp(buf2, "clone") != 0) {
+            if(strcmp(buf2, "finalize") != 0 && strcmp(buf2, "clone") != 0 && strcmp(buf2, "shallow_clone") != 0) {
                 int k;
                 for(k=0; k<pointer_num; k++) {
                     strncat(buf, "p", buf_size);
@@ -595,6 +592,7 @@ BOOL parse_variable_name(char* buf, int buf_size, sParserInfo* info, sNodeType* 
                 node_type->mPointerNum++;
                 node_type->mArrayDimentionNum = 0;
                 node_type->mOmitArrayNum = TRUE;
+                node_type->mOriginalOmitArrayNum = TRUE;
             }
             else {
                 while(*info->p == '[') {
@@ -638,22 +636,18 @@ BOOL parse_variable_name(char* buf, int buf_size, sParserInfo* info, sNodeType* 
             }
             
             int array_size = 0;
-            if(!gNCHeader) {
-                if(!get_const_value_from_node(&array_size, array_size_node, info))
-                {
-                    if(array_size_is_dynamic && info->mBlockLevel > 0) {
-                        node_type->mDynamicArrayNum = array_size_node;
-                        expect_next_character_with_one_forward("]", info);
-    
-                        return TRUE;
-                    }
-                    else {
-                        parser_err_msg(info, "Require Consta Value for array size");
-                        return TRUE;
-                    }
+            if(!get_const_value_from_node(&array_size, array_size_node, info))
+            {
+                if(array_size_is_dynamic && info->mBlockLevel > 0) {
+                    node_type->mDynamicArrayNum = array_size_node;
+                    expect_next_character_with_one_forward("]", info);
+
+                    return TRUE;
                 }
-            }
-            else {
+                else {
+                    parser_err_msg(info, "Require Consta Value for array size");
+                    return TRUE;
+                }
             }
 
             if(param_in_function) {
@@ -794,6 +788,7 @@ BOOL parse_sharp(sParserInfo* info)
     skip_spaces_and_lf(info);
 
     if(!parse_annotation(info)) {
+        fprintf(stderr, "%s %d: parse_annotaion is FALSE\n", gSName, gSLine);
         return FALSE;
     }
 

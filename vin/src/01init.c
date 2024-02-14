@@ -1,125 +1,5 @@
-public {#include "config.h" }
-public {#include <neo-c.h> }
-public {#define SAVE_INPUT_KEY_MAX 256}
-
 #include "common.h"
 
-public {
-enum eMode { kEditMode, kInsertMode, kVisualMode, kCommandMode, kSearchMode, kHorizonVisualMode, kVerticalVisualMode, kVerticalVisualMode, kRewriteMode };
-
-struct ViWin 
-{
-/// layer 1 ///
-    WINDOW* win;
-    list<wstring>*% texts;
-    int y;
-    int x;
-    int width;
-    int height;
-    int scroll;
-    void* vi;
-    int id;
-
-/// layer 2 ///
-    int cursorY;
-    int cursorX;
-    int scroll;
-    int digitInput;
-
-    tuple3<int,int,int>*% returnPoint;
-    list<tuple3<int, int, int>*%>*% returnPointStack;
-
-/// layer 5 ///
-    list<list<wstring>*%>%* undo;
-    list<int>%* undoScroll;
-    list<int>%* undoCursorX;
-    list<int>%* undoCursorY;
-    int undoIndex;
-
-/// layer 6 ///
-    char fileName[PATH_MAX];
-    bool writed;
-
-/// layer 8 ///
-    int visualModeHead;
-    int visualModeHeadX;
-    
-    int visualModeHeadHorizonScroll;
-    int visualModeHeadHorizonX;
-    int visualModeHeadHorizonY;
-
-    int visualModeHeadBefore;
-    int visualModeTailCursorYBefore;
-    int visualModeTailScrollBefore;
-
-/// layer 10 ///
-    int mRepeatFowardNextCharacterKind;
-    wchar_t mRepeatFowardNextCharacter;
-
-/// layer 12 ///
-    char commandString[128];
-
-/// layer 14 ///
-    vector<int>*% inputedKeys;
-    vector<int>*% savedInputedKeys;
-    bool autoInput;
-    int digitInput;
-    int autoInputIndex;
-    bool pressedDot;
-
-    map<int, vector<vector<int>*%>*%>*% macro;
-    int recordingMacroKey;
-    vector<vector<int>*%>*% recordingMacro;
-    vector<vector<int>*%>*% runningMacro;
-    int runningMacroIndex1;
-    int runningMacroIndex2;
-
-/// layer 16 ///
-    map<wchar_t, tuple3<int,int, int>*%>*% mark;
-
-/// layer 17 ///
-    int visualModeHorizonHeadScroll;
-    int visualModeHorizonHeadX;
-    int visualModeHorizonHeadY;
-
-/// layer 18 ///
-    int visualModeVerticalHeadX;
-    int visualModeVerticalHeadY;
-    int visualModeVerticalLen;
-    
-    int visualModeVerticalStartY;
-    int visualModeVerticalStartScroll;
-    int visualModeVerticalStartX;
-    bool visualModeVerticalInserting;
-};
-
-struct Vi 
-{
-/// layer 1 ///
-    list<ViWin*%>*% wins;
-    ViWin* activeWin;
-
-/// layer 2 ///
-    vector<void (*lambda)(Vi*, int)>*% events;
-    bool appEnd;
-
-/// layer 3 ///
-    int mode;
-
-/// layer 6 ///
-    int toggleWin;
-
-/// layer 7 ///
-    list<wstring>*% yank;
-    list<wstring>*% fileYank;
-    int yankKind;
-
-/// layer 9 ///
-    wchar_t searchString[128];
-    bool searchReverse;
-    bool regexSearch;
-};
-}
 
 ViWin*% ViWin*::initialize(ViWin*% self, int y, int x, int width, int height, Vi* vi) version 1
 {
@@ -150,7 +30,7 @@ ViWin*% ViWin*::initialize(ViWin*% self, int y, int x, int width, int height, Vi
 
 void ViWin*::finalize(ViWin* self) version 1
 {
-    delete self.texts;
+    delete borrow self.texts;
     delwin(self.win);
 }
 
@@ -201,7 +81,7 @@ bool ViWin*::equals(ViWin* left, ViWin* right)
 
 void Vi*::finalize(Vi* self) version 1
 {
-    delete self.wins;
+    delete borrow self.wins;
 
 //    endwin();
 }

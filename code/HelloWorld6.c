@@ -1,4 +1,4 @@
-#include <neo-c.h>
+#include <comelang.h>
 
 void fun(int@ pipe) 
 {
@@ -20,11 +20,11 @@ int main()
 
     come select {
         pipe {
-            printf("pipe %d\n", @pipe);
+            xassert("pipe test", @pipe == 4);
         }
 
         pipe2 {
-            printf("pipe2 %d\n", @pipe2);
+            xassert("pipe2 test", @pipe2 == 5);
         }
     }
 

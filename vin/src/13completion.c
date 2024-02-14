@@ -19,14 +19,14 @@ wchar_t*? ViWin*::selector2(ViWin* self, list<wstring>* lines)
 
         /// view ///
         for(int y=0; y<maxy && y < maxy2; y++) {
-            auto it = lines.item(scrolltop+y, null);
+            auto it = lines.item(scrolltop+y, null!);
 
             auto line = it.substring(0, maxx-1);
 
             if(cursor == y) {
-                attron(A_REVERSE);
+                using c { attron(A_REVERSE); }
                 mvprintw(y, 0, "%ls", line);
-                attroff(A_REVERSE);
+                using c { attroff(A_REVERSE); }
             }
             else {
                 mvprintw(y, 0, "%ls", line);
@@ -101,7 +101,7 @@ wchar_t*? ViWin*::selector2(ViWin* self, list<wstring>* lines)
     }
 
     if(!canceled) {
-        result = nullable lines.item(scrolltop+cursor, null);
+        result = nullable lines.item(scrolltop+cursor, null!);
     }
 
     return result;
@@ -109,7 +109,7 @@ wchar_t*? ViWin*::selector2(ViWin* self, list<wstring>* lines)
 
 void ViWin*::completion(ViWin* self, Vi* nvi) version 13
 {
-    auto line = self.texts.item(self.scroll+self.cursorY, null);
+    auto line = self.texts.item(self.scroll+self.cursorY, null!);
 
     wchar_t* p = line + self.cursorX;
     p--;
@@ -145,7 +145,9 @@ void ViWin*::completion(ViWin* self, Vi* nvi) version 13
     auto candidates2 = candidates.sort_with_lambda(int lambda(wchar_t* left, wchar_t* right) { return wcscmp(left, right); }).uniq();
 
     auto candidate = nonullable self.selector2(candidates2);
-
-    auto append = candidate.substring(len, -1);
-    self.insertText(append);
+    
+    if(candidate) {
+        auto append = candidate.substring(len, -1);
+        self.insertText(append);
+    }
 }

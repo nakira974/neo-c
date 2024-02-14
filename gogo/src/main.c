@@ -1,14 +1,4 @@
-#include <neo-c.h>
 #include "common.h"
-
-public {#include <neo-c.h>}
-public {#include <llvm-c/Core.h>}
-public {#include <llvm-c/DebugInfo.h>}
-public {#define STACK_NUM 512}
-
-public {#define COMPILE_ERR_MSG_MAX 5}
-
-public {struct sType;}
 
 LLVMContextRef gContext;
 LLVMModuleRef  gModule;
@@ -29,15 +19,13 @@ void node_final(char* sname)
     snprintf(sname2, PATH_MAX, "%s.ll", sname);
 
     LLVMDumpModule(gModule); // dump module to STDOUT
-    LLVMPrintModuleToFile(gModule, sname2, NULL);
+    LLVMPrintModuleToFile(gModule, sname2, NULL!);
 
     // clean memory
     LLVMDisposeBuilder(gBuilder);
     LLVMDisposeModule(gModule);
     LLVMContextDispose(gContext);
 }
-
-public {struct sVar;}
 
 struct LVALUE
 {
@@ -48,8 +36,6 @@ struct LVALUE
 };
 
 int gNodeID = 0;
-
-public { struct sInfo; }
 
 protocol sNode
 {
@@ -66,8 +52,6 @@ inline bool sNode*::equals(sNode* self, sNode* right)
 {
     return (self.compile == right.compile);
 }
-
-public {struct sVarTable;}
 
 struct sInfo
 {
@@ -96,14 +80,14 @@ struct sInfo
     bool last_expression_is_return;
 };
 
-private void init_modules(char* sname)
+void init_modules(char* sname)
 {
     node_init(sname);
     class_init();
     func_init();
 }
 
-private void final_modules(char* sname)
+void final_modules(char* sname)
 {
     func_final();
     class_final();
@@ -262,7 +246,7 @@ int main(int argc, char** argv)
         if(argv[i] === "run") {
         }
         else {
-            sname = nullable string(argv[i]);
+            sname = string(argv[i]);
         }
     }
     

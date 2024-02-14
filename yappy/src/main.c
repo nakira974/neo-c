@@ -60,7 +60,7 @@ list<sNode*>* parse(sParserInfo* info, int block_space_num)
     auto nodes = new list<sNode*>();
     
     while(*info->p) {
-        sNode* node = nonullable null;
+        sNode* node = null;
         
         if(info.space_num < block_space_num) {
             break;
@@ -120,7 +120,7 @@ list<sNode*>* parse(sParserInfo* info, int block_space_num)
 
 list<sNode*>* parse_block(sParserInfo* info)
 {
-    list<sNode*>* nodes = nonullable null;
+    list<sNode*>* nodes = null;
     
     /// multi line ///
     if(*info->p == '\n') {
@@ -252,8 +252,8 @@ int main(int argc, char** argv)
         
         memset(&vm_info, 0, sizeof(sVMInfo));
         
-        vm_init(codes, null, string("__main__"), null, &vm_info);
-        vm(codes, null, &vm_info).expect {
+        vm_init(codes, null!, string("__main__"), null!, &vm_info);
+        vm(codes, null!, &vm_info).expect {
             print_exception(parent->vm_info->exception);
             exit(1);
         }

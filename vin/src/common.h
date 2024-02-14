@@ -4,7 +4,12 @@
 ////////////////////////////
 #include "config.h" 
 
-#include <neo-c.h> 
+using unsafe;
+//using no-null-check;
+
+#include <comelang.h> 
+
+using unsafe;
 
 #define SAVE_INPUT_KEY_MAX 256
 

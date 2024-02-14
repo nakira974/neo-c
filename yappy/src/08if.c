@@ -1,5 +1,7 @@
 #include "common.h"
 
+struct sFunNode;
+
 class sTrueNode(sParserInfo* info)
 {
     unsigned int self.id = gNodeID++;
@@ -111,8 +113,8 @@ class sIfNode(sNode* if_exp, list<sNode*>* if_nodes, vector<sNode*>* elif_exps, 
         *p = codes.len;
         
         for(int i= 0; i<elif_exps.length(); i++) {
-            sNode* elif_exp = elif_exps.item(i, null);
-            list<sNode*>* elif_nodes = elif_blocks.item(i, null);
+            sNode* elif_exp = elif_exps.item(i, null!);
+            list<sNode*>* elif_nodes = elif_blocks.item(i, null!);
             
             if(!elif_exp.compile->(codes, info)) {
                 return false;
@@ -254,7 +256,7 @@ sNode* exp_node(sParserInfo* info) version 8
                 return null;
             }
             
-            else_nodes = nullable parse_block(info);
+            else_nodes = parse_block(info);
         }
         
         result = new sNode(new sIfNode(if_exp, if_nodes, elif_exps, elif_blocks, else_nodes, info));
@@ -315,7 +317,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 91
             break;
             
         default: {
-            bool result = inherit(codes, params, info);
+            bool result = inherit(codes, params!, info);
             if(!result) {
                 return false;
             }

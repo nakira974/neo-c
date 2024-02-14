@@ -13,9 +13,9 @@ void ViWin*::commandModeView(ViWin* self, Vi* nvi)
 
     self.textsView(nvi);
 
-    wattron(self.win, A_REVERSE);
+    using c { wattron(self.win, A_REVERSE); }
     mvwprintw(self.win, self.height-1, 0, ":%s", nvi.commandString);
-    wattroff(self.win, A_REVERSE);
+    using c { wattroff(self.win, A_REVERSE); }
 
     wrefresh(self.win);
 }
@@ -37,14 +37,14 @@ string ViWin*::selector(ViWin* self, list<string>* lines)
 
         /// view ///
         for(int y=0; y<maxy && y < maxy2; y++) {
-            auto it = lines.item(scrolltop+y, null);
+            auto it = lines.item(scrolltop+y, null!);
 
             auto line = it.substring(0, maxx-1);
 
             if(cursor == y) {
-                attron(A_REVERSE);
+                using c { attron(A_REVERSE); }
                 mvprintw(y, 0, "%s", line);
-                attroff(A_REVERSE);
+                using c { attroff(A_REVERSE); }
             }
             else {
                 mvprintw(y, 0, "%s", line);
@@ -361,8 +361,8 @@ void ViWin*::subAllTextsFromCommandMode(ViWin* self, Vi* nvi)
 
     auto command = string(nvi.commandString).scan(reg);
 
-    auto str = command.item(1, null);
-    auto replace = command.item(2, null);
+    auto str = command.item(1, null!);
+    auto replace = command.item(2, null!);
     
     if(str != null && replace != null) {
         self.pushUndo();
@@ -408,7 +408,7 @@ void Vi*::exitFromComandMode(Vi* self)
 
         regex_struct*% reg = regex("sp \(.+\)", ignore_case, multiline, global, extended, dotall, anchored, dollar_endonly, ungreedy);
 
-        auto file_name = clone string(self.commandString).scan(reg).item(1, null);
+        auto file_name = clone string(self.commandString).scan(reg).item(1, null!);
 
         if(file_name != null) {
             self.openNewFile(file_name);

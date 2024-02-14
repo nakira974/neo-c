@@ -1,4 +1,4 @@
-Zed interpreter written by neo-c
+Zed interpreter written by comelang
 
 In my hobby
 
@@ -39,4 +39,13 @@ USAGE
     RR
     LL
     DD
+    
+    > zed '[1,4,3,10].sort()'
+    [1,3,4,10]
+    > zed 'sum=0; [1,4,3,10].each { sum = sum + it }; sum'
+    18
+    > zed '"HELLO WORLD".scan(/./).map { if it == " " { it } else { it + "B" } }.join("")'
+    HBEBLBLBOB WBOBRBLBDB
+    > ls | zed '.scan(/./).sort().uniq()'
+    [-,.,2,3,4,5,6,7,8,9,A,C,D,E,I,L,M,N,R,S,_,a,b,c,d,e,f,g,h,i,k,l,m,n,o,p,r,s,t,u,v,x,y,z]
 ```

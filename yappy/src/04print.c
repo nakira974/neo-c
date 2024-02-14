@@ -371,7 +371,7 @@ static bool emb_funcmp(char* p, char* word2)
 
 sNode* return_node(sParserInfo* info) version 1
 {
-    return nonullable null;
+    return null;
 }
 
 sNode* exp_node(sParserInfo* info) version 4
@@ -839,7 +839,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 95
             break;
             
         default: {
-            bool result = inherit(codes, params, info);
+            bool result = inherit(codes, params!, info);
             if(!result) {
                 return false;
             }

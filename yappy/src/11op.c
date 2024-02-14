@@ -387,7 +387,7 @@ static sNode* op_mult_node(sParserInfo* info)
             sNode*? right = op_mult_node(info);
             
             if(right == null) {
-                return nonullable null;
+                return null;
             }
             
             result = new sNode(new sMultNode(result, right!, info));
@@ -399,7 +399,7 @@ static sNode* op_mult_node(sParserInfo* info)
             sNode*? right = op_mult_node(info);
             
             if(right == null) {
-                return nonullable null;
+                return null;
             }
             
             result = new sNode(new sDivNode(result, right!, info));
@@ -424,7 +424,7 @@ static sNode* op_eq_node(sParserInfo* info)
             sNode* right = op_eq_node(info);
             
             if(right == null) {
-                return nonullable null;
+                return null;
             }
             
             result = new sNode(new sEqualNode(result, right!, info));
@@ -436,7 +436,7 @@ static sNode* op_eq_node(sParserInfo* info)
             sNode* right = op_eq_node(info);
             
             if(right == null) {
-                return nonullable null;
+                return null;
             }
             
             result = new sNode(new sEqualNotNode(result, right, info));
@@ -452,7 +452,7 @@ static sNode* op_eq_node(sParserInfo* info)
                 sNode*? right = op_eq_node(info);
                 
                 if(right == null) {
-                    return nonullable null;
+                    return null;
                 }
                 
                 result = new sNode(new sIsNotNode(result, right, info));
@@ -461,7 +461,7 @@ static sNode* op_eq_node(sParserInfo* info)
                 sNode* right = op_eq_node(info);
                 
                 if(right == null) {
-                    return nonullable null;
+                    return null;
                 }
                 
                 result = new sNode(new sIsNode(result, right!, info));
@@ -484,7 +484,7 @@ static sNode* op_andand_node(sParserInfo* info)
             sNode* right = op_andand_node(info);
             
             if(right == null) {
-                return nonullable null;
+                return null;
             }
             
             result = new sNode(new sAndAndNode(result, right, info));
@@ -496,7 +496,7 @@ static sNode* op_andand_node(sParserInfo* info)
             sNode* right = op_andand_node(info);
             
             if(right == null) {
-                return nonullable null;
+                return null;
             }
             
             result = new sNode(new sOrOrNode(result, right, info));
@@ -683,7 +683,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 89
             break;
             
         default: {
-            bool result = inherit(codes, params, info);
+            bool result = inherit(codes, params!, info);
             if(!result) {
                 return false;
             }

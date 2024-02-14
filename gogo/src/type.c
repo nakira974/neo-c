@@ -1,8 +1,5 @@
-#include <neo-c.h>
+#include <comelang.h>
 #include "common.h"
-
-public {#define PARAMS_MAX 32}
-public {#define VAR_NAME_MAX 128}
 
 struct sClass 
 {
@@ -11,7 +8,7 @@ struct sClass
     bool unsigned_;
 };
 
-private map<string, sClass*>* gClasses;
+map<string, sClass*>* gClasses;
 
 void class_init()
 {
@@ -63,7 +60,7 @@ sClass* sClass*::clone(sClass* klass)
 
 sClass* get_class(char* class_name_)
 {
-    sClass* klass = gClasses.at(class_name_, null);
+    sClass* klass = gClasses.at(class_name_, null!);
     
     if(klass == null) {
         fprintf(stderr, "unexpected err in get_class (%s)\n", class_name_);
@@ -164,7 +161,7 @@ bool type_identify(sType* left, sType* right)
     return left->klass->name === right->klass->name;
 }
 
-private sType* parse_class_name(char** p, char** p2, char* buf)
+sType* parse_class_name(char** p, char** p2, char* buf)
 {
     sType* node_type = new sType();
 

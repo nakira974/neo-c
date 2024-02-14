@@ -51,7 +51,7 @@ ALLOC void* xmalloc(size_t size)
 
     if(buf == NULL) {
         fprintf(stderr, "It is not enough memory");
-        exit(1);
+        exit(100);
     }
 
     return buf;
@@ -65,7 +65,7 @@ ALLOC char* xstrdup(char* str)
 
     if(buf == NULL) {
         fprintf(stderr, "It is not enough memory\n");
-        exit(1);
+        exit(101);
     }
 
     return buf;
@@ -79,7 +79,7 @@ ALLOC void* xrealloc(void* ptr, size_t size)
 
     if(buf == NULL) {
         fprintf(stderr, "It is not enough memory\n");
-        exit(1);
+        exit(102);
     }
 
     return buf;
@@ -93,7 +93,7 @@ ALLOC void* xcalloc(size_t count, size_t size)
 
     if(buf == NULL) {
         fprintf(stderr, "It is not enough memory\n");
-        exit(1);
+        exit(103);
     }
 
     return buf;

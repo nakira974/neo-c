@@ -12,8 +12,11 @@ then
 # termux
 elif test `uname -o` = Android
 then
-    apt install clang libllvm pcre libgc readline ncurses make ninja cmake autoconf valgrind gdb lldb binutils libandroid-glob
+    apt install which clang libllvm pcre libgc readline ncurses make ninja cmake autoconf valgrind gdb lldb binutils libandroid-glob
 # debian
+elif ls /etc/debian_version
+then
+    sudo apt install  clang g++ gcc llvm-dev libpcre3-dev libgc-dev libreadline-dev ncurses-dev make ninja-build cmake autoconf valgrind gdb lldb
 elif which apt > /dev/null
 then
     sudo apt install  clang g++ gcc llvm-dev libpcre++-dev libgc-dev libreadline-dev ncurses-dev make ninja-build cmake autoconf valgrind gdb lldb

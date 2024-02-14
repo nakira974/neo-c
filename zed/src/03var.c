@@ -1,14 +1,14 @@
-#include <neo-c.h>
+#include <comelang.h>
 #include "common.h"
 
-private struct sStoreNode
+ struct sStoreNode
 {
     int id;
     wstring var_name;
     sNode*% right;
 };
 
-private sStoreNode*% sStoreNode*::initialize(sStoreNode*% self, wstring var_name, sNode*% right)
+ sStoreNode*% sStoreNode*::initialize(sStoreNode*% self, wstring var_name, sNode*% right)
 {
     self.id = gNodeID++;
     self.var_name = var_name;
@@ -17,7 +17,7 @@ private sStoreNode*% sStoreNode*::initialize(sStoreNode*% self, wstring var_name
     return self;
 }
 
-private bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
+ bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
 {
     if(!self.right.compile->(info)) {
         return false;
@@ -31,18 +31,18 @@ private bool sStoreNode*::compile(sStoreNode* self, sInfo* info)
     return true;
 }
 
-private unsigned int sStoreNode*::id(sStoreNode* self)
+ unsigned int sStoreNode*::id(sStoreNode* self)
 {
     return self.id;
 }
 
-private struct sLoadNode
+ struct sLoadNode
 {
     int id;
     wstring var_name;
 };
 
-private sLoadNode*% sLoadNode*::initialize(sLoadNode*% self, wstring var_name)
+ sLoadNode*% sLoadNode*::initialize(sLoadNode*% self, wstring var_name)
 {
     self.id = gNodeID++;
     self.var_name = var_name;
@@ -50,7 +50,7 @@ private sLoadNode*% sLoadNode*::initialize(sLoadNode*% self, wstring var_name)
     return self;
 }
 
-private bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
+ bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
 {
     info.codes.append_int(OP_LOAD);
     
@@ -61,19 +61,19 @@ private bool sLoadNode*::compile(sLoadNode* self, sInfo* info)
     return true;
 }
 
-private unsigned int sLoadNode*::id(sLoadNode* self)
+ unsigned int sLoadNode*::id(sLoadNode* self)
 {
     return self.id;
 }
 
-private struct sLoadElementNode
+ struct sLoadElementNode
 {
     int id;
     string var_name;
     sNode*% index;
 };
 
-private sLoadElementNode*% sLoadElementNode*::initialize(sLoadElementNode*% self, string var_name, sNode*% index)
+ sLoadElementNode*% sLoadElementNode*::initialize(sLoadElementNode*% self, string var_name, sNode*% index)
 {
     self.id = gNodeID++;
     
@@ -83,12 +83,12 @@ private sLoadElementNode*% sLoadElementNode*::initialize(sLoadElementNode*% self
     return self;
 }
 
-private unsigned int sLoadElementNode*::id(sLoadElementNode* self)
+ unsigned int sLoadElementNode*::id(sLoadElementNode* self)
 {
     return self.id;
 }
 
-private bool sLoadElementNode*::compile(sLoadElementNode* self, sInfo* info)
+ bool sLoadElementNode*::compile(sLoadElementNode* self, sInfo* info)
 {
     sNode* index = self.index;
     
@@ -106,7 +106,7 @@ private bool sLoadElementNode*::compile(sLoadElementNode* self, sInfo* info)
     return true;
 }
 
-private struct sStoreElementNode
+ struct sStoreElementNode
 {
     int id;
     string var_name;
@@ -114,7 +114,7 @@ private struct sStoreElementNode
     sNode*% right;
 };
 
-private sStoreElementNode*% sStoreElementNode*::initialize(sStoreElementNode*% self, string var_name, sNode*% index, sNode*% right)
+ sStoreElementNode*% sStoreElementNode*::initialize(sStoreElementNode*% self, string var_name, sNode*% index, sNode*% right)
 {
     self.id = gNodeID++;
     
@@ -125,12 +125,12 @@ private sStoreElementNode*% sStoreElementNode*::initialize(sStoreElementNode*% s
     return self;
 }
 
-private unsigned int sStoreElementNode*::id(sStoreElementNode* self)
+ unsigned int sStoreElementNode*::id(sStoreElementNode* self)
 {
     return self.id;
 }
 
-private bool sStoreElementNode*::compile(sStoreElementNode* self, sInfo* info)
+ bool sStoreElementNode*::compile(sStoreElementNode* self, sInfo* info)
 {
     sNode* index = self.index;
     
@@ -153,7 +153,7 @@ private bool sStoreElementNode*::compile(sStoreElementNode* self, sInfo* info)
     return true;
 }
 
-private map<wstring, ZVALUE*%>* gVars;
+ map<wstring, ZVALUE*%>* gVars;
 
 ZVALUE gNullValue;
 
@@ -178,9 +178,9 @@ bool vm(sInfo* info) version 3
             
             wstring var_name = get_str_from_codes(info);
             
-            ZVALUE*? right_value = nullable info.stack[-1];
+            ZVALUE*? right_value = info.stack[-1];
             
-            gVars.insert(var_name, clone right_value!);
+            gVars.insert(var_name, clone right_value);
             
             info.stack.delete_back();
             }
@@ -191,7 +191,7 @@ bool vm(sInfo* info) version 3
             
             wstring var_name = get_str_from_codes(info);
             
-            ZVALUE* zvalue = gVars.at(var_name, null);
+            ZVALUE* zvalue = gVars.at(var_name, null!);
             
             if(zvalue == null) {
                 fprintf(stderr, "undeclared var(%ls)\n", var_name);
@@ -207,9 +207,9 @@ bool vm(sInfo* info) version 3
             
             wstring var_name = get_str_from_codes(info);
             
-            ZVALUE* map = gVars.at(var_name, null);
+            ZVALUE* map_ = gVars.at(var_name, null!);
             
-            if(map == null || (map.kind != kMapValue && map.kind != kListValue)) {
+            if(map_ == null || (map_.kind != kMapValue && map_.kind != kListValue)) {
                 fprintf(stderr, "invalid obj value for array index\n");
                 exit(2);
             }
@@ -218,7 +218,7 @@ bool vm(sInfo* info) version 3
             
             info.stack.delete_back();
             
-            switch(map.kind) {
+            switch(map_.kind) {
                 case kListValue: {
                     int index_value = -1;
                     if(index.kind == kIntValue) {
@@ -229,7 +229,7 @@ bool vm(sInfo* info) version 3
                         exit(2);
                     }
                     
-                    ZVALUE* result = map.listValue[index_value];
+                    ZVALUE* result = map_.listValue[index_value];
                     
                     if(result == null) {
                         fprintf(stderr, "invalid list index\n");
@@ -241,7 +241,7 @@ bool vm(sInfo* info) version 3
                     break;
                     
                 case kMapValue: {
-                    ZVALUE* result = map.mapValue[index];
+                    ZVALUE* result = map_.mapValue[index];
                     
                     if(result == null) {
                         fprintf(stderr, "invalid map index\n");
@@ -264,9 +264,9 @@ bool vm(sInfo* info) version 3
             
             wstring var_name = get_str_from_codes(info);
             
-            ZVALUE* map = gVars.at(var_name, null);
+            ZVALUE* map_ = gVars.at(var_name, null!);
             
-            if(map == null || (map.kind != kMapValue && map.kind != kListValue)) {
+            if(map_ == null || (map_.kind != kMapValue && map_.kind != kListValue)) {
                 fprintf(stderr, "invalid obj value for array index\n");
                 exit(2);
             }
@@ -277,7 +277,7 @@ bool vm(sInfo* info) version 3
             info.stack.delete_back();
             info.stack.delete_back();
             
-            switch(map.kind) {
+            switch(map_.kind) {
                 case kListValue: {
                     int index_value = -1;
                     if(index.kind == kIntValue) {
@@ -288,19 +288,19 @@ bool vm(sInfo* info) version 3
                         exit(2);
                     }
                     
-                    ZVALUE* item = map.listValue.item(index_value, null);
+                    ZVALUE* item = map_.listValue.item(index_value, null!);
                     
                     if(item == null) {
                         fprintf(stderr, "invalid list index\n");
                         exit(2);
                     }
                     
-                    map.listValue[index_value] = clone right;
+                    map_.listValue[index_value] = clone right;
                     }
                     break;
                     
                 case kMapValue: 
-                    map.mapValue[clone index] = clone right;
+                    map_.mapValue[clone index] = clone right;
                     break;
                     
                 default:
@@ -322,16 +322,16 @@ sNode*? exp_node(sInfo* info) version 3
     buffer*%? var_name = null;
     
     if(xisalpha(*info->p)) {
-        var_name = nullable new buffer();
+        var_name = new buffer();
         
         while(xisalnum(*info->p) || *info->p == '_') {
-            var_name!.append_char(*info->p);
+            var_name.append_char(*info->p);
             info->p++;
         }
         
         skip_spaces(info);
         
-        if(*info->p == '=') {
+        if(*info->p == '=' && *(info->p+1) != '=') {
             info->p++;
             skip_spaces(info);
             
@@ -342,14 +342,14 @@ sNode*? exp_node(sInfo* info) version 3
                 exit(2);
             }
             
-            sNode*? result = borrow new sNode(new sStoreNode(var_name!.to_string().to_wstring(), clone node!));
+            sNode*? result = borrow new sNode(new sStoreNode(var_name.to_string().to_wstring(), clone node));
             
-            delete node!;
+            delete node;
             
             return result;
         }
         else {
-           result = borrow new sNode(new sLoadNode(var_name!.to_string().to_wstring()));
+           result = borrow new sNode(new sLoadNode(var_name.to_string().to_wstring()));
         }
     }
     else {
@@ -383,19 +383,19 @@ sNode*? exp_node(sInfo* info) version 3
                 exit(2);
             }
             
-            sNode*? result2 = borrow new sNode(new sStoreElementNode(var_name!.to_string(), clone node!, clone node2!));
+            sNode*? result2 = borrow new sNode(new sStoreElementNode(var_name.to_string(), clone node, clone node2));
             
-            delete result!;
-            delete node!;
-            delete node2!;
+            delete result;
+            delete node;
+            delete node2;
             
             result = result2;
         }
         else {
-            sNode*? result2 = borrow new sNode(new sLoadElementNode(var_name!.to_string(), clone node!))
+            sNode*? result2 = borrow new sNode(new sLoadElementNode(var_name.to_string(), clone node))
             
-            delete result!;
-            delete node!;
+            delete result;
+            delete node;
             
             result = result2;
         }

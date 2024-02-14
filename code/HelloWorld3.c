@@ -1,7 +1,9 @@
-#include <neo-c.h>
+#include <comelang.h>
 
 int main()
 {
+    using unsafe;
+    
     xassert("xaasert test", true);
 
     auto a = xsprintf("AAA");
@@ -106,13 +108,13 @@ int main()
         printf("%d\n", it);
     }
 
-    vector<int*>*% v3 = new vector<init*>.initialize();
+    vector<int*>*% v3 = new vector<int*>.initialize();
 
     int x = 0;
 
     v3.push_back(&x);
 
-    printf("%d\n", *v3.item(0, null));
+    printf("%d\n", *v3.item(0, null!));
 
     buffer*% b1 = new buffer.initialize();
 

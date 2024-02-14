@@ -1,7 +1,7 @@
-#include <neo-c.h>
+#include <comelang.h>
 #include "common.h"
 
-private struct sRegexNode
+ struct sRegexNode
 {
     int id;
     wstring value;
@@ -9,7 +9,7 @@ private struct sRegexNode
     bool ignore_case;
 };
 
-private sRegexNode*% sRegexNode*::initialize(sRegexNode*% self, wstring value, bool global, bool ignore_case)
+ sRegexNode*% sRegexNode*::initialize(sRegexNode*% self, wstring value, bool global, bool ignore_case)
 {
     self.id = gNodeID++;
     self.value = value;
@@ -19,12 +19,12 @@ private sRegexNode*% sRegexNode*::initialize(sRegexNode*% self, wstring value, b
     return self;
 }
 
-private unsigned int sRegexNode*::id(sRegexNode* self)
+ unsigned int sRegexNode*::id(sRegexNode* self)
 {
     return self.id;
 }
 
-private bool sRegexNode*::compile(sRegexNode* self, sInfo* info)
+ bool sRegexNode*::compile(sRegexNode* self, sInfo* info)
 {
     info.codes.append_int(OP_REGEX_VALUE);
     

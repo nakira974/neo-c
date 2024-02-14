@@ -81,19 +81,17 @@ sNodeType* clone_node_type(sNodeType* node_type)
     }
     node_type2->mSizeNum = node_type->mSizeNum;
     node_type2->mNullable = node_type->mNullable;
-    node_type2->mGuarded = node_type->mGuarded;
     node_type2->mImmutable = node_type->mImmutable;
-    node_type2->mChannel = node_type->mChannel;
     node_type2->mPointerNum = node_type->mPointerNum;
     node_type2->mHeap = node_type->mHeap;
     node_type2->mAllocaValue = node_type->mAllocaValue;
     node_type2->mNoHeap = node_type->mNoHeap;
     node_type2->mRefference = node_type->mRefference;
     node_type2->mUnsigned = node_type->mUnsigned;
+    node_type2->mLongLong = node_type->mLongLong;
     node_type2->mRegister = node_type->mRegister;
     node_type2->mVolatile = node_type->mVolatile;
     node_type2->mStatic = node_type->mStatic;
-    node_type2->mUniq = node_type->mUniq;
     node_type2->mDummyHeap = node_type->mDummyHeap;
     node_type2->mDynamicArrayNum = node_type->mDynamicArrayNum;
     node_type2->mArrayInitializeNum = node_type->mArrayInitializeNum;
@@ -119,18 +117,15 @@ sNodeType* clone_node_type(sNodeType* node_type)
     }
     node_type2->mVarArgs = node_type->mVarArgs;
 
-    node_type2->mNumFields = node_type->mNumFields;
-
-    xstrncpy(node_type2->mTypeName, node_type->mTypeName, VAR_NAME_MAX);
-    node_type2->mTypePointerNum = node_type->mTypePointerNum;
-    
     node_type2->mArrayPointer = node_type->mArrayPointer;
     node_type2->mOmitArrayNum = node_type->mOmitArrayNum;
+    node_type2->mOriginalOmitArrayNum = node_type->mOriginalOmitArrayNum;
     node_type2->mNoArrayPointerNum = node_type->mNoArrayPointerNum;
     node_type2->mFunctionParam = node_type->mFunctionParam;
     node_type2->mArrayParam = node_type->mArrayParam;
     node_type2->mCastedPointerToPointer = node_type->mCastedPointerToPointer;
     node_type2->mNoAutoCast = node_type->mNoAutoCast;
+    node_type2->mCatchHeapMark = node_type->mCatchHeapMark;
     
     return node_type2;
 }
@@ -206,9 +201,6 @@ void show_type_core(sNodeType* type, int* num_classes, char** classes, BOOL no_o
     if(type->mImmutable) {
         printf(" immutable ");
     }
-    if(type->mChannel) {
-        printf("@");
-    }
     if(type->mNumParams > 0) printf("(");
 /*
     for(i=0; i<type->mNumParams; i++)
@@ -218,6 +210,7 @@ void show_type_core(sNodeType* type, int* num_classes, char** classes, BOOL no_o
     }
 */
     if(type->mNumParams > 0) printf(")");
+/*
     if(!no_output_fields && ((klass->mFlags & CLASS_FLAGS_STRUCT) || (klass->mFlags & CLASS_FLAGS_UNION))) {
         puts("");
         int i;
@@ -246,7 +239,7 @@ void show_type_core(sNodeType* type, int* num_classes, char** classes, BOOL no_o
             }
 
             if(*num_classes >= 128) {
-                fprintf(stderr, "overflow class\n");
+                fprintf(stderr, "%s %d: overflow class\n", gSName, gSLine);
                 exit(2);
             }
 
@@ -276,6 +269,7 @@ void show_type_core(sNodeType* type, int* num_classes, char** classes, BOOL no_o
             }
         }
     }
+*/
     if(type_identify_with_class_name(type, "lambda")) {
         puts("");
         int i;
@@ -302,7 +296,6 @@ void show_type_core(sNodeType* type, int* num_classes, char** classes, BOOL no_o
     }
 }
 
-
 void show_node_type(sNodeType* type)
 {
     char* classes[128];
@@ -318,6 +311,8 @@ void show_node_type(sNodeType* type)
         free(classes[i]);
     }
 }
+
+
 
 void show_node_type_one_line(sNodeType* type)
 {
@@ -351,7 +346,6 @@ static sNodeType* parse_class_name(char** p, char** p2, char* buf)
     node_type->mArrayDimentionNum = 0;
     node_type->mNullable = FALSE;
     node_type->mImmutable = FALSE;
-    node_type->mChannel = FALSE;
 
     *p2 = buf;
 
@@ -419,12 +413,6 @@ static sNodeType* parse_class_name(char** p, char** p2, char* buf)
             skip_spaces_for_parse_class_name(p);
 
             node_type->mNullable = TRUE;
-        }
-        else if(**p == '~') {
-            (*p)++;
-            skip_spaces_for_parse_class_name(p);
-
-            node_type->mChannel = TRUE;
         }
         else if(**p == '*') {
             (*p)++;
@@ -509,35 +497,6 @@ BOOL is_number_class(sNodeType* node_type)
     return n;
 }
 
-BOOL check_the_same_fields(sNodeType* left_node, sNodeType* right_node)
-{
-    sCLClass* left_class = left_node->mClass;
-    sCLClass* right_class = right_node->mClass;
-
-    if(left_class->mNumFields != right_class->mNumFields)
-    {
-        return FALSE;
-    }
-
-    if(left_class->mNumFields == 0) {
-        return FALSE;
-    }
-
-    int i;
-    for(i=0; i<left_class->mNumFields; i++) {
-        sNodeType* left_field = left_class->mFields[i];
-        sNodeType* right_field = right_class->mFields[i];
-
-        if(!type_identify(left_field, right_field))
-        {
-            return FALSE;
-        }
-
-    }
-
-    return TRUE;
-}
-
 BOOL lambda_posibility(sNodeType* left_type, sNodeType* right_type)
 {
     if(left_type->mNumParams != right_type->mNumParams) {
@@ -563,6 +522,8 @@ BOOL lambda_posibility(sNodeType* left_type, sNodeType* right_type)
 
 BOOL auto_cast_posibility(sNodeType* left_type, sNodeType* right_type, BOOL op)
 {
+//show_node_type(left_type);
+//show_node_type(right_type);
     sCLClass* left_class = left_type->mClass;
     sCLClass* right_class = right_type->mClass; 
     
@@ -586,9 +547,6 @@ BOOL auto_cast_posibility(sNodeType* left_type, sNodeType* right_type, BOOL op)
     else if(type_identify(left_type, right_type) && (left_class->mFlags & CLASS_FLAGS_UNION) && (right_class->mFlags & CLASS_FLAGS_UNION)) {
         return TRUE;
     }
-    else if(type_identify(left_type, right_type) && right_type->mChannel) {
-        return TRUE;
-    }
     else if(is_number_type(left_type) && is_number_type(right_type)) {
         return TRUE;
     }
@@ -601,6 +559,10 @@ BOOL auto_cast_posibility(sNodeType* left_type, sNodeType* right_type, BOOL op)
         return TRUE;
     }
     else if(type_identify_with_class_name(left_type, "void*") && right_type->mPointerNum > 0) 
+    {
+        return TRUE;
+    }
+    else if(type_identify_with_class_name(right_type, "void*") && left_type->mPointerNum > 0) 
     {
         return TRUE;
     }
@@ -659,6 +621,9 @@ BOOL auto_cast_posibility(sNodeType* left_type, sNodeType* right_type, BOOL op)
     else if(type_identify_with_class_name(left_type, "void") && left_type->mPointerNum == 1 && right_type->mPointerNum > 0) {
         return TRUE;
     }
+    else if(type_identify_with_class_name(left_type, "void") && left_type->mPointerNum == 1 && right_type->mArrayDimentionNum == 1) {
+        return TRUE;
+    }
     else if(type_identify_with_class_name(left_type, "protocol_obj_t")) {
         return TRUE;
     }
@@ -681,19 +646,23 @@ BOOL auto_cast_posibility(sNodeType* left_type, sNodeType* right_type, BOOL op)
     {
         return TRUE;
     }
-    else if((left_type->mPointerNum-1 == right_type->mPointerNum) && right_type->mArrayDimentionNum == 1)
+    else if(type_identify(left_type, right_type) && (left_type->mPointerNum-1 == right_type->mPointerNum) && right_type->mArrayDimentionNum == 1)
     {
         return TRUE;
     }
-    else if(left_type->mPointerNum+left_type->mNoArrayPointerNum == right_type->mPointerNum+right_type->mArrayDimentionNum) 
+    else if(type_identify(left_type, right_type) && left_type->mPointerNum+left_type->mNoArrayPointerNum == right_type->mPointerNum+right_type->mArrayDimentionNum && left_type->mNumGenericsTypes == right_type->mNumGenericsTypes) 
     {
+        int i;
+        for(i=0; i<left_type->mNumGenericsTypes; i++) {
+            sNodeType* left_type2 = left_type->mGenericsTypes[i];
+            sNodeType* right_type2 = right_type->mGenericsTypes[i];
+            if(!type_identify(left_type2, right_type2)) {
+                return FALSE;
+            }
+        }
         return TRUE;
     }
-    else if(left_type->mPointerNum == 1 && left_type->mArrayDimentionNum == 1 && right_type->mArrayDimentionNum == 2 && right_type->mPointerNum == 0) {
-        return TRUE;
-    }
-    else if((left_type->mPointerNum-1 == right_type->mPointerNum) && right_type->mChannel == 1)
-    {
+    else if(type_identify(left_type, right_type) && left_type->mPointerNum == 1 && left_type->mArrayDimentionNum == 1 && right_type->mArrayDimentionNum == 2 && right_type->mPointerNum == 0) {
         return TRUE;
     }
 
@@ -731,15 +700,9 @@ BOOL substitution_posibility(sNodeType* left_type, sNodeType* right_type, LLVMVa
         return FALSE;
     }
 */
-    
-    if(left_type->mNullable != right_type->mNullable) {
-        if(left_type->mNullable && !right_type->mNullable) {
-        }
-        else if(!left_type->mNullable && right_type->mGuarded) {
-        }
-        else {
-            return FALSE;
-        }
+    if(left_type->mHeap && !right_type->mHeap && right_obj && LLVMIsNull(right_obj) == 0)
+    {
+        return FALSE;
     }
     
     if(type_identify_with_class_name(left_type, "lambda") && type_identify_with_class_name(right_type, "lambda")) {
@@ -754,8 +717,20 @@ BOOL substitution_posibility(sNodeType* left_type, sNodeType* right_type, LLVMVa
     else if(left_type->mPointerNum == 1 && right_type->mDynamicArrayNum > 0) {
         return TRUE;
     }
-    else if(type_identify(left_type, right_type) && left_type->mPointerNum+left_type->mNoArrayPointerNum == right_type->mPointerNum+right_type->mNoArrayPointerNum) 
+    else if(type_identify(left_type, right_type) && left_type->mPointerNum+left_type->mNoArrayPointerNum == right_type->mPointerNum+right_type->mNoArrayPointerNum && left_type->mNumGenericsTypes == right_type->mNumGenericsTypes) 
     {
+        if(left_type->mNumGenericsTypes > 0) {
+            int i;
+            for(i=0; i<left_type->mNumGenericsTypes; i++) {
+                sNodeType* left_type2 = left_type->mGenericsTypes[i];
+                sNodeType* right_type2 = right_type->mGenericsTypes[i];
+                
+                if(!substitution_posibility(left_type2, right_type2, NULL, info))
+                {
+                    return FALSE;
+                }
+            }
+        }
         return TRUE;
     }
     else if(type_identify_with_class_name(left_type, "bool")) {
@@ -912,7 +887,6 @@ BOOL solve_generics(sNodeType** node_type, sNodeType* generics_type)
             }
             BOOL nullable_ = (*node_type)->mNullable;
             BOOL immutable_ = (*node_type)->mImmutable;
-            BOOL channel = (*node_type)->mChannel;
             int pointer_num = (*node_type)->mPointerNum;
             BOOL heap = (*node_type)->mHeap;
 
@@ -935,9 +909,6 @@ BOOL solve_generics(sNodeType** node_type, sNodeType* generics_type)
             }
             if(immutable_) {
                 (*node_type)->mImmutable = immutable_;
-            }
-            if(channel) {
-                (*node_type)->mChannel = channel;
             }
             if(array_dimetion_num > 0) {
                 (*node_type)->mArrayDimentionNum = array_dimetion_num;
@@ -1024,7 +995,6 @@ BOOL solve_method_generics(sNodeType** node_type, int num_method_generics_types,
             BOOL immutable_ = (*node_type)->mImmutable;
             int pointer_num = (*node_type)->mPointerNum;
             BOOL heap = (*node_type)->mHeap;
-            BOOL channel = (*node_type)->mChannel;
 
             BOOL no_heap = (*node_type)->mNoHeap;
             BOOL refference = (*node_type)->mRefference;
@@ -1042,9 +1012,6 @@ BOOL solve_method_generics(sNodeType** node_type, int num_method_generics_types,
             }
             if(nullable_) {
                 (*node_type)->mNullable = nullable_;
-            }
-            if(channel) {
-                (*node_type)->mChannel = channel;
             }
             if(immutable_) {
                 (*node_type)->mImmutable = immutable_;
@@ -1128,44 +1095,70 @@ BOOL is_typeof_type(sNodeType* node_type)
 
 BOOL solve_typeof(sNodeType** node_type, sCompileInfo* info)
 {
-    int pointer_num = (*node_type)->mPointerNum;
+//    char* type_name = (*node_type)->mOriginalTypeName;
     
-    int array_dimention_num = (*node_type)->mArrayDimentionNum;
-    int array_num[ARRAY_DIMENTION_MAX];
-    int i;
-    for(i=0; i<array_dimention_num; i++) {
-        array_num[i] = (*node_type)->mArrayNum[i];
-    }
+//    sNodeType* node_type2 = get_typedef(type_name);
     
-    for(i=0; i<(*node_type)->mNumGenericsTypes; i++)
-    {
-        if(!solve_typeof(&(*node_type)->mGenericsTypes[i], info))
+    if(is_typeof_type(*node_type)) {
+        int pointer_num = (*node_type)->mPointerNum;
+        
+        int array_dimention_num = (*node_type)->mArrayDimentionNum;
+        int array_num[ARRAY_DIMENTION_MAX];
+        int i;
+        for(i=0; i<array_dimention_num; i++) {
+            array_num[i] = (*node_type)->mArrayNum[i];
+        }
+        
+        for(i=0; i<(*node_type)->mNumGenericsTypes; i++)
         {
-            return FALSE;
+            if(!solve_typeof(&(*node_type)->mGenericsTypes[i], info))
+            {
+                return FALSE;
+            }
         }
-    }
-
-    unsigned int node = (*node_type)->mTypeOfExpression;
-
-    if(node) {
-        BOOL no_output = info->no_output;
-        info->no_output = TRUE;
-        if(!compile(node, info)) {
-            compile_err_msg(info, "can't get type from typedef");
-            return TRUE;
-        }
-        info->no_output = no_output;
-
-        dec_stack_ptr(1, info);
-
-        *node_type = clone_node_type(info->type);
-    }
     
-    (*node_type)->mPointerNum += pointer_num;
-    (*node_type)->mArrayDimentionNum = array_dimention_num;
-    for(i=0; i<array_dimention_num; i++ ) {
-        (*node_type)->mArrayNum[i] = array_num[i];
+        unsigned int node = (*node_type)->mTypeOfExpression;
+    
+        if(node) {
+            BOOL no_output = info->no_output;
+            info->no_output = TRUE;
+            if(!compile(node, info)) {
+                compile_err_msg(info, "can't get type from typedef");
+                return TRUE;
+            }
+            info->no_output = no_output;
+    
+            dec_stack_ptr(1, info);
+    
+            *node_type = clone_node_type(info->type);
+        }
+        
+        (*node_type)->mPointerNum += pointer_num;
+        (*node_type)->mArrayDimentionNum = array_dimention_num;
+        for(i=0; i<array_dimention_num; i++ ) {
+            (*node_type)->mArrayNum[i] = array_num[i];
+        }
     }
+/*
+    else if(node_type2) {
+        int pointer_num = (*node_type)->mPointerNum;
+        
+        int array_dimention_num = (*node_type)->mArrayDimentionNum;
+        int array_num[ARRAY_DIMENTION_MAX];
+        int i;
+        for(i=0; i<array_dimention_num; i++) {
+            array_num[i] = (*node_type)->mArrayNum[i];
+        }
+        
+        *node_type = clone_node_type(node_type2);
+        
+        (*node_type)->mPointerNum += pointer_num;
+        (*node_type)->mArrayDimentionNum = array_dimention_num;
+        for(i=0; i<array_dimention_num; i++ ) {
+            (*node_type)->mArrayNum[i] = array_num[i];
+        }
+    }
+*/
 
     return TRUE;
 }
@@ -1189,16 +1182,12 @@ BOOL solve_type(sNodeType** node_type, sNodeType* generics_type, int num_method_
         }
     }
 
-    if(is_typeof_type(*node_type))
+    if(!solve_typeof(node_type, info)) 
     {
-        if(!solve_typeof(node_type, info)) 
-        {
-            compile_err_msg(info, "Can't solve typeof types");
-            show_node_type(*node_type);
-            return TRUE;
-        }
+        compile_err_msg(info, "Can't solve typeof types");
+        show_node_type(*node_type);
+        return TRUE;
     }
-
 
     return TRUE;
 }
@@ -1255,7 +1244,7 @@ BOOL included_generics_type(sNodeType* node_type, sCLClass* checked_class[], int
 
     if(*num_checked_class >= STRUCT_FIELD_MAX) 
     {
-        fprintf(stderr, "overflow struct field max at included_generics_type");
+        fprintf(stderr, "%s %d: overflow struct field max at included_generics_type", gSName, gSLine);
         exit(2);
     }
 
@@ -1366,9 +1355,6 @@ void create_type_name_from_node_type(char* type_name, int type_name_max, sNodeTy
     if(node_type->mHeap) {
         xstrncat(type_name, "%", type_name_max);
     }
-    if(node_type->mChannel) {
-        xstrncat(type_name, "~", type_name_max);
-    }
     if(node_type->mNumGenericsTypes > 0) {
         xstrncat(type_name, "<", type_name_max);
 
@@ -1385,25 +1371,12 @@ void create_type_name_from_node_type(char* type_name, int type_name_max, sNodeTy
     }
 }
 
-BOOL check_nullable_type(char* var_name, sNodeType* node_type, sCompileInfo* info)
-{
-    if(node_type->mNullable && !info->in_generics_function) {
-        if(var_name) {
-            compile_err_msg(info, "Require unwrap to use this variable(%s)", var_name);
-        }
-        else {
-            compile_err_msg(info, "Require unwrap to use this variable");
-        }
-    }
-    return TRUE;
-}
-
 BOOL type_equalability(sNodeType* left_type, sNodeType* right_type)
 {
     if(strcmp(CLASS_NAME(left_type->mClass), CLASS_NAME(right_type->mClass)) != 0) {
         return FALSE;
     }
-    if(left_type->mPointerNum != right_type->mPointerNum || left_type->mHeap != right_type->mHeap || left_type->mNullable != right_type->mNullable)
+    if(left_type->mPointerNum != right_type->mPointerNum || left_type->mHeap != right_type->mHeap)
     {
         return FALSE;
     }
@@ -1424,7 +1397,10 @@ BOOL type_equalability(sNodeType* left_type, sNodeType* right_type)
 
 BOOL is_left_type_bigger_size(sNodeType* left_type, sNodeType* right_type)
 {
-    if(left_type->mPointerNum > 0 || right_type->mPointerNum > 0) {
+    if(left_type->mPointerNum > 0 && right_type->mArrayDimentionNum > 0) {
+        return TRUE;
+    }
+    else if(left_type->mPointerNum > 0 || right_type->mPointerNum > 0) {
         return FALSE;
     }
     else if(left_type->mArrayDimentionNum > 0 || right_type->mArrayDimentionNum > 0) {

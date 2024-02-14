@@ -53,8 +53,8 @@ void rehash_labels()
                         p = new_labels;
                     }
                     else if(p == new_labels + hash_value) {
-                        fprintf(stderr, "ovewflow rehash_labels\n");
-                        exit(1);
+                        fprintf(stderr, "%s %d: ovewflow rehash_labels\n", gSName, gSLine);
+                        exit(71);
                     }
                 }
             }
@@ -147,7 +147,7 @@ unsigned int sNodeTree_if_expression(unsigned int expression_node, MANAGED struc
     memcpy(gNodes[node].uValue.sIf.mElifNodeBlocks, MANAGED elif_node_blocks, sizeof(sNodeBlock*)*elif_num);
     gNodes[node].uValue.sIf.mElifNum = elif_num;
     gNodes[node].uValue.sIf.mElseNodeBlock = MANAGED else_node_block;
-
+    
     gNodes[node].mLeft = 0;
     gNodes[node].mRight = 0;
     gNodes[node].mMiddle = 0;
@@ -233,11 +233,15 @@ BOOL compile_if_expression(unsigned int node, sCompileInfo* info)
 
     BOOL last_expression_is_return_before = info->last_expression_is_return;
     info->last_expression_is_return = FALSE;
+    
+    add_come_code(info, "if(%s) {\n", conditional_value.c_value);
 
     BOOL force_hash_result = FALSE;
     if(!compile_block(if_block, force_hash_result, info)) {
         return FALSE;
     }
+    
+    add_come_code(info, "}\n");
 
     if(!info->last_expression_is_return) {
         free_right_value_objects(info);
@@ -301,6 +305,8 @@ BOOL compile_if_expression(unsigned int node, sCompileInfo* info)
             sNodeBlock* elif_node_block = gNodes[node].uValue.sIf.mElifNodeBlocks[i];
 
             BOOL last_expression_is_return_before = info->last_expression_is_return;
+            
+            add_come_code(info, "else if(%s) {\n", conditional_value.c_value);
             info->last_expression_is_return = FALSE;
 
             BOOL force_hash_result = FALSE;
@@ -308,6 +314,8 @@ BOOL compile_if_expression(unsigned int node, sCompileInfo* info)
             {
                 return FALSE;
             }
+
+            add_come_code(info, "}\n");
 
             if(!info->last_expression_is_return) {
                 free_right_value_objects(info);
@@ -323,12 +331,16 @@ BOOL compile_if_expression(unsigned int node, sCompileInfo* info)
 
         BOOL last_expression_is_return_before = info->last_expression_is_return;
         info->last_expression_is_return = FALSE;
+        
+        add_come_code(info, "else {\n");
 
         BOOL force_hash_result = FALSE;
         if(!compile_block(else_node_block, force_hash_result, info))
         {
             return FALSE;
         }
+        
+        add_come_code(info, "}\n");
 
         if(!info->last_expression_is_return) {
             free_right_value_objects(info);
@@ -341,104 +353,8 @@ BOOL compile_if_expression(unsigned int node, sCompileInfo* info)
     llvm_change_block(cond_end_block, info);
 
     info->type = create_node_type_with_class_name("void");
-
-    return TRUE;
-}
-
-unsigned int sNodeTree_guard_expression(char* var_name, MANAGED struct sNodeBlockStruct* if_node_block, sParserInfo* info, char* sname, int sline)
-{
-    unsigned node = alloc_node();
-
-    gNodes[node].mNodeType = kNodeTypeGuard;
-
-    xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
-    gNodes[node].mLine = info->sline;
-
-    xstrncpy(gNodes[node].uValue.sGuard.mVarName, var_name, VAR_NAME_MAX);
-    gNodes[node].uValue.sGuard.mIfNodeBlock = MANAGED if_node_block;
-
-    gNodes[node].mLeft = 0;
-    gNodes[node].mRight = 0;
-    gNodes[node].mMiddle = 0;
-
-    return node;
-}
-
-BOOL compile_guard_expression(unsigned int node, sCompileInfo* info)
-{
-    char var_name[VAR_NAME_MAX];
     
-    xstrncpy(var_name, gNodes[node].uValue.sGuard.mVarName, VAR_NAME_MAX);
-    
-    /// compile expression ///
-    unsigned int expression_node1 = sNodeTree_create_load_variable(var_name, info->pinfo);
-    unsigned int expression_node2 = sNodeTree_create_null(info->pinfo);
-    unsigned int expression_node = sNodeTree_create_equals(expression_node1, expression_node2, 0, info->pinfo);
-    
-    sVar* var_ = get_variable_from_table(info->pinfo->lv_table, var_name);
-    
-    if(var_ == NULL) {
-        compile_err_msg(info, "reuire variable name");
-        return FALSE;
-    }
-    
-    var_->mType->mNullable = FALSE;
-
-    info->sline = gNodes[expression_node].mLine;
-
-    if(!compile_conditional_expression(expression_node, info)) {
-        return FALSE;
-    }
-
-    sNodeType* conditional_type = info->type;
-
-    LVALUE conditional_value = *get_value_from_stack(-1);
-    dec_stack_ptr(1, info);
-
-    sNodeType* bool_type = create_node_type_with_class_name("bool");
-
-    if(auto_cast_posibility(bool_type, conditional_type, FALSE)) {
-        if(!cast_right_type_to_left_type(bool_type, &conditional_type, &conditional_value, info))
-        {
-            compile_err_msg(info, "Cast failed");
-            return TRUE;
-        }
-    }
-
-    if(!type_identify_with_class_name(conditional_type, "bool")) {
-        compile_err_msg(info, "This conditional type is not bool");
-        show_node_type(conditional_type);
-        return TRUE;
-    }
-    LLVMBasicBlockRef cond_then_block = LLVMAppendBasicBlockInContext(gContext, gFunction, "cond_jump_then");
-    LLVMBasicBlockRef cond_end_block = LLVMAppendBasicBlockInContext(gContext, gFunction, "cond_end");
-
-    free_right_value_objects(info);
-
-    LLVMBuildCondBr(gBuilder, conditional_value.value, cond_then_block, cond_end_block);
-
-    llvm_change_block(cond_then_block, info);
-
-    sNodeBlock* if_block = gNodes[node].uValue.sGuard.mIfNodeBlock;
-
-    BOOL last_expression_is_return_before = info->last_expression_is_return;
-    info->last_expression_is_return = FALSE;
-
-    BOOL force_hash_result = FALSE;
-    if(!compile_block(if_block, force_hash_result, info)) {
-        return FALSE;
-    }
-
-    if(!info->last_expression_is_return) {
-        free_right_value_objects(info);
-        LLVMBuildBr(gBuilder, cond_end_block);
-    }
-
-    info->last_expression_is_return = last_expression_is_return_before;
-
-    llvm_change_block(cond_end_block, info);
-
-    info->type = create_node_type_with_class_name("void");
+    transpiler_clear_last_code();
 
     return TRUE;
 }
@@ -537,11 +453,15 @@ BOOL compile_while_expression(unsigned int node, sCompileInfo* info)
 
     sNodeBlock* current_node_block = info->current_node_block;
     info->current_node_block = while_node_block;
+    
+    add_come_code(info, "while (%s) {\n", conditional_value.c_value);
 
     BOOL force_hash_result = FALSE;
     if(!compile_block(while_node_block, force_hash_result, info)) {
         return FALSE;
     }
+    
+    add_come_code(info, "}\n");
     
     info->current_node_block = current_node_block;
 
@@ -560,6 +480,8 @@ BOOL compile_while_expression(unsigned int node, sCompileInfo* info)
     info->type = create_node_type_with_class_name("void");
 
     info->switch_expression = switch_expression_before;
+    
+    transpiler_clear_last_code();
 
     return TRUE;
 }
@@ -622,6 +544,8 @@ BOOL compile_do_while_expression(unsigned int node, sCompileInfo* info)
 
     sNodeBlock* current_node_block = info->current_node_block;
     info->current_node_block = while_node_block;
+    
+    add_come_code(info, "do {\n");
 
     if(while_node_block) {
         BOOL force_hash_result = FALSE;
@@ -650,6 +574,8 @@ BOOL compile_do_while_expression(unsigned int node, sCompileInfo* info)
 
     LVALUE conditional_value = *get_value_from_stack(-1);
     dec_stack_ptr(1, info);
+    
+    add_come_code(info, "} while(%s);\n", conditional_value.c_value);
 
     sNodeType* bool_type = create_node_type_with_class_name("bool");
 
@@ -679,6 +605,8 @@ BOOL compile_do_while_expression(unsigned int node, sCompileInfo* info)
     
     info->num_loop--;
     info->num_loop2--;
+    
+    transpiler_clear_last_code();
 
     return TRUE;
 }
@@ -721,12 +649,6 @@ BOOL compile_and_and(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-/*
-    if(!check_nullable_type(info->type, info)) {
-        return TRUE;
-    }
-*/
 
     sNodeType* left_type = info->type;
 
@@ -753,7 +675,7 @@ BOOL compile_and_and(unsigned int node, sCompileInfo* info)
 
     LLVMBasicBlockRef cond_end_block = LLVMAppendBasicBlockInContext(gContext, gFunction, "cond_jump_end");
 
-    free_right_value_objects(info);
+    if(!gNCTranspile) free_right_value_objects(info);
 
     LLVMBuildCondBr(gBuilder, conditional_value.value, cond_then_block, cond_end_block);
 
@@ -767,12 +689,6 @@ BOOL compile_and_and(unsigned int node, sCompileInfo* info)
     if(!compile(right_node, info)) {
         return FALSE;
     }
-    
-/*
-    if(!check_nullable_type(info->type, info)) {
-        return TRUE;
-    }
-*/
 
     sNodeType* right_type = info->type;
 
@@ -796,7 +712,7 @@ BOOL compile_and_and(unsigned int node, sCompileInfo* info)
 
     LLVMBuildStore(gBuilder, andand_value, result_var);
 
-    free_right_value_objects(info);
+    if(!gNCTranspile) free_right_value_objects(info);
 
     LLVMBuildBr(gBuilder, cond_end_block);
 
@@ -806,6 +722,7 @@ BOOL compile_and_and(unsigned int node, sCompileInfo* info)
     
     LVALUE llvm_value;
     llvm_value.value = LLVMBuildLoad2(gBuilder, create_llvm_type_with_class_name("bool"), result_var, "andand_result_value");
+    llvm_value.c_value = xsprintf("%s&&%s", conditional_value.c_value, conditional_value2.c_value);
     llvm_value.type = create_node_type_with_class_name("bool");
     llvm_value.address = result_var;
     llvm_value.var = NULL;
@@ -854,12 +771,6 @@ BOOL compile_or_or(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-/*
-    if(!check_nullable_type(info->type, info)) {
-        return TRUE;
-    }
-*/
 
     sNodeType* left_type = info->type;
 
@@ -885,7 +796,7 @@ BOOL compile_or_or(unsigned int node, sCompileInfo* info)
     LLVMBasicBlockRef cond_then_block = LLVMAppendBasicBlockInContext(gContext, gFunction, "cond_jump_then");
     LLVMBasicBlockRef cond_end_block = LLVMAppendBasicBlockInContext(gContext, gFunction, "cond_jump_end");
 
-    free_right_value_objects(info);
+    if(!gNCTranspile) free_right_value_objects(info);
 
     LLVMBuildCondBr(gBuilder, conditional_value.value, cond_end_block, cond_then_block);
 
@@ -899,12 +810,6 @@ BOOL compile_or_or(unsigned int node, sCompileInfo* info)
     if(!compile(right_node, info)) {
         return FALSE;
     }
-    
-/*
-    if(!check_nullable_type(info->type, info)) {
-        return TRUE;
-    }
-*/
 
     sNodeType* right_type = info->type;
 
@@ -927,7 +832,7 @@ BOOL compile_or_or(unsigned int node, sCompileInfo* info)
 
     LLVMBuildStore(gBuilder, oror_value, result_var);
 
-    free_right_value_objects(info);
+    if(!gNCTranspile) free_right_value_objects(info);
 
     LLVMBuildBr(gBuilder, cond_end_block);
 
@@ -939,6 +844,7 @@ BOOL compile_or_or(unsigned int node, sCompileInfo* info)
 
     LVALUE llvm_value;
     llvm_value.value = LLVMBuildLoad2(gBuilder, llvm_type2, result_var, "oror_result_value");
+    llvm_value.c_value = xsprintf("%s||%s", conditional_value.c_value, conditional_value2.c_value);
     llvm_value.type = create_node_type_with_class_name("bool");
     llvm_value.address = result_var;
     llvm_value.var = NULL;
@@ -991,11 +897,17 @@ BOOL compile_for_expression(unsigned int node, sCompileInfo* info)
 
     info->sline = gNodes[expression_node].mLine;
     
+    LVALUE init_value;
+    add_come_code(info, "{\n");
+    int nest = info->come_nest++;
+    
     if(expression_node != 0) {
         if(!compile_conditional_expression(expression_node, info)) {
             info->pinfo->lv_table = lv_table_before;
             return FALSE;
         }
+        
+        init_value = *get_value_from_stack(-1);
     
         arrange_stack(info, stack_num_before);
     }
@@ -1039,6 +951,7 @@ BOOL compile_for_expression(unsigned int node, sCompileInfo* info)
         conditional_value.value = zero_value;
         conditional_value.type = create_node_type_with_class_name("int");
         conditional_value.address = NULL;
+        conditional_value.c_value = NULL;
         conditional_value.var = NULL;
         
         conditional_type = create_node_type_with_class_name("int");
@@ -1090,6 +1003,49 @@ BOOL compile_for_expression(unsigned int node, sCompileInfo* info)
 
     sNodeBlock* current_node_block = info->current_node_block;
     info->current_node_block = for_block;
+    
+    if(conditional_value.c_value) {
+        unsigned int expression_node3 = gNodes[node].uValue.sFor.mExpressionNode3;
+        
+        if(gNCTranspile) {
+            add_come_code(info, "for(;%s;", conditional_value.c_value);
+            if(expression_node3) {
+                if(!compile(expression_node3, info)) {
+                    info->pinfo->lv_table = lv_table_before;
+                    return FALSE;
+                }
+                
+                transpiler_remove_last_semicolon(info);
+                
+                dec_stack_ptr(1, info);
+                add_come_code(info, ") {\n");
+            }
+            else {
+                add_come_code(info, "for(;%s;) {\n", conditional_value.c_value);
+            }
+        }
+    }
+    else {
+        unsigned int expression_node3 = gNodes[node].uValue.sFor.mExpressionNode3;
+        
+        if(gNCTranspile) {
+            add_come_code(info, "for(;;");
+            if(expression_node3) {
+                if(!compile(expression_node3, info)) {
+                    info->pinfo->lv_table = lv_table_before;
+                    return FALSE;
+                }
+                
+                transpiler_remove_last_semicolon(info);
+                
+                dec_stack_ptr(1, info);
+                add_come_code(info, ") {\n");
+            }
+            else {
+                add_come_code(info, ") {\n");
+            }
+        }
+    }
 
     /// block of for expression ///
     if(for_block) {
@@ -1118,8 +1074,12 @@ BOOL compile_for_expression(unsigned int node, sCompileInfo* info)
     LLVMBuildBr(gBuilder, loop_continue_top_block);
 
     llvm_change_block(loop_continue_top_block, info);
+    
+    LVALUE third_exp;
+    
+    info->come_nest++;
 
-    if(expression_node3) {
+    if(expression_node3 && !gNCTranspile) {
         if(!compile_conditional_expression(expression_node3, info)) {
             info->pinfo->lv_table = lv_table_before;
             return FALSE;
@@ -1129,6 +1089,8 @@ BOOL compile_for_expression(unsigned int node, sCompileInfo* info)
             free_right_value_objects(info);
             LLVMBuildBr(gBuilder, loop_top_block);
         }
+        
+        third_exp = *get_value_from_stack(-1);
     
         arrange_stack(info, stack_num_before);
     }
@@ -1138,6 +1100,8 @@ BOOL compile_for_expression(unsigned int node, sCompileInfo* info)
             LLVMBuildBr(gBuilder, loop_top_block);
         }
     }
+    info->come_nest--;
+    add_come_code(info, "}\n");
 
     info->last_expression_is_return = last_expression_is_return_before;
 
@@ -1148,6 +1112,8 @@ BOOL compile_for_expression(unsigned int node, sCompileInfo* info)
 
     free_objects(info->pinfo->lv_table, info);
     info->pinfo->lv_table = lv_table_before;
+    info->come_nest = nest;
+    add_come_code(info, "}\n");
 
     info->type = create_node_type_with_class_name("void");
 
@@ -1156,7 +1122,7 @@ BOOL compile_for_expression(unsigned int node, sCompileInfo* info)
     return TRUE;
 }
 
-unsigned int sNodeTree_create_return(unsigned int left, sParserInfo* info)
+unsigned int sNodeTree_create_return(unsigned int left, BOOL no_compile_value, sParserInfo* info)
 {
     unsigned node = alloc_node();
 
@@ -1164,6 +1130,8 @@ unsigned int sNodeTree_create_return(unsigned int left, sParserInfo* info)
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
+    
+    gNodes[node].uValue.sReturn.mNoCompileValue = no_compile_value;
 
     gNodes[node].mLeft = left;
     gNodes[node].mRight = 0;
@@ -1174,15 +1142,20 @@ unsigned int sNodeTree_create_return(unsigned int left, sParserInfo* info)
 
 BOOL compile_return(unsigned int node, sCompileInfo* info)
 {
+    BOOL no_compile_value = gNodes[node].uValue.sReturn.mNoCompileValue;
     int left_node = gNodes[node].mLeft;
+    
+    transpiler_append_defer_source(info);
 
     if(left_node != 0) {
-        if(!compile(left_node, info)) {
-            return FALSE;
+        if(!no_compile_value) {
+            if(!compile(left_node, info)) {
+                return FALSE;
+            }
         }
         
         sNodeType* result_type = clone_node_type(gComeFunctionResultType);
-            
+        
         sNodeType* right_type = clone_node_type(info->type);
     
 
@@ -1206,6 +1179,8 @@ BOOL compile_return(unsigned int node, sCompileInfo* info)
                 }
                 
                 LLVMBuildRet(gBuilder, NULL);
+                
+                add_come_code(info, "return;");
             }
 /*
             compile_err_msg(info, "Return type is void");
@@ -1232,14 +1207,11 @@ BOOL compile_return(unsigned int node, sCompileInfo* info)
                 return TRUE;
             }
         
-            if(is_typeof_type(result_type))
+            if(!solve_typeof(&result_type, info)) 
             {
-                if(!solve_typeof(&result_type, info)) 
-                {
-                    compile_err_msg(info, "Can't solve typeof types");
-                    show_node_type(result_type); 
-                    return FALSE;
-                }
+                compile_err_msg(info, "Can't solve typeof types");
+                show_node_type(result_type); 
+                return FALSE;
             }
     
             if(auto_cast_posibility(result_type, right_type, FALSE))
@@ -1247,6 +1219,7 @@ BOOL compile_return(unsigned int node, sCompileInfo* info)
                 cast_right_type_to_left_type(result_type, &right_type, &llvm_value, info);
             }
             
+/*
             if(!result_type->mMethodGenericsResult && !(type_identify_with_class_name(result_type, "void") && result_type->mPointerNum == 0)) {
                 if(!substitution_posibility(result_type, right_type, llvm_value.value, info)) {
                     compile_err_msg(info, "invalid result type");
@@ -1255,14 +1228,15 @@ BOOL compile_return(unsigned int node, sCompileInfo* info)
                     return FALSE;
                 }
             }
+*/
     
             if(result_type->mHeap) {
                 remove_object_from_right_values(llvm_value.value, info);
             }
-            
-            free_right_value_objects(info);
     
             if(info->in_inline_function) {
+                free_right_value_objects(info);
+                
                 if(llvm_value.value == NULL) {
                     compile_err_msg(info, "invalid result value");
                     return FALSE;
@@ -1270,8 +1244,21 @@ BOOL compile_return(unsigned int node, sCompileInfo* info)
                 free_objects_on_return(info->function_node_block, info, llvm_value.address, FALSE);
                 LLVMBuildStore(gBuilder, llvm_value.value, info->inline_result_variable);
                 LLVMBuildBr(gBuilder, info->inline_func_end);
+                
+                add_come_code(info, "%s = %s;\n", info->inline_result_variable_name, llvm_value.c_value);
+                add_come_code(info, "goto %s;\n", info->inline_func_end_label);
             }
             else {
+                if(type_identify_with_class_name(result_type, "void") && result_type->mPointerNum == 0)
+                {
+                    add_come_code(info, "return;");
+                }
+                else {
+                    sNodeType* result_type2 = clone_node_type(result_type);
+                    result_type2->mStatic = FALSE;
+                    add_come_code(info, "%s = %s;\n", make_define_var(result_type2, "__result_value", info), llvm_value.c_value);
+                }
+                free_right_value_objects(info);
                 free_objects_on_return(info->function_node_block, info, llvm_value.address, TRUE);
                 call_come_gc_final(info);
                 
@@ -1288,9 +1275,16 @@ BOOL compile_return(unsigned int node, sCompileInfo* info)
                 if(type_identify_with_class_name(result_type, "void") && result_type->mPointerNum == 0)
                 {
                     LLVMBuildRet(gBuilder, NULL);
+                    add_come_code(info, "return;\n");
                 }
                 else {
                     LLVMBuildRet(gBuilder, llvm_value.value);
+                    if(llvm_value.c_value) {
+                        add_come_code(info, "return __result_value;\n");
+                    }
+                    else {
+                        add_come_code(info, "return;");
+                    }
                 }
             }
     
@@ -1316,6 +1310,7 @@ BOOL compile_return(unsigned int node, sCompileInfo* info)
 
             LLVMBuildRet(gBuilder, NULL);
         }
+        add_come_code(info, "return;");
 
         info->return_result_type = create_node_type_with_class_name("void");
 
@@ -1386,66 +1381,6 @@ BOOL compile_nodes(unsigned int node, sCompileInfo* info)
     return TRUE;
 }
 
-unsigned int sNodeTree_create_macro(unsigned int* nodes, int num_nodes, BOOL in_macro, sParserInfo* info)
-{
-    unsigned node = alloc_node();
-
-    gNodes[node].mNodeType = kNodeTypeMacro;
-
-    xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
-    gNodes[node].mLine = info->sline;
-
-    gNodes[node].uValue.sNodes.mNodes = GC_malloc(sizeof(unsigned int)* num_nodes);
-    int i;
-    for(i=0; i<num_nodes; i++) {
-        gNodes[node].uValue.sNodes.mNodes[i] = nodes[i];
-    }
-    gNodes[node].uValue.sNodes.mNumNodes = num_nodes;
-    gNodes[node].uValue.sNodes.mInMacro = in_macro;
-
-    gNodes[node].mLeft = 0;
-    gNodes[node].mRight = 0;
-    gNodes[node].mMiddle = 0;
-
-    return node;
-}
-
-BOOL compile_macro(unsigned int node, sCompileInfo* info)
-{
-    int num_nodes = gNodes[node].uValue.sNodes.mNumNodes;
-    unsigned int nodes[NODES_MAX];
-    int i;
-    for(i=0; i<num_nodes; i++) {
-        nodes[i] = gNodes[node].uValue.sNodes.mNodes[i];
-    }
-    BOOL in_macro = gNodes[node].uValue.sNodes.mInMacro;
-
-    int stack_num_before = info->stack_num;
-
-    for(i=0; i<num_nodes; i++) {
-        unsigned int node = nodes[i];
-
-        xstrncpy(info->sname, gNodes[node].mSName, PATH_MAX);
-        info->sline = gNodes[node].mLine;
-        
-        if(!compile(node, info)) {
-            return FALSE;
-        }
-        
-
-        if(i == num_nodes -1) 
-        {
-        }
-        else {
-            arrange_stack(info, stack_num_before);
-            
-            info->type = create_node_type_with_class_name("void");
-        }
-    }
-
-    return TRUE;
-}
-
 unsigned int sNodeTree_create_normal_block(struct sNodeBlockStruct* node_block, sParserInfo* info)
 {
     unsigned int node = alloc_node();
@@ -1468,12 +1403,31 @@ unsigned int sNodeTree_create_normal_block(struct sNodeBlockStruct* node_block, 
 BOOL compile_normal_block(unsigned int node, sCompileInfo* info)
 {
     struct sNodeBlockStruct* node_block = gNodes[node].uValue.sNormalBlock.mNodeBlock;
+    
+    add_come_code(info, "{\n");
 
     BOOL force_hash_result = TRUE;
     if(!compile_block(node_block, force_hash_result, info)) {
         return FALSE;
     }
-
+    
+    if(gNCTranspile && !(type_identify_with_class_name(info->type, "void") && info->type->mPointerNum == 0)) {
+        LVALUE llvm_value = *get_value_from_stack(-1);
+        
+        static int normal_block_num = 0;
+        add_come_code_at_head(info, "%s;\n", make_define_var(info->type, xsprintf("__normal_block_result%d", ++normal_block_num), info));
+        add_come_code(info, "__normal_block_result%d = %s;\n", normal_block_num, llvm_value.c_value);
+        
+        LVALUE llvm_value2 = *get_value_from_stack(-1);
+        llvm_value2 = llvm_value;
+        llvm_value2.c_value = xsprintf("(__normal_block_result%d)", normal_block_num);
+        
+        dec_stack_ptr(1, info);
+        push_value_to_stack_ptr(&llvm_value2, info);
+    }
+    
+    add_come_code(info, "}\n");
+    
 //    info->type = create_node_type_with_class_name("void");
 
     return TRUE;
@@ -1519,6 +1473,10 @@ BOOL compile_switch_expression(unsigned int node, sCompileInfo* info)
     if(!compile_conditional_expression(expression_node, info)) {
         return FALSE;
     }
+    
+    LVALUE conditional_value = *get_value_from_stack(-1);
+    
+    add_come_code(info, "switch(%s)\n{\n", conditional_value.c_value);
 
     void* switch_expression_before = info->switch_expression;
     info->switch_expression = get_value_from_stack(-1)->value;
@@ -1546,6 +1504,7 @@ BOOL compile_switch_expression(unsigned int node, sCompileInfo* info)
             return FALSE;
         }
     }
+    add_come_code(info, "\n}\n");
 
     LLVMBasicBlockRef case_else_block;
 /*
@@ -1579,6 +1538,8 @@ BOOL compile_switch_expression(unsigned int node, sCompileInfo* info)
 //    info->case_else_block = NULL;
 
     info->num_loop--;
+    
+    transpiler_clear_last_code();
 
     return TRUE;
 }
@@ -1661,6 +1622,8 @@ BOOL compile_case_expression(unsigned int node, sCompileInfo* info)
         sNodeType* right_type = clone_node_type(info->type);
 
         LVALUE rvalue = *get_value_from_stack(-1);
+        
+        add_come_code(info, "case %s:\n", rvalue.c_value);
 
         dec_stack_ptr(1, info);
         LLVMValueRef lvalue = (LLVMValueRef)info->switch_expression;
@@ -1695,6 +1658,8 @@ BOOL compile_case_expression(unsigned int node, sCompileInfo* info)
     info->case_else_block = cond_else_block;
 
     info->type = create_node_type_with_class_name("void");
+    
+    transpiler_clear_last_code();
 
     return TRUE;
 }
@@ -1737,6 +1702,10 @@ BOOL compile_break_expression(unsigned int node, sCompileInfo* info)
     llvm_change_block(after_break, info);
 
     info->type = create_node_type_with_class_name("void");
+    
+    add_come_code(info, "break;\n");
+    
+    transpiler_clear_last_code();
 
     return TRUE;
 }
@@ -1774,6 +1743,8 @@ BOOL compile_continue_expression(unsigned int node, sCompileInfo* info)
     LLVMBasicBlockRef after_continue = LLVMAppendBasicBlockInContext(gContext, gFunction, "after_continue");
 
     llvm_change_block(after_continue, info);
+    
+    add_come_code(info, "continue;\n");
 
     info->type = create_node_type_with_class_name("void");
 
@@ -1810,7 +1781,7 @@ BOOL compile_label_expression(unsigned int node, sCompileInfo* info)
     if(block == NULL) {
         block = LLVMAppendBasicBlockInContext(gContext, gFunction, label_name2);
         if(!add_label_to_table(label_name2, block)) {
-            fprintf(stderr, "overflow label max\n");
+            fprintf(stderr, "%s %d: overflow label max\n", gSName, gSLine);
             return FALSE;
         }
     }
@@ -1856,13 +1827,14 @@ BOOL compile_create_label(unsigned int node, sCompileInfo* info)
     if(block == NULL) {
         block = LLVMAppendBasicBlockInContext(gContext, gFunction, label_name2);
         if(!add_label_to_table(label_name2, block)) {
-            fprintf(stderr, "overflow label max\n");
+            fprintf(stderr, "%s %d: overflow label max\n", gSName, gSLine);
             return FALSE;
         }
     }
     
     LVALUE llvm_value;
     llvm_value.value = get_block_address(block);
+    llvm_value.c_value = xsprintf("%s:\n", label_name2);
     llvm_value.type = create_node_type_with_class_name("void*");
     llvm_value.address = get_block_address(block);
     llvm_value.var = NULL;
@@ -1921,7 +1893,7 @@ BOOL compile_goto_expression(unsigned int node, sCompileInfo* info)
         if(block == NULL) {
             block = LLVMAppendBasicBlockInContext(gContext, gFunction, label_name2);
             if(!add_label_to_table(label_name2, block)) {
-                fprintf(stderr, "overflow label max\n");
+                fprintf(stderr, "%s %d: overflow label max\n", gSName, gSLine);
                 return FALSE;
             }
         }
@@ -1996,7 +1968,10 @@ BOOL compile_conditional(unsigned int node, sCompileInfo* info)
     if(LLVMIsConstant(conditional_value.value)) {
         compile_time_value = LLVMConstIntGetZExtValue(conditional_value.value);
     }
-
+    
+    LVALUE lvalue1;
+    LVALUE lvalue2;
+    
     LVALUE llvm_value;
     if(compile_time_value != -1) {
         if(compile_time_value) {
@@ -2008,6 +1983,8 @@ BOOL compile_conditional(unsigned int node, sCompileInfo* info)
             {
                 return FALSE;
             }
+            
+            lvalue1 = *get_value_from_stack(-1);
         }
         else {
             unsigned int value2_node  = gNodes[node].mMiddle;
@@ -2018,6 +1995,7 @@ BOOL compile_conditional(unsigned int node, sCompileInfo* info)
             {
                 return FALSE;
             }
+            lvalue2 = *get_value_from_stack(-1);
         }
 
         if(type_identify_with_class_name(info->type, "void")) {
@@ -2046,6 +2024,8 @@ BOOL compile_conditional(unsigned int node, sCompileInfo* info)
         {
             return FALSE;
         }
+        
+        lvalue1 = *get_value_from_stack(-1);
 
         sNodeType* value1_result_type = clone_node_type(info->type);
         
@@ -2111,6 +2091,8 @@ BOOL compile_conditional(unsigned int node, sCompileInfo* info)
             return FALSE;
         }
         free_right_value_objects(info);
+        
+        lvalue2 = *get_value_from_stack(-1);
 
         LVALUE value2;
         if(type_identify_with_class_name(info->type, "void") && info->type->mPointerNum == 0) {
@@ -2160,6 +2142,7 @@ BOOL compile_conditional(unsigned int node, sCompileInfo* info)
         LLVMTypeRef llvm_type = create_llvm_type_from_node_type(value1_result_type);
 
         llvm_value.value = LLVMBuildLoad2(gBuilder, llvm_type, result_value, "conditional_result_value");
+        llvm_value.c_value = xsprintf("%s?%s:%s", conditional_value.c_value, lvalue1.c_value, lvalue2.c_value);
         llvm_value.type = clone_node_type(value1_result_type);
         llvm_value.address = NULL;
         llvm_value.var = NULL;
@@ -2215,242 +2198,6 @@ BOOL compile_comma(unsigned int node, sCompileInfo* info)
     return TRUE;
 }
 
-unsigned int sNodeTree_create_select(int num_pipes, char** pipes, struct sNodeBlockStruct** pipe_blocks, sParserInfo* info)
-{
-    unsigned int node = alloc_node();
-
-    gNodes[node].mNodeType = kNodeTypeSelect;
-
-    xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
-    gNodes[node].mLine = info->sline;
-
-    gNodes[node].uValue.sSelect.mNumPipes = num_pipes;
-    int i;
-    for(i=0; i<num_pipes; i++) {
-        gNodes[node].uValue.sSelect.mPipes[i] = GC_strdup(pipes[i]);
-        gNodes[node].uValue.sSelect.mPipeBlocks[i] = pipe_blocks[i];
-    }
-
-    gNodes[node].mLeft = 0;
-    gNodes[node].mRight = 0;
-    gNodes[node].mMiddle = 0;
-
-    return node;
-}
-
-BOOL compile_select(unsigned int node, sCompileInfo* info)
-{
-    int num_pipes = gNodes[node].uValue.sSelect.mNumPipes;
-
-    if(num_pipes == 0) {
-        compile_err_msg(info, "require pipe name");
-        return FALSE;
-    }
-
-    char* pipes[SELECT_MAX];
-    sNodeBlock* pipe_blocks[SELECT_MAX];
-
-    int i;
-    for(i=0; i<num_pipes; i++) {
-        pipes[i] = GC_strdup(gNodes[node].uValue.sSelect.mPipes[i]);
-        pipe_blocks[i] = gNodes[node].uValue.sSelect.mPipeBlocks[i];
-    }
-
-    sBuf source;
-    sBuf_init(&source);
-
-    char source2[1024];
-    snprintf(source2, 1024, "{ fd_set readfds; int max_fd = %s[0]+1; ", pipes[0]);
-
-    sBuf_append_str(&source, source2);
-
-    for(i=1; i<num_pipes; i++) {
-        char source2[1024];
-        snprintf(source2, 1024, "if(%s[0] > max_fd) { max_fd = %s[0]+1; };", pipes[i], pipes[i]);
-        sBuf_append_str(&source, source2);
-    }
-
-    sBuf_append_str(&source, "come_fd_zero(&readfds);");
-
-    for(i=0; i<num_pipes; i++) {
-        char source2[1024];
-        snprintf(source2, 1024, "come_fd_set(%s[0], &readfds);", pipes[i]);
-        sBuf_append_str(&source, source2);
-    }
-
-    sBuf_append_str(&source, "select(max_fd, &readfds, (void*)0, (void*)0, (void*)0);");
-
-    for(i=0; i<num_pipes; i++) {
-        char source2[4096];
-        snprintf(source2, 4096, "if(come_fd_isset(%s[0], &readfds)) {", pipes[i]);
-        sBuf_append_str(&source, source2);
-
-        sBuf_append_str(&source, pipe_blocks[i]->mSource.mBuf);
-
-        snprintf(source2, 4096, "}");
-        sBuf_append_str(&source, source2);
-    }
-
-    sBuf_append_str(&source, " }");
-
-    sParserInfo pinfo;
-    memset(&pinfo, 0, sizeof(sParserInfo));
-    
-    pinfo.p = source.mBuf;
-    char* source3 = source.mBuf;
-    pinfo.source = &source3;
-    snprintf(pinfo.sname, PATH_MAX, "select");
-    pinfo.sline = 1;
-    pinfo.lv_table = info->pinfo->lv_table;
-
-    sNodeBlock* node_block = NULL;
-    BOOL result_type_is_void = TRUE;
-    if(!parse_block_easy(&node_block, FALSE, result_type_is_void, FALSE, &pinfo)) {
-        return FALSE;
-    }
-
-    BOOL force_hash_result = FALSE;
-    if(!compile_block(node_block, force_hash_result, info)) {
-        return FALSE;
-    }
-
-    sNodeBlock_free(node_block);
-
-    info->type = create_node_type_with_class_name("void");
-
-    return TRUE;
-}
-
-unsigned int sNodeTree_create_pselect(int num_pipes, char** pipes, struct sNodeBlockStruct** pipe_blocks, struct sNodeBlockStruct* default_block, sParserInfo* info)
-{
-    unsigned int node = alloc_node();
-
-    gNodes[node].mNodeType = kNodeTypePSelect;
-
-    xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
-    gNodes[node].mLine = info->sline;
-
-    gNodes[node].uValue.sSelect.mNumPipes = num_pipes;
-    int i;
-    for(i=0; i<num_pipes; i++) {
-        gNodes[node].uValue.sSelect.mPipes[i] = GC_strdup(pipes[i]);
-        gNodes[node].uValue.sSelect.mPipeBlocks[i] = pipe_blocks[i];
-    }
-    gNodes[node].uValue.sSelect.mDefaultBlock = default_block;
-
-    gNodes[node].mLeft = 0;
-    gNodes[node].mRight = 0;
-    gNodes[node].mMiddle = 0;
-
-    return node;
-}
-
-BOOL compile_pselect(unsigned int node, sCompileInfo* info)
-{
-    int num_pipes = gNodes[node].uValue.sSelect.mNumPipes;
-
-    if(num_pipes == 0) {
-        compile_err_msg(info, "require pipe name");
-        return FALSE;
-    }
-
-    char* pipes[SELECT_MAX];
-    sNodeBlock* pipe_blocks[SELECT_MAX];
-
-    int i;
-    for(i=0; i<num_pipes; i++) {
-        pipes[i] = GC_strdup(gNodes[node].uValue.sSelect.mPipes[i]);
-        pipe_blocks[i] = gNodes[node].uValue.sSelect.mPipeBlocks[i];
-    }
-
-    sNodeBlock* default_block = gNodes[node].uValue.sSelect.mDefaultBlock;
-
-    sBuf source;
-    sBuf_init(&source);
-
-    char source2[1024];
-    snprintf(source2, 1024, "{ fd_set readfds; timeval tv; tv.tv_sec = 0; tv.tv_usec = 0; int max_fd = %s[0]+1; ", pipes[0]);
-
-    sBuf_append_str(&source, source2);
-
-    for(i=1; i<num_pipes; i++) {
-        char source2[1024];
-        snprintf(source2, 1024, "if(%s[0] > max_fd) { max_fd = %s[0]+1; };", pipes[i], pipes[i]);
-        sBuf_append_str(&source, source2);
-    }
-
-    sBuf_append_str(&source, "come_fd_zero(&readfds);");
-
-    for(i=0; i<num_pipes; i++) {
-        char source2[1024];
-        snprintf(source2, 1024, "come_fd_set(%s[0], &readfds);", pipes[i]);
-        sBuf_append_str(&source, source2);
-    }
-
-    sBuf_append_str(&source, "select(max_fd, &readfds, (void*)0, (void*)0, &tv);");
-
-
-    snprintf(source2, 1024, "if(come_fd_isset(%s[0], &readfds)) {", pipes[0]);
-    sBuf_append_str(&source, source2);
-
-    sBuf_append_str(&source, pipe_blocks[0]->mSource.mBuf);
-
-    snprintf(source2, 1024, "}");
-
-    sBuf_append_str(&source, source2);
-
-    for(i=1; i<num_pipes; i++) {
-        char source2[4096];
-        snprintf(source2, 4096, "else if(come_fd_isset(%s[0], &readfds)) {", pipes[i]);
-        sBuf_append_str(&source, source2);
-
-        sBuf_append_str(&source, pipe_blocks[i]->mSource.mBuf);
-
-        snprintf(source2, 4096, "}");
-        sBuf_append_str(&source, source2);
-    }
-
-    if(default_block) {
-        snprintf(source2, 1024, "else {");
-        sBuf_append_str(&source, source2);
-
-        sBuf_append_str(&source, default_block->mSource.mBuf);
-
-        snprintf(source2, 1024, "}");
-
-        sBuf_append_str(&source, source2);
-    }
-
-    sBuf_append_str(&source, " }");
-
-    sParserInfo pinfo;
-    memset(&pinfo, 0, sizeof(sParserInfo));
-    
-    pinfo.p = source.mBuf;
-    char* source3 = source.mBuf;
-    pinfo.source = &source3;
-    snprintf(pinfo.sname, PATH_MAX, "select");
-    pinfo.sline = 1;
-    pinfo.lv_table = info->pinfo->lv_table;
-
-    sNodeBlock* node_block = NULL;
-    BOOL result_type_is_void = TRUE;
-    if(!parse_block_easy(&node_block, FALSE, result_type_is_void, FALSE, &pinfo)) {
-        return FALSE;
-    }
-
-    BOOL force_hash_result = FALSE;
-    if(!compile_block(node_block, force_hash_result, info)) {
-        return FALSE;
-    }
-
-    sNodeBlock_free(node_block);
-
-    info->type = create_node_type_with_class_name("void");
-
-    return TRUE;
-}
-
 unsigned int sNodeTree_create_defer(unsigned int expression_node, sParserInfo* info)
 {
     unsigned node = alloc_node();
@@ -2484,6 +2231,10 @@ BOOL compile_defer(unsigned int node, sCompileInfo* info)
     if(!compile(expression_node, info)) {
         return FALSE;
     }
+    
+    LVALUE llvm_value = *get_value_from_stack(-1);
+    
+    add_come_code_at_defer(info, "%s;\n", llvm_value.c_value);
 
     llvm_change_block(current_block, info);
 

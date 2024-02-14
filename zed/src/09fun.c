@@ -1,7 +1,7 @@
-#include <neo-c.h>
+#include <comelang.h>
 #include "common.h"
 
-private struct sFunNode
+ struct sFunNode
 {
     int id;
     sNode*% obj;
@@ -10,7 +10,7 @@ private struct sFunNode
     sNodeBlock? block;
 };
 
-private sFunNode*% sFunNode*::initialize(sFunNode*% self, string name, sNode*% obj, vector<sNode*%>*% params, sNodeBlock? block)
+ sFunNode*% sFunNode*::initialize(sFunNode*% self, string name, sNode*% obj, vector<sNode*%>*% params, sNodeBlock? block)
 {
     self.id = gNodeID++;
     self.name = name;
@@ -21,12 +21,12 @@ private sFunNode*% sFunNode*::initialize(sFunNode*% self, string name, sNode*% o
     return self;
 }
 
-private unsigned int sFunNode*::id(sFunNode* self)
+ unsigned int sFunNode*::id(sFunNode* self)
 {
     return self.id;
 }
 
-private bool sFunNode*::compile(sFunNode* self, sInfo* info)
+ bool sFunNode*::compile(sFunNode* self, sInfo* info)
 {
     char* name = self.name;
     vector<sNode*%>* params = self.params;
@@ -63,11 +63,11 @@ private bool sFunNode*::compile(sFunNode* self, sInfo* info)
         
         info2.stack_num = 0;
         
-        if(!compile_block(block!, &info2)) {
+        if(!compile_block(block, &info2)) {
             return false;
         }
 
-        codes = nullable borrow clone info2.codes;
+        codes = borrow clone info2.codes;
         
     }
     
@@ -76,12 +76,12 @@ private bool sFunNode*::compile(sFunNode* self, sInfo* info)
     
     append_str_to_codes(info, wstring(name));
     
-    info.codes.append_int(codes ? codes!.length():0);
+    info.codes.append_int(codes ? codes.length():0);
     
     if(codes) {
-        info.codes.append(codes!.buf, codes!.length());
+        info.codes.append(codes.buf, codes.length());
         
-        delete codes!;
+        delete codes;
     }
     
     info.stack_num -= params.length() + 1;
@@ -99,7 +99,7 @@ sNode*? exp_node(sInfo* info) version 9
         string fun_name = string("read");
         vector<sNode*%>*% params = new vector<sNode*%>();
         sNodeBlock? block = null
-        result = borrow new sNode(new sFunNode(fun_name, clone result!, params, block));
+        result = borrow new sNode(new sFunNode(fun_name, clone result, params, block!));
     }
     else {
         result = inherit(info);
@@ -146,9 +146,9 @@ sNode*? exp_node(sInfo* info) version 9
                     exit(1);
                 }
                 
-                params.push_back(clone node!);
+                params.push_back(clone node);
                 
-                delete node!;
+                delete node;
                 
                 if(*info->p == ',') {
                     info->p++;
@@ -162,9 +162,9 @@ sNode*? exp_node(sInfo* info) version 9
             block = parse_block(info);
         }
         
-        sNode*? result2 = borrow new sNode(new sFunNode(fun_name, clone result!, params, block));
+        sNode*? result2 = borrow new sNode(new sFunNode(fun_name, clone result, params, block!));
         
-        delete result!;
+        delete result;
         
         result = result2;
     }

@@ -219,7 +219,7 @@ sNode* index_node(char* var_name, sParserInfo* info) version 12
                 index_node2 = new sNode(new sIntNode(-1));
                 
                 if(!expression(&index_node3, info)) {
-                    return nonullable null;
+                    return null;
                 }
             }
         }
@@ -232,7 +232,7 @@ sNode* index_node(char* var_name, sParserInfo* info) version 12
             index_node = new sNode(new sIntNode(0));
             
             if(!expression(&index_node2, info)) {
-                return nonullable null;
+                return null;
             }
             
             if(*info->p == ':') {
@@ -240,7 +240,7 @@ sNode* index_node(char* var_name, sParserInfo* info) version 12
                 skip_spaces_until_eol(info);
                 
                 if(!expression(&index_node3, info)) {
-                    return nonullable null;
+                    return null;
                 }
             }
             else {
@@ -250,7 +250,7 @@ sNode* index_node(char* var_name, sParserInfo* info) version 12
     }
     else {
         if(!expression(&index_node, info)) {
-            return nonullable null;
+            return null;
         }
         
         if(*info->p == ':') {
@@ -272,13 +272,13 @@ sNode* index_node(char* var_name, sParserInfo* info) version 12
                 }
                 else {
                     if(!expression(&index_node3, info)) {
-                        return nonullable null;
+                        return null;
                     }
                 }
             }
             else {
                 if(!expression(&index_node2, info)) {
-                    return nonullable null;
+                    return null;
                 }
                 
                 if(*info->p == ':') {
@@ -290,7 +290,7 @@ sNode* index_node(char* var_name, sParserInfo* info) version 12
                     }
                     else {
                         if(!expression(&index_node3, info)) {
-                            return nonullable null;
+                            return null;
                         }
                     }
                 }

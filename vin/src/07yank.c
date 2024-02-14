@@ -1,9 +1,5 @@
 #include "common.h"
 
-public {
-enum { kYankKindLine, kYankKindNoLine };
-}
-
 bool ViWin*::saveYankToFile(ViWin* self, Vi* nvi)
 {
     char* home = getenv("HOME");
@@ -127,10 +123,10 @@ void ViWin*::pasteAfterCursor(ViWin* self, Vi* nvi)
     else {
         self.pushUndo();
 
-        auto line = self.texts.item(self.scroll+self.cursorY, null);
+        auto line = self.texts.item(self.scroll+self.cursorY, null!);
         
         if(nvi.yank.length() == 1) {
-            auto yank_first_line = nvi.yank.item(0, null);
+            auto yank_first_line = nvi.yank.item(0, null!);
 
             auto new_line = xsprintf("%ls%ls%ls"
                             , line.substring(0, self.cursorX+1)
@@ -140,7 +136,7 @@ void ViWin*::pasteAfterCursor(ViWin* self, Vi* nvi)
             self.texts.replace(self.scroll+self.cursorY, new_line);
         }
         else if(nvi.yank.length() == 2) {
-            auto yank_first_line = nvi.yank.item(0, null);
+            auto yank_first_line = nvi.yank.item(0, null!);
     
             auto new_line = xsprintf("%ls%ls"
                                 , line.substring(0, self.cursorX+1)
@@ -150,7 +146,7 @@ void ViWin*::pasteAfterCursor(ViWin* self, Vi* nvi)
     
             self.texts.replace(self.scroll+self.cursorY, new_line);
             
-            auto yank_last_line = nvi.yank.item(-1, null);
+            auto yank_last_line = nvi.yank.item(-1, null!);
             
             auto new_line2 = xsprintf("%ls%ls"
                                 , yank_last_line
@@ -158,7 +154,7 @@ void ViWin*::pasteAfterCursor(ViWin* self, Vi* nvi)
             self.texts.insert(self.scroll+self.cursorY+1, new_line2);
         }
         else if(nvi.yank.length() > 2) {
-            auto yank_first_line = nvi.yank.item(0, null);
+            auto yank_first_line = nvi.yank.item(0, null!);
     
             auto new_line = xsprintf("%ls%ls"
                                     , line.substring(0, self.cursorX+1)
@@ -173,7 +169,7 @@ void ViWin*::pasteAfterCursor(ViWin* self, Vi* nvi)
                 it2++;
             }
             
-            auto yank_last_line = nvi.yank.item(-1, null);
+            auto yank_last_line = nvi.yank.item(-1, null!);
             
             auto new_line2 = xsprintf("%ls%ls"
                                         , yank_last_line
@@ -197,10 +193,10 @@ void ViWin*::pasteBeforeCursor(ViWin* self, Vi* nvi)
     else {
         self.pushUndo();
 
-        auto line = self.texts.item(self.scroll+self.cursorY, null);
+        auto line = self.texts.item(self.scroll+self.cursorY, null!);
         
         if(nvi.yank.length() == 1) {
-            auto yank_first_line = nvi.yank.item(0, null);
+            auto yank_first_line = nvi.yank.item(0, null!);
 
             auto new_line = xsprintf("%ls%ls%ls"
                                 , line.substring(0, self.cursorX)
@@ -210,7 +206,7 @@ void ViWin*::pasteBeforeCursor(ViWin* self, Vi* nvi)
             self.texts.replace(self.scroll+self.cursorY, new_line);
         }
         else if(nvi.yank.length() == 2) {
-            auto yank_first_line = nvi.yank.item(0, null);
+            auto yank_first_line = nvi.yank.item(0, null!);
     
             auto new_line = xsprintf("%ls%ls"
                                 , line.substring(0, self.cursorX) 
@@ -220,7 +216,7 @@ void ViWin*::pasteBeforeCursor(ViWin* self, Vi* nvi)
     
             self.texts.replace(self.scroll+self.cursorY, new_line);
             
-            auto yank_last_line = nvi.yank.item(-1, null);
+            auto yank_last_line = nvi.yank.item(-1, null!);
             
             auto new_line2 = xsprintf("%ls%ls"
                                 , yank_last_line
@@ -228,7 +224,7 @@ void ViWin*::pasteBeforeCursor(ViWin* self, Vi* nvi)
             self.texts.insert(self.scroll+self.cursorY+1, new_line2);
         }
         else if(nvi.yank.length() > 2) {
-            auto yank_first_line = nvi.yank.item(0, null);
+            auto yank_first_line = nvi.yank.item(0, null!);
     
             auto new_line = xsprintf("%ls%ls"
                                 , line.substring(0, self.cursorX) 
@@ -242,7 +238,7 @@ void ViWin*::pasteBeforeCursor(ViWin* self, Vi* nvi)
                 it2++;
             }
             
-            auto yank_last_line = nvi.yank.item(-1, null);
+            auto yank_last_line = nvi.yank.item(-1, null!);
             
             auto new_line2 = xsprintf("%ls%ls"
                                         ,yank_last_line
@@ -267,10 +263,10 @@ void ViWin*::filePasteAfterCursor(ViWin* self, Vi* nvi)
     else {
         self.pushUndo();
 
-        auto line = self.texts.item(self.scroll+self.cursorY, null);
+        auto line = self.texts.item(self.scroll+self.cursorY, null!);
         
         if(nvi.fileYank.length() == 1) {
-            auto yank_first_line = nvi.fileYank.item(0, null);
+            auto yank_first_line = nvi.fileYank.item(0, null!);
 
             auto new_line = xsprintf("%ls%ls%ls"
                             , line.substring(0, self.cursorX+1)
@@ -280,7 +276,7 @@ void ViWin*::filePasteAfterCursor(ViWin* self, Vi* nvi)
             self.texts.replace(self.scroll+self.cursorY, new_line);
         }
         else if(nvi.fileYank.length() == 2) {
-            auto yank_first_line = nvi.yank.item(0, null);
+            auto yank_first_line = nvi.yank.item(0, null!);
     
             auto new_line = xsprintf("%ls%ls"
                                 , line.substring(0, self.cursorX+1)
@@ -290,7 +286,7 @@ void ViWin*::filePasteAfterCursor(ViWin* self, Vi* nvi)
     
             self.texts.replace(self.scroll+self.cursorY, new_line);
             
-            auto yank_last_line = nvi.fileYank.item(-1, null);
+            auto yank_last_line = nvi.fileYank.item(-1, null!);
             
             auto new_line2 = xsprintf("%ls%ls"
                                 , yank_last_line
@@ -298,7 +294,7 @@ void ViWin*::filePasteAfterCursor(ViWin* self, Vi* nvi)
             self.texts.insert(self.scroll+self.cursorY+1, new_line2);
         }
         else if(nvi.fileYank.length() > 2) {
-            auto yank_first_line = nvi.fileYank.item(0, null);
+            auto yank_first_line = nvi.fileYank.item(0, null!);
     
             auto new_line = xsprintf("%ls%ls"
                                     , line.substring(0, self.cursorX+1)
@@ -313,7 +309,7 @@ void ViWin*::filePasteAfterCursor(ViWin* self, Vi* nvi)
                 it2++;
             }
             
-            auto yank_last_line = nvi.fileYank.item(-1, null);
+            auto yank_last_line = nvi.fileYank.item(-1, null!);
             
             auto new_line2 = xsprintf("%ls%ls"
                                         , yank_last_line
@@ -357,6 +353,6 @@ void Vi*::finalize(Vi* self) version 7
 {
     inherit(self);
 
-    delete self.yank;
-    delete self.fileYank;
+    delete borrow self.yank;
+    delete borrow self.fileYank;
 }

@@ -3891,7 +3891,7 @@ fi
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking Operating System" >&5
 printf %s "checking Operating System... " >&6; }
 
-CFLAGS='-DPREFIX="\"${DESTDIR}/\""'
+CFLAGS='-DPREFIX="\"${DESTDIR}/\"" -gc'
 CFLAGS="-fPIC -rdynamic $CFLAGS"
 
 AR_LIB=
@@ -4039,56 +4039,6 @@ CC=clang
 
 INSTALL="$(which install) -c"
 
-ac_fn_c_check_header_compile "$LINENO" "readline/readline.h" "ac_cv_header_readline_readline_h" "$ac_includes_default"
-if test "x$ac_cv_header_readline_readline_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_READLINE_H 1" >>confdefs.h
-
-else $as_nop
-  exit
-fi
-
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for main in -lreadline" >&5
-printf %s "checking for main in -lreadline... " >&6; }
-if test ${ac_cv_lib_readline_main+y}
-then :
-  printf %s "(cached) " >&6
-else $as_nop
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lreadline  $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-
-int
-main (void)
-{
-return main ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"
-then :
-  ac_cv_lib_readline_main=yes
-else $as_nop
-  ac_cv_lib_readline_main=no
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_readline_main" >&5
-printf "%s\n" "$ac_cv_lib_readline_main" >&6; }
-if test "x$ac_cv_lib_readline_main" = xyes
-then :
-   LIBS="$LIBS -lreadline";
-else $as_nop
-  exit
-fi
-ac_cv_lib_readline=ac_cv_lib_readline_main
-
-
 ac_fn_c_check_header_compile "$LINENO" "bsd/stdlib.h" "ac_cv_header_bsd_stdlib_h" "$ac_includes_default"
 if test "x$ac_cv_header_bsd_stdlib_h" = xyes
 then :
@@ -4200,7 +4150,7 @@ ac_cv_lib_pcre=ac_cv_lib_pcre_main
 
 
 
-CC=neo-c
+CC=comelang
 
 
 
@@ -4208,7 +4158,7 @@ DESTDIR=$myprefix
 
 
 
-OBJS="src/main.o src/01int.o src/02add.o src/03str.o src/04print.o src/05var.o src/06fun.o src/07module.o src/08if.o src/type.o src/09comment.o src/10while.o src/11op.o"
+OBJS="src/main.o src/01int.o src/02add.o src/03str.o src/04print.o src/05var.o src/06fun.o src/07module.o src/08if.o src/type.o src/09comment.o src/10while.o src/11op.o src/12list.o"
 #OBJS="src/main.o src/01int.o src/02add.o src/03str.o src/04print.o src/05var.o src/06fun.o src/07bool.o src/08if.o src/09comment.o src/10while.o src/11op.o src/12module.o src/13list.o src/vm.o src/type.o"
 
 ac_fn_c_check_func "$LINENO" "execvpe" "ac_cv_func_execvpe"

@@ -1,13 +1,13 @@
-#include <neo-c.h>
+#include <comelang.h>
 #include "common.h"
 
-private struct sListNode
+ struct sListNode
 {
     int id;
     list<sNode*%>*% value;
 };
 
-private sListNode*% sListNode*::initialize(sListNode*% self, list<sNode*%>*% value)
+ sListNode*% sListNode*::initialize(sListNode*% self, list<sNode*%>*% value)
 {
     self.id = gNodeID++;
     self.value = value;
@@ -15,17 +15,17 @@ private sListNode*% sListNode*::initialize(sListNode*% self, list<sNode*%>*% val
     return self;
 }
 
-private unsigned int sListNode*::id(sListNode* self)
+ unsigned int sListNode*::id(sListNode* self)
 {
     return self.id;
 }
 
-private bool sListNode*::compile(sListNode* self, sInfo* info)
+ bool sListNode*::compile(sListNode* self, sInfo* info)
 {
-    list<sNode*%>* list = self.value;
+    list<sNode*%>* list_ = self.value;
     
-    for(int i=0; i<list.length(); i++) {
-        sNode* node = list[i];
+    for(int i=0; i<list_.length(); i++) {
+        sNode* node = list_[i];
         
         if(!node.compile->(info)) {
             return false;
@@ -33,21 +33,21 @@ private bool sListNode*::compile(sListNode* self, sInfo* info)
     }
     
     info.codes.append_int(OP_LIST_VALUE);
-    info.codes.append_int(list.length());
+    info.codes.append_int(list_.length());
     
-    info.stack_num -= list.length();
+    info.stack_num -= list_.length();
     info.stack_num++;
     
     return true;
 }
 
-private struct sMapNode
+ struct sMapNode
 {
     int id;
     map<sNode*%, sNode*%>*% value;
 };
 
-private sMapNode*% sMapNode*::initialize(sMapNode*% self, map<sNode*%, sNode*%>*% value)
+ sMapNode*% sMapNode*::initialize(sMapNode*% self, map<sNode*%, sNode*%>*% value)
 {
     self.id = gNodeID++;
     self.value = value;
@@ -55,17 +55,17 @@ private sMapNode*% sMapNode*::initialize(sMapNode*% self, map<sNode*%, sNode*%>*
     return self;
 }
 
-private unsigned int sMapNode*::id(sMapNode* self)
+ unsigned int sMapNode*::id(sMapNode* self)
 {
     return self.id;
 }
 
-private bool sMapNode*::compile(sMapNode* self, sInfo* info)
+ bool sMapNode*::compile(sMapNode* self, sInfo* info)
 {
-    map<sNode*%, sNode*%>* map = self.value;
+    map<sNode*%, sNode*%>* map_ = self.value;
     
-    foreach(it, map) {
-        sNode* item = map[it];
+    foreach(it, map_) {
+        sNode* item = map_[it];
         
         if(!it.compile->(info)) {
             return false;
@@ -77,9 +77,9 @@ private bool sMapNode*::compile(sMapNode* self, sInfo* info)
     }
     
     info.codes.append_int(OP_MAP_VALUE);
-    info.codes.append_int(map.length());
+    info.codes.append_int(map_.length());
     
-    info.stack_num -= map.length() * 2;
+    info.stack_num -= map_.length() * 2;
     info.stack_num++;
     
     return true;
@@ -96,19 +96,19 @@ bool vm(sInfo* info) version 7
             int len = *info->op;
             info->op++;
             
-            list<ZVALUE*%>*% list = new list<ZVALUE*%>();
+            list<ZVALUE*%>*% list_ = new list<ZVALUE*%>();
             
             for(int i=0; i<len; i++) {
                 ZVALUE*% value = clone info.stack[-len+i];
                 
-                list.push_back(value);
+                list_.push_back(value);
             }
             
             for(int i=0; i<len; i++) {
                 info.stack.delete_back();
             }
             
-            info.stack.push_back(new ZVALUE(kind:kListValue, list_value:list));
+            info.stack.push_back(new ZVALUE(kind:kListValue, list_value:list_));
             }
             break;
             
@@ -118,20 +118,20 @@ bool vm(sInfo* info) version 7
             int len = *info->op;
             info->op++;
             
-            map<ZVALUE*%, ZVALUE*%>*% map = new map<ZVALUE*%, ZVALUE*%>();
+            map<ZVALUE*%, ZVALUE*%>*% map_ = new map<ZVALUE*%, ZVALUE*%>();
             
             for(int i=0; i<len*2; i+=2) {
                 ZVALUE*% key = clone info.stack[-len*2+i];
                 ZVALUE*% item = clone info.stack[-len*2+i+1];
                 
-                map.insert(key, item);
+                map_.insert(key, item);
             }
             
             for(int i=0; i<len*2; i++) {
                 info.stack.delete_back();
             }
             
-            info.stack.push_back(new ZVALUE(kind:kMapValue, map_value:map));
+            info.stack.push_back(new ZVALUE(kind:kMapValue, map_value:map_));
             }
             break;
     }
@@ -153,12 +153,12 @@ sNode*? exp_node(sInfo* info) version 8
             return null;
         }
         
-        delete node!;
+        delete node;
         
         if(*info->p == ':') {
             info->p = p;
             
-            map<sNode*%, sNode*%>*% map = new map<sNode*%, sNode*%>();
+            map<sNode*%, sNode*%>*% map_ = new map<sNode*%, sNode*%>();
             
             while(true) {
                 sNode*? node = expression(info);
@@ -178,10 +178,10 @@ sNode*? exp_node(sInfo* info) version 8
                     return null;
                 }
                 
-                map.insert(clone node!, clone node2!);
+                map_.insert(clone node, clone node2);
                 
-                delete node!;
-                delete node2!;
+                delete node;
+                delete node2;
                 
                 if(*info->p == ',') {
                     info->p++;
@@ -195,12 +195,12 @@ sNode*? exp_node(sInfo* info) version 8
                 }
             }
             
-            return borrow new sNode(new sMapNode(map));
+            return borrow new sNode(new sMapNode(map_));
         }
         else {
             info->p = p;
             
-            list<sNode*%>*% list = new list<sNode*%>();
+            list<sNode*%>*% list_ = new list<sNode*%>();
             
             while(true) {
                 sNode*? node = expression(info);
@@ -209,9 +209,9 @@ sNode*? exp_node(sInfo* info) version 8
                     return null;
                 }
                 
-                list.push_back(clone node!);
+                list_.push_back(clone node);
                 
-                delete node!;
+                delete node;
                 
                 if(*info->p == ',') {
                     info->p++;
@@ -225,7 +225,7 @@ sNode*? exp_node(sInfo* info) version 8
                 }
             }
             
-            return borrow new sNode(new sListNode(list));
+            return borrow new sNode(new sListNode(list_));
         }
     }
     else {

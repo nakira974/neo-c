@@ -115,7 +115,8 @@ fi
 AC_MSG_CHECKING(Operating System)
 
 #CFLAGS='-DPREFIX="\"${DESTDIR}/\"" -fPIC'
-CFLAGS='-DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H'
+CFLAGS='-DPREFIX="\"${DESTDIR}/\"" -fPIC -DCONFIG_H'
+#CFLAGS='-DPREFIX="\"${DESTDIR}/\"" -fPIC -L/usr/local/lib -DCONFIG_H'
 #CFLAGS="-fPIC -rdynamic $CFLAGS"
 
 if uname -v | grep iSH > /dev/null; then
@@ -140,12 +141,9 @@ elif uname -a | grep Darwin | grep arm64; then
     AC_DEFINE(__DARWIN_ARM__, 1)
 
     if test $myprefix = /usr/local; then
-        CFLAGS="-Isrc/ -I.  $CFLAGS -I/usr/local/opt/llvm/include -L/opt/homebrew/lib -I/opt/homebrew/include"
-#        CFLAGS="-Isrc/ -I.  $CFLAGS -L/usr/local/opt/llvm/lib -I/usr/local/opt/llvm/include "
-#        CFLAGS="-Isrc/ -I.  -I `xcrun --show-sdk-path`/usr/include $CFLAGS -L/usr/local/opt/llvm/lib -I/usr/local/opt/llvm/include "
+        CFLAGS="-Isrc/ -I.  $CFLAGS -I/usr/local/opt/llvm/include -I/opt/homebrew/include -L/opt/homebrew/lib"
     else 
-        CFLAGS="-Isrc/ -I. -I$myprefix/include $CFLAGS -L/usr/local/opt/llvm/lib -I/usr/local/opt/llvm/include -L/opt/homebrew/lib -I/opt/homebrew/include"
-#        CFLAGS="-Isrc/ -I. -I$myprefix/include -I `xcrun --show-sdk-path`/usr/include $CFLAGS -L/usr/local/opt/llvm/lib -I/usr/local/opt/llvm/include "
+        CFLAGS="-Isrc/ -I. -I$myprefix/include $CFLAGS -L/usr/local/opt/llvm/lib -I/usr/local/opt/llvm/include -I/opt/homebrew/include -L/opt/homebrew/lib"
     fi
 
     PATH="$PATH:/opt/homebrew/opt/llvm/bin"
@@ -247,11 +245,11 @@ fi
 
 AC_HAVE_LIBRARY(rt, [ LIBS="$LIBS -lrt"; ], [])
 
-if which /opt/homebrew/Cellar/llvm/15.*/bin/clang-15
+if which /opt/homebrew/Cellar/llvm/16.*/bin/clang-16
 then
     echo Darwin-clang
-    CC=$(ls /opt/homebrew/Cellar/llvm/15.*/bin/clang-15)
-    CLANG=$(ls /opt/homebrew/Cellar/llvm/15.*/bin/clang-15)
+    CC=$(ls /opt/homebrew/Cellar/llvm/16.*/bin/clang-16)
+    CLANG=$(ls /opt/homebrew/Cellar/llvm/16.*/bin/clang-16)
 elif test `uname -s` = "Darwin"; then
     CC=clang
 elif which clang-11 2> /dev/null
@@ -267,12 +265,13 @@ echo $CC
 AC_SUBST(LIBS)
 
 AC_SUBST(CC)
+AC_SUBST(CLANG)
 
 DESTDIR=$myprefix
 
 AC_SUBST(DESTDIR)
 
-CXXFLAGS='-DPREFIX="\"${DESTDIR}/\" -L/usr/local/lib"'
+CXXFLAGS='-DPREFIX="\"${DESTDIR}/\""'
 CXXFLAGS="-I . -I src $CXXFLAGS"
 #CXXFLAGS="-fPIC -rdynamic $CXXFLAGS"
 
@@ -295,8 +294,8 @@ LIBS="$LIBS"
 
 AC_SUBST(CXX)
 
-OBJS="src/parse_value.o src/parse_lib.o src/parse_type.o src/parse_function.o src/parse_loop.o src/parse_var.o src/parse_exp.o src/parse_op.o src/alignment.o src/buffer.o src/xfunc.o src/node.o src/node_function_call.o src/node_function_lib.o src/node_function.o src/node_function_come.o src/node_compile.o src/node_loop.o src/node_op.o src/node_value.o src/node_var.o src/vtable.o src/node_type.o src/klass.o src/node_block.o src/typedef.o src/compiler.o src/macro.o"
-SELF_HOST_OBJS="src/parse_value.c.o src/parse_lib.c.o src/parse_type.c.o src/parse_function.c.o src/parse_loop.c.o src/parse_var.c.o src/parse_exp.c.o src/parse_op.c.o src/alignment.c.o src/buffer.c.o src/xfunc.c.o src/node.c.o src/vtable.c.o src/node_type.c.o src/klass.c.o src/node_block.c.o src/typedef.c.o src/compiler.c.o src/node_function_call.c.o src/node_function_lib.c.o src/node_function.c.o src/node_function_come.c.o src/node_loop.c.o src/node_op.c.o src/node_value.c.o src/node_var.c.o src/macro.c.o src/node_compile.c.o src/main.c.o"
+OBJS="src/parse_value.o src/parse_lib.o src/parse_type.o src/parse_function.o src/parse_loop.o src/parse_var.o src/parse_exp.o src/parse_op.o src/buffer.o src/xfunc.o src/node.o src/node_function_call.o src/node_function_lib.o src/node_function.o src/node_compile.o src/node_loop.o src/node_op.o src/node_value.o src/node_var.o src/vtable.o src/node_type.o src/klass.o src/node_block.o src/typedef.o src/compiler.o src/transpiler.o"
+SELF_HOST_OBJS="src/parse_value.c.o src/parse_lib.c.o src/parse_type.c.o src/parse_function.c.o src/parse_loop.c.o src/parse_var.c.o src/parse_exp.c.o src/parse_op.c.o src/buffer.c.o src/xfunc.c.o src/node.c.o src/vtable.c.o src/node_type.c.o src/klass.c.o src/node_block.c.o src/typedef.c.o src/compiler.c.o src/node_function_call.c.o src/node_function_lib.c.o src/node_function.c.o src/node_loop.c.o src/node_op.c.o src/node_value.c.o src/node_var.c.o src/node_compile.c.o src/main.c.o src/transpiler.c.o"
 
 AC_CHECK_FUNCS(lchmod)
 
@@ -306,10 +305,11 @@ echo checking for llvm-config...
 
 export PATH=$PATH:/opt/homebrew/opt/llvm/bin
 
-if ls /opt/homebrew/Cellar/llvm/15.*/bin/clang-15 1> /dev/null 2>/dev/null
+if ls /opt/homebrew/Cellar/llvm/16.*/bin/clang-16 1> /dev/null 2>/dev/null
 then
     CFLAGS=`/opt/homebrew/opt/llvm/bin/llvm-config --cflags | tr '\n' ' '`" $CFLAGS"
     CXXFLAGS=`/opt/homebrew/opt/llvm/bin/llvm-config --cxxflags --ldflags --system-libs --libs core | tr '\n' ' '`" $CXXFLAGS"
+    CXXFLAGS2=`/opt/homebrew/opt/llvm/bin/llvm-config --cxxflags --system-libs --libs core | tr '\n' ' '`" $CXXFLAGS"
     LLVM_VERSION=`/opt/homebrew/opt/llvm/bin/llvm-config --version | sed 's/\([[0-9]]*\)\.[[0-9]]*\.[[0-9]]*/\1/'`
     CFLAGS="$CFLAGS -DLLVM_VERSION=$LLVM_VERSION"
     CFLAGS=$CFLAGS' -DCLANG="\"'$CLANG'\""'
@@ -318,6 +318,7 @@ elif which llvm-config-11 1> /dev/null 2>/dev/null
 then
     CFLAGS=`llvm-config-11 --cflags | tr '\n' ' '`" $CFLAGS"
     CXXFLAGS=`llvm-config-11 --cxxflags --ldflags --system-libs --libs core | tr '\n' ' '`" $CXXFLAGS"
+    CXXFLAGS2=`llvm-config-11 --cxxflags --system-libs --libs core | tr '\n' ' '`" $CXXFLAGS"
     #CXXFLAGS=`llvm-config-11 --cxxflags --ldflags --system-libs --libs all | tr '\n' ' '`" $CXXFLAGS"
     echo llvm-11 ok
     LLVM_VERSION=`llvm-config-11 --version | sed 's/\([[0-9]]*\)\.[[0-9]]*\.[[0-9]]*/\1/'`
@@ -327,6 +328,7 @@ elif which llvm-config-9 1> /dev/null 2>/dev/null
 then
     CFLAGS=`llvm-config-9 --cflags | tr '\n' ' '`" $CFLAGS"
     CXXFLAGS=`llvm-config-9 --cxxflags --ldflags --system-libs --libs core | tr '\n' ' '`" $CXXFLAGS"
+    CXXFLAGS2=`llvm-config-9 --cxxflags --system-libs --libs core | tr '\n' ' '`" $CXXFLAGS"
     echo llvm-9 ok
     LLVM_VERSION=`llvm-config-9 --version | sed 's/\([[0-9]]*\)\.[[0-9]]*\.[[0-9]]*/\1/'`
     CFLAGS="$CFLAGS -DLLVM_VERSION=$LLVM_VERSION"
@@ -335,6 +337,7 @@ elif which llvm-config 1> /dev/null 2>/dev/null
 then
     CFLAGS=`llvm-config --cflags | tr '\n' ' '`" $CFLAGS"
     CXXFLAGS=`llvm-config --cxxflags --ldflags --system-libs --libs core | tr '\n' ' '`" $CXXFLAGS"
+    CXXFLAGS=`llvm-config --cxxflags --system-libs --libs core | tr '\n' ' '`" $CXXFLAGS"
     LLVM_VERSION=`llvm-config --version | sed 's/\([[0-9]]*\)\.[[0-9]]*\.[[0-9]]*/\1/'`
     CFLAGS="$CFLAGS -DLLVM_VERSION=$LLVM_VERSION"
     CFLAGS=$CFLAGS' -DCLANG="\"clang\""'
@@ -346,12 +349,12 @@ fi
 
 CFLAGS=$CFLAGS' -DGCC="\"clang\""'
 
-if test $DEBUGGING = 1
-then
-    CXXFLAGS2="${CXXFLAGS}"
-else
-    CXXFLAGS2="${CXXFLAGS#-g}"
-fi
+#if test $DEBUGGING = 1
+#then
+    #CXXFLAGS2="${CXXFLAGS}"
+#else
+    #CXXFLAGS2="${CXXFLAGS#-g}"
+#fi
 
 #CXXFLAGS='`llvm-config --cxxflags --ldflags --system-libs --libs all` '" $CXXFLAGS"
 

@@ -2,7 +2,7 @@
 A=.a
 O=.o
 E=
-CC=neo-c
+CC=comelang
 CFLAGS=-g
 LDFLAGS=-g
 LD=$(CC)

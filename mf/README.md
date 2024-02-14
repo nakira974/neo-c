@@ -1,5 +1,4 @@
-shsh
+mf
 
-shell script 
+1000 lines console filer by comelang
 
-1000 lines shell implemented by neo-c

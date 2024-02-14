@@ -82,8 +82,8 @@ fi
 ##############################################################
 AC_MSG_CHECKING(Operating System)
 
-CFLAGS='-DPREFIX="\"${DESTDIR}/\""'
-CFLAGS="-fPIC -rdynamic $CFLAGS"
+CFLAGS='-DPREFIX="\"${DESTDIR}/\"" -gc'
+CFLAGS="-fPIC $CFLAGS"
 
 AR_LIB=
 
@@ -106,7 +106,7 @@ elif test `uname -s` = "FreeBSD"; then
 
     AC_DEFINE(__FREEBSD__, 1)
 
-    CFLAGS="-Isrc/ -I. -L . -I$myprefix/include -L$myprefix/lib $CFLAGS"
+    CFLAGS="-Isrc/ -I. -I$myprefix/include -L$myprefix/lib $CFLAGS"
 elif uname -s | grep -q CYGWIN_NT; then
     echo CYGWIN
 
@@ -115,9 +115,9 @@ elif uname -s | grep -q CYGWIN_NT; then
     AC_DEFINE(__CYGWIN__, 1)
 
     if test $myprefix = /usr/local; then
-        CFLAGS="-Isrc/ -I. -L . $CFLAGS"
+        CFLAGS="-Isrc/ -I. $CFLAGS"
     else 
-        CFLAGS="-Isrc/ -I. -L . -I$myprefix/include -L$myprefix/lib $CFLAGS"
+        CFLAGS="-Isrc/ -I. -I$myprefix/include -L$myprefix/lib $CFLAGS"
     fi
 else
     echo "Linux"
@@ -127,9 +127,9 @@ else
     AC_DEFINE(__LINUX__, 1)
 
     if test $myprefix = /usr/local; then
-        CFLAGS="-Isrc/ -I. -L . $CFLAGS"
+        CFLAGS="-Isrc/ -I. $CFLAGS"
     else
-        CFLAGS="-Isrc/ -I. -L . -I$myprefix/include -L$myprefix/lib $CFLAGS"
+        CFLAGS="-Isrc/ -I. -I$myprefix/include -L$myprefix/lib $CFLAGS"
     fi
 
     AC_HAVE_LIBRARY(util, [ LIBS="$LIBS -lutil" ], [])
@@ -143,10 +143,10 @@ then
     CFLAGS="$CFLAGS -I/usr/local/include"
 fi
 
-if test -d /usr/local/lib
-then
-    CFLAGS="$CFLAGS -L /usr/local/lib"
-fi
+#if test -d /usr/local/lib
+#then
+#    CFLAGS="$CFLAGS -L /usr/local/lib"
+#fi
 
 if test -d /opt/local/include
 then
@@ -189,9 +189,6 @@ CC=clang
 
 INSTALL="$(which install) -c"
 
-AC_CHECK_HEADER(readline/readline.h, [AC_DEFINE(HAVE_READLINE_H, 1)], [exit])
-AC_HAVE_LIBRARY(readline, [ LIBS="$LIBS -lreadline"; ], [exit])
-
 AC_CHECK_HEADER(bsd/stdlib.h, [AC_DEFINE(HAVE_BSD_H, 1)], [])
 
 AC_CHECK_HEADER(math.h, [AC_DEFINE(HAVE_MATH_H,1)], [])
@@ -203,7 +200,7 @@ AC_HAVE_LIBRARY(pcre, [ LIBS="$LIBS -lpcre"; ], [ eixt ])
 
 AC_SUBST(LIBS)
 
-CC=neo-c
+CC=comelang
 
 AC_SUBST(CC)
 

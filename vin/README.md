@@ -1,6 +1,6 @@
 # vin
 
-vi clone implemented by neo-c
+vi clone implemented by comelang
 
 tab --> word completion
 

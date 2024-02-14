@@ -49,6 +49,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
     *result_type = NULL;
 
     BOOL nullable_ = FALSE;
+    BOOL no_calling_destructor = FALSE;
     BOOL constant = FALSE;
     BOOL register_ = FALSE;
     BOOL volatile_ = FALSE;
@@ -61,6 +62,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
     BOOL no_heap = FALSE;
     BOOL refference = FALSE;
     BOOL exception_ = FALSE;
+    BOOL restrict_ = FALSE;
     
     BOOL unsigned_ = FALSE;
     BOOL long_ = FALSE;
@@ -96,7 +98,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
         else if(strcmp(type_name, "immutable") == 0) {
             immutable_ = TRUE;
         }
-        else if(strcmp(type_name, "static") == 0 || strcmp(type_name, "private") == 0) {
+        else if(strcmp(type_name, "static") == 0) {
             static_ = TRUE;
         }
         else if(strcmp(type_name, "exception") == 0) {
@@ -247,7 +249,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                 short_ = TRUE;
             }
         }
-        else if(strcmp(type_name, "struct") == 0 || strcmp(type_name, "protocol") == 0)
+        else if(strcmp(type_name, "struct") == 0 || (gNCGC && strcmp(type_name, "protocol") == 0))
         {
             BOOL protocol_ = strcmp(type_name, "protocol") == 0;
             
@@ -357,8 +359,8 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                 else {
                     sCLClass* klass = get_class(union_name);
 
-                    if(klass == NULL && gNCHeader) {
-                        return FALSE;
+                    if(klass == NULL) {
+                        klass = alloc_union(union_name, FALSE, FALSE);
                     }
                 }
 
@@ -503,6 +505,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
 #endif
 
             if(*result_type != NULL) {
+                (*result_type)->mConstant = constant;
                 xstrncpy((*result_type)->mOriginalTypeName, type_name, VAR_NAME_MAX);
 
                 if(strcmp(CLASS_NAME((*result_type)->mClass), "long") == 0)
@@ -510,8 +513,8 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                     long_long = TRUE;
                 }
 
-                channel = (*result_type)->mChannel;
                 nullable_ = (*result_type)->mNullable;
+                no_calling_destructor = (*result_type)->mNoCallingDestructor;
                 no_heap = (*result_type)->mNoHeap;
                 refference = (*result_type)->mRefference;
                 heap = (*result_type)->mHeap;
@@ -519,14 +522,15 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                 unsigned_ = (*result_type)->mUnsigned;
                 register_ = (*result_type)->mRegister;
                 volatile_ = (*result_type)->mVolatile;
+                long_long = (*result_type)->mLongLong;
+                register_ = (*result_type)->mRegister;
+                restrict_ = (*result_type)->mRestrict;
                 //static_ = (*result_type)->mStatic;
                 //pointer_num = 0;
                 //(*result_type)->mPointerNum;
                 pointer_num = (*result_type)->mPointerNum;
                 //typedef_pointer_num = (*result_type)->mPointerNum;
                 immutable_ = (*result_type)->mImmutable;
-                
-                xstrncpy((*result_type)->mTypeName, type_name, VAR_NAME_MAX);
             }
         }
 
@@ -563,6 +567,9 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
     }
 
     if(*result_type == NULL || (*result_type)->mClass == NULL) {
+        char buf[128];
+        snprintf(buf, 128, "type not found %s", type_name);
+        parser_err_msg(info, buf);
         *result_type = create_node_type_with_class_name("int");
     }
 
@@ -575,6 +582,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
 
     if(long_long && type_identify_with_class_name((*result_type), "int"))
     {
+        (*result_type)->mLongLong = TRUE;
         *result_type = create_node_type_with_class_name("long");
     }
 
@@ -613,7 +621,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                 else if(*info->p == '%') {
                     info->p++;
                     skip_spaces_and_lf(info);
-                    if(!gExternC && !gNCGC) {
+                    if(gNCCome && !gNCGC) {
                         (*result_type)->mHeap = TRUE;
                     }
                 }
@@ -718,25 +726,33 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                 node_type->mPointerNum = pointer_num;
                 node_type->mImmutable = immutable_;
                 node_type->mNullable = nullable_;
+                node_type->mNoCallingDestructor = no_calling_destructor;
                 node_type->mNoHeap = no_heap;
                 node_type->mRefference = refference;
                 node_type->mHeap = heap;
                 node_type->mConstant = constant;
                 node_type->mUnsigned = unsigned_;
                 node_type->mVolatile = volatile_;
+                node_type->mLongLong = long_long;
+                node_type->mRegister = register_;
+                node_type->mRestrict = restrict_;
                 node_type->mStatic = static_;
                 (*result_type)->mResultType = node_type;
                 
                 pointer_num = 0;
                 immutable_ = FALSE;
                 nullable_ = FALSE;
+                no_calling_destructor = FALSE;
                 no_heap = FALSE;
                 refference = FALSE;
                 heap = FALSE;
                 constant = FALSE;
                 unsigned_ = FALSE;
                 volatile_ = FALSE;
+                long_long = FALSE;
                 static_ = FALSE;
+                register_ = FALSE;
+                restrict_ = FALSE;
 
                 if(*info->p == '(') {
                     info->p++;
@@ -893,6 +909,8 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                             return FALSE;
                         }
                     }
+                    if(*info->p == '(') {
+                    }
 
                     BOOL no_function_pointer_result_function = FALSE;
                     if(*info->p == ')' && !array_param) {
@@ -906,7 +924,10 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                     }
 
                     if(*info->p == '(') {
-                        if(function_pointer_result_function && !no_function_pointer_result_function) {
+                        if(func_pointer_name && strcmp(func_pointer_name, "anon_fun") == 0)
+                        {
+                        }
+                        else if(function_pointer_result_function && !no_function_pointer_result_function) {
                             *function_pointer_result_function = TRUE;
                             info->p = p;
                             info->sline = sline;
@@ -920,30 +941,39 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                         node_type->mPointerNum = pointer_num;
                         node_type->mImmutable = immutable_;
                         node_type->mNullable = nullable_;
+                        node_type->mNoCallingDestructor = no_calling_destructor;
                         node_type->mNoHeap = no_heap;
                         node_type->mRefference = refference;
                         node_type->mHeap = heap;
                         node_type->mConstant = constant;
                         node_type->mUnsigned = unsigned_;
                         node_type->mVolatile = volatile_;
+                        node_type->mLongLong = long_long;
+                        node_type->mRegister = register_;
+                        node_type->mRestrict = restrict_;
                         node_type->mStatic = static_;
                         (*result_type)->mResultType = node_type;
                         
                         pointer_num = 0;
                         immutable_ = FALSE;
                         nullable_ = FALSE;
+                        no_calling_destructor = FALSE;
                         no_heap = FALSE;
                         refference = FALSE;
                         heap = FALSE;
                         constant = FALSE;
                         unsigned_ = FALSE;
                         volatile_ = FALSE;
+                        long_long = FALSE;
+                        restrict_ = FALSE;
+                        register_ = FALSE;
                         static_ = FALSE;
                         
                         if(zero_size_array) {
                             //node_type->mArrayDimentionNum = 1;
                             //node_type->mArrayNum[0] = 0;
                             (*result_type)->mOmitArrayNum = TRUE;
+                            (*result_type)->mOriginalOmitArrayNum = TRUE;
                             if(type_identify_with_class_name(*result_type, "lambda")) {
                                 pointer_num++;
                             }
@@ -1009,6 +1039,8 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                                     if(*info->p == ')') {
                                         info->p++;
                                         skip_spaces_and_lf(info);
+                                        
+                                        
 
                                         if(*info->p == ')' && *(info->p+1) == '(') {
                                             info->p++;
@@ -1026,24 +1058,32 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
                                             node_type->mPointerNum = pointer_num;
                                             node_type->mImmutable = immutable_;
                                             node_type->mNullable = nullable_;
+                                            node_type->mNoCallingDestructor = no_calling_destructor;
                                             node_type->mNoHeap = no_heap;
                                             node_type->mRefference = refference;
                                             node_type->mHeap = heap;
                                             node_type->mConstant = constant;
                                             node_type->mUnsigned = unsigned_;
                                             node_type->mVolatile = volatile_;
+                                            node_type->mLongLong = long_long;
+                                            node_type->mRegister = register_;
+                                            node_type->mRestrict = restrict_;
                                             node_type->mStatic = static_;
                                             (*result_type)->mResultType = node_type;
                                             
                                             pointer_num = 0;
                                             immutable_ = FALSE;
                                             nullable_ = FALSE;
+                                            no_calling_destructor = FALSE;
                                             no_heap = FALSE;
                                             refference = FALSE;
                                             heap = FALSE;
                                             constant = FALSE;
                                             unsigned_ = FALSE;
                                             volatile_ = FALSE;
+                                            register_ = FALSE;
+                                            restrict_ = FALSE;
+                                            long_long = FALSE;
                                             static_ = FALSE;
 
                                             if(*info->p == ')') {
@@ -1277,6 +1317,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
         (void)parse_word(buf, VAR_NAME_MAX, info, FALSE, FALSE);
         if(strcmp(buf, "__restrict") == 0 || strcmp(buf, "restrict") == 0)
         {
+            restrict_ = TRUE;
         }
         else if(strcmp(buf, "const") == 0)
         {
@@ -1308,6 +1349,14 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
             skip_spaces_and_lf(info);
 
             nullable_ = TRUE;
+        }
+        else if(*info->p == '|') {
+            info->p++;
+            skip_spaces_and_lf(info);
+
+            if(!gNCGC) {
+                no_calling_destructor = TRUE;
+            }
         }
         else if(*info->p == '%') {
             info->p++;
@@ -1342,10 +1391,12 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
              skip_spaces_and_lf(info);
         }
         else if(parse_cmp(type_name, "__restrict") == 0) {
+             restrict_ = TRUE;
              info->p += strlen("__restrict");
              skip_spaces_and_lf(info);
         }
         else if(parse_cmp(type_name, "restrict") == 0) {
+             restrict_ = TRUE;
              info->p += strlen("restrict");
              skip_spaces_and_lf(info);
         }
@@ -1377,6 +1428,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
         else if(strcmp(type_name, "_Nonnull") == 0) {
         }
         else if(strcmp(type_name, "__restrict") == 0) {
+             restrict_ = TRUE;
         }
         else if(strcmp(type_name, "restrict") == 0) {
         }
@@ -1400,8 +1452,8 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
     (*result_type)->mPointerNum = pointer_num;
     
     
-    (*result_type)->mChannel = channel;
     (*result_type)->mNullable = nullable_;
+    (*result_type)->mNoCallingDestructor = no_calling_destructor;
     (*result_type)->mNoHeap = no_heap;
     (*result_type)->mRefference = refference;
     (*result_type)->mHeap = heap;
@@ -1409,33 +1461,17 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
     (*result_type)->mUnsigned = unsigned_;
     (*result_type)->mRegister = register_;
     (*result_type)->mVolatile = volatile_;
+    (*result_type)->mLongLong = long_long;
+    (*result_type)->mRestrict = restrict_;
     (*result_type)->mStatic = static_;
-    (*result_type)->mUniq = uniq;
     (*result_type)->mImmutable = immutable_;
     
     if(no_heap) {
         (*result_type)->mHeap = FALSE;
     }
     
-    if(exception_ && get_class("tuple2")) {
-        sNodeType* node_type = clone_node_type(*result_type);
-        *result_type = create_node_type_with_class_name("tuple2");
-        if(!gNCGC) {
-            (*result_type)->mHeap = TRUE;
-        }
-        (*result_type)->mNumGenericsTypes = 2;
-        (*result_type)->mGenericsTypes[0] = node_type;
-        (*result_type)->mGenericsTypes[1] = create_node_type_with_class_name("bool");
-        (*result_type)->mPointerNum = 1;
-        (*result_type)->mException = TRUE;
-    }
     
     (*result_type)->mOriginalPointerNum = parser_pointer_num;
-
-    if(strcmp((*result_type)->mTypeName, "") != 0)
-    {
-        (*result_type)->mTypePointerNum = parser_pointer_num;
-    }
     
     if(func_pointer_name && parse_parametor_type_name) {
         char* p = info->p;
@@ -1768,7 +1804,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
             num_result_type++;
             
             if(num_result_type >= 32) {
-                fprintf(stderr, "multiple result type overflow\n");
+                fprintf(stderr, "%s %d: multiple result type overflow\n", gSName, gSLine);
                 exit(2);
             }
         }
@@ -1777,7 +1813,7 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
     if(num_result_type > 1) {
         if(num_result_type >= NUM_TUPLE_MAX) {
             fprintf(stderr, "%s %d: num tuple max overflow (%d)\n", info->sname, info->sline, num_result_type);
-            exit(1);
+            exit(99);
         }
         
         char class_name[VAR_NAME_MAX];
@@ -1786,8 +1822,8 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
         sNodeType* generics_type = create_node_type_with_class_name(class_name);
         
         if(generics_type == NULL || generics_type->mClass == NULL) {
-            fprintf(stderr, "%s %d: tuple not found. require include <neo-c.h>\n", info->sname, info->sline);
-            exit(1);
+            fprintf(stderr, "%s %d: tuple not found. require include <comelang.h>\n", info->sname, info->sline);
+            exit(98);
         }
         
         generics_type->mNumGenericsTypes = num_result_type;
@@ -1806,6 +1842,26 @@ BOOL parse_type(sNodeType** result_type, sParserInfo* info, char* func_pointer_n
         }
         
         *result_type = generics_type;
+    }
+    
+    if(exception_ && get_class("tuple2")) {
+        sNodeType* node_type = clone_node_type(*result_type);
+        *result_type = create_node_type_with_class_name("tuple2");
+        (*result_type)->mNumGenericsTypes = 2;
+/*
+        if(type_identify_with_class_name(node_type, "void") && node_type->mPointerNum == 0)
+        {
+            node_type = create_node_type_with_class_name("int");
+        }
+*/
+        (*result_type)->mGenericsTypes[0] = node_type;
+        (*result_type)->mGenericsTypes[1] = create_node_type_with_class_name("bool");
+        (*result_type)->mPointerNum = 1;
+        (*result_type)->mException = TRUE;
+        
+        if(!gNCGC) {
+            (*result_type)->mHeap = TRUE;
+        }
     }
     
 /*

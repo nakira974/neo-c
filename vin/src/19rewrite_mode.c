@@ -4,9 +4,9 @@ void ViWin*::rewriteModeView(ViWin* self, Vi* nvi)
 {
     self.textsView(nvi);
 
-    wattron(self.win, A_REVERSE);
-    mvwprintw(self.win, self.height-1, 0, "REWITEMODE MODE x %d y %d scroll %d", self.cursorX, self.scroll+self.cursorY, self.scroll);
-    wattroff(self.win, A_REVERSE);
+	    using c { wattron(self.win, A_REVERSE); }
+	    mvwprintw(self.win, self.height-1, 0, "REWITEMODE MODE x %d y %d scroll %d", self.cursorX, self.scroll+self.cursorY, self.scroll);
+	    using c { wattroff(self.win, A_REVERSE); }
 }
 
 void ViWin*::view(ViWin* self, Vi* nvi) version 19
@@ -55,7 +55,7 @@ void ViWin*::inputRewritetMode(ViWin* self, Vi* nvi)
         self.backSpace();
     }
     else if(key == 9) {
-        auto str = self.texts.item(self.scroll+self.cursorY, null).substring(0, self.cursorX);
+        auto str = self.texts.item(self.scroll+self.cursorY, null!).substring(0, self.cursorX);
 
         bool ignore_case = false;
         bool multiline = false;

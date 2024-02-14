@@ -61,8 +61,6 @@ BOOL call_operator_function(char* fun_base_name, sNodeType* left_type, int num_p
     
     if(operator_fun != NULL) {
         if(!operator_fun->mImmutable && var_) {
-            var_->mCalledMutable = TRUE;
-            
             if(var_->mRefferencedVar) {
                 compile_err_msg(info, "%s is refferenced var by %s, so can't call mutable method", var_->mName, var_->mRefferencedVar->mName);
                 return TRUE;
@@ -78,9 +76,10 @@ BOOL call_operator_function(char* fun_base_name, sNodeType* left_type, int num_p
             
             BOOL immutable_ = operator_fun->mImmutable;
             
-            if(!create_generics_function(&llvm_fun, operator_fun, fun_name, left_type, 0, NULL, immutable_, info)) {
-                fprintf(stderr, "can't craete generics function %s\n", fun_name);
-                exit(1);
+            char* llvm_fun_name = NULL;
+            if(!create_generics_function(&llvm_fun, &llvm_fun_name, operator_fun, fun_name, left_type, 0, NULL, immutable_, info)) {
+                fprintf(stderr, "%s %d: can't craete generics function %s\n", gSName, gSLine, fun_name);
+                exit(91);
             }
             
             set_caller_sname(info->sname);
@@ -111,11 +110,6 @@ BOOL call_operator_function(char* fun_base_name, sNodeType* left_type, int num_p
                 if(!solve_type(&fun_param_type, generics_type, 0, NULL, info)) {
                     return FALSE;
                 }
-
-                if(!substitution_posibility(fun_param_type, param_type, NULL, info)) {
-                    *found = FALSE;
-                    return TRUE;
-                }
                 
                 if(auto_cast_posibility(fun_param_type, param_type, TRUE)) 
                 {
@@ -124,6 +118,15 @@ BOOL call_operator_function(char* fun_base_name, sNodeType* left_type, int num_p
                         compile_err_msg(info, "Cast failed");
                         return TRUE;
                     }
+                }
+
+                if(!substitution_posibility(fun_param_type, param_type, NULL, info)) {
+                    compile_err_msg(info, "%s param error %d", fun_name, i);
+                    show_node_type(fun_param_type);
+                    show_node_type(param_type);
+                    
+                    *found = FALSE;
+                    return TRUE;
                 }
                 
                 llvm_params[i] = param.value;
@@ -170,20 +173,58 @@ BOOL call_operator_function(char* fun_base_name, sNodeType* left_type, int num_p
                 return FALSE;
             }
             
-            LVALUE llvm_value;
-            llvm_value.value = obj;
-            llvm_value.type = result_type;
-            llvm_value.address = NULL;
-            llvm_value.var = NULL;
-    
-            dec_stack_ptr(num_params, info);
-            if(obj) {
-                push_value_to_stack_ptr(&llvm_value, info);
+            sBuf buf;
+            
+            sBuf_init(&buf);
+            sBuf_append_str(&buf, llvm_fun_name);
+
+            sBuf_append_str(&buf, "(");
+
+            for(i=0; i<num_params; i++) {
+                if(params[i].c_value) {
+                    sBuf_append_str(&buf, params[i].c_value);
+                }
+                
+                if(i!=num_params-1) {
+                    sBuf_append_str(&buf, ",");
+                }
             }
+    
+            sBuf_append_str(&buf, ")");
+            //add_come_code(info, "%s;\n", buf.mBuf);
             
             if(obj && result_type->mHeap) {
-                append_object_to_right_values(obj, result_type, info);
+                char* var_name = append_object_to_right_values(obj, result_type, info);
+                
+                LVALUE llvm_value;
+                llvm_value.value = obj;
+                llvm_value.c_value = xsprintf("(%s = %s)", var_name, buf.mBuf);
+                llvm_value.type = result_type;
+                llvm_value.address = NULL;
+                llvm_value.var = NULL;
+        
+                dec_stack_ptr(num_params, info);
+                
+                if(obj) {
+                    push_value_to_stack_ptr(&llvm_value, info);
+                }
             }
+            else {
+                LVALUE llvm_value;
+                llvm_value.value = obj;
+                llvm_value.c_value = xsprintf("%s", buf.mBuf);
+                llvm_value.type = result_type;
+                llvm_value.address = NULL;
+                llvm_value.var = NULL;
+        
+                dec_stack_ptr(num_params, info);
+                
+                if(obj) {
+                    push_value_to_stack_ptr(&llvm_value, info);
+                }
+            }
+            
+            free(buf.mBuf);
             
             info->type = result_type;
         }
@@ -205,7 +246,7 @@ BOOL call_operator_function(char* fun_base_name, sNodeType* left_type, int num_p
                 dec_stack_ptr(num_params, info);
             }
             else {
-                if(!call_inline_function(fun, generics_type, num_method_generics_types, method_generics_types, llvm_params, info)) {
+                if(!call_inline_function(fun, generics_type, num_method_generics_types, method_generics_types, llvm_params, params, info)) {
                     return FALSE;
                 }
             }
@@ -220,7 +261,6 @@ BOOL call_operator_function(char* fun_base_name, sNodeType* left_type, int num_p
             LLVMTypeRef llvm_param_types[PARAMS_MAX];
     
 
-            int i;
             for(i=0; i<num_params; i++) {
                 LVALUE param = params[i];
                 
@@ -292,20 +332,47 @@ BOOL call_operator_function(char* fun_base_name, sNodeType* left_type, int num_p
                 return FALSE;
             }
             
+            sBuf buf;
+            
+            sBuf_init(&buf);
+            sBuf_append_str(&buf, fun_name);
+
+            sBuf_append_str(&buf, "(");
+
+            for(i=0; i<num_params; i++) {
+                if(params[i].c_value) {
+                    sBuf_append_str(&buf, params[i].c_value);
+                }
+                
+                if(i!=num_params-1) {
+                    sBuf_append_str(&buf, ",");
+                }
+            }
+    
+            sBuf_append_str(&buf, ")");
+            
             LVALUE llvm_value;
             llvm_value.value = obj;
             llvm_value.type = result_type;
             llvm_value.address = NULL;
             llvm_value.var = NULL;
+            
+            if(obj && result_type->mHeap) {
+                char* var_name = append_object_to_right_values(obj, result_type, info);
+                llvm_value.c_value = xsprintf("(%s = %s)", var_name, buf.mBuf);
+                add_come_last_code(info, "%s;\n", llvm_value.c_value);
+            }
+            else {
+                llvm_value.c_value = xsprintf("%s", buf.mBuf);
+                add_come_last_code(info, "%s;\n", llvm_value.c_value);
+            }
     
             dec_stack_ptr(num_params, info);
             if(obj) {
                 push_value_to_stack_ptr(&llvm_value, info);
             }
             
-            if(obj && result_type->mHeap) {
-                append_object_to_right_values(obj, result_type, info);
-            }
+            free(buf.mBuf);
             
             info->type = result_type;
         }
@@ -327,6 +394,7 @@ unsigned int sNodeTree_create_add(unsigned int left, unsigned int right, unsigne
     gNodes[node].mLine = info->sline;
     
     gNodes[node].uValue.sOp.mMove = move_;
+    gNodes[node].uValue.sOp.mSafeMode = gNCSafeMode;
 
     gNodes[node].mLeft = left;
     gNodes[node].mRight = right;
@@ -338,17 +406,20 @@ unsigned int sNodeTree_create_add(unsigned int left, unsigned int right, unsigne
 BOOL compile_add(unsigned int node, sCompileInfo* info)
 {
     BOOL move_ = gNodes[node].uValue.sOp.mMove;
+    BOOL safe_mode = gNodes[node].uValue.sOp.mSafeMode;
     
     int left_node = gNodes[node].mLeft;
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = clone_node_type(info->type);
+    
+    if(type_identify_with_class_name(left_type, "void") && left_type->mPointerNum == 1)
+    {
+        compile_err_msg(info, "invalid operand void*");
+        return FALSE;
+    }
 
     LVALUE lvalue = *get_value_from_stack(-1);
     
@@ -357,10 +428,6 @@ BOOL compile_add(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = clone_node_type(info->type);
@@ -407,6 +474,10 @@ BOOL compile_add(unsigned int node, sCompileInfo* info)
         
         if(left_type->mPointerNum > 0 && is_number_type(right_type))
         {
+            if(safe_mode) {
+                compile_err_msg(info, "This is safe mode. can't not be derefference");
+                return TRUE;
+            }
             LLVMTypeRef long_type = create_llvm_type_with_class_name("long");
     
             LLVMValueRef left_value = LLVMBuildCast(gBuilder, LLVMPtrToInt, lvalue.value, long_type, "ptrToIntC");
@@ -449,6 +520,7 @@ BOOL compile_add(unsigned int node, sCompileInfo* info)
             }
             llvm_value.value = LLVMBuildCast(gBuilder, LLVMIntToPtr, llvm_value.value, llvm_var_type, "intToPtrB");
             llvm_value.type = clone_node_type(left_type2);
+            llvm_value.c_value = xsprintf("%s+%s", lvalue.c_value, rvalue.c_value);
             llvm_value.address = NULL;
             llvm_value.var = NULL;
     
@@ -508,6 +580,7 @@ BOOL compile_add(unsigned int node, sCompileInfo* info)
             }
             llvm_value.value = LLVMBuildCast(gBuilder, LLVMIntToPtr, llvm_value.value, llvm_var_type, "intToPtrB");
             llvm_value.type = clone_node_type(left_type2);
+            llvm_value.c_value = xsprintf("%s+%s", lvalue.c_value, rvalue.c_value);
             llvm_value.address = NULL;
             llvm_value.var = NULL;
     
@@ -545,6 +618,7 @@ BOOL compile_add(unsigned int node, sCompileInfo* info)
                 llvm_value.value = LLVMBuildAdd(gBuilder, lvalue.value, rvalue.value, "add");
             }
             llvm_value.type = clone_node_type(left_type);
+            llvm_value.c_value = xsprintf("%s+%s", lvalue.c_value, rvalue.c_value);
             llvm_value.address = NULL;
             llvm_value.var = NULL;
     
@@ -568,6 +642,7 @@ unsigned int sNodeTree_create_sub(unsigned int left, unsigned int right, unsigne
     gNodes[node].mLine = info->sline;
     
     gNodes[node].uValue.sOp.mMove = move_;
+    gNodes[node].uValue.sOp.mSafeMode = gNCSafeMode;
 
     gNodes[node].mLeft = left;
     gNodes[node].mRight = right;
@@ -579,17 +654,20 @@ unsigned int sNodeTree_create_sub(unsigned int left, unsigned int right, unsigne
 BOOL compile_sub(unsigned int node, sCompileInfo* info)
 {
     BOOL move_ = gNodes[node].uValue.sOp.mMove;
+    BOOL safe_mode = gNodes[node].uValue.sOp.mSafeMode;
     
     int left_node = gNodes[node].mLeft;
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = clone_node_type(info->type);
+    
+    if(type_identify_with_class_name(left_type, "void") && left_type->mPointerNum == 1)
+    {
+        compile_err_msg(info, "invalid operand void*");
+        return FALSE;
+    }
     
     LVALUE lvalue = *get_value_from_stack(-1);
     
@@ -598,10 +676,6 @@ BOOL compile_sub(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = clone_node_type(info->type);
@@ -646,6 +720,10 @@ BOOL compile_sub(unsigned int node, sCompileInfo* info)
             }
         }
         if(left_type->mPointerNum > 0 && right_type->mPointerNum > 0) {
+            if(safe_mode) {
+                compile_err_msg(info, "This is safe mode. can't not be derefference");
+                return TRUE;
+            }
             LLVMTypeRef long_type = create_llvm_type_with_class_name("long");
     
             LLVMValueRef left_value;
@@ -699,6 +777,7 @@ BOOL compile_sub(unsigned int node, sCompileInfo* info)
             llvm_value.value = LLVMBuildSub(gBuilder, left_value, right_value, "sub");
             llvm_value.value = LLVMBuildSDiv(gBuilder, llvm_value.value, elemet_size_value, "div");
             llvm_value.value = LLVMBuildCast(gBuilder, LLVMBitCast, llvm_value.value, llvm_var_type, "bitcast");
+            llvm_value.c_value = xsprintf("%s-%s", lvalue.c_value, rvalue.c_value);
             llvm_value.type = clone_node_type(node_type);
             llvm_value.address = NULL;
             llvm_value.var = NULL;
@@ -745,6 +824,7 @@ BOOL compile_sub(unsigned int node, sCompileInfo* info)
             LVALUE llvm_value;
             llvm_value.value = LLVMBuildSub(gBuilder, left_value, right_value, "sub");
             llvm_value.value = LLVMBuildCast(gBuilder, LLVMIntToPtr, llvm_value.value, llvm_var_type, "iintToPtrD");
+            llvm_value.c_value = xsprintf("%s-%s", lvalue.c_value, rvalue.c_value);
             llvm_value.type = clone_node_type(left_type2);
             llvm_value.address = NULL;
             llvm_value.var = NULL;
@@ -783,6 +863,7 @@ BOOL compile_sub(unsigned int node, sCompileInfo* info)
                 llvm_value.value = LLVMBuildSub(gBuilder, lvalue.value, rvalue.value, "sub");
             }
             llvm_value.type = clone_node_type(left_type);
+            llvm_value.c_value = xsprintf("%s-%s", lvalue.c_value, rvalue.c_value);
             llvm_value.address = NULL;
             llvm_value.var = NULL;
     
@@ -818,10 +899,6 @@ BOOL compile_mult(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = clone_node_type(info->type);
 
@@ -832,10 +909,6 @@ BOOL compile_mult(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = clone_node_type(info->type);
@@ -885,6 +958,7 @@ BOOL compile_mult(unsigned int node, sCompileInfo* info)
             llvm_value.value = LLVMBuildMul(gBuilder, lvalue.value, rvalue.value, "mul");
         }
         llvm_value.type = clone_node_type(left_type);
+        llvm_value.c_value = xsprintf("%s*%s", lvalue.c_value, rvalue.c_value);
         llvm_value.address = NULL;
         llvm_value.var = NULL;
     
@@ -920,10 +994,6 @@ BOOL compile_div(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = clone_node_type(info->type);
 
@@ -934,10 +1004,6 @@ BOOL compile_div(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = clone_node_type(info->type);
@@ -990,6 +1056,7 @@ BOOL compile_div(unsigned int node, sCompileInfo* info)
             llvm_value.value = LLVMBuildSDiv(gBuilder, lvalue.value, rvalue.value, "div");
         }
         llvm_value.type = clone_node_type(left_type);
+        llvm_value.c_value = xsprintf("%s/%s", lvalue.c_value, rvalue.c_value);
         llvm_value.address = NULL;
         llvm_value.var = NULL;
     
@@ -1024,10 +1091,6 @@ BOOL compile_mod(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = clone_node_type(info->type);
 
@@ -1038,10 +1101,6 @@ BOOL compile_mod(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = clone_node_type(info->type);
@@ -1083,6 +1142,7 @@ BOOL compile_mod(unsigned int node, sCompileInfo* info)
             llvm_value.value = LLVMBuildSRem(gBuilder, lvalue.value, rvalue.value, "srem");
         }
         llvm_value.type = clone_node_type(left_type);
+        llvm_value.c_value = xsprintf("%s%%%s", lvalue.c_value, rvalue.c_value);
         llvm_value.address = NULL;
         llvm_value.var = NULL;
     
@@ -1117,12 +1177,6 @@ BOOL compile_equals(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-/*
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
-*/
 
     sNodeType* left_type = clone_node_type(info->type);
 
@@ -1132,12 +1186,6 @@ BOOL compile_equals(unsigned int node, sCompileInfo* info)
     if(!compile(right_node, info)) {
         return FALSE;
     }
-    
-/*
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
-*/
 
     sNodeType* right_type = clone_node_type(info->type);
 
@@ -1154,13 +1202,20 @@ BOOL compile_equals(unsigned int node, sCompileInfo* info)
         left_type = node_type;
     }
 
-//    if(auto_cast_posibility(left_type, right_type, TRUE)) {
+    if(!is_left_type_bigger_size(left_type, right_type)) {
+        if(!cast_right_type_to_left_type(right_type, &left_type, &lvalue, info))
+        {
+            compile_err_msg(info, "Cast failed");
+            return TRUE;
+        }
+    }
+    else {
         if(!cast_right_type_to_left_type(left_type, &right_type, &rvalue, info))
         {
             compile_err_msg(info, "Cast failed");
             return TRUE;
         }
-//    }
+    }
 
     LVALUE llvm_value;
     if((type_identify_with_class_name(left_type, "long_double") || type_identify_with_class_name(left_type, "double") || type_identify_with_class_name(left_type, "float")) && left_type->mPointerNum == 0) 
@@ -1171,6 +1226,7 @@ BOOL compile_equals(unsigned int node, sCompileInfo* info)
         llvm_value.value = LLVMBuildICmp(gBuilder, LLVMIntEQ, lvalue.value, rvalue.value, "eq");
     }
     llvm_value.type = create_node_type_with_class_name("bool");
+    llvm_value.c_value = xsprintf("%s==%s", lvalue.c_value, rvalue.c_value);
     llvm_value.address = NULL;
     llvm_value.var = NULL;
 
@@ -1204,10 +1260,6 @@ BOOL compile_equals2(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = clone_node_type(info->type);
 
@@ -1218,10 +1270,6 @@ BOOL compile_equals2(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = clone_node_type(info->type);
@@ -1272,6 +1320,7 @@ BOOL compile_equals2(unsigned int node, sCompileInfo* info)
         }
         
         llvm_value.type = create_node_type_with_class_name("bool");
+        llvm_value.c_value = xsprintf("%s==%s", lvalue.c_value, rvalue.c_value);
         llvm_value.address = NULL;
         llvm_value.var = NULL;
     
@@ -1307,12 +1356,6 @@ BOOL compile_not_equals(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-/*
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
-*/
 
     sNodeType* left_type = clone_node_type(info->type);
 
@@ -1322,12 +1365,6 @@ BOOL compile_not_equals(unsigned int node, sCompileInfo* info)
     if(!compile(right_node, info)) {
         return FALSE;
     }
-    
-/*
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
-*/
 
     sNodeType* right_type = clone_node_type(info->type);
 
@@ -1344,13 +1381,20 @@ BOOL compile_not_equals(unsigned int node, sCompileInfo* info)
         left_type = node_type;
     }
 
-//    if(auto_cast_posibility(left_type, right_type, TRUE)) {
+    if(!is_left_type_bigger_size(left_type, right_type)) {
+        if(!cast_right_type_to_left_type(right_type, &left_type, &lvalue, info))
+        {
+            compile_err_msg(info, "Cast failed");
+            return TRUE;
+        }
+    }
+    else {
         if(!cast_right_type_to_left_type(left_type, &right_type, &rvalue, info))
         {
             compile_err_msg(info, "Cast failed");
             return TRUE;
         }
-//    }
+    }
 
     LVALUE llvm_value;
     if((type_identify_with_class_name(left_type, "long_double") || type_identify_with_class_name(left_type, "double") || type_identify_with_class_name(left_type, "float")) && left_type->mPointerNum == 0) 
@@ -1361,6 +1405,7 @@ BOOL compile_not_equals(unsigned int node, sCompileInfo* info)
         llvm_value.value = LLVMBuildICmp(gBuilder, LLVMIntNE, lvalue.value, rvalue.value, "not_eq");
     }
     llvm_value.type = create_node_type_with_class_name("bool");
+    llvm_value.c_value = xsprintf("%s!=%s", lvalue.c_value, rvalue.c_value);
     llvm_value.address = NULL;
     llvm_value.var = NULL;
 
@@ -1394,10 +1439,6 @@ BOOL compile_not_equals2(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = clone_node_type(info->type);
 
@@ -1408,10 +1449,6 @@ BOOL compile_not_equals2(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = clone_node_type(info->type);
@@ -1461,6 +1498,7 @@ BOOL compile_not_equals2(unsigned int node, sCompileInfo* info)
             llvm_value.value = LLVMBuildICmp(gBuilder, LLVMIntNE, lvalue.value, rvalue.value, "not_eq");
         }
         llvm_value.type = create_node_type_with_class_name("bool");
+        llvm_value.c_value = xsprintf("%s!=%s", lvalue.c_value, rvalue.c_value);
         llvm_value.address = NULL;
         llvm_value.var = NULL;
     
@@ -1496,10 +1534,6 @@ BOOL compile_gteq(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = clone_node_type(info->type);
 
@@ -1510,10 +1544,6 @@ BOOL compile_gteq(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = clone_node_type(info->type);
@@ -1546,13 +1576,20 @@ BOOL compile_gteq(unsigned int node, sCompileInfo* info)
             left_type = node_type;
         }
     
-//        if(auto_cast_posibility(left_type, right_type, TRUE)) {
+        if(is_left_type_bigger_size(left_type, right_type)) {
             if(!cast_right_type_to_left_type(left_type, &right_type, &rvalue, info))
             {
                 compile_err_msg(info, "Cast failed");
                 return TRUE;
             }
-//        }
+        }
+        else {
+            if(!cast_right_type_to_left_type(right_type, &left_type, &lvalue, info))
+            {
+                compile_err_msg(info, "Cast failed");
+                return TRUE;
+            }
+        }
     
         LVALUE llvm_value;
         if((type_identify_with_class_name(left_type, "long_double") || type_identify_with_class_name(left_type, "double") || type_identify_with_class_name(left_type, "float")) && left_type->mPointerNum == 0) 
@@ -1565,6 +1602,7 @@ BOOL compile_gteq(unsigned int node, sCompileInfo* info)
         else {
             llvm_value.value = LLVMBuildICmp(gBuilder, LLVMIntSGE, lvalue.value, rvalue.value, "gteq_signed");
         }
+        llvm_value.c_value = xsprintf("%s>=%s", lvalue.c_value, rvalue.c_value);
         llvm_value.type = create_node_type_with_class_name("bool");
         llvm_value.address = NULL;
         llvm_value.var = NULL;
@@ -1601,10 +1639,6 @@ BOOL compile_leeq(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = clone_node_type(info->type);
 
@@ -1615,10 +1649,6 @@ BOOL compile_leeq(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = clone_node_type(info->type);
@@ -1651,13 +1681,20 @@ BOOL compile_leeq(unsigned int node, sCompileInfo* info)
             left_type = node_type;
         }
     
-//        if(auto_cast_posibility(left_type, right_type, TRUE)) {
+        if(is_left_type_bigger_size(left_type, right_type)) {
             if(!cast_right_type_to_left_type(left_type, &right_type, &rvalue, info))
             {
                 compile_err_msg(info, "Cast failed");
                 return TRUE;
             }
-//        }
+        }
+        else {
+            if(!cast_right_type_to_left_type(right_type, &left_type, &lvalue, info))
+            {
+                compile_err_msg(info, "Cast failed");
+                return TRUE;
+            }
+        }
     
         LVALUE llvm_value;
         if((type_identify_with_class_name(left_type, "long_double") || type_identify_with_class_name(left_type, "double") || type_identify_with_class_name(left_type, "float")) && left_type->mPointerNum == 0) 
@@ -1670,6 +1707,7 @@ BOOL compile_leeq(unsigned int node, sCompileInfo* info)
         else {
             llvm_value.value = LLVMBuildICmp(gBuilder, LLVMIntSLE, lvalue.value, rvalue.value, "leeq");
         }
+        llvm_value.c_value = xsprintf("%s<=%s", lvalue.c_value, rvalue.c_value);
         llvm_value.type = create_node_type_with_class_name("bool");
         llvm_value.address = NULL;
         llvm_value.var = NULL;
@@ -1706,10 +1744,6 @@ BOOL compile_gt(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = clone_node_type(info->type);
 
@@ -1720,10 +1754,6 @@ BOOL compile_gt(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = clone_node_type(info->type);
@@ -1756,13 +1786,20 @@ BOOL compile_gt(unsigned int node, sCompileInfo* info)
             left_type = node_type;
         }
     
-//        if(auto_cast_posibility(left_type, right_type, TRUE)) {
+        if(is_left_type_bigger_size(left_type, right_type)) {
             if(!cast_right_type_to_left_type(left_type, &right_type, &rvalue, info))
             {
                 compile_err_msg(info, "Cast failed");
                 return TRUE;
             }
-//        }
+        }
+        else {
+            if(!cast_right_type_to_left_type(right_type, &left_type, &lvalue, info))
+            {
+                compile_err_msg(info, "Cast failed");
+                return TRUE;
+            }
+        }
 
         LVALUE llvm_value;
         if((type_identify_with_class_name(left_type, "long_double") || type_identify_with_class_name(left_type, "double") || type_identify_with_class_name(left_type, "float")) && left_type->mPointerNum == 0) 
@@ -1775,6 +1812,7 @@ BOOL compile_gt(unsigned int node, sCompileInfo* info)
         else {
             llvm_value.value = LLVMBuildICmp(gBuilder, LLVMIntSGT, lvalue.value, rvalue.value, "gt");
         }
+        llvm_value.c_value = xsprintf("%s>%s", lvalue.c_value, rvalue.c_value);
         llvm_value.type = create_node_type_with_class_name("bool");
         llvm_value.address = NULL;
         llvm_value.var = NULL;
@@ -1811,10 +1849,6 @@ BOOL compile_le(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = clone_node_type(info->type);
 
@@ -1825,10 +1859,6 @@ BOOL compile_le(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = clone_node_type(info->type);
@@ -1861,13 +1891,20 @@ BOOL compile_le(unsigned int node, sCompileInfo* info)
             left_type = node_type;
         }
     
-//        if(auto_cast_posibility(left_type, right_type, TRUE)) {
+        if(is_left_type_bigger_size(left_type, right_type)) {
             if(!cast_right_type_to_left_type(left_type, &right_type, &rvalue, info))
             {
                 compile_err_msg(info, "Cast failed");
                 return TRUE;
             }
-//        }
+        }
+        else {
+            if(!cast_right_type_to_left_type(right_type, &left_type, &lvalue, info))
+            {
+                compile_err_msg(info, "Cast failed");
+                return TRUE;
+            }
+        }
     
         LVALUE llvm_value;
         if((type_identify_with_class_name(left_type, "long_double") || type_identify_with_class_name(left_type, "double") || type_identify_with_class_name(left_type, "float")) && left_type->mPointerNum == 0) 
@@ -1880,6 +1917,7 @@ BOOL compile_le(unsigned int node, sCompileInfo* info)
         else {
             llvm_value.value = LLVMBuildICmp(gBuilder, LLVMIntSLT, lvalue.value, rvalue.value, "le");
         }
+        llvm_value.c_value = xsprintf("%s<%s", lvalue.c_value, rvalue.c_value);
         llvm_value.type = create_node_type_with_class_name("bool");
         llvm_value.address = NULL;
         llvm_value.var = NULL;
@@ -1916,12 +1954,14 @@ BOOL compile_logical_denial(unsigned int node, sCompileInfo* info)
     if(!compile(left_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_type = clone_node_type(info->type);
+    
+    if(type_identify_with_class_name(left_type, "void") && left_type->mPointerNum == 0)
+    {
+        compile_err_msg(info, "invalid logical denial");
+        return FALSE;
+    }
 
     LVALUE lvalue = *get_value_from_stack(-1);
     
@@ -1974,6 +2014,7 @@ BOOL compile_logical_denial(unsigned int node, sCompileInfo* info)
         
         LLVMTypeRef int_type = create_llvm_type_with_class_name("int");
         
+        llvm_value.c_value = xsprintf("!%s", lvalue.c_value);
         llvm_value.value = LLVMBuildCast(gBuilder, LLVMZExt, llvm_value.value, int_type, "castOOOO");
         llvm_value.type = create_node_type_with_class_name("int");
         llvm_value.address = NULL;
@@ -2010,9 +2051,6 @@ BOOL compile_left_shift(unsigned int node, sCompileInfo* info)
         return FALSE;
     }
     
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
     sNodeType* left_type = info->type;
 
     LVALUE lvalue = *get_value_from_stack(-1);
@@ -2022,10 +2060,6 @@ BOOL compile_left_shift(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = info->type;
@@ -2068,6 +2102,7 @@ BOOL compile_left_shift(unsigned int node, sCompileInfo* info)
     
         LVALUE llvm_value;
         llvm_value.value = LLVMBuildShl(gBuilder, lvalue.value, rvalue.value, "lshifttmp");
+        llvm_value.c_value = xsprintf("%s<<%s", lvalue.c_value, rvalue.c_value);
         llvm_value.type = clone_node_type(right_type);
         llvm_value.address = NULL;
         llvm_value.var = NULL;
@@ -2104,9 +2139,6 @@ BOOL compile_right_shift(unsigned int node, sCompileInfo* info)
         return FALSE;
     }
     
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
     sNodeType* left_type = info->type;
 
     LVALUE lvalue = *get_value_from_stack(-1);
@@ -2116,10 +2148,6 @@ BOOL compile_right_shift(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = info->type;
@@ -2162,6 +2190,7 @@ BOOL compile_right_shift(unsigned int node, sCompileInfo* info)
         
         LVALUE llvm_value;
         llvm_value.value = LLVMBuildLShr(gBuilder, lvalue.value, rvalue.value, "rshifttmp");
+        llvm_value.c_value = xsprintf("%s>>%s", lvalue.c_value, rvalue.c_value);
         llvm_value.type = clone_node_type(right_type);
         llvm_value.address = NULL;
         llvm_value.var = NULL;
@@ -2198,9 +2227,6 @@ BOOL compile_and(unsigned int node, sCompileInfo* info)
         return FALSE;
     }
     
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
     sNodeType* left_type = info->type;
 
     LVALUE lvalue = *get_value_from_stack(-1);
@@ -2210,10 +2236,6 @@ BOOL compile_and(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = info->type;
@@ -2256,6 +2278,7 @@ BOOL compile_and(unsigned int node, sCompileInfo* info)
     
         LVALUE llvm_value;
         llvm_value.value = LLVMBuildAnd(gBuilder, lvalue.value, rvalue.value, "andtmp");
+        llvm_value.c_value = xsprintf("%s&%s", lvalue.c_value, rvalue.c_value);
         llvm_value.type = clone_node_type(right_type);
         llvm_value.address = NULL;
         llvm_value.var = NULL;
@@ -2292,9 +2315,6 @@ BOOL compile_xor(unsigned int node, sCompileInfo* info)
         return FALSE;
     }
     
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
     sNodeType* left_type = info->type;
 
     LVALUE lvalue = *get_value_from_stack(-1);
@@ -2304,10 +2324,6 @@ BOOL compile_xor(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = info->type;
@@ -2350,6 +2366,7 @@ BOOL compile_xor(unsigned int node, sCompileInfo* info)
     
         LVALUE llvm_value;
         llvm_value.value = LLVMBuildXor(gBuilder, lvalue.value, rvalue.value, "xortmp");
+        llvm_value.c_value = xsprintf("%s^%s", lvalue.c_value, rvalue.c_value);
         llvm_value.type = clone_node_type(right_type);
         llvm_value.address = NULL;
         llvm_value.var = NULL;
@@ -2386,9 +2403,6 @@ BOOL compile_or(unsigned int node, sCompileInfo* info)
         return FALSE;
     }
     
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
     sNodeType* left_type = info->type;
 
     LVALUE lvalue = *get_value_from_stack(-1);
@@ -2398,10 +2412,6 @@ BOOL compile_or(unsigned int node, sCompileInfo* info)
     int right_node = gNodes[node].mRight;
     if(!compile(right_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* right_type = info->type;
@@ -2444,6 +2454,7 @@ BOOL compile_or(unsigned int node, sCompileInfo* info)
     
         LVALUE llvm_value;
         llvm_value.value = LLVMBuildOr(gBuilder, lvalue.value, rvalue.value, "ortmp");
+        llvm_value.c_value = xsprintf("%s|%s", lvalue.c_value, rvalue.c_value);
         llvm_value.type = clone_node_type(left_type);
         llvm_value.address = NULL;
         llvm_value.var = NULL;
@@ -2481,10 +2492,6 @@ BOOL compile_complement(unsigned int node, sCompileInfo* info)
     {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* left_node_type = clone_node_type(info->type);
 
@@ -2518,6 +2525,7 @@ BOOL compile_complement(unsigned int node, sCompileInfo* info)
     
             LVALUE llvm_value;
             lvalue.value = LLVMBuildCast(gBuilder, LLVMSExt, lvalue.value, llvm_type, "CastComplement");
+            llvm_value.c_value = xsprintf("~%s", lvalue.c_value);
             llvm_value.value = LLVMBuildXor(gBuilder, lvalue.value, rvalue.value, "xortmp");
             llvm_value.type = create_node_type_with_class_name("int");
             llvm_value.address = NULL;
@@ -2540,6 +2548,7 @@ BOOL compile_complement(unsigned int node, sCompileInfo* info)
     
             LVALUE llvm_value;
             llvm_value.value = LLVMBuildXor(gBuilder, lvalue.value, rvalue.value, "xortmp");
+            llvm_value.c_value = xsprintf("~%s", lvalue.c_value);
             llvm_value.type = clone_node_type(left_node_type);
             llvm_value.address = NULL;
             llvm_value.var = NULL;
@@ -2562,6 +2571,7 @@ BOOL compile_complement(unsigned int node, sCompileInfo* info)
     
             LVALUE llvm_value;
             llvm_value.value = LLVMBuildXor(gBuilder, lvalue.value, rvalue.value, "xortmp");
+            llvm_value.c_value = xsprintf("~%s", lvalue.c_value);
             llvm_value.type = clone_node_type(left_node_type);
             llvm_value.address = NULL;
             llvm_value.var = NULL;
@@ -2582,6 +2592,7 @@ BOOL compile_complement(unsigned int node, sCompileInfo* info)
             rvalue.var = NULL;
     
             LVALUE llvm_value;
+            llvm_value.c_value = xsprintf("~%s", lvalue.c_value);
             llvm_value.value = LLVMBuildXor(gBuilder, lvalue.value, rvalue.value, "xortmp");
             llvm_value.type = clone_node_type(left_node_type);
             llvm_value.address = NULL;
@@ -2603,6 +2614,7 @@ BOOL compile_complement(unsigned int node, sCompileInfo* info)
             rvalue.var = NULL;
     
             LVALUE llvm_value;
+            llvm_value.c_value = xsprintf("~%s", lvalue.c_value);
             llvm_value.value = LLVMBuildXor(gBuilder, lvalue.value, rvalue.value, "xortmp");
             llvm_value.type = clone_node_type(left_node_type);
             llvm_value.address = NULL;
@@ -2629,7 +2641,9 @@ unsigned int sNodeTree_create_plus_plus(unsigned int left_node, sParserInfo* inf
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
-
+    
+    gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
+    
     gNodes[node].mLeft = left_node;
     gNodes[node].mRight = 0;
     gNodes[node].mMiddle = 0;
@@ -2640,15 +2654,13 @@ unsigned int sNodeTree_create_plus_plus(unsigned int left_node, sParserInfo* inf
 BOOL compile_plus_plus(unsigned int node, sCompileInfo* info)
 {
     unsigned int left_node = gNodes[node].mLeft;
-
+    
+    BOOL safe_mode = gNodes[node].uValue.sStoreValueToAddress.mSafeMode;
+    
     BOOL derefference = gNodes[left_node].mNodeType == kNodeTypeDerefference;
 
     if(!compile(left_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* left_type = info->type;
@@ -2661,10 +2673,6 @@ BOOL compile_plus_plus(unsigned int node, sCompileInfo* info)
     if(!compile(right_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* right_type = info->type;
 
@@ -2672,6 +2680,10 @@ BOOL compile_plus_plus(unsigned int node, sCompileInfo* info)
     dec_stack_ptr(1, info);
 
     if(left_type->mPointerNum > 0) {
+        if(safe_mode) {
+            compile_err_msg(info, "This is safe mode. can't not be derefference");
+            return TRUE;
+        }
         left_type->mPointerNum--;
 
         if(derefference && left_type->mPointerNum == 0) {
@@ -2710,6 +2722,7 @@ BOOL compile_plus_plus(unsigned int node, sCompileInfo* info)
             left_type2->mPointerNum++;
 
             LVALUE llvm_value;
+            llvm_value.c_value = xsprintf("%s++", lvalue.c_value);
             llvm_value.value = left_value2;
             llvm_value.type = clone_node_type(left_type2);
             llvm_value.address = NULL;
@@ -2740,6 +2753,7 @@ BOOL compile_plus_plus(unsigned int node, sCompileInfo* info)
             LLVMBuildStore(gBuilder, value, address);
 
             LVALUE llvm_value;
+            llvm_value.c_value = xsprintf("%s++", lvalue.c_value);
             llvm_value.value = add_lvalue;
             llvm_value.type = clone_node_type(left_type);
             llvm_value.address = NULL;
@@ -2771,6 +2785,7 @@ BOOL compile_plus_plus(unsigned int node, sCompileInfo* info)
         LLVMBuildStore(gBuilder, value, address);
         
         LVALUE llvm_value;
+        llvm_value.c_value = xsprintf("%s++", lvalue.c_value);
         llvm_value.value = add_lvalue;
         llvm_value.type = clone_node_type(left_type);
         llvm_value.address = NULL;
@@ -2792,6 +2807,8 @@ unsigned int sNodeTree_create_minus_minus(unsigned int left_node, sParserInfo* i
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
+    
+    gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
 
     gNodes[node].mLeft = left_node;
     gNodes[node].mRight = 0;
@@ -2810,9 +2827,7 @@ BOOL compile_minus_minus(unsigned int node, sCompileInfo* info)
         return FALSE;
     }
     
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
+    BOOL safe_mode = gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
 
     sNodeType* left_type = info->type;
 
@@ -2824,10 +2839,6 @@ BOOL compile_minus_minus(unsigned int node, sCompileInfo* info)
     if(!compile(right_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* right_type = info->type;
 
@@ -2837,6 +2848,10 @@ BOOL compile_minus_minus(unsigned int node, sCompileInfo* info)
     sNodeType* result_type = clone_node_type(left_type);
 
     if(left_type->mPointerNum > 0) {
+        if(safe_mode) {
+            compile_err_msg(info, "This is safe mode. can't not be derefference");
+            return TRUE;
+        }
         left_type->mPointerNum--;
 
         if(derefference && left_type->mPointerNum == 0) {
@@ -2877,6 +2892,7 @@ BOOL compile_minus_minus(unsigned int node, sCompileInfo* info)
             left_type2->mPointerNum++;
 
             LVALUE llvm_value;
+            llvm_value.c_value = xsprintf("%s--", lvalue.c_value);
             llvm_value.value = left_value2;
             llvm_value.type = clone_node_type(left_type2);
             llvm_value.address = NULL;
@@ -2906,6 +2922,7 @@ BOOL compile_minus_minus(unsigned int node, sCompileInfo* info)
             LLVMBuildStore(gBuilder, value, address);
 
             LVALUE llvm_value;
+            llvm_value.c_value = xsprintf("%s--", lvalue.c_value);
             llvm_value.value = add_lvalue;
             llvm_value.type = clone_node_type(left_type);
             llvm_value.address = NULL;
@@ -2937,6 +2954,7 @@ BOOL compile_minus_minus(unsigned int node, sCompileInfo* info)
         LLVMBuildStore(gBuilder, value, address);
 
         LVALUE llvm_value;
+        llvm_value.c_value = xsprintf("%s--", lvalue.c_value);
         llvm_value.value = add_lvalue;
         llvm_value.type = clone_node_type(left_type);
         llvm_value.address = NULL;
@@ -2960,6 +2978,8 @@ unsigned int sNodeTree_create_equal_plus(unsigned int left_node, unsigned int ri
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
+    
+    gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
 
     gNodes[node].mLeft = left_node;
     gNodes[node].mRight = right_node;
@@ -2971,15 +2991,13 @@ unsigned int sNodeTree_create_equal_plus(unsigned int left_node, unsigned int ri
 BOOL compile_equal_plus(unsigned int node, sCompileInfo* info)
 {
     unsigned int left_node = gNodes[node].mLeft;
+    
+    BOOL safe_mode = gNodes[node].uValue.sStoreValueToAddress.mSafeMode;
 
     BOOL derefference = gNodes[left_node].mNodeType == kNodeTypeDerefference;
 
     if(!compile(left_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* left_type = info->type;
@@ -2992,10 +3010,6 @@ BOOL compile_equal_plus(unsigned int node, sCompileInfo* info)
     if(!compile(right_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* right_type = info->type;
 
@@ -3005,6 +3019,10 @@ BOOL compile_equal_plus(unsigned int node, sCompileInfo* info)
     sNodeType* result_type = clone_node_type(right_type);
 
     if(left_type->mPointerNum > 0) {
+        if(safe_mode) {
+            compile_err_msg(info, "This is safe mode. can't not be derefference");
+            return TRUE;
+        }
         left_type->mPointerNum--;
 
         if(derefference && left_type->mPointerNum == 0) {
@@ -3088,7 +3106,11 @@ BOOL compile_equal_plus(unsigned int node, sCompileInfo* info)
         LLVMBuildStore(gBuilder, value, address);
     }
     
-    push_value_to_stack_ptr(&rvalue, info);
+    LVALUE llvm_value = rvalue;
+    
+    llvm_value.c_value = xsprintf("%s+=%s", lvalue.c_value, rvalue.c_value);
+    
+    push_value_to_stack_ptr(&llvm_value, info);
 
     info->type = clone_node_type(right_type);
 
@@ -3103,6 +3125,8 @@ unsigned int sNodeTree_create_equal_minus(unsigned int left_node, unsigned int r
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
+    
+    gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
 
     gNodes[node].mLeft = left_node;
     gNodes[node].mRight = right_node;
@@ -3115,13 +3139,10 @@ BOOL compile_equal_minus(unsigned int node, sCompileInfo* info)
 {
     unsigned int left_node = gNodes[node].mLeft;
     BOOL derefference = gNodes[left_node].mNodeType == kNodeTypeDerefference;
+    BOOL safe_mode = gNodes[node].uValue.sStoreValueToAddress.mSafeMode;
 
     if(!compile(left_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* left_type = info->type;
@@ -3134,10 +3155,6 @@ BOOL compile_equal_minus(unsigned int node, sCompileInfo* info)
     if(!compile(right_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* right_type = info->type;
 
@@ -3145,6 +3162,10 @@ BOOL compile_equal_minus(unsigned int node, sCompileInfo* info)
     dec_stack_ptr(1, info);
 
     if(left_type->mPointerNum > 0) {
+        if(safe_mode) {
+            compile_err_msg(info, "This is safe mode. can't not be derefference");
+            return TRUE;
+        }
         left_type->mPointerNum--;
 
         if(derefference && left_type->mPointerNum == 0) {
@@ -3225,8 +3246,12 @@ BOOL compile_equal_minus(unsigned int node, sCompileInfo* info)
 
         LLVMBuildStore(gBuilder, value, address);
     }
-
-    push_value_to_stack_ptr(&rvalue, info);
+    
+    LVALUE llvm_value = rvalue;
+    
+    llvm_value.c_value = xsprintf("%s-=%s", lvalue.c_value, rvalue.c_value);
+    
+    push_value_to_stack_ptr(&llvm_value, info);
 
     info->type = clone_node_type(right_type);
 
@@ -3242,6 +3267,8 @@ unsigned int sNodeTree_create_equal_mult(unsigned int left_node, unsigned int ri
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
+    
+    gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
 
     gNodes[node].mLeft = left_node;
     gNodes[node].mRight = right_node;
@@ -3253,13 +3280,11 @@ unsigned int sNodeTree_create_equal_mult(unsigned int left_node, unsigned int ri
 BOOL compile_equal_mult(unsigned int node, sCompileInfo* info)
 {
     unsigned int left_node = gNodes[node].mLeft;
+    
+    BOOL safe_mode = gNodes[node].uValue.sStoreValueToAddress.mSafeMode;
 
     if(!compile(left_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* left_type = info->type;
@@ -3272,10 +3297,6 @@ BOOL compile_equal_mult(unsigned int node, sCompileInfo* info)
     if(!compile(right_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* right_type = info->type;
 
@@ -3283,6 +3304,10 @@ BOOL compile_equal_mult(unsigned int node, sCompileInfo* info)
     dec_stack_ptr(1, info);
 
     if(left_type->mPointerNum > 0) {
+        if(safe_mode) {
+            compile_err_msg(info, "This is safe mode. can't not be derefference");
+            return TRUE;
+        }
         left_type->mPointerNum--;
 
         if(auto_cast_posibility(left_type, right_type, TRUE)) {
@@ -3326,8 +3351,12 @@ BOOL compile_equal_mult(unsigned int node, sCompileInfo* info)
 
         LLVMBuildStore(gBuilder, value, address);
     }
-
-    push_value_to_stack_ptr(&rvalue, info);
+    
+    LVALUE llvm_value = rvalue;
+    
+    llvm_value.c_value = xsprintf("%s*=%s", lvalue.c_value, rvalue.c_value);
+    
+    push_value_to_stack_ptr(&llvm_value, info);
 
     info->type = clone_node_type(right_type);
 
@@ -3343,6 +3372,8 @@ unsigned int sNodeTree_create_equal_div(unsigned int left_node, unsigned int rig
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
+    
+    gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
 
     gNodes[node].mLeft = left_node;
     gNodes[node].mRight = right_node;
@@ -3354,13 +3385,11 @@ unsigned int sNodeTree_create_equal_div(unsigned int left_node, unsigned int rig
 BOOL compile_equal_div(unsigned int node, sCompileInfo* info)
 {
     unsigned int left_node = gNodes[node].mLeft;
+    
+    BOOL safe_mode = gNodes[node].uValue.sStoreValueToAddress.mSafeMode;
 
     if(!compile(left_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* left_type = info->type;
@@ -3373,10 +3402,6 @@ BOOL compile_equal_div(unsigned int node, sCompileInfo* info)
     if(!compile(right_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* right_type = info->type;
 
@@ -3384,6 +3409,10 @@ BOOL compile_equal_div(unsigned int node, sCompileInfo* info)
     dec_stack_ptr(1, info);
 
     if(left_type->mPointerNum > 0) {
+        if(safe_mode) {
+            compile_err_msg(info, "This is safe mode. can't not be derefference");
+            return TRUE;
+        }
         left_type->mPointerNum--;
 
         if(auto_cast_posibility(left_type, right_type, TRUE)) {
@@ -3441,8 +3470,12 @@ BOOL compile_equal_div(unsigned int node, sCompileInfo* info)
 
         LLVMBuildStore(gBuilder, value, address);
     }
-
-    push_value_to_stack_ptr(&rvalue, info);
+    
+    LVALUE llvm_value = rvalue;
+    
+    llvm_value.c_value = xsprintf("%s/=%s", lvalue.c_value, rvalue.c_value);
+    
+    push_value_to_stack_ptr(&llvm_value, info);
 
     info->type = clone_node_type(right_type);
 
@@ -3457,6 +3490,8 @@ unsigned int sNodeTree_create_equal_mod(unsigned int left_node, unsigned int rig
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
+    
+    gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
 
     gNodes[node].mLeft = left_node;
     gNodes[node].mRight = right_node;
@@ -3468,13 +3503,11 @@ unsigned int sNodeTree_create_equal_mod(unsigned int left_node, unsigned int rig
 BOOL compile_equal_mod(unsigned int node, sCompileInfo* info)
 {
     unsigned int left_node = gNodes[node].mLeft;
+    
+    BOOL safe_mode = gNodes[node].uValue.sStoreValueToAddress.mSafeMode;
 
     if(!compile(left_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* left_type = info->type;
@@ -3487,10 +3520,6 @@ BOOL compile_equal_mod(unsigned int node, sCompileInfo* info)
     if(!compile(right_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* right_type = info->type;
 
@@ -3498,6 +3527,10 @@ BOOL compile_equal_mod(unsigned int node, sCompileInfo* info)
     dec_stack_ptr(1, info);
 
     if(left_type->mPointerNum > 0) {
+        if(safe_mode) {
+            compile_err_msg(info, "This is safe mode. can't not be derefference");
+            return TRUE;
+        }
         left_type->mPointerNum--;
 
         if(auto_cast_posibility(left_type, right_type, TRUE)) {
@@ -3573,8 +3606,12 @@ BOOL compile_equal_mod(unsigned int node, sCompileInfo* info)
 
         LLVMBuildStore(gBuilder, value, address);
     }
-
-    push_value_to_stack_ptr(&rvalue, info);
+    
+    LVALUE llvm_value = rvalue;
+    
+    llvm_value.c_value = xsprintf("%s%%=%s", lvalue.c_value, rvalue.c_value);
+    
+    push_value_to_stack_ptr(&llvm_value, info);
 
     info->type = clone_node_type(right_type);
 
@@ -3589,6 +3626,8 @@ unsigned int sNodeTree_create_equal_lshift(unsigned int left_node, unsigned int 
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
+    
+    gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
 
     gNodes[node].mLeft = left_node;
     gNodes[node].mRight = right_node;
@@ -3600,13 +3639,11 @@ unsigned int sNodeTree_create_equal_lshift(unsigned int left_node, unsigned int 
 BOOL compile_equal_lshift(unsigned int node, sCompileInfo* info)
 {
     unsigned int left_node = gNodes[node].mLeft;
+    
+    BOOL safe_mode = gNodes[node].uValue.sStoreValueToAddress.mSafeMode;
 
     if(!compile(left_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* left_type = info->type;
@@ -3619,10 +3656,6 @@ BOOL compile_equal_lshift(unsigned int node, sCompileInfo* info)
     if(!compile(right_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* right_type = info->type;
 
@@ -3630,6 +3663,10 @@ BOOL compile_equal_lshift(unsigned int node, sCompileInfo* info)
     dec_stack_ptr(1, info);
 
     if(left_type->mPointerNum > 0) {
+        if(safe_mode) {
+            compile_err_msg(info, "This is safe mode. can't not be derefference");
+            return TRUE;
+        }
         left_type->mPointerNum--;
 
         if(auto_cast_posibility(left_type, right_type, TRUE)) {
@@ -3675,8 +3712,12 @@ BOOL compile_equal_lshift(unsigned int node, sCompileInfo* info)
 
         LLVMBuildStore(gBuilder, value, address);
     }
-
-    push_value_to_stack_ptr(&rvalue, info);
+    
+    LVALUE llvm_value = rvalue;
+    
+    llvm_value.c_value = xsprintf("%s<<=%s", lvalue.c_value, rvalue.c_value);
+    
+    push_value_to_stack_ptr(&llvm_value, info);
 
     info->type = clone_node_type(right_type);
 
@@ -3688,6 +3729,8 @@ unsigned int sNodeTree_create_equal_rshift(unsigned int left_node, unsigned int 
     unsigned int node = alloc_node();
 
     gNodes[node].mNodeType = kNodeTypeEqualRShift;
+    
+    gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
@@ -3702,13 +3745,11 @@ unsigned int sNodeTree_create_equal_rshift(unsigned int left_node, unsigned int 
 BOOL compile_equal_rshift(unsigned int node, sCompileInfo* info)
 {
     unsigned int left_node = gNodes[node].mLeft;
+    
+    BOOL safe_mode = gNodes[node].uValue.sStoreValueToAddress.mSafeMode;
 
     if(!compile(left_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* left_type = info->type;
@@ -3721,10 +3762,6 @@ BOOL compile_equal_rshift(unsigned int node, sCompileInfo* info)
     if(!compile(right_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* right_type = info->type;
 
@@ -3732,6 +3769,10 @@ BOOL compile_equal_rshift(unsigned int node, sCompileInfo* info)
     dec_stack_ptr(1, info);
 
     if(left_type->mPointerNum > 0) {
+        if(safe_mode) {
+            compile_err_msg(info, "This is safe mode. can't not be derefference");
+            return TRUE;
+        }
         left_type->mPointerNum--;
 
         if(auto_cast_posibility(left_type, right_type, TRUE)) {
@@ -3777,8 +3818,12 @@ BOOL compile_equal_rshift(unsigned int node, sCompileInfo* info)
 
         LLVMBuildStore(gBuilder, value, address);
     }
-
-    push_value_to_stack_ptr(&rvalue, info);
+    
+    LVALUE llvm_value = rvalue;
+    
+    llvm_value.c_value = xsprintf("%s>>=%s", lvalue.c_value, rvalue.c_value);
+    
+    push_value_to_stack_ptr(&llvm_value, info);
 
     info->type = clone_node_type(right_type);
 
@@ -3791,6 +3836,8 @@ unsigned int sNodeTree_create_equal_and(unsigned int left_node, unsigned int rig
     unsigned int node = alloc_node();
 
     gNodes[node].mNodeType = kNodeTypeEqualAnd;
+    
+    gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
@@ -3805,13 +3852,11 @@ unsigned int sNodeTree_create_equal_and(unsigned int left_node, unsigned int rig
 BOOL compile_equal_and(unsigned int node, sCompileInfo* info)
 {
     unsigned int left_node = gNodes[node].mLeft;
+    
+    BOOL safe_mode = gNodes[node].uValue.sStoreValueToAddress.mSafeMode;
 
     if(!compile(left_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* left_type = info->type;
@@ -3824,10 +3869,6 @@ BOOL compile_equal_and(unsigned int node, sCompileInfo* info)
     if(!compile(right_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* right_type = info->type;
 
@@ -3835,6 +3876,10 @@ BOOL compile_equal_and(unsigned int node, sCompileInfo* info)
     dec_stack_ptr(1, info);
 
     if(left_type->mPointerNum > 0) {
+        if(safe_mode) {
+            compile_err_msg(info, "This is safe mode. can't not be derefference");
+            return TRUE;
+        }
         left_type->mPointerNum--;
 
         if(auto_cast_posibility(left_type, right_type, TRUE)) {
@@ -3880,8 +3925,12 @@ BOOL compile_equal_and(unsigned int node, sCompileInfo* info)
 
         LLVMBuildStore(gBuilder, value, address);
     }
-
-    push_value_to_stack_ptr(&rvalue, info);
+    
+    LVALUE llvm_value = rvalue;
+    
+    llvm_value.c_value = xsprintf("%s&=%s", lvalue.c_value, rvalue.c_value);
+    
+    push_value_to_stack_ptr(&llvm_value, info);
 
     info->type = clone_node_type(right_type);
 
@@ -3893,6 +3942,8 @@ unsigned int sNodeTree_create_equal_xor(unsigned int left_node, unsigned int rig
     unsigned int node = alloc_node();
 
     gNodes[node].mNodeType = kNodeTypeEqualXor;
+    
+    gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
@@ -3907,6 +3958,8 @@ unsigned int sNodeTree_create_equal_xor(unsigned int left_node, unsigned int rig
 BOOL compile_equal_xor(unsigned int node, sCompileInfo* info)
 {
     unsigned int left_node = gNodes[node].mLeft;
+    
+    BOOL safe_mode = gNodes[node].uValue.sStoreValueToAddress.mSafeMode;
 
     if(!compile(left_node, info)) {
         return FALSE;
@@ -3922,10 +3975,6 @@ BOOL compile_equal_xor(unsigned int node, sCompileInfo* info)
     if(!compile(right_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* right_type = info->type;
 
@@ -3933,6 +3982,10 @@ BOOL compile_equal_xor(unsigned int node, sCompileInfo* info)
     dec_stack_ptr(1, info);
 
     if(left_type->mPointerNum > 0) {
+        if(safe_mode) {
+            compile_err_msg(info, "This is safe mode. can't not be derefference");
+            return TRUE;
+        }
         left_type->mPointerNum--;
 
         if(auto_cast_posibility(right_type, left_type, TRUE)) {
@@ -3978,8 +4031,13 @@ BOOL compile_equal_xor(unsigned int node, sCompileInfo* info)
 
         LLVMBuildStore(gBuilder, value, address);
     }
+    
+    LVALUE llvm_value = rvalue;
+    
+    llvm_value.c_value = xsprintf("%s^=%s", lvalue.c_value, rvalue.c_value);
+    
+    push_value_to_stack_ptr(&llvm_value, info);
 
-    push_value_to_stack_ptr(&rvalue, info);
 
     info->type = clone_node_type(right_type);
 
@@ -3994,6 +4052,8 @@ unsigned int sNodeTree_create_equal_or(unsigned int left_node, unsigned int righ
 
     xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
     gNodes[node].mLine = info->sline;
+    
+    gNodes[node].uValue.sStoreValueToAddress.mSafeMode = gNCSafeMode;
 
     gNodes[node].mLeft = left_node;
     gNodes[node].mRight = right_node;
@@ -4005,13 +4065,11 @@ unsigned int sNodeTree_create_equal_or(unsigned int left_node, unsigned int righ
 BOOL compile_equal_or(unsigned int node, sCompileInfo* info)
 {
     unsigned int left_node = gNodes[node].mLeft;
+    
+    BOOL safe_mode = gNodes[node].uValue.sStoreValueToAddress.mSafeMode;
 
     if(!compile(left_node, info)) {
         return FALSE;
-    }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
     }
 
     sNodeType* left_type = info->type;
@@ -4024,10 +4082,6 @@ BOOL compile_equal_or(unsigned int node, sCompileInfo* info)
     if(!compile(right_node, info)) {
         return FALSE;
     }
-    
-    if(!check_nullable_type(NULL, info->type, info)) {
-        return TRUE;
-    }
 
     sNodeType* right_type = info->type;
 
@@ -4035,6 +4089,10 @@ BOOL compile_equal_or(unsigned int node, sCompileInfo* info)
     dec_stack_ptr(1, info);
 
     if(left_type->mPointerNum > 0) {
+        if(safe_mode) {
+            compile_err_msg(info, "This is safe mode. can't not be derefference");
+            return TRUE;
+        }
         left_type->mPointerNum--;
 
         if(auto_cast_posibility(left_type, right_type, TRUE)) {
@@ -4081,10 +4139,54 @@ BOOL compile_equal_or(unsigned int node, sCompileInfo* info)
         LLVMBuildStore(gBuilder, value, address);
     }
     
-    push_value_to_stack_ptr(&rvalue, info);
+    LVALUE llvm_value = rvalue;
+    
+    llvm_value.c_value = xsprintf("%s|=%s", lvalue.c_value, rvalue.c_value);
+    
+    push_value_to_stack_ptr(&llvm_value, info);
 
     info->type = clone_node_type(right_type);
 
     return TRUE;
 }
 
+unsigned int sNodeTree_create_paren(unsigned int left_node, sParserInfo* info)
+{
+    unsigned int node = alloc_node();
+
+    gNodes[node].mNodeType = kNodeTypeParen;
+
+    xstrncpy(gNodes[node].mSName, info->sname, PATH_MAX);
+    gNodes[node].mLine = info->sline;
+
+    gNodes[node].mLeft = left_node;
+    gNodes[node].mRight = 0;
+    gNodes[node].mMiddle = 0;
+
+    return node;
+}
+
+BOOL compile_paren(unsigned int node, sCompileInfo* info)
+{
+    int expression_node = gNodes[node].mLeft;
+
+    if(!compile(expression_node, info))
+    {
+        return FALSE;
+    }
+
+    sNodeType* left_node_type = clone_node_type(info->type);
+
+    LVALUE lvalue = *get_value_from_stack(-1);
+
+    LVALUE llvm_value;
+    llvm_value = lvalue;
+    llvm_value.c_value = xsprintf("(%s)", lvalue.c_value);
+
+    dec_stack_ptr(1, info);
+    push_value_to_stack_ptr(&llvm_value, info);
+
+    info->type = left_node_type;
+
+    return TRUE;
+}

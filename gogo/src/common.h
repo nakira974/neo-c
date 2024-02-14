@@ -2,15 +2,17 @@
 ////////////////////////////
 // src/main.c
 ////////////////////////////
-#include <neo-c.h>
+#include <comelang.h>
+
+using unsafe;
 
 #include <llvm-c/Core.h>
-
 #include <llvm-c/DebugInfo.h>
 
 #define STACK_NUM 512
 
 #define COMPILE_ERR_MSG_MAX 5
+#define ELIF_NUM_MAX 64
 
 struct sType;
 
@@ -144,16 +146,15 @@ struct sParam
     sType* mType;
 };
 
-sParam* sParam*::initialize(sParam* self, string name, sType* type);
-struct sFunction {
-    string name;
+struct sFunction
+{
+    string mName;
     sType* result_type;
     list<sParam*>* params;
     LLVMValueRef llvm_fun;
+    bool mVarArgs;
 };
 
-extern map<string,sFunction*>* gFuncs;
-sFunction* sFunction*::initialize(sFunction* self, string name, sType* result_type, list<sParam*>* params, LLVMValueRef llvm_fun);
 void func_init();
 void func_final();
 extern LLVMValueRef gFunction;

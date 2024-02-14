@@ -109,7 +109,7 @@ class sFunCallNode(char* fun_name, vector<sNode*>* params, map<char*, sNode*>* n
         map<char*, sNode*>* named_params = self.named_params;
         
         foreach(key, named_params) {
-            sNode* item = named_params.at(key, null);
+            sNode* item = named_params.at(key, null!);
             
             if(!item.compile->(codes, info)) {
                 return false;
@@ -362,7 +362,7 @@ bool function_call(sFunction* fun, vector<ZVALUE>* param_values, map<char*, ZVAL
             ZVALUE null_value;
             memset(&null_value, 0, sizeof(ZVALUE));
             
-            ZVALUE value = named_params.at(key, null_value);
+            ZVALUE value = named_params.at(key, null_value!);
             params.insert(string(key), value);
         }
         
@@ -389,7 +389,7 @@ bool function_call(sFunction* fun, vector<ZVALUE>* param_values, map<char*, ZVAL
             ZVALUE null_value;
             memset(&null_value, 0, sizeof(ZVALUE));
             
-            ZVALUE value = named_params.at(key, null_value);
+            ZVALUE value = named_params.at(key, null_value!);
             params.insert(string(key), value);
         }
         
@@ -397,8 +397,9 @@ bool function_call(sFunction* fun, vector<ZVALUE>* param_values, map<char*, ZVAL
         
         memset(&vm_info, 0, sizeof(sVMInfo));
         
-        vm_init(codes, params, info->module_name, info->class_name, &vm_info);
-        if(!vm(codes, params, &vm_info)) {
+        vm_init(codes, params!, info->module_name!, info->class_name!, &vm_info!);
+        
+        if(!vm(codes!, params!, &vm_info!)) {
             return false;
         }
         
@@ -475,7 +476,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 93
             
             if(info.class_name) {
                 if(info.module_name) {
-                    sModule* module = gModules.at(info.module_name, null);
+                    sModule* module = gModules.at(info.module_name, null!);
                     
                     if(module == null) {
                         info->exception.kind = kExceptionValue;
@@ -483,7 +484,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 93
                         return false;
                     }
                     
-                    sClass* klass = module.classes.at(info.class_name, null);
+                    sClass* klass = module.classes.at(info.class_name, null!);
                     
                     if(klass == null) {
                         info->exception.kind = kExceptionValue;
@@ -495,7 +496,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 93
                 }
             }
             else if(info.module_name) {
-                sModule* module = gModules.at(info.module_name, null);
+                sModule* module = gModules.at(info.module_name, null!);
                 
                 if(module == null) {
                     info->exception.kind = kExceptionValue;
@@ -555,14 +556,14 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 93
             
             info->stack_num -= num_named_params;
             
-            sModule* module = gModules.at(info.module_name, null);
-            sClass* klass = module.classes.at(string(fun_name2), null);
+            sModule* module = gModules.at(info.module_name, null!);
+            sClass* klass = module.classes.at(string(fun_name2), null!);
             
             /// new object ///
             if(klass) {
                 sObject* object = new sObject(module, klass);
                 
-                sFunction* constructor = klass.funcs.at("__init__", null);
+                sFunction* constructor = klass.funcs.at("__init__", null!);
                 
                 if(constructor) {
                     vector<ZVALUE>* param_values = new  vector<ZVALUE>();
@@ -607,9 +608,9 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 93
                 
                 sFunction* fun = null;
                 if(info.module_name) {
-                    sModule* module = gModules.at(info.module_name, null);
+                    sModule* module = gModules.at(info.module_name, null!);
                     
-                    fun = module.funcs.at(fun_name2, null);
+                    fun = module.funcs.at(fun_name2, null!);
                 }
                 
                 if(fun == null) {
@@ -641,7 +642,7 @@ bool vm(buffer* codes, map<char*, ZVALUE>* params, sVMInfo* info) version 93
             break;
             
         default: {
-            bool result = inherit(codes, params, info);
+            bool result = inherit(codes, params!, info);
             if(!result) {
                 return false;
             }

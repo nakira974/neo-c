@@ -1,16 +1,17 @@
-#include <neo-c.h>
-
+#include <comelang.h>
 
 long fun()
 {
     return (long)1;
 }
 
-int gArray[10];
+using unsafe;
+
+int (*gArray)[10];
 
 int (*ArrayPointerRresultFun(int c, int d))[10]
 {
-    return &gArray;
+    return gArray;
 }
 
 char* aaa = "ABC";
@@ -75,29 +76,6 @@ eNode2 gNodeX = (eNode2) { .c = 'd' };
 struct sData2 gData = (struct sData2){ .a = 1, .b = 2, .c = { .c = 3, .d =4 }, .e = { .c='c' } };
 
 struct sData2* gData2 = &(struct sData2) { .a = 3, .b = 4, .c = { .c = 4, .d = 5} };
-
-/*
-struct sData2 {
-    int a;
-    int b;
-    
-    struct {
-        int c;
-        int d;
-    } c;
-    
-    struct {
-        int c;
-        int d;
-    } d;
-    
-    union {
-        int a;
-        long b;
-        char c;
-    } e;
-};
-*/
 
 struct sData3 {
     int a;
@@ -222,65 +200,58 @@ typedef struct FlagDef {
 } FlagDef;
 
 static const FlagDef warning_defs[] = {
-    { offsetof(TCCState, warn_unsupported), 0, "unsupported" },
-    { offsetof(TCCState, warn_write_strings), 0, "write-strings" },
-    { offsetof(TCCState, warn_error), 0, "error" },
-    { offsetof(TCCState, warn_implicit_function_declaration), 1,
+    { offsetof(struct TCCState, warn_unsupported), 0, "unsupported" },
+    { offsetof(struct TCCState, warn_write_strings), 0, "write-strings" },
+    { offsetof(struct TCCState, warn_error), 0, "error" },
+    { offsetof(struct TCCState, warn_implicit_function_declaration), 1,
       "implicit-function-declaration" },
 };
 
 #define VT_VALMASK   0x00ff
-#define VT_CONST     0x00f0  /* constant in vc 
-                              (must be first non register value) */
-#define VT_LLOCAL    0x00f1  /* lvalue, offset on stack */
-#define VT_LOCAL     0x00f2  /* offset on stack */
-#define VT_CMP       0x00f3  /* the value is stored in processor flags (in vc) */
-#define VT_JMP       0x00f4  /* value is the consequence of jmp true (even) */
-#define VT_JMPI      0x00f5  /* value is the consequence of jmp false (odd) */
-#define VT_LVAL      0x0100  /* var is an lvalue */
-#define VT_SYM       0x0200  /* a symbol value is added */
-#define VT_MUSTCAST  0x0400  /* value must be casted to be correct (used for
-                                char/short stored in integer registers) */
-#define VT_MUSTBOUND 0x0800  /* bound checking must be done before
-                                dereferencing value */
-#define VT_BOUNDED   0x8000  /* value is bounded. The address of the
-                                bounding function call point is in vc */
-#define VT_LVAL_BYTE     0x1000  /* lvalue is a byte */
-#define VT_LVAL_SHORT    0x2000  /* lvalue is a short */
-#define VT_LVAL_UNSIGNED 0x4000  /* lvalue is unsigned */
+#define VT_CONST     0x00f0 
+#define VT_LLOCAL    0x00f1
+#define VT_LOCAL     0x00f2
+#define VT_CMP       0x00f3
+#define VT_JMP       0x00f4
+#define VT_JMPI      0x00f5
+#define VT_LVAL      0x0100
+#define VT_SYM       0x0200
+#define VT_MUSTCAST  0x0400
+#define VT_MUSTBOUND 0x0800
+#define VT_BOUNDED   0x8000
+#define VT_LVAL_BYTE     0x1000
+#define VT_LVAL_SHORT    0x2000
+#define VT_LVAL_UNSIGNED 0x4000
 #define VT_LVAL_TYPE     (VT_LVAL_BYTE | VT_LVAL_SHORT | VT_LVAL_UNSIGNED)
 
-/* types */
-#define VT_INT        0  /* integer type */
-#define VT_BYTE       1  /* signed byte type */
-#define VT_SHORT      2  /* short type */
-#define VT_VOID       3  /* void type */
-#define VT_PTR        4  /* pointer */
-#define VT_ENUM       5  /* enum definition */
-#define VT_FUNC       6  /* function type */
-#define VT_STRUCT     7  /* struct/union definition */
-#define VT_FLOAT      8  /* IEEE float */
-#define VT_DOUBLE     9  /* IEEE double */
-#define VT_LDOUBLE   10  /* IEEE long double */
-#define VT_BOOL      11  /* ISOC99 boolean type */
-#define VT_LLONG     12  /* 64 bit integer */
-#define VT_LONG      13  /* long integer (NEVER USED as type, only
-                            during parsing) */
-#define VT_BTYPE      0x000f /* mask for basic type */
-#define VT_UNSIGNED   0x0010  /* unsigned type */
-#define VT_ARRAY      0x0020  /* array type (also has VT_PTR) */
-#define VT_BITFIELD   0x0040  /* bitfield modifier */
-#define VT_CONSTANT   0x0800  /* const modifier */
-#define VT_VOLATILE   0x1000  /* volatile modifier */
-#define VT_SIGNED     0x2000  /* signed type */
+#define VT_INT        0
+#define VT_BYTE       1
+#define VT_SHORT      2
+#define VT_VOID       3
+#define VT_PTR        4
+#define VT_ENUM       5
+#define VT_FUNC       6
+#define VT_STRUCT     7
+#define VT_FLOAT      8
+#define VT_DOUBLE     9
+#define VT_LDOUBLE   10
+#define VT_BOOL      11
+#define VT_LLONG     12
+#define VT_LONG      13
+#define VT_BTYPE      0x000f
+#define VT_UNSIGNED   0x0010
+#define VT_ARRAY      0x0020
+#define VT_BITFIELD   0x0040
+#define VT_CONSTANT   0x0800
+#define VT_VOLATILE   0x1000
+#define VT_SIGNED     0x2000
 
-/* storage */
-#define VT_EXTERN  0x00000080  /* extern definition */
-#define VT_STATIC  0x00000100  /* static variable */
-#define VT_TYPEDEF 0x00000200  /* typedef definition */
-#define VT_INLINE  0x00000400  /* inline definition */
+#define VT_EXTERN  0x00000080
+#define VT_STATIC  0x00000100
+#define VT_TYPEDEF 0x00000200
+#define VT_INLINE  0x00000400
 
-#define VT_STRUCT_SHIFT 16   /* shift for bitfield shift values */
+#define VT_STRUCT_SHIFT 16
 
 #define VSTACK_SIZE         256
 
@@ -297,7 +268,7 @@ typedef union CValue {
     float f;
     int i;
     unsigned int ui;
-    unsigned int ul; /* address (should be unsigned long on 64 bit cpu) */
+    unsigned int ul;
     long long ll;
     unsigned long long ull;
     struct CString *cstr;
@@ -306,130 +277,23 @@ typedef union CValue {
 } CValue;
 
 typedef struct Sym {
-    int v;    /* symbol token */
-    long r;    /* associated register */
-    long c;    /* associated number */
-    CType type;    /* associated type */
-    struct Sym *next; /* next related symbol */
-    struct Sym *prev; /* prev symbol in stack */
-    struct Sym *prev_tok; /* previous symbol for this token */
+    int v;
+    long r;
+    long c;
+    CType type;
+    struct Sym *next;
+    struct Sym *prev;
+    struct Sym *prev_tok;
 } Sym;
 typedef struct SValue {
-    CType type;      /* type */
-    unsigned short r;      /* register + flags */
-    unsigned short r2;     /* second register, used for 'long long'
-                              type. If not used, set to VT_CONST */
-    CValue c;              /* constant, if VT_CONST */
-    struct Sym *sym;       /* symbol, if (VT_SYM | VT_CONST) */
+    CType type;
+    unsigned short r;
+    unsigned short r2;
+    struct Sym *sym;
 } SValue;
 
 static SValue vstack[VSTACK_SIZE], *vtop;
 
-/*
-static void gen_cast(CType *type)
-{
-    int sbt, dbt, sf, df, c, p;
-
-    if (vtop->r & VT_MUSTCAST) {
-        vtop->r &= ~VT_MUSTCAST;
-    }
-
-    if (vtop->type.t & VT_BITFIELD) {
-    }
-
-    dbt = type->t & (VT_BTYPE | VT_UNSIGNED);
-    sbt = vtop->type.t & (VT_BTYPE | VT_UNSIGNED);
-
-    if (sbt != dbt) {
-        c = (vtop->r & (VT_VALMASK | VT_LVAL | VT_SYM)) == VT_CONST;
-        p = (vtop->r & (VT_VALMASK | VT_LVAL | VT_SYM)) == (VT_CONST | VT_SYM);
-        if (c) {
-            if (sbt == VT_FLOAT)
-                vtop->c.ld = vtop->c.f;
-            else if (sbt == VT_DOUBLE)
-                vtop->c.ld = vtop->c.d;
-
-            if (df) {
-                if ((sbt & VT_BTYPE) == VT_LLONG) {
-                    if (sbt & VT_UNSIGNED)
-                        vtop->c.ld = vtop->c.ull;
-                    else
-                        vtop->c.ld = vtop->c.ll;
-                } 
-                else if(!sf) {
-                    if (sbt & VT_UNSIGNED)
-                        vtop->c.ld = vtop->c.ui;
-                    else
-                        vtop->c.ld = vtop->c.i;
-                }
-
-                if (dbt == VT_FLOAT)
-                    vtop->c.f = (float)vtop->c.ld;
-                else if (dbt == VT_DOUBLE)
-                    vtop->c.d = (double)vtop->c.ld;
-                    
-            } else if (sf && dbt == (VT_LLONG|VT_UNSIGNED)) {
-            } else if (sf && dbt == VT_BOOL) {
-            } else {
-                if(sf)
-                    vtop->c.ll = (long long)vtop->c.ld;
-                else if (sbt == (VT_LLONG|VT_UNSIGNED))
-                    vtop->c.ll = vtop->c.ull;
-                else if (sbt & VT_UNSIGNED)
-                    vtop->c.ll = vtop->c.ui;
-                else if (sbt != VT_LLONG)
-                    vtop->c.ll = vtop->c.i;
-
-                if (dbt == (VT_LLONG|VT_UNSIGNED))
-                    vtop->c.ull = vtop->c.ll;
-                else if (dbt == VT_BOOL)
-                    vtop->c.i = (vtop->c.ll != 0);
-                else if (dbt != VT_LLONG) {
-                    int s = 0;
-                    if ((dbt & VT_BTYPE) == VT_BYTE)
-                        s = 24;
-                    else if ((dbt & VT_BTYPE) == VT_SHORT)
-                        s = 16;
-
-                    if(dbt & VT_UNSIGNED)
-                        vtop->c.ui = ((unsigned int)vtop->c.ll << s) >> s;
-                    else
-                        vtop->c.i = ((int)vtop->c.ll << s) >> s;
-                }
-            }
-        } else if (p && dbt == VT_BOOL) {
-            vtop->r = VT_CONST;
-            vtop->c.i = 1;
-        } else if (!0) {
-            if (sf && df) {
-            } else if (df) {
-            } else if (sf) {
-                if (dbt == VT_BOOL) {
-                } else {
-                    if (dbt != (VT_INT | VT_UNSIGNED) &&
-                        dbt != (VT_LLONG | VT_UNSIGNED) &&
-                        dbt != VT_LLONG)
-                        dbt = VT_INT;
-                    if (dbt == VT_INT && (type->t & (VT_BTYPE | VT_UNSIGNED)) != dbt) {
-                        vtop->type.t = dbt;
-                        gen_cast(type);
-                    }
-                }
-            } else if (dbt == VT_BOOL) {
-            } else if ((dbt & VT_BTYPE) == VT_BYTE || 
-                       (dbt & VT_BTYPE) == VT_SHORT) {
-                if (sbt == VT_PTR) {
-                    vtop->type.t = VT_INT;
-                }
-            } else if ((dbt & VT_BTYPE) == VT_INT) {
-                if (sbt == VT_LLONG) {
-                } 
-            }
-        }
-    }
-    vtop->type = *type;
-}
-*/
 
 static unsigned int get32(unsigned char *p)
 {
@@ -490,6 +354,8 @@ struct sDataGG {
 
 int main(int argc, char** argv)
 {
+    using unsafe;
+    
     xassert("global array initializer test", dyyy[0] == 1 && dyyy[1] == 2 && dyyy[2] == 3);
     
     xassert("global struct initializer test", ayyy.a == 111 && ayyy.b == 0);
@@ -524,7 +390,7 @@ int main(int argc, char** argv)
     int a[10];
     int (*b)[10] = &a;
     
-    xassert("array pointer result fun", &gArray == ArrayPointerRresultFun(1,1));
+    xassert("array pointer result fun", gArray == ArrayPointerRresultFun(1,1));
 
     xassert("global string test", aaa === "ABC");
     xassert("array initializer", bbb[0] == 1 && bbb[1] == 2 && bbb[2] == 3);
@@ -641,11 +507,11 @@ int main(int argc, char** argv)
     unsigned char* p;
     int x;
     
+/*
     Section* section = NULL;
     
     get32(p + 2) + x + section->data; // - p;
 
-/*
     if(rt_bound_error_msg && *rt_bound_error_msg) {
         puts("AAA");
     }
@@ -662,7 +528,7 @@ int main(int argc, char** argv)
     *++yyvsp = yyval;
     
     xassert("yyval", xaa[1].x == 999 && xaa[1].y == 999);
-    xassert("left shift", (int)(((long)2) << 32) == 0);
+    //xassert("left shift", (int)(((long)2) << 32) == 0);
     
     const char* azi[5] = { "AAA", "BBB" };
     

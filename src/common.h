@@ -6,7 +6,6 @@
 #endif
 #include "buffer.h"
 #include "xfunc.h"
-#include "alignment.h"
 
 #include <stddef.h>
 #include <stdio.h>
@@ -22,13 +21,15 @@
 
 #include <llvm-c/Core.h>
 #include <llvm-c/DebugInfo.h>
+#include <llvm-c/Target.h>
+#include <llvm-c/TargetMachine.h>
 
 //////////////////////////////
 /// limits 
 //////////////////////////////
 #ifdef __RASPBERRY_PI__
 #define GENERICS_TYPES_MAX 10
-#define VAR_NAME_MAX 64
+#define VAR_NAME_MAX 256
 #define CLASS_NUM_MAX 2048
 #define PARSER_ERR_MSG_MAX 5
 #define COMPILE_ERR_MSG_MAX 5
@@ -53,7 +54,7 @@
 #define ENUM_ELEMENT_MAX 1024
 //#define ENUM_ELEMENT_MAX 4096
 #define LIST_ELEMENT_MAX 128
-#define TUPLE_ELEMENT_MAX 5
+#define TUPLE_ELEMENT_MAX 6
 #define MACRO_MAX 512
 #define NUM_TUPLE_MAX 7
 #define OPEN_STRUCT_MAX 64
@@ -61,11 +62,11 @@
 #define FUNCTION_VERSION_MAX 100
 #else
 #define GENERICS_TYPES_MAX 10
-#define VAR_NAME_MAX 64
+#define VAR_NAME_MAX 256
 #define CLASS_NUM_MAX 4096
 #define PARSER_ERR_MSG_MAX 5
 #define COMPILE_ERR_MSG_MAX 5
-#define NEO_C_STACK_SIZE 512
+#define NEO_C_STACK_SIZE 128
 //#define LOCAL_VARIABLE_MAX 2048
 #define LOCAL_VARIABLE_MAX 4096
 #define PARAMS_MAX 48
@@ -109,21 +110,17 @@ struct sVarTableStruct;
 /// main.c 
 //////////////////////////////
 extern BOOL gNCDebug;
-extern BOOL gNCUsingC;
 extern BOOL gNCGC;
-extern BOOL gExternC;
-extern BOOL gNCClang;
-extern BOOL gNCNoMacro;
-extern BOOL gNCType;
-extern BOOL gNCGlobal;
-extern BOOL gNCFunction;
-extern BOOL gNCClass;
-extern BOOL gNCTypedef;
-extern BOOL gNCHeader;
 extern BOOL gNCSafeMode;
 extern BOOL gNCCome;
+extern BOOL gNCTranspile;
+extern BOOL gNCNoNullCheck;
 extern char gFName[PATH_MAX];
 extern struct sVarTableStruct* gModuleVarTable;
+extern int gSLine;
+extern char* gSName;
+
+BOOL compiler(char* fname, BOOL optimize, struct sVarTableStruct* module_var_table, BOOL neo_c_header, char* macro_definition, char* include_path, BOOL output_cpp_souce, BOOL output_assembler_source);
 
 //////////////////////////////
 /// klass.c 
@@ -138,9 +135,11 @@ extern struct sVarTableStruct* gModuleVarTable;
 #define CLASS_FLAGS_ANONYMOUS 0x080
 #define CLASS_FLAGS_ENUM 0x100
 #define CLASS_FLAGS_ANONYMOUS_VAR_NAME 0x200
+#define CLASS_FLAGS_PROTOCOL 0x400
+#define CLASS_FLAGS_TUPLE 0x800
 
 struct sCLClassStruct {
-    clint64 mFlags;
+    long long mFlags;
 
     char* mName;
 
@@ -150,21 +149,10 @@ struct sCLClassStruct {
     char** mFieldName;
     struct sNodeTypeStruct** mFields;
     int mNumFields;
-
-    void* mUndefinedStructType;
-
-    int mVersion;
-
+    
     char* mEnumElementNames[ENUM_ELEMENT_MAX];
     int mEnumElementValues[ENUM_ELEMENT_MAX];
     int mNumElementNum;
-
-    BOOL mUser;
-    
-    BOOL mOpen;
-    
-    struct sCLClassStruct* mParent;
-    BOOL mProtocol;
 };
 
 #define CLASS_NAME(klass) (klass->mName)
@@ -189,7 +177,8 @@ sCLClass* clone_class(sCLClass* klass);
 //////////////////////////////
 /// node_type.c
 //////////////////////////////
-struct sNodeTypeStruct {
+struct sNodeTypeStruct 
+{
     sCLClass* mClass;
 
     struct sNodeTypeStruct* mGenericsTypes[GENERICS_TYPES_MAX];
@@ -197,27 +186,28 @@ struct sNodeTypeStruct {
 
     int mArrayNum[ARRAY_DIMENTION_MAX];
     int mArrayDimentionNum;
+
+    struct sNodeTypeStruct* mParamTypes[PARAMS_MAX];  // lambda
+    struct sNodeTypeStruct* mResultType;
+    BOOL mVarArgs;
+    int mNumParams;
+    
     BOOL mNullable;
-    BOOL mGuarded;
     BOOL mUnsigned;
     int mPointerNum;
     BOOL mConstant;
     BOOL mRegister;
     BOOL mVolatile;
     BOOL mStatic;
-    BOOL mUniq;
     int mSizeNum;
-    BOOL mChannel;
+    BOOL mRestrict;
     BOOL mImmutable;
-
-    struct sNodeTypeStruct* mParamTypes[PARAMS_MAX];
-    struct sNodeTypeStruct* mResultType;
-    BOOL mVarArgs;
-    int mNumParams;
+    BOOL mLongLong;
 
     BOOL mHeap;
     BOOL mDummyHeap;
     BOOL mNoHeap;
+    BOOL mNoCallingDestructor;
     BOOL mRefference;
 
     unsigned int mDynamicArrayNum;
@@ -225,13 +215,6 @@ struct sNodeTypeStruct {
     int mArrayInitializeNum;
 
     unsigned int mTypeOfExpression;
-
-    int mFinalizeGenericsFunNum;
-
-    int mNumFields;
-
-    char mTypeName[VAR_NAME_MAX];
-    int mTypePointerNum;
 
     char mOriginalTypeName[VAR_NAME_MAX];
     int mOriginalPointerNum;
@@ -242,6 +225,7 @@ struct sNodeTypeStruct {
     
     BOOL mArrayPointer;
     BOOL mOmitArrayNum;
+    BOOL mOriginalOmitArrayNum;
     int mNoArrayPointerNum;
     BOOL mException;
     
@@ -250,6 +234,7 @@ struct sNodeTypeStruct {
     BOOL mArrayParam;
     BOOL mCastedPointerToPointer;
     BOOL mNoAutoCast;
+    BOOL mCatchHeapMark;
 };
 
 typedef struct sNodeTypeStruct sNodeType;
@@ -257,7 +242,7 @@ typedef struct sNodeTypeStruct sNodeType;
 void init_node_types();
 void free_node_types();
 
-BOOL check_the_same_fields(sNodeType* left_node, sNodeType* right_node);
+char* make_type_name_string(sNodeType* node_type);
 
 BOOL solve_typeof(sNodeType** node_type, struct sCompileInfoStruct* info);
 sNodeType* clone_node_type(sNodeType* node_type);
@@ -267,7 +252,6 @@ BOOL cast_posibility(sNodeType* left_type, sNodeType* right_type);
 BOOL auto_cast_posibility(sNodeType* left_type, sNodeType* right_type, BOOL op);
 
 BOOL substitution_posibility(sNodeType* left_type, sNodeType* right_type, LLVMValueRef right_obj, struct sCompileInfoStruct* info);
-BOOL check_nullable_type(char* var_name, sNodeType* node_type, struct sCompileInfoStruct* info);
 BOOL type_identify(sNodeType* left, sNodeType* right);
 BOOL type_equalability(sNodeType* left_type, sNodeType* right_type);
 BOOL type_identify_with_class_name(sNodeType* left, char* right_class_name);
@@ -283,6 +267,54 @@ BOOL get_type_of_method_generics(sNodeType** method_generics_types, sNodeType* f
 void create_type_name_from_node_type(char* type_name, int type_name_max, sNodeType* node_type, BOOL neo_c);
 BOOL is_left_type_bigger_size(sNodeType* left_type, sNodeType* right_type);
 
+////////////////////
+/// transpiler.c
+////////////////////
+#define COME_FUN_MAX 4096
+#define COME_CODE_MAX 1024
+
+struct sComeFunStruct
+{
+    char mName[VAR_NAME_MAX];
+    sBuf mSource;
+    sBuf mSourceHead;
+    sBuf mSourceDefer;
+    
+    sNodeType* mResultType;
+    int mNumParams;
+    char* mParamNames[PARAMS_MAX];
+    sNodeType* mParamTypes[PARAMS_MAX];
+    BOOL mExternal;
+    
+    BOOL mVarArgs;
+    
+    struct sComeFunStruct* mNext;
+    struct sComeFunStruct* mPrev;
+};
+
+typedef struct sComeFunStruct sComeFun;
+
+struct sCompileInfoStruct;
+
+void transpiler_init();
+void transpiler_final();
+void add_come_function(char* fun_name, sNodeType* result_type, int num_params, sNodeType** param_types, char** param_names, BOOL external, BOOL var_arg);
+void output_struct(char* struct_name, sNodeType* struct_type, sNodeType* generics_type, BOOL undefined_body);
+void output_union(char* struct_name, sNodeType* union_type, sNodeType* generics_type, BOOL undefined_body);
+void output_typedef(char* name, sNodeType* node_type);
+char* make_define_var(sNodeType* node_type, char* name, struct sCompileInfoStruct* info);
+sComeFun* get_come_function(char* fun_name);
+void add_come_code(struct sCompileInfoStruct* info, const char* msg, ...);
+void add_come_code_at_head(struct sCompileInfoStruct* info, const char* msg, ...);
+void add_come_code_at_defer(struct sCompileInfoStruct* info, const char* msg, ...);
+void add_come_code_top_level(const char* msg, ...);
+void add_come_last_code(struct sCompileInfoStruct* info, const char* msg, ...);
+void add_last_code_to_source(struct sCompileInfoStruct* info);
+void output_function(sBuf* output, sComeFun* fun);
+void header_function(sBuf* output, sComeFun* fun);
+char* make_lambda_type_name_string(sNodeType* node_type, char* var_name);
+unsigned int sNodeTree_create_define_array_with_initializer(sNodeType* result_type, char* name, char* initializer_source, char* type_name_str, struct sParserInfoStruct* info);
+BOOL compile_define_array_with_initializer(unsigned int node, struct sCompileInfoStruct* info);
 
 //////////////////////////////
 /// vtable.c
@@ -292,6 +324,7 @@ struct sVarStruct;
 struct LVALUEStruct {
     sNodeType* type;
     LLVMValueRef value;
+    char* c_value;
     LLVMValueRef address;
     struct sVarStruct* var;
 };
@@ -302,23 +335,24 @@ extern LVALUE gNullLVALUE;
 
 struct sVarStruct {
     char mName[VAR_NAME_MAX];
+    char mInlineRealName[VAR_NAME_MAX];
+    char mCValueName[VAR_NAME_MAX];
     int mIndex;
     sNodeType* mType;
 
     int mBlockLevel;
 
-    BOOL mReadOnly;
     LVALUE mLLVMValue;
 
     BOOL mGlobal;
     BOOL mAllocaValue;
-    BOOL mParamVar;
     
     struct sVarStruct* mRefferencedVar;
     struct sVarStruct* mRefferenceVar;
     
     BOOL mReturnValue;
-    BOOL mCalledMutable;
+    BOOL mFunctionParam;
+    BOOL mNoFree;
 };
 
 typedef struct sVarStruct sVar;
@@ -351,7 +385,7 @@ void create_current_stack_frame_struct(char* type_name, sVarTable* lv_table);
 void check_already_added_variable(sVarTable* table, char* name, struct sParserInfoStruct* info);
 
 // result: (true) success (false) overflow the table or a variable which has the same name exists
-BOOL add_variable_to_table(sVarTable* table, char* name, sNodeType* type_, BOOL readonly, LVALUE llvm_value, int index, BOOL global, BOOL alloca_value, BOOL param);
+BOOL add_variable_to_table(sVarTable* table, char* name, char* inline_real_name, sNodeType* type_, LVALUE llvm_value, int index, BOOL global, BOOL alloca_value, BOOL function_param);
 
 // result: (null) not found (sVar*) found
 sVar* get_variable_from_table(sVarTable* table, char* name);
@@ -370,6 +404,8 @@ void free_objects(sVarTable* table, struct sCompileInfoStruct* info);
 
 BOOL check_dangiling_pointer(sVarTable* lv_table, struct sCompileInfoStruct* info);
 
+void clear_current_lv_table_llvm_value(sVarTable* table);
+
 //////////////////////////////
 /// node_block.c
 //////////////////////////////
@@ -386,9 +422,6 @@ struct sNodeBlockStruct
     int mSLine;
     
     BOOL mHasResult;
-    int mExternCLang;
-
-    BOOL mTerminated;
     BOOL mFunctionBody;
 };
 
@@ -422,10 +455,6 @@ extern char gMainModulePath[PATH_MAX];
 //////////////////////////////
 /// parser.c
 //////////////////////////////
-extern sBuf gHeader;
-void append_open_struct(char* name, char* source, char* sname);
-void write_open_struct_to_header(sBuf* header);
-
 struct sParserInfoStruct
 {
     sBuf mConst;
@@ -486,6 +515,7 @@ struct sParserInfoStruct
     unsigned int mClassFieldsRightValue[CLASS_FIELD_MAX];
     
     BOOL array_initializer;
+    BOOL array_initializer2;
     BOOL exception_result_type_function;
     sNodeType* function_result_type;
     
@@ -497,6 +527,10 @@ struct sParserInfoStruct
     
     BOOL parse_catch;
     BOOL in_parse_function;
+    
+    int container_nest;
+    int tuple_nest;
+    BOOL in_map_expression;
 };
 
 typedef struct sParserInfoStruct sParserInfo;
@@ -557,25 +591,25 @@ BOOL parse_method_generics_function(unsigned int* node, char* struct_name, sPars
 void parse_version(int* version, sParserInfo* info);
 BOOL parse_function(unsigned int* node, sNodeType* result_type, char* fun_name, char* struct_name, char* definition_top, sParserInfo* info);
 BOOL parse_inline_function(unsigned int* node, sParserInfo* info);
-BOOL parse_funcation_call_params(int* num_params, unsigned int* params, sParserInfo* info);
+BOOL parse_function_call_params(int* num_params, unsigned int* params, sParserInfo* info);
 BOOL parse_if(unsigned int* node, sParserInfo* info);
 BOOL parse_throw(unsigned int* node, sParserInfo* info);
+BOOL parse_throws(unsigned int* node, sParserInfo* info);
 BOOL parse_catch(unsigned int* node, sParserInfo* info);
-BOOL parse_guard(unsigned int* node, sParserInfo* info);
 BOOL postposition_operator(unsigned int* node, BOOL enable_assginment, sParserInfo* info);
 BOOL parse_while(unsigned int* node, sParserInfo* info);
 BOOL parse_do(unsigned int* node, sParserInfo* info);
 BOOL parse_for(unsigned int* node, sParserInfo* info);
-BOOL parse_select(unsigned int* node, sParserInfo* info);
-BOOL parse_pselect(unsigned int* node, sParserInfo* info);
 BOOL parse_alloca(unsigned int* node, sParserInfo* info);
 BOOL parse_sizeof(unsigned int* node, sParserInfo* info);
 BOOL parse_alignof(unsigned int* node, sParserInfo* info);
 BOOL parse_clone(unsigned int* node, sParserInfo* info);
+BOOL parse_shallow_clone(unsigned int* node, sParserInfo* info);
 BOOL parse_delete(unsigned int* node, sParserInfo* info);
 BOOL parse_managed(unsigned int* node, sParserInfo* info);
 BOOL parse_dummy_heap(unsigned int* node, sParserInfo* info);
 BOOL parse_is_heap(unsigned int* node, sParserInfo* info);
+BOOL parse_is_gc(unsigned int* node, sParserInfo* info);
 BOOL parse_nomove(unsigned int* node, sParserInfo* info);
 BOOL parse_nullable(unsigned int* node, sParserInfo* info);
 BOOL parse_nonullable(unsigned int* node, sParserInfo* info);
@@ -593,16 +627,16 @@ BOOL parse_impl(unsigned int* node, sParserInfo* info);
 void parse_impl_end(sParserInfo* info);
 BOOL parse_new(unsigned int* node, sParserInfo* info);
 BOOL parse_var(unsigned int* node, sParserInfo* info, BOOL readonly);
+BOOL parse_gc_dec(unsigned int* node, sParserInfo* info);
+BOOL parse_gc_inc(unsigned int* node, sParserInfo* info);
 BOOL parse_inherit(unsigned int* node, sParserInfo* info);
-BOOL parse_come(unsigned int* node, sParserInfo* info);
-BOOL parse_macro(unsigned int* node, sParserInfo* info);
 BOOL parse_defer(unsigned int* node, sParserInfo* info);
 BOOL parse_call_macro(unsigned int* node, char* name, sParserInfo* info);
 BOOL parse_function_pointer_result_function(unsigned int* node, BOOL* array_pointer_result_function_type, sParserInfo* info);
 BOOL expression_node(unsigned int* node, BOOL enable_assginment, sParserInfo* info);
-BOOL get_map(unsigned int* node, sParserInfo* info);
-BOOL get_list(unsigned int* node, sParserInfo* info);
-BOOL get_tuple(unsigned int* node, sParserInfo* info);
+BOOL parse_map(unsigned int* node, sParserInfo* info);
+BOOL parse_list(unsigned int* node, sParserInfo* info);
+BOOL parse_tuple(unsigned int* node, sParserInfo* info);
 
 //////////////////////////////
 /// node.c
@@ -612,6 +646,7 @@ struct sRightValueObject {
     sNodeType* node_type;
     struct sRightValueObject* next;
     char fun_name[VAR_NAME_MAX];
+    char var_name[VAR_NAME_MAX];
     BOOL freed;
 };
 
@@ -655,6 +690,8 @@ struct sCompileInfoStruct
     char in_inline_function_name[VAR_NAME_MAX];
     int inline_sline;
     LLVMBasicBlockRef inline_func_end;
+    char* inline_func_end_label;
+    int num_inline;
 
     BOOL in_lambda_function;
     int lambda_sline;
@@ -695,20 +732,28 @@ struct sCompileInfoStruct
     int inline_caller_sline;
     
     BOOL creating_generics_function;
+    
+    sComeFun* come_fun;
+    int come_nest;
+    int inline_nest;
+    
+    char* inline_result_variable_name;
+    
+    BOOL no_output_come_code;
+    
+    char* continue_code;
 };
 
 typedef struct sCompileInfoStruct sCompileInfo;
 extern LLVMBuilderRef gBuilder;
 
-enum eNodeType { kNodeTypeIntValue, kNodeTypeList, kNodeTypeMap, kNodeTypeFloatValue, kNodeTypeDoubleValue, kNodeTypeUIntValue, kNodeTypeLongValue, kNodeTypeULongValue, kNodeTypeAdd, kNodeTypeSub, kNodeTypeStoreVariable, kNodeTypeStoreVariableMultiple, kNodeTypeLoadVariable, kNodeTypeLoadChannelElement, kNodeTypeDefineVariable, kNodeTypeIsHeap, kNodeTypeCString, kNodeTypeRegex, kNodeTypeFunction, kNodeTypeExternalFunction, kNodeTypeFunctionCall, kNodeTypeComeFunctionCall, kNodeTypeIf, kNodeTypeGuard, kNodeTypeEquals, kNodeTypeNotEquals, kNodeTypeEquals2, kNodeTypeNotEquals2, kNodeTypeStruct, kNodeTypeObject, kNodeTypeStackObject, kNodeTypeStoreField, kNodeTypeStoreFieldOfProtocol, kNodeTypeLoadField, kNodeTypeWhile, kNodeTypeDoWhile, kNodeTypeGteq, kNodeTypeLeeq, kNodeTypeGt, kNodeTypeLe, kNodeTypeLogicalDenial, kNodeTypeTrue, kNodeTypeFalse, kNodeTypeAndAnd, kNodeTypeOrOr, kNodeTypeFor, kNodeTypeLambdaCall, kNodeTypeDerefference, kNodeTypeRefference, kNodeTypeRefferenceLoadField, kNodeTypeNull, kNodeTypeClone, kNodeTypeLoadElement, kNodeTypeStoreElement, kNodeTypeChar, kNodeTypeMult, kNodeTypeDiv, kNodeTypeMod, kNodeTypeCast, kNodeTypeGenericsFunction, kNodeTypeInlineFunction, kNodeTypeTypeDef, kNodeTypeUnion, kNodeTypeLeftShift, kNodeTypeRightShift, kNodeTypeAnd, kNodeTypeXor, kNodeTypeOr, kNodeTypeReturn, kNodeTypeSizeOf, kNodeTypeSizeOfExpression, kNodeTypeNodes, kNodeTypeLoadFunction, kNodeTypeArrayWithInitialization, kNodeTypeStructInitializer, kNodeTypeNormalBlock, kNodeTypeSelect, kNodeTypePSelect, kNodeTypeSwitch, kNodeTypeBreak, kNodeTypeContinue, kNodeTypeCase, kNodeTypeLabel, kNodeTypeGoto, kNodeTypeConditional, kNodeTypeAlignOf, kNodeTypeAlignOfExpression, kNodeTypeComplement, kNodeTypeStoreAddress, kNodeTypeLoadAddressValue, kNodeTypePlusPlus, kNodeTypeMinusMinus, kNodeTypeEqualPlus, kNodeTypeEqualMinus, kNodeTypeEqualMult, kNodeTypeEqualDiv, kNodeTypeEqualMod, kNodeTypeEqualLShift, kNodeTypeEqualRShift, kNodeTypeEqualAnd, kNodeTypeEqualXor, kNodeTypeEqualOr, kNodeTypeComma, kNodeTypeFunName, kNodeTypeJoin, kNodeTypeWriteChannel, kNodeTypeReadChannel, kNodeTypeStack, kNodeTypeMethodBlock, kNodeTypeDefer, kNodeTypeManaged, kNodeTypeDelete, kNodeTypeDummyHeap, kNodeTypeBorrow, kNodeTypeNoMove, kNodeTypeNullable, kNodeTypeNoNullable, kNodeTypeIsGCHeap, kNodeTypeUnwrap, kNodeTypeDupeFunction, kNodeTypeSName, kNodeTypeSLine, kNodeTypeCallerSName, kNodeTypeCallerSLine, kNodeTypeStoreDerefference, kNodeTypeVaArg };
+enum { kNodeTypeIntValue, kNodeTypeList, kNodeTypeMap, kNodeTypeFloatValue, kNodeTypeDoubleValue, kNodeTypeUIntValue, kNodeTypeLongValue, kNodeTypeULongValue, kNodeTypeAdd, kNodeTypeSub, kNodeTypeStoreVariable, kNodeTypeStoreVariableMultiple, kNodeTypeLoadVariable, kNodeTypeLoadChannelElement, kNodeTypeDefineVariable, kNodeTypeIsHeap, kNodeTypeCString, kNodeTypeRegex, kNodeTypeFunction, kNodeTypeExternalFunction, kNodeTypeFunctionCall, kNodeTypeComeFunctionCall, kNodeTypeIf, kNodeTypeGuard, kNodeTypeEquals, kNodeTypeNotEquals, kNodeTypeEquals2, kNodeTypeNotEquals2, kNodeTypeStruct, kNodeTypeObject, kNodeTypeStackObject, kNodeTypeStoreField, kNodeTypeStoreFieldOfProtocol, kNodeTypeLoadField, kNodeTypeWhile, kNodeTypeDoWhile, kNodeTypeGteq, kNodeTypeLeeq, kNodeTypeGt, kNodeTypeLe, kNodeTypeLogicalDenial, kNodeTypeTrue, kNodeTypeFalse, kNodeTypeAndAnd, kNodeTypeOrOr, kNodeTypeFor, kNodeTypeLambdaCall, kNodeTypeDerefference, kNodeTypeRefference, kNodeTypeRefferenceLoadField, kNodeTypeNull, kNodeTypeClone, kNodeTypeLoadElement, kNodeTypeStoreElement, kNodeTypeChar, kNodeTypeMult, kNodeTypeDiv, kNodeTypeMod, kNodeTypeCast, kNodeTypeGenericsFunction, kNodeTypeInlineFunction, kNodeTypeTypeDef, kNodeTypeUnion, kNodeTypeLeftShift, kNodeTypeRightShift, kNodeTypeAnd, kNodeTypeXor, kNodeTypeOr, kNodeTypeReturn, kNodeTypeSizeOf, kNodeTypeSizeOfExpression, kNodeTypeNodes, kNodeTypeLoadFunction, kNodeTypeArrayWithInitialization, kNodeTypeStructInitializer, kNodeTypeNormalBlock, kNodeTypeSelect, kNodeTypePSelect, kNodeTypeSwitch, kNodeTypeBreak, kNodeTypeContinue, kNodeTypeCase, kNodeTypeLabel, kNodeTypeGoto, kNodeTypeConditional, kNodeTypeAlignOf, kNodeTypeAlignOfExpression, kNodeTypeComplement, kNodeTypeStoreAddress, kNodeTypeLoadAddressValue, kNodeTypePlusPlus, kNodeTypeMinusMinus, kNodeTypeEqualPlus, kNodeTypeEqualMinus, kNodeTypeEqualMult, kNodeTypeEqualDiv, kNodeTypeEqualMod, kNodeTypeEqualLShift, kNodeTypeEqualRShift, kNodeTypeEqualAnd, kNodeTypeEqualXor, kNodeTypeEqualOr, kNodeTypeComma, kNodeTypeFunName, kNodeTypeJoin, kNodeTypeWriteChannel, kNodeTypeReadChannel, kNodeTypeStack, kNodeTypeMethodBlock, kNodeTypeDefer, kNodeTypeManaged, kNodeTypeDelete, kNodeTypeDummyHeap, kNodeTypeBorrow, kNodeTypeNoMove, kNodeTypeNullable, kNodeTypeNoNullable, kNodeTypeIsGCHeap, kNodeTypeUnwrap, kNodeTypeDupeFunction, kNodeTypeSName, kNodeTypeSLine, kNodeTypeCallerSName, kNodeTypeCallerSLine, kNodeTypeStoreDerefference, kNodeTypeVaArg };
 
-enum { kNodeTypeLChar = kNodeTypeVaArg + 1, kNodeTypeWCString, kNodeTypeCreateLabel, kNodeTypeNullValue, kNodeTypeMacro };
+enum { kNodeTypeLChar = kNodeTypeVaArg + 1, kNodeTypeWCString, kNodeTypeCreateLabel, kNodeTypeNullValue, kNodeTypeMacro, kNodeTypeIsGC, kNodeTypeTuple, kNodeTypeParen, kNodeTypeDefineArrayWithInitializer, kNodeTypeThrowNullValue, kNodeTypeShallowClone, kNodeTypeGCInc, kNodeTypeGCDec };
 
 static const BOOL gMultDivPlusPlusEnableNode[] = {
     1, 1, 1, 1, 1, 1, 1,     1, 1, 1, 0, 0, 1,     1, 0, 0, 1, 1, 0, 0,     1, 1, 0, 0, 1, 1, 1,     1, 0, 0, 0, 1, 1,     1, 0, 0, 1, 1, 1, 1, 1,     1, 1, 1, 1, 0, 1, 1, 1,     1, 1, 1, 1, 1, 1, 1, 1, 1,     1, 0, 0, 0, 1, 1, 1,     1, 1, 0, 1, 1, 0, 0,     0, 0, 0, 0, 0, 0,     0, 0, 0, 0, 0, 0, 1, 1,     1, 0, 0, 1, 1, 0,     0, 0, 0, 0, 0, 0, 0,     0, 0, 1, 0, 0, 1, 1, 0,     0, 0, 0, 0, 0, 0, 0, 1,     1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0 
 };
-
-extern int gCompilePhase;
 
 struct sStructInitializer {
     char* mName;
@@ -719,7 +764,7 @@ struct sStructInitializer {
 
 struct sNodeTreeStruct 
 {
-    enum eNodeType mNodeType;
+    int mNodeType;
 
     unsigned int mLeft;
     unsigned int mRight;
@@ -750,6 +795,7 @@ struct sNodeTreeStruct
             BOOL mGlobal;
             BOOL mStoreAddress;
             BOOL mNoStdMove;
+            sVarTable* mLVTable;
         } sStoreVariable;
         
         struct {
@@ -768,7 +814,13 @@ struct sNodeTreeStruct
             char mVarName[VAR_NAME_MAX];
             BOOL mGlobal;
             BOOL mExtern;
+            BOOL mSafeMode;
+            BOOL mNCCome;
         } sDefineVariable;
+
+        struct {
+            BOOL mNCCome;
+        } sDummyHeap;
 
         struct {
             char* mFunName;
@@ -778,17 +830,30 @@ struct sNodeTreeStruct
             unsigned int* mNodes;
             int mNumNodes;
             BOOL mInMacro;
+            BOOL mAppendRightValues;
         } sNodes;
+        
+        struct {
+            unsigned int mKeys[LIST_ELEMENT_MAX];
+            unsigned int mValues[LIST_ELEMENT_MAX];
+            int mNumKeys;
+        } sMap;
 
         struct {
             char mVarName[VAR_NAME_MAX];
             BOOL mGlobal;
             BOOL mGettingRefference;
+            BOOL mAppendRightValue;
         } sLoadVariable;
 
         struct {
             char mVarName[VAR_NAME_MAX];
+            BOOL mNCCome;
         } sManaged;
+
+        struct {
+            BOOL mNCCome;
+        } sDelete;
 
         struct {
             char* mString;
@@ -838,6 +903,7 @@ struct sNodeTreeStruct
             int mGenericsFunNum;
             BOOL mImmutable;
             BOOL mFlagAsmFunName;
+            BOOL mNCCome;
         } sFunction;
 
         struct {
@@ -893,12 +959,6 @@ struct sNodeTreeStruct
             unsigned int mParams[PARAMS_MAX];
             int mNumParams;
             BOOL mGC;
-            unsigned int mListFirstValue;
-            unsigned int mMapFirstKey;
-            unsigned int mMapFirstValue;
-            unsigned int mTupleNodes[TUPLE_ELEMENT_MAX];
-            int mNumTuples;
-            struct sVarTableStruct* mVarTable;
         } sObject;
 
         struct {
@@ -1016,6 +1076,7 @@ struct sNodeTreeStruct
         
         struct {
             BOOL mMove;
+            BOOL mSafeMode;
         } sOp;
         struct {
             int mNumElements;
@@ -1027,16 +1088,37 @@ struct sNodeTreeStruct
         struct {
             sNodeType* mNodeType;
         } sNullValue;
+        struct {
+            BOOL mLoad;
+            BOOL mInhibitUnwrap;
+            BOOL mSafeMode;
+            BOOL mNCCome;
+        } sUnwrap;
+        
+        struct {
+            char mName[VAR_NAME_MAX];
+            sNodeType* mNodeType;
+        } sTypedef;
+        
+        struct {
+            BOOL mNoCompileValue;
+        } sReturn;
+        struct {
+            char mName[VAR_NAME_MAX];
+            sNodeType* mResultType;
+            char* mInitializerSource;
+            char* mTypeNameStr;
+        } sDefineArrayWithInitializer;
     } uValue;
 };
 
-
-void increment_ref_count(LLVMValueRef obj, sNodeType* node_type, sCompileInfo* info);
-void append_object_to_right_values(LLVMValueRef obj, sNodeType* node_type, sCompileInfo* info);
+void increment_ref_count(LLVMValueRef obj, sNodeType* node_type, char* c_value, sCompileInfo* info);
+void decrement_ref_count(LLVMValueRef obj, sNodeType* node_type, char* c_value, sCompileInfo* info);
+char* append_object_to_right_values(LLVMValueRef obj, sNodeType* node_type, sCompileInfo* info);
 void remove_object_from_right_values(LLVMValueRef obj, sCompileInfo* info);
 void free_right_value_objects(sCompileInfo* info);
-void free_object(sNodeType* node_type, LLVMValueRef obj, BOOL force_delete, sCompileInfo* info);
-void free_protocol_object(sNodeType* protocol_type, LLVMValueRef protocol_obj, sCompileInfo* info);
+void free_object(sNodeType* node_type, LLVMValueRef obj, char* c_value, BOOL force_delete, sCompileInfo* info);
+void free_protocol_object(sNodeType* protocol_type, LLVMValueRef protocol_value, char* protocol_value_c_source, sCompileInfo* info);
 BOOL is_right_values(LLVMValueRef obj, sCompileInfo* info);
 void check_null_value_for_pointer(LLVMValueRef value, sCompileInfo* info);
 
@@ -1056,8 +1138,19 @@ extern LLVMContextRef gContext;
 extern LLVMValueRef gFunction;
 extern char gFunctionName[VAR_NAME_MAX];
 
+struct sComeModule
+{
+    sBuf mSourceHead;
+    sBuf mSource;
+    char* mLastCode;
+};
+
+extern struct sComeModule gComeModule;
+
 extern LLVMValueRef gCallerSName;
 extern LLVMValueRef gCallerSLine;
+extern char* gCallerSNameCValue;
+extern int gCallerSLineCValue;
 
 void set_caller_sline(int sline);
 void set_caller_sname(char* sname);
@@ -1075,7 +1168,8 @@ void sNodeBlock_free(sNodeBlock* block);
 void append_node_to_node_block(sNodeBlock* node_block, unsigned int node);
 
 void compile_err_msg(sCompileInfo* info, const char* msg, ...);
-LLVMValueRef clone_object(sNodeType* node_type, LLVMValueRef obj, sCompileInfo* info);
+LLVMValueRef clone_object(sNodeType* node_type, LLVMValueRef obj, char* obj_c_value, char** c_value, sCompileInfo* info);
+LLVMValueRef shallow_clone_object(sNodeType* node_type, LLVMValueRef obj, LLVMValueRef obj_address, char* obj_c_value, char** c_value, sCompileInfo* info);
 
 void show_node(unsigned int node);
 BOOL compile(unsigned int node, sCompileInfo* info);
@@ -1099,7 +1193,6 @@ struct sFunctionStruct
     int mNumMethodGenerics;
     char* mMethodGenericsTypeNames[GENERICS_TYPES_MAX];
     char* mAsmFunName;
-    BOOL mUser;
     char* mSource;
     char mSName[PATH_MAX];
     int mSLine;
@@ -1112,9 +1205,9 @@ typedef struct sFunctionStruct sFunction;
 
 extern sNodeType* gComeFunctionResultType;
 
-sFunction* create_finalizer_automatically(sNodeType* node_type, char* fun_name, sCompileInfo* info);
-sFunction* create_cloner_automatically(sNodeType* node_type, char* fun_name, sCompileInfo* info);
-sFunction* create_equals_automatically(sNodeType* node_type, char* fun_name, sCompileInfo* info);
+sFunction* create_finalizer_automatically(sNodeType* node_type, char* fun_name, char** real_fun_name, sCompileInfo* info);
+sFunction* create_cloner_automatically(sNodeType* node_type, char* fun_name, char** real_fun_name, sCompileInfo* info);
+sFunction* create_equals_automatically(sNodeType* node_type, char* fun_name, char** real_fun_name, sCompileInfo* info);
 void setCurrentDebugLocation(int sline, sCompileInfo* info);
 void setNullCurrentDebugLocation(int sline, sCompileInfo* info);
 LLVMMetadataRef create_llvm_debug_type(sNodeType* node_type, sCompileInfo* info);
@@ -1148,7 +1241,6 @@ typedef struct sLabelStruct sLabel;
 
 
 void create_generics_struct_name(char* struct_name, size_t size, sNodeType* struct_type);
-void create_generics_struct_name2(char* class_name, char* struct_name, size_t size, sNodeType* struct_type);
 LLVMTypeRef create_llvm_type_from_node_type(sNodeType* node_type);
 LLVMTypeRef create_llvm_type_with_class_name(char* class_name);
 BOOL cast_right_type_to_left_type(sNodeType* left_type, sNodeType** right_type, LVALUE* rvalue, struct sCompileInfoStruct* info);
@@ -1186,10 +1278,8 @@ BOOL call_operator_function(char* fun_base_name, sNodeType* left_type, int num_p
 
 unsigned int sNodeTree_create_plus_plus(unsigned int left_node, sParserInfo* info);
 unsigned int sNodeTree_create_va_arg(unsigned int ap, sNodeType* node_type, sParserInfo* info);
-unsigned int sNodeTree_guard_expression(char* var_name, MANAGED struct sNodeBlockStruct* if_node_block, sParserInfo* info, char* sname, int sline);
-unsigned int sNodeTree_create_store_field_of_protocol(unsigned int left_node, unsigned int right_node, sParserInfo* info);
 unsigned int sNodeTree_create_dupe_function(char* old_fun_name, char* new_fun_name, sParserInfo* info);
-unsigned int sNodeTree_create_unwrap(unsigned int left, sParserInfo* info);
+unsigned int sNodeTree_create_unwrap(unsigned int left, BOOL load_, sParserInfo* info);
 unsigned int sNodeTree_create_nullable(unsigned int object_node, sParserInfo* info);
 unsigned int sNodeTree_create_nonullable(unsigned int object_node, sParserInfo* info);
 unsigned int sNodeTree_create_nonullable(unsigned int object_node, sParserInfo* info);
@@ -1231,9 +1321,8 @@ unsigned int sNodeTree_create_store_value_to_derefference(unsigned int address_n
 
 BOOL compile_va_arg(unsigned int node, sCompileInfo* info);
 BOOL compile_store_derefference(unsigned int node, sCompileInfo* info);
-BOOL compile_reffernce_load_field(unsigned int node, sCompileInfo* info);
+BOOL compile_refference_load_field(unsigned int node, sCompileInfo* info);
 BOOL compile_store_field_of_protocol(unsigned int node, sCompileInfo* info);
-BOOL compile_guard_expression(unsigned int node, sCompileInfo* info);
 BOOL compile_equal_or(unsigned int node, sCompileInfo* info);
 BOOL compile_store_variable_multiple(unsigned int node, sCompileInfo* info);
 BOOL compile_dupe_function(unsigned int node, sCompileInfo* info);
@@ -1287,11 +1376,12 @@ unsigned int sNodeTree_create_caller_sline(sParserInfo* info);
 
 unsigned int sNodeTree_create_load_channel_element(unsigned int array, unsigned int num_chanel, sParserInfo* info);
 unsigned int sNodeTree_create_stack_object(sNodeType* node_type, unsigned int object_num, char* sname, int sline, sParserInfo* info);
-unsigned int sNodeTree_create_dereffernce(unsigned int left_node, BOOL parent, sNodeType* cast_pointer_type, sParserInfo* info);
-unsigned int sNodeTree_create_reffernce(unsigned int left_node, sParserInfo* info);
+unsigned int sNodeTree_create_derefference(unsigned int left_node, BOOL parent, sNodeType* cast_pointer_type, BOOL no_check_safe_mode, sParserInfo* info);
+unsigned int sNodeTree_create_refference(unsigned int left_node, sParserInfo* info);
 unsigned int sNodeTree_create_clone(unsigned int left, BOOL gc, sParserInfo* info);
+unsigned int sNodeTree_create_shallow_clone(unsigned int left, BOOL gc, sParserInfo* info);
 unsigned int sNodeTree_create_is_gc_heap(unsigned int left, sParserInfo* info);
-unsigned int sNodeTree_create_load_array_element(unsigned int array, unsigned int index_node[], int num_dimetion, sParserInfo* info);
+unsigned int sNodeTree_create_load_array_element(unsigned int array, unsigned int index_node[], int num_dimention, sParserInfo* info);
 unsigned int sNodeTree_create_store_element(unsigned int array, unsigned int index_node[], int num_dimetion, unsigned int right_node, sParserInfo* info);
 unsigned int sNodeTree_create_func_name(sParserInfo* info);
 unsigned int sNodeTree_create_load_adress_value(unsigned int address_node, sParserInfo* info);
@@ -1305,25 +1395,26 @@ unsigned int sNodeTree_create_sizeof(sNodeType* node_type, sParserInfo* info);
 unsigned int sNodeTree_create_sizeof_expression(int num_nodes, unsigned int* nodes, sParserInfo* info);
 unsigned int sNodeTree_create_alignof(sNodeType* node_type, sParserInfo* info);
 unsigned int sNodeTree_create_alignof_expression(unsigned int lnode, sParserInfo* info);
-unsigned int sNodeTree_create_load_variable(char* var_name, sParserInfo* info);
+unsigned int sNodeTree_create_load_variable(char* var_name, BOOL append_right_value, sParserInfo* info);
 unsigned int sNodeTree_create_define_variable(char* var_name, BOOL extern_, BOOL global, sParserInfo* info);
-unsigned int sNodeTree_create_store_variable(char* var_name, int right, BOOL alloc, BOOL global, BOOL no_std_move, sParserInfo* info);
+unsigned int sNodeTree_create_store_variable(char* var_name, int right, BOOL alloc, BOOL global, sParserInfo* info);
 unsigned int sNodeTree_create_store_variable_multiple(int num_vars, char** var_names, int right, BOOL alloc, sParserInfo* info);
 unsigned int sNodeTree_struct(sNodeType* struct_type, sParserInfo* info, char* sname, int sline, BOOL undefined_body);
 unsigned int sNodeTree_union(sNodeType* struct_type, sParserInfo* info, char* sname, int sline, BOOL undefined_body);
-unsigned int sNodeTree_create_object(sNodeType* node_type, unsigned int object_num, int num_params, unsigned int* params, unsigned int list_first_value, unsigned int map_first_key, unsigned int map_first_value, unsigned int* tuple_nodes, int num_tuples, char* sname, int sline, BOOL gc, sParserInfo* info);
-unsigned int sNodeTree_create_store_field(char* var_name, unsigned int left_node, unsigned int right_node, BOOL std_move, sParserInfo* info);
+unsigned int sNodeTree_create_object(sNodeType* node_type, unsigned int object_num, int num_params, unsigned int* params, char* sname, int sline, BOOL gc, sParserInfo* info);
+unsigned int sNodeTree_create_store_field(char* var_name, unsigned int left_node, unsigned int right_node, sParserInfo* info);
 unsigned int sNodeTree_create_load_field(char* name, unsigned int left_node, sParserInfo* info);
 unsigned int sNodeTree_create_cast(sNodeType* left_type, unsigned int left_node, sParserInfo* info);
 unsigned int sNodeTree_create_typedef(char* name, sNodeType* node_type, sParserInfo* info);
 unsigned int sNodeTree_create_write_channel(unsigned int address_node, unsigned int right_node, sParserInfo* info);
-unsigned int sNodeTree_create_read_channel(unsigned int left_node, sParserInfo* info);
+unsigned int sNodeTree_create_read_channel(unsigned int left_node, char* var_name, sParserInfo* info);
 unsigned int sNodeTree_create_borrow(unsigned int object_node, sParserInfo* info);
 unsigned int sNodeTree_create_nomove(unsigned int object_node, sParserInfo* info);
 unsigned int sNodeTree_create_dummy_heap(unsigned int object_node, sParserInfo* info);
 unsigned int sNodeTree_create_managed(char* var_name, sParserInfo* info);
 unsigned int sNodeTree_create_delete(unsigned int object_node, sParserInfo* info);
 unsigned int sNodeTree_create_is_heap(sNodeType* node_type, sParserInfo* info);
+unsigned int sNodeTree_create_is_gc(sParserInfo* info);
 
 BOOL is_generics_type(sNodeType* node_type);
 BOOL is_method_generics_type(sNodeType* node_type);
@@ -1362,9 +1453,11 @@ BOOL compile_stack_object(unsigned int node, sCompileInfo* info);
 BOOL compile_store_field(unsigned int node, sCompileInfo* info);
 BOOL compile_load_field(unsigned int node, sCompileInfo* info);
 BOOL compile_derefference(unsigned int node, sCompileInfo* info);
-BOOL compile_reffernce(unsigned int node, sCompileInfo* info);
+BOOL compile_refference(unsigned int node, sCompileInfo* info);
 BOOL compile_clone(unsigned int node, sCompileInfo* info);
+BOOL compile_shallow_clone(unsigned int node, sCompileInfo* info);
 BOOL compile_is_gc_heap(unsigned int node, sCompileInfo* info);
+BOOL compile_is_gc(unsigned int node, sCompileInfo* info);
 BOOL compile_load_element(unsigned int node, sCompileInfo* info);
 BOOL compile_store_element(unsigned int node, sCompileInfo* info);
 BOOL compile_cast(unsigned int node, sCompileInfo* info);
@@ -1376,6 +1469,7 @@ BOOL compile_sline(unsigned int node, sCompileInfo* info);
 //////////////////////////////
 /// node_value.c ///
 //////////////////////////////
+LLVMValueRef defineStringLiteral(LLVMValueRef* str, const char *sourceString, size_t size ) ;
 unsigned int sNodeTree_create_c_string_value(MANAGED char* value, int len, int sline, sParserInfo* info);
 unsigned int sNodeTree_create_regex_value(MANAGED char* value, BOOL global, BOOL ignore_case, int sline, sParserInfo* info);
 unsigned int sNodeTree_create_int_value(int value, sParserInfo* info);
@@ -1388,8 +1482,9 @@ unsigned int sNodeTree_create_character_value(unsigned char c, sParserInfo* info
 unsigned int sNodeTree_create_true(sParserInfo* info);
 unsigned int sNodeTree_create_false(sParserInfo* info);
 unsigned int sNodeTree_create_null(sParserInfo* info);
-unsigned int sNodeTree_create_map(int num_nodes, unsigned int* nodes, sParserInfo* info);
-unsigned int sNodeTree_create_list(int num_nodes, unsigned int* nodes, sParserInfo* info);
+unsigned int sNodeTree_create_map(int num_keys, unsigned int* keys, unsigned int* values, sParserInfo* info);
+unsigned int sNodeTree_create_tuple(int num_nodes, unsigned int* nodes, BOOL append_right_value, sParserInfo* info);
+unsigned int sNodeTree_create_list(int num_elements, unsigned int* elements, sParserInfo* info);
 
 BOOL compile_c_string_value(unsigned int node, sCompileInfo* info);
 BOOL compile_regex_value(unsigned int node, sCompileInfo* info);
@@ -1404,6 +1499,7 @@ BOOL compile_null(unsigned int node, sCompileInfo* info);
 BOOL compile_float_value(unsigned int node, sCompileInfo* info);
 BOOL compile_double_value(unsigned int node, sCompileInfo* info);
 BOOL compile_list_value(unsigned int node, sCompileInfo* info);
+BOOL compile_tuple_value(unsigned int node, sCompileInfo* info);
 BOOL compile_map_value(unsigned int node, sCompileInfo* info);
 
 //////////////////////////////
@@ -1417,7 +1513,7 @@ void node_function_final();
 void show_funcs();
 void show_func(sFunction* fun, BOOL code);
 
-BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_method_generics_types, sNodeType** method_generics_types, LLVMValueRef* llvm_params, sCompileInfo* info);
+BOOL call_inline_function(sFunction* fun, sNodeType* generics_type, int num_method_generics_types, sNodeType** method_generics_types, LLVMValueRef* llvm_params, LVALUE* lvalue_params, sCompileInfo* info);
 BOOL add_function_to_table(char* name, int num_params, char** param_names, sNodeType** param_types, char** param_default_values, BOOL* param_labels, sNodeType* result_type, LLVMValueRef llvm_fun, char* block_text, BOOL generics_function, BOOL var_args, int num_generics, char** generics_type_names, int num_method_generics, char** mgenerics_type_names, BOOL extern_, char* asm_fun_name, BOOL user, char* source, char* sname, int sline, BOOL immutable, BOOL flag_asm_fun_name, LLVMTypeRef llvm_function_type);
 BOOL dupe_function(char* old_fun_name, char* new_fun_name);
 void remove_function_from_table(char* name);
@@ -1438,7 +1534,7 @@ unsigned int sNodeTree_create_method_block(MANAGED char* block, char* block_text
 
 void create_real_fun_name(char* real_fun_name, size_t size_real_fun_name, char* fun_name, char* struct_name);
 void llvm_change_block(LLVMBasicBlockRef current_block, sCompileInfo* info);
-BOOL create_generics_function(LLVMValueRef* llvm_fun, sFunction* fun, char* fun_name, sNodeType* generics_type, int num_method_generics_types, sNodeType** method_generics_types, BOOL immutable, sCompileInfo* info);
+BOOL create_generics_function(LLVMValueRef* llvm_fun, char** llvm_fun_name, sFunction* fun, char* fun_name, sNodeType* generics_type, int num_method_generics_types, sNodeType** method_generics_types, BOOL immutable, sCompileInfo* info);
 BOOL solve_type(sNodeType** node_type, sNodeType* generics_type, int num_method_generics_types, sNodeType** method_generics_types, sCompileInfo* info);
 BOOL solve_method_generics(sNodeType** node_type, int num_method_generics_types, sNodeType** method_generics_types);
 void create_generics_fun_name(char* real_fun_name, int size_real_fun_name, char* fun_name,  sNodeType* generics_type, int num_method_generics_types, sNodeType** method_generics_types);
@@ -1464,7 +1560,7 @@ LLVMBasicBlockRef get_label_from_table(char* name);
 
 unsigned int sNodeTree_create_conditional(unsigned int conditional, unsigned int value1, unsigned int value2, sParserInfo* info);
 unsigned int sNodeTree_create_comma(unsigned int left_node, unsigned int right_node, sParserInfo* info);
-unsigned int sNodeTree_create_return(unsigned int left, sParserInfo* info);
+unsigned int sNodeTree_create_return(unsigned int left, BOOL no_compile_value, sParserInfo* info);
 void create_exception_result_value(unsigned int* node, BOOL throw_, sParserInfo* info);
 unsigned int sNodeTree_create_nodes(unsigned int* nodes, int num_nodes, BOOL in_macro, sParserInfo* info);
 unsigned int sNodeTree_create_macro(unsigned int* nodes, int num_nodes, BOOL in_macro, sParserInfo* info);
@@ -1482,11 +1578,8 @@ unsigned int sNodeTree_while_expression(unsigned int expression_node, MANAGED st
 unsigned int sNodeTree_create_throw(sParserInfo* info);
 unsigned int sNodeTree_do_while_expression(unsigned int expression_node, MANAGED struct sNodeBlockStruct* while_node_block, sParserInfo* info);
 unsigned int sNodeTree_create_defer(unsigned int expression_node, sParserInfo* info);
-unsigned int sNodeTree_create_select(int num_pipes, char** pipes, struct sNodeBlockStruct** pipe_blocks, sParserInfo* info);
-unsigned int sNodeTree_create_pselect(int num_pipes, char** pipes, struct sNodeBlockStruct** pipe_blocks, struct sNodeBlockStruct* default_block, sParserInfo* info);
 
 BOOL compile_comma(unsigned int node, sCompileInfo* info);
-BOOL compile_macro(unsigned int node, sCompileInfo* info);
 BOOL compile_conditional(unsigned int node, sCompileInfo* info);
 BOOL compile_goto_expression(unsigned int node, sCompileInfo* info);
 BOOL compile_label_expression(unsigned int node, sCompileInfo* info);
@@ -1504,9 +1597,6 @@ BOOL compile_and_and(unsigned int node, sCompileInfo* info);
 BOOL compile_or_or(unsigned int node, sCompileInfo* info);
 BOOL compile_for_expression(unsigned int node, sCompileInfo* info);
 BOOL compile_return(unsigned int node, sCompileInfo* info);
-BOOL compile_join(unsigned int node, sCompileInfo* info);
-BOOL compile_select(unsigned int node, sCompileInfo* info);
-BOOL compile_pselect(unsigned int node, sCompileInfo* info);
 
 /////////////
 /// macro.c
@@ -1543,6 +1633,23 @@ LLVMValueRef call_va_arg_inst(LLVMBasicBlockRef block, LLVMValueRef value, LLVMT
 
 void call_come_final(sCompileInfo* info);
 void call_come_gc_final(sCompileInfo* info);
+char* xsprintf(const char* msg, ...);
+
+extern int gRightValueNum;
+
+void transpiler_clear_last_code();
+void transpiler_remove_last_semicolon(struct sCompileInfoStruct* info);
+void transpiler_append_defer_source(struct sCompileInfoStruct* info);
+unsigned int sNodeTree_create_paren(unsigned int left_node, sParserInfo* info);
+BOOL compile_paren(unsigned int node, sCompileInfo* info);
+void add_declare_right_value_var(struct sCompileInfoStruct* info, char* var_name);
+
+unsigned int sNodeTree_create_throw_null_value(sParserInfo* info);
+BOOL compile_throw_null_value(unsigned int node, sCompileInfo* info);
+unsigned int sNodeTree_create_gc_inc(unsigned int object_node, sParserInfo* info);
+BOOL compile_gc_inc(unsigned int node, sCompileInfo* info);
+unsigned int sNodeTree_create_gc_dec(unsigned int object_node, sParserInfo* info);
+BOOL compile_gc_dec(unsigned int node, sCompileInfo* info);
 
 #endif
 

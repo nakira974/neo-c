@@ -1,5 +1,7 @@
 #include "common.h"
 
+sNodeType* gComeFunctionResultType;
+
 unsigned int sNodeTree_create_function(char* fun_name, char* asm_fname, sParserParam* params, int num_params, sNodeType* result_type, MANAGED struct sNodeBlockStruct* node_block, BOOL lambda_, sVarTable* block_var_table, char* struct_name, BOOL operator_fun, BOOL constructor_fun, BOOL simple_lambda_param, sParserInfo* info, BOOL generics_function, BOOL var_arg, int version, BOOL finalize, int generics_fun_num, char* simple_fun_name, int sline, BOOL immutable_)
 {
     unsigned int node = alloc_node();
@@ -37,6 +39,7 @@ unsigned int sNodeTree_create_function(char* fun_name, char* asm_fname, sParserP
     gNodes[node].uValue.sFunction.mFinalize = finalize;
     gNodes[node].uValue.sFunction.mGenericsFunNum = generics_fun_num;
     gNodes[node].uValue.sFunction.mImmutable = immutable_;
+    gNodes[node].uValue.sFunction.mNCCome = gNCCome;
 
     if(struct_name && strcmp(struct_name, "") != 0) {
         xstrncpy(gNodes[node].uValue.sFunction.mStructName, struct_name, VAR_NAME_MAX);
@@ -81,7 +84,7 @@ static BOOL is_method_generics_function(sFunction* fun)
 
 void call_come_gc_final(sCompileInfo* info)
 {
-    if(!gNCGC && strcmp(gFunctionName, "main") == 0 && !gExternC) {
+    if(!gNCGC && strcmp(gFunctionName, "main") == 0 && gNCCome) {
         if(gNCDebug) {
             setNullCurrentDebugLocation(info->sline, info);
         }
@@ -103,7 +106,7 @@ void call_come_gc_final(sCompileInfo* info)
             LLVMBuildCall2(gBuilder, function_type, llvm_fun, NULL, num_params, "");
         }
         else {
-            fprintf(stderr, "come_gc_init not found\n");
+            fprintf(stderr, "%s %d: come_gc_init not found\n", gSName, gSLine);
             exit(2);
         }
     }
@@ -114,14 +117,18 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
     LLVMValueRef inline_result_variable = info->inline_result_variable;
     LLVMBasicBlockRef current_block_before = info->current_block; //LLVMGetLastBasicBlock(gFunction);
 
-    int thread_num = gThreadNum;
-    gThreadNum = 0;
-
     /// get result type ///
     sNodeType* result_type = clone_node_type(gNodes[node].uValue.sFunction.mResultType);
 
     char fun_name[VAR_NAME_MAX];
     xstrncpy(fun_name, gNodes[node].uValue.sFunction.mName, VAR_NAME_MAX);
+    
+    if(strcmp(fun_name, "string") == 0) {
+        xstrncpy(fun_name, "__builtin_string", VAR_NAME_MAX);
+    }
+    else if(strcmp(fun_name, "wstring") == 0) {
+        xstrncpy(fun_name, "__builtin_wstring", VAR_NAME_MAX);
+    }
     
     xstrncpy(info->fun_name, fun_name, VAR_NAME_MAX);
     
@@ -134,6 +141,7 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
     BOOL var_arg = gNodes[node].uValue.sFunction.mVarArg;
     int version = gNodes[node].uValue.sFunction.mVersion;
     int generics_fun_num = gNodes[node].uValue.sFunction.mGenericsFunNum;
+    BOOL nc_come = gNodes[node].uValue.sFunction.mNCCome;
 
     /// rename variables ///
     int num_params = gNodes[node].uValue.sFunction.mNumParams;
@@ -163,12 +171,6 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
         
         
         if(!method_generics_function && !lambda_function) {
-/*
-            if(!fun->mExtern) {
-                compile_err_msg(info, "Multiple function definition %s", fun_name);
-                return FALSE;
-            }
-*/
             if(fun->mResultType == NULL) {
                 compile_err_msg(info, "invalid function result type");
                 return FALSE;
@@ -178,7 +180,7 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
                 return FALSE;
             }
             if(!type_equalability(fun->mResultType, result_type)) {
-                compile_err_msg(info, "Different extern function and definition of the function %s", fun_name);
+                compile_err_msg(info, "Different extern function and definition of the function result type %s", fun_name);
                 show_node_type_one_line(fun->mResultType);
                 show_node_type_one_line(result_type);
                 return FALSE;
@@ -190,7 +192,7 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
                     
                     if(!type_equalability(old_fun_param_type, new_fun_param_type))
                     {
-                        compile_err_msg(info, "Different extern function and definition of the function %s", fun_name);
+                        compile_err_msg(info, "Different extern function and definition of the function %s num params #%d", fun_name, i);
                         show_node_type_one_line(old_fun_param_type);
                         show_node_type_one_line(new_fun_param_type);
                         return FALSE;
@@ -201,6 +203,10 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
                 compile_err_msg(info, "Different extern function param number and definition of the function param number %s", fun_name);
                 return TRUE;
             }
+        }
+
+        if(lambda_function) {
+            clear_current_lv_table_llvm_value(block_var_table);
         }
     }
 
@@ -223,15 +229,12 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
     for(i=0; i<num_params; i++) {
         param_types[i] = params[i].mType;
 
-        if(is_typeof_type(param_types[i]))
+        if(!solve_typeof(&param_types[i], info))
         {
-            if(!solve_typeof(&param_types[i], info))
-            {
-                compile_err_msg(info, "Can't solve typeof types");
-                show_node_type(param_types[i]);
-                info->function_node_block = function_node_block;
-                return TRUE;
-            }
+            compile_err_msg(info, "Can't solve typeof types");
+            show_node_type(param_types[i]);
+            info->function_node_block = function_node_block;
+            return TRUE;
         }
         
         if(!create_generics_struct_type(CLASS_NAME(param_types[i]->mClass), param_types[i])) {
@@ -239,7 +242,7 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
             info->function_node_block = function_node_block;
             return TRUE;
         }
-
+        
         llvm_param_types[i] = create_llvm_type_from_node_type(params[i].mType);
 
         if(type_identify_with_class_name(param_types[i], "__builtin_va_list") || type_identify_with_class_name(param_types[i], "va_list")) {
@@ -283,6 +286,16 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
             llvm_fun = LLVMAddFunction(gModule, asm_fun_name, llvm_fun_type);
         }
     }
+    
+    char* param_names2[PARAMS_MAX];
+    for(i=0; i<PARAMS_MAX; i++) {
+        param_names2[i] = param_names[i];
+    }
+    
+    add_come_function(fun_name, result_type, num_params, param_types, param_names2, FALSE, var_arg);
+    
+    sComeFun* come_fun = info->come_fun;
+    info->come_fun = get_come_function(fun_name);
 
     if(static_) {
         LLVMSetLinkage(llvm_fun, LLVMInternalLinkage);
@@ -304,11 +317,6 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
     info->empty_function = node_block->mNumNodes == 0;
 
     char* block_text = NULL;
-
-    char* param_names2[PARAMS_MAX];
-    for(i=0; i<PARAMS_MAX; i++) {
-        param_names2[i] = param_names[i];
-    }
     
     char param_default_values[PARAMS_MAX][METHOD_DEFAULT_PARAM_MAX];
     for(i=0; i<PARAMS_MAX; i++) {
@@ -328,7 +336,7 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
     BOOL generics_function = FALSE;
     BOOL flag_asm_fun_name = FALSE;
     if(!add_function_to_table(fun_name, num_params, param_names2, param_types, param_default_values2, param_labels, result_type, llvm_fun, block_text, generics_function, var_arg, 0, NULL, 0, NULL, FALSE, asm_fun_name, TRUE, node_block->mSource.mBuf, info->sname, info->sline, immutable_, flag_asm_fun_name, llvm_fun_type)) {
-        fprintf(stderr, "overflow function table\n");
+        fprintf(stderr, "%s %d: overflow function table\n", gSName, gSLine);
         info->function_node_block = function_node_block;
         return FALSE;
     }
@@ -434,7 +442,7 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
     sNodeType* return_result_type = info->return_result_type;
     info->return_result_type = create_node_type_with_class_name("void");
     
-    if(strcmp(fun_name, "main") == 0 && !gExternC) {
+    if(strcmp(fun_name, "main") == 0 && nc_come) {
         if(gNCGC) {
             if(gNCDebug) {
                 setNullCurrentDebugLocation(info->sline, info);
@@ -457,9 +465,11 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
                 LLVMBuildCall2(gBuilder, function_type, llvm_fun2, NULL, num_params, "");
             }
             else {
-                fprintf(stderr, "come_boehm_gc_init not found\n");
+                fprintf(stderr, "%s %d: come_boehm_gc_init not found\n", gSName, gSLine);
                 exit(2);
             }
+            
+            add_come_code(info, "come_boehm_gc_init();\n");
         }
         else {
             if(gNCDebug) {
@@ -483,9 +493,11 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
                 LLVMBuildCall2(gBuilder, function_type, llvm_fun, NULL, num_params, "");
             }
             else {
-                fprintf(stderr, "come_gc_init not found\n");
+                fprintf(stderr, "%s %d: come_gc_init not found\n", gSName, gSLine);
                 exit(2);
             }
+            
+            add_come_code(info, "come_gc_init();\n");
         }
     }
 
@@ -494,14 +506,8 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
         info->function_node_block = function_node_block;
         return FALSE;
     }
-
-    if(gNCType && node_block->mTerminated) {
-        if(!gNCGlobal && !gNCFunction && !gNCClass && !gNCTypedef) {
-            //show_node_type(info->type);
-        }
-        info->function_node_block = function_node_block;
-        return TRUE;
-    }
+    
+    transpiler_append_defer_source(info);
 
     if(type_identify_with_class_name(result_type, "void") && result_type->mPointerNum == 0) {
         call_come_gc_final(info);
@@ -598,6 +604,7 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
         llvm_value.value = llvm_fun;
         llvm_value.type = clone_node_type(lambda_type);
         llvm_value.address = NULL;
+        llvm_value.c_value = xsprintf("(void*)(%s)", fun_name);
         llvm_value.var = NULL;
 
         push_value_to_stack_ptr(&llvm_value, info);
@@ -616,8 +623,6 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
     if(lambda_) {
         llvm_change_block(current_block, info);
     }
-
-    gThreadNum = thread_num;
     
     sNodeType* return_result_type2 = clone_node_type(info->return_result_type);
 
@@ -629,13 +634,20 @@ BOOL compile_function(unsigned int node, sCompileInfo* info)
         LLVMDeleteFunction(llvm_fun);
         gNodes[node].uValue.sFunction.mResultType = clone_node_type(return_result_type2);
         
-        return compile(node, info);
+        BOOL result = compile(node, info);
+        
+        info->come_fun = come_fun;
+        info->inline_result_variable = inline_result_variable;
+        info->function_node_block = function_node_block;
+        return result;
     }
     
     info->function_node_block = function_node_block;
     
     llvm_change_block(current_block_before, info);
     info->inline_result_variable = inline_result_variable;
+    
+    info->come_fun = come_fun;
 
     return TRUE;
 }
@@ -919,7 +931,7 @@ BOOL compile_inline_function(unsigned int node, sCompileInfo* info)
     BOOL flag_asm_fun_name = FALSE;
     if(!add_function_to_table(fun_name, num_params, param_names2, param_types, param_default_values2, param_labels, result_type, llvm_fun, block_text, generics_function, var_arg
     , 0, NULL, 0, NULL, FALSE, NULL, TRUE, block_text, info->sname, info->sline, immutable_, flag_asm_fun_name, NULL)) {
-        fprintf(stderr, "overflow function table\n");
+        fprintf(stderr, "%s %d: overflow function table\n", gSName, gSLine);
         return FALSE;
     }
     info->inline_result_variable = inline_result_variable;
@@ -957,6 +969,7 @@ BOOL compile_method_block(unsigned int node, sCompileInfo* info)
     
     char* block_text = gNodes[node].uValue.sMethodBlock.mBlockText;
     sVarTable* lv_table = gNodes[node].uValue.sMethodBlock.mVarTable;
+    
     sNodeType* result_type = gNodes[node].uValue.sMethodBlock.mResultType;
 
     sFunction* fun = get_function_from_table(info->calling_fun_name);
@@ -966,6 +979,10 @@ BOOL compile_method_block(unsigned int node, sCompileInfo* info)
     int block_text_sline = gNodes[node].uValue.sMethodBlock.mBlockTextSLine;
 
     int sline = info->sline;
+    
+    if(fun == NULL) {
+        return TRUE;
+    }
 
     /// params ///
     if(fun->mNumParams < 2) {
@@ -1055,8 +1072,7 @@ BOOL compile_method_block(unsigned int node, sCompileInfo* info)
     for(i=0; i<num_params; i++) {
         sParserParam* param = params + i;
 
-        BOOL readonly = TRUE;
-        if(!add_variable_to_table(pinfo.lv_table, param->mName, param->mType, readonly, gNullLVALUE, -1, FALSE, FALSE, TRUE))
+        if(!add_variable_to_table(pinfo.lv_table, param->mName, "", param->mType, gNullLVALUE, -1, FALSE, FALSE, TRUE))
         {
             return FALSE;
         }
@@ -1095,7 +1111,9 @@ BOOL compile_method_block(unsigned int node, sCompileInfo* info)
     unsigned int node2 = sNodeTree_create_function(fun_name, "", params, num_params, result_type2, MANAGED node_block, lambda_, block_var_table, NULL, operator_fun, construct_fun, simple_lambda_param, &pinfo, FALSE, FALSE, 0, FALSE, -1, fun_name, sline, immutable_);
     info->inline_result_variable = inline_result_variable;
 
-    return compile(node2, info);
+    BOOL result = compile(node2, info);
+    
+    return result;
 }
 
 unsigned int sNodeTree_create_external_function(char* fun_name, char* asm_fname, sParserParam* params, int num_params, BOOL var_arg, sNodeType* result_type, char* struct_name, BOOL operator_fun, int version, BOOL immutable_, BOOL flag_asm_fun_name, sParserInfo* info)
@@ -1153,6 +1171,13 @@ BOOL compile_external_function(unsigned int node, sCompileInfo* info)
     else {
         snprintf(fun_name, VAR_NAME_MAX, "%s_%s", struct_name, gNodes[node].uValue.sFunction.mName);
     }
+    
+    if(strcmp(fun_name, "string") == 0) {
+        xstrncpy(fun_name, "__builtin_string", VAR_NAME_MAX);
+    }
+    else if(strcmp(fun_name, "wstring") == 0) {
+        xstrncpy(fun_name, "__builtin_wstring", VAR_NAME_MAX);
+    }
 
     char asm_fun_name[VAR_NAME_MAX];
     xstrncpy(asm_fun_name, gNodes[node].uValue.sFunction.mAsmName, VAR_NAME_MAX);
@@ -1196,6 +1221,13 @@ BOOL compile_external_function(unsigned int node, sCompileInfo* info)
         if(type_identify_with_class_name(param_types[i], "__builtin_va_list") || type_identify_with_class_name(param_types[i], "va_list")) {
             llvm_param_types[i] = create_llvm_type_with_class_name("int");
             llvm_param_types[i] = LLVMArrayType(llvm_param_types[i], 1);
+        }
+        else {
+            llvm_param_types[i] = create_llvm_type_from_node_type(param_types[i]);
+        }
+#elif defined(__LINUX__) && (__32BIT_CPU__)
+        if(type_identify_with_class_name(param_types[i], "__builtin_va_list") || type_identify_with_class_name(param_types[i], "va_list")) {
+            llvm_param_types[i] = create_llvm_type_with_class_name("char*");
         }
         else {
             llvm_param_types[i] = create_llvm_type_from_node_type(param_types[i]);
@@ -1248,7 +1280,7 @@ BOOL compile_external_function(unsigned int node, sCompileInfo* info)
 
             BOOL generics_function = FALSE;
             if(!add_function_to_table(new_fun_name, num_params, param_names2, param_types, param_default_values2, param_labels, result_type, llvm_fun, block_text, generics_function, var_arg, 0, NULL, 0, NULL, TRUE, asm_fun_name, TRUE, NULL, info->sname, info->sline, immutable_, flag_asm_fun_name, function_type)) {
-                fprintf(stderr, "overflow function table\n");
+                fprintf(stderr, "%s %d: overflow function table\n", gSName, gSLine);
                 return FALSE;
             }
 
@@ -1258,6 +1290,7 @@ BOOL compile_external_function(unsigned int node, sCompileInfo* info)
             else {
                 llvm_fun = LLVMAddFunction(gModule, asm_fun_name, function_type);
             }
+            add_come_function(new_fun_name, result_type, num_params, param_types, param_names2, TRUE, var_arg);
         }
     }
     else {
@@ -1290,7 +1323,7 @@ BOOL compile_external_function(unsigned int node, sCompileInfo* info)
 
             BOOL generics_function = FALSE;
             if(!add_function_to_table(new_fun_name, num_params, param_names2, param_types, param_default_values2, param_labels, result_type, llvm_fun, block_text, generics_function, var_arg, 0, NULL, 0, NULL, TRUE, asm_fun_name, TRUE, NULL, info->sname, info->sline, immutable_, flag_asm_fun_name, function_type)) {
-                fprintf(stderr, "overflow function table\n");
+                fprintf(stderr, "%s %d: overflow function table\n", gSName, gSLine);
                 return FALSE;
             }
 
@@ -1300,6 +1333,7 @@ BOOL compile_external_function(unsigned int node, sCompileInfo* info)
             else {
                 llvm_fun = LLVMAddFunction(gModule, asm_fun_name, function_type);
             }
+            add_come_function(new_fun_name, result_type, num_params, param_types, param_names2, TRUE, var_arg);
         }
         else {
             if(strcmp(asm_fun_name, "") == 0) {
@@ -1342,9 +1376,10 @@ BOOL compile_external_function(unsigned int node, sCompileInfo* info)
     
             BOOL generics_function = FALSE;
             if(!add_function_to_table(fun_name, num_params, param_names2, param_types, param_default_values2, param_labels, result_type, llvm_fun, block_text, generics_function, var_arg, 0, NULL, 0, NULL, TRUE, asm_fun_name, TRUE, NULL, info->sname, info->sline, immutable_, flag_asm_fun_name, function_type)) {
-                fprintf(stderr, "overflow function table\n");
+                fprintf(stderr, "%s %d: overflow function table\n", gSName, gSLine);
                 return FALSE;
             }
+            add_come_function(fun_name, result_type, num_params, param_types, param_names2, TRUE, var_arg);
         }
     }
 
@@ -1353,7 +1388,7 @@ BOOL compile_external_function(unsigned int node, sCompileInfo* info)
     return TRUE;
 }
 
-BOOL create_generics_function(LLVMValueRef* llvm_fun, sFunction* fun, char* fun_name, sNodeType* generics_type, int num_method_generics_types, sNodeType** method_generics_types, BOOL immutable_, sCompileInfo* info)
+BOOL create_generics_function(LLVMValueRef* llvm_fun, char** llvm_fun_name, sFunction* fun, char* fun_name, sNodeType* generics_type, int num_method_generics_types, sNodeType** method_generics_types, BOOL immutable_, sCompileInfo* info)
 {
     sNodeType* generics_type_before = info->generics_type;
     if(generics_type) {
@@ -1376,6 +1411,8 @@ BOOL create_generics_function(LLVMValueRef* llvm_fun, sFunction* fun, char* fun_
 
     char real_fun_name[REAL_FUN_NAME_MAX];
     create_generics_fun_name(real_fun_name, REAL_FUN_NAME_MAX, fun_name,  generics_type, num_method_generics_types, method_generics_types);
+    
+    *llvm_fun_name = xsprintf("%s", real_fun_name);
     
     *llvm_fun = LLVMGetNamedFunction(gModule, real_fun_name);
 
@@ -1448,8 +1485,7 @@ BOOL create_generics_function(LLVMValueRef* llvm_fun, sFunction* fun, char* fun_
         for(i=0; i<num_params; i++) {
             sParserParam param = params[i];
 
-            BOOL readonly = FALSE;
-            if(!add_variable_to_table(info2.lv_table, param.mName, param.mType, readonly, gNullLVALUE, -1, FALSE, FALSE, TRUE))
+            if(!add_variable_to_table(info2.lv_table, param.mName, "", param.mType, gNullLVALUE, -1, FALSE, FALSE, TRUE))
             {
                 compile_err_msg(info, "overflow variable table");
                 return FALSE;
@@ -1468,8 +1504,8 @@ BOOL create_generics_function(LLVMValueRef* llvm_fun, sFunction* fun, char* fun_
             return FALSE;
         }
 
-        if(info2.err_num > 0 && !gNCHeader) {
-            fprintf(stderr, "Parser error number is %d. ", info2.err_num);
+        if(info2.err_num > 0) {
+            fprintf(stderr, "%s %d: Parser error number is %d. ", gSName, gSLine, info2.err_num);
             return FALSE;
         }
 
@@ -1528,8 +1564,8 @@ BOOL create_generics_function(LLVMValueRef* llvm_fun, sFunction* fun, char* fun_
         if(!compile(node, &cinfo)) {
             return FALSE;
         }
-        if(cinfo.err_num > 0 && !gNCHeader) {
-            fprintf(stderr, "Compile error number is %d. ", cinfo.err_num);
+        if(cinfo.err_num > 0) {
+            fprintf(stderr, "%s %d: Compile error number is %d. ", gSName, gSLine, cinfo.err_num);
             return FALSE;
         }
 

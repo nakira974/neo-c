@@ -1,16 +1,5 @@
 
-int xxx()
-{
-    if(1) {
-    }
-    else {
-}
-
-int fun()
-{
-    if(1) {
-    }
-}
+int a, b;
 
 int main(int argc, char** argv)
 {

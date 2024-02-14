@@ -2,28 +2,22 @@
 #include <sys/stat.h>
 #include "common.h"
 
-public {
-enum eRepeatForwardNextCharacter {
-    kRFNCNone, kRFNC1, kRFNC2
-};
-}
-
 void ViWin*::searchModeView(ViWin* self, Vi* nvi)
 {
     werase(self.win);
 
     self.textsView(nvi);
 
-    wattron(self.win, A_REVERSE);
+    using C { wattron(self.win, A_REVERSE); }
     if(nvi.searchReverse) {
         mvwprintw(self.win, self.height-1, 0, "?%ls", nvi.searchString);
     }
     else {
         mvwprintw(self.win, self.height-1, 0, "/%ls", nvi.searchString);
     }
-    wattroff(self.win, A_REVERSE);
+    using c { wattroff(self.win, A_REVERSE); }
 
-    wrefresh(self.win);
+    using c { wrefresh(self.win); }
 }
 
 void ViWin*::view(ViWin* self, Vi* nvi) version 9
@@ -43,7 +37,7 @@ void ViWin*::search(ViWin* self, Vi* nvi)
         return;
     }
     
-    auto cursor_line = self.texts.item(self.scroll+self.cursorY, null);
+    auto cursor_line = self.texts.item(self.scroll+self.cursorY, null!);
 
     int x = cursor_line.substring(self.cursorX+1, -1).index(nvi.searchString, -1);
 
@@ -95,7 +89,7 @@ void ViWin*::searchReverse(ViWin* self, Vi* nvi)
         return;
     }
     
-    auto cursor_line = self.texts.item(self.scroll+self.cursorY, null);
+    auto cursor_line = self.texts.item(self.scroll+self.cursorY, null!);
 
     int x;
     if(self.cursorX < nvi.searchString.length())

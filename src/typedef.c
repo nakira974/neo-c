@@ -4,7 +4,6 @@ struct sTypeDefTable
 {
     char* mName;
     sNodeType* mItem;
-    BOOL mUser;
 };
 
 static struct sTypeDefTable* gTypeDefTable;
@@ -29,17 +28,6 @@ void free_typedef()
     free(gTypeDefTable);
 }
 
-void show_typedefs()
-{
-    int i;
-    for(i=0; i<gSizeTypeDef; i++) {
-        if(gTypeDefTable[i].mName && gTypeDefTable[i].mUser) {
-            printf("%s ", gTypeDefTable[i].mName);
-            show_node_type(gTypeDefTable[i].mItem);
-        }
-    }
-}
-
 void final_typedef()
 {
     free_typedef();
@@ -60,7 +48,7 @@ void rehash_typedef()
             while(1) {
                 if(p->mName == NULL) {
                     p->mName = strdup(gTypeDefTable[i].mName);
-                    p->mItem = gTypeDefTable[i].mItem;
+                    p->mItem = clone_node_type(gTypeDefTable[i].mItem);
                     break;
                 }
                 else {
@@ -72,8 +60,8 @@ void rehash_typedef()
                     }
                     else if(p == new_typedef_table + hash_value)
                     {
-                        fprintf(stderr, "overflow typedef number\n");
-                        exit(2);
+                        fprintf(stderr, "%s %d: overflow typedef number\n", gSName ,gSLine);
+                        exit(33);
                     }
                 }
             }
@@ -88,11 +76,6 @@ void rehash_typedef()
 
 void add_typedef(char* name, sNodeType* node_type, BOOL user)
 {
-/*
-    if(gCompilePhase == 1 || gCompilePhase == 2) {
-        return;
-    }
-*/
     if(gNumTypeDef >= gSizeTypeDef/3) {
         rehash_typedef();
     }
@@ -105,9 +88,13 @@ void add_typedef(char* name, sNodeType* node_type, BOOL user)
         if(p->mName == NULL) {
             p->mName = strdup(name);
             p->mItem = clone_node_type(node_type);
-            p->mUser = user;
-
+            
             gNumTypeDef++;
+            
+            break;
+        }
+        else if(strcmp(p->mName, name) == 0) {
+            p->mItem = clone_node_type(node_type);
             break;
         }
         else {
@@ -119,8 +106,8 @@ void add_typedef(char* name, sNodeType* node_type, BOOL user)
             }
             else if(p == gTypeDefTable + hash_value)
             {
-                fprintf(stderr, "overflow typedef number\n");
-                exit(2);
+                fprintf(stderr, "%s %d: overflow typedef number\n", gSName ,gSLine);
+                exit(34);
             }
         }
     }

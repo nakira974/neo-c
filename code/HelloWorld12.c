@@ -1,4 +1,4 @@
-#include <neo-c.h>
+#include <comelang.h>
 #include <stdio.h>
 
 int fun(int x = 123, int y = 345, int z = 456) 
@@ -40,7 +40,7 @@ struct sData2
 
 void sData2::finalize(sData2* self)
 {
-    delete self.m1;
+    delete borrow self.m1;
 }
 
 struct sInfo
@@ -60,6 +60,7 @@ void funX2(sInfo* info)
 
 int main(int argc, char** argv) 
 {
+    using unsafe; 
     fun();
     fun(y:2);
     
@@ -78,15 +79,6 @@ int main(int argc, char** argv)
     (&data).fun(1);
     (&data).show();
     
-/*
-    auto li = list<int>();
-    
-    li.push_back(1);
-    li.push_back(2);
-    li.push_back(3);
-    
-    xassert("list initializer test", li.item(0, -1) == 1 && li.item(1, -1) == 2 && li.item(2, -1) == 3);
-*/
     auto li2 = ["1", "2", "3"];
     
     auto li3 = li2.map { atoi(it); };
@@ -116,13 +108,13 @@ int main(int argc, char** argv)
     
     putc('X', stdout);
     
-    int*? a = null;
+    int* a = null;
     
     int b = 123;
     
     a = nullable &b;
     
-    printf("%d\n", *a!);
+    printf("%d\n", *a);
     
     sData2*% c = new sData2;
     

@@ -2,8 +2,9 @@
 ////////////////////////////
 // src/01int.c
 ////////////////////////////
-#include <neo-c.h>
+#include <comelang.h>
 
+using unsafe;
 
 struct sInfo;
 
@@ -195,6 +196,7 @@ unsigned int ZVALUE*::get_hash_key(ZVALUE* self);
 bool ZVALUE*::equals(ZVALUE* self, ZVALUE* right);
 int ZVALUE*::compare(ZVALUE* self, ZVALUE* right);
 bool ZVALUE*::operator_equals(ZVALUE* self, ZVALUE* right);
+bool ZVALUE*::operator_not_equals(ZVALUE* self, ZVALUE* right);
 string ZVALUE*::to_string(ZVALUE* self);
 int main(int argc, char** argv);
 
